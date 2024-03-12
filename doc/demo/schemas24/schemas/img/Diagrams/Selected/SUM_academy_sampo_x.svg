@@ -1,0 +1,1988 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="2850" height="1953" viewBox="0 0 2850 1953">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002693008"><polygon points="1256,1227 1556,1227 1556,1272 1256,1272 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1362" y="1242">y:Country (199)</tspan>
+</text>
+</g>
+<g id="2002693030"><polygon points="885,1227 1185,1227 1185,1272 885,1272 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="997" y="1242">y:County (45)</tspan>
+</text>
+</g>
+<g id="2002693041"><polygon points="1847,766 2147,766 2147,831 1847,831 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1934" y="781">y:FamilyName (2.3e4)</tspan>
+</text>
+<line x1="1851" y1="784" x2="2145" y2="784"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1851" y="796">rdf:type (2.4e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1851" y="811">Property,y:Graduation</tspan>
+<tspan x="1851" y="826">skos:prefLabel (2.3e4) [*] </tspan>
+</text>
+</g>
+<g id="2002693052"><polygon points="549,695 849,695 849,775 549,775 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="630" y="710">schema:GenderType (2)</tspan>
+</text>
+<line x1="553" y1="713" x2="847" y2="713"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="553" y="725">rdf:type (2) [*]  -&gt;  owl:DatatypeProperty or rdf:Property,</tspan>
+<tspan x="553" y="740">y:Graduation</tspan>
+<tspan x="553" y="755">rdfs:label (2) [1] </tspan>
+<tspan x="553" y="770">skos:prefLabel (2) [*] </tspan>
+</text>
+</g>
+<g id="2002693085"><polygon points="561,1112 861,1112 861,1237 561,1237 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="667" y="1127">y:Death (4.3e4)</tspan>
+</text>
+<line x1="565" y1="1130" x2="859" y2="1130"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="565" y="1142">rdf:type (4.3e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="565" y="1157">Property,y:Graduation</tspan>
+<tspan x="565" y="1172">schema:date (4.2e4) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="565" y="1187">schema:place (2.3e4) [*]  -&gt;  y:Place</tspan>
+<tspan x="565" y="1202">skos:altLabel (5) [*] </tspan>
+<tspan x="565" y="1217">skos:prefLabel (4.3e4) [*] </tspan>
+<tspan x="565" y="1232">y:comment (4.3e4) [*] </tspan>
+</text>
+</g>
+<g id="2002693118"><polygon points="1678,1743 1978,1743 1978,1823 1678,1823 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1769" y="1758">y:RectorPeriod (188)</tspan>
+</text>
+<line x1="1682" y1="1761" x2="1976" y2="1761"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1682" y="1773">rdf:type (188) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1682" y="1788">Property,y:Graduation</tspan>
+<tspan x="1682" y="1803">schema:date (188) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="1682" y="1818">skos:prefLabel (188) [*] </tspan>
+</text>
+</g>
+<g id="2002693151"><polygon points="1325,1302 1625,1302 1625,1397 1325,1397 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1421" y="1317">y:Reference (1217)</tspan>
+</text>
+<line x1="1329" y1="1320" x2="1623" y2="1320"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1329" y="1332">rdf:type (1217) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1329" y="1347">Property,y:Graduation</tspan>
+<tspan x="1329" y="1362">skos:prefLabel (1217) [*] </tspan>
+<tspan x="1329" y="1377">skos:related (1217) [1]  -&gt; IRI</tspan>
+<tspan x="1329" y="1392">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002693195"><polygon points="1890,193 2190,193 2190,333 1890,333 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1923" y="208">sd:Graph or sd:Dataset et al. S115 (~15)</tspan>
+</text>
+<line x1="1894" y1="211" x2="2188" y2="211"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1894" y="223">dct:description (1) [1] </tspan>
+<tspan x="1894" y="238">dct:license (1) [1]  -&gt; IRI</tspan>
+<tspan x="1894" y="253">dct:rightsHolder (3) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1894" y="268">dct:title (2) [*] </tspan>
+<tspan x="1894" y="283">ldf:dataVisualization (1) [1]  -&gt; IRI</tspan>
+<tspan x="1894" y="298">rdf:type (3) [*]  -&gt;  owl:DatatypeProperty or rdf:Property,</tspan>
+<tspan x="1894" y="313">y:Graduation</tspan>
+<tspan x="1894" y="328">void:uriSpace (1) [1] </tspan>
+</text>
+</g>
+<g id="2002693239"><polygon points="132,1405 432,1405 432,1500 132,1500 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="215" y="1420">owl:ObjectProperty (38)</tspan>
+</text>
+<line x1="136" y1="1423" x2="430" y2="1423"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="136" y="1435">rdf:type (38) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="136" y="1450">Property,y:Graduation</tspan>
+<tspan x="136" y="1465">rdfs:label (1) [1] </tspan>
+<tspan x="136" y="1480">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
+<tspan x="136" y="1495">skos:prefLabel (38) [*] </tspan>
+</text>
+</g>
+<g id="2002693283"><polygon points="1690,1587 1990,1587 1990,1697 1690,1697 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1784" y="1602">y:Enrollment (6675)</tspan>
+</text>
+<line x1="1694" y1="1605" x2="1988" y2="1605"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1694" y="1617">rdf:type (6677) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1694" y="1632">Property,y:Graduation</tspan>
+<tspan x="1694" y="1647">schema:date (6675) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="1694" y="1662">skos:altLabel (1) [*] </tspan>
+<tspan x="1694" y="1677">skos:prefLabel (6677) [*] </tspan>
+<tspan x="1694" y="1692">&lt;-y:link_by (7255) D &lt;-  y:Distance</tspan>
+</text>
+</g>
+<g id="2002693327"><polygon points="1819,361 2119,361 2119,456 1819,456 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1930" y="376">sd:Graph (12)</tspan>
+</text>
+<line x1="1823" y1="379" x2="2117" y2="379"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1823" y="391">ldf:dataDocumentation (12) [1] D -&gt; IRI</tspan>
+<tspan x="1823" y="406">void:dataDump (12) [1] D -&gt; IRI</tspan>
+<tspan x="1823" y="421">void:exampleResource (11) [1] D -&gt;  y:Timespan,y:</tspan>
+<tspan x="1823" y="436">Organization..(11)</tspan>
+<tspan x="1823" y="451">void:vocabulary (48) [*] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002693338"><polygon points="1166,830 1466,830 1466,1090 1166,1090 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1275" y="845">y:Place (9554)</tspan>
+</text>
+<line x1="1170" y1="848" x2="1464" y2="848"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1170" y="860">geo:lat (9237) [1] D</tspan>
+<tspan x="1170" y="875">geo:long (9237) [1] D</tspan>
+<tspan x="1170" y="890">owl:sameAs (584) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="1170" y="905">rdf:type (9798) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1170" y="920">Property,y:Graduation</tspan>
+<tspan x="1170" y="935">rdfs:label (4565) [1] </tspan>
+<tspan x="1170" y="950">schema:image (5334) [*]  -&gt; IRI</tspan>
+<tspan x="1170" y="965">skos:altLabel (3963) [*] </tspan>
+<tspan x="1170" y="980">skos:hiddenLabel (1.7e4) [*] </tspan>
+<tspan x="1170" y="995">skos:prefLabel (9333) [*] </tspan>
+<tspan x="1170" y="1010">y:number_of_events (2883) [1] D</tspan>
+<tspan x="1170" y="1025">y:wikipedia (742) [*]  -&gt; IRI</tspan>
+<tspan x="1170" y="1040">&lt;-schema:place (1.4e5)  &lt;-  y:Burial,y:Study or y:</tspan>
+<tspan x="1170" y="1055">Career..(8)</tspan>
+<tspan x="1170" y="1070">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+<tspan x="1170" y="1085">&lt;-y:link_by (9.4e4) D &lt;-  y:Distance</tspan>
+</text>
+</g>
+<g id="2002693393"><polygon points="171,1707 471,1707 471,1862 171,1862 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="278" y="1722">y:Event (1.7e4)</tspan>
+</text>
+<line x1="175" y1="1725" x2="469" y2="1725"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="175" y="1737">rdf:type (1.7e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="175" y="1752">Property,y:Graduation</tspan>
+<tspan x="175" y="1767">schema:date (2.0e4) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="175" y="1782">schema:place (1.4e4) [*]  -&gt;  y:Place</tspan>
+<tspan x="175" y="1797">skos:altLabel (184) [*] </tspan>
+<tspan x="175" y="1812">skos:prefLabel (1.7e4) [*] </tspan>
+<tspan x="175" y="1827">y:has_part (6702) [*]  -&gt;  (type/type) y:Graduation</tspan>
+<tspan x="175" y="1842">y:organization (2367) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="175" y="1857">&lt;-y:link_by (1.2e4) D &lt;-  y:Distance</tspan>
+</text>
+</g>
+<g id="2002693404"><polygon points="561,849 861,849 861,989 561,989 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="671" y="864">y:Birth (2.5e4)</tspan>
+</text>
+<line x1="565" y1="867" x2="859" y2="867"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="565" y="879">rdf:type (2.5e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="565" y="894">Property,y:Graduation</tspan>
+<tspan x="565" y="909">schema:date (2.3e4) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="565" y="924">schema:place (2.3e4) [*]  -&gt;  y:Place</tspan>
+<tspan x="565" y="939">skos:altLabel (1) [*] </tspan>
+<tspan x="565" y="954">skos:prefLabel (2.5e4) [*] </tspan>
+<tspan x="565" y="969">y:comment (2.5e4) [*] </tspan>
+<tspan x="565" y="984">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002693437"><polygon points="1805,999 2105,999 2105,1544 1805,1544 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1908" y="1014">y:Person (2.8e4)</tspan>
+</text>
+<line x1="1809" y1="1017" x2="2103" y2="1017"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1809" y="1029">bioc:has_family_relation (1.7e5) [*]  -&gt;  yr:[Daughter-in</tspan>
+<tspan x="1809" y="1044">-law (f73)] et al.,yr:[Wife (f11)] et al...(7)</tspan>
+<tspan x="1809" y="1059">rdf:type (2.8e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1809" y="1074">Property,y:Graduation</tspan>
+<tspan x="1809" y="1089">schema:image (822) [*]  -&gt; IRI</tspan>
+<tspan x="1809" y="1104">skos:altLabel (439) [*] </tspan>
+<tspan x="1809" y="1119">skos:prefLabel (2.8e4) [*] </tspan>
+<tspan x="1809" y="1134">skosxl:altLabel (2.3e4) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1809" y="1149">y:abstract (1.8e4) [1] D</tspan>
+<tspan x="1809" y="1164">y:code (292) [1] </tspan>
+<tspan x="1809" y="1179">y:enrollment_text (2.8e4) [1] D</tspan>
+<tspan x="1809" y="1194">y:entry_text (2.8e4) [1] D</tspan>
+<tspan x="1809" y="1209">y:has_birth (2.5e4) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1809" y="1224">y:has_death (2.5e4) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1809" y="1239">y:has_event (1.7e5) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="1809" y="1254">y:id (2.8e4) [1] </tspan>
+<tspan x="1809" y="1269">y:kb (1) [1] </tspan>
+<tspan x="1809" y="1284">y:number_of_spouses (2.2e4) [1] D</tspan>
+<tspan x="1809" y="1299">y:reference_text (1.8e4) [1] D</tspan>
+<tspan x="1809" y="1314">y:relative_text (2.0e4) [1] D</tspan>
+<tspan x="1809" y="1329">y:title_text (1.9e4) [*] </tspan>
+<tspan x="1809" y="1344">&lt;-bioc:inheres_in (1.4e5)  &lt;-  yr:[Daughter-in-law (f73)</tspan>
+<tspan x="1809" y="1359">] et al.,yr:[Wife (f11)] et al...(8)</tspan>
+<tspan x="1809" y="1374">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002693470"><polygon points="991,642 1291,642 1291,812 991,812 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1086" y="657">y:Timespan (6.3e4)</tspan>
+</text>
+<line x1="995" y1="660" x2="1289" y2="660"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="995" y="672">gvp:estEnd (6.2e4) [*] D</tspan>
+<tspan x="995" y="687">gvp:estStart (6.2e4) [*] D</tspan>
+<tspan x="995" y="702">rdf:type (6.3e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="995" y="717">Property,y:Graduation</tspan>
+<tspan x="995" y="732">skos:altLabel (22) [*] </tspan>
+<tspan x="995" y="747">skos:prefLabel (6.3e4) [*] </tspan>
+<tspan x="995" y="762">&lt;-schema:date (2.2e5)  &lt;-  y:Burial,y:Study or y:</tspan>
+<tspan x="995" y="777">Career..(10)</tspan>
+<tspan x="995" y="792">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+<tspan x="995" y="807">&lt;-y:link_by (1.9e4) D &lt;-  y:Distance</tspan>
+</text>
+</g>
+<g id="2002693129"><polygon points="118,9 418,9 418,704 118,704 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="115,12 415,12 415,707 115,707 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="167" y="27">yr:[Wife (f11)] et al. G113 (~1.8e5)</tspan>
+</text>
+<line x1="119" y1="30" x2="413" y2="30"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="119" y="42">bioc:inheres_in (1.8e5) [*]  -&gt;  y:Person,y:</tspan>
+<tspan x="119" y="57">ReferencedPerson</tspan>
+<tspan x="119" y="72">rdf:type (1.8e5) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="119" y="87">Property,y:Graduation</tspan>
+<tspan x="119" y="102">skos:altLabel (1564) [*] </tspan>
+<tspan x="119" y="117">skos:prefLabel (1.8e5) [*] </tspan>
+<tspan x="119" y="132">y:inferred (1.1e5) [1] </tspan>
+<tspan x="119" y="147">&lt;-bioc:has_family_relation (2.0e5)  &lt;-  y:Person,y:</tspan>
+<tspan x="119" y="162">ReferencedPerson</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="119" y="177">yr:[Brother (f22)] (1.3e4)</tspan>
+<tspan x="119" y="192">yr:[Brother-in-law (f77)] (1.2e4)</tspan>
+<tspan x="119" y="207">yr:[Cousin (f105)] (3546)</tspan>
+<tspan x="119" y="222">yr:[Daughter-in-law (f73)] (2.0e4)</tspan>
+<tspan x="119" y="237">yr:[Father (f4)] (1.8e4)</tspan>
+<tspan x="119" y="252">yr:[Father-in-law (f56)] (1.5e4)</tspan>
+<tspan x="119" y="267">yr:[Foster Father (f120)] (47)</tspan>
+<tspan x="119" y="282">yr:[Grandfather (f19)] (4077)</tspan>
+<tspan x="119" y="297">yr:[Grandmother (f15)] (3919)</tspan>
+<tspan x="119" y="312">yr:[Great Grandchild (f81)] (777)</tspan>
+<tspan x="119" y="327">yr:[Great Grandmother (f58)] (1579)</tspan>
+<tspan x="119" y="342">yr:[Great Nephew (f89)] (2836)</tspan>
+<tspan x="119" y="357">yr:[Great Nephew (f90)] (232)</tspan>
+<tspan x="119" y="372">yr:[Great Nephew (f93)] (172)</tspan>
+<tspan x="119" y="387">yr:[Great Niece (f91)] (44)</tspan>
+<tspan x="119" y="402">yr:[Great Uncle (f86)] (1342)</tspan>
+<tspan x="119" y="417">yr:[Great Uncle (f87)] (130)</tspan>
+<tspan x="119" y="432">yr:[Great grandfather (f59)] (1703)</tspan>
+<tspan x="119" y="447">yr:[Mother-in-law (f55)] (1.4e4)</tspan>
+<tspan x="119" y="462">yr:[Nephew (f67)] (556)</tspan>
+<tspan x="119" y="477">yr:[Niece (f70)] (9)</tspan>
+<tspan x="119" y="492">yr:[Other Relative (f123)] (131)</tspan>
+<tspan x="119" y="507">yr:[Relative (f1)] (403)</tspan>
+<tspan x="119" y="522">yr:[Second Cousin (f113)] (784)</tspan>
+<tspan x="119" y="537">yr:[Sister (f21)] (270)</tspan>
+<tspan x="119" y="552">yr:[Sister-in-law (f75)] (6542)</tspan>
+<tspan x="119" y="567">yr:[Son's Daughter (f36)] (104)</tspan>
+<tspan x="119" y="582">yr:[Son's Son (f33)] (9030)</tspan>
+<tspan x="119" y="597">yr:[Son-in-law (f74)] (4783)</tspan>
+<tspan x="119" y="612">yr:[Stepfather (f38)] (161)</tspan>
+<tspan x="119" y="627">yr:[Uncle (f65)] (400)</tspan>
+<tspan x="119" y="642">yr:[Uncle (f66)] (3798)</tspan>
+<tspan x="119" y="657">yr:[Wife (f11)] (3.5e4)</tspan>
+<tspan x="119" y="672">yr:[isän lanko (f108)] (1382)</tspan>
+<tspan x="119" y="687">yr:[langon poika (f110)] (5605)</tspan>
+<tspan x="119" y="702">yr:[puolison edellinen aviomies (f44)] (753)</tspan>
+</text>
+</g>
+<g id="2002693140"><polygon points="66,921 366,921 366,1181 66,1181 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="136" y="936">y:ReferencedPerson (4.7e4)</tspan>
+</text>
+<line x1="70" y1="939" x2="364" y2="939"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="70" y="951">bioc:has_family_relation (1.5e5) [*]  -&gt;  yr:[Daughter-in</tspan>
+<tspan x="70" y="966">-law (f73)] et al.,yr:[Wife (f11)] et al...(7)</tspan>
+<tspan x="70" y="981">rdf:type (4.7e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="70" y="996">Property,y:Graduation</tspan>
+<tspan x="70" y="1011">schema:image (218) [*]  -&gt; IRI</tspan>
+<tspan x="70" y="1026">skos:altLabel (7166) [*] </tspan>
+<tspan x="70" y="1041">skos:prefLabel (4.7e4) [*] </tspan>
+<tspan x="70" y="1056">skosxl:altLabel (8976) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="70" y="1071">y:code (18) [1] </tspan>
+<tspan x="70" y="1086">y:has_birth (814) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="70" y="1101">y:has_death (1.8e4) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="70" y="1116">y:kb (1) [1] </tspan>
+<tspan x="70" y="1131">y:nbf (1) [1] D -&gt; IRI</tspan>
+<tspan x="70" y="1146">y:title_text (1.5e4) [*] </tspan>
+<tspan x="70" y="1161">&lt;-bioc:inheres_in (1.4e5)  &lt;-  yr:[Daughter-in-law (f73)</tspan>
+<tspan x="70" y="1176">] et al.,yr:[Wife (f11)] et al...(8)</tspan>
+</text>
+</g>
+<g id="2002693525"><polygon points="135,1544 435,1544 435,1669 135,1669 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="132,1547 432,1547 432,1672 132,1672 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="143" y="1562">owl:DatatypeProperty or rdf:Property G110 (~37)</tspan>
+</text>
+<line x1="136" y1="1565" x2="430" y2="1565"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="136" y="1577">rdf:type (43) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="136" y="1592">Property,y:Graduation</tspan>
+<tspan x="136" y="1607">skos:prefLabel (37) [*] </tspan>
+<tspan x="136" y="1622">&lt;-rdf:type (184)  &lt;-  yr:[Great Aunt (f88)] et al.,yr:</tspan>
+<tspan x="136" y="1637">[Daughter-in-law (f73)] et al...(44)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="136" y="1652">owl:DatatypeProperty (25)</tspan>
+<tspan x="136" y="1667">rdf:Property (12)</tspan>
+</text>
+</g>
+<g id="2002693074"><polygon points="573,1454 874,1454 874,1760 573,1760 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="570,1457 871,1457 871,1763 570,1763 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="573" y="1472">ext:[Ylioppilasmatrikkeli 1640 (D1640)] et al. G112 </tspan>
+<tspan x="697" y="1488">(~5.4e4)</tspan>
+</text>
+<line x1="574" y1="1491" x2="869" y2="1491"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="574" y="1503">y:weight (1594) [*] D</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="574" y="1518">ext:Biografiasampo (2612)</tspan>
+<tspan x="574" y="1533">ext:DoriaD (1135)</tspan>
+<tspan x="574" y="1548">ext:DoriaG (783)</tspan>
+<tspan x="574" y="1563">ext:DoriaP (148)</tspan>
+<tspan x="574" y="1578">ext:DoriaR (1367)</tspan>
+<tspan x="574" y="1593">ext:Kansallisbiografia (2613)</tspan>
+<tspan x="574" y="1608">ext:Kansanedustajat (210)</tspan>
+<tspan x="574" y="1623">ext:Ministerit (73)</tspan>
+<tspan x="574" y="1638">ext:PNR (686)</tspan>
+<tspan x="574" y="1653">ext:Wikidata (8059)</tspan>
+<tspan x="574" y="1668">ext:Wikimedia (408)</tspan>
+<tspan x="574" y="1683">ext:Wikipedia (3903)</tspan>
+<tspan x="574" y="1698">ext:Wikisource (203)</tspan>
+<tspan x="574" y="1713">ext:Yso (1229)</tspan>
+<tspan x="574" y="1728">ext:[Ylioppilasmatrikkeli 1640 (D1640)] (1.8e4)</tspan>
+<tspan x="574" y="1743">ext:[Ylioppilasmatrikkeli 1853 (D1853)] (9509)</tspan>
+<tspan x="574" y="1758">ext:nbf (2613)</tspan>
+</text>
+</g>
+<g id="2002693250"><polygon points="1687,1829 1987,1829 1987,1924 1687,1924 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1788" y="1844">y:Graduation (93)</tspan>
+</text>
+<line x1="1691" y1="1847" x2="1985" y2="1847"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1691" y="1859">rdf:type (93) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1691" y="1874">Property,y:Graduation</tspan>
+<tspan x="1691" y="1889">skos:prefLabel (93) [*] </tspan>
+<tspan x="1691" y="1904">&lt;-rdf:type (5005)  &lt;-  yr:[Great Aunt (f88)] et al.,yr:</tspan>
+<tspan x="1691" y="1919">[Daughter-in-law (f73)] et al...(44)</tspan>
+</text>
+</g>
+<g id="2002693063"><polygon points="1433,684 1733,684 1733,824 1433,824 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1541" y="699">y:Label (9.3e4)</tspan>
+</text>
+<line x1="1437" y1="702" x2="1731" y2="702"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1437" y="714">rdf:type (9.3e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1437" y="729">Property,y:Graduation</tspan>
+<tspan x="1437" y="744">schema:familyName (9.3e4) [1] D</tspan>
+<tspan x="1437" y="759">schema:givenName (9.3e4) [1] D</tspan>
+<tspan x="1437" y="774">skos:prefLabel (9.3e4) [*] </tspan>
+<tspan x="1437" y="789">y:fname (8.8e4) [*] DR -&gt; dgr,IRI</tspan>
+<tspan x="1437" y="804">y:name_1 (8.8e4) [*] DR -&gt; dgr,IRI</tspan>
+<tspan x="1437" y="819">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002693261"><polygon points="2133,1699 2343,1699 2343,1744 2133,1744 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2179" y="1714">skos:Concept (2137)</tspan>
+</text>
+</g>
+<g id="2002693547"><polygon points="1698,879 1998,879 1998,959 1698,959 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1790" y="894">y:Coordinate (2.8e4)</tspan>
+</text>
+<line x1="1702" y1="897" x2="1996" y2="897"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1702" y="909">rdf:type (2.8e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1702" y="924">Property,y:Graduation</tspan>
+<tspan x="1702" y="939">y:x (2.8e4) [1] D</tspan>
+<tspan x="1702" y="954">y:y (2.8e4) [1] D</tspan>
+</text>
+</g>
+<g id="2002693294"><polygon points="2067,840 2367,840 2367,950 2067,950 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2172" y="855">y:Baptism (495)</tspan>
+</text>
+<line x1="2071" y1="858" x2="2365" y2="858"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2071" y="870">rdf:type (495) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="2071" y="885">Property,y:Graduation</tspan>
+<tspan x="2071" y="900">schema:date (494) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="2071" y="915">schema:place (494) [*]  -&gt;  y:Place</tspan>
+<tspan x="2071" y="930">skos:prefLabel (495) [*] </tspan>
+<tspan x="2071" y="945">y:comment (495) [*] </tspan>
+</text>
+</g>
+<g id="2002693514"><polygon points="2224,1072 2524,1072 2524,1197 2224,1197 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2339" y="1087">y:Source (2)</tspan>
+</text>
+<line x1="2228" y1="1090" x2="2522" y2="1090"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2228" y="1102">dct:author (2) [1] </tspan>
+<tspan x="2228" y="1117">dct:description (2) [1] </tspan>
+<tspan x="2228" y="1132">rdf:type (2) [*]  -&gt;  owl:DatatypeProperty or rdf:Property,</tspan>
+<tspan x="2228" y="1147">y:Graduation</tspan>
+<tspan x="2228" y="1162">skos:altLabel (2) [*] </tspan>
+<tspan x="2228" y="1177">skos:prefLabel (2) [*] </tspan>
+<tspan x="2228" y="1192">skos:related (2) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002693349"><polygon points="2234,1518 2534,1518 2534,1598 2234,1598 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2334" y="1533">y:PersonLink (24)</tspan>
+</text>
+<line x1="2238" y1="1536" x2="2532" y2="1536"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2238" y="1548">rdf:type (24) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="2238" y="1563">Property,y:Graduation</tspan>
+<tspan x="2238" y="1578">rdfs:label (24) [1] </tspan>
+<tspan x="2238" y="1593">y:id (24) [1] </tspan>
+</text>
+</g>
+<g id="2002693371"><polygon points="2279,956 2528,956 2528,1066 2279,1066 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2362" y="971">y:Burial (1260)</tspan>
+</text>
+<line x1="2283" y1="974" x2="2526" y2="974"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2283" y="986">rdf:type (1260) [*]  -&gt;  owl:DatatypeProperty </tspan>
+<tspan x="2283" y="1001">or rdf:Property,y:Graduation</tspan>
+<tspan x="2283" y="1016">schema:date (1108) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="2283" y="1031">schema:place (1235) [*]  -&gt;  y:Place</tspan>
+<tspan x="2283" y="1046">skos:prefLabel (1260) [*] </tspan>
+<tspan x="2283" y="1061">y:comment (1260) [*] </tspan>
+</text>
+</g>
+<g id="2002693569"><polygon points="2182,1767 2402,1767 2402,1847 2182,1847 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2233" y="1782">y:StudentNation (24)</tspan>
+</text>
+<line x1="2186" y1="1785" x2="2400" y2="1785"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2186" y="1797">skos:hiddenLabel (2) [*] </tspan>
+<tspan x="2186" y="1812">y:comment (8) [*] </tspan>
+<tspan x="2186" y="1827">y:wikidata (6) [1] D -&gt; IRI</tspan>
+<tspan x="2186" y="1842">y:wikipedia (6) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002693536"><polygon points="2362,1625 2662,1625 2662,1735 2362,1735 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2415" y="1640">skos:Concept et al. S102 (~2709)</tspan>
+</text>
+<line x1="2366" y1="1643" x2="2660" y2="1643"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2366" y="1655">rdf:type (548) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="2366" y="1670">Property,y:Graduation</tspan>
+<tspan x="2366" y="1685">skos:altLabel (13) [*] </tspan>
+<tspan x="2366" y="1700">skos:broader (542) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="2366" y="1715">skos:prefLabel (548) [*] </tspan>
+<tspan x="2366" y="1730">&lt;-y:link_by (3.6e4) D &lt;-  y:Distance</tspan>
+</text>
+</g>
+<g id="2002693316"><polygon points="2439,1779 2687,1779 2687,1844 2439,1844 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2516" y="1794">y:Category (548)</tspan>
+</text>
+<line x1="2443" y1="1797" x2="2685" y2="1797"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2443" y="1809">schema:place (497) [*]  -&gt;  y:Place</tspan>
+<tspan x="2443" y="1824">skos:related (536) [1]  -&gt; IRI</tspan>
+<tspan x="2443" y="1839">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002693382"><polygon points="1917,502 2177,502 2177,582 1917,582 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1927" y="517">foaf:Project or foaf:Organization S115 (~3)</tspan>
+</text>
+<line x1="1921" y1="520" x2="2175" y2="520"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1921" y="532">foaf:homepage (1) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="1921" y="547">rdf:type (1) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1921" y="562">Property,y:Graduation</tspan>
+<tspan x="1921" y="577">skos:prefLabel (2) [*] </tspan>
+</text>
+</g>
+<g id="2002693228"><polygon points="1644,473 1874,473 1874,553 1644,553 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1700" y="488">sd:NamedGraph (14)</tspan>
+</text>
+<line x1="1648" y1="491" x2="1872" y2="491"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1648" y="503">rdf:type (14) [*]  -&gt;  owl:DatatypeProperty </tspan>
+<tspan x="1648" y="518">or rdf:Property,y:Graduation</tspan>
+<tspan x="1648" y="533">sd:graph (14) [1] DR -&gt; dgr,IRI</tspan>
+<tspan x="1648" y="548">sd:name (14) [1] DR -&gt; dgr,IRI</tspan>
+</text>
+</g>
+<g id="2002693415"><polygon points="1832,616 2093,616 2093,681 1832,681 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1921" y="631">foaf:Project (2)</tspan>
+</text>
+<line x1="1836" y1="634" x2="2091" y2="634"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1836" y="646">dct:author (2) [1] </tspan>
+<tspan x="1836" y="661">dct:description (2) [1] </tspan>
+<tspan x="1836" y="676">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002693481"><polygon points="2130,604 2312,604 2312,654 2130,654 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2164" y="619">foaf:Organization (1)</tspan>
+</text>
+<line x1="2134" y1="622" x2="2310" y2="622"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2134" y="634">foaf:mbox (1) [1] D</tspan>
+<tspan x="2134" y="649">foaf:phone (1) [1] D</tspan>
+</text>
+</g>
+<g id="2002693558"><polygon points="2212,193 2462,193 2462,318 2212,318 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2298" y="208">sd:Service (1)</tspan>
+</text>
+<line x1="2216" y1="211" x2="2460" y2="211"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2216" y="223">rdf:type (1) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="2216" y="238">Property,y:Graduation</tspan>
+<tspan x="2216" y="253">sd:defaultEntailmentRegime (1) [1] D -&gt; IRI</tspan>
+<tspan x="2216" y="268">sd:endpoint (1) [1] D -&gt; IRI</tspan>
+<tspan x="2216" y="283">sd:feature (2) [*] D -&gt; IRI</tspan>
+<tspan x="2216" y="298">sd:resultFormat (4) [*] D -&gt; IRI</tspan>
+<tspan x="2216" y="313">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002693272"><polygon points="2166,353 2435,353 2435,493 2166,493 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="2163,356 2432,356 2432,496 2163,496 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2223" y="371">sd:Dataset et al. G101 (1)</tspan>
+</text>
+<line x1="2167" y1="374" x2="2430" y2="374"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2167" y="386">dct:subject (4) [*] D -&gt; IRI</tspan>
+<tspan x="2167" y="401">foaf:homepage (1) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="2167" y="416">ldf:starRating (1) [1] D</tspan>
+<tspan x="2167" y="431">void:sparqlEndpoint (1) [1] D -&gt; IRI</tspan>
+<tspan x="2167" y="446">void:uriLookupEndPoint (1) [1] D -&gt; IRI</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2167" y="461">dcat:Dataset (1)</tspan>
+<tspan x="2167" y="476">sd:Dataset (1)</tspan>
+<tspan x="2167" y="491">void:Dataset (1)</tspan>
+</text>
+</g>
+<g id="2002693492"><polygon points="1630,73 1864,73 1864,153 1630,153 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1710" y="88">owl:Class (6)</tspan>
+</text>
+<line x1="1634" y1="91" x2="1862" y2="91"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1634" y="103">rdf:type (6) [*]  -&gt;  owl:DatatypeProperty or </tspan>
+<tspan x="1634" y="118">rdf:Property,y:Graduation</tspan>
+<tspan x="1634" y="133">rdfs:label (5) [1] </tspan>
+<tspan x="1634" y="148">skos:prefLabel (2) [*] </tspan>
+</text>
+</g>
+<g id="2002693360"><polygon points="467,19 767,19 767,579 467,579 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="464,22 764,22 764,582 464,582 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="506" y="37">yr:[Great Aunt (f88)] et al. G109 (~71)</tspan>
+</text>
+<line x1="468" y1="40" x2="762" y2="40"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="468" y="52">rdf:type (71) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="468" y="67">Property,y:Graduation</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="468" y="82">yr:[Aunt (f64)] (6)</tspan>
+<tspan x="468" y="97">yr:[Big Brother (f24)] (2)</tspan>
+<tspan x="468" y="112">yr:[Big Sister (f23)] (2)</tspan>
+<tspan x="468" y="127">yr:[Daughter's Daughter (f35)] (2)</tspan>
+<tspan x="468" y="142">yr:[Fourth Cousin (f119)] (1)</tspan>
+<tspan x="468" y="157">yr:[Godchild (f51)] (1)</tspan>
+<tspan x="468" y="172">yr:[Goddaughter (f52)] (2)</tspan>
+<tspan x="468" y="187">yr:[Godfather (f50)] (2)</tspan>
+<tspan x="468" y="202">yr:[Godmother (f49)] (2)</tspan>
+<tspan x="468" y="217">yr:[Godparent (f48)] (1)</tspan>
+<tspan x="468" y="232">yr:[Godson (f53)] (2)</tspan>
+<tspan x="468" y="247">yr:[Grandchild (f30)] (3)</tspan>
+<tspan x="468" y="262">yr:[Grandmother (f16)] (2)</tspan>
+<tspan x="468" y="277">yr:[Grandparent (f13)] (1)</tspan>
+<tspan x="468" y="292">yr:[Great Aunt (f88)] (8)</tspan>
+<tspan x="468" y="307">yr:[Great Grandparent (f57)] (5)</tspan>
+<tspan x="468" y="322">yr:[Great Great Grandchild (f99)] (2)</tspan>
+<tspan x="468" y="337">yr:[Great Great Grandparent (f97)] (2)</tspan>
+<tspan x="468" y="352">yr:[Great Great Great Grandchild (f103)] (1)</tspan>
+<tspan x="468" y="367">yr:[Great Great Great Grandparent (f101)] (2)</tspan>
+<tspan x="468" y="382">yr:[Great Niece (f92)] (2)</tspan>
+<tspan x="468" y="397">yr:[Great Niece (f95)] (1)</tspan>
+<tspan x="468" y="412">yr:[Great Niece (f96)] (1)</tspan>
+<tspan x="468" y="427">yr:[Little Brother (f26)] (2)</tspan>
+<tspan x="468" y="442">yr:[Little Sister (f25)] (2)</tspan>
+<tspan x="468" y="457">yr:[Spouse (f10)] (1)</tspan>
+<tspan x="468" y="472">yr:[Stepdaughter (f42)] (2)</tspan>
+<tspan x="468" y="487">yr:[Stepmother (f37)] (3)</tspan>
+<tspan x="468" y="502">yr:[Stepsister (f80)] (2)</tspan>
+<tspan x="468" y="517">yr:[Third Cousin (f116)] (1)</tspan>
+<tspan x="468" y="532">yr:[Twin (f27)] (1)</tspan>
+<tspan x="468" y="547">yr:[Twin Brother (f29)] (2)</tspan>
+<tspan x="468" y="562">yr:[Twin Sister (f28)] (1)</tspan>
+<tspan x="468" y="577">yr:[puolison aviomies (f43)] (1)</tspan>
+</text>
+</g>
+<g id="2002693580"><polygon points="791,19 1091,19 1091,519 791,519 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="788,22 1088,22 1088,522 788,522 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="845" y="37">yr:[Son (f6)] et al. G114 (~4.7e4)</tspan>
+</text>
+<line x1="792" y1="40" x2="1086" y2="40"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="792" y="52">bioc:inheres_in (4.7e4) [*]  -&gt;  y:Person,y:</tspan>
+<tspan x="792" y="67">ReferencedPerson</tspan>
+<tspan x="792" y="82">rdf:type (4.7e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="792" y="97">Property,y:Graduation</tspan>
+<tspan x="792" y="112">skos:altLabel (3039) [*] </tspan>
+<tspan x="792" y="127">skos:prefLabel (4.7e4) [*] </tspan>
+<tspan x="792" y="142">&lt;-bioc:has_family_relation (8.0e4)  &lt;-  y:Person,y:</tspan>
+<tspan x="792" y="157">ReferencedPerson</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="792" y="172">yr:[Daughter (f7)] (520)</tspan>
+<tspan x="792" y="187">yr:[Daughter's Son (f34)] (598)</tspan>
+<tspan x="792" y="202">yr:[Foster Son (f122)] (48)</tspan>
+<tspan x="792" y="217">yr:[Grandfather (f18)] (530)</tspan>
+<tspan x="792" y="232">yr:[Great Grandson (f83)] (14)</tspan>
+<tspan x="792" y="247">yr:[Great Grandson (f84)] (4)</tspan>
+<tspan x="792" y="262">yr:[Great Grandson (f85)] (7)</tspan>
+<tspan x="792" y="277">yr:[Great Great Grandfather (f98)] (16)</tspan>
+<tspan x="792" y="292">yr:[Great Great Grandson (f100)] (17)</tspan>
+<tspan x="792" y="307">yr:[Great Great Great Grandfather (f102)] (2)</tspan>
+<tspan x="792" y="322">yr:[Great Great Great Grandson (f104)] (2)</tspan>
+<tspan x="792" y="337">yr:[Great Nephew (f94)] (5)</tspan>
+<tspan x="792" y="352">yr:[Mother (f3)] (1.8e4)</tspan>
+<tspan x="792" y="367">yr:[Nephew (f69)] (460)</tspan>
+<tspan x="792" y="382">yr:[Son (f6)] (2.5e4)</tspan>
+<tspan x="792" y="397">yr:[Stepbrother (f79)] (340)</tspan>
+<tspan x="792" y="412">yr:[Stepson (f41)] (167)</tspan>
+<tspan x="792" y="427">yr:[appipuoli (f124)] (1)</tspan>
+<tspan x="792" y="442">yr:[isän velipuoli (f107)] (16)</tspan>
+<tspan x="792" y="457">yr:[puolison aiempi aviomies (f47)] (2)</tspan>
+<tspan x="792" y="472">yr:[puolison myöhempi aviomies (f46)] (4)</tspan>
+<tspan x="792" y="487">yr:[puolison seuraava aviomies (f45)] (736)</tspan>
+<tspan x="792" y="502">yr:[velipuolen poika (f106)] (17)</tspan>
+<tspan x="792" y="517">yr:[äidin aiempi puoliso (f39)] (27)</tspan>
+</text>
+</g>
+<g id="2002693459"><polygon points="1108,17 1408,17 1408,292 1108,292 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="1105,20 1405,20 1405,295 1105,295 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1147" y="35">yr:[Nephew (f72)] et al. G107 (~1.3e4)</tspan>
+</text>
+<line x1="1109" y1="38" x2="1403" y2="38"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1109" y="50">bioc:inheres_in (1.3e4) [*]  -&gt;  y:Person,y:</tspan>
+<tspan x="1109" y="65">ReferencedPerson</tspan>
+<tspan x="1109" y="80">rdf:type (1.3e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1109" y="95">Property,y:Graduation</tspan>
+<tspan x="1109" y="110">skos:prefLabel (1.3e4) [*] </tspan>
+<tspan x="1109" y="125">y:inferred (1.3e4) [1] </tspan>
+<tspan x="1109" y="140">&lt;-bioc:has_family_relation (1.3e4)  &lt;-  y:Person,y:</tspan>
+<tspan x="1109" y="155">ReferencedPerson</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1109" y="170">yr:[Nephew (f72)] (5793)</tspan>
+<tspan x="1109" y="185">yr:[Niece (f71)] (70)</tspan>
+<tspan x="1109" y="200">yr:[isän serkku (f109)] (1009)</tspan>
+<tspan x="1109" y="215">yr:[pikkuserkun poika (f114)] (334)</tspan>
+<tspan x="1109" y="230">yr:[pikkuserkun tytär (f115)] (6)</tspan>
+<tspan x="1109" y="245">yr:[pojanpojanpoika (f62)] (4442)</tspan>
+<tspan x="1109" y="260">yr:[pojanpojantytär (f61)] (71)</tspan>
+<tspan x="1109" y="275">yr:[serkun poika (f111)] (1728)</tspan>
+<tspan x="1109" y="290">yr:[serkun tytär (f112)] (22)</tspan>
+</text>
+</g>
+<g id="2002693173"><polygon points="2543,41 2843,41 2843,1531 2543,1531 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="2540,44 2840,44 2840,1534 2540,1534 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2547" y="59">y:[(Graduation) vihitty papiksi] et al. G102 (~5005)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2544" y="74">y:[(Graduation) Maatalous- ja metsätieteiden </tspan>
+<tspan x="2544" y="89">kandidaatti] (1)</tspan>
+<tspan x="2544" y="104">y:[(Graduation) Maatalous- ja metsätieteiden </tspan>
+<tspan x="2544" y="119">lisensiaatti] (1)</tspan>
+<tspan x="2544" y="134">y:[(Graduation) Maatalous- ja metsätieteiden tohtori] </tspan>
+<tspan x="2544" y="149">(1)</tspan>
+<tspan x="2544" y="164">y:[(Graduation) agronomi] (47)</tspan>
+<tspan x="2544" y="179">y:[(Graduation) aineopettajan tutkinto] (1)</tspan>
+<tspan x="2544" y="194">y:[(Graduation) alempi hallintotutkinto] (20)</tspan>
+<tspan x="2544" y="209">y:[(Graduation) apteekkarin tutkinto] (2)</tspan>
+<tspan x="2544" y="224">y:[(Graduation) arkkitehti] (1)</tspan>
+<tspan x="2544" y="239">y:[(Graduation) dimissiotutkinto] (1)</tspan>
+<tspan x="2544" y="254">y:[(Graduation) diplomi-insinööri] (3)</tspan>
+<tspan x="2544" y="269">y:[(Graduation) eläinlääketieteen kandidaatti] (11)</tspan>
+<tspan x="2544" y="284">y:[(Graduation) eläinlääketieteen lisensiaatti] (1)</tspan>
+<tspan x="2544" y="299">y:[(Graduation) eläinlääketieteen tohtori] (2)</tspan>
+<tspan x="2544" y="314">y:[(Graduation) eläinlääkärin tutkinto] (11)</tspan>
+<tspan x="2544" y="329">y:[(Graduation) farmaseutin tutkinto] (4)</tspan>
+<tspan x="2544" y="344">y:[(Graduation) filosofian kandidaatti] (595)</tspan>
+<tspan x="2544" y="359">y:[(Graduation) filosofian lisensiaatti] (93)</tspan>
+<tspan x="2544" y="374">y:[(Graduation) filosofian maisteri] (259)</tspan>
+<tspan x="2544" y="389">y:[(Graduation) filosofian tohtori] (79)</tspan>
+<tspan x="2544" y="404">y:[(Graduation) fyysis-matem. tiet. kandidaatti] (29)</tspan>
+<tspan x="2544" y="419">y:[(Graduation) fyysis-matem. tiet. lisensiaatti] (9)</tspan>
+<tspan x="2544" y="434">y:[(Graduation) fyysis-matem. tiet. maisteri] (4)</tspan>
+<tspan x="2544" y="449">y:[(Graduation) fyysis-matem. tiet. tohtori] (2)</tspan>
+<tspan x="2544" y="464">y:[(Graduation) hammaslääketieteen kandidaatti] (10)</tspan>
+<tspan x="2544" y="479">y:[(Graduation) hammaslääketieteen lisensiaatti] (2)</tspan>
+<tspan x="2544" y="494">y:[(Graduation) hammaslääkärin tutkinto] (13)</tspan>
+<tspan x="2544" y="509">y:[(Graduation) hist.-filol. kandidaatti] (32)</tspan>
+<tspan x="2544" y="524">y:[(Graduation) hist.-filol. lisensiaatti] (16)</tspan>
+<tspan x="2544" y="539">y:[(Graduation) hist.-filol. maisteri] (6)</tspan>
+<tspan x="2544" y="554">y:[(Graduation) hist.-filol. tohtori] (3)</tspan>
+<tspan x="2544" y="569">y:[(Graduation) hovioikeuden auskultantti] (1)</tspan>
+<tspan x="2544" y="584">y:[(Graduation) hovioikeudentutkinto] (17)</tspan>
+<tspan x="2544" y="599">y:[(Graduation) insinööri] (37)</tspan>
+<tspan x="2544" y="614">y:[(Graduation) inst.t.] (3)</tspan>
+<tspan x="2544" y="629">y:[(Graduation) kadettitutkinto] (1)</tspan>
+<tspan x="2544" y="644">y:[(Graduation) kameraalitutkinto] (107)</tspan>
+<tspan x="2544" y="659">y:[(Graduation) kansakoulunopettaja] (23)</tspan>
+<tspan x="2544" y="674">y:[(Graduation) kansliatutkinto] (11)</tspan>
+<tspan x="2544" y="689">y:[(Graduation) kirurgian kandidaatti] (13)</tspan>
+<tspan x="2544" y="704">y:[(Graduation) kirurgian maisteri] (27)</tspan>
+<tspan x="2544" y="719">y:[(Graduation) kirurginen tutkinto] (1)</tspan>
+<tspan x="2544" y="734">y:[(Graduation) koneinsinööri] (1)</tspan>
+<tspan x="2544" y="749">y:[(Graduation) la] (1)</tspan>
+<tspan x="2544" y="764">y:[(Graduation) laivarakennusinsinööri] (1)</tspan>
+<tspan x="2544" y="779">y:[(Graduation) lakitieteen tohtori] (8)</tspan>
+<tspan x="2544" y="794">y:[(Graduation) lääket.-fil. kandidaatti] (10)</tspan>
+<tspan x="2544" y="809">y:[(Graduation) lääketieteen ja kirurgian tohtori] (65)</tspan>
+<tspan x="2544" y="824">y:[(Graduation) lääketieteen kandidaatti] (201)</tspan>
+<tspan x="2544" y="839">y:[(Graduation) lääketieteen lisensiaatti] (196)</tspan>
+<tspan x="2544" y="854">y:[(Graduation) lääketieteen tohtori] (15)</tspan>
+<tspan x="2544" y="869">y:[(Graduation) maanmittari] (67)</tspan>
+<tspan x="2544" y="884">y:[(Graduation) maanmittausinsinöörin tutkinto] (10)</tspan>
+<tspan x="2544" y="899">y:[(Graduation) maanviljelystutkinto] (1)</tspan>
+<tspan x="2544" y="914">y:[(Graduation) meijeritutkinto] (1)</tspan>
+<tspan x="2544" y="929">y:[(Graduation) merikapteeni] (1)</tspan>
+<tspan x="2544" y="944">y:[(Graduation) metsänhoitaja] (21)</tspan>
+<tspan x="2544" y="959">y:[(Graduation) mit] (1)</tspan>
+<tspan x="2544" y="974">y:[(Graduation) molempien oikeuksien kandidaatti] </tspan>
+<tspan x="2544" y="989">(83)</tspan>
+<tspan x="2544" y="1004">y:[(Graduation) molempien oikeuksien lisensiaatti] </tspan>
+<tspan x="2544" y="1019">(48)</tspan>
+<tspan x="2544" y="1034">y:[(Graduation) molempien oikeuksien tohtori] (33)</tspan>
+<tspan x="2544" y="1049">y:[(Graduation) mv-ins.t.] (1)</tspan>
+<tspan x="2544" y="1064">y:[(Graduation) odontologian kandidaatti] (5)</tspan>
+<tspan x="2544" y="1079">y:[(Graduation) odontologian lisensiaatti] (6)</tspan>
+<tspan x="2544" y="1094">y:[(Graduation) odontologian tohtori] (1)</tspan>
+<tspan x="2544" y="1109">y:[(Graduation) opettajakandidaatti] (21)</tspan>
+<tspan x="2544" y="1124">y:[(Graduation) pedagogian tutkinto] (16)</tspan>
+<tspan x="2544" y="1139">y:[(Graduation) pedagoginen tutkinto] (5)</tspan>
+<tspan x="2544" y="1154">y:[(Graduation) pienempi kameraalitutkinto] (64)</tspan>
+<tspan x="2544" y="1169">y:[(Graduation) siveysopin tutkinto] (2)</tspan>
+<tspan x="2544" y="1184">y:[(Graduation) sotilastutkinto] (1)</tspan>
+<tspan x="2544" y="1199">y:[(Graduation) suomen asiain komitean tutkinto] (7)</tspan>
+<tspan x="2544" y="1214">y:[(Graduation) suurempi kameraalitutkinto] (45)</tspan>
+<tspan x="2544" y="1229">y:[(Graduation) taktiikan ja linnoitusopin tutkinto] (1)</tspan>
+<tspan x="2544" y="1244">y:[(Graduation) teologian kandidaatti] (57)</tspan>
+<tspan x="2544" y="1259">y:[(Graduation) teologian lisensiaatti] (42)</tspan>
+<tspan x="2544" y="1274">y:[(Graduation) teologian tohtori] (29)</tspan>
+<tspan x="2544" y="1289">y:[(Graduation) teologinen alkututkinto] (14)</tspan>
+<tspan x="2544" y="1304">y:[(Graduation) teologinen erotutkinto] (65)</tspan>
+<tspan x="2544" y="1319">y:[(Graduation) tprelim.t.] (1)</tspan>
+<tspan x="2544" y="1334">y:[(Graduation) tuomarintutkinto] (283)</tspan>
+<tspan x="2544" y="1349">y:[(Graduation) tykistöupseerin tutkinto] (1)</tspan>
+<tspan x="2544" y="1364">y:[(Graduation) vakuutustutkinto] (1)</tspan>
+<tspan x="2544" y="1379">y:[(Graduation) valtiotieteen kandidaatti] (9)</tspan>
+<tspan x="2544" y="1394">y:[(Graduation) valtiotieteen tohtori] (3)</tspan>
+<tspan x="2544" y="1409">y:[(Graduation) varatuomari] (65)</tspan>
+<tspan x="2544" y="1424">y:[(Graduation) veistonopettaja] (1)</tspan>
+<tspan x="2544" y="1439">y:[(Graduation) venäjän kielen tutkinto] (2)</tspan>
+<tspan x="2544" y="1454">y:[(Graduation) vihitty papiksi] (1892)</tspan>
+<tspan x="2544" y="1469">y:[(Graduation) voimistelunopettaja] (18)</tspan>
+<tspan x="2544" y="1484">y:[(Graduation) vuori-insinööri] (4)</tspan>
+<tspan x="2544" y="1499">y:[(Graduation) vuoritutkinto] (16)</tspan>
+<tspan x="2544" y="1514">y:[(Graduation) yleinen oikeustutkinto] (42)</tspan>
+<tspan x="2544" y="1529">y:[(Graduation) ylempi hallintotutkinto] (21)</tspan>
+</text>
+</g>
+<g id="2002693305"><polygon points="2146,42 2446,42 2446,137 2146,137 "
+style="fill:#FFB0B0; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2207" y="57">(type/type) y:Graduation (5005)</tspan>
+</text>
+<line x1="2150" y1="60" x2="2444" y2="60"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2150" y="72">rdf:type (5005) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="2150" y="87">Property,y:Graduation</tspan>
+<tspan x="2150" y="102">schema:date (5005) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="2150" y="117">skos:prefLabel (5005) [*] </tspan>
+<tspan x="2150" y="132">&lt;-y:has_part (1.1e4)  &lt;-  y:Event,y:Study or y:Career</tspan>
+</text>
+</g>
+<g id="2002693096"><polygon points="62,713 341,713 341,868 62,868 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="128" y="728">yr:[Husband (f12)] (3.1e4)</tspan>
+</text>
+<line x1="66" y1="731" x2="339" y2="731"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="66" y="743">bioc:inheres_in (3.1e4) [*]  -&gt;  y:Person,y:</tspan>
+<tspan x="66" y="758">ReferencedPerson</tspan>
+<tspan x="66" y="773">rdf:type (3.1e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="66" y="788">Property,y:Graduation</tspan>
+<tspan x="66" y="803">skos:altLabel (1585) [*] </tspan>
+<tspan x="66" y="818">skos:prefLabel (3.1e4) [*] </tspan>
+<tspan x="66" y="833">&lt;-bioc:has_family_relation (3.5e4)  &lt;-  y:Person,y:</tspan>
+<tspan x="66" y="848">ReferencedPerson</tspan>
+<tspan x="66" y="863">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002693019"><polygon points="10,1252 310,1252 310,1362 10,1362 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="100" y="1267">rdf:Statement (1.9e5)</tspan>
+</text>
+<line x1="14" y1="1270" x2="308" y2="1270"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="14" y="1282">rdf:object (1.9e5) [1] D -&gt; dgr,IRI</tspan>
+<tspan x="14" y="1297">rdf:type (1.9e5) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="14" y="1312">Property,y:Graduation</tspan>
+<tspan x="14" y="1327">schema:date (2.2e4) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="14" y="1342">y:event_no (1.6e5) [*] D</tspan>
+<tspan x="14" y="1357">y:spouse_no (2.1e4) [1] D</tspan>
+</text>
+</g>
+<g id="2002693184"><polygon points="641,1361 896,1361 896,1427 641,1427 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="648" y="1376">ext:[Ylioppilasmatrikkeli 1640 (D1640)] et </tspan>
+<tspan x="667" y="1392">al. or ext:Geonames S115 (~6.0e4)</tspan>
+</text>
+<line x1="645" y1="1395" x2="894" y2="1395"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="645" y="1407">rdf:type (5574) [*]  -&gt;  owl:DatatypeProperty or </tspan>
+<tspan x="645" y="1422">rdf:Property,y:Graduation</tspan>
+</text>
+</g>
+<g id="2002693426"><polygon points="941,1308 1166,1308 1166,1353 941,1353 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="991" y="1323">ext:Geonames (5574)</tspan>
+</text>
+</g>
+<g id="2002693107"><polygon points="1076,1456 1379,1456 1379,1551 1076,1551 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1175" y="1471">y:Distance (1.2e5)</tspan>
+</text>
+<line x1="1080" y1="1474" x2="1377" y2="1474"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1080" y="1486">rdf:type (1.2e5) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1080" y="1501">Property,y:Graduation</tspan>
+<tspan x="1080" y="1516">y:link_by (4.0e5) [*] D -&gt;  skos:Concept et al.,y:Study or </tspan>
+<tspan x="1080" y="1531">y:Career..(8)</tspan>
+<tspan x="1080" y="1546">y:value (1.2e5) [1] D</tspan>
+</text>
+</g>
+<g id="2002693206"><polygon points="596,1796 896,1796 896,1921 596,1921 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="688" y="1811">y:Organization (497)</tspan>
+</text>
+<line x1="600" y1="1814" x2="894" y2="1814"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="600" y="1826">rdf:type (497) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="600" y="1841">Property,y:Graduation</tspan>
+<tspan x="600" y="1856">skos:altLabel (87) [*] </tspan>
+<tspan x="600" y="1871">skos:hiddenLabel (946) [*] </tspan>
+<tspan x="600" y="1886">skos:prefLabel (497) [*] </tspan>
+<tspan x="600" y="1901">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+<tspan x="600" y="1916">&lt;-y:link_by (3.7e4) D &lt;-  y:Distance</tspan>
+</text>
+</g>
+<g id="2002693448"><polygon points="1067,1562 1367,1562 1367,1702 1067,1702 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1178" y="1577">y:Title (1.1e4)</tspan>
+</text>
+<line x1="1071" y1="1580" x2="1365" y2="1580"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1071" y="1592">rdf:type (1.1e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1071" y="1607">Property,y:Graduation</tspan>
+<tspan x="1071" y="1622">schema:place (8503) [*]  -&gt;  y:Place</tspan>
+<tspan x="1071" y="1637">skos:altLabel (287) [*] </tspan>
+<tspan x="1071" y="1652">skos:hiddenLabel (79) [*] </tspan>
+<tspan x="1071" y="1667">skos:prefLabel (1.1e4) [*] </tspan>
+<tspan x="1071" y="1682">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+<tspan x="1071" y="1697">&lt;-y:link_by (9.9e4) D &lt;-  y:Distance</tspan>
+</text>
+</g>
+<g id="2002693217"><polygon points="1082,1718 1382,1718 1382,1903 1082,1903 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="1079,1721 1379,1721 1379,1906 1079,1906 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1130" y="1736">y:Study or y:Career G111 (~8.4e4)</tspan>
+</text>
+<line x1="1083" y1="1739" x2="1377" y2="1739"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1083" y="1751">rdf:type (8.4e4) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1083" y="1766">Property,y:Graduation</tspan>
+<tspan x="1083" y="1781">schema:date (1.0e5) [*]  -&gt;  y:Timespan</tspan>
+<tspan x="1083" y="1796">schema:place (6.7e4) [*]  -&gt;  y:Place</tspan>
+<tspan x="1083" y="1811">skos:altLabel (171) [*] </tspan>
+<tspan x="1083" y="1826">skos:prefLabel (8.4e4) [*] </tspan>
+<tspan x="1083" y="1841">y:has_part (4389) [*]  -&gt;  (type/type) y:Graduation</tspan>
+<tspan x="1083" y="1856">y:organization (1.3e4) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1083" y="1871">&lt;-y:link_by (9555) D &lt;-  y:Distance</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1083" y="1886">y:Career (4.2e4)</tspan>
+<tspan x="1083" y="1901">y:Study (4.2e4)</tspan>
+</text>
+</g>
+<g id="2002693503"><polygon points="1318,606 1618,606 1618,671 1318,671 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1410" y="621">y:GivenName (3981)</tspan>
+</text>
+<line x1="1322" y1="624" x2="1616" y2="624"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1322" y="636">rdf:type (4493) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="1322" y="651">Property,y:Graduation</tspan>
+<tspan x="1322" y="666">skos:prefLabel (3981) [*] </tspan>
+</text>
+</g>
+<g id="2002693162"><polygon points="2138,1200 2438,1200 2438,1431 2138,1431 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="2135,1203 2435,1203 2435,1434 2135,1434 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2146" y="1218">yr:[yksityistodistuksen saaja (ff6)] et al. G106 (~</tspan>
+<tspan x="2270" y="1234">4034)</tspan>
+</text>
+<line x1="2139" y1="1237" x2="2433" y2="1237"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2139" y="1249">bioc:inheres_in (4039) [*]  -&gt;  y:Person,y:</tspan>
+<tspan x="2139" y="1264">ReferencedPerson</tspan>
+<tspan x="2139" y="1279">rdf:type (4034) [*]  -&gt;  owl:DatatypeProperty or rdf:</tspan>
+<tspan x="2139" y="1294">Property,y:Graduation</tspan>
+<tspan x="2139" y="1309">skos:prefLabel (4026) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2139" y="1324">yr:[Namesake (ff3)] (638)</tspan>
+<tspan x="2139" y="1339">yr:[Referenced person (ff4)] (464)</tspan>
+<tspan x="2139" y="1354">yr:[Student (ff2)] (76)</tspan>
+<tspan x="2139" y="1369">yr:[Teacher (ff1)] (48)</tspan>
+<tspan x="2139" y="1384">yr:[yksityistodistuksen antaja (ff5)] (408)</tspan>
+<tspan x="2139" y="1399">yr:[yksityistodistuksen antaja s.d (ff7)] (83)</tspan>
+<tspan x="2139" y="1414">yr:[yksityistodistuksen saaja (ff6)] (2086)</tspan>
+<tspan x="2139" y="1429">yr:[yksityistodistuksen saaja s.d (ff8)] (231)</tspan>
+</text>
+</g>
+<g id="2002692614"><path d="M366,959 L561,959 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="555" y1="956" x2="561" y2="959"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="555" y1="962" x2="561" y2="959"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="957">y:has_birth (208) </tspan>
+</text>
+</g>
+<g id="2002692619"><path d="M366,1175 L518,1175 522,1177 524,1181 524,1272 526,1276 530,1278 1406,1278 1406,1272 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1403" y1="1278" x2="1406" y2="1272"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1409" y1="1278" x2="1406" y2="1272"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="1158">y:country_of_end (251) R</tspan>
+<tspan x="370" y="1173">y:country_of_origin (185) R</tspan>
+</text>
+</g>
+<g id="2002692624"><path d="M1805,1212 L1185,1212 1181,1214 1179,1218 1179,1227 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1176" y1="1221" x2="1179" y2="1227"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1182" y1="1221" x2="1179" y2="1227"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1649" y="1225">y:county_of_end (2.2e4) R</tspan>
+<tspan x="1649" y="1240">y:county_of_origin (2.1e4) R</tspan>
+</text>
+</g>
+<g id="2002692634"><path d="M310,1356 L447,1356 451,1358 453,1362 453,1433 451,1437 447,1439 432,1439 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="438" y1="1436" x2="432" y2="1439"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="438" y1="1442" x2="432" y2="1439"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="314" y="1354">rdf:predicate (1.9e5) DR</tspan>
+</text>
+</g>
+<g id="2002692654"><path d="M1805,1077 L1466,1077 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1472" y1="1074" x2="1466" y2="1077"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1472" y1="1080" x2="1466" y2="1077"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1654" y="1090">y:place_of_end (2.4e4) R</tspan>
+<tspan x="1654" y="1105">y:place_of_origin (2.3e4) R</tspan>
+</text>
+</g>
+<g id="2002692659"><path d="M1805,1403 L896,1403 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1400" x2="896" y2="1403"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1406" x2="896" y2="1403"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1662" y="1416">schema:sameAs (4.5e4) </tspan>
+</text>
+</g>
+<g id="2002692664"><path d="M1172,1721 L1172,1702 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1169" y1="1708" x2="1172" y2="1702"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1175" y1="1708" x2="1172" y2="1702"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1061" y="1717">y:has_title (5.2e4) R</tspan>
+</text>
+</g>
+<g id="2002692679"><path d="M2105,1140 L2224,1140 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2218" y1="1137" x2="2224" y2="1140"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2218" y1="1143" x2="2224" y2="1140"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2109" y="1138">dct:source (2.8e4) R</tspan>
+</text>
+</g>
+<g id="2002692684"><path d="M310,1290 L1805,1290 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1799" y1="1287" x2="1805" y2="1290"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1799" y1="1293" x2="1805" y2="1290"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="314" y="1288">rdf:subject (1.7e5) D</tspan>
+</text>
+</g>
+<g id="2002692689"><path d="M991,747 L867,747 863,745 861,741 861,642 863,638 867,636 1141,636 1141,642 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1138" y1="636" x2="1141" y2="642"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1144" y1="636" x2="1141" y2="642"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="869" y="760">skos:broader (6.1e4) </tspan>
+</text>
+</g>
+<g id="2002692699"><path d="M2105,1052 L2279,1052 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2273" y1="1049" x2="2279" y2="1052"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2273" y1="1055" x2="2279" y2="1052"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2109" y="1050">y:has_burial (1260) DR</tspan>
+</text>
+</g>
+<g id="2002692704"><path d="M341,769 L549,769 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="543" y1="766" x2="549" y2="769"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="543" y1="772" x2="549" y2="769"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="345" y="767">schema:gender (1) R</tspan>
+</text>
+</g>
+<g id="2002692709"><path d="M366,1031 L1166,1031 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1160" y1="1028" x2="1166" y2="1031"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1160" y1="1034" x2="1166" y2="1031"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="1014">y:place_of_end (251) R</tspan>
+<tspan x="370" y="1029">y:place_of_origin (186) R</tspan>
+</text>
+</g>
+<g id="2002692714"><path d="M2105,1031 L2255,1031 2259,1029 2261,1025 2261,950 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2258" y1="956" x2="2261" y2="950"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2264" y1="956" x2="2261" y2="950"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2109" y="1029">y:has_baptism (495) DR</tspan>
+</text>
+</g>
+<g id="2002692729"><path d="M366,1097 L867,1097 871,1099 873,1103 873,1361 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="870" y1="1355" x2="873" y2="1361"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="876" y1="1355" x2="873" y2="1361"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="1095">schema:sameAs (1270) </tspan>
+</text>
+</g>
+<g id="2002692734"><path d="M656,582 L656,695 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="653" y1="689" x2="656" y2="695"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="659" y1="689" x2="656" y2="695"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="658" y="597">schema:gender (93) R</tspan>
+</text>
+</g>
+<g id="2002692739"><path d="M1805,1191 L861,1191 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="867" y1="1188" x2="861" y2="1191"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="867" y1="1194" x2="861" y2="1191"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1689" y="1204">y:has_death (2.4e4) </tspan>
+</text>
+</g>
+<g id="2002692744"><path d="M310,1335 L453,1335 457,1337 459,1341 459,1707 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="456" y1="1701" x2="459" y2="1707"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="462" y1="1701" x2="459" y2="1707"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="314" y="1333">rdf:object (3.7e4) D</tspan>
+</text>
+</g>
+<g id="2002692759"><path d="M1166,1073 L885,1073 881,1075 879,1079 879,1361 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="876" y1="1355" x2="879" y2="1361"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="882" y1="1355" x2="879" y2="1361"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1023" y="1086">schema:sameAs (1.4e4) </tspan>
+</text>
+</g>
+<g id="2002692774"><path d="M2362,1631 L2231,1631 2227,1629 2225,1625 2225,1619 2227,1615 2231,1613 2496,1613 2500,1615 2502,1619 2502,1625 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2499" y1="1619" x2="2502" y2="1625"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2505" y1="1619" x2="2502" y2="1625"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2243" y="1644">skos:broader (2668) </tspan>
+</text>
+</g>
+<g id="2002692779"><path d="M1805,1026 L1626,1026 1622,1024 1620,1020 1620,824 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1617" y1="830" x2="1620" y2="824"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1623" y1="830" x2="1620" y2="824"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1650" y="1039">skosxl:prefLabel (2.8e4) R</tspan>
+<tspan x="1650" y="1054">skosxl:altLabel (2.2e4) </tspan>
+<tspan x="1650" y="1069">skosxl:hiddenLabel (157) R</tspan>
+</text>
+</g>
+<g id="2002692804"><path d="M366,1118 L561,1118 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="555" y1="1115" x2="561" y2="1118"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="555" y1="1121" x2="561" y2="1118"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="1116">y:has_death (1.7e4) </tspan>
+</text>
+</g>
+<g id="2002692809"><path d="M1805,1005 L1637,1005 1633,1003 1631,999 1631,986 1633,982 1637,980 1909,980 1913,982 1915,986 1915,999 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1912" y1="993" x2="1915" y2="999"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1918" y1="993" x2="1915" y2="999"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1715" y="1018">y:in_bio (513) R</tspan>
+</text>
+</g>
+<g id="2002692824"><path d="M1433,692 L1303,692 1299,690 1297,686 1297,660 1299,656 1303,654 1318,654 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1312" y1="651" x2="1318" y2="654"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1312" y1="657" x2="1318" y2="654"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1312" y="705">y:name_1 (8.8e4) DR</tspan>
+<tspan x="1312" y="720">y:name_2 (5.0e4) DR</tspan>
+<tspan x="1312" y="735">y:name_3 (5000) DR</tspan>
+<tspan x="1312" y="750">y:name_4 (426) DR</tspan>
+<tspan x="1312" y="765">y:name_5 (47) DR</tspan>
+<tspan x="1312" y="780">y:name_6 (10) DR</tspan>
+<tspan x="1312" y="795">y:name_7 (5) DR</tspan>
+<tspan x="1312" y="810">y:name_8 (2) DR</tspan>
+</text>
+</g>
+<g id="2002692829"><path d="M1733,783 L1847,783 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1841" y1="780" x2="1847" y2="783"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1841" y1="786" x2="1847" y2="783"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1737" y="781">y:fname (8.8e4) DR</tspan>
+</text>
+</g>
+<g id="2002692849"><path d="M1805,1149 L903,1149 899,1147 897,1143 897,945 895,941 891,939 861,939 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="867" y1="936" x2="861" y2="939"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="867" y1="942" x2="861" y2="939"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1696" y="1162">y:has_birth (2.5e4) </tspan>
+</text>
+</g>
+<g id="2002692864"><path d="M366,938 L549,938 553,936 555,932 555,775 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="552" y1="781" x2="555" y2="775"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="558" y1="781" x2="555" y2="775"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="936">schema:gender (4.6e4) R</tspan>
+</text>
+</g>
+<g id="2002692879"><path d="M366,1067 L1009,1067 1013,1069 1015,1073 1015,1227 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1012" y1="1221" x2="1015" y2="1227"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1018" y1="1221" x2="1015" y2="1227"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="1050">y:county_of_end (233) R</tspan>
+<tspan x="370" y="1065">y:county_of_origin (56) R</tspan>
+</text>
+</g>
+<g id="2002692884"><path d="M1805,1170 L873,1170 869,1168 867,1164 867,775 865,771 861,769 849,769 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="855" y1="766" x2="849" y2="769"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="855" y1="772" x2="849" y2="769"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1660" y="1183">schema:gender (2.8e4) R</tspan>
+</text>
+</g>
+<g id="2002692894"><path d="M310,1269 L448,1269 452,1267 454,1263 454,1239 452,1235 448,1233 312,1233 308,1231 306,1227 306,1181 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="303" y1="1187" x2="306" y2="1181"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="309" y1="1187" x2="306" y2="1181"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="314" y="1267">rdf:subject (1.4e4) D</tspan>
+</text>
+</g>
+<g id="2002692899"><path d="M366,995 L997,995 1001,993 1003,989 1003,812 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1000" y1="818" x2="1003" y2="812"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1006" y1="818" x2="1003" y2="812"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="978">y:date_of_end (1.7e4) R</tspan>
+<tspan x="370" y="993">y:date_of_origin (50) R</tspan>
+</text>
+</g>
+<g id="2002692909"><path d="M312,1181 L312,1221 314,1225 318,1227 454,1227 458,1229 460,1233 460,1278 462,1282 466,1284 1805,1284 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1799" y1="1281" x2="1805" y2="1284"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1799" y1="1287" x2="1805" y2="1284"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="314" y="1196">y:in_bio (5.8e4) R</tspan>
+</text>
+</g>
+<g id="2002692914"><path d="M1166,951 L1034,951 1030,949 1028,945 1028,830 1030,826 1034,824 1329,824 1329,830 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1326" y1="824" x2="1329" y2="830"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1332" y1="824" x2="1329" y2="830"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1047" y="964">skos:broader (9475) </tspan>
+</text>
+</g>
+<g id="2002692919"><path d="M1805,1248 L1556,1248 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1562" y1="1245" x2="1556" y2="1248"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1562" y1="1251" x2="1556" y2="1248"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1645" y="1261">y:country_of_end (2.4e4) R</tspan>
+<tspan x="1645" y="1276">y:country_of_origin (2.3e4) R</tspan>
+</text>
+</g>
+<g id="2002692934"><path d="M2234,1524 L2105,1524 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2111" y1="1521" x2="2105" y2="1524"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2111" y1="1527" x2="2105" y2="1524"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2134" y="1537">owl:sameAs (24) </tspan>
+</text>
+</g>
+<g id="2002692939"><path d="M415,701 L549,701 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="543" y1="698" x2="549" y2="701"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="543" y1="704" x2="549" y2="701"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="419" y="699">schema:gender (97) R</tspan>
+</text>
+</g>
+<g id="2002692949"><path d="M1805,1527 L1690,1527 1686,1529 1684,1533 1684,1743 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1681" y1="1737" x2="1684" y2="1743"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1687" y1="1737" x2="1684" y2="1743"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1692" y="1540">y:has_event (188) D</tspan>
+</text>
+</g>
+<g id="2002692954"><path d="M1325,1370 L1204,1370 1200,1368 1198,1364 1198,1302 1200,1298 1204,1296 1486,1296 1486,1302 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1483" y1="1296" x2="1486" y2="1302"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1489" y1="1296" x2="1486" y2="1302"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1206" y="1383">skos:broader (1214) </tspan>
+</text>
+</g>
+<g id="2002692964"><path d="M471,1827 L596,1827 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="590" y1="1824" x2="596" y2="1827"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="590" y1="1830" x2="596" y2="1827"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="475" y="1825">y:organization (2364) </tspan>
+</text>
+</g>
+<g id="2002692974"><path d="M1805,1113 L1015,1113 1011,1111 1009,1107 1009,812 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1006" y1="818" x2="1009" y2="812"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1012" y1="818" x2="1009" y2="812"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1660" y="1126">y:date_of_end (2.5e4) R</tspan>
+<tspan x="1660" y="1141">y:date_of_origin (2.4e4) R</tspan>
+</text>
+</g>
+<g id="2002692979"><path d="M1805,1368 L1625,1368 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1631" y1="1365" x2="1625" y2="1368"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1631" y1="1371" x2="1625" y2="1368"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1650" y="1381">y:has_reference (1.0e5) DR</tspan>
+</text>
+</g>
+<g id="2002692986"><path d="M2169,333 L2169,356 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2174,343 2169,333 2164,343 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2171" y="348"> </tspan>
+</text>
+</g>
+<g id="2002692988"><path d="M896,1397 L1088,1397 1092,1395 1094,1391 1094,1353 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="906,1402 896,1397 906,1392 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="900" y="1395"> </tspan>
+</text>
+</g>
+<g id="2002692990"><path d="M1172,1090 L1172,1227 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="1177,1100 1172,1090 1167,1100 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1174" y="1105"> </tspan>
+</text>
+</g>
+<g id="2002692992"><path d="M1407,1090 L1407,1227 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="1412,1100 1407,1090 1402,1100 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1409" y="1105"> </tspan>
+</text>
+</g>
+<g id="2002692996"><path d="M2441,1735 L2441,1767 2439,1771 2435,1773 2402,1773 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2446,1745 2441,1735 2436,1745 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2443" y="1750"> </tspan>
+</text>
+</g>
+<g id="2002692998"><path d="M2170,582 L2170,604 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2175,592 2170,582 2165,592 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2172" y="597"> </tspan>
+</text>
+</g>
+<g id="2002693002"><path d="M813,1427 L813,1457 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="818,1437 813,1427 808,1437 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="815" y="1442"> </tspan>
+</text>
+</g>
+<g id="2002693004"><path d="M2022,333 L2022,361 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2027,343 2022,333 2017,343 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2024" y="348"> </tspan>
+</text>
+</g>
+<g id="2002692839"><path d="M801,522 L801,695 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="798" y1="689" x2="801" y2="695"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="804" y1="689" x2="801" y2="695"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="803" y="537">schema:gender (26) R</tspan>
+</text>
+</g>
+<g id="2002692814"><path d="M2054,999 L2054,947 2052,943 2048,941 1998,941 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2004" y1="938" x2="1998" y2="941"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2004" y1="944" x2="1998" y2="941"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1923" y="995">y:coordinate (2.8e4) DR</tspan>
+</text>
+</g>
+<g id="2002692984"><path d="M2362,1718 L2343,1718 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2352,1723 2362,1718 2352,1713 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2348" y="1731"> </tspan>
+</text>
+</g>
+<g id="2002692994"><path d="M2596,1735 L2596,1779 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2601,1745 2596,1735 2591,1745 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2598" y="1750"> </tspan>
+</text>
+</g>
+<g id="2002692629"><path d="M2105,1453 L2303,1453 2307,1451 2309,1447 2309,1434 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2306" y1="1440" x2="2309" y2="1434"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2312" y1="1440" x2="2309" y2="1434"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2109" y="1451">bioc:has_person_relation (6074) D</tspan>
+</text>
+</g>
+<g id="2002692869"><path d="M2373,318 L2373,356 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2370" y1="350" x2="2373" y2="356"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2376" y1="350" x2="2373" y2="356"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2375" y="333">sd:defaultDataset (3) DR</tspan>
+</text>
+</g>
+<g id="2002692959"><path d="M2309,496 L2309,534 2307,538 2303,540 2177,540 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2183" y1="537" x2="2177" y2="540"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2183" y1="543" x2="2177" y2="540"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2311" y="511">dct:creator (3) D</tspan>
+<tspan x="2311" y="526">dct:publisher (3) D</tspan>
+</text>
+</g>
+<g id="2002692904"><path d="M2163,479 L1874,479 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1880" y1="476" x2="1874" y2="479"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1880" y1="482" x2="1874" y2="479"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2023" y="492">sd:namedGraph (14) DR</tspan>
+</text>
+</g>
+<g id="2002692944"><path d="M1720,473 L1720,441 1722,437 1726,435 1819,435 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1813" y1="432" x2="1819" y2="435"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1813" y1="438" x2="1819" y2="435"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1623" y="454">sd:graph (12) DR</tspan>
+<tspan x="1623" y="469">sd:name (12) DR</tspan>
+</text>
+</g>
+<g id="2002692889"><path d="M1890,268 L1621,268 1617,270 1615,274 1615,555 1617,559 1621,561 1917,561 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1911" y1="558" x2="1917" y2="561"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1911" y1="564" x2="1917" y2="561"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1771" y="281">dct:rightsHolder (31) </tspan>
+</text>
+</g>
+<g id="2002692819"><path d="M1923,582 L1923,616 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1920" y1="610" x2="1923" y2="616"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1926" y1="610" x2="1923" y2="616"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1925" y="597">foaf:homepage (2) </tspan>
+</text>
+</g>
+<g id="2002693000"><path d="M2082,582 L2082,616 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2087,592 2082,582 2077,592 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2084" y="597"> </tspan>
+</text>
+</g>
+<g id="2002692854"><path d="M2462,1518 L2462,1197 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2459" y1="1203" x2="2462" y2="1197"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2465" y1="1203" x2="2462" y2="1197"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2366" y="1514">dct:source (24) R</tspan>
+</text>
+</g>
+<g id="2002692794"><path d="M1811,1544 L1811,1587 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1808" y1="1581" x2="1811" y2="1587"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1814" y1="1581" x2="1811" y2="1587"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1813" y="1559">y:has_enrollment (2.8e4) DR</tspan>
+</text>
+</g>
+<g id="2002692724"><path d="M1996,1544 L1996,1847 1998,1851 2002,1853 2600,1853 2604,1851 2606,1847 2606,1844 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2603" y1="1850" x2="2606" y2="1844"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2609" y1="1850" x2="2606" y2="1844"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1998" y="1559">y:has_category (4.1e4) DR</tspan>
+</text>
+</g>
+<g id="2002693006"><path d="M2446,110 L2540,110 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2456,115 2446,110 2456,105 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2450" y="108"> </tspan>
+</text>
+</g>
+<g id="2002692649"><path d="M1630,85 L1492,85 1488,83 1486,79 1486,50 1488,46 1492,44 1642,44 1646,46 1648,50 1648,73 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1645" y1="67" x2="1648" y2="73"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1651" y1="67" x2="1648" y2="73"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1497" y="98">rdfs:subClassOf (1) DR</tspan>
+</text>
+</g>
+<g id="2002692799"><path d="M356,921 L356,824 358,820 362,818 1433,818 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1427" y1="815" x2="1433" y2="818"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1427" y1="821" x2="1433" y2="818"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="196" y="887">skosxl:prefLabel (4.7e4) R</tspan>
+<tspan x="196" y="902">skosxl:altLabel (8660) </tspan>
+<tspan x="196" y="917">skosxl:hiddenLabel (7222) R</tspan>
+</text>
+</g>
+<g id="2002692859"><path d="M263,1252 L263,1229 261,1225 257,1223 62,1223 58,1221 56,1217 56,862 62,862 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="56" y1="859" x2="62" y2="862"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="56" y1="865" x2="62" y2="862"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="157" y="1248">rdf:object (1.3e4) D</tspan>
+</text>
+</g>
+<g id="2002692844"><path d="M146,1252 L146,1235 144,1231 140,1229 56,1229 52,1227 50,1223 50,567 52,563 56,561 115,561 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="109" y1="558" x2="115" y2="561"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="109" y1="564" x2="115" y2="561"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="40" y="1248">rdf:object (1.7e4) D</tspan>
+</text>
+</g>
+<g id="2002692789"><path d="M1379,1473 L1805,1473 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1799" y1="1470" x2="1805" y2="1473"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1799" y1="1476" x2="1805" y2="1473"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1383" y="1471">yr:relates_to (2.5e5) DR</tspan>
+</text>
+</g>
+<g id="2002692784"><path d="M1805,1479 L1539,1479 1535,1481 1533,1485 1533,1594 1531,1598 1527,1600 1367,1600 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1373" y1="1597" x2="1367" y2="1600"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1373" y1="1603" x2="1367" y2="1600"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1692" y="1492">y:has_title (2.4e4) R</tspan>
+</text>
+</g>
+<g id="2002692929"><path d="M1367,1621 L1549,1621 1553,1623 1555,1627 1555,1712 1557,1716 1561,1718 2133,1718 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2127" y1="1715" x2="2133" y2="1718"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2127" y1="1721" x2="2133" y2="1718"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1371" y="1619">y:related_occupation (1.1e4) DR</tspan>
+</text>
+</g>
+<g id="2002692969"><path d="M1678,1752 L1529,1752 1525,1750 1523,1746 1523,1670 1521,1666 1517,1664 1367,1664 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1373" y1="1661" x2="1367" y2="1664"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1373" y1="1667" x2="1367" y2="1664"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1575" y="1765">y:has_title (188) R</tspan>
+</text>
+</g>
+<g id="2002692764"><path d="M366,1139 L524,1139 528,1141 530,1145 530,1763 532,1767 536,1769 902,1769 906,1767 908,1763 908,1677 910,1673 914,1671 1067,1671 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1061" y1="1668" x2="1067" y2="1671"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1061" y1="1674" x2="1067" y2="1671"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="370" y="1137">y:has_title (1.8e4) R</tspan>
+</text>
+</g>
+<g id="2002692694"><path d="M1379,1793 L1555,1793 1559,1791 1561,1787 1561,1506 1563,1502 1567,1500 1805,1500 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1799" y1="1497" x2="1805" y2="1500"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1799" y1="1503" x2="1805" y2="1500"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1383" y="1791">y:supervisor (4847) DR</tspan>
+</text>
+</g>
+<g id="2002692674"><path d="M1805,1506 L1573,1506 1569,1508 1567,1512 1567,1808 1565,1812 1561,1814 1379,1814 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1385" y1="1811" x2="1379" y2="1814"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1385" y1="1817" x2="1379" y2="1814"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1682" y="1519">y:has_event (1.4e5) D</tspan>
+</text>
+</g>
+<g id="2002692754"><path d="M1373,1906 L1373,1924 1375,1928 1379,1930 2326,1930 2330,1928 2332,1924 2332,1847 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2329" y1="1853" x2="2332" y2="1847"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2335" y1="1853" x2="2332" y2="1847"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1375" y="1921">y:student_nation (4510) R</tspan>
+</text>
+</g>
+<g id="2002692769"><path d="M63,1362 L63,1921 65,1925 69,1927 1080,1927 1084,1925 1086,1921 1086,1906 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1083" y1="1912" x2="1086" y2="1906"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1089" y1="1912" x2="1086" y2="1906"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="65" y="1377">rdf:object (1.2e5) D</tspan>
+</text>
+</g>
+<g id="2002692719"><path d="M1079,1881 L896,1881 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1878" x2="896" y2="1881"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1884" x2="896" y2="1881"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="955" y="1894">y:organization (1.2e4) </tspan>
+</text>
+</g>
+<g id="2002692669"><path d="M1067,1569 L932,1569 928,1567 926,1563 926,1415 924,1411 920,1409 896,1409 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1406" x2="896" y2="1409"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1412" x2="896" y2="1409"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="934" y="1582">schema:sameAs (570) </tspan>
+</text>
+</g>
+<g id="2002692639"><path d="M471,1790 L908,1790 912,1788 914,1784 914,1692 916,1688 920,1686 1067,1686 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1061" y1="1683" x2="1067" y2="1686"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1061" y1="1689" x2="1067" y2="1686"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="475" y="1788">y:has_title (1.6e4) R</tspan>
+</text>
+</g>
+<g id="2002692924"><path d="M1687,1838 L1523,1838 1519,1836 1517,1832 1517,1686 1515,1682 1511,1680 1367,1680 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1373" y1="1677" x2="1367" y2="1680"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1373" y1="1683" x2="1367" y2="1680"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1591" y="1851">y:has_title (60) R</tspan>
+</text>
+</g>
+<g id="2002692749"><path d="M2234,1581 L2088,1581 2084,1583 2082,1587 2082,1930 2080,1934 2076,1936 926,1936 922,1934 920,1930 920,1421 918,1417 914,1415 896,1415 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1412" x2="896" y2="1415"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1418" x2="896" y2="1415"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2108" y="1594">schema:sameAs (24) </tspan>
+</text>
+</g>
+<g id="2002692874"><path d="M2139,1744 L2139,1936 2137,1940 2133,1942 908,1942 904,1940 902,1936 902,1421 896,1421 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1418" x2="896" y2="1421"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="902" y1="1424" x2="896" y2="1421"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2141" y="1759">schema:sameAs (418) </tspan>
+</text>
+</g>
+<g id="2002692644"><path d="M1805,1450 L471,1450 467,1452 465,1456 465,1707 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="462" y1="1701" x2="465" y2="1707"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="468" y1="1701" x2="465" y2="1707"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1682" y="1463">y:has_event (3.7e4) D</tspan>
+</text>
+</g>
+<g id="2002692834"><path d="M1192,1090 L1192,1341 1190,1345 1186,1347 1166,1347 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1172" y1="1344" x2="1166" y2="1347"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1172" y1="1350" x2="1166" y2="1347"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1194" y="1105">y:geonames (4565) DR</tspan>
+</text>
+</g>
+</svg>

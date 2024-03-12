@@ -671,18 +671,18 @@ Template.ontologySettings.events({
 
 	'click #ok-ontology-settings' : async function(e, templ) {
 		
-		var myRows = [];
-		var $headers = $("th");
-		var $rows = $("tbody tr").each(function(index) {
-		  let $cells = $(this).find("td");
-		  myRows[index] = {};
-		  $cells.each(function(cellIndex) {
-			  if($($headers[cellIndex]).html() == "Graph/Service shorthand" || $($headers[cellIndex]).html() == "Expansion (e.g., URI)"){
-				  myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
-			  }
-		  });
-		  myRows[index]["index"] = index;
-		});
+		// var myRows = [];
+		// var $headers = $("th");
+		// var $rows = $("tbody tr").each(function(index) {
+		  // let $cells = $(this).find("td");
+		  // myRows[index] = {};
+		  // $cells.each(function(cellIndex) {
+			  // if($($headers[cellIndex]).html() == "Graph/Service shorthand" || $($headers[cellIndex]).html() == "Expansion (e.g., URI)"){
+				  // myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
+			  // }
+		  // });
+		  // myRows[index]["index"] = index;
+		// });
 
 		
 		var list = {projectId: Session.get("activeProject"),
@@ -711,7 +711,7 @@ Template.ontologySettings.events({
 					keepVariableNames: $("#keep-variable-names").is(":checked"),
 					endpointUsername: $("#endpoint-username").val(),
 					endpointPassword: $("#endpoint-password").val(),
-					graphsInstructions: JSON.stringify(myRows)
+					// graphsInstructions: JSON.stringify(myRows)
 				};
 
 
@@ -772,10 +772,10 @@ Template.ontologySettings.events({
 	 Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
 	 Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
 	 //Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
-	 if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) 
-		Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
-	 else 
-		Template.ontologySettings.graphs.set([]);
+	 // if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) 
+		// Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+	 // else 
+		// Template.ontologySettings.graphs.set([]);
 
 	},
 
@@ -888,8 +888,8 @@ Template.ontologySettings.rendered = async function() {
 		Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
 		Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
 
-		if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
-		else Template.ontologySettings.graphs.set([]);
+		// if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+		// else Template.ontologySettings.graphs.set([]);
 		
 		if (proj.schema != undefined && proj.schema != "") {
 			var selected = rr.filter(function(o){ return o.display_name == proj.schema});

@@ -160,7 +160,12 @@ Interpreter.methods({
 
 	ComputeLayout: function(x, y, boxes, lines) {
 		let editor = Interpreter.editor;
-		let layoutEngine = editor.layoutEngine();
+
+    let ontologyMode = false; // FIXME: te vajag datos balstītu IF par to, vai šī ir ontoloģiju diagramma
+    let arrangeIncrementally = false;
+    let layoutType = ontologyMode ? "INVERSE_VERTICAL" : "UNIVERSAL";
+
+    let layoutEngine = editor.layoutEngine(layoutType);
 
 		let elements_to_map = {};
 		let elements_from_map = {};
@@ -189,6 +194,7 @@ Interpreter.methods({
 				Compartments.find({elementId: box._id}).forEach(function(compart) {
 					//calculate width and height only for visible compartments
 					if(compart.style.visible == true){
+            if (!compart.value) return;
 						let value = compart.value.trimStart();
 						if (value == "") {
 							return;
@@ -258,6 +264,20 @@ Interpreter.methods({
 				_.extend(options, {endSides: line.endSides,});
 			}
 
+      if (ontologyMode) {
+        // FIXME: hack: ja līnijai ir teksts, tad tā nav apakšklases (plūsmas) līnija
+        // vajadzētu plūsmas pazīmi saņemt jau datos, vai nu no konfigurācijas, vai no import_ontology
+        if (line?.compartments?.compartments[0]?.value?.trim()) {
+          options.isFlowEdge = false;
+          options.startSides = 10; // sānu malas
+          options.endSides = 15;
+        } else {
+          options.isFlowEdge = true;
+          options.startSides = 5; // augša vai apakša
+          options.endSides = 5;
+        }
+      }
+
 			layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], options);
 
 			let line_id = line._id;
@@ -278,8 +298,10 @@ Interpreter.methods({
 
 		});
 
-    	// let new_layout = layoutEngine.arrangeFromScratch()
-    	let new_layout = layoutEngine.arrangeIncrementally();
+    let new_layout = arrangeIncrementally ? layoutEngine.arrangeIncrementally() : layoutEngine.arrangeFromScratch();
+    console.log('the new layout is', new_layout)
+
+    // FIXME: te nekas netiek darīts ar sarēķinātajām iezīmju vietām ( new_layout.labels[] ) !!
 
 		let moved_boxes = _.map(new_layout.boxes, function(box_in, key) {
 							let box = elements_from_map[key];

@@ -395,6 +395,9 @@ const dataShapes = {
 
 		return NaN;
 	},
+	getOntologiesSync : function() {
+		return this.schema.info;
+	},
 	getPublicNamespaces : async function() {
 		let rr = await callWithGet('public_ns/');
 		if (!_.isEmpty(rr)) {
@@ -442,7 +445,7 @@ const dataShapes = {
 					return;
 				}
 
-
+				this.schema.info = info;
 				if (info.filter(function(o){ return o.display_name == proj.schema}).length > 0) {
 					const schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
 					this.schema.schema = schema_info.db_schema_name;

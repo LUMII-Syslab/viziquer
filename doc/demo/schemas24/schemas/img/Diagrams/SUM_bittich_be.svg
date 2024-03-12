@@ -1,0 +1,286 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="1050" height="543" viewBox="0 0 1050 543">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002700273"><polygon points="17,216 317,216 317,281 17,281 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="144" y="231">:Skill (9)</tspan>
+</text>
+<line x1="21" y1="234" x2="315" y2="234"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="21" y="246">:skillName (9) [1] D</tspan>
+<tspan x="21" y="261">n1:tags (91) [*] D</tspan>
+<tspan x="21" y="276">rdf:type (9) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700295"><polygon points="396,215 696,215 696,265 396,265 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="526" y="230">:CV (1)</tspan>
+</text>
+<line x1="400" y1="233" x2="694" y2="233"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="400" y="245">:cvDescription (1) [1] D</tspan>
+<tspan x="400" y="260">rdf:type (1) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700306"><polygon points="377,10 677,10 677,135 377,135 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="486" y="25">foaf:Person (1)</tspan>
+</text>
+<line x1="381" y1="28" x2="675" y2="28"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="381" y="40">foaf:account (2) [*] D -&gt; IRI</tspan>
+<tspan x="381" y="55">foaf:birthday (1) [1] D</tspan>
+<tspan x="381" y="70">foaf:firstName (1) [1] D</tspan>
+<tspan x="381" y="85">foaf:homepage (1) [1]  -&gt; IRI</tspan>
+<tspan x="381" y="100">foaf:lastName (1) [1] D</tspan>
+<tspan x="381" y="115">foaf:title (1) [1] </tspan>
+<tspan x="381" y="130">rdf:type (1) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700350"><polygon points="376,472 676,472 676,522 376,522 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="471" y="487">:EducationalOrg (1)</tspan>
+</text>
+<line x1="380" y1="490" x2="674" y2="490"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="380" y="502">foaf:name (1) [1] </tspan>
+<tspan x="380" y="517">rdf:type (1) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700383"><polygon points="372,343 672,343 672,423 372,423 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="482" y="358">:Education (1)</tspan>
+</text>
+<line x1="376" y1="361" x2="670" y2="361"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="376" y="373">:eduDescription (1) [1] D</tspan>
+<tspan x="376" y="388">:eduGradDate (1) [1] D</tspan>
+<tspan x="376" y="403">:eduStartDate (1) [1] D</tspan>
+<tspan x="376" y="418">rdf:type (1) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700284"><polygon points="727,10 1027,10 1027,105 727,105 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="837" y="25">:OtherInfo (13)</tspan>
+</text>
+<line x1="731" y1="28" x2="1025" y2="28"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="731" y="40">:otherInfoDescription (6) [1] D</tspan>
+<tspan x="731" y="55">:otherInfoType (13) [1] D</tspan>
+<tspan x="731" y="70">foaf:homepage (6) [1]  -&gt; IRI</tspan>
+<tspan x="731" y="85">foaf:title (7) [1] </tspan>
+<tspan x="731" y="100">rdf:type (13) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700339"><polygon points="728,298 1028,298 1028,408 728,408 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="828" y="313">:WorkHistory (10)</tspan>
+</text>
+<line x1="732" y1="316" x2="1026" y2="316"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="732" y="328">:endDate (9) [1] D</tspan>
+<tspan x="732" y="343">:isCurrent (10) [1] D</tspan>
+<tspan x="732" y="358">:jobDescription (10) [1] D</tspan>
+<tspan x="732" y="373">:jobTitle (10) [1] D</tspan>
+<tspan x="732" y="388">:startDate (10) [1] D</tspan>
+<tspan x="732" y="403">rdf:type (10) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700317"><polygon points="740,468 1040,468 1040,518 740,518 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="848" y="483">:Company (10)</tspan>
+</text>
+<line x1="744" y1="486" x2="1038" y2="486"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="744" y="498">foaf:name (10) [1] </tspan>
+<tspan x="744" y="513">rdf:type (10) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700361"><polygon points="13,327 313,327 313,397 13,397 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="114" y="342">skos:Concept (2)</tspan>
+</text>
+<line x1="17" y1="345" x2="311" y2="345"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="17" y="357">rdf:type (2) [1]  -&gt; IRI</tspan>
+<tspan x="17" y="372">skos:altLabel (2) [1] D</tspan>
+<tspan x="17" y="387">skos:prefLabel (2) [1] </tspan>
+</text>
+</g>
+<g id="2002700328"><polygon points="10,16 310,16 310,156 10,156 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="98" y="31">nfo:FileDataObject (3)</tspan>
+</text>
+<line x1="14" y1="34" x2="308" y2="34"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="14" y="46">dbo:fileExtension (3) [1] D</tspan>
+<tspan x="14" y="61">dct:created (3) [1] D</tspan>
+<tspan x="14" y="76">dct:format (3) [1] D</tspan>
+<tspan x="14" y="91">dct:modified (3) [1] D</tspan>
+<tspan x="14" y="106">n1:uuid (3) [1] D</tspan>
+<tspan x="14" y="121">nfo:fileName (3) [1] D</tspan>
+<tspan x="14" y="136">nfo:fileSize (3) [1] D</tspan>
+<tspan x="14" y="151">rdf:type (3) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002700372"><polygon points="17,483 317,483 317,533 17,533 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="94" y="498">skos:ConceptScheme (1)</tspan>
+</text>
+<line x1="21" y1="501" x2="315" y2="501"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="21" y="513">rdf:type (1) [1]  -&gt; IRI</tspan>
+<tspan x="21" y="528">skos:prefLabel (1) [1] </tspan>
+</text>
+</g>
+<g id="2002700233"><path d="M396,246 L317,246 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="323" y1="243" x2="317" y2="246"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="323" y1="249" x2="317" y2="246"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="321" y="259">:hasSkill  DR</tspan>
+</text>
+</g>
+<g id="2002700248"><path d="M696,259 L816,259 820,261 822,265 822,298 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="819" y1="292" x2="822" y2="298"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="825" y1="292" x2="822" y2="298"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="700" y="257">:hasWorkHistory  DR</tspan>
+</text>
+</g>
+<g id="2002700253"><path d="M63,397 L63,483 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="60" y1="477" x2="63" y2="483"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="66" y1="477" x2="63" y2="483"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="65" y="412">skos:inScheme  DR</tspan>
+<tspan x="65" y="427">skos:topConceptOf  DR</tspan>
+</text>
+</g>
+<g id="2002700243"><path d="M541,265 L541,343 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="538" y1="337" x2="541" y2="343"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="544" y1="337" x2="541" y2="343"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="543" y="280">:hasEducation  DR</tspan>
+</text>
+</g>
+<g id="2002700228"><path d="M489,215 L489,135 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="486" y1="141" x2="489" y2="135"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="492" y1="141" x2="489" y2="135"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="389" y="211">:aboutPerson  DR</tspan>
+</text>
+</g>
+<g id="2002700258"><path d="M509,423 L509,472 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="506" y1="466" x2="509" y2="472"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="512" y1="466" x2="509" y2="472"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="511" y="438">:studiedIn  DR</tspan>
+</text>
+</g>
+<g id="2002700268"><path d="M897,408 L897,468 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="894" y1="462" x2="897" y2="468"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="900" y1="462" x2="897" y2="468"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="899" y="423">:employedIn  DR</tspan>
+</text>
+</g>
+<g id="2002700238"><path d="M110,281 L110,327 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="107" y1="321" x2="110" y2="327"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="113" y1="321" x2="110" y2="327"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="112" y="296">n2:skill-type  DR</tspan>
+</text>
+</g>
+<g id="2002700263"><path d="M696,232 L855,232 859,230 861,226 861,105 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="858" y1="111" x2="861" y2="105"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="864" y1="111" x2="861" y2="105"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="700" y="230">:hasOtherInfo  DR</tspan>
+</text>
+</g>
+</svg>

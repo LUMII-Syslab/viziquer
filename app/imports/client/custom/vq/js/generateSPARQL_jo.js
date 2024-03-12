@@ -1304,7 +1304,9 @@ function generateSPARQLtext(abstractQueryTable){
 			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
 				for(let g in rootClass["namedGraphs"]){
 					if(typeof rootClass["namedGraphs"][g] === "object" && typeof rootClass["namedGraphs"][g]["graphInstruction"] !== "undefined" && typeof rootClass["namedGraphs"][g]["graph"] !== "undefined"){
-						fromText =  fromText +"\n"+ rootClass["namedGraphs"][g]["graphInstruction"] + " " + rootClass["namedGraphs"][g]["graph"] ;
+						let graphName = rootClass["namedGraphs"][g]["graph"];
+						if (checkIfIsURI(graphName) == "full_form" && !graphName.startsWith("<") && !graphName.endsWith(">")) graphName = "<"+ graphName+ ">";
+						fromText =  fromText +"\n"+ rootClass["namedGraphs"][g]["graphInstruction"] + " " + graphName ;
 					}
 				}
 			}
@@ -3745,7 +3747,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								if(typeof sparqlTable["subClasses"][subclass]["graphs"] !== "undefined"){
 									for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
 										if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "GRAPH" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "SERVICE"){
-											subQuery = subQuery + SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + " {"+ "\n";
+											let graphName = sparqlTable["subClasses"][subclass]["graphs"][g]["graph"];
+											if (checkIfIsURI(graphName) == "full_form" && !graphName.startsWith("<") && !graphName.endsWith(">")) graphName = "<"+ graphName+ ">";
+											subQuery = subQuery + SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ graphName + " {"+ "\n";
 											graphFound = true;
 											break;
 										}
@@ -4056,7 +4060,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		filters = [];
 		
 		SPARQL_interval = SPARQL_interval + "  ";
-		let tempString = sparqlTable.graph.graphInstruction + " "+ sparqlTable.graph.graph + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
+		let graphName = sparqlTable.graph.graph;
+		if (checkIfIsURI(graphName) == "full_form" && !graphName.startsWith("<") && !graphName.endsWith(">")) graphName = "<"+ graphName+ ">";
+		let tempString = sparqlTable.graph.graphInstruction + " "+ graphName + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
 		graphService.push(tempString);
 	}
 
@@ -4221,6 +4227,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		SPARQL_interval = SPARQL_interval + "  ";
 		let graphName = sparqlTable.graphLink.graph;
 		if(graphName.startsWith("??")) graphName = graphName.substring(1);
+		if (checkIfIsURI(graphName) == "full_form" && !graphName.startsWith("<") && !graphName.endsWith(">")) graphName = "<"+ graphName+ ">";
 		let tempString = sparqlTable.graphLink.graphInstruction + " "+ graphName + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
 
 		graphService.push(tempString);

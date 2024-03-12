@@ -1959,8 +1959,8 @@
                 "diagramTypeId": "5MCHCcnGRwF5axfDj",
                 "diagramId": "7RrwRcGyxshqjBh9p",
                 "elementId": "r4MZYEQtHdDWvwSfd",
-                "tabIndex": 8,
-                "index": 103,
+                "tabIndex": 9,
+                "index": 104,
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
                 "name": "Graph/Service",
@@ -2079,7 +2079,7 @@
                             "procedure": "VQgetSchemaNames"
                           }
                         ],
-                        "prefix": "[",
+                        "prefix": " [",
                         "suffix": "]",
                         "defaultValue": null,
                         "inputType": {
@@ -2101,8 +2101,8 @@
                 "diagramTypeId": "5MCHCcnGRwF5axfDj",
                 "diagramId": "7RrwRcGyxshqjBh9p",
                 "elementId": "r4MZYEQtHdDWvwSfd",
-                "tabIndex": 9,
-                "index": 104,
+                "tabIndex": 8,
+                "index": 103,
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
                 "name": "Named Graphs",
@@ -3698,17 +3698,13 @@
 						  {
 							"extensionPoint": "update",
 							"procedure": "VQsetPrefixNamespace"
-						  },
-						  {
-							"extensionPoint": "processKeyStroke",
-							"procedure": "VQsetPrefixNamespace"
 						  }
                         ],
                         "prefix": "PREFIX ",
                         "suffix": ": ",
                         "defaultValue": null,
                         "inputType": {
-                          "type": "input"
+                          "type": "combobox"
                         },
                         "subCompartmentTypes": [],
                         "label": "Prefix"
@@ -3825,12 +3821,16 @@
                         "index": 7,
                         "name": "Schema",
                         "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetSchemaNames"
+                          }
                         ],
                         "prefix": "SCHEMA [",
                         "suffix": "] ",
                         "defaultValue": null,
                         "inputType": {
-                          "type": "input"
+                          "type": "combobox"
                         },
                         "subCompartmentTypes": [],
                         "label": "Schema"
@@ -4419,7 +4419,7 @@
                             "procedure": "VQgetSchemaNames"
                           }
                         ],
-                        "prefix": "[",
+                        "prefix": " [",
                         "suffix": "]",
                         "defaultValue": null,
                         "inputType": {
