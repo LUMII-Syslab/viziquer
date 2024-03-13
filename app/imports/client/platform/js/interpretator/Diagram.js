@@ -111,7 +111,7 @@ Interpreter.methods({
 			var element = {projectId: Session.get("activeProject"),
 							versionId: Session.get("versionId"),
 							id: elem_id,
-						};	
+						};
 
 			var list = {parentDiagram: Session.get("activeDiagram"), diagram: diagram, element: element};
 
@@ -150,7 +150,7 @@ Interpreter.methods({
 	align_selected_boxes: function(list) {
 		console.log("align selected boxes")
 		// Interpreter.editor.alignSelection(0, 1);
-	    
+
 	 //    list["projectId"] = Session.get("activeProject");
 	 //    list["versionId"] = Session.get("versionId");
 
@@ -162,7 +162,7 @@ Interpreter.methods({
 		let editor = Interpreter.editor;
 
     let ontologyMode = false; // FIXME: te vajag datos balstītu IF par to, vai šī ir ontoloģiju diagramma
-    let arrangeIncrementally = false;
+    let arrangeIncrementally = !ontologyMode;
     let layoutType = ontologyMode ? "INVERSE_VERTICAL" : "UNIVERSAL";
 
     let layoutEngine = editor.layoutEngine(layoutType);
@@ -176,15 +176,15 @@ Interpreter.methods({
 		let elements = editor.getElements();
 		boxes = boxes || _.filter(elements, function(elem) {
 							return elem.type == "Box";
-						});	
+						});
 
 		lines = lines || _.filter(elements, function(elem) {
 							return elem.type == "Line";
 						});
-		
+
 		_.each(boxes, function(box, i) {
 			let position = box.getElementPosition();
-			
+
 			let width = position.width;
 			let height = position.height;
 			if (box.compartments) {
@@ -213,10 +213,10 @@ Interpreter.methods({
 							//text_length = number_of_charecters_in_string / 2 rounded towards the greater value
 							let text_length = row.length * Math.ceil(font_size/2);
 							tmp_width = Math.max(tmp_width, text_length);
-							
+
 							//tmp_height = font_size + consant for gap between compartments
 							tmp_height += font_size + 5; // add a height gap between compartments
-							
+
 							// if compartment lenght if bigger than max box width
 							if(text_length > 500){
 								//compartment height = font_size * (text_length/max_box_width/2 rounded towards the greater value)
@@ -232,7 +232,7 @@ Interpreter.methods({
 				if (compart_width != 0) {
 					width = compart_width + 5;
 				}
-	
+
 				if (compart_height != 0) {
 					height = compart_height + 5;
 				}
