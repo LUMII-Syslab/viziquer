@@ -5,6 +5,8 @@ The aim of the ViziQuer project is to provide visual/diagrammatic environment fo
 
 See https://viziquer.lumii.lv for the tool description.
 
+See the [ViziQuer wiki](https://github.com/LUMII-Syslab/viziquer/wiki) for information on getting started and using ViziQuer.
+
 ## Acknowledgements
 
 The ViziQuer tool has been developed at Institute of Mathematics and Computer Science, University of Latvia, https://lumii.lv, 
