@@ -2199,7 +2199,7 @@ Meteor.methods({
 			return;
 		}
 
-		let diagram_object = {name: "Ontology diagram",
+		let diagram_object = {name: `Ontology diagram - ${ontology.Schema}`,
 								diagramTypeId: diagram_type._id,
 								style: diagram_type.style,
 

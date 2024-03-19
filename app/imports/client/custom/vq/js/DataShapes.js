@@ -370,21 +370,9 @@ const dataShapes = {
 	clearSchema : function() {
 		this.schema = getEmptySchema();
 	},
-	getOntologiesOld : async function() {
-		//dataShapes.getOntologies()
-		let rr = await callWithGet('info/');
-
-		if (!_.isEmpty(rr)) {
-			rr.unshift({display_name:""});
-			// *** console.log(rr)
-			return await rr;
-		}
-
-		return NaN;
-	},
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
-		let rr = await callWithGet('info2/');
+		let rr = await callWithGet('info/');
 
 		if (!_.isEmpty(rr) && !rr.error) {
 			//console.log("rr ", rr)
@@ -2065,7 +2053,7 @@ const dataShapes = {
 			let full_name = `${cl.full_name} (${roundCount(cl.cnt)})`;
 			if ( addIds ) full_name = `${full_name} ID-${cl.id}`;
 				rezFull.classes[id] = { id:id, id_id:cl.id, c_list_id:[cl.id],	super_classes:[], used:false, hasGen:false, type:type, 
-					displayName:cl.full_name, fullName:full_name,			
+					displayName:cl.full_name, fullName:full_name, fullNameD:full_name,			
 					sup:cl.s, sub:cl.b, sup0:cl.s0, sub0:cl.b0, atr_list:[], all_atr:[], cnt:cl.cnt };
 			//rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, used2:false, hasGen:false, isClasif:isClasif, type:type, prefix:cl.prefix, displayName:cl.full_name, cnt:roundCount(cl.cnt),
 			//	cnt0:cl.cnt, sup:cl.s, sub:cl.b, fullName:full_name, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[],  all_atr:[] };

@@ -13,119 +13,17 @@
 					{{#if isBig }}
 					{{else}}
 
-					{{#if pub}}
-					<div class="explain-form-group" style="padding-bottom:1px;">
-						<span>Class list filters:</span>
-					 </div>
-					 <div class="container-fluid">
-						 <div class="row">
-							 <div class="col-sm-6">
-								 <div class="slidecontainer" style="width: 400px;">
-									 <p><span id="classCount-slider-span"> </span>Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
-									 <input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount"  {{filterDisabled}}>
-								 </div>
-								 
-								 <select class="form-control" id="nsFilter" {{filterDisabled}} style="width: 400px;">
-									 {{#each nsFilters}}
-										 <option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
-									 {{/each}}
-								 </select>
-							 </div>
-							 <div class="col-sm-6">
-								 <select class="form-control" id="sortPar" style="width: 400px;">
-									 <option selected value=1 >Sort by class weight</option>
-									 <option value=3 >Sort by in class ind. count</option>
-									 <option value=4 >Sort by in prop. count</option>
-									 <option value=2 >Sort by namespaces</option>
-								 </select>
-							 </div>
-						 </div>
-					 </div>
-					 <div class="explain-form-group">
-						 <span>  </span>
-					  </div>
-					 <div class="explain-form-group">
-						<span>Manual class list selection</span>
-							 <label class="form-check-label">
-								 <input class="form-check-input" id="manual" name="manual" index = 1 type="checkbox" >
-								 <span class="custom-checkbox"></span>
-							 </label>
-					 </div>
-					 <div class="container-fluid">
-						 <div class="row">
-							 <div class="col-sm-6">
-								 <label>Selected classes ({{classCountSelected}})</label>
-							 </div>
-							 <div class="col-sm-6">
-								 <label>Rest classes ({{classCountRest}})</label>
-							 </div>
-						 </div>
-					 </div>	
-					 
-					 <div class="container-fluid">
-							 <div style="display: inline-block; vertical-align:top;">
-								 <select class="form-select" id="selectedClasses" size="15" multiple aria-label="multiple select 1" style="width: 400px;">
-									 {{#each classes}}
-										 <option value="{{id}}" {{selected}}>{{display_name}} </option>
-									 {{/each}}
-								 </select>						
-							 </div>
-							 <div style="display: inline-block; vertical-align:top;">
-								 <button id="removeSelected" type="button" class="btn btn-primary"  {{manualDisabled}}>&rarr;</button>
-								 <button id="addSelected" type="button" class="btn btn-primary" {{manualDisabled}}>&larr;</button>
-							 </div>
-							 <div style="display: inline-block; vertical-align:top;">
-								 <select class="form-select" id="restClasses" size="15" multiple aria-label="multiple select 2" style="width: 400px;">
-									 {{#each restClasses}}
-										 <option value="{{id}}" {{selected}}>{{display_name}}</option>
-									 {{/each}}
-								 </select>					
-							 </div>
-					 </div>
-
-					 <div class="form-group">
-						 <button id="getProperties" type="button" class="btn btn-primary">Show all properties</button>
-					 </div>							
-					 <div class="container-fluid">
-						 <div class="row">
-							 <div class="col-sm-6">
-								 <label>Selected properties ({{propCount}})</label>
-							 </div>
-							 <div class="col-sm-6">
-								 <label>Rest properties ({{propCountRest}})</label>
-							 </div>
-						 </div>
-					 </div>				
-
-					 <div class="container-fluid">
-						 <div style="display: inline-block; vertical-align:top;">
-							 <select class="form-select" id="selectedProperties" multiple size="15" style="width: 400px;">
-								 {{#each properties}}
-									 <option value="{{id}}">{{p_name}} </option>
-								 {{/each}}
-							 </select>						
-						 </div>
-						 <div style="display: inline-block; vertical-align:top;">
-							 <button id="removeSelectedProp" type="button" class="btn btn-primary" >&rarr;</button>
-							 <button id="addSelectedProp" type="button" class="btn btn-primary">&larr;</button>
-						 </div>
-						 <div style="display: inline-block; vertical-align:top;">
-							 <select class="form-select" id="restProperties" multiple size="15"  style="width: 400px;">
-								 {{#each restProperties}}
-									 <option value="{{id}}">{{p_name}}</option>
-								 {{/each}}
-							 </select>					
-						 </div>
-					 </div>
-					{{else}}
 					<ul class="nav nav-tabs" id="vq-tab">
 						  <li class="active"><a data-toggle="tab" href="#VQ-DSS-main">Classes and properties</a></li>
+						  {{#if pub}}
+						  {{else}}
 						  <li><a data-toggle="tab" href="#todo">Groups</a></li>
 						  <li><a data-toggle="tab" href="#support">Support</a></li>
+						  {{/if}}
 					  </ul>
 					  <div class="tab-content" style="overflow:auto; height:800px;">
 						
-						  <div id="#VQ-DSS-main" class="tab-pane fade in active">
+						  <div id="VQ-DSS-main" class="tab-pane fade in active">
 							<div class="explain-form-group" style="padding-bottom:1px;">
 							   <span>Class list filters:</span>
 							</div>
@@ -146,8 +44,8 @@
 									<div class="col-sm-6">
 										<select class="form-control" id="sortPar" style="width: 400px;">
 											<option selected value=1 >Sort by class weight</option>
-											<option value=3 >Sort by in class ind. count</option>
-											<option value=4 >Sort by in prop. count</option>
+											<option value=3 >Sort by count of class individuals</option>
+											<option value=4 >Sort by count of incoming properties</option>
 											<option value=2 >Sort by namespaces</option>
 										</select>
 									</div>
@@ -361,11 +259,14 @@
 
 						  </div>
 					  </div>
-					{{/if}}	
 					{{/if}}
                 </div>
 
                 <div class="modal-footer" style="clear: both;">
+					{{#if pub}}
+					{{else}}
+						<button id="makeDiagrAJOO" type="button" class="btn btn-primary" data-dismiss="modal">Save diagram data (AJOO)</button>
+					{{/if}}
 					<button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal">Save diagram data</button>
                     <button id="cancel-VQ-DSS-schema" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>	
                 </div>

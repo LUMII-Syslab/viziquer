@@ -1652,12 +1652,5 @@ export {
   VQ_Element,
   Create_VQ_Element,
   async_Create_VQ_Element,
-  VQ_Class,
-  VQ_Attribute,
   VQ_Schema,
-  VQ_Role,
-  VQ_SchemaRole,
-  VQ_r2rml,
-  VQ_SchemaAttribute,
-  VQ_ontology,
 }

@@ -25,10 +25,13 @@ Template.VQ_DSS_schema.FilterDisabled = new ReactiveVar('');
 Template.VQ_DSS_schema.NsFilters = new ReactiveVar('');
 Template.VQ_DSS_schema.ClassCount = new ReactiveVar('');
 Template.VQ_DSS_schema.ClassCountForSlider = new ReactiveVar('');
+Template.VQ_DSS_schema.IsPublic = new ReactiveVar(false);
 
 
 Interpreter.customMethods({
 	VQ_DSS_schema: function(){
+		// TODO liekas, ka pa šo zaru vairs neies
+		console.log('-------VQ_DSS_schema !!! ------')
 		Template.VQ_DSS_schema.SchemaName.set(dataShapes.schema.schemaName);
 		Template.VQ_DSS_schema.ClassCountAll.set(dataShapes.schema.classCount);
 		Template.VQ_DSS_schema.ClassCountFiltered.set('');
@@ -50,6 +53,7 @@ Template.VQ_DSS_schema.rendered = function() {
 	Template.VQ_DSS_schema.SchemaName.set(dataShapes.schema.schemaName);
 	Template.VQ_DSS_schema.ClassCountAll.set(dataShapes.schema.classCount);
 	Template.VQ_DSS_schema.ClassCountFiltered.set('');
+	Template.VQ_DSS_schema.IsPublic.set(false); // TODO kā lai atšķir, publiskais vai nepubliskais varaints?
 	// TODO cik lielas shēmas vispār piedāvāju vizualizēt
 	if ( dataShapes.schema.classCount < dataShapes.schema.diagram.maxCount) {
 		Template.VQ_DSS_schema.isBig.set(false);
@@ -62,7 +66,7 @@ Template.VQ_DSS_schema.rendered = function() {
 
 Template.VQ_DSS_schema.helpers({
 	pub: function() {
-		return true;
+		return Template.VQ_DSS_schema.IsPublic.get();
 	}, 
 	classes: function() {
 		return Template.VQ_DSS_schema.Classes.get();
@@ -134,22 +138,27 @@ Template.VQ_DSS_schema.helpers({
 });
 
 function getParams() {
-	// TODO ****** Jāliek šie atpakaļ būs
-	//const par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
-	//diffG:$("#diffG").val(), diffS:$("#diffS").val(), supPar:$("#supPar").val(), schema:dataShapes.schema.schema};
-	const par = {addIds:false, disconnBig:7, compView:true,	diffG:5, diffS:50, supPar:1, schema:dataShapes.schema.schema};
+	let par = {addIds:false, disconnBig:7, compView:true,	diffG:5, diffS:50, supPar:1, schema:dataShapes.schema.schema};
+	if ( !Template.VQ_DSS_schema.IsPublic.get() ) {
+		par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
+		diffG:$("#diffG").val(), diffS:$("#diffS").val(), supPar:$("#supPar").val(), schema:dataShapes.schema.schema};
+	}
 	return par;
 }
 
 function getInfo() {
-	return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`];
-	//return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`,
-	//$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text(),
-	//$('#diffS option:selected').text(),  $('#supPar option:selected').text()];
+	if ( Template.VQ_DSS_schema.IsPublic.get() )
+		return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`];
+	else
+		return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`,
+			$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text(),
+			$('#diffS option:selected').text(),  $('#supPar option:selected').text()];
 } 
 
 async function getClassesAndProperties() {
 	let classList = Template.VQ_DSS_schema.Classes.get();
+	let namespaces = {};
+	let namespacesL = [];
 	let all_s = [];
 	_.each(classList, function(cl) { all_s = [...new Set([...all_s, ...cl.s])]; });	
 	
@@ -157,6 +166,7 @@ async function getClassesAndProperties() {
 		if ( all_s.includes(cl.id)) cl.sel = 1;
 	});
 	classList = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 1});
+	_.each(classList, function(cl) { namespaces[cl.prefix] = true; });	
 
 	classList = classList.map(v => v.id);
 	let propList = Template.VQ_DSS_schema.Properties.get();
@@ -165,7 +175,19 @@ async function getClassesAndProperties() {
 		const rr = await dataShapes.callServerFunction("xx_getPropList2", allParams);	
 		propList = rr.data;
 	}
-	return [classList, propList];
+	_.each(propList, function(pr) { namespaces[pr.prefix] = true; });
+
+	const nsLoc = dataShapes.schema.namespaces.find(function(n){ return n.name == dataShapes.schema.local_ns });
+
+	for (const ns of Object.keys(namespaces)) {
+		const fullNs = dataShapes.schema.namespaces.find(function(n){ return n.name == ns });
+		if ( fullNs != undefined && ns != 'null' && ns != dataShapes.schema.local_ns )
+			namespacesL.push(`PREFIX ${ns}: <${fullNs.value}>`);
+		namespacesL = namespacesL.sort();
+	}
+	namespacesL.unshift(`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`);
+
+	return [classList, propList, namespacesL];
 }
 
 async function printSup(par0) {
@@ -209,6 +231,7 @@ function setSubClasses(cId) {
 
 Template.VQ_DSS_schema.events({
 	'click #makeDiagr2': async function() {
+		// TODO vecais variants
 		const classesAndProperties = await getClassesAndProperties();
 		const classList = classesAndProperties[0];
 		const propList = classesAndProperties[1];
@@ -267,12 +290,44 @@ Template.VQ_DSS_schema.events({
 		makeAssociations();
 		makeDiagramData();
 		rezFull.info = getInfo().join('\n');
+		rezFull.namespaces = rezFull.namespaces.join('\n');
 		console.log('rezFull', rezFull);
+		console.log(dataShapes.schema)
+
 		let link = document.createElement("a");
 		link.setAttribute("download", "diagr_data.json");
 		link.href = URL.createObjectURL(new Blob([JSON.stringify(rezFull, 0, 4)], {type: "application/json;charset=utf-8;"}));
 		document.body.appendChild(link);
 		link.click();
+	},
+	'click #makeDiagrAJOO': async function() {
+		if ( state == 0 )
+			await getBasicClasses(); // TODO varētu šīs jau būt izrēķinātas
+		calculateGroups();
+		makeSuperClasses(); 
+		makeAssociations();
+		makeDiagramData();
+		console.log('rezFull', rezFull);
+
+		const table_representation = { Schema:dataShapes.schema.schemaName, SH:{ c0:{compartments:{ name:rezFull.namespaces.join('\n')}}}, Line3:{}, Gen:{}};
+			for (const k of Object.keys(rezFull.classes)) {
+			const el = rezFull.classes[k];
+			if ( el.used ) {
+				table_representation.SH[k] = { compartments:{ name:el.fullName, atr_string:el.atr_string, type:el.type, group_string: el.sub_classes_group_string }};
+				for (const s of el.super_classes) {
+					table_representation.Gen[`${k}_${s}`] = { source:s, target:k, compartments:{}};
+				}
+			}
+		}
+		
+		for (const k of Object.keys(rezFull.assoc)) {
+			const el = rezFull.assoc[k];
+			if ( el.removed == false  )
+				table_representation.Line3[k] = { source: el.from, target: el.to, compartments:{ name: k, string: el.string}};
+		}
+		console.log(table_representation)
+		Meteor.call("importOntology", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+
 	},
 	'click #getProperties': async function() {
 		let classList = Template.VQ_DSS_schema.Classes.get();
@@ -387,11 +442,11 @@ Template.VQ_DSS_schema.events({
 		}
 		clearData();
 	},
-	'input #diffS': function() {
-		let slider = document.getElementById("diffS");
-		let output = document.getElementById("diffS-slider-span");
-		output.innerHTML = slider.value;
-	},
+	//'input #diffS': function() {
+	//	let slider = document.getElementById("diffS");
+	//	let output = document.getElementById("diffS-slider-span");
+	//	output.innerHTML = slider.value;
+	//},
 	'input #classCount': function() {
 		let slider = document.getElementById("classCount");
 		let output = document.getElementById("classCount-slider-span");
@@ -574,15 +629,17 @@ function clearData() {
 // ***************** Vairākkart izmantojamās funkcijas ******************************************************
 // **********************************************************************************************************
 function getDiffs() {
-	/*  TODO ***** (vajadzēs likt atpakaļ)
-	const diffG = $("#diffG").val();
-	let diffS = $("#diffS").val();
-	if ( $("#supPar").val() == 2 ) 
-		diffS = -1; // Ja ir parametrs savilkt visparinašanas, tad arī abstraktās netiek taisītas
-	
-		return {diffG:diffG, diffS:diffS};
-	*/	
-	return {diffG:5, diffS:50};
+	if ( Template.VQ_DSS_schema.IsPublic.get() ) {
+		return {diffG:5, diffS:50};
+	}
+	else {
+		const diffG = $("#diffG").val();
+		let diffS = $("#diffS").val();
+		if ( $("#supPar").val() == 2 ) 
+			diffS = -1; // Ja ir parametrs savilkt visparinašanas, tad arī abstraktās netiek taisītas
+		
+			return {diffG:diffG, diffS:diffS};
+	}
 }
 
 // ***************** Konstantes***************************
@@ -912,8 +969,8 @@ function makeClassGroup(list, type, sum = true) {
 			displayName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName}`;
 		}
 		rezFull.classes[g_id] = { id:g_id, super_classes:[], used:true, hasGen:false, type:type, 
-			displayName:displayName, fullName:fullName, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
-			sub_classes_group_string:c_list_full.map(c => c.fullName).sort().join('\n'),			
+			displayName:displayName, fullName:fullName, fullNameD:fullName, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
+			sub_classes_group_string:c_list_full.map(c => c.fullNameD).sort().join('\n'),			
 			sup:[], sub:[], atr_list:atr_list, all_atr:[], cnt:i_cnt, cnt_sum:getWeight(i_cnt, i_in_props), in_props:i_in_props }; 
 
 		Gnum = Gnum + 1;
@@ -956,15 +1013,15 @@ function showClasses() {
 	Template.VQ_DSS_schema.UsedClasses.set(usedClasses);
 	let clCount = 0;
 	let grCount = 0;
-	let abstrCount = 0;
+	//let abstrCount = 0;  // TODO varbūt vajadzēs arī šo parādīt
 	for (const clId of Object.keys(rezFull.classes)) {
 		const cl_info = rezFull.classes[clId];
 		if ( cl_info.used ) {
 			clCount++;
 			if ( cl_info.isGroup )
 				grCount++;
-			if ( cl_info.type == 'Abstract' )
-				abstrCount++;
+			//if ( cl_info.type == 'Abstract' )
+			//	abstrCount++;
 		}
 	}
 	Template.VQ_DSS_schema.UsedClasses.set(usedClasses);
@@ -977,6 +1034,7 @@ async function getBasicClasses() {
 	console.log('Meklē sākotnējās klases')
 	clearData();
 	const classesAndProperties = await getClassesAndProperties();
+	rezFull.namespaces = classesAndProperties[2];
 	const c_list = classesAndProperties[0];
 	const p_list = classesAndProperties[1];
 	const par = getParams();
@@ -995,13 +1053,17 @@ async function getBasicClasses() {
 		if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
 			type = 'Classif';
 		}	
-		//let full_name = `${cl.full_name} (${roundCount(cl.cnt)})`;
+
 		cl.cnt = Number(cl.cnt);
 		let full_name = `${cl.full_name} (weight-${roundCount(cl.cnt_sum)} (${roundCount(cl.cnt)} ${roundCount(cl.in_props)}))`;
+		let full_name_d = `${cl.full_name} (${roundCount(cl.cnt)})`;
 
-		if ( addIds ) full_name = `${full_name} ID-${cl.id}`;
+		if ( addIds ) {
+			full_name = `${full_name} ID-${cl.id}`;
+			full_name_d = `${full_name_d} ID-${cl.id}`;
+		}
 			rezFull.classes[id] = { id:id, id_id:cl.id, c_list_id:[cl.id],	super_classes:[], used:false, hasGen:false, type:type, 
-				displayName:cl.full_name, fullName:full_name,			
+				displayName:cl.full_name, fullName:full_name, fullNameD:full_name_d, 				
 				sup:cl.s, sub:cl.b, sup0:cl.s0, sub0:cl.b0, atr_list:[], all_atr:[], cnt:cl.cnt, cnt_sum:cl.cnt_sum, in_props:cl.in_props };
 	});
 	
@@ -1030,8 +1092,11 @@ async function getBasicClasses() {
 		const p_name = `${p.prefix}:${p.display_name}`;
 	
 		const cp_info_p = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) && cp.cover_set_index > 0; }); 
+		const cp_info_p_o =  cp_info_p.filter(function(cp){ return cp.type_id == 2 && cp.object_cnt > 0; }); 
 		const c_from = cp_info_p.filter(function(cp){ return cp.type_id == 2}); 
-		const c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1}); 
+		let c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1}); 
+		if (cp_info_p_o.length == 0 )
+			c_to = [];
 
 		if ( p.max_cardinality == -1 ) 
 			p.max_cardinality = '*';
@@ -1062,13 +1127,18 @@ async function getBasicClasses() {
 		else if ( c_from.length > 0  && c_to.length > 0) {
 			for (const c_1 of c_from) {
 				const from_id = `c_${c_1.class_id}`;
-				// if ( c_1.object_cnt > 0 ) { TODO nez vai šo vajag pārbaudīt?
-				let cl_list = c_to.map( c => c.class_id);
-				const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id }); 
-				if ( !compView && has_cpc && cpc_i.length > 0 )
-					cl_list = cpc_i.map( c => c.other_class_id);
-				const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt), is_domain:pp.is_domain, is_range:pp.is_range, max_cardinality:pp.max_cardinality, class_list:cl_list.sort()};
-				rezFull.classes[from_id].atr_list.push(p_info);
+				if ( c_1.object_cnt > 0 ) { 
+					let cl_list = c_to.map( c => c.class_id);
+					const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id }); 
+					if ( !compView && has_cpc && cpc_i.length > 0 )
+						cl_list = cpc_i.map( c => c.other_class_id);
+					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt), is_domain:pp.is_domain, is_range:pp.is_range, max_cardinality:pp.max_cardinality, class_list:cl_list.sort()};
+					rezFull.classes[from_id].atr_list.push(p_info);
+				}
+				else {
+					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt), is_domain:pp.is_domain, is_range:'', max_cardinality:pp.max_cardinality, class_list:[]};
+					rezFull.classes[from_id].atr_list.push(p_info);
+				}
 				rezFull.classes[from_id].used = true;
 				if ( !rezFull.classes[from_id].all_atr.includes(pp.id)) rezFull.classes[from_id].all_atr.push(pp.id);						
 			}	
@@ -1111,7 +1181,7 @@ async function getBasicClasses() {
 		const cp_info_p = cp_info.filter(function(cp){ return cp.class_id == cl_info.id && cp.type_id == 2 && cp.cover_set_index > 0;}).map(cp => cp.property_id); 
 		for (const p of cp_info_p) {
 			if ( !cl_info.all_atr.includes(p)) {
-				console.log('******** Pieliek papildus propertiju ***********', cl_info.fullName, p_list_full[`p_${p}`].p_name)
+				console.log('******** Pieliek papildus propertiju ***********', cl_info.fullNameD, p_list_full[`p_${p}`].p_name)
 				const c_from = cp_info.filter(function(cp){ 
 					return cp.type_id == 2 && cp.property_id == p && cp.class_id == cl_info.id;
 				}); 
@@ -1312,7 +1382,6 @@ function makeSuperClasses() {
 			classInfo.in_props = getInPropCount(atr_list);
 			classInfo.cnt_sum = getWeight(classInfo.cnt, classInfo.in_props);
 			classInfo.fullName = `${classInfo.displayName} (weight-${roundCount(classInfo.cnt_sum)} (${roundCount(classInfo.cnt)} ${roundCount(classInfo.in_props)}))`;
-
 			if ( atr_list.length == 0 ) {
 				if ( classInfo.isGroup ) {
 					for (let g_cl of classInfo.c_list) {
@@ -1341,6 +1410,7 @@ function makeSuperClasses() {
 			displayName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName}`;
 		}
 		rezFull.classes[sc_id].fullName = fullName;
+		rezFull.classes[sc_id].fullNameD = fullName;
 		rezFull.classes[sc_id].displayName = displayName;
 	}
 	
@@ -1377,7 +1447,7 @@ function makeAssociations() {
 				}
 				if ( cInfo.G_id != undefined && cInfo.S_id == undefined) {
 					for (const g of cInfo.G_id) {
-						if ( !c_list2.includes(g))
+						if ( !c_list2.includes(g) && rezFull.classes[g].used)
 							c_list2.push(g);
 					}
 				}
@@ -1387,9 +1457,11 @@ function makeAssociations() {
 						if ( !c_list2.includes(cInfo.S_id))
 							c_list2.push(cInfo.S_id);
 					}
-					else if ( cInfo.G_id != undefined ) {  // TODO te ir pieņēmums, ka visrklases taisot, katra klase var būt tikai viena grupā
-						if ( !c_list2.includes(cInfo.G_id[0]))
-							c_list2.push(cInfo.G_id[0]);
+					else if ( cInfo.G_id != undefined ) {  
+						for (const g of cInfo.G_id) {
+							if ( !c_list2.includes(g) && rezFull.classes[g].used)
+								c_list2.push(g);
+						}
 					}
 					else {
 						c_list2.push(`c_${cl}`);
