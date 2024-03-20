@@ -1009,7 +1009,8 @@ Template.schemaExtra.helpers({
 		return Template.schemaExtra.SchemaName.get();
 	},
 	isBig: function() {
-		return Template.schemaExtra.isBig.get();
+		return true;
+		//return Template.schemaExtra.isBig.get(); // TODO Extra tabā būs tikai informācija
 	},
 	classCountAll: function() {
 		return Template.schemaExtra.ClassCountAll.get();
