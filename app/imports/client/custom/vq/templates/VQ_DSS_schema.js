@@ -240,26 +240,58 @@ Template.VQ_DSS_schema.events({
 	}, 
 	'click #calck': async function() {
 		//TODO šis vēlāk vairs nebūs
-		const classesAndProperties = await getClassesAndProperties();
-		const classList = classesAndProperties[0];
-		const propList = classesAndProperties[1];
-		await dataShapes.makeSuperDiagr(classList, propList, getParams(), '', true);
-		let cl = await dataShapes.getClasses();
-		console.log('cccc', cl.data);
-		const sh = dataShapes.schema.schema;
-		dataShapes.schema.schema = 'europeana';
-		cl = await dataShapes.getClasses();
-		console.log('cccc2', cl.data);
-		dataShapes.schema.schema = sh;
-		console.log('Info', dataShapes.schema.info)
-		console.log('Info2', dataShapes.getOntologiesSync())
+		//const classesAndProperties = await getClassesAndProperties();
+		//const classList = classesAndProperties[0];
+		//const propList = classesAndProperties[1];
+		//await dataShapes.makeSuperDiagr(classList, propList, getParams(), '', true);
+		let cl; 
+		//cl = await dataShapes.getClasses();
+		//console.log('getClasses', cl.data);
+		//cl = await dataShapes.getClasses({schema:'europeana'});
+		//console.log('getClasses-europeana', cl.data);
+		//cl = await dataShapes.getClasses({schema:'mini_hospital'});
+		//console.log('getClasses-mini_hospital', cl.data);
+		//cl = await dataShapes.getClassesFull({main:{}, element: {uriIndividual: 'https://swapi.co/resource/film/1'}})
+		//console.log('getClassesFull',cl.data)
+		//cl = await dataShapes.getClassesFull({main:{schema:'europeana'}, element: {uriIndividual: 'http://www.bildindex.de/bilder/m/fm239485'}})
+		//console.log('getClassesFull-europeana',cl.data)
+		//cl = await dataShapes.resolveIndividualByName({ name: 'https://swapi.co/resource/film/1'})
+		//console.log('resolveIndividualByName',cl.data)
+		//cl = await dataShapes.resolveIndividualByName({schema:'europeana', name:'http://www.bildindex.de/bilder/m/fm239485'})
+		//console.log('resolveIndividualByName-europeana',cl.data)
+		//cl = await dataShapes.resolveClassByName({name: ':Film'})
+		//console.log('resolveClassByName',cl.data)
+		//cl = await dataShapes.resolveClassByName({schema:'europeana', name: ':WebResource'})
+		//console.log('resolveClassByName-europeana',cl.data)
+		//cl = await dataShapes.resolvePropertyByName({name: ':character'})
+		//console.log('resolvePropertyByName',cl.data)
+		//cl = await dataShapes.resolvePropertyByName({schema:'europeana', name: ':componentColor'})
+		//console.log('resolvePropertyByName-europeana',cl.data)	
+		//cl = await dataShapes.getClassifiers();
+		//console.log('getClassifiers', cl);	
+		//cl = await dataShapes.getClassifiers({schema:'nobel_prizes_x'});
+		//console.log('getClassifiers-nobel_prizes_x', cl);		
+		//cl = await dataShapes.getProperties({schema:'europeana', propertyKind:'Data'});
+		//console.log('getProperties-europeana', cl.data);
+		//cl = await dataShapes.getProperties({schema:'mini_hospital',propertyKind:'Data'});
+		//console.log('getProperties-mini_hospital', cl.data);	
+		//cl = await dataShapes.getPropertiesFull({main:{schema:'europeana', propertyKind:'Data'}});
+		//console.log('getPropertiesFull-europeana', cl.data);
+		//cl = await dataShapes.getPropertiesFull({main:{schema:'mini_hospital',propertyKind:'Data'}});
+		//console.log('getPropertiesFull-mini_hospital', cl.data);	
+		//cl = await dataShapes.getClassIndividuals({limit:10}, 'UnitJoining');
+		//console.log('getClassIndividuals', cl);
+		cl = await dataShapes.getClassIndividuals({limit:10, schema:'europeana'}, ':WebResource');
+		console.log('getClassIndividuals-europeana', cl);
 		
-		cl = await dataShapes.resolveClassByName({name: 'w:Photograph'})
-		console.log(cl)
-		dataShapes.schema.schema = 'europeana';
-		dataShapes.schema.resolvedClasses = {}
-		cl = await dataShapes.resolveClassByName({name: 'w:Photograph'})
-		console.log(cl)
+		//cl = await dataShapes.checkProperty({name:'UnitJoining', propertyName: 'crm:P144_joined_with'});
+		//console.log('checkProperty', cl.data);
+		//cl = await dataShapes.checkProperty({schema:'europeana', name:':WebResource', propertyName: ':componentColor'});
+		//console.log('checkProperty-europeana', cl.data);
+		
+		//cl = await dataShapes.resolveClassByName({name: 'w:Photograph'})
+		//console.log(cl)
+
 	},
 	'click #printGroups': async function() {
 		//TODO šis vēlāk vairs nebūs

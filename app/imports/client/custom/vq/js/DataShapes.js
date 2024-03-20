@@ -516,6 +516,12 @@ const dataShapes = {
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		const startTime = Date.now();
 		let s = this.schema.schema;
+		let new_schema;
+		if ( params.main.schema != undefined) {
+			new_schema = this.getOntologiesSync().find(function(o) { return o.db_schema_name == params.main.schema});
+			if ( new_schema != undefined )
+				s = params.main.schema;
+		}
 		
 		if (s === "" || s === undefined ) {
 			await this.changeActiveProject(Session.get("activeProject"));
@@ -526,13 +532,25 @@ const dataShapes = {
 		let rr = {complete: false, data: [], error: "DSS schema not found"};
 		if (s !== "" && s !== undefined )
 		{
-			params.main.endpointUrl = this.schema.endpoint;
-			params.main.use_pp_rels = this.schema.use_pp_rels;
-			params.main.simple_prompt = this.schema.simple_prompt;
-			// params.main.makeLog = MakeLog;
-			params.main.schemaName = this.schema.schemaName;
-			params.main.schemaType = this.schema.schemaType;
-			params.main.showPrefixes = this.schema.showPrefixes;
+			if ( s == this.schema.schema) {
+				params.main.endpointUrl = this.schema.endpoint;
+				params.main.use_pp_rels = this.schema.use_pp_rels;
+				params.main.simple_prompt = this.schema.simple_prompt;
+				params.main.schemaName = this.schema.display_name;
+				params.main.schemaType = this.schema.schema_name;
+				params.main.showPrefixes = this.schema.showPrefixes;
+			}
+			else {
+				params.main.endpointUrl = new_schema.sparql_url;
+				if ( new_schema.named_graph != null	)
+					params.main.endpointUrl = `${new_schema.sparql_url}?default-graph-uri=${new_schema.named_graph}`; 	
+				params.main.use_pp_rels = new_schema.use_pp_rels;
+				params.main.simple_prompt = new_schema.simple_prompt;
+				params.main.schemaName = new_schema.schemaName;
+				params.main.schemaType = new_schema.schemaType;
+				params.main.showPrefixes = 'true';
+			}
+
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
 
@@ -560,14 +578,22 @@ const dataShapes = {
 	},
 	getNamespaces : async function(params = {}) {
 		// *** console.log("------------getNamespaces ------------------")
+		//dataShapes.getNamespaces({schema:'europeana'})
 		//dataShapes.getNamespaces()
-		if ( this.schema.namespaces.length > 0 )
-			return this.schema.namespaces;
+		console.log("------------getNamespaces ------------------", params)
+		if ( params.schema == undefined ) {
+			if ( this.schema.namespaces.length > 0 )
+				return this.schema.namespaces;
+			else {
+				let rr = await this.callServerFunction("getNamespaces", {main:params});
+				this.schema.namespaces = rr;
+				return rr;
+			}
+		}
 		else {
 			let rr = await this.callServerFunction("getNamespaces", {main:params});
-			this.schema.namespaces = rr;
 			return rr;
-		} 
+		}
 	},
 	getNamespaces_0 : async function(params = {}) {
 		let rr = await this.callServerFunction("getNamespaces", {main:params});
@@ -576,6 +602,7 @@ const dataShapes = {
 	},
 	getClasses : async function(params = {}, vq_obj = null) {
 		// *** console.log("------------GetClasses------------------")
+		// dataShapes.getClasses({schema:'europeana'})
 		// dataShapes.getClasses()
 		// dataShapes.getClasses({limit: 30})
 		// dataShapes.getClasses({filter:'aa'})
@@ -604,6 +631,7 @@ const dataShapes = {
 	},
 	getClassesFull : async function(params = {}) {
 		// *** console.log("------------GetClasses------------------")
+		// ***  dataShapes.getClassesFull({main:{schema:'europeana'}, element: {uriIndividual: 'http://www.bildindex.de/bilder/m/fm239485'}})
 		// ***  dataShapes.getClassesFull({main:{}, element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'}})
 		// ***  dataShapes.getClassesFull({{main:{},element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'} })  -- visas ir yago klases
 		// ***  dataShapes.getClassesFull({{main:{},element: { pList: { out: [{name: 'educationalAuthority', type: 'out'}]}}})
@@ -669,6 +697,9 @@ const dataShapes = {
 		return rr;
 	},
 	getPropertiesF : async function(params) {
+		if ( params.main.limit === undefined )
+			params.main.limit = this.schema.limit;
+		
 		params.main.limit = params.main.limit + 1;
 		let rr = await this.callServerFunction("getProperties", params);
 		if ( rr.data.length == params.main.limit ) {
@@ -679,6 +710,7 @@ const dataShapes = {
 	},
 	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {
 		// *** console.log("------------GetProperties------------------")
+		//dataShapes.getProperties({schema:'europeana', propertyKind:'Data'})
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
 		//dataShapes.getProperties({propertyKind:'Object'})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
@@ -706,6 +738,7 @@ const dataShapes = {
 	},
 	getPropertiesFull : async function(params = {}) {
 		// *** console.log("------------GetProperties------------------")
+		// *** dataShapes.getPropertiesFull({main:{schema:'europeana', propertyKind:'Data'}})
 		// *** dataShapes.getProperties({main: {propertyKind:'Object'}, element:{className: 'umbel-rc:Park'}})
 		// *** dataShapes.getProperties({main: {propertyKind:'Data'}, element: {className: 'umbel-rc:Park'}})
 		// *** dataShapes.getProperties({main: {propertyKind:'Connect'}, element: {className: 'umbel-rc:Park'}, elementOE: {className: 'umbel-rc:Philosopher'}})
@@ -728,9 +761,10 @@ const dataShapes = {
 		}
 		return await this.getPropertiesF(params); //this.callServerFunction("getProperties", params);
 	},
-	getClassifiers : async function() {
+	getClassifiers : async function(params = {}) {
 		// TODO droši vien ar standarta limitu būs gana
-		return await this.callServerFunction("getClassifiers", {main: {}});
+		//dataShapes.getClassifiers({schema:'nobel_prizes_x'})
+		return await this.callServerFunction("getClassifiers", {main: params});
 	},
 	checkProperty : async function(params = {}) {
 		// *** console.log("------------checkProperty-----------------")
@@ -787,7 +821,7 @@ const dataShapes = {
 			return await faas.getIndividuals(allParams); 
 		}
 
-		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
+		if ( allParams.element != undefined && (allParams.element.className !== undefined || allParams.element.pList !== undefined )) {
 			rr = await this.callServerFunction("getIndividuals", allParams);
 				
 			if (rr.error != undefined)
@@ -795,6 +829,24 @@ const dataShapes = {
 		}
 		else
 			rr = [];
+			
+		return rr;
+	},
+	getClassIndividuals : async function(params, className) {
+		// *** console.log("------------getClassIndividuals ------------------")
+		// *** dataShapes.getClassIndividuals({limit:10}, 'UnitJoining')
+		// *** dataShapes.getClassIndividuals({limit:10, schema:'europeana'}, ':WebResource')
+		
+		let rr;
+
+		//if (this.schema.schemaType == 'wikidata' && params.filter != undefined )
+		//	return await this.getIndividualsWD(params.filter); 
+		
+		let allParams = {main: params, element: {className:className}};
+		rr = await this.callServerFunction("getIndividuals", allParams);
+				
+		if (rr.error != undefined)
+			rr = []
 			
 		return rr;
 	},
@@ -846,12 +898,13 @@ const dataShapes = {
 	},
 	resolveClassByName : async function(params = {}) {
 		// *** console.log("------------resolveClassByName---"+ params.name +"---------------")
+			//dataShapes.resolveClassByName({schema:'europeana', name: ':WebResource'})
 		//dataShapes.resolveClassByName({name: 'umbel-rc:Park'})
 		//dataShapes.resolveClassByName({name: 'http://dbpedia.org/ontology/Year'})
 		//dataShapes.resolveClassByName({name: 'foaf:Document'})
 		
 		let rr;
-		if (this.schema.resolvedClasses[params.name] !== undefined || this.schema.resolvedClassesF[params.name] !== undefined) {
+		if (this.schema.resolvedClasses[params.name] !== undefined || this.schema.resolvedClassesF[params.name] !== undefined && params.schema == undefined) {
 			if (this.schema.resolvedClasses[params.name] !== undefined)
 				rr = { complete:true, data: [this.schema.resolvedClasses[params.name]]};
 			if (this.schema.resolvedClassesF[params.name] !== undefined)
@@ -860,12 +913,14 @@ const dataShapes = {
 		}
 		else {
 			rr = await this.callServerFunction("resolveClassByName", {main: params});
-			if ( rr.complete )
-				this.schema.resolvedClasses[params.name] = rr.data[0];
-			else
-				this.schema.resolvedClassesF[params.name] = 1;
+			if ( params.schema == undefined ) {
+				if ( rr.complete )
+					this.schema.resolvedClasses[params.name] = rr.data[0];
+				else
+					this.schema.resolvedClassesF[params.name] = 1;
+			}
 		}
-		
+
 		if (rr.complete == true)
 			rr.name = rr.data[0].full_name; //`${rr.data[0].prefix}:${rr.data[0].local_name}`;
 		else
@@ -874,12 +929,13 @@ const dataShapes = {
 	},
 	resolvePropertyByName : async function(params = {}) {
 		// *** console.log("------------resolvePropertyByName---"+ params.name +"---------------")
+		//dataShapes.resolvePropertyByName({schema:'europeana', name: ':componentColor'})
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
 		//dataShapes.resolvePropertyByName({name: 'http://dbpedia.org/ontology/years'})
 		let rr;
 		if ( typeof params.name !== "string" ) return { complete:false, name: '', data: []};
 		
-		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined) {
+		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined  && params.schema == undefined) {
 			if (this.schema.resolvedProperties[params.name] !== undefined)
 				rr = { complete:true, data: [this.schema.resolvedProperties[params.name]]};
 			if (this.schema.resolvedPropertiesF[params.name] !== undefined)
@@ -888,10 +944,12 @@ const dataShapes = {
 		}
 		else {
 			rr = await this.callServerFunction("resolvePropertyByName", {main: params});
-			if ( rr.complete )
-				this.schema.resolvedProperties[params.name] = rr.data[0];
-			else
-				this.schema.resolvedPropertiesF[params.name] = 1;
+			if ( params.schema == undefined ) {
+				if ( rr.complete )
+					this.schema.resolvedProperties[params.name] = rr.data[0];
+				else
+					this.schema.resolvedPropertiesF[params.name] = 1;
+			}
 		}
 
 		if (rr.complete == true)
@@ -901,6 +959,7 @@ const dataShapes = {
 		return rr;
 	},
 	resolveIndividualByName : async function(params = {}) {
+		//dataShapes.resolveIndividualByName({schema:'europeana', name:'http://www.bildindex.de/bilder/m/fm239485'}) TODO - wikidata
 		//dataShapes.resolveIndividualByName({name: 'http://www.wikidata.org/entity/Q34770'})
 		//dataShapes.resolveIndividualByName({name: 'wd:Q633795'})
 		//dataShapes.resolveIndividualByName({name: 'dbr:Aaron_Cox'}) // dbpedia
@@ -912,7 +971,7 @@ const dataShapes = {
 		params.name = this.getIndividualName(params.name);
 		let rr;
 		
-		if (this.schema.resolvedIndividuals[params.name] !== undefined || this.schema.resolvedIndividualsF[params.name] !== undefined) {
+		if (this.schema.resolvedIndividuals[params.name] !== undefined || this.schema.resolvedIndividualsF[params.name] !== undefined  && params.schema == undefined) {
 			if (this.schema.resolvedIndividuals[params.name] !== undefined)
 				rr = { complete:true, data: [this.schema.resolvedIndividuals[params.name]]};
 			if (this.schema.resolvedIndividualsF[params.name] !== undefined)
@@ -949,10 +1008,12 @@ const dataShapes = {
 			}
 		}
 		
-		if ( rr.complete )
-			this.schema.resolvedIndividuals[params.name] = rr.data[0];
-		else if ( !rr.complete )
-			this.schema.resolvedIndividualsF[params.name] = 1;
+		if ( params.schema == undefined ) {
+			if ( rr.complete )
+				this.schema.resolvedIndividuals[params.name] = rr.data[0];
+			else if ( !rr.complete )
+				this.schema.resolvedIndividualsF[params.name] = 1;
+		}
 		return rr;	
 		
 	},
