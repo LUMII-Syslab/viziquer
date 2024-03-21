@@ -919,6 +919,13 @@ const dataShapes = {
 				else
 					this.schema.resolvedClassesF[params.name] = 1;
 			}
+			else {
+				const new_schema = this.getOntologiesSync().find(function(o) { return o.db_schema_name == params.schema});
+				if ( rr.complete ) {
+					rr.data[0].direct_class_role = new_schema.direct_class_role;
+					rr.data[0].indirect_class_role = new_schema.indirect_class_role;
+				}
+			}
 		}
 
 		if (rr.complete == true)

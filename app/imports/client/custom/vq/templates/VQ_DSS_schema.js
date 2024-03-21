@@ -261,8 +261,10 @@ Template.VQ_DSS_schema.events({
 		//console.log('resolveIndividualByName-europeana',cl.data)
 		//cl = await dataShapes.resolveClassByName({name: ':Film'})
 		//console.log('resolveClassByName',cl.data)
-		//cl = await dataShapes.resolveClassByName({schema:'europeana', name: ':WebResource'})
-		//console.log('resolveClassByName-europeana',cl.data)
+		cl = await dataShapes.resolveClassByName({schema:'europeana', name: ':WebResource'})
+		console.log('resolveClassByName-europeana',cl.data)
+		cl = await dataShapes.resolveClassByName({schema:'wikidata', name: 'wd:[star (Q523)]'})
+		console.log('resolveClassByName-wikidata',cl.data)
 		//cl = await dataShapes.resolvePropertyByName({name: ':character'})
 		//console.log('resolvePropertyByName',cl.data)
 		//cl = await dataShapes.resolvePropertyByName({schema:'europeana', name: ':componentColor'})
@@ -281,9 +283,9 @@ Template.VQ_DSS_schema.events({
 		//console.log('getPropertiesFull-mini_hospital', cl.data);	
 		//cl = await dataShapes.getClassIndividuals({limit:10}, 'UnitJoining');
 		//console.log('getClassIndividuals', cl);
-		cl = await dataShapes.getClassIndividuals({limit:10, schema:'europeana'}, ':WebResource');
-		console.log('getClassIndividuals-europeana', cl);
-		
+		//cl = await dataShapes.getClassIndividuals({limit:10, schema:'europeana'}, ':WebResource');
+		//console.log('getClassIndividuals-europeana', cl);
+		console.log(dataShapes.getOntologiesSync())		
 		//cl = await dataShapes.checkProperty({name:'UnitJoining', propertyName: 'crm:P144_joined_with'});
 		//console.log('checkProperty', cl.data);
 		//cl = await dataShapes.checkProperty({schema:'europeana', name:':WebResource', propertyName: ':componentColor'});
