@@ -536,8 +536,8 @@ const dataShapes = {
 				params.main.endpointUrl = this.schema.endpoint;
 				params.main.use_pp_rels = this.schema.use_pp_rels;
 				params.main.simple_prompt = this.schema.simple_prompt;
-				params.main.schemaName = this.schema.display_name;
-				params.main.schemaType = this.schema.schema_name;
+				params.main.schemaName = this.schema.schemaName;
+				params.main.schemaType = this.schema.schemaType;
 				params.main.showPrefixes = this.schema.showPrefixes;
 			}
 			else {
@@ -546,8 +546,8 @@ const dataShapes = {
 					params.main.endpointUrl = `${new_schema.sparql_url}?default-graph-uri=${new_schema.named_graph}`; 	
 				params.main.use_pp_rels = new_schema.use_pp_rels;
 				params.main.simple_prompt = new_schema.simple_prompt;
-				params.main.schemaName = new_schema.schemaName;
-				params.main.schemaType = new_schema.schemaType;
+				params.main.schemaName = new_schema.display_name;
+				params.main.schemaType = new_schema.schema_name;
 				params.main.showPrefixes = 'true';
 			}
 
