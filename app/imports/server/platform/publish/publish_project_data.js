@@ -146,7 +146,7 @@ Meteor.publish("DiagramTypes_UserVersionSettings", function(list) {
 
 			//adding some limits on the fields
 			var diagram_type_fields = {fields: {_id: 1, name: 1, editorType: 1,
-										extensionPoints: 1, style: 1}};
+										extensionPoints: 1, style: 1, layoutSettings: 1,}};
 			var user_version_settings = {fields: {userSystemId: 0,
 													documentsSortBy: 0,
 													documentsSelectedGroup: 0,

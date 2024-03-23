@@ -83,7 +83,7 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", function(list) {
 
 				//selecting the cofigurator diagram type
 				DiagramTypes.find(diagram_type_query2,
-					{fields: {_id: 1, extensionPoints: 1, editorType: 1}}),
+					{fields: {_id: 1, extensionPoints: 1, editorType: 1, layoutSettings: 1,}}),
 				
 				UserTools.find({userSystemId: user_id, toolId: list["toolId"]},
 															{fields: {userSystemId: 0}}),

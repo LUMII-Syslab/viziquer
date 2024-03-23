@@ -61,6 +61,9 @@ Interpreter.loadAjooEditor = function(diagram) {
 	                eventLogging: event_logging(),
 	                isLayoutComputationNeededOnLoad: diagram["isLayoutComputationNeededOnLoad"],
 
+	                layoutSettings: diagram_type["layoutSettings"] || {"layout": "UNIVERSAL",
+	                													"arrangeMethod": "arrangeFromScratch",
+	                												},
 			    };
 
 	return new AjooEditor(settings);

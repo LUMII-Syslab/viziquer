@@ -149,6 +149,7 @@ var AjooEditor = function(settings) {
 
     editor.data = {};
 
+    editor.layoutSettings = settings.layoutSettings;
     editor.layoutEngine = function() {
         return new IMCSDiagramLayout();
     }

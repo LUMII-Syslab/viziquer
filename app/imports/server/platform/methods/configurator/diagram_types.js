@@ -67,16 +67,6 @@ Meteor.methods({
 			type_list["editorType"] = list["editorType"];
 			type_list["size"] = {diagramSize: 9, dialogSize: 3};
 
-			if (list["editorType"] == "ZoomChart") {
-				type_list["layout"] = {mode: "dynamic",
-										nodeSpacing: 16,
-										layoutFreezeTimeout: 1500,
-										globalLayoutOnChanges: true,
-									};
-
-				type_list["size"] = {diagramSize: 10, dialogSize: 2};					
-			}
-
 			var dgr_type_id = DiagramTypes.insert(type_list);
 
 			//adding the default dialog tab

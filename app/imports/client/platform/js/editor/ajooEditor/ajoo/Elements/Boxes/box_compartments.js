@@ -244,8 +244,8 @@ var Compartment = function(compartments, compart_in, parent) {
 
 	compart.presentation = text;
 
-	compart.textWidth = 20;
-	// compart.textWidth = text.getTextWidth();
+	// compart.textWidth = 20;
+	compart.textWidth = text.getTextWidth() || 20;
 	compart.textHeight = text.getHeight();
 
 	compart.value = compart_in.value;

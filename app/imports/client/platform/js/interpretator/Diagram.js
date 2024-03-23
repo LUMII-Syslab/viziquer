@@ -161,9 +161,12 @@ Interpreter.methods({
 	ComputeLayout: function(x, y, boxes, lines) {
 		let editor = Interpreter.editor;
 
-    let ontologyMode = false; // FIXME: te vajag datos balstītu IF par to, vai šī ir ontoloģiju diagramma
-    let arrangeIncrementally = !ontologyMode;
-    let layoutType = ontologyMode ? "INVERSE_VERTICAL" : "UNIVERSAL";
+		let layout_settings = editor.layoutSettings;
+    // let ontologyMode = false; // FIXME: te vajag datos balstītu IF par to, vai šī ir ontoloģiju diagramma
+    // let arrangeIncrementally = !ontologyMode;
+
+    let layoutType = layout_settings.layout;
+    // let layoutType = ontologyMode ? "INVERSE_VERTICAL" : "UNIVERSAL";
 
     let layoutEngine = editor.layoutEngine(layoutType);
 
@@ -264,7 +267,9 @@ Interpreter.methods({
 				_.extend(options, {endSides: line.endSides,});
 			}
 
-      if (ontologyMode) {
+			// iespejams ir labaks veids, ka so parbaudit, neizmantojot hard-coded konstanti
+			if (layoutType == "INVERSE_VERTICAL" ) {
+      // if (ontologyMode) {
         // FIXME: hack: ja līnijai ir teksts, tad tā nav apakšklases (plūsmas) līnija
         // vajadzētu plūsmas pazīmi saņemt jau datos, vai nu no konfigurācijas, vai no import_ontology
         if (line?.compartments?.compartments[0]?.value?.trim()) {
@@ -291,6 +296,10 @@ Interpreter.methods({
 				_.each(line.compartments.compartments, function(compart) {
 					k++;
 					let placement = compart.placement;
+
+					// sis izdruka compartmentu platumu. So var drosi aizvakt, ja nav vajadzigs
+					console.log("line.compartment", compart, placement.width, placement.height);
+
 					layoutEngine.addLineLabel(k, i, placement.width, placement.height, placement.name);
 				});
 
@@ -298,9 +307,14 @@ Interpreter.methods({
 
 		});
 
-    let new_layout = arrangeIncrementally ? layoutEngine.arrangeIncrementally() : layoutEngine.arrangeFromScratch();
-    console.log('the new layout is', new_layout)
 
+    // let new_layout = arrangeIncrementally ? layoutEngine.arrangeIncrementally() : layoutEngine.arrangeFromScratch();
+		let new_layout = layoutEngine.arrangeFromScratch();
+		if (layoutType == "arrangeIncrementally") {
+			new_layout = layoutEngine.arrangeIncrementally();
+		}
+
+    console.log('the new layout is', new_layout)
     // FIXME: te nekas netiek darīts ar sarēķinātajām iezīmju vietām ( new_layout.labels[] ) !!
 
 		let moved_boxes = _.map(new_layout.boxes, function(box_in, key) {
