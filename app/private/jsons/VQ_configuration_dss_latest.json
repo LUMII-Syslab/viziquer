@@ -295,6 +295,10 @@
           "diagramSize": 8,
           "dialogSize": 4
         },
+		"layoutSettings": {
+			"layout": "UNIVERSAL",
+			"arrangeMethod": "arrangeFromScratch"
+		},
         "createdAt": "2017-03-22T15:00:39.729Z",
         "createdBy": "BzQP6kPWc4fyvwCb6",
         "diagramId": "7RrwRcGyxshqjBh9p",
