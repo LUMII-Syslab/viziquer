@@ -1,4 +1,4 @@
-import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
 
 let ontology1 = {
   Gen: {
@@ -2339,6 +2339,167 @@ Meteor.methods({
 
 
 	},
+
+    importOntologyNew: function(list, ontology) {
+		var user_id = Meteor.userId();
+
+        let project = Projects.findOne({_id: list.projectId,});
+        if (!project) {
+         console.error("No Project");
+         return;
+        }
+
+        let tool_id = project.toolId;
+
+		let diagram_type = DiagramTypes.findOne({name: "DataSchema", toolId: tool_id,});
+		if (!diagram_type) {
+			console.error("No diagram type");
+			return;
+		}
+
+		let diagram_object = {name: `DataSchema - ${ontology.Schema}`,
+								diagramTypeId: diagram_type._id,
+								style: diagram_type.style,
+								createdAt: new Date(),
+								createdBy: user_id,
+								editorType: "ajooEditor",
+								imageUrl: "http://placehold.it/770x347",
+								parentDiagrams: [],
+								allowedGroups: [],
+								editing: {},
+								seenCount: 0,
+								projectId: list.projectId,
+								versionId: list.versionId,
+								isLayoutComputationNeededOnLoad: 1,
+							};
+
+		let new_diagram_id = Diagrams.insert(diagram_object);
+		let element_map = {};
+
+        // Namespaces part 
+        let ns_type = ElementTypes.findOne({name: "Namespaces", diagramTypeId: diagram_type._id});
+        if (!ns_type) {
+			console.error("No Namespaces type");
+			return;
+		}    
+        let ns_style = ns_type["styles"][0];
+		let ns_style_id = ns_style["id"];   
+        let ns_object = {diagramId: new_diagram_id,
+            type: "Box",
+            name: "Namespaces",
+            location: {x: 10, y: 10, width: 5, height: 5},
+            styleId: ns_style_id,
+            style: ns_style,
+            elementTypeId: ns_type._id,
+            diagramTypeId: diagram_type._id,
+            projectId: list.projectId,
+            versionId: list.versionId,
+        };
+
+        let ns_element = Elements.insert(ns_object);
+        add_one_compartment(list, "List", replace_newline(ontology.Namespaces.n_0.compartments.List), new_diagram_id, diagram_type._id, ns_element, ns_type._id)
+
+        // Class part 
+		let class_type = ElementTypes.findOne({name: "Class", diagramTypeId: diagram_type._id});
+		if (!class_type) {
+			console.error("No Class type");
+			return;
+		}
+
+		_.each(ontology.Class, function(item, key) {
+
+			if (element_map[key]) {
+				console.error("Key already exists", key, element_map);
+				return;
+			}
+
+            let class_style = class_type["styles"].find(function(s){ return s.name == item.compartments.Type});
+            if ( class_style == undefined )
+                class_style = class_type["styles"][0];
+            let class_style_id = class_style["id"];
+
+			let object = {diagramId: new_diagram_id,
+							type: "Box",
+                            name: "Class",
+							location: {x: 10, y: 10, width: 5, height: 5},
+							styleId: class_style_id,
+							style: class_style,
+							elementTypeId: class_type._id,
+							diagramTypeId: diagram_type._id,
+							projectId: list.projectId,
+							versionId: list.versionId,
+						};
+
+			let new_box_id = Elements.insert(object);
+			element_map[key] = new_box_id;
+
+			add_class_compartments(list, item, new_diagram_id, diagram_type._id, new_box_id, class_type._id);
+		});
+
+		// Gen part
+		let gen_type = ElementTypes.findOne({name: "Generalization", diagramTypeId: diagram_type._id});
+		if (!gen_type) {
+			console.error("No Gen type");
+			return;
+		}
+
+		let gen_style = gen_type["styles"][0];
+		let gen_style_id = gen_style["id"];
+
+		_.each(ontology.Generalization, function(item, key) {
+			let object = {diagramId: new_diagram_id,
+							type: "Line",
+							points: [0, 20, 20, 20],
+                            startElement: element_map[item.target],
+							endElement: element_map[item.source],
+                            startSides: gen_type.startSides || 4,
+                            endSides: gen_type.endSides || 1,
+							styleId: gen_style_id,
+							elementTypeId: gen_type._id,
+							diagramTypeId: diagram_type._id,
+							style: gen_style,
+							projectId: list.projectId,
+							versionId: list.versionId,
+						};
+
+            let new_gen_id = Elements.insert(object);
+			element_map[key] = new_gen_id;  // Priekš kam ?
+
+		});
+
+
+		// Lines part
+		let line_type = ElementTypes.findOne({name: "ObjectProperty", diagramTypeId: diagram_type._id});
+		if (!line_type) {
+			console.error("No Line type");
+			return;
+		}
+
+		let line_style = line_type["styles"][0];
+		let line_style_id = line_style["id"];
+
+		_.each(ontology.ObjectProperty, function(item, key) {
+			let object = {diagramId: new_diagram_id,
+							type: "Line",
+							points: [0, 10, 10, 10],
+							startElement: element_map[item.source],
+							endElement: element_map[item.target],
+							styleId: line_style_id,
+							style: line_style,
+							elementTypeId: line_type._id,
+							diagramTypeId: diagram_type._id,
+							projectId: list.projectId,
+							versionId: list.versionId,
+						};
+
+			let new_line_id = Elements.insert(object);
+            element_map[key] = new_line_id;
+
+            for (const n of item.compartments.Name)
+                add_one_compartment(list, "Name", n, new_diagram_id, diagram_type._id, new_line_id, line_type._id)
+		});
+	},
+
 });
 
 
@@ -2387,6 +2548,61 @@ function add_compartment(list, item, diagram_id, diagram_type_id, element_id, el
 						isObjectRepresentation: false,
 						index: 1,
 
+						input: `${value} value`,
+						value: `${value} input`,
+						valueLC: value,
+					};
+
+	Compartments.insert(compart_obj);
+}
+
+function add_class_compartments(list, item, diagram_id, diagram_type_id, element_id, element_type_id) {
+	let compartments = item.compartments;
+
+    // Class Name
+    add_one_compartment(list, "Name", compartments.Name, diagram_id, diagram_type_id, element_id, element_type_id)
+  
+    // Class Type
+    add_one_compartment(list, "Type", compartments.Type, diagram_id, diagram_type_id, element_id, element_type_id)
+
+    // Attributes
+    if ( compartments.Attributes.length > 0 ) {
+        for (const atr of compartments.Attributes) {
+            add_one_compartment(list, "Attributes", atr, diagram_id, diagram_type_id, element_id, element_type_id)
+        }
+    }
+
+    //SubClasses
+    if ( compartments.ClassList != undefined ) {
+        for (const cl of compartments.ClassList) {
+            add_one_compartment(list, "ClassList", cl, diagram_id, diagram_type_id, element_id, element_type_id)
+        }
+    }
+
+}
+
+function add_one_compartment(list, compartmentName, value, diagram_id, diagram_type_id, element_id, element_type_id) {
+
+	let compartment_type = CompartmentTypes.findOne({elementTypeId: element_type_id, name:compartmentName});
+	if (!compartment_type) {
+		console.error("No compartment type");
+		return;
+	}
+
+	let style_obj = compartment_type["styles"][0];
+	let style = style_obj["style"];
+
+	let compart_obj = {diagramId: diagram_id,
+						diagramTypeId: diagram_type_id,
+						projectId: list.projectId,
+						versionId: list.versionId,
+						elementId: element_id,
+						elementTypeId: element_type_id,
+						compartmentTypeId: compartment_type._id,
+						style: style,
+						styleId: style_obj["id"],
+						isObjectRepresentation: false,
+						index: 1,
 						input: value,
 						value: value,
 						valueLC: value,
@@ -2395,8 +2611,9 @@ function add_compartment(list, item, diagram_id, diagram_type_id, element_id, el
 	Compartments.insert(compart_obj);
 }
 
-
 function replace_newline(str) {
 	str = str || "";
 	return str.replace(/\\n/g, "\n");
 }
+
+

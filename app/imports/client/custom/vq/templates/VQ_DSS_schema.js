@@ -326,7 +326,6 @@ Template.VQ_DSS_schema.events({
 		rezFull.info = getInfo().join('\n');
 		rezFull.namespaces = rezFull.namespaces.join('\n');
 		console.log('rezFull', rezFull);
-		console.log(dataShapes.schema)
 
 		let link = document.createElement("a");
 		link.setAttribute("download", "diagr_data.json");
@@ -361,6 +360,58 @@ Template.VQ_DSS_schema.events({
 		}
 		console.log(table_representation)
 		Meteor.call("importOntology", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+
+	},
+	'click #makeDiagrAJOO2': async function() {
+		if ( state == 0 )
+			await getBasicClasses(); // TODO varētu šīs jau būt izrēķinātas
+		calculateGroups();
+		makeSuperClasses(); 
+		makeAssociations();
+		makeDiagramData();
+		console.log('rezFull', rezFull);
+
+		const table_representation = { 
+			Schema:dataShapes.schema.schemaName, 
+			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces.join('\n')}}},
+			Class:{}, 
+			ObjectProperty:{}, 
+			Generalization:{}};
+
+			for (const k of Object.keys(rezFull.classes)) {
+			const el = rezFull.classes[k];
+			if ( el.used ) {
+				let type = el.type;
+				if ( type == 'Classif') 
+					if ( el.sub_classes_group_string != undefined )
+						type = 'ClassifierGroup'
+					else
+						type = 'Classifier';
+				if ( type == 'Class' && el.sub_classes_group_string != undefined )
+					type = 'ClassGroup';
+				if ( type== 'Abstract')
+					type = 'AbstractClass';
+
+				table_representation.Class[k] = { compartments:{ 
+					Name:el.fullNameD, 
+					Attributes:el.attributes, 
+					Type:type}};
+				if ( el.sub_classes_group_string != undefined )
+					table_representation.Class[k].compartments.ClassList = el.sub_classes_list;
+
+				for (const s of el.super_classes) {
+					table_representation.Generalization[`${k}_${s}`] = { source:k, target:s, compartments:{}};
+				}
+			}
+		}
+		
+		for (const k of Object.keys(rezFull.assoc)) {
+			const el = rezFull.assoc[k];
+			if ( el.removed == false  )
+				table_representation.ObjectProperty[k] = { source: el.from, target: el.to, compartments:{ Name: el.names}};
+		}
+		console.log(table_representation)
+		Meteor.call("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
 
 	},
 	'click #getProperties': async function() {
@@ -1004,7 +1055,8 @@ function makeClassGroup(list, type, sum = true) {
 		}
 		rezFull.classes[g_id] = { id:g_id, super_classes:[], used:true, hasGen:false, type:type, 
 			displayName:displayName, fullName:fullName, fullNameD:fullName, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
-			sub_classes_group_string:c_list_full.map(c => c.fullNameD).sort().join('\n'),			
+			sub_classes_group_string:c_list_full.map(c => c.fullNameD).sort().join('\n'),
+			sub_classes_list:c_list_full.map(c => c.fullNameD).sort(),				
 			sup:[], sub:[], atr_list:atr_list, all_atr:[], cnt:i_cnt, cnt_sum:getWeight(i_cnt, i_in_props), in_props:i_in_props }; 
 
 		Gnum = Gnum + 1;
@@ -1642,8 +1694,11 @@ function makeDiagramData() {
 			}
 
 			classInfo.atr_string = restAtrList.map(a => getAtrString(a)).sort().join('\n');
-			if ( inPropList.length > 0 )
+			classInfo.attributes = restAtrList.map(a => getAtrString(a)).sort();
+			if ( inPropList.length > 0 ) {
 				classInfo.atr_string = `${classInfo.atr_string}\n${inPropList.map(a => getAtrString(a)).sort().join('\n')}`;
+				classInfo.attributes = [...new Set([...classInfo.attributes, ...inPropList.map(a => getAtrString(a)).sort()])];
+			}
 			
 		}
 	}
@@ -1654,10 +1709,11 @@ function makeDiagramData() {
 		if ( !aInfo.removed) {
 			const aID = `${aInfo.from}_${aInfo.to}`;
 			if ( assoc[aID] != undefined ) {
-				assoc[aID].string = `${assoc[aID].string}\n${aInfo.string}`
+				assoc[aID].string = `${assoc[aID].string}\n${aInfo.string}`;
+				assoc[aID].names.push(aInfo.string);
 			}
 			else {
-				assoc[aID] = {from:aInfo.from, to:aInfo.to, removed:false, string:aInfo.string};
+				assoc[aID] = {from:aInfo.from, to:aInfo.to, removed:false, string:aInfo.string, names:[aInfo.string]};
 			}
 		}	
 	}
