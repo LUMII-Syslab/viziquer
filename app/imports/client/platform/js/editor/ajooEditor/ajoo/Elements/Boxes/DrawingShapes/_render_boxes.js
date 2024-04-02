@@ -173,6 +173,7 @@ Box.prototype = {
 		}
 
 		box["name"] = element["style"]["elementStyle"]["shape"];
+		box["layoutSettings"] = element["layoutSettings"] || {};
 		box.shapes = new_shape_obj["element"];
 
 		//box.shapes[0].transformsEnabled('position');

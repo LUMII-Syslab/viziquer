@@ -83,6 +83,7 @@ Link.prototype = {
 
 		link.lineType = style["lineType"];	
 		link.elementTypeId = list["elementTypeId"];
+		link.layoutSettings = list["layoutSettings"] || {};
 		link.data = list.data;
 	},
 

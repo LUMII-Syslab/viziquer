@@ -86,7 +86,8 @@ function build_initial_element_type(list, editor_type) {
 		res["direction"] = "Directional";
 	}
 
-	res["isAbstract"] = false;					
+	res["isAbstract"] = false;
+	res["layoutSettings"] = {};				
 
 	return res;
 }

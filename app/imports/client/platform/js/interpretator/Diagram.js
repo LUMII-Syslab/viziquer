@@ -162,11 +162,7 @@ Interpreter.methods({
 		let editor = Interpreter.editor;
 
 		let layout_settings = editor.layoutSettings;
-    // let ontologyMode = false; // FIXME: te vajag datos balstītu IF par to, vai šī ir ontoloģiju diagramma
-    // let arrangeIncrementally = !ontologyMode;
-
     let layoutType = layout_settings.layout;
-    // let layoutType = ontologyMode ? "INVERSE_VERTICAL" : "UNIVERSAL";
 
     let layoutEngine = editor.layoutEngine(layoutType);
 
@@ -268,10 +264,13 @@ Interpreter.methods({
 			}
 
 			// iespejams ir labaks veids, ka so parbaudit, neizmantojot hard-coded konstanti
-			if (layoutType == "INVERSE_VERTICAL" ) {
-      // if (ontologyMode) {
+			if (layoutType == "INVERSE_VERTICAL") {
         // FIXME: hack: ja līnijai ir teksts, tad tā nav apakšklases (plūsmas) līnija
         // vajadzētu plūsmas pazīmi saņemt jau datos, vai nu no konfigurācijas, vai no import_ontology
+				let line_layout_settings = line.layoutSettings;
+				console.log("this is line layout settings ", line_layout_settings);
+
+
         if (line?.compartments?.compartments[0]?.value?.trim()) {
           options.isFlowEdge = false;
           options.startSides = 10; // sānu malas
@@ -296,15 +295,9 @@ Interpreter.methods({
 				_.each(line.compartments.compartments, function(compart) {
 					k++;
 					let placement = compart.placement;
-
-					// sis izdruka compartmentu platumu. So var drosi aizvakt, ja nav vajadzigs
-					console.log("line.compartment", compart, placement.width, placement.height);
-
 					layoutEngine.addLineLabel(k, i, placement.width, placement.height, placement.name);
 				});
-
 			}
-
 		});
 
 
@@ -345,9 +338,9 @@ Interpreter.methods({
 
 				    		let line = elements_from_map[key];
 				    		if (!line) {
-								console.error("No line", key, elements_from_map);
-								return;
-							}
+									console.error("No line", key, elements_from_map);
+									return;
+								}
 
 			    			line.setPoints(line_new_points);
 							// link.setPoints(line_points);

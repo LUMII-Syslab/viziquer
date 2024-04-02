@@ -879,8 +879,8 @@ function limit_versions_fields() {
 }
 
 function limit_element_fields() {
-	return {_id: 1, type: 1, style: 1, styleId: 1, location: 1, startElement: 1, endElement: 1,
-		startSides: 1, endSides: 1, swimlane: 1, points: 1, superTypeIds: 1, elementTypeId: 1, targetId: 1, diagramId: 1};
+	return {_id: 1, type: 1, style: 1, styleId: 1, location: 1, startElement: 1, endElement: 1, layoutSettings: 1,
+			startSides: 1, endSides: 1, swimlane: 1, points: 1, superTypeIds: 1, elementTypeId: 1, targetId: 1, diagramId: 1};
 }
 
 function make_regex_subsring(text) {

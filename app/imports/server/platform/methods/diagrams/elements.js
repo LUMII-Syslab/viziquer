@@ -58,6 +58,11 @@ Meteor.methods({
 		if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 			var compartments = list.initialCompartments;
 
+
+			console.log("before inssert ", list)
+			console.log("")
+
+
 			var id = Elements.insert(list);
 			var domain = list["data"];
 
@@ -74,8 +79,7 @@ Meteor.methods({
 					var sub_type_id = data["startElementTypeId"];
 					var super_type_id = data["endElementTypeId"];
 
-					ElementTypes.update({_id: sub_type_id},
-										{$addToSet: {superTypeIds: super_type_id}});
+					ElementTypes.update({_id: sub_type_id}, {$addToSet: {superTypeIds: super_type_id}});
 				}
 
 				//inserting box or line target type
@@ -84,6 +88,11 @@ Meteor.methods({
 					var editor_type = domain["editorType"];
 
 					var new_list = build_initial_element_type(list, editor_type);
+
+
+					console.log("in new list ", new_list)
+
+
 					new_list["elementId"] = id;
 					new_list["diagramTypeId"] = data["diagramTypeId"];
 
