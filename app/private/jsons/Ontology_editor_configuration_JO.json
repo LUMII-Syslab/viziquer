@@ -245,7 +245,7 @@
           "dialogSize": 3
         },
         "layoutSettings": {
-          "layout": "UNIVERSAL",
+          "layout": "INVERSE_VERTICAL",
           "arrangeMethod": "arrangeFromScratch"
         },
         "versionId": "4RWs2nhwB88xc6K2F",
@@ -1507,7 +1507,12 @@
             "direction": "Directional",
             "isAbstract": false,
             "targetDiagramTypeId": "QPP4RcjwqAtpXPBJe",
-            "lineType": "Orthogonal"
+            "lineType": "Orthogonal",
+			"layoutSettings": {
+			  "isFlowEdge": true,
+			  "startSides": 5,
+			  "endSides": 5
+			}
           },
           "compartmentTypes": [],
           "dialog": [
