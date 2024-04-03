@@ -93,8 +93,6 @@ Template.diagramTemplate.helpers({
 			return;
 		}
 
-		console.log("diagram_type ", diagram_type)
-
 		var header = diagram_type.header;
 		var footer = diagram_type.footer;
 

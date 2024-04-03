@@ -26,11 +26,6 @@ Interpreter.methods({
 		//collects the element type object
 		var elem_type = ElementTypes.findOne({_id: elem_type_id});
 
-		console.log("in new box ", elem_type)
-
-
-
-
 		//creates a new element
 		new_element(new_obj_id, elem_type, points);
 	},
@@ -61,10 +56,6 @@ Interpreter.methods({
 		//collects the element type object
 		var line_type = compute_new_line_type([elem_type_id], start_elem_id, end_elem_id);
 		
-
-		console.log("in new line ", line_type)
-
-
 		//removing the line
 		if (!line_type) {
 

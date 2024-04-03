@@ -45,6 +45,12 @@ Meteor.methods({
 		if (is_project_member(user_id, compart_in) || is_public_diagram(compart_in["diagramId"])) {
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
+
+
+				console.log("compart_in ", compart_in)
+				console.log("")
+
+
 				Compartments.insert(compart_in);
 				// Compartments.insert(compart_in, {trimStrings: false});
 

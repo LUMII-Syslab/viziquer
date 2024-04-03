@@ -58,11 +58,6 @@ Meteor.methods({
 		if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 			var compartments = list.initialCompartments;
 
-
-			console.log("before inssert ", list)
-			console.log("")
-
-
 			var id = Elements.insert(list);
 			var domain = list["data"];
 
@@ -88,11 +83,6 @@ Meteor.methods({
 					var editor_type = domain["editorType"];
 
 					var new_list = build_initial_element_type(list, editor_type);
-
-
-					console.log("in new list ", new_list)
-
-
 					new_list["elementId"] = id;
 					new_list["diagramTypeId"] = data["diagramTypeId"];
 

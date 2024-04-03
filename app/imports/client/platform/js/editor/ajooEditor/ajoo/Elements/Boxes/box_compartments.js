@@ -85,7 +85,13 @@ BoxCompartments.prototype = {
 		var comparts = compartments.compartments;	
 		_.each(comparts_in, function(compart_in) {
 			
-			if ((compart_in && compart_in["value"] == "") ||
+			compart_in.type = compart_in.type || "text";
+			if (compart_in._id == "BbFXuG8ZxX8eSa9mT") {
+				compart_in.type = "horizontalLine";
+			}
+
+
+			if ((compart_in && compart_in["type"] == "text" && compart_in["value"] == "") ||
 				(compart_in["style"] && compart_in["style"]["visible"] == false)) {
 				return;
 			}
@@ -160,27 +166,41 @@ BoxCompartments.prototype = {
 		//updating each texts group label
 		_.each(comparts, function(compart) {
 
-			var text = compart.presentation;
-			
-			text.width(text_width);
-			text.y(total_height);	
+			var presentation = compart.presentation;			
+			if (compart.type == "text") {
+				var text = presentation;
 
-			var text_height = text.getHeight() || 20;
-			total_height = total_height + text_height;
+				text.width(text_width);
+				text.y(total_height);	
 
-			compart.textWidth = text_width;
-			compart.textHeight = text_height;
+				var text_height = text.getHeight() || 20;
+				total_height = total_height + text_height;
 
-			var underline = compart.underline;
-			if (underline) {
-				var underline_y_padding = 5;
-				var undeline_y = total_height + underline_y_padding;
+				compart.textWidth = text_width;
+				compart.textHeight = text_height;
 
-				var x_padding = 1
-				underline.points([-x_padding, undeline_y, text_width + x_padding, undeline_y,]);
+				var underline = compart.underline;
+				if (underline) {
+					var underline_y_padding = 5;
+					var undeline_y = total_height + underline_y_padding;
 
-				total_height += 2 * underline_y_padding;
+					var x_padding = 1
+					underline.points([-x_padding, undeline_y, text_width + x_padding, undeline_y,]);
+
+					total_height += 2 * underline_y_padding;
+				}
+
 			}
+
+			else {
+				if (compart.type == "horizontalLine") {
+					var line = presentation;
+					var padding = 2;
+					line.points([0, total_height + padding, text_width, total_height + padding,]);
+					total_height += 2 * padding;
+				}
+			}
+
 
 			//max_width = Math.max(text.getTextWidth(), max_width);
 		});
@@ -240,18 +260,33 @@ var Compartment = function(compartments, compart_in, parent) {
 	compart._id = compart_in["_id"];
 
 	compart.textsParent = parent;
-	var text = compart.createText(compart_in);
+	if (compart_in.type == "text") {
+		var text = compart.createText(compart_in);
 
-	compart.presentation = text;
+		compart.presentation = text;
 
-	// compart.textWidth = 20;
-	compart.textWidth = text.getTextWidth() || 20;
-	compart.textHeight = text.getHeight();
+		// compart.textWidth = 20;
+		compart.textWidth = text.getTextWidth() || 20;
+		compart.textHeight = text.getHeight();
 
-	compart.value = compart_in.value;
-	compart.input = compart_in.input;
+		compart.value = compart_in.value;
+		compart.input = compart_in.input;
+	}
+
+	else {
+		if (compart_in.type == "horizontalLine") {
+				var line = compart.createHorizontalLine(compart_in);
+				compart.presentation = line;
+		}
+		else {
+			console.log("No type specified", compart_in.type)
+		}
+
+	}
+
 
 	compart.compartmentTypeId = compart_in.compartmentTypeId;
+	compart.type = compart_in.type || "text";
 
 	return compart;
 }
@@ -298,6 +333,24 @@ Compartment.prototype = {
 		}
 
 		return text;
+	},
+
+
+	createHorizontalLine: function(compart_in) {
+			var compart = this;
+			var texts_group = compart.textsParent;
+
+			var style = compart_in.style || {};
+
+      var line = new Konva.Line({
+        points: [0, 0, 0, 0,],
+        stroke: style.stroke || "white",
+        strokeWidth: style.strokeWidth || 1,
+      });
+
+      texts_group.add(line);
+
+      return line;
 	},
 
 	getTextWidth() {

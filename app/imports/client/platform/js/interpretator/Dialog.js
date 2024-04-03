@@ -126,6 +126,7 @@ const Dialog = {
 				value: value,
 				index: compart_type["index"],
 				isObjectRepresentation: compart_type["isObjectRepresentation"],
+				type: compart_type["type"] || "text",
 			};
 
 		// if multifield

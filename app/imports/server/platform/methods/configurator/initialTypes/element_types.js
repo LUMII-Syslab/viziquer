@@ -15,12 +15,12 @@ function build_initial_element_type(list, editor_type) {
 	res["type"] = list["type"];
 
 	res["extensionPoints"] = [{extensionPoint: "createElement", procedure: "MakeElement"},
-								{extensionPoint: "resizeElement", procedure: "ResizeElement"},
-								//{extensionPoint: "beforeCreateElement", procedure: ""},
-								//{extensionPoint: "afterCreateElement", procedure: ""},
-								//{extensionPoint: "dynamicContextMenu", procedure: ""},
-								//{extensionPoint: "dynamicReadModeContextMenu", procedure: ""},
-							];
+														{extensionPoint: "resizeElement", procedure: "ResizeElement"},
+														//{extensionPoint: "beforeCreateElement", procedure: ""},
+														//{extensionPoint: "afterCreateElement", procedure: ""},
+														//{extensionPoint: "dynamicContextMenu", procedure: ""},
+														//{extensionPoint: "dynamicReadModeContextMenu", procedure: ""},
+													];
 
 	//adds keystrokes and context menu depending on element type
 	if (res["type"] == "Box") {
