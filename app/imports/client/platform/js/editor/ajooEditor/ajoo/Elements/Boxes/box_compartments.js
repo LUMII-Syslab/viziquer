@@ -86,11 +86,7 @@ BoxCompartments.prototype = {
 		_.each(comparts_in, function(compart_in) {
 			
 			compart_in.type = compart_in.type || "text";
-			if (compart_in._id == "BbFXuG8ZxX8eSa9mT") {
-				compart_in.type = "horizontalLine";
-			}
-
-
+			
 			if ((compart_in && compart_in["type"] == "text" && compart_in["value"] == "") ||
 				(compart_in["style"] && compart_in["style"]["visible"] == false)) {
 				return;
@@ -259,6 +255,8 @@ var Compartment = function(compartments, compart_in, parent) {
 
 	compart._id = compart_in["_id"];
 
+	compart_in.type = compart_in.type || "text";
+
 	compart.textsParent = parent;
 	if (compart_in.type == "text") {
 		var text = compart.createText(compart_in);
@@ -286,7 +284,6 @@ var Compartment = function(compartments, compart_in, parent) {
 
 
 	compart.compartmentTypeId = compart_in.compartmentTypeId;
-	compart.type = compart_in.type || "text";
 
 	return compart;
 }
