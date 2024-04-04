@@ -161,7 +161,6 @@ BoxCompartments.prototype = {
 
 		//updating each texts group label
 		_.each(comparts, function(compart) {
-
 			var presentation = compart.presentation;			
 			if (compart.type == "text") {
 				var text = presentation;
@@ -196,7 +195,6 @@ BoxCompartments.prototype = {
 					total_height += 2 * padding;
 				}
 			}
-
 
 			//max_width = Math.max(text.getTextWidth(), max_width);
 		});
@@ -256,6 +254,7 @@ var Compartment = function(compartments, compart_in, parent) {
 	compart._id = compart_in["_id"];
 
 	compart_in.type = compart_in.type || "text";
+	compart.type = compart_in.type;
 
 	compart.textsParent = parent;
 	if (compart_in.type == "text") {
