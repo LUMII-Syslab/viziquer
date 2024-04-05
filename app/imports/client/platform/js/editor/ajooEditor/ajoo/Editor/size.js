@@ -37,8 +37,9 @@ Size.prototype = {
 		var size = this;
 		var editor = size.editor;
 
-		if (!elements)
+		if (!elements) {
 			elements = editor.getElements();
+		}
 
 		var max_x = 0;
 		var max_y = 0;
@@ -65,7 +66,6 @@ Size.prototype = {
 	},
 
 	resizeStage: function(max_x, max_y, is_refresh_not_needed) {
-
 		var size = this;
 		var editor = size.editor;
 

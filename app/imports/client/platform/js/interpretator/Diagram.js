@@ -350,12 +350,15 @@ Interpreter.methods({
 				    	});
 
 		let list = {projectId: Session.get("activeProject"),
-					versionId: Session.get("versionId"),
-					lines: new_lines,
-					movedBoxes: moved_boxes,
-				};
+								versionId: Session.get("versionId"),
+								lines: new_lines,
+								movedBoxes: moved_boxes,
+							};
 
-		Utilities.callMeteorMethod("changeCollectionPosition", list);
+		Utilities.callMeteorMethod("changeCollectionPosition", list, function() {
+			editor.size.recomputeStageBorders();
+		});
+
 	},
 
 });

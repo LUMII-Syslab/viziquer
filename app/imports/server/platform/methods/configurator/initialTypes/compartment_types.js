@@ -45,6 +45,12 @@ function build_initial_compartment_type(list, elem_type, editor_type) {
 								{extensionPoint: "dynamicDefaultValue", procedure: ""},					
 								{extensionPoint: "dynamicDropDown", procedure: ""},
 							];
+
+	list["type"] = "text";
+	
+
+	console.log("initial type ", list)
+
 }
 
 function build_box_compartment_style(editor_type) {
