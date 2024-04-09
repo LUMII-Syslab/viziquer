@@ -2444,6 +2444,7 @@ Meteor.methods({
 
 		let gen_style = gen_type["styles"][0];
 		let gen_style_id = gen_style["id"];
+        let gen_layoutSettings = ( gen_type.layoutSettings != undefined) ?  gen_type.layoutSettings : {};
 
 		_.each(ontology.Generalization, function(item, key) {
 			let object = {diagramId: new_diagram_id,
@@ -2462,13 +2463,12 @@ Meteor.methods({
 								endShapeStyle: gen_style.endShapeStyle,
 								lineType: "Orthogonal",
                             },
-                            layoutSettings: gen_style.layoutSettings,
+                            layoutSettings: gen_layoutSettings,
 							projectId: list.projectId,
 							versionId: list.versionId,
 						};
 
             let new_gen_id = Elements.insert(object);
-            //console.log(Elements.findOne({_id:new_gen_id, diagramId: new_diagram_id}))
 			element_map[key] = new_gen_id;  // Priekš kam ?
 
 		});
@@ -2483,6 +2483,7 @@ Meteor.methods({
 
 		let line_style = line_type["styles"][0];
 		let line_style_id = line_style["id"];
+        let line_layoutSettings = ( line_type.layoutSettings != undefined) ?  line_type.layoutSettings : {};
 
 		_.each(ontology.ObjectProperty, function(item, key) {
 			let object = {diagramId: new_diagram_id,
@@ -2497,6 +2498,7 @@ Meteor.methods({
 								endShapeStyle: line_style.endShapeStyle,
 								lineType: "Orthogonal",
                             },
+                            layoutSettings: line_layoutSettings,
 							elementTypeId: line_type._id,
 							diagramTypeId: diagram_type._id,
 							projectId: list.projectId,
