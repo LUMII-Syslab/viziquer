@@ -1000,6 +1000,11 @@
             "elementId": "u8nL5N5riRaRYxGLJ",
             "superTypeIds": [],
             "type": "Line",
+            "layoutSettings": {
+              "isFlowEdge": false,
+              "startSides": 10,
+              "endSides": 15
+            },
             "extensionPoints": [
               {
                 "extensionPoint": "createElement",
@@ -1199,7 +1204,9 @@
             ],
             "readModeKeyStrokes": [],
             "layoutSettings": {
-              "isFlowEdge": true
+              "isFlowEdge": true,
+              "startSides": 5,
+              "endSides": 5
             },
             "contextMenu": [
               {
