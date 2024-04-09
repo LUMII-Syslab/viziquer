@@ -150,8 +150,8 @@ var AjooEditor = function(settings) {
     editor.data = {};
 
     editor.layoutSettings = settings.layoutSettings;
-    editor.layoutEngine = function() {
-        return new IMCSDiagramLayout();
+    editor.layoutEngine = function(layoutType, fastAdd) {
+        return new IMCSDiagramLayout(layoutType ?? 'UNIVERSAL', fastAdd);
     }
 
     editor.isLayoutComputationNeededOnLoad = settings.isLayoutComputationNeededOnLoad || 0;
