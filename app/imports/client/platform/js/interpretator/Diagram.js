@@ -254,6 +254,7 @@ Interpreter.methods({
 		_.each(lines, function(line, j) {
 			let i = _.size(boxes) + j;
 
+/*      
 			let options = {lineType: "ORTHOGONAL",};
 			if (_.isNumber(line.startSides)) {
 				_.extend(options, {startSides: line.startSides,});
@@ -283,6 +284,11 @@ Interpreter.methods({
       }
 
 			layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], options);
+*/      
+
+      const DEFAULT_LINE_LAYOUT = { isFlowEdge: false, startSides: 15, endSides: 15, lineType: 'ORTHOGONAL' }
+      
+      layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], line.layoutSettings ?? DEFAULT_LINE_LAYOUT);
 
 			let line_id = line._id;
 			if (!_.isNumber(elements_to_map[line_id])) {
