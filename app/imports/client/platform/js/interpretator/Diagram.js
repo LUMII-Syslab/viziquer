@@ -357,8 +357,10 @@ Interpreter.methods({
 
 		let list = {projectId: Session.get("activeProject"),
 								versionId: Session.get("versionId"),
+								diagramId: Session.get("activeDiagram"),
 								lines: new_lines,
 								movedBoxes: moved_boxes,
+								isLayoutComputationNeededOnLoad: editor.isLayoutComputationNeededOnLoad,
 							};
 
 		Utilities.callMeteorMethod("changeCollectionPosition", list, function() {

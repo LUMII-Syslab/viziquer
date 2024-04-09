@@ -284,8 +284,8 @@ AElements.prototype = {
         }
 
         if (editor.isLayoutComputationNeededOnLoad == 1) {
-            Interpreter.execute("ComputeLayout");
             editor.isLayoutComputationNeededOnLoad = 0;
+            Interpreter.execute("ComputeLayout");
         }
 
     },
