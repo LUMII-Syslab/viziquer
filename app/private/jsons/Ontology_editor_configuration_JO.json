@@ -216,6 +216,10 @@
           {
             "item": "Paste",
             "procedure": "Paste"
+          },
+          {
+            "item": "Layout",
+            "procedure": "ComputeLayout"
           }
         ],
         "readModeNoCollectionContextMenu": [],
@@ -245,7 +249,7 @@
           "dialogSize": 3
         },
         "layoutSettings": {
-          "layout": "UNIVERSAL",
+          "layout": "INVERSE_VERTICAL",
           "arrangeMethod": "arrangeFromScratch"
         },
         "versionId": "4RWs2nhwB88xc6K2F",
@@ -653,8 +657,9 @@
                 "defaultValue": "",
                 "isObjectRepresentation": false,
                 "inputType": {
-                  "type": "custom",
-                  "templateName": "multiField"
+                  "type": "textarea",
+                  "inputType": "text",
+                  "rows": 20
                 },
                 "styles": [
                   {
@@ -703,38 +708,6 @@
                     "procedure": ""
                   }
                 ],
-				"subCompartmentTypes": [
-                  {
-                    "_id": "7d33x25iay2px07knfeijmnc",
-                    "name": "Attributes",
-                    "label": "Attributes",
-                    "extensionPoints": [
-                      {
-                        "extensionPoint": "procDecompose",
-                        "procedure": ""
-                      }
-                    ],
-                    "prefix": null,
-                    "suffix": null,
-                    "defaultValue": null,
-                    "subCompartmentTypes": [
-                      {
-                        "_id": "1z2rawp0k83p0w9byfw9ywrw",
-                        "index": 1,
-                        "name": "Attribute",
-                        "extensionPoints": [],
-                        "prefix": "",
-                        "suffix": "",
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "input"
-                        },
-                        "subCompartmentTypes": [],
-                        "label": "Attribute"
-                      }
-                    ]
-                  }
-                ],
                 "label": "Attributes"
               }
             },
@@ -758,8 +731,9 @@
                 "defaultValue": "",
                 "isObjectRepresentation": false,
                 "inputType": {
-                  "type": "custom",
-                  "templateName": "multiField"
+                  "type": "textarea",
+                  "inputType": "text",
+                  "rows": 20
                 },
                 "styles": [
                   {
@@ -808,143 +782,7 @@
                     "procedure": ""
                   }
                 ],
-				"subCompartmentTypes": [
-                  {
-                    "_id": "119gdi1rk6x8jriyvgn8h3w4",
-                    "name": "ClassList",
-                    "label": "ClassList",
-                    "extensionPoints": [
-                      {
-                        "extensionPoint": "procDecompose",
-                        "procedure": ""
-                      }
-                    ],
-                    "prefix": null,
-                    "suffix": null,
-                    "defaultValue": null,
-                    "subCompartmentTypes": [
-                      {
-                        "_id": "q6d09t58dwy00jyj16x4ruyw",
-                        "index": 1,
-                        "name": "Class",
-                        "extensionPoints": [],
-                        "prefix": "",
-                        "suffix": "",
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "input"
-                        },
-                        "subCompartmentTypes": [],
-                        "label": "Class"
-                      }
-                    ]
-                  }
-                ],
                 "label": "ClassList"
-              }
-            },
-            {
-              "object": {
-                "_id": "4n2fuLqFrognHF9o4",
-                "toolId": "ti3aaE7ZGoi2HxC8x",
-                "versionId": "4RWs2nhwB88xc6K2F",
-                "diagramTypeId": "QPP4RcjwqAtpXPBJe",
-                "diagramId": "jEKjivtbJ2T4hKxou",
-                "elementTypeId": "vEsLxF8gwbtBTBSKP",
-                "elementId": "59FbRP3qMGEwpveZG",
-                "index": 3,
-                "noRepresentation": false,
-                "tabIndex": 4,
-                "dialogTabId": "BqStF2TX5SrmbHykR",
-                "name": "Type",
-                "description": "",
-                "prefix": "",
-                "suffix": "",
-                "defaultValue": "",
-                "isObjectRepresentation": false,
-                "inputType": {
-                  "type": "selection",
-                  "values": [
-                    {
-                      "input": "Class",
-                      "value": "",
-                      "elementStyle": "765dcc6f279762657846f196",
-                      "compartmentStyle": "de9790fcac13b8b07e747156"
-                    },
-                    {
-                      "input": "Classifier",
-                      "value": "",
-                      "elementStyle": "c2e6cd4419bedeac145af206",
-                      "compartmentStyle": "de9790fcac13b8b07e747156"
-                    },
-                    {
-                      "input": "AbstractClass",
-                      "value": "",
-                      "elementStyle": "cbc28f89d8e2ecd86f312865",
-                      "compartmentStyle": "de9790fcac13b8b07e747156"
-                    },
-                    {
-                      "input": "ClassGroup",
-                      "value": "",
-                      "elementStyle": "0400d1735e9f6ccbae9529c2",
-                      "compartmentStyle": "de9790fcac13b8b07e747156"
-                    },
-                    {
-                      "input": "ClassifierGroup",
-                      "value": "",
-                      "elementStyle": "4957a26f34a71a81948e2a6f",
-                      "compartmentStyle": "de9790fcac13b8b07e747156"
-                    }
-                  ]
-                },
-                "styles": [
-                  {
-                    "name": "Default",
-                    "id": "de9790fcac13b8b07e747156",
-                    "style": {
-                      "align": "center",
-                      "fill": "black",
-                      "padding": 0,
-                      "placement": "start-left",
-                      "visible": "false",
-                      "fontSize": 14,
-                      "fontStyle": "normal",
-                      "fontFamily": "Arial",
-                      "fontVariant": "normal"
-                    }
-                  }
-                ],
-                "extensionPoints": [
-                  {
-                    "extensionPoint": "beforeUpdate",
-                    "procedure": ""
-                  },
-                  {
-                    "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
-                  },
-                  {
-                    "extensionPoint": "afterUpdate",
-                    "procedure": ""
-                  },
-                  {
-                    "extensionPoint": "dynamicPrefix",
-                    "procedure": ""
-                  },
-                  {
-                    "extensionPoint": "dynamicSuffix",
-                    "procedure": ""
-                  },
-                  {
-                    "extensionPoint": "dynamicDefaultValue",
-                    "procedure": ""
-                  },
-                  {
-                    "extensionPoint": "dynamicDropDown",
-                    "procedure": ""
-                  }
-                ],
-                "label": "Type"
               }
             }
           ],
@@ -1082,9 +920,9 @@
                 "defaultValue": "",
                 "isObjectRepresentation": false,
                 "inputType": {
-                  "type": "custom",
+                  "type": "textarea",
                   "inputType": "text",
-                  "templateName": "multiField"
+                  "rows": 30
                 },
                 "styles": [
                   {
@@ -1131,57 +969,6 @@
                   {
                     "extensionPoint": "dynamicDropDown",
                     "procedure": ""
-                  }
-                ],
-				"subCompartmentTypes": [
-                  {
-                    "_id": "eaxwp9mjehanqr2b4mmh2e0w",
-                    "name": "List",
-                    "label": "List",
-                    "extensionPoints": [
-                      {
-                        "extensionPoint": "procDecompose",
-                        "procedure": ""
-                      }
-                    ],
-                    "prefix": null,
-                    "suffix": null,
-                    "defaultValue": null,
-                    "subCompartmentTypes": [
-                      {
-                        "_id": "wv90nt5kj09f62ch0zz7pi8d",
-                        "index": 1,
-                        "name": "Prefix",
-                        "extensionPoints": [
-						  {
-							"extensionPoint": "update",
-							"procedure": ""
-						  }
-                        ],
-                        "prefix": "PREFIX ",
-                        "suffix": ": ",
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "combobox"
-                        },
-                        "subCompartmentTypes": [],
-                        "label": "Prefix"
-                      },
-					  {
-                        "_id": "vnefhgjcdu0v3gjmbdgnqj43",
-                        "index": 2,
-                        "name": "Namespace",
-                        "label": "Namespace",
-                        "extensionPoints": [],
-                        "prefix": "<",
-                        "suffix": ">",
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "input"
-                        },
-                        "subCompartmentTypes": []
-                      }
-                    ]
                   }
                 ],
                 "label": "List"
@@ -1316,8 +1103,9 @@
                 "defaultValue": "",
                 "isObjectRepresentation": false,
                 "inputType": {
-                  "type": "custom",
-                  "templateName": "multiField"
+                  "type": "textarea",
+                  "inputType": "text",
+                  "rows": 20
                 },
                 "styles": [
                   {
@@ -1366,38 +1154,6 @@
                     "procedure": ""
                   }
                 ],
-				"subCompartmentTypes": [
-                  {
-                    "_id": "bz4nvnvpd0233he58c2rqhke",
-                    "name": "Name",
-                    "label": "Name",
-                    "extensionPoints": [
-                      {
-                        "extensionPoint": "procDecompose",
-                        "procedure": ""
-                      }
-                    ],
-                    "prefix": null,
-                    "suffix": null,
-                    "defaultValue": null,
-                    "subCompartmentTypes": [
-                      {
-                        "_id": "j9ntcwkvdpqrp7kp455hrjir",
-                        "index": 1,
-                        "name": "Name",
-                        "extensionPoints": [],
-                        "prefix": "",
-                        "suffix": "",
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "input"
-                        },
-                        "subCompartmentTypes": [],
-                        "label": "Name"
-                      }
-                    ]
-                  }
-                ],				
                 "label": "Name"
               }
             }
@@ -1442,6 +1198,9 @@
               }
             ],
             "readModeKeyStrokes": [],
+            "layoutSettings": {
+              "isFlowEdge": true
+            },
             "contextMenu": [
               {
                 "item": "Delete",
@@ -1471,22 +1230,6 @@
                   ]
                 },
                 "startShapeStyle": {
-                  "fill": "rgb(192,192,192)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(0,0,0)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": "0",
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 14,
-                  "shape": "Triangle"
-                },
-                "endShapeStyle": {
                   "fill": "rgb(65,113,156)",
                   "fillPriority": "color",
                   "stroke": "rgb(65,113,156)",
@@ -1501,6 +1244,22 @@
                   "dash": [],
                   "radius": 12,
                   "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "rgb(192,192,192)",
+                  "fillPriority": "color",
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": "0",
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 14,
+                  "shape": "Triangle"
                 }
               }
             ],

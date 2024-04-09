@@ -2370,10 +2370,11 @@ Meteor.methods({
 								seenCount: 0,
 								projectId: list.projectId,
 								versionId: list.versionId,
-								isLayoutComputationNeededOnLoad: 1,
+								isLayoutComputationNeededOnLoad: 0  // TODO, ja šeit ir viens, tad izkarto sākumā un vienmēr diagrammu atverot
 							};
 
-		let new_diagram_id = Diagrams.insert(diagram_object);
+
+        let new_diagram_id = Diagrams.insert(diagram_object);
 		let element_map = {};
 
         // Namespaces part 
@@ -2386,7 +2387,6 @@ Meteor.methods({
 		let ns_style_id = ns_style["id"];   
         let ns_object = {diagramId: new_diagram_id,
             type: "Box",
-            name: "Namespaces",
             location: {x: 10, y: 10, width: 5, height: 5},
             styleId: ns_style_id,
             style: ns_style,
@@ -2420,7 +2420,6 @@ Meteor.methods({
 
 			let object = {diagramId: new_diagram_id,
 							type: "Box",
-                            name: "Class",
 							location: {x: 10, y: 10, width: 5, height: 5},
 							styleId: class_style_id,
 							style: class_style,
@@ -2457,12 +2456,19 @@ Meteor.methods({
 							styleId: gen_style_id,
 							elementTypeId: gen_type._id,
 							diagramTypeId: diagram_type._id,
-							style: gen_style,
+                            style:{
+								elementStyle: gen_style.elementStyle,
+								startShapeStyle: gen_style.startShapeStyle,
+								endShapeStyle: gen_style.endShapeStyle,
+								lineType: "Orthogonal",
+                            },
+                            layoutSettings: gen_style.layoutSettings,
 							projectId: list.projectId,
 							versionId: list.versionId,
 						};
 
             let new_gen_id = Elements.insert(object);
+            //console.log(Elements.findOne({_id:new_gen_id, diagramId: new_diagram_id}))
 			element_map[key] = new_gen_id;  // Priekš kam ?
 
 		});
@@ -2485,7 +2491,12 @@ Meteor.methods({
 							startElement: element_map[item.source],
 							endElement: element_map[item.target],
 							styleId: line_style_id,
-							style: line_style,
+                            style:{
+								elementStyle: line_style.elementStyle,
+								startShapeStyle: line_style.startShapeStyle,
+								endShapeStyle: line_style.endShapeStyle,
+								lineType: "Orthogonal",
+                            },
 							elementTypeId: line_type._id,
 							diagramTypeId: diagram_type._id,
 							projectId: list.projectId,
@@ -2547,9 +2558,8 @@ function add_compartment(list, item, diagram_id, diagram_type_id, element_id, el
 						styleId: style_obj["id"],
 						isObjectRepresentation: false,
 						index: 1,
-
-						input: `${value} value`,
-						value: `${value} input`,
+						input: value,
+						value: value,
 						valueLC: value,
 					};
 
@@ -2562,21 +2572,14 @@ function add_class_compartments(list, item, diagram_id, diagram_type_id, element
     // Class Name
     add_one_compartment(list, "Name", compartments.Name, diagram_id, diagram_type_id, element_id, element_type_id)
   
-    // Class Type
-    add_one_compartment(list, "Type", compartments.Type, diagram_id, diagram_type_id, element_id, element_type_id)
-
     // Attributes
     if ( compartments.Attributes.length > 0 ) {
-        for (const atr of compartments.Attributes) {
-            add_one_compartment(list, "Attributes", atr, diagram_id, diagram_type_id, element_id, element_type_id)
-        }
+        add_one_compartment(list, "Attributes", replace_newline(compartments.Attributes.join('\n')), diagram_id, diagram_type_id, element_id, element_type_id)
     }
 
     //SubClasses
     if ( compartments.ClassList != undefined ) {
-        for (const cl of compartments.ClassList) {
-            add_one_compartment(list, "ClassList", cl, diagram_id, diagram_type_id, element_id, element_type_id)
-        }
+           add_one_compartment(list, "ClassList", replace_newline(compartments.ClassList.join('\n')), diagram_id, diagram_type_id, element_id, element_type_id)
     }
 
 }
