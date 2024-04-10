@@ -218,8 +218,16 @@
             "procedure": "Paste"
           },
           {
-            "item": "Layout",
+            "item": "Layout (default)",
             "procedure": "ComputeLayout"
+          },
+          {
+            "item": "Layout as Graph",
+            "procedure": "ComputeUniversalLayout"
+          },
+          {
+            "item": "Layout as Flow",
+            "procedure": "ComputeFlowLayout"
           }
         ],
         "readModeNoCollectionContextMenu": [],

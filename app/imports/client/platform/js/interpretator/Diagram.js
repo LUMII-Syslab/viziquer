@@ -157,6 +157,29 @@ Interpreter.methods({
 	 //    Utilities.callMeteorMethod("changeCollectionPosition", list);
 	},
 
+  ComputeFlowLayout: function() {
+    // remember existing
+		let editor = Interpreter.editor;
+		let remembered_layout_settings = { ...editor.layoutSettings };
+
+    editor.layoutSettings.layout = "INVERSE_VERTICAL";
+    Interpreter.execute("ComputeLayout");
+
+    // restore 
+    editor.layoutSettings = remembered_layout_settings;
+  },
+
+  ComputeUniversalLayout: function() {
+    // remember existing
+		let editor = Interpreter.editor;
+		let remembered_layout_settings = { ...editor.layoutSettings };
+
+    editor.layoutSettings.layout = "UNIVERSAL";
+    Interpreter.execute("ComputeLayout");
+
+    // restore 
+    editor.layoutSettings = remembered_layout_settings;
+  },
 
 	ComputeLayout: function(x, y, boxes, lines) {
 		let editor = Interpreter.editor;
@@ -287,7 +310,7 @@ Interpreter.methods({
 */      
 
       const DEFAULT_LINE_LAYOUT = { isFlowEdge: false, startSides: 15, endSides: 15, lineType: 'ORTHOGONAL' }
-      
+
       layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], line.layoutSettings ?? DEFAULT_LINE_LAYOUT);
 
 			let line_id = line._id;
