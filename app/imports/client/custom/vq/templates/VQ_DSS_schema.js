@@ -374,7 +374,7 @@ Template.VQ_DSS_schema.events({
 
 		const table_representation = { 
 			Schema:dataShapes.schema.schemaName, 
-			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces.join('\n')}}},
+			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces}}},
 			Class:{}, 
 			ObjectProperty:{}, 
 			Generalization:{}};
@@ -1668,7 +1668,7 @@ function makeDiagramData() {
 					rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}${atr_info.is_range} -> ${classNames}`;
 			}
 			if (atr_info.type == 'in') 
-				rez = `<-${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} <- ${classNames}`;
+				rez = `<- ${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} <- ${classNames}`;
 			if (atr_info.type == 'cycle') 
 				rez = `${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} <-> ${classNames}`;
 			}	

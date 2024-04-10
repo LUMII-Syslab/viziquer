@@ -237,7 +237,7 @@ Interpreter.methods({
 							tmp_width = Math.max(tmp_width, text_length);
 
 							//tmp_height = font_size + consant for gap between compartments
-							tmp_height += font_size + 5; // add a height gap between compartments
+							tmp_height += font_size; // ??? pagaidām noņēmu ??? + 5; // add a height gap between compartments
 
 							// if compartment lenght if bigger than max box width
 							if(text_length > 500){

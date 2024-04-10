@@ -2397,7 +2397,7 @@ Meteor.methods({
         };
 
         let ns_element = Elements.insert(ns_object);
-        add_one_compartment(list, "List", replace_newline(ontology.Namespaces.n_0.compartments.List), new_diagram_id, diagram_type._id, ns_element, ns_type._id)
+        add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, 30, new_diagram_id, diagram_type._id, ns_element, ns_type._id)
 
         // Class part 
 		let class_type = ElementTypes.findOne({name: "Class", diagramTypeId: diagram_type._id});
@@ -2508,7 +2508,7 @@ Meteor.methods({
 			let new_line_id = Elements.insert(object);
             element_map[key] = new_line_id;
 
-            add_one_compartment(list, "Name", replace_newline(item.compartments.Name.join('\n')), new_diagram_id, diagram_type._id, new_line_id, line_type._id)
+            add_one_compartment_from_list(list, "Name", item.compartments.Name, 5, new_diagram_id, diagram_type._id, new_line_id, line_type._id)
 		});
 	},
 });
@@ -2569,21 +2569,31 @@ function add_class_compartments(list, item, diagram_id, diagram_type_id, element
 	let compartments = item.compartments;
 
     // Class Name
-    add_one_compartment(list, "Name", compartments.Name, diagram_id, diagram_type_id, element_id, element_type_id)
+    add_one_compartment(list, "Name", compartments.Name, compartments.Name, diagram_id, diagram_type_id, element_id, element_type_id)
   
     // Attributes
     if ( compartments.Attributes.length > 0 ) {
-        add_one_compartment(list, "Attributes", replace_newline(compartments.Attributes.join('\n')), diagram_id, diagram_type_id, element_id, element_type_id)
+        add_one_compartment_from_list(list, "Attributes", compartments.Attributes, 20, diagram_id, diagram_type_id, element_id, element_type_id)
     }
 
     //SubClasses
     if ( compartments.ClassList != undefined ) {
-           add_one_compartment(list, "ClassList", replace_newline(compartments.ClassList.join('\n')), diagram_id, diagram_type_id, element_id, element_type_id)
+           add_one_compartment_from_list(list, "ClassList", compartments.ClassList, 20, diagram_id, diagram_type_id, element_id, element_type_id)
     }
 
 }
 
-function add_one_compartment(list, compartmentName, value, diagram_id, diagram_type_id, element_id, element_type_id) {
+function add_one_compartment_from_list(list, compartmentName, value_list, max_count,  diagram_id, diagram_type_id, element_id, element_type_id) {
+    const input = replace_newline(value_list.join('\n'));
+    if ( value_list.length > max_count) {
+        value_list = value_list.slice(0, max_count);
+        value_list.push('...');
+    }
+    const value = replace_newline(value_list.join('\n'));
+    add_one_compartment(list, compartmentName, input, value, diagram_id, diagram_type_id, element_id, element_type_id);
+}
+
+function add_one_compartment(list, compartmentName, input, value, diagram_id, diagram_type_id, element_id, element_type_id) {
 
 	let compartment_type = CompartmentTypes.findOne({elementTypeId: element_type_id, name:compartmentName});
 	if (!compartment_type) {
@@ -2605,7 +2615,7 @@ function add_one_compartment(list, compartmentName, value, diagram_id, diagram_t
 						styleId: style_obj["id"],
 						isObjectRepresentation: false,
 						index: 1,
-						input: value,
+						input: input,
 						value: value,
 						valueLC: value,
 					};
