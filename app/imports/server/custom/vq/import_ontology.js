@@ -2370,7 +2370,7 @@ Meteor.methods({
 								seenCount: 0,
 								projectId: list.projectId,
 								versionId: list.versionId,
-								isLayoutComputationNeededOnLoad: 0  // TODO, ja šeit ir viens, tad izkarto sākumā un vienmēr diagrammu atverot
+								isLayoutComputationNeededOnLoad: 1 
 							};
 
 
@@ -2508,13 +2508,10 @@ Meteor.methods({
 			let new_line_id = Elements.insert(object);
             element_map[key] = new_line_id;
 
-            for (const n of item.compartments.Name)
-                add_one_compartment(list, "Name", n, new_diagram_id, diagram_type._id, new_line_id, line_type._id)
+            add_one_compartment(list, "Name", replace_newline(item.compartments.Name.join('\n')), new_diagram_id, diagram_type._id, new_line_id, line_type._id)
 		});
 	},
-
 });
-
 
 function add_compartment(list, item, diagram_id, diagram_type_id, element_id, element_type_id) {
 	let compartments = item.compartments;
