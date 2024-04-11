@@ -580,7 +580,6 @@ const dataShapes = {
 		// *** console.log("------------getNamespaces ------------------")
 		//dataShapes.getNamespaces({schema:'europeana'})
 		//dataShapes.getNamespaces()
-		console.log("------------getNamespaces ------------------", params)
 		if ( params.schema == undefined ) {
 			if ( this.schema.namespaces.length > 0 )
 				return this.schema.namespaces;

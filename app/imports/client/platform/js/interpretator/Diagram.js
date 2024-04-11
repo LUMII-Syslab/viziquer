@@ -157,6 +157,29 @@ Interpreter.methods({
 	 //    Utilities.callMeteorMethod("changeCollectionPosition", list);
 	},
 
+  ComputeFlowLayout: function() {
+    // remember existing
+		let editor = Interpreter.editor;
+		let remembered_layout_settings = { ...editor.layoutSettings };
+
+    editor.layoutSettings.layout = "INVERSE_VERTICAL";
+    Interpreter.execute("ComputeLayout");
+
+    // restore 
+    editor.layoutSettings = remembered_layout_settings;
+  },
+
+  ComputeUniversalLayout: function() {
+    // remember existing
+		let editor = Interpreter.editor;
+		let remembered_layout_settings = { ...editor.layoutSettings };
+
+    editor.layoutSettings.layout = "UNIVERSAL";
+    Interpreter.execute("ComputeLayout");
+
+    // restore 
+    editor.layoutSettings = remembered_layout_settings;
+  },
 
 	ComputeLayout: function(x, y, boxes, lines) {
 		let editor = Interpreter.editor;
@@ -214,7 +237,7 @@ Interpreter.methods({
 							tmp_width = Math.max(tmp_width, text_length);
 
 							//tmp_height = font_size + consant for gap between compartments
-							tmp_height += font_size + 5; // add a height gap between compartments
+							tmp_height += font_size; // ??? pagaidām noņēmu ??? + 5; // add a height gap between compartments
 
 							// if compartment lenght if bigger than max box width
 							if(text_length > 500){
@@ -254,6 +277,7 @@ Interpreter.methods({
 		_.each(lines, function(line, j) {
 			let i = _.size(boxes) + j;
 
+/*      
 			let options = {lineType: "ORTHOGONAL",};
 			if (_.isNumber(line.startSides)) {
 				_.extend(options, {startSides: line.startSides,});
@@ -283,6 +307,11 @@ Interpreter.methods({
       }
 
 			layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], options);
+*/      
+
+      const DEFAULT_LINE_LAYOUT = { isFlowEdge: false, startSides: 15, endSides: 15, lineType: 'ORTHOGONAL' }
+
+      layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], line.layoutSettings ?? DEFAULT_LINE_LAYOUT);
 
 			let line_id = line._id;
 			if (!_.isNumber(elements_to_map[line_id])) {
@@ -351,8 +380,10 @@ Interpreter.methods({
 
 		let list = {projectId: Session.get("activeProject"),
 								versionId: Session.get("versionId"),
+								diagramId: Session.get("activeDiagram"),
 								lines: new_lines,
 								movedBoxes: moved_boxes,
+								isLayoutComputationNeededOnLoad: editor.isLayoutComputationNeededOnLoad,
 							};
 
 		Utilities.callMeteorMethod("changeCollectionPosition", list, function() {

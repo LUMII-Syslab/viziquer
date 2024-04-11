@@ -2370,10 +2370,11 @@ Meteor.methods({
 								seenCount: 0,
 								projectId: list.projectId,
 								versionId: list.versionId,
-								isLayoutComputationNeededOnLoad: 1,
+								isLayoutComputationNeededOnLoad: 1 
 							};
 
-		let new_diagram_id = Diagrams.insert(diagram_object);
+
+        let new_diagram_id = Diagrams.insert(diagram_object);
 		let element_map = {};
 
         // Namespaces part 
@@ -2386,7 +2387,6 @@ Meteor.methods({
 		let ns_style_id = ns_style["id"];   
         let ns_object = {diagramId: new_diagram_id,
             type: "Box",
-            name: "Namespaces",
             location: {x: 10, y: 10, width: 5, height: 5},
             styleId: ns_style_id,
             style: ns_style,
@@ -2397,7 +2397,7 @@ Meteor.methods({
         };
 
         let ns_element = Elements.insert(ns_object);
-        add_one_compartment(list, "List", replace_newline(ontology.Namespaces.n_0.compartments.List), new_diagram_id, diagram_type._id, ns_element, ns_type._id)
+        add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, 30, new_diagram_id, diagram_type._id, ns_element, ns_type._id)
 
         // Class part 
 		let class_type = ElementTypes.findOne({name: "Class", diagramTypeId: diagram_type._id});
@@ -2420,7 +2420,6 @@ Meteor.methods({
 
 			let object = {diagramId: new_diagram_id,
 							type: "Box",
-                            name: "Class",
 							location: {x: 10, y: 10, width: 5, height: 5},
 							styleId: class_style_id,
 							style: class_style,
@@ -2445,6 +2444,7 @@ Meteor.methods({
 
 		let gen_style = gen_type["styles"][0];
 		let gen_style_id = gen_style["id"];
+        let gen_layoutSettings = ( gen_type.layoutSettings != undefined) ?  gen_type.layoutSettings : {};
 
 		_.each(ontology.Generalization, function(item, key) {
 			let object = {diagramId: new_diagram_id,
@@ -2457,7 +2457,13 @@ Meteor.methods({
 							styleId: gen_style_id,
 							elementTypeId: gen_type._id,
 							diagramTypeId: diagram_type._id,
-							style: gen_style,
+                            style:{
+								elementStyle: gen_style.elementStyle,
+								startShapeStyle: gen_style.startShapeStyle,
+								endShapeStyle: gen_style.endShapeStyle,
+								lineType: "Orthogonal",
+                            },
+                            layoutSettings: gen_layoutSettings,
 							projectId: list.projectId,
 							versionId: list.versionId,
 						};
@@ -2477,6 +2483,7 @@ Meteor.methods({
 
 		let line_style = line_type["styles"][0];
 		let line_style_id = line_style["id"];
+        let line_layoutSettings = ( line_type.layoutSettings != undefined) ?  line_type.layoutSettings : {};
 
 		_.each(ontology.ObjectProperty, function(item, key) {
 			let object = {diagramId: new_diagram_id,
@@ -2485,7 +2492,13 @@ Meteor.methods({
 							startElement: element_map[item.source],
 							endElement: element_map[item.target],
 							styleId: line_style_id,
-							style: line_style,
+                            style:{
+								elementStyle: line_style.elementStyle,
+								startShapeStyle: line_style.startShapeStyle,
+								endShapeStyle: line_style.endShapeStyle,
+								lineType: "Orthogonal",
+                            },
+                            layoutSettings: line_layoutSettings,
 							elementTypeId: line_type._id,
 							diagramTypeId: diagram_type._id,
 							projectId: list.projectId,
@@ -2495,13 +2508,10 @@ Meteor.methods({
 			let new_line_id = Elements.insert(object);
             element_map[key] = new_line_id;
 
-            for (const n of item.compartments.Name)
-                add_one_compartment(list, "Name", n, new_diagram_id, diagram_type._id, new_line_id, line_type._id)
+            add_one_compartment_from_list(list, "Name", item.compartments.Name, 5, new_diagram_id, diagram_type._id, new_line_id, line_type._id)
 		});
 	},
-
 });
-
 
 function add_compartment(list, item, diagram_id, diagram_type_id, element_id, element_type_id) {
 	let compartments = item.compartments;
@@ -2547,9 +2557,8 @@ function add_compartment(list, item, diagram_id, diagram_type_id, element_id, el
 						styleId: style_obj["id"],
 						isObjectRepresentation: false,
 						index: 1,
-
-						input: `${value} value`,
-						value: `${value} input`,
+						input: value,
+						value: value,
 						valueLC: value,
 					};
 
@@ -2560,28 +2569,31 @@ function add_class_compartments(list, item, diagram_id, diagram_type_id, element
 	let compartments = item.compartments;
 
     // Class Name
-    add_one_compartment(list, "Name", compartments.Name, diagram_id, diagram_type_id, element_id, element_type_id)
+    add_one_compartment(list, "Name", compartments.Name, compartments.Name, diagram_id, diagram_type_id, element_id, element_type_id)
   
-    // Class Type
-    add_one_compartment(list, "Type", compartments.Type, diagram_id, diagram_type_id, element_id, element_type_id)
-
     // Attributes
     if ( compartments.Attributes.length > 0 ) {
-        for (const atr of compartments.Attributes) {
-            add_one_compartment(list, "Attributes", atr, diagram_id, diagram_type_id, element_id, element_type_id)
-        }
+        add_one_compartment_from_list(list, "Attributes", compartments.Attributes, 20, diagram_id, diagram_type_id, element_id, element_type_id)
     }
 
     //SubClasses
     if ( compartments.ClassList != undefined ) {
-        for (const cl of compartments.ClassList) {
-            add_one_compartment(list, "ClassList", cl, diagram_id, diagram_type_id, element_id, element_type_id)
-        }
+           add_one_compartment_from_list(list, "ClassList", compartments.ClassList, 20, diagram_id, diagram_type_id, element_id, element_type_id)
     }
 
 }
 
-function add_one_compartment(list, compartmentName, value, diagram_id, diagram_type_id, element_id, element_type_id) {
+function add_one_compartment_from_list(list, compartmentName, value_list, max_count,  diagram_id, diagram_type_id, element_id, element_type_id) {
+    const input = replace_newline(value_list.join('\n'));
+    if ( value_list.length > max_count) {
+        value_list = value_list.slice(0, max_count);
+        value_list.push('...');
+    }
+    const value = replace_newline(value_list.join('\n'));
+    add_one_compartment(list, compartmentName, input, value, diagram_id, diagram_type_id, element_id, element_type_id);
+}
+
+function add_one_compartment(list, compartmentName, input, value, diagram_id, diagram_type_id, element_id, element_type_id) {
 
 	let compartment_type = CompartmentTypes.findOne({elementTypeId: element_type_id, name:compartmentName});
 	if (!compartment_type) {
@@ -2603,7 +2615,7 @@ function add_one_compartment(list, compartmentName, value, diagram_id, diagram_t
 						styleId: style_obj["id"],
 						isObjectRepresentation: false,
 						index: 1,
-						input: value,
+						input: input,
 						value: value,
 						valueLC: value,
 					};

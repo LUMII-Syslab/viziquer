@@ -343,8 +343,9 @@ Template.VQ_DSS_schema.events({
 		console.log('rezFull', rezFull);
 
 		const table_representation = { Schema:dataShapes.schema.schemaName, SH:{ c0:{compartments:{ name:rezFull.namespaces.join('\n')}}}, Line3:{}, Gen:{}};
-			for (const k of Object.keys(rezFull.classes)) {
-			const el = rezFull.classes[k];
+
+		for (const k of Object.keys(rezFull.classes)) {
+		const el = rezFull.classes[k];
 			if ( el.used ) {
 				table_representation.SH[k] = { compartments:{ name:el.fullName, atr_string:el.atr_string, type:el.type, group_string: el.sub_classes_group_string }};
 				for (const s of el.super_classes) {
@@ -364,7 +365,7 @@ Template.VQ_DSS_schema.events({
 	},
 	'click #makeDiagrAJOO2': async function() {
 		if ( state == 0 )
-			await getBasicClasses(); // TODO varētu šīs jau būt izrēķinātas
+			await getBasicClasses(); 
 		calculateGroups();
 		makeSuperClasses(); 
 		makeAssociations();
@@ -373,12 +374,12 @@ Template.VQ_DSS_schema.events({
 
 		const table_representation = { 
 			Schema:dataShapes.schema.schemaName, 
-			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces.join('\n')}}},
+			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces}}},
 			Class:{}, 
 			ObjectProperty:{}, 
 			Generalization:{}};
 
-			for (const k of Object.keys(rezFull.classes)) {
+		for (const k of Object.keys(rezFull.classes)) {
 			const el = rezFull.classes[k];
 			if ( el.used ) {
 				let type = el.type;
@@ -400,11 +401,13 @@ Template.VQ_DSS_schema.events({
 					table_representation.Class[k].compartments.ClassList = el.sub_classes_list;
 
 				for (const s of el.super_classes) {
-					table_representation.Generalization[`${k}_${s}`] = { source:k, target:s, compartments:{}};
+					if ( rezFull.classes[s].used )
+						table_representation.Generalization[`${k}_${s}`] = { source:s, target:k, compartments:{}};
 				}
+
 			}
 		}
-		
+
 		for (const k of Object.keys(rezFull.assoc)) {
 			const el = rezFull.assoc[k];
 			if ( el.removed == false  )
@@ -1665,7 +1668,7 @@ function makeDiagramData() {
 					rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}${atr_info.is_range} -> ${classNames}`;
 			}
 			if (atr_info.type == 'in') 
-				rez = `<-${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} <- ${classNames}`;
+				rez = `<- ${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} <- ${classNames}`;
 			if (atr_info.type == 'cycle') 
 				rez = `${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} <-> ${classNames}`;
 			}	

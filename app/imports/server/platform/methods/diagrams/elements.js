@@ -402,6 +402,12 @@ Meteor.methods({
 							};
 
 				change_position(list, query, user_id);
+
+				if (list.isLayoutComputationNeededOnLoad != undefined) {
+					Diagrams.update({_id: list.diagramId, projectId: list["projectId"],},
+									{$set: {isLayoutComputationNeededOnLoad: list.isLayoutComputationNeededOnLoad,}});
+				}
+
 			}
 		}
 		else if (is_system_admin(user_id, list)) {
