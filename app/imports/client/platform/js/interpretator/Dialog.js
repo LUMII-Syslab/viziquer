@@ -33,7 +33,35 @@ Interpreter.methods({
 
 		return Dialog.updateCompartmentValue(compart_type, elem_id, input, value, src_id, compart_style, elem_style);
 	},
+	UpdateBigCompartment: function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
+	// TODO Nav pārāk skaisti, pagaidu risinājums, lai 'neizlien tie garie saraksti'
+		var compart_type = this;
+		var compartment = Compartments.findOne({elementId: elem_id, compartmentTypeId: compart_type["_id"]});
+		if ( compartment.input.length != compartment.value.length) {
+			console.log('Imaiņas netiek veiktas! Saīsināto datu situācija.')
+			return;
+		}
+		var value = Dialog.buildCompartmentValue(compart_type, input, mapped_value);
 
+		//selecting the element style by id
+		var elem_style;
+		if (elemStyleId) {
+			var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType"), "styles.id": elemStyleId});
+			if (elem_type && elem_type["styles"]) {
+				elem_style = Dialog.get_style_by_id(elem_type["styles"], elemStyleId);
+			}
+		}
+
+		//selecting the compartment style by id
+		var compart_style;
+		if (compartStyleId) {
+			if (compart_type) {
+				compart_style = Dialog.get_style_by_id(compart_type["styles"], compartStyleId);
+			}
+		}
+
+		return Dialog.updateCompartmentValue(compart_type, elem_id, input, value, src_id, compart_style, elem_style);
+	},
 	TestDynamicDropDown: function() {
 		return [
 			{value: "item1", input: "item1", elementStyle: "NoStyle"},

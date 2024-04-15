@@ -2370,11 +2370,18 @@ Meteor.methods({
 								seenCount: 0,
 								projectId: list.projectId,
 								versionId: list.versionId,
-								isLayoutComputationNeededOnLoad: 1 
+								isLayoutComputationNeededOnLoad: 1,
+                                description:`${ontology.ClassCount} classes, ${ontology.NodesCount} nodes` 
 							};
-
+        
+        if ( !ontology.hasGeneralization ) {
+            console.log('Mēģinam likt klāt citu izvietojumu', ontology.Schema)
+            diagram_object['layoutSettings'] = {layout: 'UNIVERSAL', arrangeMethod: 'arrangeFromScratch'};
+            //console.log(diagram_object, diagram_object.description, 'aaaaa')
+        }
 
         let new_diagram_id = Diagrams.insert(diagram_object);
+        //console.log('Otra diagramma 5555', Diagrams.findOne({_id:new_diagram_id}))
 		let element_map = {};
 
         // Namespaces part 
@@ -2397,7 +2404,8 @@ Meteor.methods({
         };
 
         let ns_element = Elements.insert(ns_object);
-        add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, 30, new_diagram_id, diagram_type._id, ns_element, ns_type._id)
+        const nsProc = (ontology.Namespaces.n_0.compartments.List.length > 35) ? Math.round(3500/ontology.Namespaces.n_0.compartments.List.length) : 100; 
+        add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, '', nsProc, new_diagram_id, diagram_type._id, ns_element, ns_type._id, false)
 
         // Class part 
 		let class_type = ElementTypes.findOne({name: "Class", diagramTypeId: diagram_type._id});
@@ -2507,8 +2515,9 @@ Meteor.methods({
 
 			let new_line_id = Elements.insert(object);
             element_map[key] = new_line_id;
-
-            add_one_compartment_from_list(list, "Name", item.compartments.Name, 5, new_diagram_id, diagram_type._id, new_line_id, line_type._id)
+            const lineCompCount = 5;
+            const lineProc = (item.compartments.Name.length > lineCompCount + 2 ) ? Math.round(lineCompCount*100/item.compartments.Name.length) : 100; 
+            add_one_compartment_from_list(list, "Name", item.compartments.Name, '', lineProc, new_diagram_id, diagram_type._id, new_line_id, line_type._id)
 		});
 	},
 });
@@ -2571,25 +2580,44 @@ function add_class_compartments(list, item, diagram_id, diagram_type_id, element
     // Class Name
     add_one_compartment(list, "Name", compartments.Name, compartments.Name, diagram_id, diagram_type_id, element_id, element_type_id)
   
+    const compCount = compartments.AttributesT.out.length + compartments.AttributesT.in.length +
+                       compartments.AttributesT.c.length + compartments.ClassList.length;
+    let proc = 100;
+
+    // TODO -35 ir konstante ~ apmēram tik daudz būs kompartmentu atļauti 
+    const comCount = 35;
+    if ( compCount > comCount +1 ) { 
+        proc = Math.round(comCount*100/compCount)
+    }
     // Attributes
-    if ( compartments.Attributes.length > 0 ) {
-        add_one_compartment_from_list(list, "Attributes", compartments.Attributes, 20, diagram_id, diagram_type_id, element_id, element_type_id)
+    if ( compartments.AttributesT.out.length > 0 ) {
+        add_one_compartment_from_list(list, "PropOut", compartments.AttributesT.out, '', proc, diagram_id, diagram_type_id, element_id, element_type_id)
+    }
+    if ( compartments.AttributesT.in.length > 0 ) {
+        add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, '<- ', proc, diagram_id, diagram_type_id, element_id, element_type_id)
+    }
+    if ( compartments.AttributesT.c.length > 0 ) {
+        add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, '<> ', proc, diagram_id, diagram_type_id, element_id, element_type_id)
     }
 
     //SubClasses
-    if ( compartments.ClassList != undefined ) {
-           add_one_compartment_from_list(list, "ClassList", compartments.ClassList, 20, diagram_id, diagram_type_id, element_id, element_type_id)
+    if ( compartments.ClassList.length > 0 ) {
+           add_one_compartment_from_list(list, "ClassList", compartments.ClassList, '', proc, diagram_id, diagram_type_id, element_id, element_type_id)
     }
 
 }
 
-function add_one_compartment_from_list(list, compartmentName, value_list, max_count,  diagram_id, diagram_type_id, element_id, element_type_id) {
-    const input = replace_newline(value_list.join('\n'));
-    if ( value_list.length > max_count) {
+function add_one_compartment_from_list(list, compartmentName, value_list, pref, proc,  diagram_id, diagram_type_id, element_id, element_type_id, sort = true) {
+    const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
+    const max_count = Math.round(value_list.length*proc/100);
+    const length = value_list.length;   
+    if ( value_list.length < 3 || length-max_count == 1) proc = 100; // TODO šis ir lai nesanāk dīvaini
+    if ( proc < 100 ) {
         value_list = value_list.slice(0, max_count);
-        value_list.push('...');
     }
-    const value = replace_newline(value_list.join('\n'));
+    let value = ( sort ) ? replace_newline(value_list.map(a => `${pref}${a.name}`).sort().join('\n')) : replace_newline(value_list.map(a => `${pref}${a.name}`).join('\n'));
+    if ( proc < 100 )  value = `${value}\n...(${length-max_count})...`; 
+
     add_one_compartment(list, compartmentName, input, value, diagram_id, diagram_type_id, element_id, element_type_id);
 }
 
@@ -2597,7 +2625,7 @@ function add_one_compartment(list, compartmentName, input, value, diagram_id, di
 
 	let compartment_type = CompartmentTypes.findOne({elementTypeId: element_type_id, name:compartmentName});
 	if (!compartment_type) {
-		console.error("No compartment type");
+		console.error("No compartment type", compartmentName);
 		return;
 	}
 
