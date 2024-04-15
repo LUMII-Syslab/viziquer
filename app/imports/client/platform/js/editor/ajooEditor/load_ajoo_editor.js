@@ -10,7 +10,7 @@ import { compute_new_line_type } from '/imports/client/platform/js/interpretator
 
 Interpreter.loadAjooEditor = function(diagram) {
 
-	console.log("diagram ", diagram)
+	console.log("diagram ", diagram, diagram.layoutSettings)
 
 	if (!(diagram && diagram["style"])) {
 		console.error("Error: no diagram");
@@ -32,6 +32,13 @@ Interpreter.loadAjooEditor = function(diagram) {
 
     var container_width = $("#" + container_name).width();
     var container_height = $(window).height() - $("#" + container_name).offset().top - 200;
+	
+	var layoutSettings = {"layout": "UNIVERSAL", "arrangeMethod": "arrangeFromScratch"};
+	if ( diagram.layoutSettings != undefined )
+		layoutSettings = diagram.layoutSettings;
+	else if ( diagram_type.layoutSettings != undefined)
+		layoutSettings = diagram_type.layoutSettings;
+		
 
 	var settings = {
 			        container: container_name,
@@ -63,9 +70,7 @@ Interpreter.loadAjooEditor = function(diagram) {
 	                eventLogging: event_logging(),
 	                isLayoutComputationNeededOnLoad: diagram["isLayoutComputationNeededOnLoad"],
 
-	                layoutSettings: diagram_type["layoutSettings"] || {"layout": "UNIVERSAL",
-	                													"arrangeMethod": "arrangeFromScratch",
-	                												},
+	                layoutSettings: layoutSettings
 			    };
 
 	return new AjooEditor(settings);

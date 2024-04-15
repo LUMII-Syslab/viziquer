@@ -658,7 +658,7 @@
                 "noRepresentation": false,
                 "tabIndex": 2,
                 "dialogTabId": "BqStF2TX5SrmbHykR",
-                "name": "Attributes",
+                "name": "PropOut",
                 "description": "",
                 "prefix": "",
                 "suffix": "",
@@ -693,7 +693,7 @@
                   },
                   {
                     "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
+                    "procedure": "UpdateBigCompartment"
                   },
                   {
                     "extensionPoint": "afterUpdate",
@@ -716,12 +716,12 @@
                     "procedure": ""
                   }
                 ],
-                "label": "Attributes"
+                "label": "Outgoing properties"
               }
             },
-            {
+			{
               "object": {
-                "_id": "L2vfuH3zGqDJmHvWL",
+                "_id": "ygAiBWdnFMFjLTWm7",
                 "toolId": "ti3aaE7ZGoi2HxC8x",
                 "versionId": "4RWs2nhwB88xc6K2F",
                 "diagramTypeId": "QPP4RcjwqAtpXPBJe",
@@ -732,6 +732,154 @@
                 "noRepresentation": false,
                 "tabIndex": 3,
                 "dialogTabId": "BqStF2TX5SrmbHykR",
+                "name": "PropIn",
+                "description": "",
+                "prefix": "",
+                "suffix": "",
+                "defaultValue": "",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "textarea",
+                  "inputType": "text",
+                  "rows": 5
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "8971b3cbfcc7ae55fbcc5480",
+                    "style": {
+                      "align": "left",
+                      "fill": "black",
+                      "padding": "0",
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateBigCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown",
+                    "procedure": ""
+                  }
+                ],
+                "label": "Incoming properties"
+              }
+            },
+			{
+              "object": {
+                "_id": "ygAiBWdnFMFjLTWm8",
+                "toolId": "ti3aaE7ZGoi2HxC8x",
+                "versionId": "4RWs2nhwB88xc6K2F",
+                "diagramTypeId": "QPP4RcjwqAtpXPBJe",
+                "diagramId": "jEKjivtbJ2T4hKxou",
+                "elementTypeId": "vEsLxF8gwbtBTBSKP",
+                "elementId": "59FbRP3qMGEwpveZG",
+                "index": 3,
+                "noRepresentation": false,
+                "tabIndex": 4,
+                "dialogTabId": "BqStF2TX5SrmbHykR",
+                "name": "PropC",
+                "description": "",
+                "prefix": "",
+                "suffix": "",
+                "defaultValue": "",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "textarea",
+                  "inputType": "text",
+                  "rows":5
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "8971b3cbfcc7ae55fbcc5480",
+                    "style": {
+                      "align": "left",
+                      "fill": "black",
+                      "padding": "0",
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateBigCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown",
+                    "procedure": ""
+                  }
+                ],
+                "label": "Cyclic properties"
+              }
+            },			
+            {
+              "object": {
+                "_id": "L2vfuH3zGqDJmHvWL",
+                "toolId": "ti3aaE7ZGoi2HxC8x",
+                "versionId": "4RWs2nhwB88xc6K2F",
+                "diagramTypeId": "QPP4RcjwqAtpXPBJe",
+                "diagramId": "jEKjivtbJ2T4hKxou",
+                "elementTypeId": "vEsLxF8gwbtBTBSKP",
+                "elementId": "59FbRP3qMGEwpveZG",
+                "index": 0,
+                "noRepresentation": false,
+                "tabIndex": 1,
+                "dialogTabId": "BqStF2TX5SrmbHykk",
                 "name": "ClassList",
                 "description": "",
                 "prefix": "",
@@ -767,7 +915,7 @@
                   },
                   {
                     "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
+                    "procedure": "UpdateBigCompartment"
                   },
                   {
                     "extensionPoint": "afterUpdate",
@@ -804,6 +952,16 @@
               "elementTypeId": "vEsLxF8gwbtBTBSKP",
               "name": "Main",
               "index": 1
+            },
+			{
+              "_id": "BqStF2TX5SrmbHykk",
+              "toolId": "ti3aaE7ZGoi2HxC8x",
+              "versionId": "4RWs2nhwB88xc6K2F",
+              "diagramTypeId": "QPP4RcjwqAtpXPBJe",
+              "diagramId": "jEKjivtbJ2T4hKxou",
+              "elementTypeId": "vEsLxF8gwbtBTBSKP",
+              "name": "ClassList",
+              "index": 2
             }
           ]
         },
@@ -956,7 +1114,7 @@
                   },
                   {
                     "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
+                    "procedure": "UpdateBigCompartment"
                   },
                   {
                     "extensionPoint": "afterUpdate",
@@ -1144,7 +1302,7 @@
                   },
                   {
                     "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
+                    "procedure": "UpdateBigCompartment"
                   },
                   {
                     "extensionPoint": "afterUpdate",
@@ -1167,7 +1325,7 @@
                     "procedure": ""
                   }
                 ],
-                "label": "Name"
+                "label": "Object properties"
               }
             }
           ],
