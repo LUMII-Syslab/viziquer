@@ -7,6 +7,8 @@ import './add_link_form.html'
 import { Create_VQ_Element, VQ_Element } from '../js/VQ_Element';
 import { autoCompletionCleanup, autoCompletionAddLink } from '../js/autoCompletion';
 
+import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
+
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const delayTime = 500;
 var linkKeyDownTimeStamp;
@@ -225,7 +227,12 @@ Template.SelectTargetClass.events({
 		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		
-		let schemaName = dataShapes.schema.schemaType;
+		let scName = await getSchemaNameForElement();
+		let schemaName = dataShapes.schema.schema;
+		if(typeof scName !== "undefined" && scName !== null && scName !== "") {
+			schemaName = scName;
+		}
+		
 		if(typeof schemaName === "undefined") schemaName = "";
 		
 		var params = {};
@@ -247,6 +254,7 @@ Template.SelectTargetClass.events({
 					"main": {"limit": 30,  "filter": f},
 					"element": {"pList": {"in": elementParams}}
 				}
+				
 			} else {
 				let elementParams = [{"name": name, "type": "out",}]
 				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
@@ -258,7 +266,9 @@ Template.SelectTargetClass.events({
 					"main": {"limit": 30,  "filter": f},
 					"element": {"pList": {"out": elementParams}}
 				}
+				
 			}
+		if(typeof schemaName === "undefined" && schemaName !== null && schemaName !== null && dataShapes.schema.schema !== schemaName) params.main.schema = schemaName;
 		var classes = await dataShapes.getClassesFull(params);
 		classes = classes.data;
 		
@@ -266,7 +276,7 @@ Template.SelectTargetClass.events({
 		
 		_.each(classes, function(e){
 			var prefix;
-			if(e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd"))prefix = "";
+			if(dataShapes.schema.schema === schemaName && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;
 			if(e.principal_class == 2) e.clr = "color: purple";
@@ -465,7 +475,14 @@ Template.AddLink.events({
 		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
 		var class_name = $(e.target).closest(".association").attr("className");
 		
-		let schemaName = dataShapes.schema.schemaType;
+		let scName = await getSchemaNameForElement();
+		let schemaName = dataShapes.schema.schema;
+		let param = {};
+		if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+			schemaName = scName;
+			param.schema = schemaName;
+		}
+		
 		if(typeof schemaName === "undefined") schemaName = "";
 		
 		Template.SelectTargetClass.classes.set([{text: "Waiting answer...", wait: true}]);
@@ -478,7 +495,7 @@ Template.AddLink.events({
 		
 		var classes;
 		if(name == "==" || name == "++") {
-			classes = await dataShapes.getClasses();
+			classes = await dataShapes.getClasses(param);
 		}
 		else {
 			var params = {};
@@ -513,7 +530,9 @@ Template.AddLink.events({
 					"element": {"pList": {"out": elementParams,}}
 				}
 			}
-
+			if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+				params.main.schema = schemaName;
+			}
 			classes = await dataShapes.getClassesFull(params);
 			
 		}
@@ -522,7 +541,7 @@ Template.AddLink.events({
 
 		_.each(classes, function(e){
 			var prefix;
-			if(proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
+			if(dataShapes.schema.schema === schemaName &&(proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd"))))prefix = "";
 			else prefix = e.prefix+":";
 			// e.short_class_name = prefix + e.display_name;
 			e.short_class_name = e.full_name;
@@ -825,14 +844,21 @@ async function getAllAssociations(){
 						param.basicOrder = true;
 					}
 					
+					let scName = await getSchemaNameForElement();
+					let schemaName = dataShapes.schema.schema;
+					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+						// dataShapes.schema.schema = scName;
+						// dataShapes.schema.schemaType = scName;
+						schemaName = scName;
+						param.schema = scName;
+					}
+					
 					var prop = await dataShapes.getProperties(param, newStartElement);
 					
 					var allAssociations = prop["data"];
-					
-					let schemaName = dataShapes.schema.schemaType;
+									
 					if(typeof schemaName === "undefined") schemaName = "";
 
-					
 					_.each(allAssociations, function(e){
 						if ( e.mark === 'out') {
 							e.type = '=>';
@@ -846,7 +872,7 @@ async function getAllAssociations(){
 						
 						if (e.class_iri !== undefined && e.class_iri !== null) {
 							var prefix;
-							if((proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true) && e.class_is_local == true || (schemaName.toLowerCase() == "wikidata" && e.class_prefix == "wd"))prefix = "";
+							if(dataShapes.schema.schema === schemaName && ((proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true) && e.class_is_local == true || (schemaName.toLowerCase() == "wikidata" && e.class_prefix == "wd")))prefix = "";
 							else prefix = e.class_prefix+":";
 							e.short_class_name = prefix + e.class_display_name;						
 						}
@@ -897,7 +923,7 @@ async function getAllAssociations(){
 						//prefix:name
 						var prefix;
 
-						if((proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true) && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt")))prefix = "";
+						if(dataShapes.schema.schema === schemaName && ((proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true) && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt"))))prefix = "";
 						else prefix = e.prefix+":";
 						var eName = prefix + e.display_name;
 						

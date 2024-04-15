@@ -844,7 +844,12 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
     			async function resolveTypeFromSchemaForClass(id) {
-    				var cls = await dataShapes.resolveClassByName({name: id})
+					let scName = options.schemaName;
+					let param = {name: id}
+					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+						param["schema"] = scName;
+					}	
+    				var cls = await dataShapes.resolveClassByName(param)
     				if(cls["complete"] == false) return null;
     				if(cls["data"].length > 0){
     					return cls["data"][0];
@@ -855,8 +860,12 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
     			async function resolveTypeFromSchemaForAttributeAndLink(id) {
-    				
-    				var aorl = await dataShapes.resolvePropertyByName({name: id})
+    				let scName = options.schemaName;
+					let param = {name: id}
+					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+						param["schema"] = scName;
+					}	
+    				var aorl = await dataShapes.resolvePropertyByName(param)
     				if(aorl["complete"] == false) return null;
     				var res = aorl["data"][0];
     				if(res){
@@ -896,8 +905,6 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
     			async function checkIfVariable(Variable) {
     				var v=makeVar(Variable)
 					if(v.indexOf("@") !== -1) v = v.substring(0, v.indexOf("@"))
-					
-					console.log("QQQQQQQQQQQQQQQ", Variable, v)
 					
     				if(await resolveType(v) == null ) return v.replace(/-/g, " - ");
     				return Variable;

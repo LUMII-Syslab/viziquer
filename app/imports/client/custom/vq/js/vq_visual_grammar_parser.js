@@ -2746,7 +2746,7 @@ import { makeString } from './parserCommon';
     }
 
 
-    	function makeVar(o) {console.log("TTTTTTTTTTTTTTTTTTT");return makeString(o);};
+    	function makeVar(o) {return makeString(o);};
     	function makeVarVariable(o) {
     		var variable =  makeString(o);
     		if(variable.startsWith("_") == true) variable = variable.substring(1);

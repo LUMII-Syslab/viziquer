@@ -128,6 +128,41 @@ function Create_VQ_Element(func, location, isLink, source, target) {
 
 };
 
+function Create_VQ_Element_Declaration(func, location) {
+  var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
+
+    let elem_type = ElementTypes.findOne({name:"Declaration", diagramTypeId:active_diagram_type_id});
+    let elem_style = _.find(elem_type.styles, function(style) {
+                return style.name === "Default";
+    });
+
+    var new_box = {
+            projectId: Session.get("activeProject"),
+            versionId: Session.get("versionId"),
+
+            diagramId: Session.get("activeDiagram"),
+            diagramTypeId: elem_type["diagramTypeId"],
+            elementTypeId: elem_type["_id"],
+            style: {elementStyle: elem_style["elementStyle"]},
+            styleId: elem_style["id"],
+            type: "Box",
+            location:  location
+    };
+
+    let compartments = Dialog.buildCopartmentDefaultValue(new_box);
+
+    if (_.size(compartments) > 0) {
+      new_box.initialCompartments = compartments;
+    }
+
+    Utilities.callMeteorMethod("insertElement", new_box, function(elem_id) {
+          var vq_obj = new VQ_Element(elem_id);
+          if (func) { func(vq_obj) };
+    });
+
+
+};
+
 var VQ_Element_cache = {};
 
 // ajoo element id --> VQ_Element
@@ -710,10 +745,24 @@ VQ_Element.prototype = {
     {title:"namespace",name:"Namespace"}]);
   },
   
+  addPrefixDeclarations: function(prefix, namespace) {
+	this.addCompartmentSubCompartments("Prefix Declarations",[
+      {name:"Prefix",value:prefix},
+      {name:"Namespace",value:namespace},
+    ])
+  },
+  
   getSchemaDeclarations: function() {
     return this.getMultiCompartmentSubCompartmentValues("Schema Declarations",
     [{title:"schema",name:"Schema"},
     {title:"endpointURI",name:"Endpoint URI"}]);
+  },
+  
+  addSchemaDeclarations: function(schema, endpointURI) {
+	this.addCompartmentSubCompartments("Schema Declarations",[
+      {name:"Schema",value:schema},
+      {name:"Endpoint URI",value:endpointURI},
+    ])
   },
   
   // string, string -->
@@ -728,6 +777,14 @@ VQ_Element.prototype = {
     this.addCompartmentSubCompartments("Graphs",[
       {name:"Graph",value:graph},
       {name:"Graph instruction",value:graphInstruction},
+    ])
+  },
+  
+  addGraphsServices: function(graph,graphInstruction,schema) {
+    this.addCompartmentSubCompartments("Graph/Service",[
+      {name:"Graph",value:graph},
+      {name:"Graph instruction",value:graphInstruction},
+      {name:"Schema",value:schema},
     ])
   },
   // --> [{fulltext:string, exp:string, isDescending:bool},...]
@@ -1622,7 +1679,7 @@ VQ_Element.prototype = {
     getRootId: function (){
     	var classObj = this;
     	if (!classObj.isClass()) {return 0;}
-    	if (classObj.isRoot()){console.log(classObj.obj);
+    	if (classObj.isRoot()){
     		return classObj.obj._id;
     	} else {
     		if (classObj.getLinkToRoot()){
@@ -1652,5 +1709,6 @@ export {
   VQ_Element,
   Create_VQ_Element,
   async_Create_VQ_Element,
+  Create_VQ_Element_Declaration,
   VQ_Schema,
 }

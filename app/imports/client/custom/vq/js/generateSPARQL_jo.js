@@ -4,6 +4,8 @@ import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
 import { parse_class, parse_attrib, parse_filter, getPathFullGrammar } from './parser';
 import { VQ_Element } from './VQ_Element';
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
+import { setSchemaNamesForQuery } from '/imports/client/custom/vq/js/transformations.js'
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -402,6 +404,30 @@ Interpreter.customMethods({
 
     GenerateSPARQL_for_all_queries(elems_in_diagram_ids)
   },
+  
+  Collect_prefixes_from_diagram_for_all_queries: async function() {
+    // get _id of the active ajoo diagram
+    var diagramId = Session.get("activeDiagram");
+
+    // get an array of ajoo Elements whithin the active diagram
+    var elems_in_diagram_ids = Elements.find({diagramId:diagramId}).map(function(e) {
+      return e["_id"]
+    });
+
+    Collect_prefixes_for_all_queries(elems_in_diagram_ids)
+  },
+  
+  Collect_schemas_from_diagram_for_all_queries: async function() {
+    // get _id of the active ajoo diagram
+    var diagramId = Session.get("activeDiagram");
+
+    // get an array of ajoo Elements whithin the active diagram
+    var elems_in_diagram_ids = Elements.find({diagramId:diagramId}).map(function(e) {
+      return e["_id"]
+    });
+
+    Collect_schemas_for_all_queries(elems_in_diagram_ids)
+  },
 
   ExecuteSPARQL_from_text: function(text, paging_info) {
       executeSparqlString(text, paging_info);
@@ -609,6 +635,140 @@ async function GenerateSPARQL_for_all_queries(list_of_ids) {
   for(let v in sparqlTable){
 	  console.log("----", v, sparqlTable[v]);
   }
+}
+
+
+async function Collect_prefixes_for_all_queries(list_of_ids) {
+  Interpreter.destroyErrorMsg();
+  let el = new VQ_Element(Session.get("activeElement"));
+  let queries =  await genAbstractQueryForElementList(list_of_ids);
+  let prefixTable = [];
+  // goes through all queries found within the list of VQ element ids
+  for(let q = 0; q < queries.length; q++){
+	   var abstractQueryTable = await resolveTypesAndBuildSymbolTable(queries[q]);
+	   let result = generateSPARQLtext(abstractQueryTable);
+	   for(let p in result.prefixTable){
+		   if(typeof result.prefixTable[p] !== "function"){
+			   prefixTable[p] = result.prefixTable[p];
+		   }
+	   }
+  }
+  Interpreter.destroyErrorMsg();
+  for(let p in prefixTable){
+	  if(typeof prefixTable[p] !== "function" && prefixTable[p] === ""){	
+			let prefixFound = false;
+			let prefixValue = p.substring(0, p.length - 1) ;
+			let prefixes = await dataShapes.getNamespaces();
+			for(let r = 0; r < prefixes.length; r++){
+				if(prefixes[r]["name"] === prefixValue){
+					prefixTable[p] = prefixes[r]["value"];
+					prefixFound = true;
+					break;
+				}
+			}
+			let ontologies = await dataShapes.getOntologies();
+			
+			for(let o = 0; o < ontologies.length; o++){
+				if(prefixFound !== true){
+					if(typeof ontologies[o]["db_schema_name"]!== "undefined"){
+						let prefixes = await dataShapes.getNamespaces({schema:ontologies[o]["db_schema_name"]});
+						for(let r = 0; r < prefixes.length; r++){
+							if(prefixes[r]["name"] === prefixValue){
+								prefixTable[p] = prefixes[r]["value"];
+								prefixFound = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+		if(prefixTable[p] === "") prefixTable[p] = null;
+	  }
+  }
+  let showMessages = [];
+  let declaredPrefixes = el.getPrefixDeclarations();
+  for(let p in prefixTable){
+	  if(typeof prefixTable[p] !== "function"){
+		let addPrefix = false;
+		let pDeclaration = prefixTable[p];
+		if(pDeclaration.startsWith("<") && pDeclaration.endsWith(">")) pDeclaration = pDeclaration.substring(1,  pDeclaration.length - 1);
+		for(let r = 0; r < declaredPrefixes.length; r++){
+			if(declaredPrefixes[r]["prefix"] === p.substring(0, p.length - 1) && (prefixTable[p] === null || declaredPrefixes[r]["namespace"] === pDeclaration)){
+				addPrefix = true;
+				break;
+			} else if(declaredPrefixes[r]["prefix"] === p.substring(0, p.length - 1) && declaredPrefixes[r]["namespace"] !== pDeclaration){
+				showMessages.push("Prefix: "+ p.substring(0, p.length - 1) + " declares more than one namespace");
+				addPrefix = false;
+				break;
+			}
+		}
+		if(addPrefix === false){
+			if(prefixTable[p] === null) {
+				showMessages.push("Unknown prefix: "+ p.substring(0, p.length - 1));
+				el.addPrefixDeclarations(p.substring(0, p.length - 1), "");
+			}
+			else el.addPrefixDeclarations(p.substring(0, p.length - 1), pDeclaration);
+		}
+	  }
+  }
+  
+  Interpreter.destroyErrorMsg();
+  if(showMessages.length > 0) Interpreter.showErrorMsg(showMessages.join(" // "), -3); 
+}
+
+async function Collect_schemas_for_all_queries(list_of_ids) {
+  Interpreter.destroyErrorMsg();
+  let showMessages = [];
+  let schemaTable = [];
+  let el = new VQ_Element(Session.get("activeElement"));
+  let queries =  await genAbstractQueryForElementList(list_of_ids);
+  let ontologies = await dataShapes.getOntologies();
+  let declaredSchemas = el.getSchemaDeclarations();
+  	
+  for(let q = 0; q < queries.length; q++){
+	   let tempSymbolTable = queries[q];
+	   let sc = await dataShapes.schema.schema;
+	   let schemaNames = setSchemaNamesForQuery(tempSymbolTable["root"], [], sc);
+	  
+	   for(let s in schemaNames){
+		   if(typeof schemaNames[s] !== "function" && typeof schemaTable[schemaNames[s]] === "undefined" && typeof schemaNames[s] !== "undefined") {
+			schemaTable[schemaNames[s]] = "";
+			for(let o = 0; o < ontologies.length; o++){
+				if(ontologies[o]["display_name"] === schemaNames[s] || ontologies[o]["db_schema_name"] === schemaNames[s]){
+					delete schemaTable[schemaNames[s]];
+					schemaTable[ontologies[o]["display_name"]] = ontologies[o]["sparql_url"];
+					break;
+				}
+			}
+		   }
+	   }
+  }
+ 
+   for(let s in schemaTable){
+	  if(typeof schemaTable[s] !== "function"){
+		let addSchema = false;
+		for(let r = 0; r < declaredSchemas.length; r++){
+			if(declaredSchemas[r]["schema"] === s && (schemaTable[s] === null || declaredSchemas[r]["endpointURI"] === schemaTable[s])){
+				addSchema = true;
+				break;
+			} else if(declaredSchemas[r]["schema"] === s && declaredSchemas[r]["endpointURI"] !== schemaTable[s]){
+				showMessages.push("Schema: "+ s + " declares more than one endpoint URI");
+				addSchema = false;
+				break;
+			}
+		}
+		if(addSchema === false){
+			if(schemaTable[s] === "") {
+				showMessages.push("Unknown schema: "+ s);
+				el.addSchemaDeclarations(s, "");
+			}
+			else el.addSchemaDeclarations(s, schemaTable[s]);
+		}
+	  }
+  }
+  
+  Interpreter.destroyErrorMsg();
+  if(showMessages.length > 0) Interpreter.showErrorMsg(showMessages.join(" // "), -3); 
 }
 
 function setText_In_SPARQL_Editor(text) {
@@ -1242,7 +1402,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 // if root class is Union
 		 if(rootClass["isUnion"] == true){
 			
-			var unionResult = getUNIONClasses(sparqlTable, null, null, true, referenceTable, SPARQL_interval, parameterTable);
+			var unionResult = getUNIONClasses(sparqlTable, null, null, true, referenceTable, SPARQL_interval, parameterTable, knownPrefixes);
 			SPARQL_text = unionResult["result"];
 			
 			messages = messages.concat(unionResult["messages"]);
@@ -1274,7 +1434,7 @@ function generateSPARQLtext(abstractQueryTable){
 				tempSelect = tempSelect.concat(selectResult["selectLabels"]);
 			 // }
 
-			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable, SPARQL_interval+"  ", parameterTable);
+			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable, SPARQL_interval+"  ", parameterTable, knownPrefixes);
 		
 			 tempSelect= tempSelect.concat(whereInfo["subSelectResult"]);
 			 
@@ -1305,7 +1465,15 @@ function generateSPARQLtext(abstractQueryTable){
 				for(let g in rootClass["namedGraphs"]){
 					if(typeof rootClass["namedGraphs"][g] === "object" && typeof rootClass["namedGraphs"][g]["graphInstruction"] !== "undefined" && typeof rootClass["namedGraphs"][g]["graph"] !== "undefined"){
 						let graphName = rootClass["namedGraphs"][g]["graph"];
-						if (checkIfIsURI(graphName) == "full_form" && !graphName.startsWith("<") && !graphName.endsWith(">")) graphName = "<"+ graphName+ ">";
+						if (checkIfIsURI(graphName) === "full_form" && !graphName.startsWith("<") && !graphName.endsWith(">")) graphName = "<"+ graphName+ ">";
+						else if (checkIfIsURI(graphName) === "prefix_form"){
+							for(let p = 0; p < knownPrefixes.length; p++){
+								if(knownPrefixes[p]["name"]+":" == graphName) {
+									prefixTable[graphName] = "<"+knownPrefixes[p]["value"]+">";
+									break;
+								}	
+							}
+						}
 						fromText =  fromText +"\n"+ rootClass["namedGraphs"][g]["graphInstruction"] + " " + graphName ;
 					}
 				}
@@ -1506,7 +1674,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 }
 		 
 		 // console.log(rootClass["comment"], SPARQL_text);
-		 return {"SPARQL_text":SPARQL_text, "messages":messages, "blocking":blocking, "showSPARQL":showSPARQL, "comment":rootClass["comment"]};
+		 return {"SPARQL_text":SPARQL_text, "messages":messages, "blocking":blocking, "showSPARQL":showSPARQL, "comment":rootClass["comment"], "prefixTable":prefixTable};
 }
 
 function getPrefix(emptyPrefix, givenPrefix){
@@ -1582,20 +1750,39 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	}
 
 	var classMembership;
+	// indirectClassMembership
 	if(typeof clazz["indirectClassMembership"] !== 'undefined' && clazz["indirectClassMembership"] == true && typeof parameterTable["indirectClassMembershipRole"] !== 'undefined' && parameterTable["indirectClassMembershipRole"] != null && parameterTable["indirectClassMembershipRole"] != ""){
 		classMembership =  parameterTable["indirectClassMembershipRole"];
+		if(typeof clazz.identification.indirect_class_role !== "undefined" && clazz.identification.indirect_class_role !== classMembership){
+			if(classMembership === "a" && clazz.identification.indirect_class_role === "rdf:type"){
+					
+			} else {
+				classMembership = clazz.identification.indirect_class_role;
+			}
+		}
 		let prefixMembership = getPrefixFromClassMembership(classMembership);
 		for(let prefix in prefixMembership) {
 			if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
 	
 		}
+	}else if(typeof clazz["indirectClassMembership"] !== 'undefined' && clazz["indirectClassMembership"] == true && (typeof parameterTable["indirectClassMembershipRole"] === 'undefined' || parameterTable["indirectClassMembershipRole"] === null || parameterTable["indirectClassMembershipRole"] === "") && clazz.identification.indirect_class_role !== null){
+		classMembership = clazz.identification.indirect_class_role;
 	}else if(typeof clazz["indirectClassMembership"] === 'undefined' || clazz["indirectClassMembership"] != true && typeof parameterTable["directClassMembershipRole"] !== 'undefined' && parameterTable["directClassMembershipRole"] != null && parameterTable["directClassMembershipRole"] != ""){
 		if(typeof clazz["identification"]["classification_property"] !== "undefined" && clazz["identification"]["classification_property"] !== "" &&  clazz["identification"]["classification_property"] != "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
 			var shortForm = getPropertyShortForm(clazz["identification"]["classification_property"], knownPrefixes)
 			classMembership = shortForm.name;
 			if(typeof shortForm.prefix !== "undefined") prefixTable[shortForm.prefix] = "<"+shortForm.namespace+">";
 		} else {
+			// directClassMembership
 			classMembership =  parameterTable["directClassMembershipRole"];
+			if(typeof clazz.identification.direct_class_role !== "undefined" && clazz.identification.direct_class_role !== classMembership){
+				if(classMembership === "a" && clazz.identification.direct_class_role === "rdf:type"){
+					
+				} else {
+					classMembership = clazz.identification.direct_class_role;
+				}
+			}
+			// console.log("classMembership", classMembership, clazz.identification)
 			let prefixMembership = getPrefixFromClassMembership(classMembership);
 			for(let prefix in prefixMembership) {
 				if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
@@ -1604,8 +1791,10 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		}
 	} else {
 		classMembership = "a";
+		if(typeof clazz.identification.direct_class_role !== "undefined" && clazz.identification.direct_class_role !== null && clazz.identification.direct_class_role !== "rdf:type") classMembership = clazz.identification.direct_class_role;
 		// prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
 	}
+	
 
 	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") != "" && clazz["instanceAlias"].indexOf(" ") >= 0 && clazz["instanceAlias"].indexOf("[") == -1) {
 		messages.push({
@@ -3286,7 +3475,7 @@ function generateSPARQLWHEREInfoPhase2(sparqlTable, ws, fil, lin, referenceTable
 
 // genrerate SPARQL WHERE info
 // sparqlTable - table with sparql parts
-function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPARQL_interval, parameterTable){
+function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPARQL_interval, parameterTable, knownPrefixes){
 
 	let phase2 = [];
 	let phase3 = [];
@@ -3472,6 +3661,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			}
 			if(sparqlTable["filetrAsTripleTable"][expression]["isConstant"] != true ) classes.push(triplePrefix + "?" + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + "."+ tripleSufix);
 			else if(sparqlTable["filetrAsTripleTable"][expression]["object"].startsWith("<") == true)filterTriples.push(triplePrefix + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + "." + tripleSufix);	
+			else if(sparqlTable["filetrAsTripleTable"][expression]["object"].indexOf(":") !== -1) filterTriples.push(triplePrefix + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + "." + tripleSufix);
 			else filterTriples.push(triplePrefix + "?" + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + "." + tripleSufix);	
 		}
 	}
@@ -3536,7 +3726,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				//union
 				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) {
-					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable, SPARQL_interval, parameterTable)
+					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable, SPARQL_interval, parameterTable, knownPrefixes)
 
 					if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == false && sparqlTable["subClasses"][subclass]["isSubQuery"] == false){
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") unionResult["result"] = "OPTIONAL{\n" + unionResult["result"] + "\n}";
@@ -3553,7 +3743,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 					if(typeof sparqlTable["linkType"] === 'string' && (sparqlTable["linkType"] == "OPTIONAL" || sparqlTable["linkType"] == "NOT")) {SPARQL_interval_temp = SPARQL_interval_temp+"  ";}
 					var graphString = "GRAPH " + sparqlTable["class"] + "{\n"+ SPARQL_interval;
 					
-					let temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval_temp, parameterTable);
+					let temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval_temp, parameterTable, knownPrefixes);
 		
 					graphString = graphString + temp["classes"].join("\n"+SPARQL_interval);
 					graphString = graphString + temp["grounding"].join("\n"+SPARQL_interval);
@@ -3588,7 +3778,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 					let SPARQL_interval_temp = SPARQL_interval;
 					if(typeof sparqlTable["linkType"] === 'string' && (sparqlTable["linkType"] == "OPTIONAL" || sparqlTable["linkType"] == "NOT")) SPARQL_interval_temp = SPARQL_interval_temp+"  ";
 					
-					let temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval_temp, parameterTable);
+					let temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval_temp, parameterTable, knownPrefixes);
 					//phase 1
 					if(sparqlTable["subClasses"][subclass]["linkType"] == "REQUIRED"){	
 						if(sparqlTable["subClasses"][subclass]["linkNameType"] == "singleProperty") singleProperty = singleProperty.concat(temp["classes"]);
@@ -3646,7 +3836,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 						}
 					}
 
-					var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval+"  ", parameterTable);
+					var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval+"  ", parameterTable, knownPrefixes);
 					if(sparqlTable["getSubQueryResults"] == true) subSelectResult = subSelectResult.concat(wheresubInfo["subSelectResult"]);
 					
 					
@@ -3749,6 +3939,15 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 										if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "GRAPH" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "SERVICE"){
 											let graphName = sparqlTable["subClasses"][subclass]["graphs"][g]["graph"];
 											if (checkIfIsURI(graphName) == "full_form" && !graphName.startsWith("<") && !graphName.endsWith(">")) graphName = "<"+ graphName+ ">";
+											else if (checkIfIsURI(graphName) === "prefix_form"){
+												for(let p = 0; p < knownPrefixes.length; p++){
+													if(knownPrefixes[p]["name"]+":" == graphName) {
+														prefixTable[graphName] = "<"+knownPrefixes[p]["value"]+">";
+														break;
+													}
+													
+												}
+											}
 											subQuery = subQuery + SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ graphName + " {"+ "\n";
 											graphFound = true;
 											break;
@@ -4228,10 +4427,21 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		let graphName = sparqlTable.graphLink.graph;
 		if(graphName.startsWith("??")) graphName = graphName.substring(1);
 		if (checkIfIsURI(graphName) == "full_form" && !graphName.startsWith("<") && !graphName.endsWith(">")) graphName = "<"+ graphName+ ">";
+		else if (checkIfIsURI(graphName) === "prefix_form"){
+			for(let p = 0; p < knownPrefixes.length; p++){
+				if(knownPrefixes[p]["name"]+":" == graphName) {
+					prefixTable[graphName] = "<"+knownPrefixes[p]["value"]+">";
+					break;
+				}				
+			}
+		}
 		let tempString = sparqlTable.graphLink.graphInstruction + " "+ graphName + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
 
 		graphService.push(tempString);
 	}
+	graphService = graphService.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
 
 	return {
 		"classes" : classes, 
@@ -4421,7 +4631,7 @@ function generateSPARQLWHEREInfo2(sparqlTable, ws, fil, lin, referenceTable, SPA
 		for(let subclass in sparqlTable["subClasses"]){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) {
-					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable, SPARQL_interval, parameterTable)
+					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable, SPARQL_interval, parameterTable, )
 
 					if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == false && sparqlTable["subClasses"][subclass]["isSubQuery"] == false){
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") unionResult["result"] = "OPTIONAL{\n" + unionResult["result"] + "\n}";
@@ -5023,7 +5233,7 @@ function findSubQueryMainClass(referenceTable, subQueryMainClass){
 	return result;
 }
 
-function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, generateUpperSelect, referenceTable, SPARQL_interval, parameterTable){
+function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, generateUpperSelect, referenceTable, SPARQL_interval, parameterTable, knownPrefixes){
 	var whereInfo = [];
 	var unionsubSELECTstaterents = [];
 	var unionGroupStaterents = [];
@@ -5044,7 +5254,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				var selectResult = generateSELECT(sparqlTable["subClasses"][subclass], false);
 
-				var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval, parameterTable);
+				var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval, parameterTable, knownPrefixes);
 				let temp = [];
 				temp = temp.concat(wheresubInfo["classes"]);
 				temp = temp.concat(wheresubInfo["grounding"]);
@@ -5577,26 +5787,7 @@ function getAggregationFromFragment(clazz){
 	return aggregation;
 }
 
-function setSchemaNamesForQuery(abstractQueryTable, schemaNamesTable, parentSchemaName){
-	let schemaName = parentSchemaName;
-	if(typeof abstractQueryTable["graphsService"] !== "undefined" && abstractQueryTable["graphsService"] !== null && abstractQueryTable["graphsService"]["schema"] !== null && abstractQueryTable["graphsService"]["schema"] !== ""){
-		schemaNamesTable[abstractQueryTable.identification._id] = abstractQueryTable["graphsService"]["schema"];
-		schemaName = abstractQueryTable["graphsService"]["schema"];
-	} else {
-		schemaNamesTable[abstractQueryTable.identification._id] = parentSchemaName;
-	}
-	if(typeof abstractQueryTable["graphsServiceLink"] !== "undefined" && abstractQueryTable["graphsServiceLink"] !== null && abstractQueryTable["graphsServiceLink"]["schema"] !== null && abstractQueryTable["graphsServiceLink"]["schema"] !== ""){
-		schemaNamesTable[abstractQueryTable.linkIdentification._id] = abstractQueryTable["graphsServiceLink"]["schema"];
-		schemaNamesTable[abstractQueryTable.identification._id] = abstractQueryTable["graphsServiceLink"]["schema"];
-		schemaName = abstractQueryTable["graphsServiceLink"]["schema"];
-	} else {
-		schemaNamesTable[abstractQueryTable.identification._id] = parentSchemaName;
-	}
-	for(let c = 0; c < abstractQueryTable.children.length; c++){
-		schemaNamesTable = setSchemaNamesForQuery(abstractQueryTable.children[c], schemaNamesTable, parentSchemaName)
-	}
-	return schemaNamesTable;
-}
+
 
 function combineWithDefinedPrefixes(knownPrefixes, prefixDeclarations){
 	messages = [];

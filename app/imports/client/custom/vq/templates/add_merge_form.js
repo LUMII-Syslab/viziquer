@@ -6,6 +6,8 @@ import './add_merge_form.html'
 import { countCardinality } from '../js/parser';
 import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 
+import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
+
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");
 Template.AddMergeValues.mergeAlias = new ReactiveVar("");
@@ -40,7 +42,9 @@ Interpreter.customMethods({
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.distinct.set(distinct);
 		
-		var card = await countCardinality(expr, Session.get("activeElement"))
+		let scName = await getSchemaNameForElement();
+		
+		var card = await countCardinality(expr, Session.get("activeElement"), scName)
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj){
       		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!=true){
@@ -106,7 +110,9 @@ async function AddMergeValues2(e) {
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.distinct.set(distinct);
 		
-		var card = await countCardinality(expr, Session.get("activeElement"))
+		let scName = await getSchemaNameForElement();
+		
+		var card = await countCardinality(expr, Session.get("activeElement"), scName)
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj){
       		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!=true){

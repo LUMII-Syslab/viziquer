@@ -1970,6 +1970,7 @@
                 "name": "Graph/Service",
                 "isObjectRepresentation": false,
                 "noRepresentation": false,
+				"maxCompartmentsCount": 1,
                 "inputType": {
                   "type": "custom",
                   "inputType": "text",
@@ -3556,6 +3557,14 @@
               {
                 "item": "Delete",
                 "procedure": "Delete"
+              },
+              {
+                "item": "Collect Prefixes",
+                "procedure": "Collect_prefixes_from_diagram_for_all_queries"
+              },
+              {
+                "item": "Collect Schemas",
+                "procedure": "Collect_schemas_from_diagram_for_all_queries"
               }
             ],
             "readModeContextMenu": [],
@@ -3760,7 +3769,7 @@
                 "styles": [
                   {
                     "name": "Default",
-                    "id": "1ad164fa838409317ed7a987",
+                    "id": "1ad164fa838409317ed7a988",
                     "style": {
                       "align": "left",
                       "fill": "#000000",
@@ -3822,13 +3831,17 @@
                     "subCompartmentTypes": [
                       {
                         "_id": "vc49w74a0fpdm2f2gyv12nkt",
-                        "index": 7,
+                        "index": 9,
                         "name": "Schema",
                         "extensionPoints": [
                           {
                             "extensionPoint": "dynamicDropDown",
                             "procedure": "VQgetSchemaNames"
-                          }
+                          },
+						  {
+							"extensionPoint": "update",
+							"procedure": "VQsetSchemaEndpoint"
+						  }
                         ],
                         "prefix": "SCHEMA [",
                         "suffix": "] ",
@@ -3841,7 +3854,7 @@
                       },
 					  {
                         "_id": "xy27hw6322k58uq3thaer62z",
-                        "index": 8,
+                        "index": 10,
                         "name": "Endpoint URI",
                         "label": "Endpoint URI",
                         "extensionPoints": [],
@@ -4315,6 +4328,7 @@
                   "inputType": "text",
                   "templateName": "multiField"
                 },
+				"maxCompartmentsCount": 1,
                 "styles": [
                   {
                     "name": "Default",

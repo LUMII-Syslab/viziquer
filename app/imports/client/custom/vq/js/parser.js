@@ -157,6 +157,7 @@ function parse_class(clazz, symbolTable, parameterTable, idTable, referenceTable
 						"message" : "Unknown prefix: "+clazz.identification.prefix,
 						"isBlocking" : true
 					});
+		prefixTable[clazz.identification.prefix+":"] = "";
 	}
 	
 	return {"exp":exp, "triples":triples, "prefixTable":prefixTable, "messages":messages};
@@ -2285,7 +2286,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							"type" : "Error",
 							//"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
 							"message" : "Used name (variable) '" + substringvar["name"] + "' not defined in the query, the query can not be created",
-							"isBlocking" : false
+							"isBlocking" : true
 						});
 					}
 					else{
@@ -2327,7 +2328,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								"type" : "Error",
 								//"message" : "Unrecognized variable '" + variableStructure["var"]["name"] + "'. Please specify variable.",
 								"message" : "Used name (variable) '" + variableStructure["var"]["name"] + "' not defined in the query, the query can not be created",
-								"isBlocking" : false
+								"isBlocking" : true
 							});
 						}
 
@@ -2735,7 +2736,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						"type" : "Error",
 						//"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
 						"message" : "Used name (variable) '" + varName + "' not defined in the query, the query can not be created",
-						"isBlocking" : false
+						"isBlocking" : true
 					});
 					
 					
@@ -2820,6 +2821,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		if (key == "RelationalExpression") {
 
 				if(typeof expressionTable[key]["Relation"]!== 'undefined') {
+					
 					let VarL = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 					let VarR = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
 
@@ -4177,12 +4179,13 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							}
 							
 						} else {
+							prefixTable[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] = "";
 							messages.push({
 								"type" : "Warning",
 								//"message" : "Unrecognized variable '" + valueString + "'. Please specify variable.",
 								"message" : "Used name (variable) '" + valueString + "' not defined in the query, the query can not be created",
 								"listOfElementId" : [classID],
-								"isBlocking" : false
+								"isBlocking" : true
 							});
 							valueString = "";
 						}
@@ -4567,14 +4570,18 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 	return SPARQLstring
 }
 
-async function countCardinality(str_expr, context){	 
+async function countCardinality(str_expr, context, scName){	 
 	
 	try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  
 		  var proj = Projects.findOne({_id: Session.get("activeProject")});
+		  var schemaName = dataShapes.schema.schema; 
+		  if(typeof scName !== "undefined" && scName !== null && scName !== "") {
+			schemaName = scName;
+		  }
 		  
-		  var schemaName = dataShapes.schema.schemaType; 
+		 
 		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:{}, exprType:"attribute", context:context});
 		  parsed_exp = await getResolveInformation(parsed_exp, schemaName, {}, context, "attribute");
 		  

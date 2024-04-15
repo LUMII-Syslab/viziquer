@@ -3611,12 +3611,19 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           	// var elFrom=options.link.getStartElement();
           	// var elTo=options.link.getEndElement();
           	// if (varibleName != "") params.filter=varibleName;
-      		
-      		var p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
-			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
-      		var props= await dataShapes.getPropertiesFull(p)
 			
-			var schemaName = dataShapes.schema.schemaType;
+			var p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
+      		
+			let scName = options.schema;
+			var schemaName = dataShapes.schema.schema;
+      		if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+				schemaName = scName;
+				p.main.schema = scName;
+			}
+			
+      		var props= await dataShapes.getPropertiesFull(p)
+
 			if(typeof schemaName === "undefined") schemaName = "";
 
           	// var props = await dataShapes.getProperties(params, elFrom, elTo);
@@ -3624,8 +3631,9 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           	for(let pr in props){
 				if(typeof props[pr] !== "function"){
 					var prefix;
-					if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+					if(dataShapes.schema.schema === schemaName &&
+					((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 					else prefix = props[pr]["prefix"]+":";
 						
 					var propName = prefix+props[pr]["display_name"];
@@ -3672,10 +3680,16 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
     	
     			if(pathParts[0].startsWith("^"))isInv = true;
       		}
+			let scName = options.schema;
+			var schemaName = dataShapes.schema.schema;
+      		if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+				params.main.schema = scName;
+				schemaName = scName;
+			}
 
           	var props = await dataShapes.getPropertiesFull(params);
 			
-			var schemaName = dataShapes.schema.schemaType;
+			
 			if(typeof schemaName === "undefined") schemaName = "";
 
           	props = props["data"];
@@ -3683,8 +3697,9 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           	for(let pr in props){
 				if(typeof props[pr] !== "function"){
 					var prefix;
-					if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+					if(dataShapes.schema.schema === schemaName &&
+					((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 					else prefix = props[pr]["prefix"]+":";
 						
 					var propName = prefix+props[pr]["display_name"];
@@ -3717,17 +3732,25 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 					
 				} else if (typeof options.className !== 'undefined') params.element = {className: options.className};
       		}
+			
+			let scName = options.schema;
+			var schemaName = dataShapes.schema.schema;
+      		if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+				params.main.schema = scName;
+				schemaName = scName;
+			}
 
           	var props = await dataShapes.getPropertiesFull(params);
-			var schemaName = dataShapes.schema.schemaType;
+			
 			if(typeof schemaName === "undefined") schemaName = "";
 
           	props = props["data"];
           	for(let pr in props){
 				if(typeof props[pr] !== "function"){
 					var prefix;
-					if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-						|| (schemaName.toLowerCase() == "wikidata" &&  props[pr]["prefix"] == "wdt"))prefix = "";
+					if(dataShapes.schema.schema === schemaName &&
+					((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" &&  props[pr]["prefix"] == "wdt")))prefix = "";
 					else prefix = props[pr]["prefix"]+":";
 						
 					var propName = prefix+props[pr]["display_name"];
@@ -3743,8 +3766,16 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
       	
           async function getAssociations(place, priority){
 				var pathParts = options.text.split(/[.\/]/);
+				let scName = options.schema;
+				var schemaName = dataShapes.schema.schema;
+				if(typeof scName !== "undefined" && scName !== null && scName !== "") {
+					schemaName = scName;
+				}
 				if(pathParts.length <= 1){
 					let params = {propertyKind:'Connect', limit:dataShapes.schema.limit};
+					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+						params.schema = scName;
+					}
 					// if (fullText != "") params.filter = fullText;
 					var selected_elem_id = Session.get("activeElement");	
 					var props;
@@ -3754,19 +3785,23 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 						props = await dataShapes.getProperties(params, elFrom, elTo);
 					} else {
 						let params = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}};
+						if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+							params.main.schema = scName;
+						}
 						if (typeof options.className !== 'undefined') params.element = {className: options.className};
 						props = await dataShapes.getPropertiesFull(params);
 					}
 					props = props["data"];
 					
-					var schemaName = dataShapes.schema.schemaType;
+					
 					if(typeof schemaName === "undefined") schemaName = "";
 	
 					for(let pr in props){
 						if(typeof props[pr] !== "function"){
 							var prefix;
-							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+							if(dataShapes.schema.schema === schemaName &&
+							((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
 											
 							var propName = prefix+props[pr]["display_name"];
@@ -3831,7 +3866,12 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           // string -> idObject
           // returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
           async function resolveTypeFromSchemaForClass(id) {
-            var cls = await dataShapes.resolveClassByName({name: id})
+			let scName = options.schema;
+			let param = {name: id}
+			if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+				param["schema"] = scName;
+			}			
+            var cls = await dataShapes.resolveClassByName(param);
             if(cls["complete"] == false) return null;
             if(cls["data"].length > 0){
                  return cls["data"][0];
@@ -3841,8 +3881,12 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
          // string -> idObject
          // returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
          async function resolveTypeFromSchemaForAttributeAndLink(id) {
-                      	
-            var aorl = await dataShapes.resolvePropertyByName({name: id})
+			let scName = options.schema;
+			let param = {name: id}
+      		if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+				param["schema"] = scName;
+			};               	
+            var aorl = await dataShapes.resolvePropertyByName(param)
             if(aorl["complete"] == false) return null;
             var res = aorl["data"][0];
             if(res){

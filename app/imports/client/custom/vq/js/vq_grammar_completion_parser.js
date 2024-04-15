@@ -21156,18 +21156,24 @@ options = arguments[1];
 								}						
 							}					
 						}
-						
-						var prop = await dataShapes.getProperties({propertyKind:'Data', limit:dataShapes.schema.limit}, newStartElement);
+						let properties = {propertyKind:'Data', limit:dataShapes.schema.limit};
+						let scName = options.schema;
+						let schemaName = dataShapes.schema.schema;
+						if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+							schemaName = scName;
+							properties.schema = scName;
+						}
+						var prop = await dataShapes.getProperties(properties, newStartElement);
 						prop = prop["data"];
-						
-						let schemaName = dataShapes.schema.schemaType;
+
 						if(typeof schemaName === "undefined") schemaName = "";
 						
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
 								let prefix;
-								if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+								if(dataShapes.schema.schema === schemaName &&
+								((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt")))prefix = "";
 								else prefix = prop[cl]["prefix"]+":";
 
 								let propName = prefix+prop[cl]["display_name"]
@@ -21212,17 +21218,25 @@ options = arguments[1];
 								}						
 							}					
 					}
-					var prop = await dataShapes.getProperties({propertyKind:'ObjectExt', limit:dataShapes.schema.limit}, newStartElement);
+					let scName = options.schema;
+					let schemaName = dataShapes.schema.schema;
+					let properties = {propertyKind:'ObjectExt', limit:dataShapes.schema.limit};
+					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+						schemaName = scName;
+						properties.schema = scName;
+					}
+					var prop = await dataShapes.getProperties(properties, newStartElement);
 					prop = prop["data"];
 					
-					let schemaName = dataShapes.schema.schemaType;
+					
 					if(typeof schemaName === "undefined") schemaName = "";
 					
 					for(let cl in prop){
 						if(typeof prop[cl] !== "function"){
 							let prefix;
-							if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+							if(dataShapes.schema.schema === schemaName &&
+							((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt")))prefix = "";
 							else prefix = prop[cl]["prefix"]+":";
 
 							let propName = prefix+prop[cl]["display_name"]
@@ -21308,7 +21322,12 @@ options = arguments[1];
 			// string -> idObject
             // returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
             async function resolveTypeFromSchemaForClass(id) {
-            	var cls = await dataShapes.resolveClassByName({name: id})
+				let scName = options.schema;
+				let param = {name: id}
+				if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+					param["schema"] = scName;
+				}
+            	var cls = await dataShapes.resolveClassByName(param)
             	if(cls["complete"] == false) return null;
             	if(cls["data"].length > 0){
             		return cls["data"][0];
@@ -21320,8 +21339,12 @@ options = arguments[1];
             // string -> idObject
             // returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
             async function resolveTypeFromSchemaForAttributeAndLink(id) {
-
-            	var aorl = await dataShapes.resolvePropertyByName({name: id})
+				let scName = options.schema;
+				let param = {name: id}
+				if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+					param.schema = scName;
+				}
+            	var aorl = await dataShapes.resolvePropertyByName(param);
             	if(aorl["complete"] == false) return null;
             	var res = aorl["data"][0];
             	if(res){
@@ -21394,18 +21417,25 @@ options = arguments[1];
         		} else {
         			if (typeof options.className !== 'undefined') params.element = {className: options.className};	
         		}
-
+				
+				let scName = options.schema;
+				let schemaName = dataShapes.schema.schema;
+				if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+					schemaName = scName;
+					params.main.schema = scName;
+				}
+				
 				let props = await dataShapes.getPropertiesFull(params);
             	props = props["data"];
-				
-				let schemaName = dataShapes.schema.schemaType;
+
 				if(typeof schemaName === "undefined") schemaName = "";
 
             	for(let pr in props){
 					if(typeof props[pr] !== "function"){
 						let prefix;
-						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+						if(dataShapes.schema.schema === schemaName &&
+						((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 										
 						let propName = prefix+props[pr]["display_name"];
@@ -21431,19 +21461,27 @@ options = arguments[1];
             	if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
             	var targetSourceClass = "targetClass";
             	if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
-
-				let p = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
-        		let props= await dataShapes.getPropertiesFull(p);
 				
+				let p = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+        		
+				let scName = options.schema;
 				let schemaName = dataShapes.schema.schemaType;
+				if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+					p.main.schema = scName;
+					schemaName = scName;
+				}
+
+				let props= await dataShapes.getPropertiesFull(p);
+
 				if(typeof schemaName === "undefined") schemaName = "";
 
             	props = props["data"];
             	for(let pr in props){
 					if(typeof props[pr] !== "function"){
 						let prefix;
-						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+						if(dataShapes.schema.schema === schemaName &&
+						((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 										
 						let propName = prefix+props[pr]["display_name"];
@@ -21454,14 +21492,17 @@ options = arguments[1];
 				}
 							
 				p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
-        		props= await dataShapes.getPropertiesFull(p);
+        		if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+					p.main.schema = scName;
+				}
+				props= await dataShapes.getPropertiesFull(p);
 
             	props = props["data"];
 
             	for(let pr in props){
 					if(typeof props[pr] !== "function"){
 						let prefix;
-						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+						if(dataShapes.schema.schema === schemaName &&(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false"))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 										
 						let propName = prefix+props[pr]["display_name"];
@@ -21544,11 +21585,16 @@ options = arguments[1];
 			
 						if(pathParts[0].startsWith("^"))isInv = true;
 					}
+					let scName = options.schema;
+					let schemaName = dataShapes.schema.schema;
+					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+						params.main.schema = scName;
+						schemaName = scName;
+					}
 					
 					let props = await dataShapes.getPropertiesFull(params);
 					props = props["data"];
-						
-					let schemaName = dataShapes.schema.schemaType;
+								
 					if(typeof schemaName === "undefined") schemaName = "";
 					
 					if(isInv == false){
@@ -21557,8 +21603,9 @@ options = arguments[1];
 						for(let pr in props){
 							if(typeof props[pr] !== "function"){
 								let prefix;
-								if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-									|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+								if(dataShapes.schema.schema === schemaName &&
+								((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+									|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 								else prefix = props[pr]["prefix"]+":";
 								let propName = prefix+props[pr]["display_name"];
 								await addContinuation(await location(), propName, 100, false, 1);
@@ -21577,8 +21624,9 @@ options = arguments[1];
 					for(let pr in props){
 						if(typeof props[pr] !== "function"){
 							let prefix;
-							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") 
-								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+							if(dataShapes.schema.schema === schemaName &&
+							((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") 
+								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
 											
 							let propName = prefix+props[pr]["display_name"];
@@ -21620,18 +21668,25 @@ options = arguments[1];
 					continuations[loc["end"]["offset"]] = {};
 					let params = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}};
 					params.element = {className: classAliasTable[o]};	
-
+					
+					let scName = options.schema;
+					let schemaName = dataShapes.schema.schema;
+					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+						params.main.schema = scName;
+						schemaName = scName;
+					}
+					
             		let props = await dataShapes.getPropertiesFull(params);
             		props = props["data"];
-					
-					let schemaName = dataShapes.schema.schemaType;
+						
 					if(typeof schemaName === "undefined") schemaName = "";
 
             		for(let pr in props){
 						if(typeof props[pr] !== "function"){
 							let prefix;
-							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+							if(dataShapes.schema.schema === schemaName &&
+							((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
 										
 							let propName = prefix+props[pr]["display_name"];
@@ -21646,8 +21701,9 @@ options = arguments[1];
             		for(let pr in props){
 						if(typeof props[pr] !== "function"){
 							let prefix;
-							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+							if(dataShapes.schema.schema === schemaName &&
+							((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
 										
 							let propName = prefix+props[pr]["display_name"];
@@ -21683,6 +21739,12 @@ options = arguments[1];
 								}						
 							}					
 						}
+						
+						let scName = options.schema;
+						let schemaName = dataShapes.schema.schema;
+						if(typeof scName !== "undefined" && scName !== null && scName !== "") {
+							schemaName = scName;
+						}
 								
 						var prop;
 						if(pathParts.length > 1){
@@ -21693,21 +21755,30 @@ options = arguments[1];
 							} else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
 								params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
 							}
-										 
+							if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+								params.main.schema = scName;
+							}		 
 							prop = await dataShapes.getPropertiesFull(params);
 										 
-						} else prop = await dataShapes.getProperties({propertyKind:'Data'}, newStartElement);
+						} else {
+							let params = {propertyKind:'Data'};
+							if(typeof scName !== "undefined" && scName !== null && scName !== "") {
+								params.schema = scName;
+							}
+							prop = await dataShapes.getProperties(params, newStartElement);
+						}
 								
 						prop = prop["data"];
 						
-						let schemaName = dataShapes.schema.schemaType;
+						
 						if(typeof schemaName === "undefined") schemaName = "";
 						
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
 								let prefix;
-								if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+								if(dataShapes.schema.schema === schemaName &&
+								((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt")))prefix = "";
 								else prefix = prop[cl]["prefix"]+":";
 
 								let propName = prefix+prop[cl]["display_name"]
@@ -21725,17 +21796,26 @@ options = arguments[1];
 									// } else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
 										// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
 									// }
-										 
+							if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+								params.main.schema = scName;
+							}		 
 							prop = await dataShapes.getPropertiesFull(params);
 										 
-						} else prop = await dataShapes.getProperties({propertyKind:'ObjectExt', limit: dataShapes.schema.limit}, newStartElement);
+						} else {
+							let params = {propertyKind:'ObjectExt', limit: dataShapes.schema.limit}
+							if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+								params.schema = scName;
+							}
+							prop = await dataShapes.getProperties(params, newStartElement);
+						}
 						prop = prop["data"];
 						
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
 								let prefix;
-								if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+								if(dataShapes.schema.schema === schemaName &&
+								((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt")))prefix = "";
 								else prefix = prop[cl]["prefix"]+":";
 
 								let propName = prefix+prop[cl]["display_name"]

@@ -60,7 +60,6 @@ Interpreter.customMethods({
 		else if(elem.isNegation())lintType = "NOT";
 		else if(elem.isFilterExists())lintType = "FILTER_EXISTS";
 		let newLoc = [locLinkTempX2, locLinkTempY2, locLinkTempX1, locLinkTempY1];
-		console.log("linkChangeDirection",lintType, elem, elem.getNestingType())
 		Create_VQ_Element(function(lnk) {
 	       lnk.setName(name);
 	       lnk.setLinkType(lintType);	                    
@@ -312,7 +311,7 @@ Interpreter.customMethods({
 	let schemaName = dataShapes.getOntologiesSync();
 	
 	schemaName = schemaName.map(function(e) {
-      return {input:e["db_schema_name"],value:e["db_schema_name"]}
+      return {input:e["display_name"],value:e["display_name"]}
 	})
 	return  schemaName;
   },
@@ -524,7 +523,6 @@ Interpreter.customMethods({
 	},
 
 	VQbeforeCreateLink: function(params) {
-		console.log("VQbeforeCreateLink");
 		// console.log(params);
 		Interpreter.destroyErrorMsg();
 		var startLink = new VQ_Element(params["startElement"]);
@@ -553,7 +551,6 @@ Interpreter.customMethods({
 
 	VQafterCreateLink: function(params) {
 		var linkName = VQsetAssociationName(params["startElement"], params["endElement"])
-		console.log("VQafterCreateLink", params, linkName);
 		//console.log(params);
 		Interpreter.destroyErrorMsg();
 		var link = new VQ_Element(params["_id"]);
@@ -581,7 +578,6 @@ Interpreter.customMethods({
 	
 	VQmoveNamedGraphs: function(params) {
 		if(params.input === "query"){
-			console.log("VQmoveNamedGraphs", params.input);
 			let c = Compartments.findOne({_id:params["compartmentId"]});
 			if (c) {
 				let elem = new VQ_Element(c["elementId"]);
@@ -731,32 +727,52 @@ Interpreter.customMethods({
 			} 
 	},
 	
-	VQsetPrefixNamespace: function(e, compart) {
-		//console.log("FFFFFFFFFFFFFFFFFF", e, compart)
-		// var elem = document.activeElement;
-
-		// var text = e.originalEvent.target.value;
+	VQsetPrefixNamespace: async function(params, prefixValue) {
+		// console.log(params)
+		let namespaceInput = document.getElementById(params).parentElement.children[1].getElementsByTagName('input')[0];
+		let namespaceInputValue = namespaceInput.value;
+		let prefixFound = false;
+		let prefixes = await dataShapes.getNamespaces();
+		for(let p = 0; p < prefixes.length; p++){
+			if(prefixes[p]["name"] === prefixValue){
+				namespaceInputValue = prefixes[p]["value"];
+				prefixFound = true;
+				break;
+			}
+		}
+		let ontologies = dataShapes.getOntologiesSync();
 		
-		// let elem_name = params["input"];
-		// var c = Compartments.findOne({_id:params["compartmentId"]});
-		// if (c) {
-			// var elem = new VQ_Element(c["elementId"]);
-
-			// if (elem.isIndirectClassMembership() && elem_name !== null && elem_name !== "") {
-				// let elem_name_pref = ".. " + elem_name;
-				// elem.setNameValue(elem_name_pref, elem_name);
-			// }
-			// else {
-				// if (elem_name !== null) {
-					// elem.setNameValue(elem_name, elem_name);
-				// }
-			// }
-
-       		// _.each(elem.getLinks().map(function(l) {return l.link}), function(link) {
-				// link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
-			// });
-		// }
-			
+		for(let o = 0; o < ontologies.length; o++){
+			if(prefixFound !== true){
+				// dataShapes.schema.schema = ontologies[o]["db_schema_name"];
+				// dataShapes.schema.namespaces = [];
+				if(typeof ontologies[o]["db_schema_name"] !== "undefined"){
+					let prefixes = await dataShapes.getNamespaces({schema:ontologies[o]["db_schema_name"]});
+					for(let p = 0; p < prefixes.length; p++){
+						if(prefixes[p]["name"] === prefixValue){
+							namespaceInputValue = prefixes[p]["value"];
+							prefixFound = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		namespaceInput.value = namespaceInputValue;		
+	},
+	
+	VQsetSchemaEndpoint: function(params, schemaValue) {
+		// console.log(params, document.getElementById(params).parentElement)
+		let namespaceInput = document.querySelectorAll('[id='+params+']')[1].parentElement.children[1].getElementsByTagName('input')[0];
+		let namespaceInputValue = namespaceInput.value;
+		let ontologies = dataShapes.getOntologiesSync();
+		for(let o = 0; o < ontologies.length; o++){
+			if(ontologies[o]["display_name"] === schemaValue){
+				namespaceInputValue = ontologies[o]["sparql_url"];
+				break;
+			}
+		}
+		namespaceInput.value = namespaceInputValue;	
 	},
 		
 	visualizeSPARQL: function(q) {
@@ -1152,7 +1168,7 @@ Interpreter.customMethods({
 				currentElement.setClassStyle("condition");
 				//coordinates to place new Box and create link
 				var d = 60; //distance between boxes
-				var locClass = currentElement.getNewLocation(d); console.log(locClass);
+				var locClass = currentElement.getNewLocation(d); 
 				var coordX = locClass.x + Math.round(locClass.width/2);
 				var coordY = locClass["y"] - d; 
 				var locLink = [coordX, locClass.y, coordX, coordY];
@@ -1347,7 +1363,7 @@ function findAttributeInAbstractTable(context, clazz, fieldValue){
 
 }
 
-async function generateSymbolTable() {
+async function generateSymbolTable(notResolveTable) {
  
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
@@ -1381,11 +1397,14 @@ async function generateSymbolTable() {
 
        var elem_ids = _.keys(visited_elems);  
        var queries = await genAbstractQueryForElementList(elem_ids, null); 
-	  
-	   for (const q of queries) {
-	    //_.each(queries,async function(q) {
-		abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);	
-       }
+	   if(!notResolveTable){
+		   for (const q of queries) {
+			//_.each(queries,async function(q) {
+			abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);	
+		   }
+	   } else {
+		   abstractQueryTable = queries[0];
+	   }
 	   //)
     } else {
       // nothing selected
@@ -1441,8 +1460,51 @@ function findNamedGraphsInQuery(elem, visitedClasses){
 	return namedGraphs;
 }
 
+function setSchemaNamesForQuery(abstractQueryTable, schemaNamesTable, parentSchemaName){
+	let schemaName = parentSchemaName;
+	// console.log("setSchemaNamesForQuery", abstractQueryTable, abstractQueryTable["graphsService"], parentSchemaName)
+	if(typeof abstractQueryTable["graphsService"] !== "undefined" && abstractQueryTable["graphsService"] !== null && typeof abstractQueryTable["graphsService"]["schema"] !== "undefined" && abstractQueryTable["graphsService"]["schema"] !== null && abstractQueryTable["graphsService"]["schema"] !== ""){
+		schemaNamesTable[abstractQueryTable.identification._id] = abstractQueryTable["graphsService"]["schema"];
+		schemaName = abstractQueryTable["graphsService"]["schema"];
+	} else {
+		schemaNamesTable[abstractQueryTable.identification._id] = parentSchemaName;
+	}
+	if(typeof abstractQueryTable["graphsServiceLink"] !== "undefined" && abstractQueryTable["graphsServiceLink"] !== null && typeof abstractQueryTable["graphsServiceLink"]["schema"] !== "undefined" && abstractQueryTable["graphsServiceLink"]["schema"] !== null && abstractQueryTable["graphsServiceLink"]["schema"] !== ""){
+		schemaNamesTable[abstractQueryTable.linkIdentification._id] = abstractQueryTable["graphsServiceLink"]["schema"];
+		schemaNamesTable[abstractQueryTable.identification._id] = abstractQueryTable["graphsServiceLink"]["schema"];
+		schemaName = abstractQueryTable["graphsServiceLink"]["schema"];
+	} else {
+		schemaNamesTable[abstractQueryTable.identification._id] = schemaName;
+		if(typeof abstractQueryTable.linkIdentification !== "undefined")schemaNamesTable[abstractQueryTable.linkIdentification._id] = parentSchemaName;
+	}
+	for(let c = 0; c < abstractQueryTable.children.length; c++){
+		schemaNamesTable = setSchemaNamesForQuery(abstractQueryTable.children[c], schemaNamesTable, schemaName)
+	}
+	return schemaNamesTable;
+}
+
+async function getSchemaNameForElement(){
+	const selected_elem_id = Session.get("activeElement");
+	let tempSymbolTable = await generateSymbolTable(true);
+	let sc = await dataShapes.schema.schema;
+	let schemaNames = setSchemaNamesForQuery(tempSymbolTable["abstractQueryTable"], [], sc);
+	let schemaNameFromABS = schemaNames[selected_elem_id];
+	
+	let ontologies = dataShapes.getOntologiesSync();	
+	for(let o = 0; o < ontologies.length; o++){
+		if(ontologies[o]["display_name"] === schemaNameFromABS) {
+			schemaNameFromABS = ontologies[o]["db_schema_name"];
+			break;
+		}
+	}
+	return schemaNameFromABS;
+}
+
+
 export {
   generateSymbolTable,
   findAttributeInAbstractTable,
   isURI,
+  setSchemaNamesForQuery,
+  getSchemaNameForElement,
 }

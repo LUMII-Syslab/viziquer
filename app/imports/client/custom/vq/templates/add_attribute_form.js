@@ -5,7 +5,7 @@ import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { generateSymbolTable } from '/imports/client/custom/vq/js/transformations.js'
+import { generateSymbolTable, getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
 import { autoCompletionAddAttribute, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
 
 import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
@@ -52,7 +52,7 @@ Interpreter.customMethods({
 		
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		 if (proj) {
-			  if (proj.enableWikibaseLabelServices==true && dataShapes.schema.schemaType === 'wikidata') {
+			  if (proj.enableWikibaseLabelServices==true && dataShapes.schema.schema === 'wikidata') {
 				Template.AddNewAttribute.showLabel.set(true)
 			  } else {
 				  Template.AddNewAttribute.showLabel.set(false)
@@ -1000,7 +1000,15 @@ async function getAttributes(filter, waiting){
 							}						
 						}					
 					} 
-
+					let scName = await getSchemaNameForElement();
+					var schemaName = dataShapes.schema.schema;
+					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+						// dataShapes.schema.schema = scName;
+						// dataShapes.schema.schemaType = scName;
+						schemaName = scName;
+						param.schema = schemaName;
+					}
+					// console.log("schemaName", scName, dataShapes.schema.schema);
 					var prop = await dataShapes.getProperties(param, newStartElement);
 
 					if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
@@ -1009,19 +1017,19 @@ async function getAttributes(filter, waiting){
 					prop = prop["data"];
 					
 					// var proj = Projects.findOne({_id: Session.get("activeProject")});
-					var schemaName = dataShapes.schema.schemaType;
+					
 					if(typeof schemaName === "undefined") schemaName = "";
 					// if (proj) {
 						// if (proj.schema) {
 							// schemaName = proj.schema;
 						// };
 					// }
-					
 					for(let cl in prop){
 						if(typeof prop[cl] !== "function"){
 							var prefix;
-							if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+							if(dataShapes.schema.schema === schemaName &&
+							((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt")))prefix = "";
 							else prefix = prop[cl]["prefix"]+":";
 							attr_list.push({name: prefix+prop[cl]["display_name"]})
 						}
@@ -1089,6 +1097,12 @@ async function getAssociations(filter){
         			}						
 				}					
 			} 
+			let scName = await getSchemaNameForElement();
+			var schemaName = dataShapes.schema.schema;
+			if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
+				schemaName = scName;
+				param.schema = schemaName;
+			}
 
 			var prop = await dataShapes.getProperties(param, newStartElement);
 			
@@ -1102,15 +1116,16 @@ async function getAssociations(filter){
 			
 			prop = prop["data"];
 			
-			var schemaName = dataShapes.schema.schemaType;
+			
 			if(typeof schemaName === "undefined") schemaName = "";
 
 			
 			for(let cl in prop){
 				if(typeof prop[cl] !== "function"){
 					var prefix;
-					if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-						|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+					if(dataShapes.schema.schema === schemaName &&
+					((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt")))prefix = "";
 					else prefix = prop[cl]["prefix"]+":";
 					attr_list.push({name: prefix+prop[cl]["display_name"]})
 				}

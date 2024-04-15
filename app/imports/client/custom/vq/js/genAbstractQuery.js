@@ -58,14 +58,14 @@ function getDeclarations(){
 				if(typeof declarationPrefixes[prefixes[p]["prefix"]] === "undefined") {
 					declarationPrefixes[prefixes[p]["prefix"]] = prefixes[p]["namespace"];
 				} else {
-					console.log("ERROR declarationPrefixes")
+					// console.log("ERROR declarationPrefixes")
 				}
 			}
 			for(let s = 0; s < schemas.length; s++){
 				if(typeof declarationSchemas[schemas[s]["schema"]] === "undefined") {
 					declarationSchemas[schemas[s]["schema"]] = schemas[s]["endpointURI"];
 				} else {
-					console.log("ERROR declarationSchemas")
+					// console.log("ERROR declarationSchemas")
 				}
 			}
 		}
@@ -93,9 +93,11 @@ async function resolveTypesAndBuildSymbolTable(query) {
 
   // string -->[IdObject]
   async function resolveClassByName(className, schemaName) {
-   // console.log("resolveClassByName", className, schemaName)
+	// if(typeof schemaName !== "undefined" && schemaName !== null && schemaName !== "")dataShapes.schema.schema = schemaName;
 	if(typeof className !== "undefined" && className !== null){
-		let cls = await dataShapes.resolveClassByName({name: className})
+		let params = {name: className};
+		if(typeof schemaName !== "undefined" && schemaName !== null && schemaName !== "" && dataShapes.schema.schema !== schemaName)params.schema = schemaName;
+		let cls = await dataShapes.resolveClassByName(params);
 		if(cls["data"].length > 0){
 			return cls["data"][0];
 		} else if(typeof cls["name"] !== "undefined" && className.indexOf("[ + ]") == -1 && className.indexOf("[ ]") == -1 && className.indexOf("?") == -1) {
@@ -134,8 +136,11 @@ async function resolveTypesAndBuildSymbolTable(query) {
    //JSON -->
   // function recursively modifies query by adding identification info
   async function resolveClass(obj_class, parents_scope_table) {
-	var schemaName = await dataShapes.schema.schemaType;
-	if(typeof obj_class.identification.schemaName !== "undefined" && obj_class.identification.schemaName !== "") schemaName = obj_class.identification.schemaName;
+	var schemaName = await dataShapes.schema.schema;
+	if(typeof obj_class.identification.schemaName !== "undefined" && obj_class.identification.schemaName !== "") {
+		schemaName = obj_class.identification.schemaName;
+		// dataShapes.schema.schema = schemaName;
+	}
 	if(typeof schemaName === "undefined") schemaName = "";
 	// for wikidata
 	
@@ -145,8 +150,8 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		}	
 
 		if(obj_class.instanceIsConstant == true && (isURI(obj_class.instanceAlias) == 3 || isURI(obj_class.instanceAlias) == 4)) {
-			//console.log("getIndividualName", obj_class.instanceAlias, schemaName);
 			obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias,true);	
+			// console.log("getIndividualName", obj_class.instanceAlias, schemaName, dataShapes.schema.schema);
 		}
 	}
 		  
@@ -449,7 +454,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	try {
 	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  // var proj = Projects.findOne({_id: Session.get("activeProject")});
-		  var schemaName = await dataShapes.schema.schemaType;
+		  var schemaName = await dataShapes.schema.schema;
 		  if(typeof context.schemaName !== "undefined" && context.schemaName !== "") schemaName = context.schemaName;
 		  if(typeof schemaName === "undefined") schemaName = "";
   
@@ -471,10 +476,14 @@ async function resolveTypesAndBuildSymbolTable(query) {
    //console.log("parseExpObject",  exp_obj, context, exprType)
    var parse_obj = exp_obj.exp;
    if(typeof parse_obj !== 'undefined'){
+	   let schemaName = await dataShapes.schema.schema;
+	   if(typeof context.schemaName !== "undefined" && context.schemaName !== "") schemaName = context.schemaName;
+	   if(typeof schemaName === "undefined") schemaName = "";
 	   if(parse_obj.indexOf("-") !== -1 && parse_obj.indexOf("[") === -1 && parse_obj.indexOf("]") === -1){
 	   try {
 		  // parse_obj = await vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
-		  parse_obj = await vq_variable_grammar_parser.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
+		  
+		  parse_obj = await vq_variable_grammar_parser.parse(parse_obj, {schema:schemaName, symbol_table:symbol_table, context:context});
 		} catch (e) {
 		  Interpreter.showErrorMsg("Syntax error in attribute expression " + exp_obj.exp, -3);  
 		}
@@ -487,10 +496,6 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		if(parse_obj != "[*sub]"){
 			try {
 			  // var proj = Projects.findOne({_id: Session.get("activeProject")});
-			 var schemaName = await dataShapes.schema.schemaType;
-			 if(context.schemaName !== "") schemaName = context.schemaName;
-			 if(typeof schemaName === "undefined") schemaName = "";
-
 			    var tt=await resolveTypeFromSchemaForAttributeAndLink(exp_obj.exp, schemaName);
 				var isSimple = false;
 				if(tt != null) isSimple = true;
@@ -646,7 +651,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
 		  if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
             var strURI = (instanceAliasIsURI == 3 && obj_class.instanceAlias.indexOf("<") == -1) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
-			 var schemaName = await dataShapes.schema.schemaType;
+			 var schemaName = await dataShapes.schema.schema;
 			 if(typeof obj_class.identification.schemaName !== "undefined" && obj_class.identification.schemaName !== "") schemaName = obj_class.identification.schemaName;
 			 if(typeof schemaName === "undefined") schemaName = "";
 
@@ -654,6 +659,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 						if(strURI.indexOf(":") == -1)strURI = "wd:"+strURI;
 						// var cls = await dataShapes.resolveIndividualByName({name: id})
 					//	console.log("getIndividualName", strURI, schemaName)
+					dataShapes.schema.schema = schemaName;
 						var cls = await dataShapes.getIndividualName(strURI,true)
 						if(cls != null && cls != ""){
 							strURI = cls;
@@ -1267,8 +1273,8 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
                     isGraphToContents: link.link.isGraphToContents(),
 					graph: link.link.getGraph(),
 					graphInstruction: link.link.getGraphInstruction(),
-					graphsService: elem.getGraphsServices(),
-					graphsServiceLink: link.link.getGraphsServices(),
+					graphsService: getSchemaNameFromGraphService(elem.getGraphsServices()),
+					graphsServiceLink: getSchemaNameFromGraphService(link.link.getGraphsServices()),
                     identification: { _id: elem._id(), local_name: elem.getName()},
                     instanceAlias: replaceSymbols(elem.getInstanceAlias()),
 					instanceIsConstant: checkIfInstanceIsConstantOrVariable(elem.getInstanceAlias(), "="),
@@ -1389,7 +1395,7 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
       fields: e.getFields(),
       aggregations: e.getAggregateFields(),
 	  graphs: e.getGraphs(),
-	  graphsService: e.getGraphsServices(),
+	  graphsService: getSchemaNameFromGraphService(e.getGraphsServices()),
 	  namedGraphs: e.getNamedGraphs(),
       conditions: e.getConditions(),
       orderings: e.getOrderings(),
@@ -1699,8 +1705,11 @@ async function resolveTypeFromSchemaForClass(id, schemaName) {
 					if(schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
 						id = "wd:"+id;
 					}
-					
-					var cls = await dataShapes.resolveClassByName({name: id})
+					// if(schemaName !== "" && schemaName !== null) dataShapes.schema.schema = schemaName;
+					let params = {name: id};
+					if(schemaName !== "" && schemaName !== null && dataShapes.schema.schema !== schemaName) params.schema = schemaName;
+						
+					var cls = await dataShapes.resolveClassByName(params);
 
     				if(cls["complete"] == false) return null;
     				if(cls["data"].length > 0){
@@ -1732,6 +1741,7 @@ async function resolveTypeFromSchemaForIndividual(id, schemaName) {
 					if(schemaName.toLowerCase() == "wikidata" && ((id.indexOf("[") > -1 && id.endsWith("]"))) ){
 						id = "wd:"+id;
 						// var cls = await dataShapes.resolveIndividualByName({name: id})
+						// if(schemaName !== "" && schemaName !== null) dataShapes.schema.schema = schemaName;
 						var cls = await dataShapes.getIndividualName(id,true)
 						if(cls != null && cls != ""){
 							return {local_name: cls.substring(3), prefix: "wd"};
@@ -1743,12 +1753,17 @@ async function resolveTypeFromSchemaForIndividual(id, schemaName) {
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
 async function resolveTypeFromSchemaForAttributeAndLink(id, schemaName) {
-    				if(schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
+    				let properties = {name: id};
+					if(schemaName !== "" && schemaName !== null && dataShapes.schema.schema !== schemaName) {
+						// schemaName = dataShapes.schema.schema;
+						properties.schema = schemaName;
+						// dataShapes.schema.schemaType = schemaName;
+					}
+					if(schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
 						id = "wdt:"+id;
 					}
-
-    				var aorl = await dataShapes.resolvePropertyByName({name: id})
-
+					var aorl = await dataShapes.resolvePropertyByName(properties);
+					
     				if(aorl["complete"] == false) return null;
     				var res = aorl["data"][0];
     				if(res){
@@ -1995,8 +2010,24 @@ function chechIfSimplePath(expressionTable, isSimple, isPath){
 	return {isSimple:isSimple, isPath:isPath}
 }
 
+function getSchemaNameFromGraphService(getGraphsServices){
+	let ontologies = dataShapes.getOntologiesSync();
+	let declarations = getDeclarations();
+	if(typeof declarations.schemas[getGraphsServices.graph] !== "undefined") getGraphsServices.graph = declarations.schemas[getGraphsServices.graph];
+	if(typeof ontologies !== "undefined"){
+		for(let o = 0; o < ontologies.length; o++){	
+			if(ontologies[o]["display_name"] === getGraphsServices.schema){
+				getGraphsServices.schema = ontologies[o]["db_schema_name"];
+				break;
+			}
+		}
+	}
+	return getGraphsServices;
+}
+
 export {
   resolveTypesAndBuildSymbolTable,
   genAbstractQueryForElementList,
-  getResolveInformation
+  getResolveInformation,
+  getDeclarations
 }

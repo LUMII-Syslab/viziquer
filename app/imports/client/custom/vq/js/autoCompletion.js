@@ -3,7 +3,7 @@ import { Elements, ElementTypes, CompartmentTypes, Compartments } from '/imports
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { generateSymbolTable, findAttributeInAbstractTable, } from '/imports/client/custom/vq/js/transformations.js'
+import { generateSymbolTable, findAttributeInAbstractTable, setSchemaNamesForQuery } from '/imports/client/custom/vq/js/transformations.js'
 import { VQ_Element } from './VQ_Element'
 
 import * as vq_grammar_completion_parser from '/imports/client/custom/vq/js/vq_grammar_completion_parser.js'
@@ -13,6 +13,8 @@ import * as vq_language_grammar_completion_parser from '/imports/client/custom/v
 var symbolTable = {};
 var grammarType = "class";
 var time;
+var schemaNameFromABS = null;
+var schemaNames = [];
 
 Interpreter.customMethods({
 
@@ -25,6 +27,7 @@ Interpreter.customMethods({
 		const d = new Date();
 		time = d.getTime();
 		if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
+		getSchemaNameFromABS();
 		await autoCompletion(e);
 	},
 
@@ -33,6 +36,7 @@ Interpreter.customMethods({
 		const d = new Date();
 		time = d.getTime();
 		if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
+		getSchemaNameFromABS();
 		await autoCompletion(e);
 	},
 	
@@ -44,11 +48,13 @@ Interpreter.customMethods({
 		grammarType = "link"
 		const d = new Date();
 		time = d.getTime();
+		getSchemaNameFromABS();
 		await autoCompletion(e);
 	},
 	
 	classAutoCompletion: async function(e, compart) {
 		grammarType = "className"
+		getSchemaNameFromABS();
 		await autoCompletion(e);
 	},
 	
@@ -70,6 +76,7 @@ Interpreter.customMethods({
 		grammarType = "instance"
 		let ev = e.originalEvent;
 		if ((ev.ctrlKey || ev.metaKey) && ev.code === 'Space') {
+			getSchemaNameFromABS();
 			await autoCompletion(e);
 		}	
 	},
@@ -84,6 +91,7 @@ const generateSymbolTableAC = async function() {
 	var tempSymbolTable = await generateSymbolTable();
 	var st = tempSymbolTable["symbolTable"];
 	
+	const selected_elem_id = Session.get("activeElement");
 	return st;
   }
 
@@ -92,11 +100,13 @@ const autoCompletionAddCondition = async function(e) {
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
+	getSchemaNameFromABS();
 	await autoCompletion(e);
 }
 
 const autoCompletionClass = async function(e) {
 	grammarType = "className"
+	getSchemaNameFromABS();
 	await autoCompletion(e);
 }
 
@@ -105,6 +115,7 @@ const autoCompletionAddAttribute = async function(e) {
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
+	getSchemaNameFromABS();
 	await autoCompletion(e);
 }
 
@@ -113,6 +124,7 @@ const autoCompletionAddLink = async function(e) {
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
+	getSchemaNameFromABS();
 	await autoCompletion(e);
 }
 
@@ -120,6 +132,7 @@ const autoCompletionInstance = async function(e) {
 	grammarType = "instance"
 	let ev = e.originalEvent;
 	if ((ev.ctrlKey || ev.metaKey) && ev.code === 'Space') {
+		getSchemaNameFromABS();
 		await autoCompletion(e);
 	}	
 }
@@ -157,6 +170,8 @@ const autoCompletionCleanup = function() {
 	removeMessage();
 	closeAllLists();
 	symbolTable = null;
+	schemaNameFromABS = null;
+	schemaNames = [];
 }
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -407,7 +422,7 @@ function updateInputValue(input, prefix, suggestion) {
 	let newValue = prefix + suggestion + tail;
 	let cursorPos = prefix.length + suggestion.length;
 	
-	if(grammarType == "instance") newValue = "="+newValue;
+	// if(grammarType == "instance") newValue = "="+newValue;
 	
 	input.value = newValue;
 	
@@ -461,6 +476,9 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 			var vq_obj;
 			if(fullText != "") params.filter = fullText;
 			params.limit = dataShapes.schema.limit;
+			if(typeof schemaNameFromABS !== "undefined" && schemaNameFromABS !== null && schemaNameFromABS !== "" && dataShapes.schema.schema !== schemaNameFromABS){
+				params.schema = schemaNameFromABS;
+			}
 			
 			const selected_elem_id = Session.get("activeElement");			
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
@@ -472,10 +490,12 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
 			}			
 			
+
 			cls = await dataShapes.getClasses(params, vq_obj);
 			cls = cls["data"];
 			
-			var schemaName = dataShapes.schema.schemaType;
+			var schemaName = dataShapes.schema.schema;
+			if(typeof schemaNameFromABS !== "undefined" && schemaNameFromABS !== null && schemaNameFromABS !== "") schemaName = schemaNameFromABS;
 			if(typeof schemaName === "undefined") schemaName = "";
 
 			for(let cl = 0; cl < cls.length; cl++){
@@ -636,15 +656,21 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			act_el = new VQ_Element(selected_elem_id);
 		}
+		if(typeof schemaNameFromABS !== "undefined" && schemaNameFromABS !== null && schemaNameFromABS !== ""){
+			params.schema = schemaNameFromABS;
+			// dataShapes.schema.schemaType = schemaNameFromABS;
+		}
 		
-		var inst = await dataShapes.getIndividuals(params, act_el);
+		var inst = await dataShapes.getClassIndividuals(params, act_el);
 		//if (dataShapes.schema.schemaType == 'wikidata' && fullText != "")
 		//	inst = await dataShapes.getIndividualsWD(fullText); 
 		//else
 		//	inst = await dataShapes.getIndividuals(params, act_el);
 
 		if (fullText != "" ){
-			if ( inst.length === 0 && dataShapes.schema.schemaType == 'dbpedia' || inst.length > 0 && inst[0] !== "dbr:"+fullText && dataShapes.schema.schemaType == 'dbpedia')
+			let scName = dataShapes.schema.schema;
+			if(typeof schemaNameFromABS !== "undefined" && schemaNameFromABS !== null && schemaNameFromABS !== "")scName = schemaNameFromABS;
+			if ( inst.length === 0 && scName == 'dbpedia' || inst.length > 0 && inst[0] !== "dbr:"+fullText && dataShapes.schema.schema == 'dbpedia')
 				c["suggestions"].push({name: "dbr:"+fullText, priority:100, type:0})
 		}
 			
@@ -666,9 +692,8 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 				if (act_elem) {
 					var vq_link = new VQ_Element(act_elem);
 					if (vq_link.isLink()) {
-						// console.log("PPPPPPPPP", fullText, text)
 						// var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
-						let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
+						let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:schemaNameFromABS, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
 						
 					};
 				};
@@ -680,7 +705,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 					const compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 					const compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					let className = compart["input"];
-					let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, context:act_elem, className:className});
+					let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:schemaNameFromABS, symbol_table:symbolTable, context:act_elem, className:className});
 				};
 			}else if(grammarType == "language"){
 				let name_list = [];
@@ -704,10 +729,10 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 					symbolTable = tempSymbolTable["symbolTable"];
 				}
 				// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-				let parsed_exp = await vq_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+				let parsed_exp = await vq_grammar_completion_parser.parse(text, {time:time, text:text, schema:schemaNameFromABS, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			}
 		} catch (com) {
-			console.log(com);
+			// console.log(com);
 			// console.log(JSON.stringify(com["message"], null, 2));
 			// console.log(JSON.parse(com["message"]));
 			var cont = JSON.parse(com["message"]);
@@ -870,6 +895,26 @@ function findClassInAbstractQueryTable(elemId, abstractQueryTable){
 		}
 	}
 	return clazz;
+}
+
+async function getSchemaNameFromABS(){
+	const selected_elem_id = Session.get("activeElement");
+	if(typeof schemaNames[selected_elem_id] !== "undefined") {
+		schemaNameFromABS = schemaNames[selected_elem_id];
+	} else{
+		let tempSymbolTable = await generateSymbolTable(true);
+		schemaNames = setSchemaNamesForQuery(tempSymbolTable["abstractQueryTable"], [], "");
+		schemaNameFromABS = schemaNames[selected_elem_id];
+	}
+	
+	let ontologies = dataShapes.getOntologiesSync();	
+	for(let o = 0; o < ontologies.length; o++){
+		if(ontologies[o]["display_name"] === schemaNameFromABS) {
+			schemaNameFromABS = ontologies[o]["db_schema_name"];
+			break;
+		}
+	}
+
 }
 
 export {

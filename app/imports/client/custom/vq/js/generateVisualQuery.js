@@ -13,11 +13,13 @@ import { Projects, Compartments, Elements, ElementTypes} from '/imports/db/platf
 import {OrthogonalCollectionRerouting} from '/imports/client/platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { Create_VQ_Element, VQ_Element } from './VQ_Element';
+import { Create_VQ_Element, VQ_Element, Create_VQ_Element_Declaration } from './VQ_Element.js';
+import { getDeclarations } from './genAbstractQuery.js';
 
 import { isURI } from '/imports/client/custom/vq/js/transformations.js'
 
 import * as vq_visual_grammar_parser from '/imports/client/custom/vq/js/vq_visual_grammar_parser.js'
+
 
 // meteor npm install sparqljs
 
@@ -41,6 +43,7 @@ var boxMoveY = 0;
 var MinY = 10;
 var MaxY = 10;
 var classifiers = [];
+var usedPrefixes = [];
 
 const async_Create_VQ_Element = async (location, isLink, target, source) => new Promise(resolve => {
     Create_VQ_Element(newElem => { resolve(newElem) }, location, isLink, target, source);
@@ -50,6 +53,7 @@ Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
 
 generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
+	  usedPrefixes = [];
 	  x = xx;
 	  y = yy;
 	  MinY = yy;
@@ -58,7 +62,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 	  orderCounter = 1;
 	  useRef = false;
 	  var prefixesText = [];
-	  schemaName = dataShapes.schema.schemaType;
+	  schemaName = dataShapes.schema.schema;
 	  // schemaName = "wikidata";
 	   
 	  directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
@@ -84,6 +88,8 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		 }
 		 
 		let prefixes = await dataShapes.getNamespaces();
+		prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+
 		if(typeof prefixes["complete"] === "undefined"){
 			prefixesText = [];
 			for (const p of prefixes) {
@@ -287,7 +293,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
 
-		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion);
+		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion, usedPrefixes);
 
 		for (let condLink of conditionLinks) {
 			const linkName = condLink.identification.display_name ?? condLink.identification.short_name;
@@ -357,11 +363,16 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
   },
   
 generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
+	usedPrefixes = [];
+		
 	orderCounter = 1;
 	boxMoveY = 0;
 	useRef = false;
 	isUnderUnion = false;
 	let prefixes = await dataShapes.getNamespaces();
+	prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+	
+
 	var classif = await dataShapes.getClassifiers();
 	
 	if(classif["data"].length > 0){
@@ -371,21 +382,23 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	}
 
 	if(typeof prefixes["complete"] === "undefined"){
-		var prefixesText = [];
-	
+		let prefixesText = [];
+
 		for (const p of prefixes) {
 			prefixesText.push("PREFIX " + p["name"] + ": <" + p["value"] + ">");
 		}
 
 		text  = prefixesText.join('\n') + text;
 	}
+	
+	
 	text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		
 		if(Object.keys(parsedQuery).length == 0)  Interpreter.showErrorMsg("Error in the SPARQL text. See details in the Meteor console", -3);
 		else {
-		schemaName = dataShapes.schema.schemaType;
+		schemaName = dataShapes.schema.schema;
 		  
 		x = xx;
 		y = yy;
@@ -591,7 +604,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
 
-		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion);
+		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion, usedPrefixes);
 		
 		// var i = 0;
 		// while((Object.keys(VQ_Elements).length < classCount || link_count < link_count2)&& i < 100){
@@ -806,10 +819,17 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	//from
 	var from = parsedQuery["from"];
 	if(typeof from !== "undefined"){
-		for(let f = 0; f < from.length; f++){
-			var graphInstruction = "FROM";
-			if(f == "named") graphInstruction = "FROM NAMED";
-			var graph = from[f];
+		for(let f = 0; f < from.default.length; f++){		
+			let graphInstruction = "FROM";
+			let graph = from.default[f]["value"];
+			fromTable.push({
+				"graph":graph,
+				"graphInstruction":graphInstruction
+			})
+		}
+		for(let f = 0; f < from.named.length; f++){	
+			let graphInstruction = "FROM NAMED";
+			let graph = from.named[f]["value"];
 			fromTable.push({
 				"graph":graph,
 				"graphInstruction":graphInstruction
@@ -900,6 +920,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			
 		}
 	}
+	
 	if(starInSelect == true){
 		variables = variables.concat(tempN["selectStarList"]);
 		variables = variables.filter(function (el, i, arr) {
@@ -908,6 +929,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	}
 	
 	var aggregationInSelect = false;
+	
 	
 	for(let key = 0; key < variables.length; key++){
 		
@@ -947,6 +969,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					}
 					
 				}
+				
 				if(addVariable === true){
 					var isVariable = false;
 					for(let link = 0; link< linkTable.length; link++){
@@ -986,6 +1009,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					
 					// if(Object.keys(classes).length > 0 && typeof nodeList[variables[key]] !== "undefined"){
 					if(Object.keys(classes).length > 0){
+						
 						//add class as attribute
 						var parsedClass = getVariable(variables[key])["value"];
 						var identification = await dataShapes.resolveClassByName({name: parsedClass});
@@ -1018,11 +1042,14 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 						for(let clazz in classes){
 							if(typeof classes[clazz] !== "function"){
 								classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-								// console.log("1", attributeInfo)
+								// console.log("1", attributeInfo, classesTable[clazz])
 							}
 						}
 						
-						if(typeof nodeList[variables[key]] === "undefined"){
+						let nodeListService = await collectNodeListWithService(nodeWhere);
+						nodeListService = nodeListService.nodeList;
+
+						if(typeof nodeListService[variables[key]] === "undefined"){
 							let parsedAttributeRes = getVariable(variables[key]);	
 							let parsedAttribute = parsedAttributeRes["value"];	
 							if(typeof bindTable[parsedAttribute] === 'undefined'){		
@@ -1058,7 +1085,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 									for(let clazz in classesTable){
 										if(typeof classesTable[clazz] !== "function"){
 											classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-											// console.log("1,5", attributeInfo)
+											// console.log("1,5", attributeInfo, nodeList, variables[key]);
 											break;
 										}
 									}
@@ -1152,7 +1179,6 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					
 					if(typeof attributeTable[getVariable(variables[key])["value"]] !== 'undefined') {
 						// add attribute
-						
 						let parsedAttribute = getVariable(variables[key])["value"];	
 						let attributes = findByVariableName(attributeTable, parsedAttribute);
 						
@@ -1747,7 +1773,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 				} 
 			
 				classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
-				// console.log("path", attributeInfo)
+				// console.log("path", attributeInfo, attributeTable[attribute], attributeTable[attribute]["seen"])
 			}
 		}
 	  }
@@ -2801,11 +2827,14 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							let splittedUri = splitURI(unionBlock["triples"][triple]["predicate"]["value"]);
 							if(splittedUri == null) pathExpr = "<"+unionBlock["triples"][triple]["predicate"]["value"]+">";
 							else {
-								let prefixes = await dataShapes.getNamespaces()
+								let prefixes = await dataShapes.getNamespaces();
+								prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+	
 								for(let key = 0; key < prefixes.length; key++){
 									if(prefixes[key]["value"] == splittedUri.namespace) {
 										if(prefixes[key]["name"].slice(-1) == ":") return prefixes[key]["name"]+splittedUri.name;
 										pathExpr = prefixes[key]["name"]+":"+splittedUri.name;
+										usedPrefixes[prefixes[key]["name"]] = prefixes[key]["value"];
 									}
 								}
 								pathExpressionbgp.push(pathExpr);
@@ -4385,7 +4414,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						let addAttribute = true;
 						for(let filter = 0; filter < filterTable.length; filter++){
 							if(filterTable[filter]["filterVariables"].indexOf("@" + attributeTableAdded[attr]) !== -1) addAttribute = false;
-							console.log("filterVariables", filterTable[filter]["filterVariables"], attributeTableAdded[attr])
 						}
 						let attributeInfoTemp = attributeTable[attributeTableAdded[attr]];
 						let attributeInfo = {
@@ -4729,7 +4757,313 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + ")";
 		}	
 	}
-	if(where["type"] == "graph" || where["type"] == "service"){
+	if(where["type"] == "service"){
+		
+		let nodeLitsTemp = nodeList;
+		let patterns =  where["patterns"];
+		let collectNodeListTemp = await collectNodeList(patterns);
+		let temp  = collectNodeListTemp["nodeList"];
+		
+		let graphName = await generateInstanceAlias(where.name.value, false);
+					
+		let abstractTable = await generateAbstractTable({where:where["patterns"]}, allClasses, variableList, nodeList);
+			
+		for(let clazz in abstractTable["classesTable"]){
+			if(typeof abstractTable["classesTable"][clazz] !== "function"){
+				allClasses[clazz] = abstractTable["classesTable"][clazz];
+			}
+		}
+		
+		let linkFound = false;
+		var pn = null;
+		for(let node in abstractTable["nodeList"]){
+			if(typeof nodeList[node] !== 'undefined' && typeof nodeList[node] !== 'function'){
+				
+				//find links outside subquery
+				for(let subLink = 0; subLink < abstractTable["linkTable"].length; subLink++){
+					if((typeof classesTable[abstractTable["linkTable"][subLink]["subject"]]!=='undefined' && classesTable[abstractTable["linkTable"][subLink]["subject"]]["variableName"] == node) 
+						|| (typeof classesTable[abstractTable["linkTable"][subLink]["object"]] !== 'undefined' && classesTable[abstractTable["linkTable"][subLink]["object"]]["variableName"] == node)){
+						if(linkFound==false){
+							let subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject", nodeList[node]);
+							pn = nodeList[node];
+							if(subSelectMainClass == null){
+								for(let subClass in abstractTable["classesTable"]){
+									if(typeof abstractTable["classesTable"][subClass] !== "function"){
+										subSelectMainClass = subClass;
+										break;
+									}
+								}
+							 } 
+
+							abstractTable["linkTable"][subLink]["graphInstructionLink"] = where["type"].toUpperCase();
+							abstractTable["linkTable"][subLink]["graphLink"] = graphName;
+
+							
+							// abstractTable["linkTable"][subLink]["isSubQuery"] = isSubQuery;
+							// abstractTable["linkTable"][subLink]["isGlobalSubQuery"] = isGlobalSubQuery;
+							// if(where["type"] == "optional") abstractTable["linkTable"][subLink]["linkType"] = "OPTIONAL";
+							linkFound = true;
+						}
+					}
+					linkTable.push(abstractTable["linkTable"][subLink]);
+				}
+			}
+		}
+		
+		// UNIT
+		if(Object.keys(nodeList).length == 0){
+					
+			if(typeof classesTable["[ ]"] === 'undefined' && typeof allClasses["[ ]"] === 'undefined'){
+				classesTable["[ ]"] = {
+					"variableName":"[ ]",
+					"identification":null,
+					"instanceAlias":"",
+					"isVariable":false,
+					"isUnit":true,
+					"isUnion":false
+				};
+				classTableAdded.push("[ ]");
+				nodeList["[ ]"]= {uses: {"[ ]": "class"}, count:1};
+			}else {
+				classesTable["[ ]"+counter] = {
+					"variableName":"[ ]",
+					"identification":null,
+					"instanceAlias":"",
+					"isVariable":false,
+					"isUnit":true,
+					"isUnion":false
+				};
+				classTableAdded.push("[ ]"+counter);
+				if(typeof nodeList["[ ]"] === 'undefined') nodeList["[ ]"] = {uses: [], count:1}
+				nodeList["[ ]"]["uses"]["[ ]"+counter] = "class";
+				nodeList["[ ]"]["count"] = nodeList["[ ]"]["count"]+1;
+				counter++;
+			}
+		}
+		if(linkFound == false){
+			let linkType = "REQUIRED"
+			if(where["type"] == "optional") linkType = "OPTIONAL";
+			if(typeof nodeList["[ ]"] !== 'undefined'){
+				for(let unionClass in nodeList["[ ]"]["uses"]){
+					let object;
+					if(typeof nodeList["[ ]"]["uses"][unionClass] !== "function"){
+						object = findClassToConnectUNIT(abstractTable["classesTable"], abstractTable["linkTable"], null, "object");
+						if(object == null){
+							for(let subClass in abstractTable["classesTable"]){
+								if(typeof abstractTable["classesTable"][subClass] !== "function"){
+									object = subClass;
+									break;
+								}
+							}
+						}
+					}
+					let isSubQuery = false;
+					let isGlobalSubQuery = false;
+					
+					// if(typeof where["patterns"][0]["limit"] !== 'undefined' || typeof where["patterns"][0]["offset"] !== 'undefined' || abstractTable["orderTable"].length > 0){
+						// isGlobalSubQuery = true;
+						// isSubQuery = false;
+					// }
+					
+					let link = {
+						"linkIdentification":{local_name: "++", short_name: "++"},
+						"object":object,
+						"subject":unionClass,
+						"isVisited":false,
+						"linkType":linkType,
+						"isSubQuery":isSubQuery,
+						"isGlobalSubQuery":isGlobalSubQuery,
+						"counter":orderCounter,
+						"graphInstructionLink":where["type"].toUpperCase(),
+						"graphLink": graphName
+					}
+
+					linkTable.push(link);
+					linkTableAdded.push(link);
+					linkFound = true;
+					orderCounter++;
+				}
+			}
+			if(typeof abstractTable["nodeList"]["[ ]"] !== 'undefined'){
+				for(let unionClass in abstractTable["nodeList"]["[ ]"]["uses"]){
+				  if(typeof abstractTable["nodeList"]["[ ]"]["uses"][unionClass] !== "function"){
+					let subject = findClassToConnectUNIT(classesTable, linkTable, nodeList, "subject");
+					if(subject == null){
+						for(let subClass in classesTable){
+							if(typeof classesTable[subClass] !== "function"){
+								subject = subClass;
+								break;
+							}
+						}
+					}
+	
+					let link = {
+						"linkIdentification":{local_name: "++", short_name: "++"},
+						"object":unionClass,
+						"subject":subject,
+						"isVisited":false,
+						"linkType":linkType,
+						"isSubQuery":false,
+						"isGlobalSubQuery":false,
+						"counter":orderCounter,
+						"graphInstructionLink":where["type"].toUpperCase(),
+						"graphLink": graphName
+					}
+	
+					linkTable.push(link);
+					linkTableAdded.push(link);
+					linkFound = true;
+					orderCounter++;
+				  }
+				}
+			}
+			for(let subLink = 0; subLink < abstractTable["linkTable"].length; subLink++){
+				linkTable.push(abstractTable["linkTable"][subLink]);
+			}
+		}
+		
+		
+		
+		if(linkFound == false){
+			let linkType = "REQUIRED"
+			if(where["type"] == "optional") linkType = "OPTIONAL";
+			
+			//if no link found
+			// search for equals nodes in nodeList and parentNodeList
+			for(let node in abstractTable["nodeList"]){
+				if(typeof nodeList[node] !== 'undefined' && typeof nodeList[node] !== 'function'){
+					for(let classNode in abstractTable["nodeList"][node]["uses"]){
+						if(typeof abstractTable["nodeList"][node]["uses"][classNode] !== "function"){
+							for(let classParentNode in nodeList[node]["uses"]){
+								if(typeof nodeList[node]["uses"][classParentNode] !== "function"){
+									
+									abstractTable["classesTable"][classParentNode] = abstractTable["classesTable"][classNode];
+									classesTable[classParentNode] = abstractTable["classesTable"][classNode];
+									delete abstractTable["classesTable"][classNode];
+									classesTable[classParentNode]["graph"] = graphName;
+									classesTable[classParentNode]["graphInstruction"] = where["type"].toUpperCase();
+									
+									
+									// let link = {
+										// "linkIdentification":{local_name: "==", short_name: "=="},
+										// "object":classParentNode,
+										// "subject":classNode,
+										// "isVisited":false,
+										// "linkType":linkType,
+										// "isSubQuery":true,
+										// "isGlobalSubQuery":false,
+										// "counter":orderCounter
+									// }
+									
+									// linkTable.push(link);
+									// linkTableAdded.push(link);
+									// orderCounter++;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			// if class from parentNodeList in nodeList dont has attributes, except (select this), and nodeList class has link, relink it to parentNodeList and make subquery
+			
+			// if no equals nodes found, connect subquery main class, with parent query class, without outgoing links
+			// TO DO
+		}
+		
+		let subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject", pn);
+		
+		if(subSelectMainClass == null){
+			for(let subClass in abstractTable["classesTable"]){
+				if(typeof abstractTable["classesTable"][subClass] !== "function"){
+					subSelectMainClass = subClass;
+					break;
+				}
+			}
+		}
+		
+		if(linkFound == false){
+			
+			let parentSelectMainClass = findClassToConnect(classesTable, linkTable, null,"object", pn);
+		
+			if(parentSelectMainClass == null){
+				for(let subClass in classesTable){
+					if(typeof classesTable[subClass] !== "function"){
+						parentSelectMainClass = subClass;
+						break;
+					}
+				}
+			}
+			
+			let link = {
+				"linkIdentification":{local_name: "++", short_name: "++"},
+				"object":subSelectMainClass,
+				"subject":parentSelectMainClass,
+				"isVisited":false,
+				"linkType": "REQUIRED",
+				"isSubQuery":false,
+				"isGlobalSubQuery":false,
+				"counter":orderCounter,
+				"graphInstructionLink":where["type"].toUpperCase(),
+				"graphLink": graphName
+			}
+									
+			linkTable.push(link);
+			linkTableAdded.push(link);
+			orderCounter++;
+		}
+		
+		var isNotConnectdClass = true;
+		while(isNotConnectdClass == true){
+			isNotConnectdClass = false;
+			let ct = [];
+			for(let cl in abstractTable["classesTable"]){
+				if(typeof abstractTable["classesTable"][cl] !== "function"){
+					ct[cl] = false;
+				}
+			}
+			
+			ct = connectNotConnectedQueryParts(subSelectMainClass, abstractTable["linkTable"], ct);
+			for(let cl in ct){
+				if(ct[cl] == false){
+					isNotConnectdClass = true;
+					let link = {
+						"linkIdentification":{local_name: "++", display_name: "++", short_name: "++"},
+						"object":cl,
+						"subject":subSelectMainClass,
+						"isVisited":false,
+						"linkType":"REQUIRED",
+						"isSubQuery":false,
+						"isGlobalSubQuery":false,
+						"isVariable":false,
+						"counter":orderCounter
+					}
+					linkTable.push(link);
+					abstractTable["linkTable"].push(link);
+					orderCounter++;
+					break;
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		for(let clazz in abstractTable["classesTable"]){
+			if(typeof abstractTable["classesTable"][clazz] !== "function" && typeof classesTable[clazz] === "undefined"){
+				classesTable[clazz] = abstractTable["classesTable"][clazz];
+			}
+		}
+		for(let clazz in abstractTable["attributeTable"]){
+			if(typeof abstractTable["attributeTable"][clazz] !== "function" && typeof attributeTable[clazz] === "undefined"){
+				attributeTable[clazz] = abstractTable["attributeTable"][clazz];
+			}
+		}
+		
+	}
+	if(where["type"] == "graph" ){
+		
 		let nodeLitsTemp = nodeList;
 		let patterns =  where["patterns"];
 		let collectNodeListTemp = await collectNodeList(patterns);
@@ -5778,7 +6112,7 @@ async function collectNodeList(whereAll, propUnderOptional){
 	}
 	//bind
 	if(where["type"] == "bind"){
-		selectStarList.push(where["variable"])
+		selectStarList.push(where["variable"]["value"])
 	}
 	
 	//sub select
@@ -5797,6 +6131,115 @@ async function collectNodeList(whereAll, propUnderOptional){
 			if(typeof patterns[pattern]["type"] !== 'undefined' && patterns[pattern]["type"] != "bgp") optionalDataPropAsObjectProp = true;
 		}
 		let temp = await collectNodeList(patterns, optionalDataPropAsObjectProp);
+		var tempNode = temp["nodeList"];
+		for(let node in tempNode){
+			if(typeof tempNode[node] !== "function"){
+				nodeList[node] = concatNodeListInstance(nodeList, node, tempNode[node]);
+			}
+		}
+		selectStarList = selectStarList.concat(temp["selectStarList"]);
+	}
+  }
+  return {"nodeList":nodeList, "selectStarList":selectStarList}
+}
+
+async function collectNodeListWithService(whereAll, propUnderOptional){
+  var nodeList = [];
+  var selectStarList = [];
+  for(let key in whereAll){
+	var where = whereAll[key];
+	//type=bgp
+	if(where["type"] == "bgp"){
+		let triples = where["triples"];
+		
+		for(let triple = 0; triple < triples.length; triple++) {
+		  if(typeof triples[triple] !== "undefined"){
+			if(getVariable(triples[triple]["subject"])["type"] == "varName") selectStarList.push(triples[triple]["subject"]["value"]);
+			if(getVariable(triples[triple]["object"])["type"] == "varName") selectStarList.push(triples[triple]["object"]["value"]);
+			if(getVariable(triples[triple]["predicate"])["type"] == "varName") selectStarList.push(triples[triple]["predicate"]["value"]);
+
+			//class definitions
+			if((triples[triple]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined")){
+				nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
+			} else{
+				//if class without definition
+				//from data property
+				let propertyResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]["value"]});
+				if(propertyResolved.complete == true && propertyResolved.data[0].data_cnt > 0 && propertyResolved.data[0].object_cnt == 0){
+					//subjest
+					nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
+					//object, dataproperty as objectproperty
+					if(propUnderOptional != null && propUnderOptional == true) nodeList[triples[triple]["object"]["value"]] = createNodeListInstance(nodeList, triples[triple]["object"]["value"]);
+				}
+				//from object property
+				else if(propertyResolved.complete == true && propertyResolved.data[0].object_cnt > 0){
+					//subjest
+					nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
+					//object
+					nodeList[triples[triple]["object"]["value"]] = createNodeListInstance(nodeList, triples[triple]["object"]["value"]);
+				}
+				//from property path
+				else if(typeof triples[triple]["predicate"] === "object" && triples[triple]["predicate"]["type"] == "path"){
+					
+					let last_element = triples[triple]["predicate"]["items"][triples[triple]["predicate"]["items"].length - 1];
+					if(typeof last_element["termType"] === "undefined"){
+						last_element = last_element["items"][last_element["items"].length - 1];
+					}
+					last_element = last_element["value"];
+					let pathPropertyResolved = await dataShapes.resolvePropertyByName({name: last_element});
+						
+					// object property
+					if(pathPropertyResolved.complete == true && pathPropertyResolved.data[0].object_cnt > 0){
+						//subjest
+						nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
+						//object
+						nodeList[triples[triple]["object"]["value"]] = createNodeListInstance(nodeList, triples[triple]["object"]["value"]);
+					}
+					// data property
+					if(pathPropertyResolved.complete == true && pathPropertyResolved.data[0].object_cnt == 0 && pathPropertyResolved.data[0].data_cnt > 0){
+						//subjest
+						nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
+					}
+					// not in schema, use as object property
+					if(pathPropertyResolved.complete == false){
+						//subjest
+						nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
+						//object
+						nodeList[triples[triple]["object"]["value"]] = createNodeListInstance(nodeList, triples[triple]["object"]["value"]);
+					}
+				}
+				//from property not in a schema
+				else if(propertyResolved.complete != true){
+					//subjest
+					nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
+					//object
+					nodeList[triples[triple]["object"]["value"]] = createNodeListInstance(nodeList, triples[triple]["object"]["value"]);
+				}
+			}
+		  }
+		}
+	}
+	//bind
+	if(where["type"] == "bind"){
+		selectStarList.push(where["variable"]["value"])
+	}
+	
+	//sub select
+	if(where["type"] == "group" && where["patterns"].length == 1 && where["patterns"][0]["type"] == "query"){	
+		var variables = transformSelectVariables(where["patterns"][0]["variables"])
+		for(let sel = 0; sel < variables.length; sel++){
+			selectStarList.push(variables[sel]);
+		}
+	}
+	
+	//type=optional
+	if(where["type"] == "optional" || where["type"] == "service"){
+		let patterns = where["patterns"];
+		var optionalDataPropAsObjectProp = false;
+		for(let pattern  = 0; pattern < patterns.length; pattern++) {
+			if(typeof patterns[pattern]["type"] !== 'undefined' && patterns[pattern]["type"] != "bgp") optionalDataPropAsObjectProp = true;
+		}
+		let temp = await collectNodeListWithService(patterns, optionalDataPropAsObjectProp);
 		var tempNode = temp["nodeList"];
 		for(let node in tempNode){
 			if(typeof tempNode[node] !== "function"){
@@ -7424,7 +7867,6 @@ function generateArgument(argument){
 }
 
 function addAttributeToClass(classesTable, identification){
-	
 	if(typeof classesTable["fields"] === 'undefined')classesTable["fields"] = [];
 	
 	var fieldExists = false;
@@ -7432,6 +7874,7 @@ function addAttributeToClass(classesTable, identification){
 	 if(typeof classesTable["fields"][field] !== "undefined"){
 		if(classesTable["fields"][field]["alias"] == identification["alias"] && classesTable["fields"][field]["exp"] == identification["exp"]){
 			fieldExists = true;
+			classesTable["fields"][field]["isInternal"] = identification["isInternal"];
 			break;
 		}
 	 }
@@ -7731,8 +8174,10 @@ function addClass(childrenClass, linkInformation, childrenClassName, linkIdentif
 	childrenClass["linkType"] = linkInformation["linkType"];
 	childrenClass["isSubQuery"] = linkInformation["isSubQuery"];
 	childrenClass["isGlobalSubQuery"] = linkInformation["isGlobalSubQuery"];
-	childrenClass["graph"] = linkInformation["graph"];
-	childrenClass["graphInstruction"] = linkInformation["graphInstruction"];
+	childrenClass["graph"] = graph;
+	childrenClass["graphLink"] = linkInformation["graphLink"];
+	childrenClass["graphInstruction"] = graphInstruction;
+	childrenClass["graphInstructionLink"] = linkInformation["graphInstructionLink"];
 	let generateClassCtructureTemp = generateClassCtructure(childrenClass, childrenClassName, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList);
 	childrenClass = generateClassCtructureTemp.clazz;
 	return {childrenClass:childrenClass, visitedClasses:visitedClasses, conditionLinks:conditionLinks};
@@ -7756,7 +8201,18 @@ function getStartClass(classesTable, linkTable) {
   var classesWithAggregations = [];
   for(let clazz in classesTable){
 	if(typeof classesTable[clazz] !== "function"){
-		if(typeof classesTable[clazz]["fields"] !== "undefined"){
+		let underService = false;
+		for(let link = 0; link< linkTable.length; link++){
+			 if(typeof linkTable[link] !== "undefined"){
+				 
+				if((linkTable[link]["object"] == clazz || linkTable[link]["subject"] == clazz) && (typeof linkTable[link]["graphInstructionLink"] !== "undefined")){
+					underService = true;
+					break;
+				}
+			 }
+		}
+	
+		if(underService === false && typeof classesTable[clazz]["fields"] !== "undefined"){
 			for(let field = 0; field< classesTable[clazz]["fields"].length; field++){
 				let f = classesTable[clazz]["fields"][field];
 				if((typeof f["isInternal"] === "undefined" || f["isInternal"] == false) && f["exp"] != "(select this)") {return {startClass:{"name":clazz, "class":classesTable[clazz]}, classesTable:classesTable}}
@@ -7846,7 +8302,7 @@ function getStartClass(classesTable, linkTable) {
   }
   
   for(let clazz in classesTable){
-	if(typeof classesTable[clazz] !== "function"){	  
+	if(typeof classesTable[clazz] !== "function"){	 
 		return {startClass:{"name":clazz, "class":classesTable[clazz]}, classesTable:classesTable};
 	}
   }
@@ -8131,8 +8587,26 @@ function buildPathElement(pathElement){
 }
 
 // Visualize query based on tree structure
-async function visualizeQuery(clazz, variableListAlias, parentClass, variableList, queryId, queryQuestion ){
-
+async function visualizeQuery(clazz, variableListAlias, parentClass, variableList, queryId, queryQuestion, usedPrefixesinQuery ){
+	if(usedPrefixesinQuery && Object.keys(usedPrefixesinQuery).length > 0){
+		let xTemp = x+300;
+		let newPosition = { xTemp, y, width, height };
+		Create_VQ_Element_Declaration(function(cl){
+			for(let p in usedPrefixesinQuery){
+			  if(typeof usedPrefixesinQuery[p] !== "function"){
+				let addPrefix = false;
+				let pDeclaration = usedPrefixesinQuery[p];
+				let prefixName = p;
+				if(prefixName.endsWith(":")) prefixName = prefixName.substring(0, prefixName.length - 1)
+				if(pDeclaration.startsWith("<") && pDeclaration.endsWith(">")) pDeclaration = pDeclaration.substring(1,  pDeclaration.length - 1);
+				cl.addPrefixDeclarations(prefixName, pDeclaration);
+				
+			  }
+		  }
+            VQ_Elements[cl.obj._id] = cl.obj._id;
+        }, newPosition);
+	}
+	
 	//node type
 	let nodeType = parentClass ? "condition" : "query";
 	if(parentClass == null) nodeType = "query";
@@ -8251,7 +8725,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 		const { exp, requireValues, isInternal, groupValues, addLabel, addAltLabel, addDescription, graph, graphInstruction } = field;
 		let condition = field.attributeConditionSelection;
 		let attributeCondition = field.attributeCondition;
-        classBox.addField(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction,condition,attributeCondition);
+        classBox.addField(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,null, null,condition,attributeCondition);
       }
     }
 
@@ -8301,14 +8775,18 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
       }
     }
 		
-	//graphs
+	//from
 	if (clazz.graphs) {
       for (const gr of clazz.graphs) {	
 		const { graph, graphInstruction } = gr;
-		//add graphs to class
-		classBox.addGraphs(graph, graphInstruction);
+		classBox.addGraphsServices(graph, graphInstruction);
       }
     }
+	//graphs
+	if (clazz.graph && clazz.graphInstruction) {
+		classBox.addGraphsServices(clazz.graph, clazz.graphInstruction);
+    }
+	
 		
 	// if(typeof clazz["groupByThis"] !== 'undefined') classBox.setGroupByThis(clazz["groupByThis"]);
 		
@@ -8365,9 +8843,9 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 		if(isGlobalSubQuery == true) linkQueryType = "GLOBAL_SUBQUERY";
 
 		var isInverse = clazz["isInverse"];
-		var graph = clazz["graph"];
-		var graphInstruction = clazz["graphInstruction"];
-			
+		var graph = clazz["graphLink"];
+		var graphInstruction = clazz["graphInstructionLink"];
+	
         //Link Coordinates
         // var coordX = newPosition.x + Math.round(newPosition.width/2);
         var coordX = newPosition.x + 10;
@@ -8381,8 +8859,9 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 			linkLine.setLinkType(linkType);
 			linkLine.setNestingType(linkQueryType);
 			if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
-				linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
-				linkLine.setGraphInstruction(graphInstruction);
+				// linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
+				// linkLine.setGraphInstruction(graphInstruction);
+				linkLine.addGraphsServices(graph, graphInstruction);
 			}
 			link_count = link_count + 1;
 			VQ_Links[linkLine.obj._id] = linkLine.obj._id;
@@ -8393,8 +8872,9 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 			linkLine.setLinkType(linkType);
 			linkLine.setNestingType(linkQueryType);
 			if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
-				linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
-				linkLine.setGraphInstruction(graphInstruction);
+				// linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
+				// linkLine.setGraphInstruction(graphInstruction);
+				linkLine.addGraphsServices(graph, graphInstruction);
 			}
 			link_count = link_count + 1;
 			VQ_Links[linkLine.obj._id] = linkLine.obj._id;
@@ -8422,7 +8902,7 @@ async function generateInstanceAlias(uri, resolve){
 		}else 
 			uriResolved = await dataShapes.resolveIndividualByName({name: uri});
 		
-		// console.log("uriResolved", uri)
+		// console.log("uriResolved", uri, uriResolved)
 		if(uriResolved.complete == true && uriResolved.data[0].localName != ""){
 			uri = uriResolved.data[0].localName;
 			
@@ -8434,10 +8914,13 @@ async function generateInstanceAlias(uri, resolve){
 			let splittedUri = splitURI(uri);
 			if(splittedUri == null) return uri;
 			
-			let prefixes = await dataShapes.getNamespaces()
+			let prefixes = await dataShapes.getNamespaces();
+			prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+	
 			for(let key = 0; key < prefixes.length; key++){
 				if(prefixes[key]["value"] == splittedUri.namespace) {
 					if(prefixes[key]["name"].slice(-1) == ":") return prefixes[key]["name"]+splittedUri.name;
+					usedPrefixes[prefixes[key]["name"]] = prefixes[key]["value"];
 					return prefixes[key]["name"]+":"+splittedUri.name;
 				}
 			}
@@ -8450,10 +8933,13 @@ async function generateInstanceAlias(uri, resolve){
 			return uri;
 		}
 		
-		let prefixes = await dataShapes.getNamespaces()
+		let prefixes = await dataShapes.getNamespaces();
+		prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+
 		for(let key = 0; key < prefixes.length; key++){
 			if(prefixes[key]["value"] == splittedUri.namespace) {
 				if(prefixes[key]["name"].slice(-1) == ":") return prefixes[key]["name"]+splittedUri.name;
+				usedPrefixes[prefixes[key]["name"]] = prefixes[key]["value"];
 				return prefixes[key]["name"]+":"+splittedUri.name;
 			}
 		}
@@ -8786,4 +9272,32 @@ function getVariable(variable){
 	}
 	// return vq_visual_grammar.parse(variable)
 	return {value:variable, type:"varName"}
+}
+
+
+function combineKnownPrefixesWithDefinedPrefixes(knownPrefixes){
+	let declaredPrefixes = getDeclarations();
+	let prefixDeclarations = declaredPrefixes.prefixes;
+	for(let pr in prefixDeclarations){
+		if(typeof prefixDeclarations[pr] !== "function"){
+			let prefixExists = false;
+			for(let kpr = 0; kpr < knownPrefixes.length; kpr++){
+				if(knownPrefixes[kpr]["name"] === pr && knownPrefixes[kpr]["value"] !== prefixDeclarations[pr]){
+					prefixExists = true;
+					break;
+				} else if(knownPrefixes[kpr]["name"] === pr && knownPrefixes[kpr]["value"] === prefixDeclarations[pr]){
+					prefixExists = true;
+					break;
+				}
+			}
+			if(prefixExists === false){
+				knownPrefixes.push({
+					is_local: false,
+					name: pr,
+					value: prefixDeclarations[pr]
+				})
+			}
+		}
+	}
+	return knownPrefixes;
 }
