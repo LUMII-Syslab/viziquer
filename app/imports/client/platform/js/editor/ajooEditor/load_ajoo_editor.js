@@ -53,7 +53,8 @@ Interpreter.loadAjooEditor = function(diagram) {
 	                },
 
                     boxSettings: {
-                    	isMaxSizeEnabled: true,
+                    	isMaxSizeEnabled: false,
+                    	// isMaxSizeEnabled: true,
                     	isTextFitEnabled: false,
                     },
 
