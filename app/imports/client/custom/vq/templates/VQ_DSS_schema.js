@@ -154,12 +154,12 @@ function getParams() {
 	if ( !Template.VQ_DSS_schema.IsPublic.get() ) {
 		par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
 		diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema};
-		if ( $("#diffS").val() == 0 )
-			par.supPar = 0;
 		if ( $("#diffG").val() == 10 )
 			par.supPar = 2;
 		if ( $("#abstr").is(":checked") )
 			par.diffS = 50;
+		if ( $("#diffG").val() == 0 )
+			par.supPar = 0;
 	}
 	return par;
 }
@@ -1353,9 +1353,10 @@ async function calculateGroups() {
 	// Tiek padots zīmējamo klašu un propertiju saraksts
 	const par = getParams();
 	const diffG = par.diffG;
+	
 	const compChain = ( par.supPar == 1 ) ? true : false; // Vai apvienot vispārinašanas virknes
 	const compTree = ( par.supPar == 2 ) ? true : false; // Vai apvienot sākotnējos klašu kokus
-
+	console.log(diffG, compChain)
 	// Sākotnējo klašu koku apvienošana
 	if ( compTree ) {
 		let top_classes = [];
