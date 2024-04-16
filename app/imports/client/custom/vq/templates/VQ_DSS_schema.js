@@ -627,7 +627,7 @@ function setClassList0() {
 	let filteredClassList = dataShapes.schema.diagram.classList;	
 
 	// TODO  Šis ir manai ērtībai, vai nu jāmet ārā, vai jāliek konfigurācijā
-
+	/*
 	if ( schema == 'mondial' ) {
 		nsFiltersSel = 'Local';
 	}
@@ -640,6 +640,7 @@ function setClassList0() {
 	else if ( schema == 'war_sampo' || schema == 'war_sampo_2' ) {
 		nsFiltersSel = 'Local';
 	}
+	*/
 	
 	if ( nsFiltersSel == 'Exclude' ) 
 		filteredClassList = dataShapes.schema.diagram.classList.filter(function(c){ const not_in = ['owl','rdf','rdfs']; return !not_in.includes(c.prefix);});
@@ -798,7 +799,13 @@ function checkSimilarity(diff, level) {
 		result = true;
 	}
 	else if ( level == 1 ) {
-		if ( diff[1] < diffs.diffG && diff[0] > diff[1] ) // TODO padomāt, vai prasīt līdzību, vai neprasīt
+		if ( diffs.diffG == 10  ) { // TODO ļoti pagaidu risinājums
+			if ( diff[1] < 6 && diff[0] > 0 )
+				result = true;
+			if ( diff[0] > 25 )
+				result = true;
+		}
+		else if ( diff[1] < diffs.diffG && diff[0] > diff[1] ) // TODO padomāt, vai prasīt līdzību, vai neprasīt
 			result = true;
 	}
 	else if ( level == 2 )  {
@@ -811,8 +818,11 @@ function checkSimilarity(diff, level) {
 // Funkcija, kas pārbauda, vai klases (sarakstus) var apvienot
 function areSimilar(rezFull, classList1, classList2, level) {
 	let rezult = true;
+	//const diffs = getDiffs();
 	if ( level > 1 )
 		return rezult;
+	//if ( diffs.diffG == 10) //TODO pagaidu risinājums
+	//	return rezult;
 	for ( const c1 of classList1) {
 		for ( const c2 of classList2) {
 			const classInfo1 = rezFull.classes[c1]; 
@@ -1062,7 +1072,7 @@ function makeAtrTree(cl_list) {
 }
 
 // Funkcija klašu grupas izveidošanai, izmanto dažādās situācijās 
-function makeClassGroup(list, type, sum = true) {
+function makeClassGroup(list, type, sum = true, ekv = false) {
 	let g_id = '';
 	if ( list.length > 1 ) {
 		let atr_list = [];
@@ -1098,29 +1108,39 @@ function makeClassGroup(list, type, sum = true) {
 		}
 
 		for (const classInfo of c_list_full) {
-			for (const atr of atr_list) {
-				if ( classInfo.atr_list.filter(function(a){ return a.p_name == atr.p_name && a.type == atr.type}).length == 0 ) {
-					const a2 = {p_name:atr.p_name, type:atr.type, cnt:0, cnt2:atr.cnt2 };
-					classInfo.atr_list.push(a2);
-				}
-				else {
-					const cAtr = classInfo.atr_list.find(function(a){ return a.p_name == atr.p_name && a.type == atr.type});
-					cAtr.cnt2 = atr.cnt2;
+			if ( !ekv ) {
+				for (const atr of atr_list) {
+					if ( classInfo.atr_list.filter(function(a){ return a.p_name == atr.p_name && a.type == atr.type}).length == 0 ) {
+						const a2 = {p_name:atr.p_name, type:atr.type, cnt:0, cnt2:atr.cnt2 };
+						classInfo.atr_list.push(a2);
+					}
+					else {
+						const cAtr = classInfo.atr_list.find(function(a){ return a.p_name == atr.p_name && a.type == atr.type});
+						cAtr.cnt2 = atr.cnt2;
+					}
 				}
 			}
+			else {
+				classInfo.atr_list = atr_list;
+			}
+
 		}
-		const cnt_sum = ( sum ) ? `(~${roundCount(i_cnt, i_in_props)})`: `(${roundCount(list[0].cnt_sum)})`;
-		let fullName = `${c_list_full.sort((a, b) => { return b.cnt_sum - a.cnt_sum; })[0].displayName} et al. G${Gnum} ${cnt_sum}`;
+		const cnt = ( sum ) ? i_cnt : list[0].cnt;
+		const cnt_sum = ( sum ) ? getWeight(i_cnt, i_in_props) : getWeight(list[0].cnt, list[0].in_props);
+
+		let fullName = `${c_list_full.sort((a, b) => { return b.cnt_sum - a.cnt_sum; })[0].displayName} et al. G${Gnum} (weight-${roundCount(cnt_sum)})`;
+		let fullNameD = `${c_list_full.sort((a, b) => { return b.cnt_sum - a.cnt_sum; })[0].displayName} et al. G${Gnum} (${roundCount(cnt)})`;
 		let displayName = `${c_list_full.sort((a, b) => { return b.cnt_sum - a.cnt_sum; })[0].displayName} et al.`;
 		if ( c_list_full.length == 2 ) {
-			fullName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} G${Gnum} ${cnt_sum}`;
+			fullName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} G${Gnum} (weight-${roundCount(cnt_sum)})`;
+			fullNameD = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} G${Gnum} (${roundCount(cnt)})`;
 			displayName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName}`;
 		}
 		rezFull.classes[g_id] = { id:g_id, super_classes:[], used:true, hasGen:false, type:type, 
-			displayName:displayName, fullName:fullName, fullNameD:fullName, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
+			displayName:displayName, fullName:fullName, fullNameD:fullNameD, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
 			sub_classes_group_string:c_list_full.map(c => c.fullNameD).sort().join('\n'),
 			sub_classes_list:c_list_full.map(c => c.fullNameD).sort(),				
-			sup:[], sub:[], atr_list:atr_list, all_atr:[], cnt:i_cnt, cnt_sum:getWeight(i_cnt, i_in_props), in_props:i_in_props }; 
+			sup:[], sub:[], atr_list:atr_list, all_atr:[], cnt:cnt, cnt_sum:cnt_sum, in_props:i_in_props }; 
 
 		rezFull.classes[g_id].sub_classes_list =  _.map(c_list_full, function(c) {
 			return {cnt:c.cnt, name:c.fullNameD};
@@ -1406,7 +1426,7 @@ async function calculateGroups() {
 					}
 				} 
 			}
-			const classGrId = makeClassGroup(class_chain, 'Class', false);
+			const classGrId = makeClassGroup(class_chain, 'Class', false, true);
 			rezFull.classes[classGrId].super_classes = class_chain[0].super_classes;
 		}
 		for (const clId of Object.keys(rezFull.classes)) {
@@ -1516,6 +1536,7 @@ function makeSuperClasses() {
 		let c_list_full = [];
 		let cnt = 0;	
 		for (let classInfo of cl_list) {
+			const atr_list = makeAtrList(classInfo.atr_list);
 			c_list_full.push(classInfo);
 			cnt = cnt + classInfo.cnt;
 			classInfo.super_classes.push(sc_id); 
@@ -1530,12 +1551,13 @@ function makeSuperClasses() {
 			else {
 				rezFull.classes[sc_id].c_list_id.push(classInfo.id_id);
 			}
-			rezFull.classes[sc_id].c_list.push(classInfo.id);
-			const atr_list = makeAtrList(classInfo.atr_list);
+			if ( atr_list.length > 0 )
+				rezFull.classes[sc_id].c_list.push(classInfo.id);
 			classInfo.atr_list = atr_list;
 			classInfo.in_props = getInPropCount(atr_list);
 			classInfo.cnt_sum = getWeight(classInfo.cnt, classInfo.in_props);
 			classInfo.fullName = `${classInfo.displayName} (weight-${roundCount(classInfo.cnt_sum)} (${roundCount(classInfo.cnt)} ${roundCount(classInfo.in_props)}))`;
+	
 			if ( atr_list.length == 0 ) {
 				if ( classInfo.isGroup ) {
 					for (let g_cl of classInfo.c_list) {
@@ -1547,9 +1569,18 @@ function makeSuperClasses() {
 					g_list.push(classInfo);
 				}
 			}
-		}
+		} 
+
 		if ( g_list.length > 1 ) {
-			makeClassGroup(g_list, [sc_id])
+			const grId = makeClassGroup(g_list, 'Class') //TODO te neskatās uz tipu - klase/klasifikators
+			const gClass =  rezFull.classes[grId];
+			gClass.super_classes.push(sc_id);
+			gClass.S_id = sc_id;
+			gClass.hasGen = true;
+			rezFull.classes[sc_id].c_list.push(grId);
+		}
+		else if ( g_list.length == 1 ) {
+			rezFull.classes[sc_id].c_list.push(g_list[0].id);
 		}
 
 		rezFull.classes[sc_id].atr_list = sup_atr_list;
@@ -1557,14 +1588,16 @@ function makeSuperClasses() {
 		rezFull.classes[sc_id].in_props = getInPropCount(sup_atr_list);
 		rezFull.classes[sc_id].cnt_sum = getWeight(rezFull.classes[sc_id].cnt, rezFull.classes[sc_id].in_props);
 		
-		let fullName = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al. S${Snum} (~${roundCount(rezFull.classes[sc_id].cnt_sum)})`;
+		let fullName = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al. S${Snum} (weight~${roundCount(rezFull.classes[sc_id].cnt_sum)})`;
+		let fullNameD = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al. S${Snum} (~${roundCount(cnt)})`;
 		let displayName = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al.`;
 		if ( c_list_full.length == 2 ) {
-			fullName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} S${Gnum} (~${roundCount(cnt)})`;
+			fullName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} S${Gnum} (weight~${roundCount(rezFull.classes[sc_id].cnt_sum)})`;
+			fullNameD = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} S${Gnum} (~${roundCount(cnt)})`;
 			displayName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName}`;
 		}
 		rezFull.classes[sc_id].fullName = fullName;
-		rezFull.classes[sc_id].fullNameD = fullName;
+		rezFull.classes[sc_id].fullNameD = fullNameD;
 		rezFull.classes[sc_id].displayName = displayName;
 	}
 	

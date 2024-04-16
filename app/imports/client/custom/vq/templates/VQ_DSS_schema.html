@@ -110,7 +110,7 @@
 
 							<div class="container-fluid">
 								<div style="display: inline-block; vertical-align:top;">
-									<select class="form-select" id="selectedProperties" multiple size="17" style="width: 400px;">
+									<select class="form-select" id="selectedProperties" multiple size="15" style="width: 400px;">
 										{{#each properties}}
 											<option value="{{id}}">{{p_name}} </option>
 										{{/each}}
@@ -121,7 +121,7 @@
 									<button id="addSelectedProp" type="button" class="btn btn-primary">&larr;</button>
 								</div>
 								<div style="display: inline-block; vertical-align:top;">
-									<select class="form-select" id="restProperties" multiple size="17"  style="width: 400px;">
+									<select class="form-select" id="restProperties" multiple size="15"  style="width: 400px;">
 										{{#each restProperties}}
 											<option value="{{id}}">{{p_name}}</option>
 										{{/each}}
@@ -197,9 +197,9 @@
 								<div class="container-fluid">
 									<div class="row">
 										<div class="col-sm-4">
-											<label>C - Class, G - Merged classes, A - Superclass</label>
+											<label>C-Class, G-Merged classes, A-Superclass</label>
 											<div style="display: inline-block; vertical-align:top;">
-												<select class="form-select" id="usedClasses" size="35"  style="width: 300px;">
+												<select class="form-select" id="usedClasses" size="33"  style="width: 300px;">
 													{{#each usedClasses}}
 														<option value={{id}} {{selected}}> {{display_name}} </option>
 													{{/each}}
@@ -207,9 +207,9 @@
 											</div>										
 										</div>
 										<div class="col-sm-4">
-											<label>Class/Group+Merged classes/Superclass+Subclasses</label>
+											<label>Class/Class+Subclasses</label>
 											<div style="display: inline-block; vertical-align:top;">
-												<select class="form-select" id="subClasses" size="35"  style="width: 300px;">
+												<select class="form-select" id="subClasses" size="33"  style="width: 300px;">
 													{{#each subClasses}}
 														<option value={{id}} {{selected}}>{{display_name}}</option>
 													{{/each}}
@@ -219,7 +219,7 @@
 										<div class="col-sm-4">
 											<label>Properties</label>
 											<div style="display: inline-block; vertical-align:top;">
-												<select class="form-select" id="classProperties" size="35" multiple style="width: 300px;">
+												<select class="form-select" id="classProperties" size="33" multiple style="width: 300px;">
 													{{#each classProperties}}
 														<option value={{id}} {{selected}}>{{display_name}}</option>
 													{{/each}}
