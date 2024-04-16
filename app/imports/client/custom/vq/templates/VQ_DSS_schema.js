@@ -52,6 +52,7 @@ Interpreter.customMethods({
 })
 
 Template.VQ_DSS_schema.rendered = function() {
+	clearData();
 	Template.VQ_DSS_schema.SchemaName.set(dataShapes.schema.schemaName);
 	Template.VQ_DSS_schema.ClassCountAll.set(dataShapes.schema.classCount);
 	Template.VQ_DSS_schema.ClassCountFromSlider.set(dataShapes.schema.classCount);
@@ -67,7 +68,6 @@ Template.VQ_DSS_schema.rendered = function() {
 	else {
 		Template.VQ_DSS_schema.isBig.set(true);
 	}
-	clearData();
 }
 
 Template.VQ_DSS_schema.helpers({
@@ -181,6 +181,7 @@ async function getClassesAndProperties() {
 	
 	_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
 		if ( all_s.includes(cl.id)) cl.sel = 1;
+		else cl.sel = 0;
 	});
 	classList = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 1});
 	_.each(classList, function(cl) { 
@@ -250,7 +251,7 @@ function setSubClasses(cId) {
 	if ( cInfo.isGroup || cInfo.type == 'Abstract') {
 		for (const sc of cInfo.c_list ) {
 			const scInfo = rezFull.classes[sc];
-			subClasses.push({id:sc, display_name:`.  ${scInfo.fullName}`, cnt_sum:scInfo.cnt_sum });
+			subClasses.push({id:sc, display_name:`___${scInfo.fullName}`, cnt_sum:scInfo.cnt_sum });
 		}
 	}
 	Template.VQ_DSS_schema.SubClasses.set(subClasses);
@@ -341,7 +342,6 @@ Template.VQ_DSS_schema.events({
 		calculateGroups();
 		makeSuperClasses(); 
 		showClasses();
-		console.log('Savācām grupas')
 		console.log('rezFull', rezFull);
 	},
 	'click #makeDiagr': async function() {
@@ -614,13 +614,14 @@ function setClassListInfo(classes, restClasses) {
 }
 
 function setClassList0() {
+	// Izsauc  -- VQ_DSS_schema.rendered 
 	Template.VQ_DSS_schema.ManualDisabled.set("disabled");
 	Template.VQ_DSS_schema.FilterDisabled.set("");
 	Template.VQ_DSS_schema.Properties.set([]);
 	Template.VQ_DSS_schema.RestProperties.set([]);
 	const nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}];
 
-	const schema = dataShapes.schema.schema;
+	//const schema = dataShapes.schema.schema;
 	let nsFiltersSel = 'All';
 	let classCountSel = 300;
 	
@@ -708,7 +709,6 @@ function sortClassList() {
 }
 
 function setClassList(changeCount = false) {
-
 	if (Template.VQ_DSS_schema.ManualDisabled.get() == "disabled") {
 		let filteredClassList = dataShapes.schema.diagram.classList;
 		const nsFilter = $("#nsFilter").val();
@@ -752,7 +752,7 @@ function makeClassLists() {
 // *********************** Datu glabāšanas vietas *********************************************************
 var rezFull = {classes:{}, assoc:{}, lines:{}};
 var p_list_full = {};
-var state = 0;  // 0 - tukšš, 1 - pamata klases, 2 - grupas un virsklases
+var state = 0;  // 0 - tukšs, 1 - pamata klases, 2 - grupas un virsklases (nav īsti realizēts)
 var Gnum = 101;
 var Snum = 101;
 var cpc_info = [];
@@ -1205,6 +1205,7 @@ function showClasses() {
 // *** Salasa sākotnējās klases un to propertijas
 async function getBasicClasses() {
 	clearData();
+	state = 1;
 	const classesAndProperties = await getClassesAndProperties();
 	rezFull.namespaces = classesAndProperties[2];
 	const c_list = classesAndProperties[0];
@@ -1373,10 +1374,8 @@ async function calculateGroups() {
 	// Tiek padots zīmējamo klašu un propertiju saraksts
 	const par = getParams();
 	const diffG = par.diffG;
-	
 	const compChain = ( par.supPar == 1 ) ? true : false; // Vai apvienot vispārinašanas virknes
 	const compTree = ( par.supPar == 2 ) ? true : false; // Vai apvienot sākotnējos klašu kokus
-	console.log(diffG, compChain)
 	// Sākotnējo klašu koku apvienošana
 	if ( compTree ) {
 		let top_classes = [];
@@ -1501,7 +1500,6 @@ async function calculateGroups() {
 function makeSuperClasses() {
 	const par = getParams();
 	const diffS = par.diffS;
-
 	function makeSupClass(cl_list, temp) {
 		const sc_id = `s_${Snum}`;
 		Snum = Snum + 1;
@@ -1600,7 +1598,7 @@ function makeSuperClasses() {
 		rezFull.classes[sc_id].fullNameD = fullNameD;
 		rezFull.classes[sc_id].displayName = displayName;
 	}
-	
+
 	if ( diffS > 0 ) {
 		const similarClassesS = findSimilarClasses(2); // Meklējam līdzīgas klases vispārināšanas veidošanai
 		console.log("Līdzīgās klases virsklašu veidošanai", similarClassesS)
