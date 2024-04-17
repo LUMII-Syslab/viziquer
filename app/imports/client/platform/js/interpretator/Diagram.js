@@ -223,6 +223,8 @@ Interpreter.methods({
 						}
 
 						let font_size = compart.style.fontSize;
+						let font_style_coef = ( compart.style.fontStyle == 'bold' ) ? 1.1 : 0.95; 
+
 						let tmp_width = 0;
 						let tmp_height = 0;
 
@@ -233,17 +235,18 @@ Interpreter.methods({
 							}
 
 							//text_length = number_of_charecters_in_string / 2 rounded towards the greater value
-							let text_length = row.length * Math.ceil(font_size/2);
+							let text_length = Math.ceil(font_style_coef*(row.length * Math.ceil(font_size/2)));
 							tmp_width = Math.max(tmp_width, text_length);
 
 							//tmp_height = font_size + consant for gap between compartments
 							tmp_height += font_size; // ??? pagaidām noņēmu ??? + 5; // add a height gap between compartments
 
-							// if compartment lenght if bigger than max box width
-							if(text_length > 500){
-								//compartment height = font_size * (text_length/max_box_width/2 rounded towards the greater value)
-								tmp_height += font_size * Math.ceil(text_length/500/2) + 5;
-							}
+							// Vairs nav izmēra ierobežojuma
+							//// if compartment lenght if bigger than max box width
+							//if(text_length > 500){
+							//	//compartment height = font_size * (text_length/max_box_width/2 rounded towards the greater value)
+							//	tmp_height += font_size * Math.ceil(text_length/500/2) + 5;
+							//}
 						});
 
 						compart_width = Math.max(compart_width, tmp_width);

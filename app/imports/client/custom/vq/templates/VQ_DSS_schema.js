@@ -59,7 +59,7 @@ Template.VQ_DSS_schema.rendered = function() {
 	if ( dataShapes.schema.classCount == 0)
 		Template.VQ_DSS_schema.HasClasses.set('disabled');
 	Template.VQ_DSS_schema.ClassCountFiltered.set('');
-	Template.VQ_DSS_schema.IsPublic.set(false); // TODO kā lai atšķir, publiskais vai nepubliskais varaints?
+	Template.VQ_DSS_schema.IsPublic.set(true); // TODO kā lai atšķir, publiskais vai nepubliskais varaints?
 	// TODO cik lielas shēmas vispār piedāvāju vizualizēt
 	if ( dataShapes.schema.classCount < dataShapes.schema.diagram.maxCount) {
 		Template.VQ_DSS_schema.isBig.set(false);
@@ -150,9 +150,7 @@ Template.VQ_DSS_schema.helpers({
 });
 
 function getParams() {
-	let par = {addIds:false, disconnBig:7, compView:true,	diffG:5, diffS:50, supPar:1, schema:dataShapes.schema.schema};
-	if ( !Template.VQ_DSS_schema.IsPublic.get() ) {
-		par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
+	let par = {addIds:false, disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
 		diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema};
 		if ( $("#diffG").val() == 10 )
 			par.supPar = 2;
@@ -160,15 +158,15 @@ function getParams() {
 			par.diffS = 50;
 		if ( $("#diffG").val() == 0 )
 			par.supPar = 0;
+
+	if ( !Template.VQ_DSS_schema.IsPublic.get() ) {
+		par.addIds = $("#addIds").is(":checked"); 
 	}
 	return par;
 }
 
 function getInfo() {
-	if ( Template.VQ_DSS_schema.IsPublic.get() )
-		return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`];
-	else
-		return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`,
+	return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`,
 			$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text()];
 } 
 
@@ -222,7 +220,7 @@ async function getClassesAndProperties() {
 async function printSup(par0) {
 	const classesAndProperties = await getClassesAndProperties();
 	const classList = classesAndProperties[0];
-	const propList = classesAndProperties[1].map(a => a.name);
+	const propList = classesAndProperties[1];
 	let par = getParams();
 	par.printGroups = par0.printGroups; 
 	par.printDiffs = par0.printDiffs;
@@ -263,7 +261,7 @@ Template.VQ_DSS_schema.events({
 		// TODO vecais variants
 		const classesAndProperties = await getClassesAndProperties();
 		const classList = classesAndProperties[0];
-		const propList = classesAndProperties[1].map(a => a.name);
+		const propList = classesAndProperties[1];
 
 		await dataShapes.makeSuperDiagr(classList, propList, getParams(), getInfo().join('\n'));
 	}, 
@@ -776,19 +774,14 @@ function clearData() {
 // ***************** Vairākkart izmantojamās funkcijas ******************************************************
 // **********************************************************************************************************
 function getDiffs() {
-	if ( Template.VQ_DSS_schema.IsPublic.get() ) {
-		return {diffG:5, diffS:50};
+	let diffS = ( $("#abstr").is(":checked") ) ? 50 : 0;
+	if ( diffS > 0 ) {
+		if ( rezFull.diffMax < 50 && rezFull.diffMax > 25 )
+			diffS = 25;
+		else if ( rezFull.diffMax < 25 )
+			diffS = 5;
 	}
-	else {
-		let diffS = ( $("#abstr").is(":checked") ) ? 50 : 0;
-		if ( diffS > 0 ) {
-			if ( rezFull.diffMax < 50 && rezFull.diffMax > 25 )
-				diffS = 25;
-			else if ( rezFull.diffMax < 25 )
-				diffS = 5;
-		}
-		return {diffG:$("#diffG").val(), diffS:diffS};
-	}
+	return {diffG:$("#diffG").val(), diffS:diffS};
 }
 // ***************** Konstantes***************************
 function checkSimilarity(diff, level) {
@@ -1017,7 +1010,7 @@ function findSimilarClasses(level) {
 				}
 			}					
 		}
-		// Savelk trūkstošās līnijas
+		// Savelk trūkstošās līnijas, to vajag tikai grupu zīmēšanai
 		for (const cId1 of temp2[gId]) {
 			for (const cId2 of temp2[gId]) {
 				const classInfo1 = rezFull.classes[cId1];

@@ -15,9 +15,9 @@
 
 					<ul class="nav nav-tabs" id="vq-tab">
 						  <li class="active"><a data-toggle="tab" href="#VQ-DSS-main">Classes and properties</a></li>
+						  <li><a data-toggle="tab" href="#paremeters">Class merging parameters</a></li>
 						  {{#if pub}}
 						  {{else}}
-						  <li><a data-toggle="tab" href="#paremeters">Class merging parameters</a></li>
 						  <li><a data-toggle="tab" href="#support">Support</a></li>
 						  {{/if}}
 					  </ul>
@@ -173,18 +173,19 @@
 												<option selected value=7 >Max. 7 one object property edges</option>
 												<option value=10 >Max. 10 one object property edges</option>
 												<option value=0 >Draw all object properties in the diagram</option>
-											</select>											
+											</select>	
+											<label class="form-check-label">
+												<input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">
+												<span class="custom-checkbox"></span>
+												Compact view of properties and subclasses
+											</label>										
 											<label class="form-check-label">
 												<input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
 												<span class="custom-checkbox"></span>
-												Compact attribute view
-											</label>
-											<label class="form-check-label">
-												<input class="form-check-input" name = "addIds" id="addIds" type="checkbox">
-												<span class="custom-checkbox"></span>
-												Show DB IDs in names
+												Compact list of property target classes
 											</label>
 										</div>
+
 									</div>
 								</div>
 								<div class="container-fluid">
@@ -229,15 +230,13 @@
 									</div>
 								</div>								
 						  </div>
-
+						  <!-- //////////////////////////////////////// -->
 						  <div id="support" class="tab-pane fade">
-							<div class="explain-form-group">
-								<span>  </span>
-							 </div>
-							 <div class="explain-form-group">
-								<span>Diagram parameters:</span>
-							 </div>  
-
+							<label class="form-check-label">
+								<input class="form-check-input" name = "addIds" id="addIds" type="checkbox">
+								<span class="custom-checkbox"></span>
+								Show DB IDs in names
+							</label>
 
 							<div class="form-group">
 								<button id="printGroups" type="button" class="btn btn-primary" data-dismiss="modal">Print groups</button>
@@ -255,11 +254,8 @@
                 </div>
 
                 <div class="modal-footer" style="clear: both;">
-					{{#if pub}}
-					{{else}}
-						<button id="makeDiagrAJOO2" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Show diagram data</button>
-					{{/if}}
-					<button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Export diagram data</button>
+					<button id="makeDiagrAJOO2" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Create Schema diagram</button>
+					<button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Export Schema diagram data</button>
                     <button id="cancel-VQ-DSS-schema" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>	
                 </div>
             </div><!-- /.modal-content -->
