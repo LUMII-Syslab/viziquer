@@ -7,30 +7,30 @@
         
         <div class="modal-dialog" style="width:1000px">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header" style="overflow:scroll;">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">DSS schema <b>{{info_schema}}</b> has {{classCountAll}} ({{classCountFiltered}} filtered ) classes.</h4>
 					{{#if isBig }}
 					{{else}}
 
-					<ul class="nav nav-tabs" id="vq-tab">
+					<ul class="nav nav-tabs" id="vq-tab" style="padding-top:10px;">
 						  <li class="active"><a data-toggle="tab" href="#VQ-DSS-main">Classes and properties</a></li>
 						  <li><a data-toggle="tab" href="#paremeters">Class merging parameters</a></li>
 						  {{#if pub}}
 						  {{else}}
 						  <li><a data-toggle="tab" href="#support">Support</a></li>
 						  {{/if}}
-					  </ul>
-					  <div class="tab-content" style="overflow:auto; height:800px;">
+					</ul>
+					  <div class="tab-content" style="overflow:auto;">
 						
 						  <div id="VQ-DSS-main" class="tab-pane fade in active">
-							<div class="explain-form-group" style="padding-bottom:1px;">
-								<span class="label label-default" style="font-size:15px;">Class list filters:</span>
+							<div class="explain-form-group" style="padding-bottom:5px; padding-top:10px;">
+								<span class="label label-default" style="font-size:15px; background-color:transparent;">Class list filters:</span>
 							</div>
 							<div class="container-fluid">
 								<div class="row">
 									<div class="col-sm-6">
-										<div class="slidecontainer" style="width: 400px;">
+										<div class="slidecontainer" style="width: 400px; padding-bottom:10px;">
 											<p><span id="classCount-slider-span"> </span> Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
 											<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount"  {{filterDisabled}}>
 										</div>
@@ -55,8 +55,8 @@
 							<div class="explain-form-group">
 								<span>  </span>
 							 </div>
-							<div class="explain-form-group">
-								<span class="label label-default" style="font-size:15px;">Manual class list selection</span>
+							<div class="explain-form-group" style="padding-top:20px;">
+								<span class="label label-default" style="font-size:15px; background-color:transparent;">Manual class list selection</span>
 									<label class="form-check-label">
 										<input class="form-check-input" id="manual" name="manual" index = 1 type="checkbox" >
 										<span class="custom-checkbox"></span>
@@ -94,7 +94,7 @@
 									</div>
 							</div>
 
-							<div class="form-group">
+							<div class="form-group" style="padding-top:10px; padding-left:15px;">
 								<button id="getProperties" type="button" class="btn btn-primary">Show all properties</button>
 							</div>							
 							<div class="container-fluid">
@@ -148,7 +148,7 @@
 								<div class="container-fluid">
 									<div class="row">
 										<div class="col-sm-4">
-											<div class="slidecontainer">
+											<div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
 												<p><span id="classCount-slider-span2"> </span> Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
 												<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount2">
 											</div>
@@ -159,7 +159,7 @@
 												<option selected value=5 >Basic merging</option>
 												<option value=10 >Strong merging</option>
 											</select>
-											<label class="form-check-label">
+											<label class="form-check-label" style="padding-bottom:10px; padding-top:10px;">
 												<input class="form-check-input" name = "abstr" id="abstr" type="checkbox">
 												<span class="custom-checkbox"></span>
 												Make abstract superclasses 
@@ -167,14 +167,16 @@
 										</div>
 										<div class="col-sm-4">
 										</div>
-										<div class="col-sm-4">
-											<span class="label label-default" style="font-size:15px;">Diagram parameters:</span>
+										<div class="col-sm-4" style="padding-top:10px;">
+											<div style="padding-bottom:10px;">
+												<span class="label label-default" style="font-size:15px; background-color:transparent;">Diagram parameters:</span>
+											</div>
 											<select class="form-control" id="disconnBig">
 												<option selected value=7 >Max. 7 one object property edges</option>
 												<option value=10 >Max. 10 one object property edges</option>
 												<option value=0 >Draw all object properties in the diagram</option>
 											</select>	
-											<label class="form-check-label">
+											<label class="form-check-label" style="padding-top:10px;">
 												<input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">
 												<span class="custom-checkbox"></span>
 												Compact view of properties and subclasses
@@ -188,14 +190,14 @@
 
 									</div>
 								</div>
-								<div class="container-fluid">
+								<div class="container-fluid" >
 									<div class="form-group">
 										<button id="showGroups" type="button" class="btn btn-primary">Calculate groups -(skos:altLabel,skos:prefLabel,rdf:type)</button>
 									</div>
-									<span class="label label-default" style="font-size:15px;">Nodes- {{classCountUsed}}, groups - {{classCountGroups}}, abstract classes - {{classCountAbstr}} </span>
+									<span class="label label-default" style="font-size:15px; background-color:transparent; padding-left:0px;">Nodes- {{classCountUsed}}, groups - {{classCountGroups}}, abstract classes - {{classCountAbstr}} </span>
 								</div>
 
-								<div class="container-fluid">
+								<div class="container-fluid" style="padding-top:10px;">
 									<div class="row">
 										<div class="col-sm-4">
 											<label>C-Class, G-Merged classes, A-Superclass</label>
