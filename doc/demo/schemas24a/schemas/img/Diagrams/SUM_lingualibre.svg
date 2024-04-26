@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="1801" height="978" viewBox="0 0 1801 978">
+ width="1593" height="1057" viewBox="0 0 1593 1057">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,473 +38,476 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002687072"><polygon points="395,171 695,171 695,224 395,224 "
+<g id="2002723501"><polygon points="395,31 628,31 628,238 395,238 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="471" y="186">owl:DatatypeProperty (96)</tspan>
+<tspan x="454" y="46">wikiba:Property (39)</tspan>
 </text>
-</g>
-<g id="2002687094"><polygon points="819,16 1119,16 1119,225 819,225 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="912" y="31">wikiba:Property (39)</tspan>
-</text>
-<line x1="823" y1="34" x2="1117" y2="34"
+<line x1="399" y1="49" x2="626" y2="49"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="823" y="46">direct:P10 (12) [1] D</tspan>
-<tspan x="823" y="61">direct:P12 (13) [1] </tspan>
-<tspan x="823" y="76">direct:P22 (5) [1] D</tspan>
-<tspan x="823" y="91">n7:P12 (13) [*]  -&gt; IRI</tspan>
-<tspan x="823" y="106">rdfs:label (449) [*] </tspan>
-<tspan x="823" y="121">schema:description (60) [*] </tspan>
-<tspan x="823" y="136">schema:name (44) [*] </tspan>
-<tspan x="823" y="151">skos:altLabel (119) [*] </tspan>
-<tspan x="823" y="166">skos:prefLabel (44) [*] </tspan>
-<tspan x="823" y="181">wikiba:propertyType (39) [1] D -&gt; IRI</tspan>
-<tspan x="823" y="196">wikiba:timestamp (39) [1] </tspan>
+<tspan x="399" y="61">direct:P10 (12) [1] D</tspan>
+<tspan x="399" y="76">direct:P12 (13) [1] </tspan>
+<tspan x="399" y="91">direct:P22 (5) [1] D</tspan>
+<tspan x="399" y="106">dn:P12 (13) [*]  -&gt; IRI</tspan>
+<tspan x="399" y="121">rdfs:label (449) [*] </tspan>
+<tspan x="399" y="136">schema:description (60) [*] </tspan>
+<tspan x="399" y="151">schema:name (44) [*] </tspan>
+<tspan x="399" y="166">skos:altLabel (119) [*] </tspan>
+<tspan x="399" y="181">skos:prefLabel (44) [*] </tspan>
+<tspan x="399" y="196">wikiba:propertyType (39) [1] D -&gt; IRI</tspan>
+<tspan x="399" y="211">wikiba:timestamp (39) [1] </tspan>
+<tspan x="399" y="226">&lt;&gt; direct:P36  DR</tspan>
 </text>
 </g>
-<g id="2002687160"><polygon points="380,236 680,236 680,661 380,661 "
+<g id="2002723512"><polygon points="236,404 536,404 536,574 236,574 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="233,407 533,407 533,577 233,577 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="476" y="251">wikiba:Item (7.0e5)</tspan>
+<tspan x="270" y="422">novalue:P14 or novalue:P8 G101 (1192)</tspan>
 </text>
-<line x1="384" y1="254" x2="678" y2="254"
+<line x1="237" y1="425" x2="531" y2="425"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="384" y="266">direct:P11 (1109) [1] </tspan>
-<tspan x="384" y="281">direct:P12 (2.7e4) [1] </tspan>
-<tspan x="384" y="296">direct:P13 (172) [*] </tspan>
-<tspan x="384" y="311">direct:P14 (1117 77%d) [*]  -&gt; IRI</tspan>
-<tspan x="384" y="326">direct:P17 (21) [*] </tspan>
-<tspan x="384" y="341">direct:P18 (3782) [1] </tspan>
-<tspan x="384" y="356">direct:P19 (3.7e4) [*] </tspan>
-<tspan x="384" y="371">direct:P20 (1.4e5) [*] </tspan>
-<tspan x="384" y="386">direct:P21 (1.3e4) [*] </tspan>
-<tspan x="384" y="401">direct:P26 (155) [1] </tspan>
-<tspan x="384" y="416">direct:P28 (1) [1] D</tspan>
-<tspan x="384" y="431">direct:P29 (1) [1] D</tspan>
-<tspan x="384" y="446">direct:P30 (2) [1] D -&gt; IRI</tspan>
-<tspan x="384" y="461">direct:P31 (1) [1] D</tspan>
-<tspan x="384" y="476">direct:P38 (1) [1] </tspan>
-<tspan x="384" y="491">n7:P12 (5.2e4) [*]  -&gt; IRI</tspan>
-<tspan x="384" y="506">n7:P14 (1096) [*]  -&gt; IRI</tspan>
-<tspan x="384" y="521">n7:P21 (1.3e4) [*]  -&gt; IRI</tspan>
-<tspan x="384" y="536">n7:P28 (1) [1] D -&gt; IRI</tspan>
-<tspan x="384" y="551">n7:P29 (1) [1] D -&gt; IRI</tspan>
-<tspan x="384" y="566">rdfs:label (7.1e5) [*] </tspan>
-<tspan x="384" y="581">schema:description (7.1e5) [*] </tspan>
-<tspan x="384" y="596">schema:name (7.1e5) [*] </tspan>
-<tspan x="384" y="611">skos:altLabel (1432) [*] </tspan>
-<tspan x="384" y="626">skos:prefLabel (7.1e5) [*] </tspan>
-<tspan x="384" y="641">wikiba:identifiers (2.5e5) [*] </tspan>
-<tspan x="384" y="656">wikiba:timestamp (2.5e5) [1] </tspan>
-</text>
-</g>
-<g id="2002687182"><polygon points="1077,770 1377,770 1377,815 1077,815 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1194" y="785">n6:P15 (10)</tspan>
-</text>
-</g>
-<g id="2002687193"><polygon points="914,461 1214,461 1214,751 914,751 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="994" y="476">wikiba:BestRank (9.0e6)</tspan>
-</text>
-<line x1="918" y1="479" x2="1212" y2="479"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="918" y="491">n4:P40 (1) [1] D</tspan>
-<tspan x="918" y="506">n4:P41 (1) [1] D</tspan>
-<tspan x="918" y="521">n5:P12 (5.9e4) [*] D -&gt; IRI</tspan>
-<tspan x="918" y="536">n5:P14 (2084) [*] D -&gt; IRI</tspan>
-<tspan x="918" y="551">n5:P21 (3.5e4) [1] D -&gt; IRI</tspan>
-<tspan x="918" y="566">statement:P10 (12) [1] D</tspan>
-<tspan x="918" y="581">statement:P11 (2488) [1] D</tspan>
-<tspan x="918" y="596">statement:P12 (3.4e4) [1] D</tspan>
-<tspan x="918" y="611">statement:P13 (722) [1] D</tspan>
-<tspan x="918" y="626">statement:P14 (2214 84%d) [*] D -&gt; IRI</tspan>
-<tspan x="918" y="641">statement:P15 (2) [1] D</tspan>
-<tspan x="918" y="656">statement:P17 (280) [1] D</tspan>
-<tspan x="918" y="671">statement:P18 (9069) [1] D</tspan>
-<tspan x="918" y="686">statement:P19 (8.9e4) [1] D</tspan>
-<tspan x="918" y="701">statement:P3 (1.2e6) [1]  -&gt; IRI</tspan>
-<tspan x="918" y="716">statement:P6 (1.2e6) [*] D</tspan>
-<tspan x="918" y="731">statement:P7 (1.2e6 99.9%d) [*] D -&gt; IRI</tspan>
-<tspan x="918" y="746">statement:P8 (2293) [*] D -&gt; IRI</tspan>
-</text>
-</g>
-<g id="2002687204"><polygon points="1320,18 1620,18 1620,206 1320,206 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1399" y="33">owl:ObjectProperty (272)</tspan>
-</text>
-</g>
-<g id="2002687226"><polygon points="406,115 706,115 706,160 406,160 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="516" y="130">owl:Class (39)</tspan>
-</text>
-</g>
-<g id="2002687083"><polygon points="1491,692 1791,692 1791,737 1491,737 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1572" y="707">schema:Dataset (7.0e5)</tspan>
-</text>
-<line x1="1495" y1="710" x2="1789" y2="710"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1495" y="722">wikiba:identifiers (7.0e5) [*] </tspan>
-</text>
-</g>
-<g id="2002687116"><polygon points="1483,803 1783,803 1783,868 1483,868 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1587" y="818">owl:Ontology (1)</tspan>
-</text>
-<line x1="1487" y1="821" x2="1781" y2="821"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1487" y="833">cc:license (1) [1] D -&gt; IRI</tspan>
-<tspan x="1487" y="848">rdf:type () [1] </tspan>
-<tspan x="1487" y="863">schema:softwareVersion (1) [1] D</tspan>
-</text>
-</g>
-<g id="2002687171"><polygon points="1344,332 1644,332 1644,442 1344,442 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1423" y="347">wikiba:Statement (5.1e6)</tspan>
-</text>
-<line x1="1348" y1="350" x2="1642" y2="350"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1348" y="362">n12:P14 (1) [1] D -&gt; IRI</tspan>
-<tspan x="1348" y="377">n4:P35 (334) [1] D -&gt; IRI</tspan>
-<tspan x="1348" y="392">n4:P4 (7) [1] D -&gt; IRI</tspan>
-<tspan x="1348" y="407">n5:P28 (1) [1] D -&gt; IRI</tspan>
-<tspan x="1348" y="422">n5:P29 (1) [1] D -&gt; IRI</tspan>
-<tspan x="1348" y="437">statement:P3 (7.0e5) [1]  -&gt; IRI</tspan>
-</text>
-</g>
-<g id="2002687237"><polygon points="604,843 942,843 942,968 604,968 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="744" y="858">n6:P13 (6)</tspan>
-</text>
-<line x1="608" y1="861" x2="940" y2="861"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="608" y="873">direct:P12 (3) [1] </tspan>
-<tspan x="608" y="888">direct:P27 (1) [1] </tspan>
-<tspan x="608" y="903">direct:P39 (1) [*] </tspan>
-<tspan x="608" y="918">n7:P12 (4) [*]  -&gt; IRI</tspan>
-<tspan x="608" y="933">rdfs:label (42) [*] </tspan>
-<tspan x="608" y="948">wikiba:identifiers (2) [*] </tspan>
-<tspan x="608" y="963">wikiba:timestamp (2) [1] </tspan>
-</text>
-</g>
-<g id="2002687149"><polygon points="1072,892 1372,892 1372,957 1072,957 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1170" y="907">schema:Article (8)</tspan>
-</text>
-<line x1="1076" y1="910" x2="1370" y2="910"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1076" y="922">schema:inLanguage (8) [1] D</tspan>
-<tspan x="1076" y="937">schema:isPartOf (8) [1] D -&gt; IRI</tspan>
-<tspan x="1076" y="952">schema:name (8) [*] </tspan>
-</text>
-</g>
-<g id="2002687105"><polygon points="14,599 314,599 314,799 14,799 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="11,602 311,602 311,802 11,802 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="73" y="617">n6:P14 or n6:P8 G101 (~1192)</tspan>
-</text>
-<line x1="15" y1="620" x2="309" y2="620"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="15" y="632">direct:P11 (595) [1] </tspan>
-<tspan x="15" y="647">direct:P14 (151 71%d) [*]  -&gt; IRI</tspan>
-<tspan x="15" y="662">direct:P15 (1) [1] </tspan>
-<tspan x="15" y="677">n7:P14 (119) [*]  -&gt; IRI</tspan>
-<tspan x="15" y="692">rdfs:label (606) [*] </tspan>
-<tspan x="15" y="707">schema:description (596) [*] </tspan>
-<tspan x="15" y="722">wikiba:identifiers (494) [*] </tspan>
-<tspan x="15" y="737">wikiba:timestamp (494) [1] </tspan>
+<tspan x="237" y="437">direct:P11 (595) [1] </tspan>
+<tspan x="237" y="452">direct:P14 (151 71%d) [*]  -&gt; IRI</tspan>
+<tspan x="237" y="467">direct:P15 (1) [1] </tspan>
+<tspan x="237" y="482">dn:P14 (119) [*]  -&gt; IRI</tspan>
+<tspan x="237" y="497">rdfs:label (606) [*] </tspan>
+<tspan x="237" y="512">schema:description (596) [*] </tspan>
+<tspan x="237" y="527">wikiba:identifiers (494) [*] </tspan>
+<tspan x="237" y="542">wikiba:timestamp (494) [1] </tspan>
 </text>
 <text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="15" y="752">n6:P14 (804)</tspan>
-<tspan x="15" y="767">n6:P8 (388)</tspan>
+<tspan x="237" y="557">novalue:P14 (804)</tspan>
+<tspan x="237" y="572">novalue:P8 (388)</tspan>
 </text>
 </g>
-<g id="2002687215"><polygon points="1490,907 1790,907 1790,952 1490,952 "
+<g id="2002723523"><polygon points="1313,460 1583,460 1583,505 1313,505 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1582" y="922">owl:Restriction (400)</tspan>
+<tspan x="1390" y="475">wikiba:Reference (5)</tspan>
 </text>
-<line x1="1494" y1="925" x2="1788" y2="925"
+<line x1="1317" y1="478" x2="1581" y2="478"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1494" y="937">owl:someValuesFrom (400) [1] D -&gt; IRI</tspan>
+<tspan x="1317" y="490">re-vn:P12 (2) [*] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002687127"><polygon points="1484,589 1784,589 1784,634 1484,634 "
+<g id="2002723534"><polygon points="1198,394 1450,394 1450,444 1198,444 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1576" y="604">wikiba:Reference (5)</tspan>
+<tspan x="1254" y="409">wikiba:TimeValue (1842)</tspan>
 </text>
-<line x1="1488" y1="607" x2="1782" y2="607"
+<line x1="1202" y1="412" x2="1448" y2="412"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1488" y="619">n11:P12 (2) [*] D -&gt; IRI</tspan>
+<tspan x="1202" y="424">wikiba:timeCalendarModel (1842) [1] D -&gt; IRI</tspan>
+<tspan x="1202" y="439">wikiba:timeValue (1842) [1] D</tspan>
 </text>
 </g>
-<g id="2002687138"><polygon points="1350,245 1650,245 1650,295 1350,295 "
+<g id="2002723545"><polygon points="146,31 381,31 381,74 146,74 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1430" y="260">wikiba:TimeValue (1842)</tspan>
-</text>
-<line x1="1354" y1="263" x2="1648" y2="263"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1354" y="275">wikiba:timeCalendarModel (1842) [1] D -&gt; IRI</tspan>
-<tspan x="1354" y="290">wikiba:timeValue (1842) [1] D</tspan>
+<tspan x="192" y="46">owl:ObjectProperty (272)</tspan>
 </text>
 </g>
-<g id="2002686976"><path d="M680,615 L914,615 "
+<g id="2002723556"><polygon points="278,638 699,638 699,914 278,914 "
+style="fill:White; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="282" y="652">PREFIX direct: &lt;https://lingualibre.org/prop/direct/&gt;</tspan>
+<tspan x="282" y="667">PREFIX wikiba: &lt;http://wikiba.se/ontology#&gt;</tspan>
+<tspan x="282" y="682">PREFIX statement: &lt;https://lingualibre.org/prop/statement/&gt;</tspan>
+<tspan x="282" y="697">PREFIX prop: &lt;https://lingualibre.org/prop/&gt;</tspan>
+<tspan x="282" y="712">PREFIX schema: &lt;http://schema.org/&gt;</tspan>
+<tspan x="282" y="727">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="282" y="742">PREFIX novalue: &lt;https://lingualibre.org/prop/novalue/&gt;</tspan>
+<tspan x="282" y="757">PREFIX vn: &lt;https://lingualibre.org/prop/statement/value-normalized/&gt;</tspan>
+<tspan x="282" y="772">PREFIX dn: &lt;https://lingualibre.org/prop/direct-normalized/&gt;</tspan>
+<tspan x="282" y="787">PREFIX qual: &lt;https://lingualibre.org/prop/qualifier/&gt;</tspan>
+<tspan x="282" y="802">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
+<tspan x="282" y="817">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="282" y="832">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="282" y="847">PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;</tspan>
+<tspan x="282" y="862">PREFIX re-vn: &lt;https://lingualibre.org/prop/reference/value-normalized/&gt;</tspan>
+<tspan x="282" y="877">PREFIX cc: &lt;http://creativecommons.org/ns#&gt;</tspan>
+<tspan x="282" y="892">PREFIX st-v: &lt;https://lingualibre.org/prop/statement/value/&gt;</tspan>
+<tspan x="282" y="907">PREFIX q-vn: &lt;https://lingualibre.org/prop/qualifier/value-normalized/&gt;</tspan>
+</text>
+</g>
+<g id="2002723567"><polygon points="146,259 340,259 340,384 146,384 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="199" y="274">novalue:P13 (6)</tspan>
+</text>
+<line x1="150" y1="277" x2="338" y2="277"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="150" y="289">direct:P12 (3) [1] </tspan>
+<tspan x="150" y="304">direct:P27 (1) [1] </tspan>
+<tspan x="150" y="319">direct:P39 (1) [*] </tspan>
+<tspan x="150" y="334">dn:P12 (4) [*]  -&gt; IRI</tspan>
+<tspan x="150" y="349">rdfs:label (42) [*] </tspan>
+<tspan x="150" y="364">wikiba:identifiers (2) [*] </tspan>
+<tspan x="150" y="379">wikiba:timestamp (2) [1] </tspan>
+</text>
+</g>
+<g id="2002723578"><polygon points="1186,644 1486,644 1486,689 1186,689 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1267" y="659">schema:Dataset (7.0e5)</tspan>
+</text>
+<line x1="1190" y1="662" x2="1484" y2="662"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1190" y="674">wikiba:identifiers (7.0e5) [*] </tspan>
+</text>
+</g>
+<g id="2002723589"><polygon points="1186,570 1486,570 1486,635 1186,635 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1284" y="585">schema:Article (8)</tspan>
+</text>
+<line x1="1190" y1="588" x2="1484" y2="588"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1190" y="600">schema:inLanguage (8) [1] D</tspan>
+<tspan x="1190" y="615">schema:isPartOf (8) [1] D -&gt; IRI</tspan>
+<tspan x="1190" y="630">schema:name (8) [*] </tspan>
+</text>
+</g>
+<g id="2002723600"><polygon points="716,562 1016,562 1016,1047 716,1047 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="812" y="577">wikiba:Item (7.0e5)</tspan>
+</text>
+<line x1="720" y1="580" x2="1014" y2="580"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="720" y="592">direct:P11 (1109) [1] </tspan>
+<tspan x="720" y="607">direct:P12 (2.7e4) [1] </tspan>
+<tspan x="720" y="622">direct:P13 (172) [*] </tspan>
+<tspan x="720" y="637">direct:P14 (1117 77%d) [*]  -&gt; IRI</tspan>
+<tspan x="720" y="652">direct:P17 (21) [*] </tspan>
+<tspan x="720" y="667">direct:P18 (3782) [1] </tspan>
+<tspan x="720" y="682">direct:P19 (3.7e4) [*] </tspan>
+<tspan x="720" y="697">direct:P20 (1.4e5) [*] </tspan>
+<tspan x="720" y="712">direct:P21 (1.3e4) [*] </tspan>
+<tspan x="720" y="727">direct:P26 (155) [1] </tspan>
+<tspan x="720" y="742">direct:P28 (1) [1] D</tspan>
+<tspan x="720" y="757">direct:P29 (1) [1] D</tspan>
+<tspan x="720" y="772">direct:P30 (2) [1] D -&gt; IRI</tspan>
+<tspan x="720" y="787">direct:P31 (1) [1] D</tspan>
+<tspan x="720" y="802">direct:P38 (1) [1] </tspan>
+<tspan x="720" y="817">dn:P12 (5.2e4) [*]  -&gt; IRI</tspan>
+<tspan x="720" y="832">dn:P14 (1096) [*]  -&gt; IRI</tspan>
+<tspan x="720" y="847">dn:P21 (1.3e4) [*]  -&gt; IRI</tspan>
+<tspan x="720" y="862">dn:P28 (1) [1] D -&gt; IRI</tspan>
+<tspan x="720" y="877">dn:P29 (1) [1] D -&gt; IRI</tspan>
+<tspan x="720" y="892">rdfs:label (7.1e5) [*] </tspan>
+<tspan x="720" y="907">schema:description (7.1e5) [*] </tspan>
+<tspan x="720" y="922">schema:name (7.1e5) [*] </tspan>
+<tspan x="720" y="937">skos:altLabel (1432) [*] </tspan>
+<tspan x="720" y="952">skos:prefLabel (7.1e5) [*] </tspan>
+<tspan x="720" y="967">wikiba:identifiers (2.5e5) [*] </tspan>
+<tspan x="720" y="982">wikiba:timestamp (2.5e5) [1] </tspan>
+<tspan x="720" y="997">&lt;&gt; direct:P24  </tspan>
+<tspan x="720" y="1012">&lt;&gt; direct:P32  DR</tspan>
+<tspan x="720" y="1027">&lt;&gt; direct:P33  R</tspan>
+<tspan x="720" y="1042">&lt;&gt; direct:P37  DR</tspan>
+</text>
+</g>
+<g id="2002723611"><polygon points="1085,233 1385,233 1385,343 1085,343 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1164" y="248">wikiba:Statement (5.1e6)</tspan>
+</text>
+<line x1="1089" y1="251" x2="1383" y2="251"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1089" y="263">q-vn:P14 (1) [1] D -&gt; IRI</tspan>
+<tspan x="1089" y="278">qual:P35 (334) [1] D -&gt; IRI</tspan>
+<tspan x="1089" y="293">qual:P4 (7) [1] D -&gt; IRI</tspan>
+<tspan x="1089" y="308">nv:P28 (1) [1] D -&gt; IRI</tspan>
+<tspan x="1089" y="323">nv:P29 (1) [1] D -&gt; IRI</tspan>
+<tspan x="1089" y="338">statement:P3 (7.0e5) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002723622"><polygon points="1116,170 1284,170 1284,202 1116,202 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1153" y="185">novalue:P15 (10)</tspan>
+</text>
+</g>
+<g id="2002723633"><polygon points="1184,714 1484,714 1484,779 1184,779 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1288" y="729">owl:Ontology (1)</tspan>
+</text>
+<line x1="1188" y1="732" x2="1482" y2="732"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1188" y="744">cc:license (1) [1] D -&gt; IRI</tspan>
+<tspan x="1188" y="759">rdf:type () [1] </tspan>
+<tspan x="1188" y="774">schema:softwareVersion (1) [1] D</tspan>
+</text>
+</g>
+<g id="2002723644"><polygon points="716,168 1016,168 1016,458 716,458 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="796" y="183">wikiba:BestRank (9.0e6)</tspan>
+</text>
+<line x1="720" y1="186" x2="1014" y2="186"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="720" y="198">qual:P40 (1) [1] D</tspan>
+<tspan x="720" y="213">qual:P41 (1) [1] D</tspan>
+<tspan x="720" y="228">nv:P12 (5.9e4) [*] D -&gt; IRI</tspan>
+<tspan x="720" y="243">nv:P14 (2084) [*] D -&gt; IRI</tspan>
+<tspan x="720" y="258">nv:P21 (3.5e4) [1] D -&gt; IRI</tspan>
+<tspan x="720" y="273">statement:P10 (12) [1] D</tspan>
+<tspan x="720" y="288">statement:P11 (2488) [1] D</tspan>
+<tspan x="720" y="303">statement:P12 (3.4e4) [1] D</tspan>
+<tspan x="720" y="318">statement:P13 (722) [1] D</tspan>
+<tspan x="720" y="333">statement:P14 (2214 84%d) [*] D -&gt; IRI</tspan>
+<tspan x="720" y="348">statement:P15 (2) [1] D</tspan>
+<tspan x="720" y="363">statement:P17 (280) [1] D</tspan>
+<tspan x="720" y="378">statement:P18 (9069) [1] D</tspan>
+<tspan x="720" y="393">statement:P19 (8.9e4) [1] D</tspan>
+<tspan x="720" y="408">statement:P3 (1.2e6) [1]  -&gt; IRI</tspan>
+<tspan x="720" y="423">statement:P6 (1.2e6) [*] D</tspan>
+<tspan x="720" y="438">statement:P7 (1.2e6 99.9%d) [*] D -&gt; IRI</tspan>
+<tspan x="720" y="453">statement:P8 (2293) [*] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002723655"><polygon points="1186,514 1486,514 1486,559 1186,559 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1278" y="529">owl:Restriction (400)</tspan>
+</text>
+<line x1="1190" y1="532" x2="1484" y2="532"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1190" y="544">owl:someValuesFrom (400) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002723666"><polygon points="765,114 925,114 925,144 765,144 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="805" y="129">owl:Class (39)</tspan>
+</text>
+</g>
+<g id="2002723677"><polygon points="761,62 954,62 954,91 761,91 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="783" y="77">owl:DatatypeProperty (96)</tspan>
+</text>
+</g>
+<g id="2002723410"><path d="M828,562 L828,458 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="908" y1="612" x2="914" y2="615"
+<line x1="825" y1="464" x2="828" y2="458"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="908" y1="618" x2="914" y2="615"
+<line x1="831" y1="464" x2="828" y2="458"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="684" y="538">prop:P7  R</tspan>
-<tspan x="684" y="553">prop:P9  R</tspan>
-<tspan x="684" y="568">prop:P6  R</tspan>
-<tspan x="684" y="583">prop:P8  R</tspan>
-<tspan x="684" y="598">prop:P33  R</tspan>
-<tspan x="684" y="613">prop:P38  R</tspan>
+<tspan x="761" y="483">prop:P7  R</tspan>
+<tspan x="761" y="498">prop:P9  R</tspan>
+<tspan x="761" y="513">prop:P6  R</tspan>
+<tspan x="761" y="528">prop:P8  R</tspan>
+<tspan x="761" y="543">prop:P33  R</tspan>
+<tspan x="761" y="558">prop:P38  R</tspan>
 </text>
 </g>
-<g id="2002687011"><path d="M819,177 L695,177 "
+<g id="2002723415"><path d="M533,434 L716,434 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="701" y1="174" x2="695" y2="177"
+<line x1="710" y1="431" x2="716" y2="434"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="701" y1="180" x2="695" y2="177"
+<line x1="710" y1="437" x2="716" y2="434"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="699" y="190">wikiba:reference  D</tspan>
-<tspan x="699" y="205">wikiba:directClaim  D</tspan>
-<tspan x="699" y="220">wikiba:qualifier  D</tspan>
+<tspan x="537" y="432">prop:P8  R</tspan>
 </text>
 </g>
-<g id="2002687036"><path d="M819,78 L724,78 720,76 718,72 718,16 720,12 724,10 969,10 969,16 "
+<g id="2002723420"><path d="M1016,711 L1165,711 1169,709 1171,705 1171,343 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="966" y1="10" x2="969" y2="16"
+<line x1="1168" y1="349" x2="1171" y2="343"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="972" y1="10" x2="969" y2="16"
+<line x1="1174" y1="349" x2="1171" y2="343"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="736" y="91">direct:P36  DR</tspan>
+<tspan x="1020" y="664">prop:P32  DR</tspan>
+<tspan x="1020" y="679">prop:P30  DR</tspan>
+<tspan x="1020" y="694">prop:P31  DR</tspan>
+<tspan x="1020" y="709">prop:P37  DR</tspan>
 </text>
 </g>
-<g id="2002687041"><path d="M1119,200 L1320,200 "
+<g id="2002723425"><path d="M1385,250 L1547,250 1551,252 1553,256 1553,460 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1314" y1="197" x2="1320" y2="200"
+<line x1="1550" y1="454" x2="1553" y2="460"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1314" y1="203" x2="1320" y2="200"
+<line x1="1556" y1="454" x2="1553" y2="460"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1123" y="33">wikiba:referenceValue  DR</tspan>
-<tspan x="1123" y="48">wikiba:claim  DR</tspan>
-<tspan x="1123" y="63">wikiba:qualifierValue  DR</tspan>
-<tspan x="1123" y="78">wikiba:reference  D</tspan>
-<tspan x="1123" y="93">wikiba:directClaim  D</tspan>
-<tspan x="1123" y="108">wikiba:qualifier  D</tspan>
-<tspan x="1123" y="123">wikiba:statementValue  DR</tspan>
-<tspan x="1123" y="138">wikiba:directClaimNormalized  DR</tspan>
-<tspan x="1123" y="153">wikiba:statementValueNormalized  </tspan>
-<tspan x="1123" y="168">DR</tspan>
-<tspan x="1123" y="183">wikiba:referenceValueNormalized  </tspan>
-<tspan x="1123" y="198">DR</tspan>
+<tspan x="1389" y="248">prov:wasDerivedFrom  DR</tspan>
 </text>
 </g>
-<g id="2002687046"><path d="M914,519 L680,519 "
+<g id="2002723430"><path d="M716,338 L340,338 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="686" y1="516" x2="680" y2="519"
+<line x1="346" y1="335" x2="340" y2="338"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="686" y1="522" x2="680" y2="519"
+<line x1="346" y1="341" x2="340" y2="338"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="822" y="532">statement:P4  </tspan>
-<tspan x="822" y="547">statement:P2  D</tspan>
-<tspan x="822" y="562">statement:P9  D</tspan>
-<tspan x="822" y="577">statement:P5  D</tspan>
+<tspan x="633" y="351">statement:P4  </tspan>
 </text>
 </g>
-<g id="2002687051"><path d="M819,133 L706,133 "
+<g id="2002723435"><path d="M716,413 L533,413 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="712" y1="130" x2="706" y2="133"
+<line x1="539" y1="410" x2="533" y2="413"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="712" y1="136" x2="706" y2="133"
+<line x1="539" y1="416" x2="533" y2="413"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="710" y="146">wikiba:novalue  DR</tspan>
+<tspan x="624" y="426">statement:P5  D</tspan>
 </text>
 </g>
-<g id="2002687066"><path d="M1664,737 L1664,803 "
+<g id="2002723440"><path d="M192,384 L192,593 194,597 198,599 716,599 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="710" y1="596" x2="716" y2="599"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="710" y1="602" x2="716" y2="599"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="194" y="399">direct:P24  </tspan>
+</text>
+</g>
+<g id="2002723445"><path d="M533,568 L716,568 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="710" y1="565" x2="716" y2="568"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="710" y1="571" x2="716" y2="568"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="537" y="566">direct:P24  </tspan>
+</text>
+</g>
+<g id="2002723450"><path d="M1091,343 L1091,592 1089,596 1085,598 1016,598 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1022" y1="595" x2="1016" y2="598"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1022" y1="601" x2="1016" y2="598"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1093" y="358">qualif:P34  D</tspan>
+</text>
+</g>
+<g id="2002723455"><path d="M340,369 L716,369 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="710" y1="366" x2="716" y2="369"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="710" y1="372" x2="716" y2="369"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="344" y="367">prop:P39  R</tspan>
+</text>
+</g>
+<g id="2002723460"><path d="M1291,343 L1291,394 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1288" y1="388" x2="1291" y2="394"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1294" y1="388" x2="1291" y2="394"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1293" y="358">st-v:P31  DR</tspan>
+</text>
+</g>
+<g id="2002723470"><path d="M395,86 L178,86 174,84 172,80 172,74 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="169" y1="80" x2="172" y2="74"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="175" y1="80" x2="172" y2="74"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="180" y="99">wikiba:qualifier  D</tspan>
+<tspan x="180" y="114">wikiba:directClaim  D</tspan>
+<tspan x="180" y="129">wikiba:referenceValue  DR</tspan>
+<tspan x="180" y="144">wikiba:reference  D</tspan>
+<tspan x="180" y="159">wikiba:qualifierValue  DR</tspan>
+<tspan x="180" y="174">wikiba:statementValue  DR</tspan>
+<tspan x="180" y="189">wikiba:claim  DR</tspan>
+<tspan x="180" y="204">wikiba:statementValueNormalized  DR</tspan>
+<tspan x="180" y="219">wikiba:directClaimNormalized  DR</tspan>
+<tspan x="180" y="234">wikiba:referenceValueNormalized  DR</tspan>
+</text>
+</g>
+<g id="2002723475"><path d="M901,458 L901,562 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="898" y1="556" x2="901" y2="562"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="904" y1="556" x2="901" y2="562"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="903" y="473">statement:P4  </tspan>
+<tspan x="903" y="488">statement:P2  D</tspan>
+<tspan x="903" y="503">statement:P9  D</tspan>
+<tspan x="903" y="518">statement:P5  D</tspan>
+</text>
+</g>
+<g id="2002723480"><path d="M628,129 L765,129 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="759" y1="126" x2="765" y2="129"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="759" y1="132" x2="765" y2="129"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="632" y="127">wikiba:novalue  DR</tspan>
+</text>
+</g>
+<g id="2002723485"><path d="M628,78 L761,78 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="755" y1="75" x2="761" y2="78"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="755" y1="81" x2="761" y2="78"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="632" y="46">wikiba:qualifier  D</tspan>
+<tspan x="632" y="61">wikiba:directClaim  D</tspan>
+<tspan x="632" y="76">wikiba:reference  D</tspan>
+</text>
+</g>
+<g id="2002723490"><path d="M628,203 L716,203 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="710" y1="200" x2="716" y2="203"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="710" y1="206" x2="716" y2="203"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="632" y="201">prop:P36  DR</tspan>
+</text>
+</g>
+<g id="2002723495"><path d="M1335,689 L1335,714 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="1669,747 1664,737 1659,747 "
+<polygon points="1340,699 1335,689 1330,699 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1666" y="752"> </tspan>
+<tspan x="1337" y="704"> </tspan>
 </text>
 </g>
-<g id="2002687068"><path d="M1370,442 L1370,770 "
+<g id="2002723497"><path d="M1200,233 L1200,202 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="1375,452 1370,442 1365,452 "
+<polygon points="1205,223 1200,233 1195,223 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1372" y="457"> </tspan>
+<tspan x="1188" y="229"> </tspan>
 </text>
 </g>
-<g id="2002687070"><path d="M1139,751 L1139,770 "
+<g id="2002723499"><path d="M1016,186 L1116,186 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="1144,761 1139,751 1134,761 "
+<polygon points="1026,191 1016,186 1026,181 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1141" y="766"> </tspan>
-</text>
-</g>
-<g id="2002687026"><path d="M1507,332 L1507,295 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1504" y1="301" x2="1507" y2="295"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1510" y1="301" x2="1507" y2="295"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1435" y="328">n10:P31  DR</tspan>
-</text>
-</g>
-<g id="2002687056"><path d="M380,377 L291,377 287,375 285,371 285,285 287,281 291,279 380,279 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="374" y1="276" x2="380" y2="279"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="374" y1="282" x2="380" y2="279"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="297" y="390">direct:P33  R</tspan>
-<tspan x="297" y="405">direct:P24  </tspan>
-<tspan x="297" y="420">direct:P32  DR</tspan>
-<tspan x="297" y="435">direct:P37  DR</tspan>
-</text>
-</g>
-<g id="2002687061"><path d="M311,647 L380,647 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="374" y1="644" x2="380" y2="647"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="374" y1="650" x2="380" y2="647"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="315" y="645">direct:P24  </tspan>
-</text>
-</g>
-<g id="2002686991"><path d="M1576,442 L1576,589 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1573" y1="583" x2="1576" y2="589"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1579" y1="583" x2="1576" y2="589"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1578" y="457">prov:wasDerivedFrom  DR</tspan>
-</text>
-</g>
-<g id="2002686986"><path d="M680,432 L1344,432 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1338" y1="429" x2="1344" y2="432"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1338" y1="435" x2="1344" y2="432"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="684" y="385">prop:P30  DR</tspan>
-<tspan x="684" y="400">prop:P32  DR</tspan>
-<tspan x="684" y="415">prop:P37  DR</tspan>
-<tspan x="684" y="430">prop:P31  DR</tspan>
-</text>
-</g>
-<g id="2002687031"><path d="M1091,225 L1091,461 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1088" y1="455" x2="1091" y2="461"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1094" y1="455" x2="1091" y2="461"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1093" y="240">prop:P36  DR</tspan>
-</text>
-</g>
-<g id="2002687016"><path d="M1344,366 L680,366 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="686" y1="363" x2="680" y2="366"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="686" y1="369" x2="680" y2="366"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1286" y="379">n4:P34  D</tspan>
-</text>
-</g>
-<g id="2002687021"><path d="M930,843 L930,751 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="927" y1="757" x2="930" y2="751"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="933" y1="757" x2="930" y2="751"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="863" y="839">prop:P39  R</tspan>
-</text>
-</g>
-<g id="2002686996"><path d="M914,734 L829,734 825,736 823,740 823,843 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="820" y1="837" x2="823" y2="843"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="826" y1="837" x2="823" y2="843"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="831" y="747">statement:P4  </tspan>
-</text>
-</g>
-<g id="2002687006"><path d="M662,843 L662,661 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="659" y1="667" x2="662" y2="661"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="665" y1="667" x2="662" y2="661"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="599" y="839">direct:P24  </tspan>
-</text>
-</g>
-<g id="2002686981"><path d="M311,682 L914,682 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="908" y1="679" x2="914" y2="682"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="908" y1="685" x2="914" y2="682"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="315" y="680">prop:P8  R</tspan>
-</text>
-</g>
-<g id="2002687001"><path d="M914,707 L311,707 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="317" y1="704" x2="311" y2="707"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="317" y1="710" x2="311" y2="707"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="822" y="720">statement:P5  D</tspan>
+<tspan x="1020" y="184"> </tspan>
 </text>
 </g>
 </svg>

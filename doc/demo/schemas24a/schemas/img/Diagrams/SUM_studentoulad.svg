@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="1321" height="540" viewBox="0 0 1321 540">
+ width="1268" height="579" viewBox="0 0 1268 579">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,216 +38,208 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002688915"><polygon points="485,16 785,16 785,81 485,81 "
+<g id="2002711755"><polygon points="81,417 323,417 323,500 81,500 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="598" y="31">owl:Class (3)</tspan>
+<tspan x="164" y="432">owl:Class (3)</tspan>
 </text>
-<line x1="489" y1="34" x2="783" y2="34"
+<line x1="85" y1="436" x2="321" y2="436"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="489" y="46">owl:unionOf (1) [1] D -&gt; IRI</tspan>
-<tspan x="489" y="61">rdf:type (3) [*]  -&gt; IRI</tspan>
-<tspan x="489" y="76">rdfs:label (2) [1] </tspan>
+<tspan x="85" y="448">owl:unionOf (1) [1] D -&gt; IRI</tspan>
+<tspan x="85" y="464">rdf:type (3) [*]  -&gt; IRI</tspan>
+<tspan x="85" y="480">rdfs:label (2) [1] </tspan>
+<tspan x="85" y="496">&lt;&gt; owl:complementOf  DR</tspan>
 </text>
 </g>
-<g id="2002688926"><polygon points="892,382 1192,382 1192,492 892,492 "
+<g id="2002711766"><polygon points="1014,42 1256,42 1256,156 1014,156 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="996" y="397">owl:Ontology (1)</tspan>
+<tspan x="1087" y="58">owl:Ontology (1)</tspan>
 </text>
-<line x1="896" y1="400" x2="1190" y2="400"
+<line x1="1018" y1="61" x2="1254" y2="61"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="896" y="412">owl:imports (1) [1] D -&gt; IRI</tspan>
-<tspan x="896" y="427">owl:priorVersion (1) [1] D -&gt; IRI</tspan>
-<tspan x="896" y="442">owl:versionInfo (1) [1] D</tspan>
-<tspan x="896" y="457">rdf:type (1) [*]  -&gt; IRI</tspan>
-<tspan x="896" y="472">rdfs:comment (1) [1] D</tspan>
-<tspan x="896" y="487">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
+<tspan x="1018" y="73">owl:imports (1) [1] D -&gt; IRI</tspan>
+<tspan x="1018" y="89">owl:priorVersion (1) [1] D -&gt; IRI</tspan>
+<tspan x="1018" y="105">owl:versionInfo (1) [1] D</tspan>
+<tspan x="1018" y="121">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="1018" y="137">rdfs:comment (1) [1] D</tspan>
+<tspan x="1018" y="153">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002688937"><polygon points="510,103 810,103 810,213 510,213 "
+<g id="2002711777"><polygon points="473,42 878,42 878,156 473,156 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="555" y="118">khoulad:StudentAssessment (1.7e5)</tspan>
+<tspan x="567" y="58">khoulad:StudentAssessment (1.7e5)</tspan>
 </text>
-<line x1="514" y1="121" x2="808" y2="121"
+<line x1="477" y1="61" x2="876" y2="61"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="514" y="133">khoulad:date_submitted (1.7e5) [1] D</tspan>
-<tspan x="514" y="148">khoulad:is_banked (1.7e5) [1] D</tspan>
-<tspan x="514" y="163">khoulad:score (1.7e5) [1] D</tspan>
-<tspan x="514" y="178">khoulad:student_assessment_has_assessment (1.</tspan>
-<tspan x="514" y="193">7e5) [1] D -&gt; IRI</tspan>
-<tspan x="514" y="208">rdf:type (1.7e5) [*]  -&gt; IRI</tspan>
+<tspan x="477" y="73">khoulad:date_submitted (1.7e5) [1] D</tspan>
+<tspan x="477" y="89">khoulad:is_banked (1.7e5) [1] D</tspan>
+<tspan x="477" y="105">khoulad:score (1.7e5) [1] D</tspan>
+<tspan x="477" y="121">khoulad:student_assessment_has_assessment (1.7e5) [1] D -&gt; IRI</tspan>
+<tspan x="477" y="137">rdf:type (1.7e5) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002688948"><polygon points="850,196 1150,196 1150,241 850,241 "
+<g id="2002711788"><polygon points="1014,197 1256,197 1256,243 1014,243 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="924" y="211">owl:AnnotationProperty (5)</tspan>
+<tspan x="1057" y="212">owl:AnnotationProperty (5)</tspan>
 </text>
-<line x1="854" y1="214" x2="1148" y2="214"
+<line x1="1018" y1="215" x2="1254" y2="215"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="854" y="226">rdf:type (6) [*]  -&gt; IRI</tspan>
+<tspan x="1018" y="227">rdf:type (6) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002688959"><polygon points="1011,273 1311,273 1311,353 1011,353 "
+<g id="2002711799"><polygon points="1014,296 1256,296 1256,394 1014,394 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1083" y="288">khoulad:StudentVle (2.0e6)</tspan>
+<tspan x="1055" y="311">khoulad:StudentVle (2.0e6)</tspan>
 </text>
-<line x1="1015" y1="291" x2="1309" y2="291"
+<line x1="1018" y1="315" x2="1254" y2="315"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1015" y="303">khoulad:date_student_vle (8.5e6) [*] D</tspan>
-<tspan x="1015" y="318">khoulad:student_vle_has_vle (2.0e6) [1] D -&gt; IRI</tspan>
-<tspan x="1015" y="333">khoulad:sum_click (4.3e6) [*] D</tspan>
-<tspan x="1015" y="348">rdf:type (2.0e6) [*]  -&gt; IRI</tspan>
+<tspan x="1018" y="327">khoulad:date_student_vle (8.5e6) [*] D</tspan>
+<tspan x="1018" y="343">khoulad:student_vle_has_vle (2.0e6) [1] </tspan>
+<tspan x="1018" y="359">D -&gt; IRI</tspan>
+<tspan x="1018" y="375">khoulad:sum_click (4.3e6) [*] D</tspan>
+<tspan x="1018" y="391">rdf:type (2.0e6) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002688970"><polygon points="510,219 810,219 810,404 510,404 "
+<g id="2002711810"><polygon points="81,224 323,224 323,270 81,270 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="582" y="234">khoulad:StudentInfo (3.3e4)</tspan>
+<tspan x="129" y="239">owl:OntologyProperty (4)</tspan>
 </text>
-<line x1="514" y1="237" x2="808" y2="237"
+</g>
+<g id="2002711821"><polygon points="473,209 803,209 803,409 473,409 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="557" y="224">khoulad:StudentInfo (3.3e4)</tspan>
+</text>
+<line x1="477" y1="228" x2="801" y2="228"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="514" y="249">khoulad:age_band (3.3e4) [1] D</tspan>
-<tspan x="514" y="264">khoulad:disability (3.3e4) [1] D</tspan>
-<tspan x="514" y="279">khoulad:final_result (3.3e4) [1] D</tspan>
-<tspan x="514" y="294">khoulad:gender (3.3e4) [1] D</tspan>
-<tspan x="514" y="309">khoulad:highest_education (3.3e4) [1] D</tspan>
-<tspan x="514" y="324">khoulad:id_student (3.3e4) [1] D</tspan>
-<tspan x="514" y="339">khoulad:imd_band (3.3e4) [1] D</tspan>
-<tspan x="514" y="354">khoulad:num_of_prev_attempts (3.3e4) [1] D</tspan>
-<tspan x="514" y="369">khoulad:student_info_has_course (3.3e4) [1] D -&gt; IRI</tspan>
-<tspan x="514" y="384">khoulad:studied_credits (3.3e4) [1] D</tspan>
-<tspan x="514" y="399">rdf:type (3.3e4) [*]  -&gt; IRI</tspan>
+<tspan x="477" y="240">khoulad:age_band (3.3e4) [1] D</tspan>
+<tspan x="477" y="256">khoulad:disability (3.3e4) [1] D</tspan>
+<tspan x="477" y="272">khoulad:final_result (3.3e4) [1] D</tspan>
+<tspan x="477" y="288">khoulad:gender (3.3e4) [1] D</tspan>
+<tspan x="477" y="304">khoulad:highest_education (3.3e4) [1] D</tspan>
+<tspan x="477" y="320">khoulad:id_student (3.3e4) [1] D</tspan>
+<tspan x="477" y="336">khoulad:imd_band (3.3e4) [1] D</tspan>
+<tspan x="477" y="352">khoulad:num_of_prev_attempts (3.3e4) [1] D</tspan>
+<tspan x="477" y="368">khoulad:student_info_has_course (3.3e4) [1] D -&gt; IRI</tspan>
+<tspan x="477" y="384">khoulad:studied_credits (3.3e4) [1] D</tspan>
+<tspan x="477" y="400">rdf:type (3.3e4) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002688981"><polygon points="10,288 310,288 310,383 10,383 "
+<g id="2002711832"><polygon points="81,297 323,297 323,364 81,364 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="57" y="303">khoulad:StudentRegistration (3.3e4)</tspan>
+<tspan x="155" y="312">rdf:Property (23)</tspan>
 </text>
-<line x1="14" y1="306" x2="308" y2="306"
+<line x1="85" y1="316" x2="321" y2="316"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="14" y="318">khoulad:date_registration (3.3e4) [1] D</tspan>
-<tspan x="14" y="333">khoulad:date_unregistration (3.3e4) [1] D</tspan>
-<tspan x="14" y="348">khoulad:student_registration_has_course (3.3e4) [1] </tspan>
-<tspan x="14" y="363">D -&gt; IRI</tspan>
-<tspan x="14" y="378">rdf:type (3.3e4) [*]  -&gt; IRI</tspan>
+<tspan x="85" y="328">rdf:type (28) [*]  -&gt; IRI</tspan>
+<tspan x="85" y="344">rdfs:label (23) [1] </tspan>
+<tspan x="85" y="360">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002688992"><polygon points="874,14 1174,14 1174,79 874,79 "
+<g id="2002711843"><polygon points="45,42 435,42 435,149 45,149 "
+style="fill:White; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="49" y="57">PREFIX virtrdf: &lt;http://www.openlinksw.com/schemas/virtrdf#&gt;</tspan>
+<tspan x="49" y="73">PREFIX khoulad: &lt;https://ontologies.khaos.uma.es/oulad/&gt;</tspan>
+<tspan x="49" y="89">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="49" y="105">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="49" y="121">PREFIX sd: &lt;http://www.w3.org/ns/sparql-service-description#&gt;</tspan>
+<tspan x="49" y="137">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+</text>
+</g>
+<g id="2002711854"><polygon points="475,470 831,470 831,568 475,568 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="978" y="29">rdf:Property (23)</tspan>
+<tspan x="547" y="485">khoulad:StudentRegistration (3.3e4)</tspan>
 </text>
-<line x1="878" y1="32" x2="1172" y2="32"
+<line x1="479" y1="489" x2="829" y2="489"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="878" y="44">rdf:type (28) [*]  -&gt; IRI</tspan>
-<tspan x="878" y="59">rdfs:label (23) [1] </tspan>
-<tspan x="878" y="74">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
+<tspan x="479" y="501">khoulad:date_registration (3.3e4) [1] D</tspan>
+<tspan x="479" y="517">khoulad:date_unregistration (3.3e4) [1] D</tspan>
+<tspan x="479" y="533">khoulad:student_registration_has_course (3.3e4) [1] D -&gt; IRI</tspan>
+<tspan x="479" y="549">rdf:type (3.3e4) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689003"><polygon points="857,98 1157,98 1157,143 857,143 "
+<g id="2002711865"><polygon points="1015,417 1258,417 1258,531 1015,531 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="936" y="113">owl:OntologyProperty (4)</tspan>
+<tspan x="1096" y="432">sd:Service (1)</tspan>
 </text>
-</g>
-<g id="2002689014"><polygon points="573,450 873,450 873,530 573,530 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="684" y="465">sd:Service (1)</tspan>
-</text>
-<line x1="577" y1="468" x2="871" y2="468"
+<line x1="1019" y1="436" x2="1255" y2="436"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="577" y="480">rdf:type (1) [*]  -&gt; IRI</tspan>
-<tspan x="577" y="495">sd:feature (2) [*] D -&gt; IRI</tspan>
-<tspan x="577" y="510">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
-<tspan x="577" y="525">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+<tspan x="1019" y="448">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="1019" y="464">sd:feature (2) [*] D -&gt; IRI</tspan>
+<tspan x="1019" y="480">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
+<tspan x="1019" y="496">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+<tspan x="1019" y="512">&lt;&gt; sd:endpoint  DR</tspan>
+<tspan x="1019" y="528">&lt;&gt; sd:url  DR</tspan>
 </text>
 </g>
-<g id="2002688883"><path d="M573,490 L478,490 474,488 472,484 472,450 474,446 478,444 723,444 723,450 "
+<g id="2002711733"><path d="M1014,341 L803,341 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="720" y1="444" x2="723" y2="450"
+<line x1="809" y1="337" x2="803" y2="341"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="726" y1="444" x2="723" y2="450"
+<line x1="809" y1="344" x2="803" y2="341"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="480" y="503">sd:url  DR</tspan>
-<tspan x="480" y="518">sd:endpoint  DR</tspan>
+<tspan x="810" y="354">khoulad:student_vle_has_student_</tspan>
+<tspan x="810" y="370">info  DR</tspan>
 </text>
 </g>
-<g id="2002688888"><path d="M874,47 L785,47 "
+<g id="2002711738"><path d="M217,364 L217,417 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="791" y1="44" x2="785" y2="47"
+<line x1="214" y1="411" x2="217" y2="417"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="791" y1="50" x2="785" y2="47"
+<line x1="220" y1="411" x2="217" y2="417"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="789" y="60">rdfs:domain  D</tspan>
-<tspan x="789" y="75">rdfs:range  D</tspan>
+<tspan x="219" y="379">rdfs:domain  D</tspan>
+<tspan x="219" y="395">rdfs:range  D</tspan>
 </text>
 </g>
-<g id="2002688893"><path d="M1011,312 L810,312 "
+<g id="2002711743"><path d="M638,156 L638,209 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="816" y1="309" x2="810" y2="312"
+<line x1="634" y1="203" x2="638" y2="209"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="816" y1="315" x2="810" y2="312"
+<line x1="641" y1="203" x2="638" y2="209"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="814" y="325">khoulad:student_vle_has_student_</tspan>
-<tspan x="814" y="340">info  DR</tspan>
+<tspan x="640" y="171">khoulad:student_assessment_has</tspan>
+<tspan x="640" y="187">_student  DR</tspan>
 </text>
 </g>
-<g id="2002688898"><path d="M485,49 L352,49 348,47 346,43 346,16 348,12 352,10 635,10 635,16 "
+<g id="2002711748"><path d="M639,470 L639,409 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="10" x2="635" y2="16"
+<line x1="635" y1="415" x2="639" y2="409"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="638" y1="10" x2="635" y2="16"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="354" y="62">owl:complementOf  DR</tspan>
-</text>
-</g>
-<g id="2002688903"><path d="M510,158 L304,158 300,160 298,164 298,273 300,277 304,279 510,279 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="504" y1="276" x2="510" y2="279"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="504" y1="282" x2="510" y2="279"
+<line x1="642" y1="415" x2="639" y2="409"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="306" y="171">khoulad:student_assessment_has_</tspan>
-<tspan x="306" y="186">student  DR</tspan>
+<tspan x="438" y="450">khoulad:student_registration_has_</tspan>
+<tspan x="438" y="466">student_info  DR</tspan>
 </text>
 </g>
-<g id="2002688908"><path d="M310,338 L510,338 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="504" y1="335" x2="510" y2="338"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="504" y1="341" x2="510" y2="338"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="314" y="321">khoulad:student_registration_has_</tspan>
-<tspan x="314" y="336">student_info  DR</tspan>
-</text>
-</g>
-<g id="2002688913"><path d="M1016,79 L1016,98 "
+<g id="2002711753"><path d="M234,297 L234,270 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="1021,89 1016,79 1011,89 "
+<polygon points="239,287 234,297 229,287 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1018" y="94"> </tspan>
+<tspan x="221" y="292"> </tspan>
 </text>
 </g>
 </svg>

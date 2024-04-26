@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="2704" height="1207" viewBox="0 0 2704 1207">
+ width="1534" height="1039" viewBox="0 0 1534 1039">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,677 +38,654 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002683643"><polygon points="621,599 921,599 921,693 621,693 "
+<g id="2002720246"><polygon points="702,386 1002,386 1002,481 702,481 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="705" y="614">frbroo:F1_Work (1.0e5)</tspan>
+<tspan x="786" y="401">frbroo:F1_Work (1.0e5)</tspan>
 </text>
-<line x1="625" y1="617" x2="919" y2="617"
+<line x1="706" y1="404" x2="1000" y2="404"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="625" y="629">owl:sameAs (3.4e4) [1]  -&gt; IRI</tspan>
-<tspan x="625" y="644">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
-<tspan x="625" y="659">rdfs:comment (1.0e5) [1] </tspan>
-<tspan x="625" y="674">rdfs:label (1.0e5) [*] </tspan>
+<tspan x="706" y="416">owl:sameAs (3.4e4) [1]  -&gt; IRI</tspan>
+<tspan x="706" y="431">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="706" y="446">rdfs:comment (1.0e5) [1] </tspan>
+<tspan x="706" y="461">rdfs:label (1.0e5) [*] </tspan>
+<tspan x="706" y="476">&lt;&gt; frbroo:R2_is_derivative_of  </tspan>
 </text>
 </g>
-<g id="2002683654"><polygon points="896,56 1196,56 1196,121 896,121 "
+<g id="2002720257"><polygon points="761,45 968,45 968,110 761,110 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="969" y="71">void:DatasetDescription (1)</tspan>
+<tspan x="787" y="60">void:DatasetDescription (1)</tspan>
 </text>
-<line x1="900" y1="74" x2="1194" y2="74"
+<line x1="765" y1="63" x2="966" y2="63"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="900" y="86">dct:creator (1) [1] D -&gt; IRI</tspan>
-<tspan x="900" y="101">dct:title (1) [1] D</tspan>
-<tspan x="900" y="116">rdf:type (1) [1]  -&gt; IRI</tspan>
+<tspan x="765" y="75">dct:creator (1) [1] D -&gt; IRI</tspan>
+<tspan x="765" y="90">dct:title (1) [1] D</tspan>
+<tspan x="765" y="105">rdf:type (1) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683665"><polygon points="1731,521 2031,521 2031,586 1731,586 "
+<g id="2002720268"><polygon points="1112,642 1406,642 1406,707 1112,707 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1795" y="536">cidoc-rm:E56_Language (183)</tspan>
+<tspan x="1173" y="657">cidoc-rm:E56_Language (183)</tspan>
 </text>
-<line x1="1735" y1="539" x2="2029" y2="539"
+<line x1="1116" y1="660" x2="1404" y2="660"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1735" y="551">owl:sameAs (177) [1]  -&gt; IRI</tspan>
-<tspan x="1735" y="566">rdf:type (183) [1]  -&gt; IRI</tspan>
-<tspan x="1735" y="581">rdfs:label (183) [*] </tspan>
+<tspan x="1116" y="672">owl:sameAs (177) [1]  -&gt; IRI</tspan>
+<tspan x="1116" y="687">rdf:type (183) [1]  -&gt; IRI</tspan>
+<tspan x="1116" y="702">rdfs:label (183) [*] </tspan>
 </text>
 </g>
-<g id="2002683676"><polygon points="1180,406 1480,406 1480,471 1180,471 "
+<g id="2002720279"><polygon points="626,964 926,964 926,1029 626,1029 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1235" y="421">cidoc-rm:E41_Appellation (1.1e5)</tspan>
+<tspan x="681" y="979">cidoc-rm:E41_Appellation (1.1e5)</tspan>
 </text>
-<line x1="1184" y1="424" x2="1478" y2="424"
+<line x1="630" y1="982" x2="924" y2="982"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1184" y="436">cidoc-rm:P190_has_symbolic_content (1.1e5) [1] </tspan>
-<tspan x="1184" y="451">rdf:type (1.1e5) [1]  -&gt; IRI</tspan>
-<tspan x="1184" y="466">rdfs:label (1.0e5) [*] </tspan>
+<tspan x="630" y="994">cidoc-rm:P190_has_symbolic_content (1.1e5) [1] </tspan>
+<tspan x="630" y="1009">rdf:type (1.1e5) [1]  -&gt; IRI</tspan>
+<tspan x="630" y="1024">rdfs:label (1.0e5) [*] </tspan>
 </text>
 </g>
-<g id="2002683687"><polygon points="1068,483 1368,483 1368,563 1068,563 "
+<g id="2002720290"><polygon points="1209,461 1509,461 1509,556 1209,556 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1146" y="498">cidoc-rm:E55_Type (389)</tspan>
+<tspan x="1287" y="476">cidoc-rm:E55_Type (389)</tspan>
 </text>
-<line x1="1072" y1="501" x2="1366" y2="501"
+<line x1="1213" y1="479" x2="1507" y2="479"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1072" y="513">owl:sameAs (227) [1]  -&gt; IRI</tspan>
-<tspan x="1072" y="528">rdf:type (389) [1]  -&gt; IRI</tspan>
-<tspan x="1072" y="543">rdfs:comment (5) [1] </tspan>
-<tspan x="1072" y="558">rdfs:label (399) [*] </tspan>
+<tspan x="1213" y="491">owl:sameAs (227) [1]  -&gt; IRI</tspan>
+<tspan x="1213" y="506">rdf:type (389) [1]  -&gt; IRI</tspan>
+<tspan x="1213" y="521">rdfs:comment (5) [1] </tspan>
+<tspan x="1213" y="536">rdfs:label (399) [*] </tspan>
+<tspan x="1213" y="551">&lt;&gt; cidoc-rm:P2_has_type  </tspan>
 </text>
 </g>
-<g id="2002683698"><polygon points="505,699 805,699 805,744 505,744 "
+<g id="2002720301"><polygon points="61,43 405,43 405,209 61,209 "
+style="fill:White; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="65" y="57">PREFIX cidoc-rm: &lt;http://www.cidoc-crm.org/cidoc-crm/&gt;</tspan>
+<tspan x="65" y="72">PREFIX void: &lt;http://rdfs.org/ns/void#&gt;</tspan>
+<tspan x="65" y="87">PREFIX frbroo: &lt;http://iflastandards.info/ns/fr/frbr/frbroo/&gt;</tspan>
+<tspan x="65" y="102">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="65" y="117">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
+<tspan x="65" y="132">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
+<tspan x="65" y="147">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
+<tspan x="65" y="162">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="65" y="177">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="65" y="192">PREFIX regap: &lt;http://metadataregistry.org/uri/profile/regap/&gt;</tspan>
+</text>
+</g>
+<g id="2002720312"><polygon points="59,263 359,263 359,308 59,308 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="523" y="714">frbroo:F3_Manifestation_Product_Type (4.0e4)</tspan>
+<tspan x="77" y="278">frbroo:F3_Manifestation_Product_Type (4.0e4)</tspan>
 </text>
-<line x1="509" y1="717" x2="803" y2="717"
+<line x1="63" y1="281" x2="357" y2="281"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="509" y="729">rdf:type (4.0e4) [1]  -&gt; IRI</tspan>
+<tspan x="63" y="293">rdf:type (4.0e4) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683709"><polygon points="527,231 827,231 827,296 527,296 "
+<g id="2002720323"><polygon points="764,120 968,120 968,185 764,185 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="634" y="246">void:Linkset (1)</tspan>
+<tspan x="823" y="135">void:Linkset (1)</tspan>
 </text>
-<line x1="531" y1="249" x2="825" y2="249"
+<line x1="768" y1="138" x2="966" y2="138"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="531" y="261">rdf:type (1) [1]  -&gt; IRI</tspan>
-<tspan x="531" y="276">void:linkPredicate (1) [1] D -&gt; IRI</tspan>
-<tspan x="531" y="291">void:triples (1) [1] </tspan>
+<tspan x="768" y="150">rdf:type (1) [1]  -&gt; IRI</tspan>
+<tspan x="768" y="165">void:linkPredicate (1) [1] D -&gt; IRI</tspan>
+<tspan x="768" y="180">void:triples (1) [1] </tspan>
 </text>
 </g>
-<g id="2002683720"><polygon points="1515,592 1815,592 1815,637 1515,637 "
+<g id="2002720334"><polygon points="136,542 366,542 366,587 136,587 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1582" y="607">frbroo:F26_Recording (1.0e5)</tspan>
+<tspan x="168" y="557">frbroo:F26_Recording (1.0e5)</tspan>
 </text>
-<line x1="1519" y1="610" x2="1813" y2="610"
+<line x1="140" y1="560" x2="364" y2="560"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1519" y="622">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="140" y="572">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683742"><polygon points="1681,286 1981,286 1981,336 1681,336 "
+<g id="2002720345"><polygon points="1110,225 1370,225 1370,275 1110,275 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1736" y="301">cidoc-rm:E40_Legal_Body (9477)</tspan>
+<tspan x="1191" y="240">skos:Concept (1)</tspan>
 </text>
-<line x1="1685" y1="304" x2="1979" y2="304"
+<line x1="1114" y1="243" x2="1368" y2="243"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1685" y="316">rdf:type (9477) [1]  -&gt; IRI</tspan>
-<tspan x="1685" y="331">rdfs:label (9477) [*] </tspan>
+<tspan x="1114" y="255">rdf:type (1) [1]  -&gt; IRI</tspan>
+<tspan x="1114" y="270">skos:prefLabel (1) [1] D</tspan>
 </text>
 </g>
-<g id="2002683753"><polygon points="982,693 1282,693 1282,738 982,738 "
+<g id="2002720356"><polygon points="1110,746 1410,746 1410,805 1110,805 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1010" y="708">frbroo:F24_Publication_Expression (1.0e5)</tspan>
+<tspan x="1165" y="761">cidoc-rm:E40_Legal_Body (9477)</tspan>
 </text>
-<line x1="986" y1="711" x2="1280" y2="711"
+<line x1="1114" y1="764" x2="1408" y2="764"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="986" y="723">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="1114" y="776">rdf:type (9477) [1]  -&gt; IRI</tspan>
+<tspan x="1114" y="791">rdfs:label (9477) [*] </tspan>
 </text>
 </g>
-<g id="2002683764"><polygon points="10,563 310,563 310,673 10,673 "
+<g id="2002720367"><polygon points="360,363 660,363 660,408 360,408 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="68" y="578">cidoc-rm:E54_Dimension (4406)</tspan>
+<tspan x="388" y="378">frbroo:F24_Publication_Expression (1.0e5)</tspan>
 </text>
-<line x1="14" y1="581" x2="308" y2="581"
+<line x1="364" y1="381" x2="658" y2="381"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="14" y="593">cidoc-rm:P180_has_currency (408) [1] D -&gt; IRI</tspan>
-<tspan x="14" y="608">cidoc-rm:P181_has_amount (408) [1] D</tspan>
-<tspan x="14" y="623">cidoc-rm:P90_has_value (3998) [1] D</tspan>
-<tspan x="14" y="638">cidoc-rm:P91_has_unit (3998) [1] D -&gt; IRI</tspan>
-<tspan x="14" y="653">rdf:type (4406) [1]  -&gt; IRI</tspan>
-<tspan x="14" y="668">rdfs:label (408) [*] </tspan>
+<tspan x="364" y="393">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683775"><polygon points="2394,435 2694,435 2694,500 2394,500 "
+<g id="2002720378"><polygon points="806,229 1088,229 1088,339 806,339 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="2470" y="450">cidoc-rm:E53_Place (379)</tspan>
+<tspan x="855" y="244">cidoc-rm:E54_Dimension (4406)</tspan>
 </text>
-<line x1="2398" y1="453" x2="2692" y2="453"
+<line x1="810" y1="247" x2="1086" y2="247"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2398" y="465">owl:sameAs (370) [1]  -&gt; IRI</tspan>
-<tspan x="2398" y="480">rdf:type (379) [1]  -&gt; IRI</tspan>
-<tspan x="2398" y="495">rdfs:label (379) [*] </tspan>
+<tspan x="810" y="259">cidoc-rm:P180_has_currency (408) [1] D -&gt; IRI</tspan>
+<tspan x="810" y="274">cidoc-rm:P181_has_amount (408) [1] D</tspan>
+<tspan x="810" y="289">cidoc-rm:P90_has_value (3998) [1] D</tspan>
+<tspan x="810" y="304">cidoc-rm:P91_has_unit (3998) [1] D -&gt; IRI</tspan>
+<tspan x="810" y="319">rdf:type (4406) [1]  -&gt; IRI</tspan>
+<tspan x="810" y="334">rdfs:label (408) [*] </tspan>
 </text>
 </g>
-<g id="2002683797"><polygon points="631,531 931,531 931,581 631,581 "
+<g id="2002720389"><polygon points="182,839 405,839 405,928 182,928 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="706" y="546">cidoc-rm:E35_Title (2.0e5)</tspan>
+<tspan x="219" y="854">cidoc-rm:E53_Place (379)</tspan>
 </text>
-<line x1="635" y1="549" x2="929" y2="549"
+<line x1="186" y1="857" x2="403" y2="857"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="635" y="561">cidoc-rm:P190_has_symbolic_content (2.0e5) [1] </tspan>
-<tspan x="635" y="576">rdf:type (2.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="186" y="869">owl:sameAs (370) [1]  -&gt; IRI</tspan>
+<tspan x="186" y="884">rdf:type (379) [1]  -&gt; IRI</tspan>
+<tspan x="186" y="899">rdfs:label (379) [*] </tspan>
 </text>
 </g>
-<g id="2002683808"><polygon points="1670,675 1970,675 1970,720 1670,720 "
+<g id="2002720400"><polygon points="984,35 1168,35 1168,190 984,190 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1718" y="690">frbroo:F21_Recording_Work (1.0e5)</tspan>
+<tspan x="1036" y="50">owl:Class (46)</tspan>
 </text>
-<line x1="1674" y1="693" x2="1968" y2="693"
+<line x1="988" y1="53" x2="1166" y2="53"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1674" y="705">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="988" y="65">owl:sameAs (46) [1]  -&gt; IRI</tspan>
+<tspan x="988" y="80">rdf:type (46) [1]  -&gt; IRI</tspan>
+<tspan x="988" y="95">rdfs:comment (46) [1] </tspan>
+<tspan x="988" y="110">rdfs:isDefinedBy (46) [1]  -&gt; IRI</tspan>
+<tspan x="988" y="125">rdfs:label (46) [*] </tspan>
+<tspan x="988" y="140">regap:name (56) [*] </tspan>
+<tspan x="988" y="155">skos:definition (45) [1] </tspan>
+<tspan x="988" y="170">skos:scopeNote (35) [1] </tspan>
+<tspan x="988" y="185">&lt;&gt; rdfs:subClassOf  </tspan>
 </text>
 </g>
-<g id="2002683819"><polygon points="2017,610 2317,610 2317,675 2017,675 "
+<g id="2002720411"><polygon points="1207,351 1507,351 1507,425 1207,425 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="2065" y="625">frbroo:F29_Recording_Event (1.0e5)</tspan>
+<tspan x="1282" y="366">cidoc-rm:E35_Title (2.0e5)</tspan>
 </text>
-<line x1="2021" y1="628" x2="2315" y2="628"
+<line x1="1211" y1="369" x2="1505" y2="369"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2021" y="640">cidoc-rm:P4_has_time-span (1.5e4) [1]  -&gt; IRI</tspan>
-<tspan x="2021" y="655">cidoc-rm:P9_consists_of (4.6e5) [*] D -&gt; IRI</tspan>
-<tspan x="2021" y="670">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="1211" y="381">cidoc-rm:P190_has_symbolic_content (2.0e5) [1] </tspan>
+<tspan x="1211" y="396">rdf:type (2.0e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683830"><polygon points="1164,744 1464,744 1464,789 1164,789 "
+<g id="2002720422"><polygon points="302,628 542,628 542,673 302,673 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1212" y="759">frbroo:F30_Publicatio_Event (1.0e5)</tspan>
+<tspan x="320" y="643">frbroo:F21_Recording_Work (1.0e5)</tspan>
 </text>
-<line x1="1168" y1="762" x2="1462" y2="762"
+<line x1="306" y1="646" x2="540" y2="646"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1168" y="774">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="306" y="658">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683841"><polygon points="1059,844 1359,844 1359,984 1059,984 "
+<g id="2002720433"><polygon points="248,725 548,725 548,790 248,790 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1160" y="859">rdf:Property (449)</tspan>
+<tspan x="296" y="740">frbroo:F29_Recording_Event (1.0e5)</tspan>
 </text>
-<line x1="1063" y1="862" x2="1357" y2="862"
+<line x1="252" y1="743" x2="546" y2="743"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1063" y="874">owl:sameAs (142) [1]  -&gt; IRI</tspan>
-<tspan x="1063" y="889">rdf:type (449) [1]  -&gt; IRI</tspan>
-<tspan x="1063" y="904">rdfs:comment (295) [1] </tspan>
-<tspan x="1063" y="919">rdfs:isDefinedBy (142) [1]  -&gt; IRI</tspan>
-<tspan x="1063" y="934">rdfs:label (1938) [*] </tspan>
-<tspan x="1063" y="949">regap:name (142) [*] </tspan>
-<tspan x="1063" y="964">skos:definition (71) [1] </tspan>
-<tspan x="1063" y="979">skos:scopeNote (31) [1] </tspan>
+<tspan x="252" y="755">cidoc-rm:P4_has_time-span (1.5e4) [1]  -&gt; IRI</tspan>
+<tspan x="252" y="770">cidoc-rm:P9_consists_of (4.6e5) [*] D -&gt; IRI</tspan>
+<tspan x="252" y="785">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683852"><polygon points="470,10 770,10 770,225 470,225 "
+<g id="2002720444"><polygon points="439,290 714,290 714,335 439,335 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="576" y="25">void:Dataset (1)</tspan>
+<tspan x="474" y="305">frbroo:F30_Publicatio_Event (1.0e5)</tspan>
 </text>
-<line x1="474" y1="28" x2="768" y2="28"
+<line x1="443" y1="308" x2="712" y2="308"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="474" y="40">dct:created (1) [1] D</tspan>
-<tspan x="474" y="55">dct:issued (1) [1] D</tspan>
-<tspan x="474" y="70">dct:license (1) [1] D -&gt; IRI</tspan>
-<tspan x="474" y="85">rdf:type (1) [1]  -&gt; IRI</tspan>
-<tspan x="474" y="100">void:classPartition (17) [*] D -&gt; IRI</tspan>
-<tspan x="474" y="115">void:classes (1) [1] D</tspan>
-<tspan x="474" y="130">void:distinctObjects (1) [1] D</tspan>
-<tspan x="474" y="145">void:distinctSubjects (1) [1] D</tspan>
-<tspan x="474" y="160">void:entities (1) [1] </tspan>
-<tspan x="474" y="175">void:properties (1) [1] D</tspan>
-<tspan x="474" y="190">void:propertyPartition (35) [*] D -&gt; IRI</tspan>
-<tspan x="474" y="205">void:triples (1) [1] </tspan>
-<tspan x="474" y="220">void:vocabulary (15) [*] D -&gt; IRI</tspan>
+<tspan x="443" y="320">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683863"><polygon points="1914,406 2214,406 2214,471 1914,471 "
+<g id="2002720455"><polygon points="1298,36 1490,36 1490,206 1298,206 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1977" y="421">cidoc-rm:E42_Identifier (1.1e5)</tspan>
+<tspan x="1345" y="51">rdf:Property (449)</tspan>
 </text>
-<line x1="1918" y1="424" x2="2212" y2="424"
+<line x1="1302" y1="54" x2="1488" y2="54"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1918" y="436">cidoc-rm:P190_has_symbolic_content (1.1e5) [1] </tspan>
-<tspan x="1918" y="451">rdf:type (1.1e5) [1]  -&gt; IRI</tspan>
-<tspan x="1918" y="466">rdfs:label (1.0e5) [*] </tspan>
+<tspan x="1302" y="66">owl:sameAs (142) [1]  -&gt; IRI</tspan>
+<tspan x="1302" y="81">rdf:type (449) [1]  -&gt; IRI</tspan>
+<tspan x="1302" y="96">rdfs:comment (295) [1] </tspan>
+<tspan x="1302" y="111">rdfs:isDefinedBy (142) [1]  -&gt; IRI</tspan>
+<tspan x="1302" y="126">rdfs:label (1938) [*] </tspan>
+<tspan x="1302" y="141">regap:name (142) [*] </tspan>
+<tspan x="1302" y="156">skos:definition (71) [1] </tspan>
+<tspan x="1302" y="171">skos:scopeNote (31) [1] </tspan>
+<tspan x="1302" y="186">&lt;&gt; owl:inverseOf  DR</tspan>
+<tspan x="1302" y="201">&lt;&gt; rdfs:subPropertyOf  D</tspan>
 </text>
 </g>
-<g id="2002683874"><polygon points="1003,290 1303,290 1303,400 1003,400 "
+<g id="2002720466"><polygon points="412,42 624,42 624,257 412,257 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1069" y="305">cidoc-rm:E21_Person (1.0e5)</tspan>
+<tspan x="474" y="57">void:Dataset (1)</tspan>
 </text>
-<line x1="1007" y1="308" x2="1301" y2="308"
+<line x1="416" y1="60" x2="622" y2="60"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1007" y="320">foaf:familyName (1.0e5) [1] D</tspan>
-<tspan x="1007" y="335">foaf:givenName (1.0e5) [1] D</tspan>
-<tspan x="1007" y="350">foaf:name (1.0e5) [1] D</tspan>
-<tspan x="1007" y="365">owl:sameAs (2.2e4) [1]  -&gt; IRI</tspan>
-<tspan x="1007" y="380">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
-<tspan x="1007" y="395">rdfs:label (1.0e5) [*] </tspan>
+<tspan x="416" y="72">dct:created (1) [1] D</tspan>
+<tspan x="416" y="87">dct:issued (1) [1] D</tspan>
+<tspan x="416" y="102">dct:license (1) [1] D -&gt; IRI</tspan>
+<tspan x="416" y="117">rdf:type (1) [1]  -&gt; IRI</tspan>
+<tspan x="416" y="132">void:classPartition (17) [*] D -&gt; IRI</tspan>
+<tspan x="416" y="147">void:classes (1) [1] D</tspan>
+<tspan x="416" y="162">void:distinctObjects (1) [1] D</tspan>
+<tspan x="416" y="177">void:distinctSubjects (1) [1] D</tspan>
+<tspan x="416" y="192">void:entities (1) [1] </tspan>
+<tspan x="416" y="207">void:properties (1) [1] D</tspan>
+<tspan x="416" y="222">void:propertyPartition (35) [*] D -&gt; IRI</tspan>
+<tspan x="416" y="237">void:triples (1) [1] </tspan>
+<tspan x="416" y="252">void:vocabulary (15) [*] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683885"><polygon points="1203,622 1503,622 1503,681 1203,681 "
+<g id="2002720477"><polygon points="617,669 917,669 917,758 617,758 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1272" y="637">cidoc-rm:E7_Activity (1.0e5)</tspan>
+<tspan x="680" y="684">cidoc-rm:E42_Identifier (1.1e5)</tspan>
 </text>
-<line x1="1207" y1="640" x2="1501" y2="640"
+<line x1="621" y1="687" x2="915" y2="687"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1207" y="652">cidoc-rm:P4_has_time-span (7.5e4) [1]  -&gt; IRI</tspan>
-<tspan x="1207" y="667">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="621" y="699">cidoc-rm:P190_has_symbolic_content (1.1e5) [1] </tspan>
+<tspan x="621" y="714">rdf:type (1.1e5) [1]  -&gt; IRI</tspan>
+<tspan x="621" y="729">rdfs:label (1.0e5) [*] </tspan>
 </text>
 </g>
-<g id="2002683731"><polygon points="1072,1147 1372,1147 1372,1197 1072,1197 "
+<g id="2002720488"><polygon points="626,819 926,819 926,929 626,929 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1173" y="1162">skos:Concept (1)</tspan>
+<tspan x="692" y="834">cidoc-rm:E21_Person (1.0e5)</tspan>
 </text>
-<line x1="1076" y1="1165" x2="1370" y2="1165"
+<line x1="630" y1="837" x2="924" y2="837"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1076" y="1177">rdf:type (1) [1]  -&gt; IRI</tspan>
-<tspan x="1076" y="1192">skos:prefLabel (1) [1] D</tspan>
+<tspan x="630" y="849">foaf:familyName (1.0e5) [1] D</tspan>
+<tspan x="630" y="864">foaf:givenName (1.0e5) [1] D</tspan>
+<tspan x="630" y="879">foaf:name (1.0e5) [1] D</tspan>
+<tspan x="630" y="894">owl:sameAs (2.2e4) [1]  -&gt; IRI</tspan>
+<tspan x="630" y="909">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
+<tspan x="630" y="924">rdfs:label (1.0e5) [*] </tspan>
 </text>
 </g>
-<g id="2002683786"><polygon points="1515,859 1815,859 1815,999 1515,999 "
+<g id="2002720499"><polygon points="328,451 594,451 594,510 328,510 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1625" y="874">owl:Class (46)</tspan>
+<tspan x="380" y="466">cidoc-rm:E7_Activity (1.0e5)</tspan>
 </text>
-<line x1="1519" y1="877" x2="1813" y2="877"
+<line x1="332" y1="469" x2="592" y2="469"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1519" y="889">owl:sameAs (46) [1]  -&gt; IRI</tspan>
-<tspan x="1519" y="904">rdf:type (46) [1]  -&gt; IRI</tspan>
-<tspan x="1519" y="919">rdfs:comment (46) [1] </tspan>
-<tspan x="1519" y="934">rdfs:isDefinedBy (46) [1]  -&gt; IRI</tspan>
-<tspan x="1519" y="949">rdfs:label (46) [*] </tspan>
-<tspan x="1519" y="964">regap:name (56) [*] </tspan>
-<tspan x="1519" y="979">skos:definition (45) [1] </tspan>
-<tspan x="1519" y="994">skos:scopeNote (35) [1] </tspan>
+<tspan x="332" y="481">cidoc-rm:P4_has_time-span (7.5e4) [1]  -&gt; IRI</tspan>
+<tspan x="332" y="496">rdf:type (1.0e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683468"><path d="M505,722 L166,722 162,720 160,716 160,673 "
+<g id="2002720091"><path d="M935,386 L935,339 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="157" y1="679" x2="160" y2="673"
+<line x1="932" y1="345" x2="935" y2="339"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="163" y1="679" x2="160" y2="673"
+<line x1="938" y1="345" x2="935" y2="339"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="319" y="735">cidoc-rm:P43_has_dimension  R</tspan>
+<tspan x="751" y="382">cidoc-rm:P43_has_dimension  R</tspan>
 </text>
 </g>
-<g id="2002683473"><path d="M1731,554 L1551,554 1547,552 1545,548 1545,461 1543,457 1539,455 1480,455 "
+<g id="2002720096"><path d="M1244,707 L1244,726 1246,730 1250,732 1420,732 1424,734 1426,738 1426,990 1424,994 1420,996 926,996 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1486" y1="452" x2="1480" y2="455"
+<line x1="932" y1="993" x2="926" y2="996"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1486" y1="458" x2="1480" y2="455"
+<line x1="932" y1="999" x2="926" y2="996"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1553" y="567">cidoc-rm:P1_is_identified_by  R</tspan>
+<tspan x="1246" y="722">cidoc-rm:P1_is_identified_by  R</tspan>
 </text>
 </g>
-<g id="2002683478"><path d="M310,587 L1162,587 1166,585 1168,581 1168,563 "
+<g id="2002720101"><path d="M1340,425 L1340,461 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1165" y1="569" x2="1168" y2="563"
+<line x1="1337" y1="455" x2="1340" y2="461"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1171" y1="569" x2="1168" y2="563"
+<line x1="1343" y1="455" x2="1340" y2="461"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="314" y="585">cidoc-rm:P2_has_type  </tspan>
+<tspan x="1342" y="440">cidoc-rm:P2_has_type  </tspan>
 </text>
 </g>
-<g id="2002683488"><path d="M621,607 L463,607 459,605 457,601 457,599 459,595 463,593 771,593 771,599 "
+<g id="2002720106"><path d="M1088,296 L1517,296 1521,298 1523,302 1523,485 1521,489 1517,491 1509,491 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="768" y1="593" x2="771" y2="599"
+<line x1="1515" y1="488" x2="1509" y2="491"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="774" y1="593" x2="771" y2="599"
+<line x1="1515" y1="494" x2="1509" y2="491"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="468" y="620">frbroo:R2_is_derivative_of  </tspan>
+<tspan x="1092" y="294">cidoc-rm:P2_has_type  </tspan>
 </text>
 </g>
-<g id="2002683493"><path d="M2017,643 L1808,643 1804,645 1802,649 1802,675 "
+<g id="2002720111"><path d="M1110,752 L917,752 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1799" y1="669" x2="1802" y2="675"
+<line x1="923" y1="749" x2="917" y2="752"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1805" y1="669" x2="1802" y2="675"
+<line x1="923" y1="755" x2="917" y2="752"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1810" y="656">frbroo:R22_created_a_realization_of  </tspan>
-<tspan x="1810" y="671">DR</tspan>
+<tspan x="941" y="765">cidoc-rm:P48_has_preferred_</tspan>
+<tspan x="941" y="780">identifier  </tspan>
 </text>
 </g>
-<g id="2002683498"><path d="M1815,609 L2005,609 2009,607 2011,603 2011,586 "
+<g id="2002720116"><path d="M285,725 L285,587 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2008" y1="592" x2="2011" y2="586"
+<line x1="282" y1="593" x2="285" y2="587"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2014" y1="592" x2="2011" y2="586"
+<line x1="288" y1="593" x2="285" y2="587"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1819" y="607">cidoc-rm:P72_has_language  DR</tspan>
+<tspan x="153" y="721">frbroo:R21_created  DR</tspan>
 </text>
 </g>
-<g id="2002683503"><path d="M1359,932 L1515,932 "
+<g id="2002720121"><path d="M519,725 L519,673 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1509" y1="929" x2="1515" y2="932"
+<line x1="516" y1="679" x2="519" y2="673"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1509" y1="935" x2="1515" y2="932"
+<line x1="522" y1="679" x2="519" y2="673"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1363" y="915">rdfs:range  D</tspan>
-<tspan x="1363" y="930">rdfs:domain  D</tspan>
+<tspan x="293" y="721">frbroo:R22_created_a_realization_of  DR</tspan>
 </text>
 </g>
-<g id="2002683508"><path d="M1303,342 L2058,342 2062,344 2064,348 2064,406 "
+<g id="2002720126"><path d="M776,929 L776,964 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2061" y1="400" x2="2064" y2="406"
+<line x1="773" y1="958" x2="776" y2="964"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2067" y1="400" x2="2064" y2="406"
+<line x1="779" y1="958" x2="776" y2="964"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1307" y="325">cidoc-rm:P48_has_preferred_</tspan>
-<tspan x="1307" y="340">identifier  </tspan>
+<tspan x="778" y="944">cidoc-rm:P1_is_identified_by  R</tspan>
 </text>
 </g>
-<g id="2002683513"><path d="M896,85 L770,85 "
+<g id="2002720131"><path d="M359,281 L806,281 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="776" y1="82" x2="770" y2="85"
+<line x1="800" y1="278" x2="806" y2="281"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="776" y1="88" x2="770" y2="85"
+<line x1="800" y1="284" x2="806" y2="281"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="774" y="98">foaf:primaryTopic  DR</tspan>
+<tspan x="363" y="279">cidoc-rm:P43_has_dimension  R</tspan>
 </text>
 </g>
-<g id="2002683518"><path d="M1681,311 L1501,311 1497,313 1495,317 1495,433 1493,437 1489,439 1480,439 "
+<g id="2002720136"><path d="M405,874 L586,874 590,872 592,868 592,758 594,754 598,752 617,752 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1486" y1="436" x2="1480" y2="439"
+<line x1="611" y1="749" x2="617" y2="752"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1486" y1="442" x2="1480" y2="439"
+<line x1="611" y1="755" x2="617" y2="752"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1503" y="324">cidoc-rm:P1_is_identified_by  R</tspan>
+<tspan x="409" y="857">cidoc-rm:P48_has_preferred_</tspan>
+<tspan x="409" y="872">identifier  </tspan>
 </text>
 </g>
-<g id="2002683523"><path d="M1068,510 L868,510 864,508 862,504 862,445 864,441 868,439 1180,439 "
+<g id="2002720141"><path d="M1209,524 L890,524 886,526 884,530 884,669 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1174" y1="436" x2="1180" y2="439"
+<line x1="881" y1="663" x2="884" y2="669"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1174" y1="442" x2="1180" y2="439"
+<line x1="887" y1="663" x2="884" y2="669"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="890" y="523">cidoc-rm:P1_is_identified_by  R</tspan>
+<tspan x="1040" y="537">cidoc-rm:P48_has_preferred_</tspan>
+<tspan x="1040" y="552">identifier  </tspan>
 </text>
 </g>
-<g id="2002683528"><path d="M2317,643 L2538,643 2542,641 2544,637 2544,500 "
+<g id="2002720146"><path d="M1112,675 L917,675 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2541" y1="506" x2="2544" y2="500"
+<line x1="923" y1="672" x2="917" y2="675"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2547" y1="506" x2="2544" y2="500"
+<line x1="923" y1="678" x2="917" y2="675"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2321" y="641">cidoc-rm:P7_took_place_at  DR</tspan>
+<tspan x="943" y="688">cidoc-rm:P48_has_preferred_</tspan>
+<tspan x="943" y="703">identifier  </tspan>
 </text>
 </g>
-<g id="2002683533"><path d="M1368,515 L2055,515 2059,513 2061,509 2061,471 "
+<g id="2002720151"><path d="M315,790 L315,839 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2058" y1="477" x2="2061" y2="471"
+<line x1="312" y1="833" x2="315" y2="839"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2064" y1="477" x2="2061" y2="471"
+<line x1="318" y1="833" x2="315" y2="839"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1372" y="498">cidoc-rm:P48_has_preferred_</tspan>
-<tspan x="1372" y="513">identifier  </tspan>
+<tspan x="317" y="805">cidoc-rm:P7_took_place_at  DR</tspan>
 </text>
 </g>
-<g id="2002683538"><path d="M1068,489 L874,489 870,487 868,483 868,483 870,479 874,477 1218,477 1218,483 "
+<g id="2002720156"><path d="M1338,206 L1338,225 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1215" y1="477" x2="1218" y2="483"
+<line x1="1335" y1="219" x2="1338" y2="225"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1221" y1="477" x2="1218" y2="483"
+<line x1="1341" y1="219" x2="1338" y2="225"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="935" y="502">cidoc-rm:P2_has_type  </tspan>
+<tspan x="1340" y="221">regap:status  R</tspan>
 </text>
 </g>
-<g id="2002683543"><path d="M1282,710 L1503,710 1507,708 1509,704 1509,615 1515,615 "
+<g id="2002720161"><path d="M1002,408 L1207,408 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1509" y1="612" x2="1515" y2="615"
+<line x1="1201" y1="405" x2="1207" y2="408"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1509" y1="618" x2="1515" y2="615"
+<line x1="1201" y1="411" x2="1207" y2="408"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1286" y="708">cidoc-rm:P165_incorporates  DR</tspan>
+<tspan x="1006" y="406">cidoc-rm:P102_has_title  DR</tspan>
 </text>
 </g>
-<g id="2002683548"><path d="M1981,318 L2214,318 2218,320 2220,324 2220,424 2214,424 "
+<g id="2002720166"><path d="M477,451 L477,408 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2220" y1="421" x2="2214" y2="424"
+<line x1="474" y1="414" x2="477" y2="408"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2220" y1="427" x2="2214" y2="424"
+<line x1="480" y1="414" x2="477" y2="408"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1985" y="301">cidoc-rm:P48_has_preferred_</tspan>
-<tspan x="1985" y="316">identifier  </tspan>
+<tspan x="254" y="447">cidoc-rm:P16_used_specific_object  DR</tspan>
 </text>
 </g>
-<g id="2002683553"><path d="M2017,622 L1815,622 "
+<g id="2002720171"><path d="M366,569 L1252,569 1256,571 1258,575 1258,642 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1821" y1="619" x2="1815" y2="622"
+<line x1="1255" y1="636" x2="1258" y2="642"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1821" y1="625" x2="1815" y2="622"
+<line x1="1261" y1="636" x2="1258" y2="642"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1883" y="635">frbroo:R21_created  DR</tspan>
+<tspan x="370" y="567">cidoc-rm:P72_has_language  DR</tspan>
 </text>
 </g>
-<g id="2002683558"><path d="M1303,371 L1483,371 1487,373 1489,377 1489,416 1487,420 1483,422 1480,422 "
+<g id="2002720176"><path d="M1116,190 L1116,225 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1486" y1="419" x2="1480" y2="422"
+<line x1="1113" y1="219" x2="1116" y2="225"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1486" y1="425" x2="1480" y2="422"
+<line x1="1119" y1="219" x2="1116" y2="225"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1307" y="369">cidoc-rm:P1_is_identified_by  R</tspan>
+<tspan x="1118" y="205">regap:status  R</tspan>
 </text>
 </g>
-<g id="2002683563"><path d="M2394,441 L2214,441 "
+<g id="2002720181"><path d="M405,902 L585,902 589,904 591,908 591,979 593,983 597,985 626,985 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2220" y1="438" x2="2214" y2="441"
+<line x1="620" y1="982" x2="626" y2="985"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2220" y1="444" x2="2214" y2="441"
+<line x1="620" y1="988" x2="626" y2="985"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2225" y="454">cidoc-rm:P48_has_preferred_</tspan>
-<tspan x="2225" y="469">identifier  </tspan>
+<tspan x="409" y="900">cidoc-rm:P1_is_identified_by  R</tspan>
 </text>
 </g>
-<g id="2002683568"><path d="M2031,554 L2202,554 2206,552 2208,548 2208,471 "
+<g id="2002720186"><path d="M224,308 L224,365 226,369 230,371 360,371 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2205" y1="477" x2="2208" y2="471"
+<line x1="354" y1="368" x2="360" y2="371"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2211" y1="477" x2="2208" y2="471"
+<line x1="354" y1="374" x2="360" y2="371"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2035" y="537">cidoc-rm:P48_has_preferred_</tspan>
-<tspan x="2035" y="552">identifier  </tspan>
+<tspan x="226" y="323">frbroo:CLR6_should_carry  DR</tspan>
 </text>
 </g>
-<g id="2002683578"><path d="M1515,865 L1406,865 1402,863 1400,859 1400,859 1402,855 1406,853 1658,853 1658,859 "
+<g id="2002720191"><path d="M1298,81 L1168,81 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1655" y1="853" x2="1658" y2="859"
+<line x1="1174" y1="78" x2="1168" y2="81"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1661" y1="853" x2="1658" y2="859"
+<line x1="1174" y1="84" x2="1168" y2="81"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1415" y="878">rdfs:subClassOf  </tspan>
+<tspan x="1213" y="94">rdfs:range  D</tspan>
+<tspan x="1213" y="109">rdfs:domain  D</tspan>
 </text>
 </g>
-<g id="2002683583"><path d="M805,719 L982,719 "
+<g id="2002720196"><path d="M771,819 L771,758 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="976" y1="716" x2="982" y2="719"
+<line x1="768" y1="764" x2="771" y2="758"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="976" y1="722" x2="982" y2="719"
+<line x1="774" y1="764" x2="771" y2="758"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="809" y="717">frbroo:CLR6_should_carry  DR</tspan>
+<tspan x="604" y="800">cidoc-rm:P48_has_preferred_</tspan>
+<tspan x="604" y="815">identifier  </tspan>
 </text>
 </g>
-<g id="2002683588"><path d="M1059,914 L936,914 932,912 930,908 930,844 932,840 936,838 1209,838 1209,844 "
+<g id="2002720201"><path d="M583,335 L583,363 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1206" y1="838" x2="1209" y2="844"
+<line x1="580" y1="357" x2="583" y2="363"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1212" y1="838" x2="1209" y2="844"
+<line x1="586" y1="357" x2="583" y2="363"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="938" y="927">owl:inverseOf  DR</tspan>
-<tspan x="938" y="942">rdfs:subPropertyOf  D</tspan>
+<tspan x="585" y="350">frbroo:R24_created  DR</tspan>
 </text>
 </g>
-<g id="2002683593"><path d="M1203,628 L1068,628 1064,626 1062,622 1062,556 1068,556 "
+<g id="2002720206"><path d="M761,51 L624,51 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1062" y1="553" x2="1068" y2="556"
+<line x1="630" y1="48" x2="624" y2="51"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1062" y1="559" x2="1068" y2="556"
+<line x1="630" y1="54" x2="624" y2="51"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1070" y="641">cidoc-rm:P2_has_type  </tspan>
+<tspan x="639" y="64">foaf:primaryTopic  DR</tspan>
 </text>
 </g>
-<g id="2002683598"><path d="M1464,767 L1600,767 1604,765 1606,761 1606,730 1604,726 1600,724 1282,724 "
+<g id="2002720211"><path d="M1159,805 L1159,971 1157,975 1153,977 926,977 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1288" y1="721" x2="1282" y2="724"
+<line x1="932" y1="974" x2="926" y2="977"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1288" y1="727" x2="1282" y2="724"
+<line x1="932" y1="980" x2="926" y2="977"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1468" y="765">frbroo:R24_created  DR</tspan>
+<tspan x="1161" y="820">cidoc-rm:P1_is_identified_by  R</tspan>
 </text>
 </g>
-<g id="2002683603"><path d="M1203,649 L994,649 990,651 988,655 988,693 "
+<g id="2002720216"><path d="M1300,556 L1300,589 1302,593 1306,595 1445,595 1449,597 1451,601 1451,1004 1449,1008 1445,1010 926,1010 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="985" y1="687" x2="988" y2="693"
+<line x1="932" y1="1007" x2="926" y2="1010"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="991" y1="687" x2="988" y2="693"
+<line x1="932" y1="1013" x2="926" y2="1010"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="996" y="662">cidoc-rm:P16_used_specific_object  </tspan>
-<tspan x="996" y="677">DR</tspan>
+<tspan x="1302" y="571">cidoc-rm:P1_is_identified_by  R</tspan>
 </text>
 </g>
-<g id="2002683608"><path d="M621,628 L457,628 453,626 451,622 451,562 453,558 457,556 631,556 "
+<g id="2002720221"><path d="M1002,475 L1209,475 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="625" y1="553" x2="631" y2="556"
+<line x1="1203" y1="472" x2="1209" y2="475"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="625" y1="559" x2="631" y2="556"
+<line x1="1203" y1="478" x2="1209" y2="475"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="459" y="641">cidoc-rm:P102_has_title  DR</tspan>
+<tspan x="1006" y="473">cidoc-rm:P2_has_type  </tspan>
 </text>
 </g>
-<g id="2002683613"><path d="M621,649 L310,649 "
+<g id="2002720226"><path d="M764,139 L624,139 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="316" y1="646" x2="310" y2="649"
+<line x1="630" y1="136" x2="624" y2="139"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="316" y1="652" x2="310" y2="649"
+<line x1="630" y1="142" x2="624" y2="139"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="435" y="662">cidoc-rm:P43_has_dimension  R</tspan>
+<tspan x="673" y="152">void:target  D</tspan>
+<tspan x="673" y="167">void:subset  DR</tspan>
 </text>
 </g>
-<g id="2002683618"><path d="M921,616 L1262,616 1266,614 1268,610 1268,563 "
+<g id="2002720231"><path d="M594,502 L1209,502 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1265" y1="569" x2="1268" y2="563"
+<line x1="1203" y1="499" x2="1209" y2="502"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1271" y1="569" x2="1268" y2="563"
+<line x1="1203" y1="505" x2="1209" y2="502"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="925" y="614">cidoc-rm:P2_has_type  </tspan>
+<tspan x="598" y="500">cidoc-rm:P2_has_type  </tspan>
 </text>
 </g>
-<g id="2002683623"><path d="M2394,477 L1330,477 1330,471 "
+<g id="2002720236"><path d="M542,645 L842,645 846,643 848,639 848,481 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1327" y1="477" x2="1330" y2="471"
+<line x1="845" y1="487" x2="848" y2="481"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1333" y1="477" x2="1330" y2="471"
+<line x1="851" y1="487" x2="848" y2="481"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2216" y="490">cidoc-rm:P1_is_identified_by  R</tspan>
+<tspan x="546" y="643">frbroo:R2_is_derivative_of  </tspan>
 </text>
 </g>
-<g id="2002683628"><path d="M931,548 L1068,548 "
+<g id="2002720241"><path d="M360,391 L173,391 169,393 167,397 167,542 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1062" y1="545" x2="1068" y2="548"
+<line x1="164" y1="536" x2="167" y2="542"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1062" y1="551" x2="1068" y2="548"
+<line x1="170" y1="536" x2="167" y2="542"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="935" y="546">cidoc-rm:P2_has_type  </tspan>
-</text>
-</g>
-<g id="2002683633"><path d="M1670,687 L921,687 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="927" y1="684" x2="921" y2="687"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="927" y1="690" x2="921" y2="687"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1517" y="700">frbroo:R2_is_derivative_of  </tspan>
-</text>
-</g>
-<g id="2002683638"><path d="M827,263 L920,263 924,261 926,257 926,161 924,157 920,155 770,155 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="776" y1="152" x2="770" y2="155"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="776" y1="158" x2="770" y2="155"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="831" y="246">void:target  D</tspan>
-<tspan x="831" y="261">void:subset  DR</tspan>
-</text>
-</g>
-<g id="2002683573"><path d="M1136,984 L1136,1147 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1133" y1="1141" x2="1136" y2="1147"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1139" y1="1141" x2="1136" y2="1147"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1138" y="999">regap:status  R</tspan>
-</text>
-</g>
-<g id="2002683483"><path d="M1567,999 L1567,1135 1565,1139 1561,1141 1366,1141 1366,1147 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1363" y1="1141" x2="1366" y2="1147"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1369" y1="1141" x2="1366" y2="1147"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1569" y="1014">regap:status  R</tspan>
+<tspan x="176" y="404">cidoc-rm:P165_incorporates  DR</tspan>
 </text>
 </g>
 </svg>

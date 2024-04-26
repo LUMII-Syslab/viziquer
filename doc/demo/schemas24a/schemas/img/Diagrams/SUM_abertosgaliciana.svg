@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="1506" height="739" viewBox="0 0 1506 739">
+ width="805" height="1042" viewBox="0 0 805 1042">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,309 +38,262 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002685669"><polygon points="1196,116 1496,116 1496,391 1196,391 "
+<g id="2002722218"><polygon points="538,45 793,45 793,185 538,185 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1293" y="131">edm:Agent (1.5e5)</tspan>
+<tspan x="606" y="60">skos:Concept (4444)</tspan>
 </text>
-<line x1="1200" y1="134" x2="1494" y2="134"
+<line x1="542" y1="63" x2="791" y2="63"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1200" y="146">edm:begin (585) [*] </tspan>
-<tspan x="1200" y="161">edm:end (580) [*] </tspan>
-<tspan x="1200" y="176">rdf:type (1.5e5) [1]  -&gt; IRI</tspan>
-<tspan x="1200" y="191">rdvocab:biographicalInformation (683) [*] </tspan>
-<tspan x="1200" y="206">rdvocab:dateOfBirth (498) [*] </tspan>
-<tspan x="1200" y="221">rdvocab:dateOfDeath (524) [*] </tspan>
-<tspan x="1200" y="236">rdvocab:dateOfEstablishment (48) [1] </tspan>
-<tspan x="1200" y="251">rdvocab:dateOfTermination (30) [1] </tspan>
-<tspan x="1200" y="266">rdvocab:gender (691) [*] </tspan>
-<tspan x="1200" y="281">rdvocab:placeOfBirth (685) [*] </tspan>
-<tspan x="1200" y="296">rdvocab:placeOfDeath (597) [*] </tspan>
-<tspan x="1200" y="311">rdvocab:professionOrOccupation (3398) [*] </tspan>
-<tspan x="1200" y="326">skos:altLabel (4581) [*] </tspan>
-<tspan x="1200" y="341">skos:note (3710) [*] </tspan>
-<tspan x="1200" y="356">skos:prefLabel (1.5e5) [*] </tspan>
-<tspan x="1200" y="371">vocab:oaiSourceIdentifier (1.2e6) [*] </tspan>
-<tspan x="1200" y="386">vocab:oaiSourceRepository (1.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="542" y="75">rdf:type (4444) [1]  -&gt; IRI</tspan>
+<tspan x="542" y="90">skos:altLabel (6737) [*] </tspan>
+<tspan x="542" y="105">skos:note (2800) [*] </tspan>
+<tspan x="542" y="120">skos:prefLabel (4444) [*] </tspan>
+<tspan x="542" y="135">&lt;&gt; skos:broader  </tspan>
+<tspan x="542" y="150">&lt;&gt; skos:closeMatch  </tspan>
+<tspan x="542" y="165">&lt;&gt; skos:narrower  </tspan>
+<tspan x="542" y="180">&lt;&gt; skos:related  </tspan>
 </text>
 </g>
-<g id="2002685680"><polygon points="228,416 528,416 528,461 228,461 "
+<g id="2002722229"><polygon points="96,453 378,453 378,533 96,533 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="338" y="431">cc:License (4)</tspan>
+<tspan x="197" y="468">cc:License (4)</tspan>
 </text>
-</g>
-<g id="2002685735"><polygon points="484,664 784,664 784,729 484,729 "
-style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="498" y="679">edm:ProvidedCHO or cc:License S101 (~5.5e5)</tspan>
-</text>
-<line x1="488" y1="682" x2="782" y2="682"
+<line x1="100" y1="471" x2="376" y2="471"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="488" y="694">rdf:type (4) [1]  -&gt; IRI</tspan>
-<tspan x="488" y="709">vocab:oaiSourceIdentifier (1.1e5) [*] </tspan>
-<tspan x="488" y="724">vocab:oaiSourceRepository (4) [1]  -&gt; IRI</tspan>
+<tspan x="100" y="483">rdf:type (4) [1]  -&gt; IRI</tspan>
+<tspan x="100" y="498">vocab:oaiSourceIdentifier (1.1e5) [*] </tspan>
+<tspan x="100" y="513">vocab:oaiSourceRepository (4) [1]  -&gt; IRI</tspan>
+<tspan x="100" y="528">&lt;&gt; odrl:inheritFrom  </tspan>
 </text>
 </g>
-<g id="2002685713"><polygon points="125,279 425,279 425,359 125,359 "
+<g id="2002722240"><polygon points="96,274 375,274 375,414 96,414 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="216" y="294">skos:Concept (4444)</tspan>
+<tspan x="168" y="289">ore:Aggregation (5.5e5)</tspan>
 </text>
-<line x1="129" y1="297" x2="423" y2="297"
+<line x1="100" y1="292" x2="373" y2="292"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="129" y="309">rdf:type (4444) [1]  -&gt; IRI</tspan>
-<tspan x="129" y="324">skos:altLabel (6737) [*] </tspan>
-<tspan x="129" y="339">skos:note (2800) [*] </tspan>
-<tspan x="129" y="354">skos:prefLabel (4444) [*] </tspan>
+<tspan x="100" y="304">edm:dataProvider (5.5e5) [1] </tspan>
+<tspan x="100" y="319">edm:isShownAt (5.5e5) [*]  -&gt; IRI</tspan>
+<tspan x="100" y="334">edm:isShownBy (3.4e5) [*]  -&gt; IRI</tspan>
+<tspan x="100" y="349">edm:object (3.4e5) [*]  -&gt; IRI</tspan>
+<tspan x="100" y="364">edm:provider (5.5e5) [1] </tspan>
+<tspan x="100" y="379">rdf:type (5.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="100" y="394">vocab:oaiSourceIdentifier (5.5e5) [*] </tspan>
+<tspan x="100" y="409">vocab:oaiSourceRepository (5.5e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002685691"><polygon points="87,493 387,493 387,633 87,633 "
+<g id="2002722251"><polygon points="538,847 795,847 795,1032 538,1032 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="170" y="508">ore:Aggregation (5.5e5)</tspan>
+<tspan x="616" y="862">edm:Place (3975)</tspan>
 </text>
-<line x1="91" y1="511" x2="385" y2="511"
+<line x1="542" y1="865" x2="793" y2="865"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="91" y="523">edm:dataProvider (5.5e5) [1] </tspan>
-<tspan x="91" y="538">edm:isShownAt (5.5e5) [*]  -&gt; IRI</tspan>
-<tspan x="91" y="553">edm:isShownBy (3.4e5) [*]  -&gt; IRI</tspan>
-<tspan x="91" y="568">edm:object (3.4e5) [*]  -&gt; IRI</tspan>
-<tspan x="91" y="583">edm:provider (5.5e5) [1] </tspan>
-<tspan x="91" y="598">rdf:type (5.5e5) [1]  -&gt; IRI</tspan>
-<tspan x="91" y="613">vocab:oaiSourceIdentifier (5.5e5) [*] </tspan>
-<tspan x="91" y="628">vocab:oaiSourceRepository (5.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="542" y="877">rdf:type (3975) [1]  -&gt; IRI</tspan>
+<tspan x="542" y="892">skos:altLabel (521) [*] </tspan>
+<tspan x="542" y="907">skos:note (2269) [*] </tspan>
+<tspan x="542" y="922">skos:prefLabel (4823) [*] </tspan>
+<tspan x="542" y="937">vocab:oaiSourceIdentifier (1.2e5) [*] </tspan>
+<tspan x="542" y="952">vocab:oaiSourceRepository (3975) [1]  -&gt; IRI</tspan>
+<tspan x="542" y="967">wgs84_pos:lat (817) [*] </tspan>
+<tspan x="542" y="982">wgs84_pos:long (842) [*] </tspan>
+<tspan x="542" y="997">&lt;&gt; dct:hasPart  </tspan>
+<tspan x="542" y="1012">&lt;&gt; dct:isPartOf  </tspan>
+<tspan x="542" y="1027">&lt;&gt; owl:sameAs  </tspan>
 </text>
 </g>
-<g id="2002685724"><polygon points="632,257 932,257 932,637 632,637 "
+<g id="2002722262"><polygon points="96,45 480,45 480,240 96,240 "
+style="fill:White; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="100" y="59">PREFIX edm: &lt;http://www.europeana.eu/schemas/edm/&gt;</tspan>
+<tspan x="100" y="74">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
+<tspan x="100" y="89">PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;</tspan>
+<tspan x="100" y="104">PREFIX rdvocab: &lt;http://rdvocab.info/ElementsGr2/&gt;</tspan>
+<tspan x="100" y="119">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
+<tspan x="100" y="134">PREFIX vocab: &lt;http://brujula.serdoc.es/vocab#&gt;</tspan>
+<tspan x="100" y="149">PREFIX wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt;</tspan>
+<tspan x="100" y="164">PREFIX ore: &lt;http://www.openarchives.org/ore/terms/&gt;</tspan>
+<tspan x="100" y="179">PREFIX cc: &lt;http://creativecommons.org/ns#&gt;</tspan>
+<tspan x="100" y="194">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="100" y="209">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="100" y="224">PREFIX odrl: &lt;http://www.w3.org/ns/odrl/2/&gt;</tspan>
+</text>
+</g>
+<g id="2002722273"><polygon points="538,226 795,226 795,775 538,775 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="708" y="272">edm:ProvidedCHO (5.5e5)</tspan>
+<tspan x="592" y="241">edm:ProvidedCHO (5.5e5)</tspan>
 </text>
-<line x1="636" y1="275" x2="930" y2="275"
+<line x1="542" y1="244" x2="793" y2="244"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="636" y="287">dc:date (5.5e5) [*] </tspan>
-<tspan x="636" y="302">dc:description (8.4e5) [*] </tspan>
-<tspan x="636" y="317">dc:format (5.5e5) [*] </tspan>
-<tspan x="636" y="332">dc:identifier (9.1e5) [*] </tspan>
-<tspan x="636" y="347">dc:language (5.6e5) [*] </tspan>
-<tspan x="636" y="362">dc:relation (246) [*] </tspan>
-<tspan x="636" y="377">dc:rights (9.4e5) [*] </tspan>
-<tspan x="636" y="392">dc:source (10) [*] </tspan>
-<tspan x="636" y="407">dc:title (9.1e5) [*] </tspan>
-<tspan x="636" y="422">dc:type (8.5e5) [*] </tspan>
-<tspan x="636" y="437">dct:alternative (3.2e4) [*] </tspan>
-<tspan x="636" y="452">dct:created (510) [*] </tspan>
-<tspan x="636" y="467">dct:extent (3.7e5) [*] </tspan>
-<tspan x="636" y="482">dct:hasFormat (8) [*] </tspan>
-<tspan x="636" y="497">dct:isReferencedBy (3.7e4) [*] </tspan>
-<tspan x="636" y="512">dct:isVersionOf (13) [*] </tspan>
-<tspan x="636" y="527">dct:issued (2.3e5) [*] </tspan>
-<tspan x="636" y="542">dct:medium (5799) [*] </tspan>
-<tspan x="636" y="557">dct:provenance (2) [1] </tspan>
-<tspan x="636" y="572">dct:tableOfContents (2.5e4) [*] </tspan>
-<tspan x="636" y="587">dct:temporal (4.4e4) [*] </tspan>
-<tspan x="636" y="602">edm:currentLocation (3.7e5) [*] </tspan>
-<tspan x="636" y="617">edm:hasType (3.7e5) [*] </tspan>
-<tspan x="636" y="632">edm:type (5.5e5) [*] </tspan>
+<tspan x="542" y="256">dc:date (5.5e5) [*] </tspan>
+<tspan x="542" y="271">dc:description (8.4e5) [*] </tspan>
+<tspan x="542" y="286">dc:format (5.5e5) [*] </tspan>
+<tspan x="542" y="301">dc:identifier (9.1e5) [*] </tspan>
+<tspan x="542" y="316">dc:language (5.6e5) [*] </tspan>
+<tspan x="542" y="331">dc:relation (246) [*] </tspan>
+<tspan x="542" y="346">dc:rights (9.4e5) [*] </tspan>
+<tspan x="542" y="361">dc:source (10) [*] </tspan>
+<tspan x="542" y="376">dc:title (9.1e5) [*] </tspan>
+<tspan x="542" y="391">dc:type (8.5e5) [*] </tspan>
+<tspan x="542" y="406">dct:alternative (3.2e4) [*] </tspan>
+<tspan x="542" y="421">dct:created (510) [*] </tspan>
+<tspan x="542" y="436">dct:extent (3.7e5) [*] </tspan>
+<tspan x="542" y="451">dct:hasFormat (8) [*] </tspan>
+<tspan x="542" y="466">dct:isReferencedBy (3.7e4) [*] </tspan>
+<tspan x="542" y="481">dct:isVersionOf (13) [*] </tspan>
+<tspan x="542" y="496">dct:issued (2.3e5) [*] </tspan>
+<tspan x="542" y="511">dct:medium (5799) [*] </tspan>
+<tspan x="542" y="526">dct:provenance (2) [1] </tspan>
+<tspan x="542" y="541">dct:tableOfContents (2.5e4) [*] </tspan>
+<tspan x="542" y="556">dct:temporal (4.4e4) [*] </tspan>
+<tspan x="542" y="571">edm:currentLocation (3.7e5) [*] </tspan>
+<tspan x="542" y="586">edm:hasType (3.7e5) [*] </tspan>
+<tspan x="542" y="601">edm:type (5.5e5) [*] </tspan>
+<tspan x="542" y="616">rdf:type (5.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="542" y="631">vocab:oaiSourceIdentifier (5.5e5) [*] </tspan>
+<tspan x="542" y="646">vocab:oaiSourceRepository (5.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="542" y="661">&lt;&gt; dct:hasPart  </tspan>
+<tspan x="542" y="676">&lt;&gt; dct:isPartOf  </tspan>
+<tspan x="542" y="691">&lt;&gt; dct:isReplacedBy  </tspan>
+<tspan x="542" y="706">&lt;&gt; dct:replaces  </tspan>
+<tspan x="542" y="721">&lt;&gt; edm:isNextInSequence  </tspan>
+<tspan x="542" y="736">&lt;&gt; edm:isRelatedTo  </tspan>
 </text>
 </g>
-<g id="2002685702"><polygon points="739,30 1039,30 1039,170 739,170 "
+<g id="2002722284"><polygon points="96,568 396,568 396,872 96,872 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="839" y="45">edm:Place (3975)</tspan>
+<tspan x="193" y="583">edm:Agent (1.5e5)</tspan>
 </text>
-<line x1="743" y1="48" x2="1037" y2="48"
+<line x1="100" y1="586" x2="394" y2="586"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="743" y="60">rdf:type (3975) [1]  -&gt; IRI</tspan>
-<tspan x="743" y="75">skos:altLabel (521) [*] </tspan>
-<tspan x="743" y="90">skos:note (2269) [*] </tspan>
-<tspan x="743" y="105">skos:prefLabel (4823) [*] </tspan>
-<tspan x="743" y="120">vocab:oaiSourceIdentifier (1.2e5) [*] </tspan>
-<tspan x="743" y="135">vocab:oaiSourceRepository (3975) [1]  -&gt; IRI</tspan>
-<tspan x="743" y="150">wgs84_pos:lat (817) [*] </tspan>
-<tspan x="743" y="165">wgs84_pos:long (842) [*] </tspan>
+<tspan x="100" y="598">edm:begin (585) [*] </tspan>
+<tspan x="100" y="613">edm:end (580) [*] </tspan>
+<tspan x="100" y="628">rdf:type (1.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="100" y="643">rdvocab:biographicalInformation (683) [*] </tspan>
+<tspan x="100" y="658">rdvocab:dateOfBirth (498) [*] </tspan>
+<tspan x="100" y="673">rdvocab:dateOfDeath (524) [*] </tspan>
+<tspan x="100" y="688">rdvocab:dateOfEstablishment (48) [1] </tspan>
+<tspan x="100" y="703">rdvocab:dateOfTermination (30) [1] </tspan>
+<tspan x="100" y="718">rdvocab:gender (691) [*] </tspan>
+<tspan x="100" y="733">rdvocab:placeOfBirth (685) [*] </tspan>
+<tspan x="100" y="748">rdvocab:placeOfDeath (597) [*] </tspan>
+<tspan x="100" y="763">rdvocab:professionOrOccupation (3398) [*] </tspan>
+<tspan x="100" y="778">skos:altLabel (4581) [*] </tspan>
+<tspan x="100" y="793">skos:note (3710) [*] </tspan>
+<tspan x="100" y="808">skos:prefLabel (1.5e5) [*] </tspan>
+<tspan x="100" y="823">vocab:oaiSourceIdentifier (1.2e6) [*] </tspan>
+<tspan x="100" y="838">vocab:oaiSourceRepository (1.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="100" y="853">&lt;&gt; edm:isRelatedTo  </tspan>
 </text>
 </g>
-<g id="2002685600"><path d="M932,385 L1196,385 "
+<g id="2002722173"><path d="M538,608 L396,608 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1190" y1="382" x2="1196" y2="385"
+<line x1="402" y1="605" x2="396" y2="608"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1190" y1="388" x2="1196" y2="385"
+<line x1="402" y1="611" x2="396" y2="608"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="936" y="308">dc:creator  </tspan>
-<tspan x="936" y="323">dc:publisher  </tspan>
-<tspan x="936" y="338">dc:subject  </tspan>
-<tspan x="936" y="353">dc:contributor  </tspan>
-<tspan x="936" y="368">dct:isPartOf  </tspan>
-<tspan x="936" y="383">edm:isRelatedTo  </tspan>
+<tspan x="433" y="621">dc:creator  </tspan>
+<tspan x="433" y="636">dc:subject  </tspan>
+<tspan x="433" y="651">dct:isPartOf  </tspan>
+<tspan x="433" y="666">dc:publisher  </tspan>
+<tspan x="433" y="681">dc:contributor  </tspan>
+<tspan x="433" y="696">edm:isRelatedTo  </tspan>
 </text>
 </g>
-<g id="2002685610"><path d="M1196,143 L1039,143 "
+<g id="2002722178"><path d="M396,761 L538,761 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1045" y1="140" x2="1039" y2="143"
+<line x1="532" y1="758" x2="538" y2="761"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1045" y1="146" x2="1039" y2="143"
+<line x1="532" y1="764" x2="538" y2="761"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1118" y="156">owl:sameAs  </tspan>
+<tspan x="400" y="759">edm:isRelatedTo  </tspan>
 </text>
 </g>
-<g id="2002685615"><path d="M228,440 L129,440 125,438 123,434 123,410 125,406 129,404 352,404 356,406 358,410 358,416 "
+<g id="2002722183"><path d="M243,872 L243,898 245,902 249,904 538,904 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="355" y1="410" x2="358" y2="416"
+<line x1="532" y1="901" x2="538" y2="904"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="361" y1="410" x2="358" y2="416"
+<line x1="532" y1="907" x2="538" y2="904"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="131" y="453">odrl:inheritFrom  </tspan>
+<tspan x="245" y="887">owl:sameAs  </tspan>
 </text>
 </g>
-<g id="2002685625"><path d="M1039,164 L1196,164 "
+<g id="2002722188"><path d="M688,226 L688,185 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1190" y1="161" x2="1196" y2="164"
+<line x1="685" y1="191" x2="688" y2="185"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1190" y1="167" x2="1196" y2="164"
+<line x1="691" y1="191" x2="688" y2="185"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1043" y="162">dct:isPartOf  </tspan>
+<tspan x="624" y="222">dc:subject  </tspan>
 </text>
 </g>
-<g id="2002685645"><path d="M632,400 L425,400 421,398 419,394 419,359 "
+<g id="2002722193"><path d="M538,864 L396,864 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="416" y1="365" x2="419" y2="359"
+<line x1="402" y1="861" x2="396" y2="864"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="422" y1="365" x2="419" y2="359"
+<line x1="402" y1="867" x2="396" y2="864"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="566" y="413">dc:subject  </tspan>
+<tspan x="465" y="877">dct:isPartOf  </tspan>
 </text>
 </g>
-<g id="2002685660"><path d="M1196,289 L932,289 "
+<g id="2002722198"><path d="M235,414 L235,453 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="938" y1="286" x2="932" y2="289"
+<line x1="232" y1="447" x2="235" y2="453"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="938" y1="292" x2="932" y2="289"
+<line x1="238" y1="447" x2="235" y2="453"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1091" y="302">edm:isRelatedTo  </tspan>
+<tspan x="237" y="429">edm:rights  </tspan>
 </text>
 </g>
-<g id="2002685667"><path d="M484,698 L37,698 33,696 31,692 31,395 33,391 37,389 374,389 378,391 380,395 380,416 "
-style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="474,703 484,698 474,693 "
-style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="470" y="711"> </tspan>
-</text>
-</g>
-<g id="2002685620"><path d="M387,578 L632,578 "
+<g id="2002722203"><path d="M729,847 L729,775 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="626" y1="575" x2="632" y2="578"
+<line x1="726" y1="781" x2="729" y2="775"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="626" y1="581" x2="632" y2="578"
+<line x1="732" y1="781" x2="729" y2="775"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="391" y="576">edm:aggregatedCHO  </tspan>
+<tspan x="658" y="828">dct:isPartOf  </tspan>
+<tspan x="658" y="843">dct:hasPart  </tspan>
 </text>
 </g>
-<g id="2002685630"><path d="M349,493 L349,461 "
+<g id="2002722208"><path d="M375,344 L538,344 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="346" y1="467" x2="349" y2="461"
+<line x1="532" y1="341" x2="538" y2="344"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="352" y1="467" x2="349" y2="461"
+<line x1="532" y1="347" x2="538" y2="344"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="282" y="489">edm:rights  </tspan>
+<tspan x="379" y="342">edm:aggregatedCHO  </tspan>
 </text>
 </g>
-<g id="2002685640"><path d="M816,257 L816,170 "
+<g id="2002722213"><path d="M580,775 L580,847 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="813" y1="176" x2="816" y2="170"
+<line x1="577" y1="841" x2="580" y2="847"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="819" y1="176" x2="816" y2="170"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="745" y="208">dc:subject  </tspan>
-<tspan x="745" y="223">dct:spatial  </tspan>
-<tspan x="745" y="238">dct:isPartOf  </tspan>
-<tspan x="745" y="253">dct:hasPart  </tspan>
-</text>
-</g>
-<g id="2002685635"><path d="M909,170 L909,257 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="906" y1="251" x2="909" y2="257"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="912" y1="251" x2="909" y2="257"
+<line x1="583" y1="841" x2="580" y2="847"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="911" y="185">dct:isPartOf  </tspan>
-<tspan x="911" y="200">dct:hasPart  </tspan>
-</text>
-</g>
-<g id="2002685665"><path d="M784,694 L821,694 825,692 827,688 827,637 "
-style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="794,699 784,694 794,689 "
-style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="788" y="692"> </tspan>
-</text>
-</g>
-<g id="2002685650"><path d="M739,61 L654,61 650,59 648,55 648,16 650,12 654,10 841,10 845,12 847,16 847,30 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="844" y1="24" x2="847" y2="30"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="850" y1="24" x2="847" y2="30"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="661" y="74">dct:isPartOf  </tspan>
-<tspan x="661" y="89">dct:hasPart  </tspan>
-<tspan x="661" y="104">owl:sameAs  </tspan>
-</text>
-</g>
-<g id="2002685605"><path d="M1196,122 L1089,122 1085,120 1083,116 1083,89 1085,85 1089,83 1277,83 1281,85 1283,89 1283,116 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1280" y1="110" x2="1283" y2="116"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1286" y1="110" x2="1283" y2="116"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1091" y="135">edm:isRelatedTo  </tspan>
-</text>
-</g>
-<g id="2002685655"><path d="M125,297 L16,297 12,295 10,291 10,268 12,264 16,262 143,262 147,264 149,268 149,279 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="146" y1="273" x2="149" y2="279"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="152" y1="273" x2="149" y2="279"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="23" y="310">skos:closeMatch  </tspan>
-<tspan x="23" y="325">skos:related  </tspan>
-<tspan x="23" y="340">skos:broader  </tspan>
-<tspan x="23" y="355">skos:narrower  </tspan>
-</text>
-</g>
-<g id="2002685595"><path d="M632,279 L474,279 470,277 468,273 468,240 470,236 474,234 688,234 692,236 694,240 694,257 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="691" y1="251" x2="694" y2="257"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="697" y1="251" x2="694" y2="257"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="494" y="292">dct:isPartOf  </tspan>
-<tspan x="494" y="307">dct:isReplacedBy  </tspan>
-<tspan x="494" y="322">dct:replaces  </tspan>
-<tspan x="494" y="337">dct:hasPart  </tspan>
-<tspan x="494" y="352">edm:isRelatedTo  </tspan>
-<tspan x="494" y="367">edm:isNextInSequence  </tspan>
+<tspan x="582" y="790">dc:subject  </tspan>
+<tspan x="582" y="805">dct:spatial  </tspan>
+<tspan x="582" y="820">dct:isPartOf  </tspan>
+<tspan x="582" y="835">dct:hasPart  </tspan>
 </text>
 </g>
 </svg>

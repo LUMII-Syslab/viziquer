@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="2070" height="1135" viewBox="0 0 2070 1135">
+ width="1282" height="1052" viewBox="0 0 1282 1052">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,530 +38,514 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002689719"><polygon points="10,175 310,175 310,225 10,225 "
+<g id="2002734195"><polygon points="873,666 1161,666 1161,731 873,731 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="111" y="190">:QuadStorage (3)</tspan>
+<tspan x="949" y="681">virtdf:QuadMapValue (8)</tspan>
 </text>
-<line x1="14" y1="193" x2="308" y2="193"
+<line x1="877" y1="684" x2="1159" y2="684"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="14" y="205">:qsMatchingFlags (2) [1] D -&gt; IRI</tspan>
-<tspan x="14" y="220">rdf:type (3) [*]  -&gt; IRI</tspan>
+<tspan x="877" y="696">rdf:type (8) [*]  -&gt; IRI</tspan>
+<tspan x="877" y="711">virtdf:qmvColumnsFormKey (8) [1] D</tspan>
+<tspan x="877" y="726">virtdf:qmvTableName (8) [1] D</tspan>
 </text>
 </g>
-<g id="2002689763"><polygon points="1412,889 1712,889 1712,969 1412,969 "
+<g id="2002734184"><polygon points="801,441 1017,441 1017,506 801,506 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1523" y="904">sd:Service (1)</tspan>
+<tspan x="837" y="456">virtdf:QuadMapATable (2)</tspan>
 </text>
-<line x1="1416" y1="907" x2="1710" y2="907"
+<line x1="805" y1="459" x2="1015" y2="459"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1416" y="919">rdf:type (1) [*]  -&gt; IRI</tspan>
-<tspan x="1416" y="934">sd:feature (2) [*] D -&gt; IRI</tspan>
-<tspan x="1416" y="949">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
-<tspan x="1416" y="964">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+<tspan x="805" y="471">rdf:type (2) [*]  -&gt; IRI</tspan>
+<tspan x="805" y="486">virtdf:qmvaAlias (2) [1] D</tspan>
+<tspan x="805" y="501">virtdf:qmvaTableName (2) [1] D</tspan>
 </text>
 </g>
-<g id="2002689774"><polygon points="157,712 457,712 457,792 157,792 "
+<g id="2002734173"><polygon points="388,182 712,182 712,1042 388,1042 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="248" y="727">n1:Enrollment (8524)</tspan>
+<tspan x="471" y="197">virtdf:QuadMapFormat (130)</tspan>
 </text>
-<line x1="161" y1="730" x2="455" y2="730"
+<line x1="392" y1="200" x2="710" y2="200"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="161" y="742">n1:enrollmentNumberOfClicks (8524) [1] D</tspan>
-<tspan x="161" y="757">n1:enrollmentNumberOfSubmissions (8524) [1] D</tspan>
-<tspan x="161" y="772">n1:enrollmentRole (8524) [1] D</tspan>
-<tspan x="161" y="787">rdf:type (8524) [*]  -&gt; IRI</tspan>
+<tspan x="392" y="212">rdf:type (130) [*]  -&gt; IRI</tspan>
+<tspan x="392" y="227">virtdf:noInherit (56) [*] D -&gt; IRI</tspan>
+<tspan x="392" y="242">virtdf:qmf01blankOfShortTmpl (2) [1] D</tspan>
+<tspan x="392" y="257">virtdf:qmf01uriOfShortTmpl (2) [1] D</tspan>
+<tspan x="392" y="272">virtdf:qmfBoolOfShortTmpl (47) [1] D</tspan>
+<tspan x="392" y="287">virtdf:qmfBoolTmpl (42) [1] D</tspan>
+<tspan x="392" y="302">virtdf:qmfCmpFuncName (39) [1] D</tspan>
+<tspan x="392" y="317">virtdf:qmfColumnCount (31) [1] D</tspan>
+<tspan x="392" y="332">virtdf:qmfCustomString1 (12) [1] D</tspan>
+<tspan x="392" y="347">virtdf:qmfDatatypeOfShortTmpl (31) [1] D</tspan>
+<tspan x="392" y="362">virtdf:qmfDatatypeTmpl (2) [1] D</tspan>
+<tspan x="392" y="377">virtdf:qmfDtpOfNiceSqlval (6) [1] D</tspan>
+<tspan x="392" y="392">virtdf:qmfExistingShortOfLongTmpl (2) [1] D</tspan>
+<tspan x="392" y="407">virtdf:qmfExistingShortOfSqlvalTmpl (2) [1] D</tspan>
+<tspan x="392" y="422">virtdf:qmfExistingShortOfTypedsqlvalTmpl (2) [1] D</tspan>
+<tspan x="392" y="437">virtdf:qmfExistingShortOfUriTmpl (2) [1] D</tspan>
+<tspan x="392" y="452">virtdf:qmfHasCheapSqlval (22) [1] D</tspan>
+<tspan x="392" y="467">virtdf:qmfIidOfShortTmpl (57) [1] D</tspan>
+<tspan x="392" y="482">virtdf:qmfIsBijection (47) [1] D</tspan>
+<tspan x="392" y="497">virtdf:qmfIsStable (47) [1] D</tspan>
+<tspan x="392" y="512">virtdf:qmfIsSubformatOfLong (8) [1] D</tspan>
+<tspan x="392" y="527">virtdf:qmfIsSubformatOfLongWhenEqToSql (2) [1] D</tspan>
+<tspan x="392" y="542">virtdf:qmfIsSubformatOfLongWhenRef (4) [1] D</tspan>
+<tspan x="392" y="557">virtdf:qmfIsblankOfShortTmpl (31) [1] D</tspan>
+<tspan x="392" y="572">virtdf:qmfIslitOfShortTmpl (31) [1] D</tspan>
+<tspan x="392" y="587">virtdf:qmfIsnumericOfShortTmpl (19) [1] D</tspan>
+<tspan x="392" y="602">virtdf:qmfIsrefOfShortTmpl (31) [1] D</tspan>
+<tspan x="392" y="617">virtdf:qmfIsuriOfShortTmpl (31) [1] D</tspan>
+<tspan x="392" y="632">virtdf:qmfLanguageOfShortTmpl (31) [1] D</tspan>
+<tspan x="392" y="647">virtdf:qmfLanguageTmpl (4) [1] D</tspan>
+<tspan x="392" y="662">virtdf:qmfLongOfShortTmpl (45) [1] D</tspan>
+<tspan x="392" y="677">virtdf:qmfLongTmpl (45) [1] D</tspan>
+<tspan x="392" y="692">virtdf:qmfMapsOnlyNullToNull (40) [1] D</tspan>
+<tspan x="392" y="707">virtdf:qmfName (130) [1] D</tspan>
+<tspan x="392" y="722">virtdf:qmfOkForAnySqlvalue (31) [1] D</tspan>
+<tspan x="392" y="737">virtdf:qmfShortOfLongTmpl (31) [1] D</tspan>
+<tspan x="392" y="752">virtdf:qmfShortOfNiceSqlvalTmpl (6) [1] D</tspan>
+<tspan x="392" y="767">virtdf:qmfShortOfSqlvalTmpl (31) [1] D</tspan>
+<tspan x="392" y="782">virtdf:qmfShortOfTypedsqlvalTmpl (31) [1] D</tspan>
+<tspan x="392" y="797">virtdf:qmfShortOfUriTmpl (31) [1] D</tspan>
+<tspan x="392" y="812">virtdf:qmfShortTmpl (31) [1] D</tspan>
+<tspan x="392" y="827">virtdf:qmfSparqlEbvOfShortTmpl (37) [1] D</tspan>
+<tspan x="392" y="842">virtdf:qmfSparqlEbvTmpl (29) [1] D</tspan>
+<tspan x="392" y="857">virtdf:qmfSqlvalOfShortTmpl (53) [1] D</tspan>
+<tspan x="392" y="872">virtdf:qmfSqlvalTmpl (53) [1] D</tspan>
+<tspan x="392" y="887">virtdf:qmfStrsqlvalOfShortTmpl (53) [1] D</tspan>
+<tspan x="392" y="902">virtdf:qmfTypemaxTmpl (39) [1] D</tspan>
+<tspan x="392" y="917">virtdf:qmfTypeminTmpl (39) [1] D</tspan>
+<tspan x="392" y="932">virtdf:qmfUriIdOffset (39) [1] D</tspan>
+<tspan x="392" y="947">virtdf:qmfUriOfShortTmpl (45) [1] D</tspan>
+<tspan x="392" y="962">virtdf:qmfValRange-rvrDatatype (7) [1] D</tspan>
+<tspan x="392" y="977">virtdf:qmfValRange-rvrLanguage (1) [1] D</tspan>
+<tspan x="392" y="992">virtdf:qmfValRange-rvrRestrictions (172) [*] D -&gt; IRI</tspan>
+<tspan x="392" y="1007">virtdf:qmfWrapDistinct (2) [1] D</tspan>
+<tspan x="392" y="1022">&lt;&gt; virtdf:inheritFrom  DR</tspan>
+<tspan x="392" y="1037">&lt;&gt; virtdf:qmfSubFormatForRefs  DR</tspan>
 </text>
 </g>
-<g id="2002689807"><polygon points="1398,572 1698,572 1698,676 1398,676 "
+<g id="2002734162"><polygon points="80,770 380,770 380,835 80,835 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1462" y="587">:array-of-QuadMapFormat (98)</tspan>
+<tspan x="180" y="785">e-lion:Course (93)</tspan>
 </text>
-<line x1="1402" y1="590" x2="1696" y2="590"
+<line x1="84" y1="788" x2="378" y2="788"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1402" y="602">rdf:type (98) [*]  -&gt; IRI</tspan>
+<tspan x="84" y="800">e-lion:courseId (93) [1] D</tspan>
+<tspan x="84" y="815">e-lion:courseSource (93) [1] D</tspan>
+<tspan x="84" y="830">rdf:type (93) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689818"><polygon points="551,826 851,826 851,871 551,871 "
+<g id="2002734151"><polygon points="1099,787 1270,787 1270,832 1099,832 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="625" y="841">owl:AnnotationProperty (5)</tspan>
+<tspan x="1121" y="802">virtdf:array-of-string (2)</tspan>
 </text>
-<line x1="555" y1="844" x2="849" y2="844"
+<line x1="1103" y1="805" x2="1268" y2="805"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="555" y="856">rdf:type (6) [*]  -&gt; IRI</tspan>
+<tspan x="1103" y="817">rdf:type (2) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689829"><polygon points="1760,560 2060,560 2060,625 1760,625 "
+<g id="2002734140"><polygon points="75,992 375,992 375,1042 75,1042 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1849" y="575">:QuadMapColumn (8)</tspan>
+<tspan x="175" y="1007">e-lion:User (1285)</tspan>
 </text>
-<line x1="1764" y1="578" x2="2058" y2="578"
+<line x1="79" y1="1010" x2="373" y2="1010"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1764" y="590">:qmvcAlias (8) [1] D</tspan>
-<tspan x="1764" y="605">:qmvcColumnName (8) [1] D</tspan>
-<tspan x="1764" y="620">rdf:type (8) [*]  -&gt; IRI</tspan>
+<tspan x="79" y="1022">e-lion:userId (1285) [1] D</tspan>
+<tspan x="79" y="1037">rdf:type (1285) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689862"><polygon points="1283,70 1583,70 1583,115 1283,115 "
+<g id="2002734129"><polygon points="76,478 376,478 376,558 76,558 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1383" y="85">:array-of-string (2)</tspan>
+<tspan x="189" y="493">owl:Class (3)</tspan>
 </text>
-<line x1="1287" y1="88" x2="1581" y2="88"
+<line x1="80" y1="496" x2="374" y2="496"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1287" y="100">rdf:type (2) [*]  -&gt; IRI</tspan>
+<tspan x="80" y="508">owl:unionOf (1) [1] D -&gt; IRI</tspan>
+<tspan x="80" y="523">rdf:type (3) [*]  -&gt; IRI</tspan>
+<tspan x="80" y="538">rdfs:label (2) [1] </tspan>
+<tspan x="80" y="553">&lt;&gt; owl:complementOf  DR</tspan>
 </text>
 </g>
-<g id="2002689873"><polygon points="557,720 857,720 857,785 557,785 "
+<g id="2002734118"><polygon points="1029,439 1231,439 1231,504 1029,504 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="665" y="735">n1:Course (93)</tspan>
+<tspan x="1056" y="454">virtdf:QuadMapColumn (8)</tspan>
 </text>
-<line x1="561" y1="738" x2="855" y2="738"
+<line x1="1033" y1="457" x2="1229" y2="457"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="561" y="750">n1:courseId (93) [1] D</tspan>
-<tspan x="561" y="765">n1:courseSource (93) [1] D</tspan>
-<tspan x="561" y="780">rdf:type (93) [*]  -&gt; IRI</tspan>
+<tspan x="1033" y="469">rdf:type (8) [*]  -&gt; IRI</tspan>
+<tspan x="1033" y="484">virtdf:qmvcAlias (8) [1] D</tspan>
+<tspan x="1033" y="499">virtdf:qmvcColumnName (8) [1] D</tspan>
 </text>
 </g>
-<g id="2002689741"><polygon points="60,79 360,79 360,124 60,124 "
+<g id="2002734107"><polygon points="922,180 1222,180 1222,225 922,225 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="148" y="94">:array-of-QuadMap (3)</tspan>
+<tspan x="996" y="195">owl:AnnotationProperty (5)</tspan>
 </text>
-<line x1="64" y1="97" x2="358" y2="97"
+<line x1="926" y1="198" x2="1220" y2="198"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="64" y="109">rdf:type (3) [*]  -&gt; IRI</tspan>
+<tspan x="926" y="210">rdf:type (6) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689752"><polygon points="848,10 1148,10 1148,105 848,105 "
+<g id="2002734096"><polygon points="924,246 1224,246 1224,359 924,359 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="943" y="25">:QuadMapFText (4)</tspan>
+<tspan x="975" y="261">virtdf:array-of-QuadMapFormat (98)</tspan>
 </text>
-<line x1="852" y1="28" x2="1146" y2="28"
+<line x1="928" y1="264" x2="1222" y2="264"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="852" y="40">:qmvftAlias (2) [1] D</tspan>
-<tspan x="852" y="55">:qmvftColumnName (4) [1] D</tspan>
-<tspan x="852" y="70">:qmvftTableName (2) [1] D</tspan>
-<tspan x="852" y="85">:qmvftXmlIndex (3) [1] D</tspan>
-<tspan x="852" y="100">rdf:type (4) [*]  -&gt; IRI</tspan>
+<tspan x="928" y="276">rdf:type (98) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689906"><polygon points="861,156 1161,156 1161,221 861,221 "
+<g id="2002734085"><polygon points="76,190 376,190 376,300 76,300 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="956" y="171">:QuadMapValue (8)</tspan>
+<tspan x="180" y="205">owl:Ontology (1)</tspan>
 </text>
-<line x1="865" y1="174" x2="1159" y2="174"
+<line x1="80" y1="208" x2="374" y2="208"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="865" y="186">:qmvColumnsFormKey (8) [1] D</tspan>
-<tspan x="865" y="201">:qmvTableName (8) [1] D</tspan>
-<tspan x="865" y="216">rdf:type (8) [*]  -&gt; IRI</tspan>
+<tspan x="80" y="220">owl:imports (1) [1] D -&gt; IRI</tspan>
+<tspan x="80" y="235">owl:priorVersion (1) [1] D -&gt; IRI</tspan>
+<tspan x="80" y="250">owl:versionInfo (1) [1] D</tspan>
+<tspan x="80" y="265">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="80" y="280">rdfs:comment (1) [1] D</tspan>
+<tspan x="80" y="295">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689884"><polygon points="955,245 1255,245 1255,1125 955,1125 "
+<g id="2002734074"><polygon points="738,799 984,799 984,864 738,864 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1039" y="260">:QuadMapFormat (130)</tspan>
+<tspan x="809" y="814">virtdf:QuadMap (2)</tspan>
 </text>
-<line x1="959" y1="263" x2="1253" y2="263"
+<line x1="742" y1="817" x2="982" y2="817"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="959" y="275">:noInherit (56) [*] D -&gt; IRI</tspan>
-<tspan x="959" y="290">:qmf01blankOfShortTmpl (2) [1] D</tspan>
-<tspan x="959" y="305">:qmf01uriOfShortTmpl (2) [1] D</tspan>
-<tspan x="959" y="320">:qmfBoolOfShortTmpl (47) [1] D</tspan>
-<tspan x="959" y="335">:qmfBoolTmpl (42) [1] D</tspan>
-<tspan x="959" y="350">:qmfCmpFuncName (39) [1] D</tspan>
-<tspan x="959" y="365">:qmfColumnCount (31) [1] D</tspan>
-<tspan x="959" y="380">:qmfCustomString1 (12) [1] D</tspan>
-<tspan x="959" y="395">:qmfDatatypeOfShortTmpl (31) [1] D</tspan>
-<tspan x="959" y="410">:qmfDatatypeTmpl (2) [1] D</tspan>
-<tspan x="959" y="425">:qmfDtpOfNiceSqlval (6) [1] D</tspan>
-<tspan x="959" y="440">:qmfExistingShortOfLongTmpl (2) [1] D</tspan>
-<tspan x="959" y="455">:qmfExistingShortOfSqlvalTmpl (2) [1] D</tspan>
-<tspan x="959" y="470">:qmfExistingShortOfTypedsqlvalTmpl (2) [1] D</tspan>
-<tspan x="959" y="485">:qmfExistingShortOfUriTmpl (2) [1] D</tspan>
-<tspan x="959" y="500">:qmfHasCheapSqlval (22) [1] D</tspan>
-<tspan x="959" y="515">:qmfIidOfShortTmpl (57) [1] D</tspan>
-<tspan x="959" y="530">:qmfIsBijection (47) [1] D</tspan>
-<tspan x="959" y="545">:qmfIsStable (47) [1] D</tspan>
-<tspan x="959" y="560">:qmfIsSubformatOfLong (8) [1] D</tspan>
-<tspan x="959" y="575">:qmfIsSubformatOfLongWhenEqToSql (2) [1] D</tspan>
-<tspan x="959" y="590">:qmfIsSubformatOfLongWhenRef (4) [1] D</tspan>
-<tspan x="959" y="605">:qmfIsblankOfShortTmpl (31) [1] D</tspan>
-<tspan x="959" y="620">:qmfIslitOfShortTmpl (31) [1] D</tspan>
-<tspan x="959" y="635">:qmfIsnumericOfShortTmpl (19) [1] D</tspan>
-<tspan x="959" y="650">:qmfIsrefOfShortTmpl (31) [1] D</tspan>
-<tspan x="959" y="665">:qmfIsuriOfShortTmpl (31) [1] D</tspan>
-<tspan x="959" y="680">:qmfLanguageOfShortTmpl (31) [1] D</tspan>
-<tspan x="959" y="695">:qmfLanguageTmpl (4) [1] D</tspan>
-<tspan x="959" y="710">:qmfLongOfShortTmpl (45) [1] D</tspan>
-<tspan x="959" y="725">:qmfLongTmpl (45) [1] D</tspan>
-<tspan x="959" y="740">:qmfMapsOnlyNullToNull (40) [1] D</tspan>
-<tspan x="959" y="755">:qmfName (130) [1] D</tspan>
-<tspan x="959" y="770">:qmfOkForAnySqlvalue (31) [1] D</tspan>
-<tspan x="959" y="785">:qmfShortOfLongTmpl (31) [1] D</tspan>
-<tspan x="959" y="800">:qmfShortOfNiceSqlvalTmpl (6) [1] D</tspan>
-<tspan x="959" y="815">:qmfShortOfSqlvalTmpl (31) [1] D</tspan>
-<tspan x="959" y="830">:qmfShortOfTypedsqlvalTmpl (31) [1] D</tspan>
-<tspan x="959" y="845">:qmfShortOfUriTmpl (31) [1] D</tspan>
-<tspan x="959" y="860">:qmfShortTmpl (31) [1] D</tspan>
-<tspan x="959" y="875">:qmfSparqlEbvOfShortTmpl (37) [1] D</tspan>
-<tspan x="959" y="890">:qmfSparqlEbvTmpl (29) [1] D</tspan>
-<tspan x="959" y="905">:qmfSqlvalOfShortTmpl (53) [1] D</tspan>
-<tspan x="959" y="920">:qmfSqlvalTmpl (53) [1] D</tspan>
-<tspan x="959" y="935">:qmfStrsqlvalOfShortTmpl (53) [1] D</tspan>
-<tspan x="959" y="950">:qmfTypemaxTmpl (39) [1] D</tspan>
-<tspan x="959" y="965">:qmfTypeminTmpl (39) [1] D</tspan>
-<tspan x="959" y="980">:qmfUriIdOffset (39) [1] D</tspan>
-<tspan x="959" y="995">:qmfUriOfShortTmpl (45) [1] D</tspan>
-<tspan x="959" y="1010">:qmfValRange-rvrDatatype (7) [1] D</tspan>
-<tspan x="959" y="1025">:qmfValRange-rvrLanguage (1) [1] D</tspan>
-<tspan x="959" y="1040">:qmfValRange-rvrRestrictions (172) [*] D -&gt; IRI</tspan>
-<tspan x="959" y="1055">:qmfWrapDistinct (2) [1] D</tspan>
-<tspan x="959" y="1070">rdf:type (130) [*]  -&gt; IRI</tspan>
+<tspan x="742" y="829">rdf:type (2) [*]  -&gt; IRI</tspan>
+<tspan x="742" y="844">virtdf:qmMatchingFlags (2) [1] D -&gt; IRI</tspan>
+<tspan x="742" y="859">virtdf:qmTableName (2) [1] D</tspan>
 </text>
 </g>
-<g id="2002689796"><polygon points="1388,717 1688,717 1688,827 1388,827 "
+<g id="2002734063"><polygon points="80,869 380,869 380,949 80,949 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1492" y="732">owl:Ontology (1)</tspan>
+<tspan x="162" y="884">e-lion:Enrollment (8524)</tspan>
 </text>
-<line x1="1392" y1="735" x2="1686" y2="735"
+<line x1="84" y1="887" x2="378" y2="887"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1392" y="747">owl:imports (1) [1] D -&gt; IRI</tspan>
-<tspan x="1392" y="762">owl:priorVersion (1) [1] D -&gt; IRI</tspan>
-<tspan x="1392" y="777">owl:versionInfo (1) [1] D</tspan>
-<tspan x="1392" y="792">rdf:type (1) [*]  -&gt; IRI</tspan>
-<tspan x="1392" y="807">rdfs:comment (1) [1] D</tspan>
-<tspan x="1392" y="822">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
+<tspan x="84" y="899">e-lion:enrollmentNumberOfClicks (8524) [1] D</tspan>
+<tspan x="84" y="914">e-lion:enrollmentNumberOfSubmissions (8524) [1] D</tspan>
+<tspan x="84" y="929">e-lion:enrollmentRole (8524) [1] D</tspan>
+<tspan x="84" y="944">rdf:type (8524) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689895"><polygon points="1336,371 1636,371 1636,436 1336,436 "
+<g id="2002734052"><polygon points="76,334 376,334 376,444 76,444 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1427" y="386">:QuadMapATable (2)</tspan>
+<tspan x="187" y="349">sd:Service (1)</tspan>
 </text>
-<line x1="1340" y1="389" x2="1634" y2="389"
+<line x1="80" y1="352" x2="374" y2="352"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1340" y="401">:qmvaAlias (2) [1] D</tspan>
-<tspan x="1340" y="416">:qmvaTableName (2) [1] D</tspan>
-<tspan x="1340" y="431">rdf:type (2) [*]  -&gt; IRI</tspan>
+<tspan x="80" y="364">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="80" y="379">sd:feature (2) [*] D -&gt; IRI</tspan>
+<tspan x="80" y="394">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
+<tspan x="80" y="409">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+<tspan x="80" y="424">&lt;&gt; sd:endpoint  DR</tspan>
+<tspan x="80" y="439">&lt;&gt; sd:url  DR</tspan>
 </text>
 </g>
-<g id="2002689708"><polygon points="1332,195 1632,195 1632,276 1332,276 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="1329,198 1629,198 1629,279 1329,279 "
+<g id="2002734041"><polygon points="76,74 430,74 430,176 76,176 "
+style="fill:White; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="80" y="88">PREFIX virtdf: &lt;http://www.openlinksw.com/schemas/virtrdf#&gt;</tspan>
+<tspan x="80" y="103">PREFIX e-lion: &lt;http://ontologies.khaos.uma.es/e-lion/&gt;</tspan>
+<tspan x="80" y="118">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="80" y="133">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="80" y="148">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="80" y="163">PREFIX sd: &lt;http://www.w3.org/ns/sparql-service-description#&gt;</tspan>
+</text>
+</g>
+<g id="2002734030"><polygon points="1001,942 1272,942 1272,1037 1001,1037 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1369" y="213">:array-of-QuadMapColumn or :array-of-</tspan>
-<tspan x="1397" y="229">QuadMapATable G101 (~10)</tspan>
+<tspan x="1068" y="957">virtdf:QuadMapFText (4)</tspan>
 </text>
-<line x1="1333" y1="232" x2="1627" y2="232"
+<line x1="1005" y1="960" x2="1270" y2="960"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1333" y="244">rdf:type (10) [*]  -&gt; IRI</tspan>
+<tspan x="1005" y="972">rdf:type (4) [*]  -&gt; IRI</tspan>
+<tspan x="1005" y="987">virtdf:qmvftAlias (2) [1] D</tspan>
+<tspan x="1005" y="1002">virtdf:qmvftColumnName (4) [1] D</tspan>
+<tspan x="1005" y="1017">virtdf:qmvftTableName (2) [1] D</tspan>
+<tspan x="1005" y="1032">virtdf:qmvftXmlIndex (3) [1] D</tspan>
+</text>
+</g>
+<g id="2002734019"><polygon points="738,992 984,992 984,1037 738,1037 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="786" y="1007">virtdf:array-of-QuadMap (3)</tspan>
+</text>
+<line x1="742" y1="1010" x2="982" y2="1010"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="742" y="1022">rdf:type (3) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002734008"><polygon points="78,691 378,691 378,736 78,736 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="157" y="706">owl:OntologyProperty (4)</tspan>
+</text>
+</g>
+<g id="2002733997"><polygon points="742,903 985,903 985,953 742,953 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="801" y="918">virtdf:QuadStorage (3)</tspan>
+</text>
+<line x1="746" y1="921" x2="983" y2="921"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="746" y="933">rdf:type (3) [*]  -&gt; IRI</tspan>
+<tspan x="746" y="948">virtdf:qsMatchingFlags (2) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002733986"><polygon points="863,548 1163,548 1163,629 863,629 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="860,551 1160,551 1160,632 860,632 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="874" y="566">virtdf:array-of-QuadMapColumn or virtdf:array-of-</tspan>
+<tspan x="932" y="582">QuadMapATable G101 (10)</tspan>
+</text>
+<line x1="864" y1="585" x2="1158" y2="585"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="864" y="597">rdf:type (10) [*]  -&gt; IRI</tspan>
 </text>
 <text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1333" y="259">:array-of-QuadMapATable (2)</tspan>
-<tspan x="1333" y="274">:array-of-QuadMapColumn (8)</tspan>
+<tspan x="864" y="612">virtdf:array-of-QuadMapATable (2)</tspan>
+<tspan x="864" y="627">virtdf:array-of-QuadMapColumn (8)</tspan>
 </text>
 </g>
-<g id="2002689785"><polygon points="421,144 651,144 651,240 421,240 "
+<g id="2002733975"><polygon points="76,592 376,592 376,657 76,657 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="497" y="159">:QuadMap (2)</tspan>
+<tspan x="180" y="607">rdf:Property (23)</tspan>
 </text>
-<line x1="425" y1="162" x2="649" y2="162"
+<line x1="80" y1="610" x2="374" y2="610"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="425" y="174">:qmMatchingFlags (2) [1] D -&gt; IRI</tspan>
-<tspan x="425" y="189">:qmTableName (2) [1] D</tspan>
-<tspan x="425" y="204">rdf:type (2) [*]  -&gt; IRI</tspan>
+<tspan x="80" y="622">rdf:type (28) [*]  -&gt; IRI</tspan>
+<tspan x="80" y="637">rdfs:label (23) [1] </tspan>
+<tspan x="80" y="652">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002689851"><polygon points="171,575 471,575 471,625 171,625 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="279" y="590">n1:User (1285)</tspan>
-</text>
-<line x1="175" y1="593" x2="469" y2="593"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="175" y="605">n1:userId (1285) [1] D</tspan>
-<tspan x="175" y="620">rdf:type (1285) [*]  -&gt; IRI</tspan>
-</text>
-</g>
-<g id="2002689730"><polygon points="163,1059 463,1059 463,1104 163,1104 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="242" y="1074">owl:OntologyProperty (4)</tspan>
-</text>
-</g>
-<g id="2002689697"><polygon points="157,936 457,936 457,1001 157,1001 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="261" y="951">rdf:Property (23)</tspan>
-</text>
-<line x1="161" y1="954" x2="455" y2="954"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="161" y="966">rdf:type (28) [*]  -&gt; IRI</tspan>
-<tspan x="161" y="981">rdfs:label (23) [1] </tspan>
-<tspan x="161" y="996">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
-</text>
-</g>
-<g id="2002689840"><polygon points="601,939 901,939 901,1004 601,1004 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="714" y="954">owl:Class (3)</tspan>
-</text>
-<line x1="605" y1="957" x2="899" y2="957"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="605" y="969">owl:unionOf (1) [1] D -&gt; IRI</tspan>
-<tspan x="605" y="984">rdf:type (3) [*]  -&gt; IRI</tspan>
-<tspan x="605" y="999">rdfs:label (2) [1] </tspan>
-</text>
-</g>
-<g id="2002689595"><path d="M1329,258 L1255,258 "
+<g id="2002733953"><path d="M873,678 L712,678 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1261" y1="255" x2="1255" y2="258"
+<line x1="718" y1="675" x2="712" y2="678"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1261" y1="261" x2="1255" y2="258"
+<line x1="718" y1="681" x2="712" y2="678"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1288" y="271">rdf:_1  </tspan>
+<tspan x="755" y="691">virtdf:qmvFormat  DR</tspan>
 </text>
 </g>
-<g id="2002689630"><path d="M1148,87 L1283,87 "
+<g id="2002733928"><path d="M712,344 L924,344 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1277" y1="84" x2="1283" y2="87"
+<line x1="918" y1="341" x2="924" y2="344"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1277" y1="90" x2="1283" y2="87"
+<line x1="918" y1="347" x2="924" y2="344"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1152" y="85">:qmvftConds  DR</tspan>
+<tspan x="716" y="342">virtdf:qmfSuperFormats  DR</tspan>
 </text>
 </g>
-<g id="2002689635"><path d="M457,977 L601,977 "
+<g id="2002733943"><path d="M1126,359 L1126,439 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="595" y1="974" x2="601" y2="977"
+<line x1="1123" y1="433" x2="1126" y2="439"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="595" y1="980" x2="601" y2="977"
+<line x1="1129" y1="433" x2="1126" y2="439"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="461" y="960">rdfs:domain  D</tspan>
-<tspan x="461" y="975">rdfs:range  D</tspan>
+<tspan x="1128" y="374">rdf:_1  </tspan>
 </text>
 </g>
-<g id="2002689640"><path d="M1398,578 L1255,578 "
+<g id="2002733918"><path d="M924,252 L712,252 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1261" y1="575" x2="1255" y2="578"
+<line x1="718" y1="249" x2="712" y2="252"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1261" y1="581" x2="1255" y2="578"
+<line x1="718" y1="255" x2="712" y2="252"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1339" y="591">rdf:_1  </tspan>
-<tspan x="1339" y="606">rdf:_2  DR</tspan>
-<tspan x="1339" y="621">rdf:_3  DR</tspan>
-<tspan x="1339" y="636">rdf:_5  DR</tspan>
-<tspan x="1339" y="651">rdf:_4  DR</tspan>
+<tspan x="865" y="265">rdf:_1  </tspan>
+<tspan x="865" y="280">rdf:_2  DR</tspan>
+<tspan x="865" y="295">rdf:_3  DR</tspan>
+<tspan x="865" y="310">rdf:_4  DR</tspan>
+<tspan x="865" y="325">rdf:_5  DR</tspan>
 </text>
 </g>
-<g id="2002689645"><path d="M457,752 L557,752 "
+<g id="2002733888"><path d="M970,359 L970,441 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="551" y1="749" x2="557" y2="752"
+<line x1="967" y1="435" x2="970" y2="441"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="551" y1="755" x2="557" y2="752"
+<line x1="973" y1="435" x2="970" y2="441"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="461" y="750">n1:inCourse  DR</tspan>
+<tspan x="972" y="374">rdf:_1  </tspan>
 </text>
 </g>
-<g id="2002689655"><path d="M1629,252 L1904,252 1908,254 1910,258 1910,560 "
+<g id="2002733898"><path d="M955,799 L955,731 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1907" y1="554" x2="1910" y2="560"
+<line x1="952" y1="737" x2="955" y2="731"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1913" y1="554" x2="1910" y2="560"
+<line x1="958" y1="737" x2="955" y2="731"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1633" y="250">rdf:_1  </tspan>
+<tspan x="808" y="750">virtdf:qmPredicateMap  DR</tspan>
+<tspan x="808" y="765">virtdf:qmObjectMap  DR</tspan>
+<tspan x="808" y="780">virtdf:qmSubjectMap  DR</tspan>
+<tspan x="808" y="795">virtdf:qmGraphMap  DR</tspan>
 </text>
 </g>
-<g id="2002689660"><path d="M1412,929 L1317,929 1313,927 1311,923 1311,889 1313,885 1317,883 1562,883 1562,889 "
+<g id="2002733958"><path d="M226,992 L226,949 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1559" y1="883" x2="1562" y2="889"
+<line x1="223" y1="955" x2="226" y2="949"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1565" y1="883" x2="1562" y2="889"
+<line x1="229" y1="955" x2="226" y2="949"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1319" y="942">sd:endpoint  DR</tspan>
-<tspan x="1319" y="957">sd:url  DR</tspan>
+<tspan x="110" y="988">e-lion:isEnrolled  DR</tspan>
 </text>
 </g>
-<g id="2002689665"><path d="M1698,619 L1760,619 "
+<g id="2002733923"><path d="M226,869 L226,835 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1754" y1="616" x2="1760" y2="619"
+<line x1="223" y1="841" x2="226" y2="835"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1754" y1="622" x2="1760" y2="619"
+<line x1="229" y1="841" x2="226" y2="835"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1702" y="617">rdf:_1  </tspan>
+<tspan x="115" y="865">e-lion:inCourse  DR</tspan>
 </text>
 </g>
-<g id="2002689670"><path d="M1161,204 L1329,204 "
+<g id="2002733903"><path d="M1033,731 L1033,942 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1323" y1="201" x2="1329" y2="204"
+<line x1="1030" y1="936" x2="1033" y2="942"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1323" y1="207" x2="1329" y2="204"
+<line x1="1036" y1="936" x2="1033" y2="942"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1165" y="187">:qmvATables  DR</tspan>
-<tspan x="1165" y="202">:qmvColumns  DR</tspan>
+<tspan x="1035" y="746">virtdf:qmvFText  DR</tspan>
+<tspan x="1035" y="761">virtdf:qmvGeo  DR</tspan>
 </text>
 </g>
-<g id="2002689675"><path d="M1255,670 L1398,670 "
+<g id="2002733938"><path d="M1189,942 L1189,832 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1392" y1="667" x2="1398" y2="670"
+<line x1="1186" y1="838" x2="1189" y2="832"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1392" y1="673" x2="1398" y2="670"
+<line x1="1192" y1="838" x2="1189" y2="832"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1259" y="668">:qmfSuperFormats  DR</tspan>
+<tspan x="1069" y="938">virtdf:qmvftConds  DR</tspan>
 </text>
 </g>
-<g id="2002689690"><path d="M310,206 L421,206 "
+<g id="2002733968"><path d="M863,903 L863,864 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="415" y1="203" x2="421" y2="206"
+<line x1="860" y1="870" x2="863" y2="864"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="415" y1="209" x2="421" y2="206"
+<line x1="866" y1="870" x2="863" y2="864"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="314" y="204">:qsDefaultMap  DR</tspan>
+<tspan x="733" y="899">virtdf:qsDefaultMap  DR</tspan>
 </text>
 </g>
-<g id="2002689695"><path d="M329,1001 L329,1059 "
+<g id="2002733963"><path d="M863,953 L863,992 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="860" y1="986" x2="863" y2="992"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="866" y1="986" x2="863" y2="992"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="865" y="968">virtdf:qsUserMaps  DR</tspan>
+</text>
+</g>
+<g id="2002733948"><path d="M1011,666 L1011,632 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1008" y1="638" x2="1011" y2="632"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1014" y1="638" x2="1011" y2="632"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="883" y="647">virtdf:qmvATables  DR</tspan>
+<tspan x="883" y="662">virtdf:qmvColumns  DR</tspan>
+</text>
+</g>
+<g id="2002733933"><path d="M1094,551 L1094,504 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1091" y1="510" x2="1094" y2="504"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1097" y1="510" x2="1094" y2="504"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1055" y="547">rdf:_1  </tspan>
+</text>
+</g>
+<g id="2002733908"><path d="M935,551 L935,506 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="932" y1="512" x2="935" y2="506"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="938" y1="512" x2="935" y2="506"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="896" y="547">rdf:_1  </tspan>
+</text>
+</g>
+<g id="2002733883"><path d="M860,571 L712,571 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="718" y1="568" x2="712" y2="571"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="718" y1="574" x2="712" y2="571"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="819" y="584">rdf:_1  </tspan>
+</text>
+</g>
+<g id="2002733973"><path d="M226,657 L226,691 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="334,1011 329,1001 324,1011 "
+<polygon points="231,667 226,657 221,667 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="331" y="1016"> </tspan>
+<tspan x="228" y="672"> </tspan>
 </text>
 </g>
-<g id="2002689685"><path d="M197,175 L197,124 "
+<g id="2002733893"><path d="M226,592 L226,558 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="194" y1="130" x2="197" y2="124"
+<line x1="223" y1="564" x2="226" y2="558"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="200" y1="130" x2="197" y2="124"
+<line x1="229" y1="564" x2="226" y2="558"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="97" y="171">:qsUserMaps  DR</tspan>
-</text>
-</g>
-<g id="2002689625"><path d="M955,490 L796,490 792,488 790,484 790,396 792,392 796,390 955,390 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="949" y1="387" x2="955" y2="390"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="949" y1="393" x2="955" y2="390"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="798" y="503">:inheritFrom  DR</tspan>
-<tspan x="798" y="518">:qmfSubFormatForRefs  DR</tspan>
-</text>
-</g>
-<g id="2002689650"><path d="M1088,221 L1088,245 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1085" y1="239" x2="1088" y2="245"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1091" y1="239" x2="1088" y2="245"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1090" y="236">:qmvFormat  DR</tspan>
-</text>
-</g>
-<g id="2002689600"><path d="M1484,572 L1484,436 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1481" y1="442" x2="1484" y2="436"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1487" y1="442" x2="1484" y2="436"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1445" y="568">rdf:_1  </tspan>
-</text>
-</g>
-<g id="2002689620"><path d="M1478,279 L1478,371 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1475" y1="365" x2="1478" y2="371"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1481" y1="365" x2="1478" y2="371"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1480" y="294">rdf:_1  </tspan>
-</text>
-</g>
-<g id="2002689615"><path d="M1041,156 L1041,105 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1038" y1="111" x2="1041" y2="105"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1044" y1="111" x2="1041" y2="105"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="960" y="137">:qmvFText  DR</tspan>
-<tspan x="960" y="152">:qmvGeo  DR</tspan>
-</text>
-</g>
-<g id="2002689610"><path d="M651,206 L861,206 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="855" y1="203" x2="861" y2="206"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="855" y1="209" x2="861" y2="206"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="655" y="159">:qmPredicateMap  DR</tspan>
-<tspan x="655" y="174">:qmGraphMap  DR</tspan>
-<tspan x="655" y="189">:qmObjectMap  DR</tspan>
-<tspan x="655" y="204">:qmSubjectMap  DR</tspan>
-</text>
-</g>
-<g id="2002689680"><path d="M312,625 L312,712 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="309" y1="706" x2="312" y2="712"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="315" y1="706" x2="312" y2="712"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="314" y="640">n1:isEnrolled  DR</tspan>
-</text>
-</g>
-<g id="2002689605"><path d="M647,939 L647,907 649,903 653,901 815,901 819,903 821,907 821,939 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="818" y1="933" x2="821" y2="939"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="824" y1="933" x2="821" y2="939"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="518" y="935">owl:complementOf  DR</tspan>
+<tspan x="143" y="573">rdfs:domain  D</tspan>
+<tspan x="143" y="588">rdfs:range  D</tspan>
 </text>
 </g>
 </svg>

@@ -64,4 +64,4 @@ The schema visualization experiment description and results involves the followi
 - `sparql_endpoints.xls`: the selection of the considered endpoints and their analysis
 - `protocol.pdf`: a description of the work done within the schema visualization experiment
 
-A sample environment with the experiment schemas loaded is available at https://schemas24.viziquer.app
+A sample environment with the experiment schemas loaded is available at https://schemas24a.viziquer.app
