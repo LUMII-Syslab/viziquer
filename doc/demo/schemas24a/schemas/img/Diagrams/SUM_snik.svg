@@ -1,0 +1,1138 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="3296" height="1594" viewBox="0 0 3296 1594">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002718371"><polygon points="2127,115 2427,115 2427,272 2127,272 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="2124,118 2424,118 2424,275 2124,275 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2134" y="133">snik-bb:StrategicInformationManagementGoal or </tspan>
+<tspan x="2132" y="149">snik-on-bb:StrategicInformationManagementGoal </tspan>
+<tspan x="2246" y="165">G105 (51)</tspan>
+</text>
+<line x1="2128" y1="168" x2="2422" y2="168"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2128" y="180">dct:source (50) [*]  -&gt; IRI</tspan>
+<tspan x="2128" y="195">rdf:type (51) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="2128" y="210">rdfs:comment (1) [*] </tspan>
+<tspan x="2128" y="225">rdfs:label (101) [*] </tspan>
+<tspan x="2128" y="240">&lt;- ov:defines (1) D &lt;-  owl:Ontology</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2128" y="255">snik-bb:StrategicInformationManagementGoal (50)</tspan>
+<tspan x="2128" y="270">snik-on-bb:StrategicInformationManagementGoal (1)</tspan>
+</text>
+</g>
+<g id="2002718382"><polygon points="62,1140 387,1140 387,1206 62,1206 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="70" y="1155">snik-meta:ComputerBasedApplicationComponent (35)</tspan>
+</text>
+<line x1="66" y1="1158" x2="385" y2="1158"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="66" y="1185">&lt;&gt; snik-meta:communicatesWith  DR</tspan>
+</text>
+</g>
+<g id="2002718393"><polygon points="2711,1237 3011,1237 3011,1282 2711,1282 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2780" y="1252">snik-crox:DocumentType (3)</tspan>
+</text>
+</g>
+<g id="2002718404"><polygon points="2258,642 2510,642 2510,669 2258,669 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2287" y="657">snik-crox:Finanzwesensystem (1)</tspan>
+</text>
+</g>
+<g id="2002718415"><polygon points="1581,1239 1881,1239 1881,1304 1581,1304 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1630" y="1254">snik-he:StrategischeSchlagkraft (5)</tspan>
+</text>
+<line x1="1585" y1="1257" x2="1879" y2="1257"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1585" y="1269">rdf:type (5) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="1585" y="1284">rdfs:label (5) [*] </tspan>
+<tspan x="1585" y="1299">skos:definition (5) [*] </tspan>
+</text>
+</g>
+<g id="2002718426"><polygon points="2462,78 2762,78 2762,450 2462,450 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2566" y="93">owl:Ontology (7)</tspan>
+</text>
+<line x1="2466" y1="96" x2="2760" y2="96"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2466" y="108">bibo:status (1) [1] D -&gt; IRI</tspan>
+<tspan x="2466" y="123">dct:abstract (2) [*] D</tspan>
+<tspan x="2466" y="138">dct:creator (11 64%d) [*] D -&gt; IRI</tspan>
+<tspan x="2466" y="153">dct:license (1) [1] D -&gt; IRI</tspan>
+<tspan x="2466" y="168">dct:modified (7) [*] D</tspan>
+<tspan x="2466" y="183">dct:publisher (6) [1]  -&gt; IRI</tspan>
+<tspan x="2466" y="198">dct:source (6) [*]  -&gt; IRI</tspan>
+<tspan x="2466" y="213">foaf:homepage (6) [1] D -&gt; IRI</tspan>
+<tspan x="2466" y="228">ov:defines (4686) [*] D -&gt;  owl:Ontology,owl:Class..</tspan>
+<tspan x="2466" y="243">(12)</tspan>
+<tspan x="2466" y="258">owl:imports (2) [1] D -&gt; IRI</tspan>
+<tspan x="2466" y="273">owl:versionInfo (4) [1] D</tspan>
+<tspan x="2466" y="288">rdf:type (7) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="2466" y="303">rdfs:comment (7) [*] </tspan>
+<tspan x="2466" y="318">rdfs:label (16) [*] </tspan>
+<tspan x="2466" y="333">snik-it4it:ontologyDomain (1) [1] D</tspan>
+<tspan x="2466" y="348">snik-it4it:ontologyQuestionTypes (1) [1] D</tspan>
+<tspan x="2466" y="363">snik-it4it:ontologyUse (1) [1] D</tspan>
+<tspan x="2466" y="378">snik-it4it:ontologyUser (1) [1] D</tspan>
+<tspan x="2466" y="393">vann:preferredNamespacePrefix (6) [1] D</tspan>
+<tspan x="2466" y="408">vann:preferredNamespaceUri (6 83%d) [1] D -&gt; IRI</tspan>
+<tspan x="2466" y="423">&lt;- ov:defines (1) D &lt;-  owl:Ontology</tspan>
+</text>
+</g>
+<g id="2002718437"><polygon points="431,1229 731,1229 731,1309 431,1309 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="502" y="1244">owl:AnnotationProperty (20)</tspan>
+</text>
+<line x1="435" y1="1247" x2="729" y2="1247"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="435" y="1259">rdf:type (22) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="435" y="1274">rdfs:label (18) [*] </tspan>
+<tspan x="435" y="1289">&lt;- ov:defines (19) D &lt;-  owl:Ontology</tspan>
+<tspan x="435" y="1304">&lt;&gt; rdfs:subPropertyOf  </tspan>
+</text>
+</g>
+<g id="2002718448"><polygon points="2824,79 3227,79 3227,189 2824,189 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2955" y="94">owl:NamedIndividual (36)</tspan>
+</text>
+<line x1="2828" y1="97" x2="3225" y2="97"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2828" y="109">rdf:type (85) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="2828" y="124">rdfs:label (42) [*] </tspan>
+<tspan x="2828" y="139">&lt;- ov:defines (36) D &lt;-  owl:Ontology</tspan>
+<tspan x="2828" y="154">&lt;&gt; snik-it4it:policyToConceptualService  DR</tspan>
+<tspan x="2828" y="169">&lt;&gt; snik-it4it:serviceArchitectureToConceptualService  DR</tspan>
+</text>
+</g>
+<g id="2002718459"><polygon points="2112,407 2412,407 2412,533 2112,533 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2193" y="422">snik-meta:Chapter (229)</tspan>
+</text>
+<line x1="2116" y1="425" x2="2410" y2="425"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2116" y="437">rdf:type (229) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="2116" y="452">rdfs:label (229) [*] </tspan>
+<tspan x="2116" y="467">snik-meta:chapterNumber (204) [1] D</tspan>
+<tspan x="2116" y="482">snik-meta:firstPage (194) [1] D</tspan>
+<tspan x="2116" y="497">snik-meta:lastPage (194) [1] D</tspan>
+<tspan x="2116" y="512">&lt;&gt; snik-meta:subChapterOf  D</tspan>
+</text>
+</g>
+<g id="2002718470"><polygon points="702,365 900,365 900,410 702,410 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="714" y="380">snik-meta:SoftwareProduct (1)</tspan>
+</text>
+</g>
+<g id="2002718481"><polygon points="2715,1489 3015,1489 3015,1584 2715,1584 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2836" y="1504">rdf:Seq (2)</tspan>
+</text>
+<line x1="2719" y1="1507" x2="3013" y2="1507"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2719" y="1519">rdf:_1 (2) [1] D</tspan>
+<tspan x="2719" y="1534">rdf:_2 (2) [1] D</tspan>
+<tspan x="2719" y="1549">rdf:_3 (2) [1] D</tspan>
+<tspan x="2719" y="1564">rdf:_4 (2) [1] D</tspan>
+<tspan x="2719" y="1579">rdf:type (2) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+</text>
+</g>
+<g id="2002718492"><polygon points="1581,1332 1881,1332 1881,1397 1581,1397 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1637" y="1347">snik-meta:EnterpriseFunction (1)</tspan>
+</text>
+<line x1="1585" y1="1350" x2="1879" y2="1350"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1585" y="1362">dc:source (1) [1] D</tspan>
+<tspan x="1585" y="1377">rdf:type (1) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="1585" y="1392">rdfs:label (1) [*] </tspan>
+</text>
+</g>
+<g id="2002718503"><polygon points="2356,1205 2703,1205 2703,1584 2356,1584 "
+style="fill:White; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2360" y="1219">PREFIX snik-meta: &lt;http://www.snik.eu/ontology/meta/&gt;</tspan>
+<tspan x="2360" y="1234">PREFIX snik-it4it: &lt;http://www.snik.eu/ontology/it4it/&gt;</tspan>
+<tspan x="2360" y="1249">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="2360" y="1264">PREFIX shacl: &lt;http://www.w3.org/ns/shacl#&gt;</tspan>
+<tspan x="2360" y="1279">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
+<tspan x="2360" y="1294">PREFIX snik-crox: &lt;http://www.snik.eu/ontology/ciox/&gt;</tspan>
+<tspan x="2360" y="1309">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="2360" y="1324">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
+<tspan x="2360" y="1339">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="2360" y="1354">PREFIX bibo: &lt;http://purl.org/ontology/bibo/&gt;</tspan>
+<tspan x="2360" y="1369">PREFIX snik-bb: &lt;http://www.snik.eu/ontology/bb/&gt;</tspan>
+<tspan x="2360" y="1384">PREFIX sioc: &lt;http://rdfs.org/sioc/ns#&gt;</tspan>
+<tspan x="2360" y="1399">PREFIX snik-he: &lt;http://www.snik.eu/ontology/he/&gt;</tspan>
+<tspan x="2360" y="1414">PREFIX snik-ob: &lt;http://www.snik.eu/ontology/ob/&gt;</tspan>
+<tspan x="2360" y="1429">PREFIX vann: &lt;http://purl.org/vocab/vann/&gt;</tspan>
+<tspan x="2360" y="1444">PREFIX sioct: &lt;http://rdfs.org/sioc/types#&gt;</tspan>
+<tspan x="2360" y="1459">PREFIX snik-on-bb: &lt;http://wwww.snik.eu/ontology/bb/&gt;</tspan>
+<tspan x="2360" y="1474">PREFIX ov: &lt;http://open.vocab.org/terms/&gt;</tspan>
+<tspan x="2360" y="1489">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
+<tspan x="2360" y="1504">PREFIX schema: &lt;http://schema.org/&gt;</tspan>
+<tspan x="2360" y="1519">PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;</tspan>
+<tspan x="2360" y="1534">PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;</tspan>
+</text>
+</g>
+<g id="2002718514"><polygon points="335,912 615,912 615,1061 335,1061 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="408" y="927">owl:ObjectProperty (66)</tspan>
+</text>
+<line x1="339" y1="930" x2="613" y2="930"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="339" y="942">rdf:type (70) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="339" y="957">rdfs:comment (36) [*] </tspan>
+<tspan x="339" y="972">rdfs:label (84) [*] </tspan>
+<tspan x="339" y="987">skos:altLabel (4) [*] </tspan>
+<tspan x="339" y="1002">skos:definition (8) [*] </tspan>
+<tspan x="339" y="1017">snik-he:page (7) [*] </tspan>
+<tspan x="339" y="1032">&lt;- ov:defines (59) D &lt;-  owl:Ontology</tspan>
+<tspan x="339" y="1047">&lt;&gt; rdfs:subPropertyOf  </tspan>
+</text>
+</g>
+<g id="2002718525"><polygon points="1031,1172 1363,1172 1363,1252 1031,1252 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1146" y="1187">owl:Restriction (4)</tspan>
+</text>
+<line x1="1035" y1="1190" x2="1361" y2="1190"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1035" y="1202">owl:qualifiedCardinality (3) [1] D</tspan>
+<tspan x="1035" y="1217">rdf:type (4) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="1035" y="1232">&lt;- rdfs:subClassOf (1)  &lt;-  owl:Class,snik-meta:Role..(4)</tspan>
+</text>
+</g>
+<g id="2002718536"><polygon points="686,1038 986,1038 986,1115 686,1115 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="767" y="1053">shacl:PropertyShape (5)</tspan>
+</text>
+<line x1="690" y1="1056" x2="984" y2="1056"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="690" y="1068">rdf:type (5) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="690" y="1083">shacl:minCount (2) [1] D</tspan>
+</text>
+</g>
+<g id="2002718547"><polygon points="2711,1173 3011,1173 3011,1218 2711,1218 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2764" y="1188">snik-meta:RepresentationType (4)</tspan>
+</text>
+<line x1="2715" y1="1191" x2="3009" y2="1191"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2715" y="1203">rdf:type (13) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+</text>
+</g>
+<g id="2002718558"><polygon points="246,813 531,813 531,858 246,858 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="280" y="828">snik-meta:ApplicationComponent (51)</tspan>
+</text>
+</g>
+<g id="2002718569"><polygon points="62,1241 362,1241 362,1306 62,1306 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="144" y="1256">snik-meta:Feature (155)</tspan>
+</text>
+<line x1="66" y1="1259" x2="360" y2="1259"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="66" y="1271">rdf:type (155) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="66" y="1286">rdfs:label (152) [*] </tspan>
+<tspan x="66" y="1301">&lt;- ov:defines (150) D &lt;-  owl:Ontology</tspan>
+</text>
+</g>
+<g id="2002718580"><polygon points="2563,685 3080,685 3080,1138 2563,1138 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2746" y="700">snik-meta:Function (1081)</tspan>
+</text>
+<line x1="2567" y1="703" x2="3078" y2="703"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2567" y="715">rdf:type (1775) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="2567" y="730">rdfs:label (1735) [*] </tspan>
+<tspan x="2567" y="745">rdfs:subClassOf (991) [*]  -&gt;  owl:Class,snik-meta:Role..(5)</tspan>
+<tspan x="2567" y="760">skos:altLabel (59) [*] </tspan>
+<tspan x="2567" y="775">skos:broadMatch (12) [1]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="2567" y="790">skos:definition (444) [*] </tspan>
+<tspan x="2567" y="805">skos:related (1) [1]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="2567" y="820">snik-bb:conceptDomain (85) [1] </tspan>
+<tspan x="2567" y="835">snik-bb:page (77) [*] </tspan>
+<tspan x="2567" y="850">snik-meta:component (140) [*]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="2567" y="865">snik-meta:isAssociatedWith (101) [*]  -&gt;  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="2567" y="880">snik-ob:conceptDomain (7) [1] </tspan>
+<tspan x="2567" y="895">snik-ob:page (71) [*] </tspan>
+<tspan x="2567" y="910">&lt;- ov:defines (1081) D &lt;-  owl:Ontology</tspan>
+<tspan x="2567" y="925">&lt;- rdfs:subClassOf (732)  &lt;-  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="2567" y="940">&lt;- skos:broadMatch (12)  &lt;-  owl:Class,snik-meta:EntityType,snik-meta:Function</tspan>
+<tspan x="2567" y="955">&lt;- skos:closeMatch (28)  &lt;-  owl:Class,snik-meta:EntityType,snik-meta:Role</tspan>
+<tspan x="2567" y="970">&lt;- skos:related (1)  &lt;-  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="2567" y="985">&lt;- snik-meta:component (140)  &lt;-  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="2567" y="1000">&lt;- snik-meta:isAssociatedWith (99)  &lt;-  owl:Class,snik-meta:Role..(5)</tspan>
+<tspan x="2567" y="1015">&lt;&gt; snik-meta:functionComponent  D</tspan>
+<tspan x="2567" y="1030">&lt;&gt; snik-meta:isDecomposedIn  </tspan>
+</text>
+</g>
+<g id="2002718591"><polygon points="123,195 649,195 649,775 123,775 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="305" y="210">snik-meta:EntityType (2796)</tspan>
+</text>
+<line x1="127" y1="213" x2="647" y2="213"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="127" y="225">rdf:type (4387) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="127" y="240">rdfs:comment (28) [*] </tspan>
+<tspan x="127" y="255">rdfs:label (4984) [*] </tspan>
+<tspan x="127" y="270">rdfs:subClassOf (3043) [*]  -&gt;  owl:Class,snik-meta:Role..(5)</tspan>
+<tspan x="127" y="285">schema:error (3) [1] D</tspan>
+<tspan x="127" y="300">skos:altLabel (300) [*] </tspan>
+<tspan x="127" y="315">skos:alternativeLabel (1) [1] D</tspan>
+<tspan x="127" y="330">skos:broadMatch (4) [1]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="127" y="345">skos:closeMatch (57) [*]  -&gt;  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="127" y="360">skos:definition (1670) [*] </tspan>
+<tspan x="127" y="375">skos:related (18) [1]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="127" y="390">snik-bb:conceptDomain (297) [1] </tspan>
+<tspan x="127" y="405">snik-bb:page (505) [*] </tspan>
+<tspan x="127" y="420">snik-meta:component (202) [*]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="127" y="435">snik-meta:isAssociatedWith (330) [*]  -&gt;  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="127" y="450">snik-ob:conceptDomain (1) [1] </tspan>
+<tspan x="127" y="465">snik-ob:page (224) [*] </tspan>
+<tspan x="127" y="480">&lt;- ov:defines (2796) D &lt;-  owl:Ontology</tspan>
+<tspan x="127" y="495">&lt;- rdf:type (66)  &lt;-  owl:Ontology,shacl:NodeShape..(22)</tspan>
+<tspan x="127" y="510">&lt;- rdfs:subClassOf (2044)  &lt;-  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="127" y="525">&lt;- skos:broadMatch (5)  &lt;-  owl:Class,snik-meta:EntityType,snik-meta:Function</tspan>
+<tspan x="127" y="540">&lt;- skos:closeMatch (62)  &lt;-  owl:Class,snik-meta:EntityType,snik-meta:Role</tspan>
+<tspan x="127" y="555">&lt;- skos:related (17)  &lt;-  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="127" y="570">&lt;- snik-meta:component (202)  &lt;-  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="127" y="585">&lt;- snik-meta:isAssociatedWith (315)  &lt;-  owl:Class,snik-meta:Role..(5)</tspan>
+<tspan x="127" y="600">&lt;&gt; snik-meta:entityTypeComponent  </tspan>
+<tspan x="127" y="615">&lt;&gt; snik-meta:isBasedOn  DR</tspan>
+</text>
+</g>
+<g id="2002718602"><polygon points="934,10 1548,10 1548,477 934,477 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1182" y="25">snik-meta:Role (261)</tspan>
+</text>
+<line x1="938" y1="28" x2="1546" y2="28"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="938" y="40">rdf:type (424) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="938" y="55">rdfs:comment (2) [*] </tspan>
+<tspan x="938" y="70">rdfs:isDefinedBy (1) [1] D</tspan>
+<tspan x="938" y="85">rdfs:label (437) [*] </tspan>
+<tspan x="938" y="100">rdfs:seeAlso (1) [1] D -&gt; IRI</tspan>
+<tspan x="938" y="115">rdfs:subClassOf (245) [*]  -&gt;  owl:Class,snik-meta:Role..(5)</tspan>
+<tspan x="938" y="130">skos:altLabel (81) [*] </tspan>
+<tspan x="938" y="145">skos:closeMatch (12) [*]  -&gt;  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="938" y="160">skos:definition (92) [*] </tspan>
+<tspan x="938" y="175">skos:related (1) [1]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="938" y="190">snik-bb:conceptDomain (40) [1] </tspan>
+<tspan x="938" y="205">snik-bb:page (23) [*] </tspan>
+<tspan x="938" y="220">snik-meta:component (21) [*]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="938" y="235">snik-meta:isAssociatedWith (27) [*]  -&gt;  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="938" y="250">snik-ob:page (14) [*] </tspan>
+<tspan x="938" y="265">&lt;- ov:defines (261) D &lt;-  owl:Ontology</tspan>
+<tspan x="938" y="280">&lt;- rdfs:subClassOf (172)  &lt;-  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="938" y="295">&lt;- skos:broadMatch (1)  &lt;-  owl:Class,snik-meta:EntityType,snik-meta:Function</tspan>
+<tspan x="938" y="310">&lt;- skos:closeMatch (11)  &lt;-  owl:Class,snik-meta:EntityType,snik-meta:Role</tspan>
+<tspan x="938" y="325">&lt;- skos:related (1)  &lt;-  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="938" y="340">&lt;- snik-meta:component (21)  &lt;-  snik-meta:EntityType,snik-meta:Function,snik-meta:Role</tspan>
+<tspan x="938" y="355">&lt;- snik-meta:isAssociatedWith (39)  &lt;-  owl:Class,snik-meta:Role..(5)</tspan>
+<tspan x="938" y="370">&lt;&gt; snik-meta:isResponsibleForRole  DR</tspan>
+<tspan x="938" y="385">&lt;&gt; snik-meta:roleComponent  DR</tspan>
+</text>
+</g>
+<g id="2002718613"><polygon points="1581,1403 1881,1403 1881,1448 1581,1448 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1660" y="1418">owl:IrreflexiveProperty (1)</tspan>
+</text>
+</g>
+<g id="2002718624"><polygon points="2712,1299 3012,1299 3012,1439 2712,1439 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2824" y="1314">bibo:Book (2)</tspan>
+</text>
+<line x1="2716" y1="1317" x2="3010" y2="1317"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2716" y="1329">bibo:doi (1) [1] D</tspan>
+<tspan x="2716" y="1344">bibo:isbn (2) [1] D</tspan>
+<tspan x="2716" y="1359">dct:date (2) [1] D</tspan>
+<tspan x="2716" y="1374">dct:publisher (2) [1]  -&gt; IRI</tspan>
+<tspan x="2716" y="1389">dct:title (2) [1] D</tspan>
+<tspan x="2716" y="1404">rdf:type (2) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="2716" y="1419">rdfs:comment (1) [*] </tspan>
+<tspan x="2716" y="1434">&lt;- ov:defines (1) D &lt;-  owl:Ontology</tspan>
+</text>
+</g>
+<g id="2002718635"><polygon points="950,722 1250,722 1250,844 950,844 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1054" y="737">owl:Axiom (233)</tspan>
+</text>
+<line x1="954" y1="740" x2="1248" y2="740"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="954" y="752">dct:source (39) [*]  -&gt; IRI</tspan>
+<tspan x="954" y="767">owl:annotatedProperty (194) [1] D -&gt; IRI</tspan>
+<tspan x="954" y="782">owl:predicate (39) [1] D -&gt; IRI</tspan>
+<tspan x="954" y="797">rdf:type (233) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="954" y="812">rdfs:label (3) [*] </tspan>
+<tspan x="954" y="827">snik-he:page (196) [*] </tspan>
+</text>
+</g>
+<g id="2002718646"><polygon points="1900,822 2335,822 2335,1584 1900,1584 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2070" y="837">owl:Class (2216)</tspan>
+</text>
+<line x1="1904" y1="840" x2="2333" y2="840"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1904" y="852">dct:source (38 3%d) [*]  -&gt; IRI</tspan>
+<tspan x="1904" y="867">rdf:type (4479) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="1904" y="882">rdfs:comment (31) [*] </tspan>
+<tspan x="1904" y="897">rdfs:label (3347) [*] </tspan>
+<tspan x="1904" y="912">rdfs:subClassOf (1779) [*]  -&gt;  owl:Class,snik-meta:Role..(5)</tspan>
+<tspan x="1904" y="927">skos:altLabel (239) [*] </tspan>
+<tspan x="1904" y="942">skos:broadMatch (13) [1]  -&gt;  snik-meta:EntityType,snik-meta:Function,snik-</tspan>
+<tspan x="1904" y="957">meta:Role</tspan>
+<tspan x="1904" y="972">skos:closeMatch (86) [*]  -&gt;  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="1904" y="987">skos:definition (1351) [*] </tspan>
+<tspan x="1904" y="1002">snik-he:page (1920) [*] </tspan>
+<tspan x="1904" y="1017">snik-it4it:mainFunctions (10) [1] D</tspan>
+<tspan x="1904" y="1032">snik-it4it:page (18) [1] D</tspan>
+<tspan x="1904" y="1047">snik-it4it:purpose (13) [1] D</tspan>
+<tspan x="1904" y="1062">snik-meta:consolidated (2044) [*] D</tspan>
+<tspan x="1904" y="1077">snik-meta:isAssociatedWith (240) [*]  -&gt;  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="1904" y="1092">&lt;- ov:defines (2215) D &lt;-  owl:Ontology</tspan>
+<tspan x="1904" y="1107">&lt;- rdf:type (4642)  &lt;-  owl:Ontology,shacl:NodeShape..(22)</tspan>
+<tspan x="1904" y="1122">&lt;- rdfs:subClassOf (1919)  &lt;-  owl:Class,snik-meta:Role..(4)</tspan>
+<tspan x="1904" y="1137">&lt;- skos:closeMatch (25)  &lt;-  owl:Class,snik-meta:EntityType,snik-meta:Role</tspan>
+<tspan x="1904" y="1152">&lt;- snik-meta:isAssociatedWith (239)  &lt;-  owl:Class,snik-meta:Role..(5)</tspan>
+<tspan x="1904" y="1167">&lt;&gt; owl:disjointWith  DR</tspan>
+<tspan x="1904" y="1182">&lt;&gt; owl:equivalentClass  DR</tspan>
+<tspan x="1904" y="1197">&lt;&gt; snik-it4it:assetsAvailability  DR</tspan>
+<tspan x="1904" y="1212">&lt;&gt; snik-it4it:auxiliaryFunctionalComponent  DR</tspan>
+<tspan x="1904" y="1227">&lt;&gt; snik-it4it:competencyAvailability  DR</tspan>
+<tspan x="1904" y="1242">&lt;&gt; snik-it4it:currentPracticeEngagementDataflow  DR</tspan>
+<tspan x="1904" y="1257">&lt;&gt; snik-it4it:dataObject  DR</tspan>
+<tspan x="1904" y="1272">&lt;&gt; snik-it4it:engagementDataflow  DR</tspan>
+<tspan x="1904" y="1287">&lt;&gt; snik-it4it:entityRelationship  DR</tspan>
+<tspan x="1904" y="1302">&lt;&gt; snik-it4it:functionalComponent  DR</tspan>
+<tspan x="1904" y="1317">&lt;&gt; snik-it4it:keyDataObject  DR</tspan>
+<tspan x="1904" y="1332">&lt;&gt; snik-it4it:keyFunctionalComponent  DR</tspan>
+<tspan x="1904" y="1347">&lt;&gt; snik-it4it:policy  DR</tspan>
+<tspan x="1904" y="1362">&lt;&gt; snik-it4it:portfolioBacklogItem  DR</tspan>
+<tspan x="1904" y="1377">&lt;&gt; snik-it4it:portfolioBacklogItemRationalizedPrioritzed  DR</tspan>
+<tspan x="1904" y="1392">&lt;&gt; snik-it4it:recordFabricIntegration  DR</tspan>
+<tspan x="1904" y="1407">&lt;&gt; snik-it4it:scopeAgreement  DR</tspan>
+<tspan x="1904" y="1422">&lt;&gt; snik-it4it:serviceModelBackboneDataObject  DR</tspan>
+<tspan x="1904" y="1437">&lt;&gt; snik-meta:decreases  </tspan>
+<tspan x="1904" y="1452">&lt;&gt; snik-meta:entityTypeComponent  </tspan>
+<tspan x="1904" y="1467">&lt;&gt; snik-meta:increases  </tspan>
+<tspan x="1904" y="1482">&lt;&gt; snik-meta:isDecomposedIn  </tspan>
+<tspan x="1904" y="1497">&lt;&gt; snik-meta:isInvolvedIn  </tspan>
+<tspan x="1904" y="1512">&lt;&gt; snik-meta:master  DR</tspan>
+<tspan x="1904" y="1527">&lt;&gt; snik-meta:updates  </tspan>
+<tspan x="1904" y="1542">&lt;&gt; snik-meta:uses  </tspan>
+</text>
+</g>
+<g id="2002718657"><polygon points="1451,1011 1751,1011 1751,1091 1451,1091 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1538" y="1026">shacl:NodeShape (27)</tspan>
+</text>
+<line x1="1455" y1="1029" x2="1749" y2="1029"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1455" y="1041">rdf:type (27) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="1455" y="1056">shacl:closed (3) [1] D</tspan>
+<tspan x="1455" y="1071">shacl:ignoredProperties (7) [*] D -&gt; IRI</tspan>
+<tspan x="1455" y="1086">shacl:xone (1) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002718668"><polygon points="2824,554 3102,554 3102,634 2824,634 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2910" y="569">sioct:Comment (1)</tspan>
+</text>
+<line x1="2828" y1="572" x2="3100" y2="572"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2828" y="584">dct:created (1) [1] D</tspan>
+<tspan x="2828" y="599">rdf:type (1) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="2828" y="614">sioc:content (1) [1] D</tspan>
+<tspan x="2828" y="629">sioc:has_creator (1) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002718679"><polygon points="2837,327 3157,327 3157,497 2837,497 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="2834,330 3154,330 3154,500 2834,500 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2878" y="345">snik-it4it:PrimaryActivity et al. G103 (17)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2838" y="360">snik-crox:BereichFinanzenPlanungUndControlling (1)</tspan>
+<tspan x="2838" y="375">snik-crox:BereichInformationsmanagement (1)</tspan>
+<tspan x="2838" y="390">snik-crox:BereichMaterialwirtschaftDienstleistungen (1)</tspan>
+<tspan x="2838" y="405">snik-crox:ChiefInformationOfficer (1)</tspan>
+<tspan x="2838" y="420">snik-crox:InstantMessagingSystem (1)</tspan>
+<tspan x="2838" y="435">snik-crox:Projektprioritaet (3)</tspan>
+<tspan x="2838" y="450">snik-crox:Projektrisiko (3)</tspan>
+<tspan x="2838" y="465">snik-it4it:PrimaryActivity (5)</tspan>
+<tspan x="2838" y="480">snik-it4it:SupportingActivity (4)</tspan>
+</text>
+</g>
+<g id="2002718690"><polygon points="20,962 280,962 280,1028 20,1028 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="17,965 277,965 277,1031 17,1031 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="59" y="980">owl:SymmetricProperty or owl:</tspan>
+<tspan x="46" y="996">InverseFunctionalProperty G102 (3)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="21" y="1011">owl:InverseFunctionalProperty (1)</tspan>
+<tspan x="21" y="1026">owl:SymmetricProperty (2)</tspan>
+</text>
+</g>
+<g id="2002718701"><polygon points="1725,208 2025,208 2025,424 1725,424 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="1722,211 2022,211 2022,427 1722,427 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1739" y="226">owl:DatatypeProperty or dct:MediaType G104 </tspan>
+<tspan x="1858" y="242">(276)</tspan>
+</text>
+<line x1="1726" y1="245" x2="2020" y2="245"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1726" y="257">rdf:type (283) [*]  -&gt;  owl:Class,snik-meta:EntityType</tspan>
+<tspan x="1726" y="272">rdfs:comment (7) [*] </tspan>
+<tspan x="1726" y="287">rdfs:label (285) [*] </tspan>
+<tspan x="1726" y="302">skos:altLabel (1) [*] </tspan>
+<tspan x="1726" y="317">snik-bb:conceptDomain (1) [1] </tspan>
+<tspan x="1726" y="332">snik-bb:page (18) [*] </tspan>
+<tspan x="1726" y="347">snik-meta:isAssociatedWith (1) [*]  -&gt;  owl:Class,snik-</tspan>
+<tspan x="1726" y="362">meta:Role..(4)</tspan>
+<tspan x="1726" y="377">xsd:range (2) [1] D -&gt; IRI</tspan>
+<tspan x="1726" y="392">&lt;- ov:defines (273) D &lt;-  owl:Ontology</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1726" y="407">dct:MediaType (6)</tspan>
+<tspan x="1726" y="422">owl:DatatypeProperty (270)</tspan>
+</text>
+</g>
+<g id="2002718126"><path d="M1235,844 L1235,891 1237,895 1241,897 1900,897 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="894" x2="1900" y2="897"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="900" x2="1900" y2="897"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1237" y="859">owl:annotatedSource  DR</tspan>
+<tspan x="1237" y="874">owl:annotatedTarget  D</tspan>
+<tspan x="1237" y="889">owl:subject  D</tspan>
+</text>
+</g>
+<g id="2002718131"><path d="M3020,189 L3020,239 3022,243 3026,245 3206,245 3210,247 3212,251 3212,1151 3210,1155 3206,1157 2335,1157 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2341" y1="1154" x2="2335" y2="1157"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2341" y1="1160" x2="2335" y2="1157"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3022" y="204">snik-it4it:auxiliaryDataObject  DR</tspan>
+<tspan x="3022" y="219">snik-it4it:</tspan>
+<tspan x="3022" y="234">policyToRequirementFunctionalComponent  DR</tspan>
+</text>
+</g>
+<g id="2002718136"><path d="M212,1206 L212,1241 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="209" y1="1235" x2="212" y2="1241"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="215" y1="1235" x2="212" y2="1241"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="214" y="1221">snik-meta:typicalFeature  D</tspan>
+</text>
+</g>
+<g id="2002718141"><path d="M2563,699 L649,699 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="655" y1="696" x2="649" y2="699"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="655" y1="702" x2="649" y2="699"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2423" y="712">snik-meta:uses  </tspan>
+<tspan x="2423" y="727">snik-meta:updates  </tspan>
+<tspan x="2423" y="742">snik-meta:accesses  DR</tspan>
+<tspan x="2423" y="757">snik-meta:increases  </tspan>
+<tspan x="2423" y="772">snik-meta:decreases  </tspan>
+<tspan x="2423" y="787">snik-meta:changes  DR</tspan>
+</text>
+</g>
+<g id="2002718146"><path d="M1098,844 L1098,1172 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1095" y1="1166" x2="1098" y2="1172"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1101" y1="1166" x2="1098" y2="1172"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1100" y="859">owl:annotatedTarget  D</tspan>
+</text>
+</g>
+<g id="2002718151"><path d="M2335,1104 L2563,1104 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2557" y1="1101" x2="2563" y2="1104"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2557" y1="1107" x2="2563" y2="1104"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2339" y="1072">snik-meta:isDecomposedIn  </tspan>
+<tspan x="2339" y="1087">snik-meta:isInvolvedIn  </tspan>
+<tspan x="2339" y="1102">skos:narrowMatch  D</tspan>
+</text>
+</g>
+<g id="2002718156"><path d="M1978,822 L1978,739 1976,735 1972,733 1476,733 1472,731 1470,727 1470,477 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1467" y1="483" x2="1470" y2="477"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1473" y1="483" x2="1470" y2="477"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1870" y="818">skos:relatedMatch  </tspan>
+</text>
+</g>
+<g id="2002718161"><path d="M1857,427 L1857,615 1855,619 1851,621 649,621 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="655" y1="618" x2="649" y2="621"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="655" y1="624" x2="649" y2="621"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1859" y="442">rdfs:domain  </tspan>
+<tspan x="1859" y="457">rdfs:range  </tspan>
+</text>
+</g>
+<g id="2002718166"><path d="M1548,471 L2112,471 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2106" y1="468" x2="2112" y2="471"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2106" y1="474" x2="2112" y2="471"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1552" y="469">snik-meta:chapter  R</tspan>
+</text>
+</g>
+<g id="2002718171"><path d="M454,1061 L454,1229 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="451" y1="1223" x2="454" y2="1229"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="457" y1="1223" x2="454" y2="1229"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="456" y="1076">rdfs:subPropertyOf  </tspan>
+</text>
+</g>
+<g id="2002718176"><path d="M609,912 L609,775 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="606" y1="781" x2="609" y2="775"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="612" y1="781" x2="609" y2="775"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="535" y="893">rdfs:domain  </tspan>
+<tspan x="535" y="908">rdfs:range  </tspan>
+</text>
+</g>
+<g id="2002718181"><path d="M2022,351 L2100,351 2104,353 2106,357 2106,822 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2103" y1="816" x2="2106" y2="822"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2109" y1="816" x2="2106" y2="822"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2026" y="334">rdfs:domain  </tspan>
+<tspan x="2026" y="349">rdfs:range  </tspan>
+</text>
+</g>
+<g id="2002718186"><path d="M1900,909 L643,909 639,907 637,903 637,775 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="634" y1="781" x2="637" y2="775"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="640" y1="781" x2="637" y2="775"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1713" y="922">snik-meta:uses  </tspan>
+<tspan x="1713" y="937">snik-meta:entityTypeComponent  </tspan>
+<tspan x="1713" y="952">snik-meta:updates  </tspan>
+<tspan x="1713" y="967">snik-meta:increases  </tspan>
+<tspan x="1713" y="982">snik-meta:decreases  </tspan>
+<tspan x="1713" y="997">skos:narrowMatch  D</tspan>
+</text>
+</g>
+<g id="2002718191"><path d="M649,329 L934,329 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="928" y1="326" x2="934" y2="329"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="928" y1="332" x2="934" y2="329"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="653" y="327">skos:relatedMatch  </tspan>
+</text>
+</g>
+<g id="2002718196"><path d="M1102,722 L1102,477 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1099" y1="483" x2="1102" y2="477"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1105" y1="483" x2="1102" y2="477"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1030" y="718">owl:object  D</tspan>
+</text>
+</g>
+<g id="2002718201"><path d="M1751,1050 L1900,1050 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1047" x2="1900" y2="1050"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1053" x2="1900" y2="1050"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1755" y="1033">shacl:class  DR</tspan>
+<tspan x="1755" y="1048">shacl:targetClass  DR</tspan>
+</text>
+</g>
+<g id="2002718206"><path d="M2278,275 L2278,407 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2275" y1="401" x2="2278" y2="407"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2281" y1="401" x2="2278" y2="407"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2280" y="290">snik-meta:chapter  R</tspan>
+</text>
+</g>
+<g id="2002718211"><path d="M2863,1439 L2863,1489 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2860" y1="1483" x2="2863" y2="1489"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2866" y1="1483" x2="2863" y2="1489"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2865" y="1454">bibo:authorList  D</tspan>
+</text>
+</g>
+<g id="2002718216"><path d="M986,1101 L1900,1101 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1098" x2="1900" y2="1101"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1104" x2="1900" y2="1101"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="990" y="1099">shacl:hasValue  R</tspan>
+</text>
+</g>
+<g id="2002718221"><path d="M1451,1017 L615,1017 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="621" y1="1014" x2="615" y2="1017"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="621" y1="1020" x2="615" y2="1017"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1299" y="1030">shacl:targetSubjectsOf  DR</tspan>
+<tspan x="1299" y="1045">shacl:targetObjectsOf  DR</tspan>
+</text>
+</g>
+<g id="2002718231"><path d="M1722,316 L1548,316 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1554" y1="313" x2="1548" y2="316"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1554" y1="319" x2="1548" y2="316"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1646" y="329">rdfs:domain  </tspan>
+<tspan x="1646" y="344">rdfs:range  </tspan>
+</text>
+</g>
+<g id="2002718236"><path d="M2252,822 L2252,533 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2249" y1="539" x2="2252" y2="533"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2255" y1="539" x2="2252" y2="533"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2136" y="818">snik-meta:chapter  R</tspan>
+</text>
+</g>
+<g id="2002718241"><path d="M615,945 L862,945 866,943 868,939 868,477 870,473 874,471 934,471 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="928" y1="468" x2="934" y2="471"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="928" y1="474" x2="934" y2="471"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="619" y="928">rdfs:domain  </tspan>
+<tspan x="619" y="943">rdfs:range  </tspan>
+</text>
+</g>
+<g id="2002718251"><path d="M1031,1200 L615,1200 611,1198 609,1194 609,1061 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="606" y1="1067" x2="609" y2="1061"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="612" y1="1067" x2="609" y2="1061"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="922" y="1213">owl:onProperty  DR</tspan>
+</text>
+</g>
+<g id="2002718256"><path d="M579,1229 L579,1061 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="576" y1="1067" x2="579" y2="1061"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="582" y1="1067" x2="579" y2="1061"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="469" y="1225">rdfs:subPropertyOf  </tspan>
+</text>
+</g>
+<g id="2002718261"><path d="M2563,942 L2335,942 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2341" y1="939" x2="2335" y2="942"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2341" y1="945" x2="2335" y2="942"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2378" y="955">snik-meta:uses  </tspan>
+<tspan x="2378" y="970">snik-meta:updates  </tspan>
+<tspan x="2378" y="985">snik-meta:functionComponent  D</tspan>
+<tspan x="2378" y="1000">snik-meta:isDecomposedIn  </tspan>
+<tspan x="2378" y="1015">snik-meta:increases  </tspan>
+<tspan x="2378" y="1030">snik-meta:decreases  </tspan>
+</text>
+</g>
+<g id="2002718266"><path d="M1451,1058 L986,1058 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="992" y1="1055" x2="986" y2="1058"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="992" y1="1061" x2="986" y2="1058"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1355" y="1071">shacl:property  D</tspan>
+<tspan x="1355" y="1086">shacl:not  DR</tspan>
+</text>
+</g>
+<g id="2002718271"><path d="M649,691 L2563,691 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2557" y1="688" x2="2563" y2="691"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2557" y1="694" x2="2563" y2="691"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="653" y="689">snik-meta:supports  DR</tspan>
+</text>
+</g>
+<g id="2002718276"><path d="M950,747 L649,747 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="655" y1="744" x2="649" y2="747"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="655" y1="750" x2="649" y2="747"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="876" y="760">owl:object  D</tspan>
+</text>
+</g>
+<g id="2002718281"><path d="M1363,1212 L1900,1212 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1209" x2="1900" y2="1212"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1215" x2="1900" y2="1212"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1367" y="1195">owl:onClass  DR</tspan>
+<tspan x="1367" y="1210">owl:allValuesFrom  DR</tspan>
+</text>
+</g>
+<g id="2002718286"><path d="M1478,477 L1478,586 1480,590 1484,592 2584,592 2588,594 2590,598 2590,685 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2587" y1="679" x2="2590" y2="685"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2593" y1="679" x2="2590" y2="685"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1480" y="492">snik-meta:</tspan>
+<tspan x="1480" y="507">isResponsibleForFunction  DR</tspan>
+<tspan x="1480" y="522">snik-meta:isInvolvedIn  </tspan>
+<tspan x="1480" y="537">snik-meta:isResponsibleFor  D</tspan>
+<tspan x="1480" y="552">snik-meta:approvesFunction  DR</tspan>
+</text>
+</g>
+<g id="2002718291"><path d="M643,775 L643,897 645,901 649,903 1900,903 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="900" x2="1900" y2="903"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="906" x2="1900" y2="903"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="645" y="790">snik-meta:entityTypeComponent  </tspan>
+</text>
+</g>
+<g id="2002718296"><path d="M1250,799 L2563,799 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2557" y1="796" x2="2563" y2="799"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2557" y1="802" x2="2563" y2="799"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1254" y="797">owl:object  D</tspan>
+</text>
+</g>
+<g id="2002718301"><path d="M2412,482 L2527,482 2531,480 2533,476 2533,450 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2530" y1="456" x2="2533" y2="450"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2536" y1="456" x2="2533" y2="450"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2416" y="480">snik-meta:book  DR</tspan>
+</text>
+</g>
+<g id="2002718306"><path d="M934,225 L649,225 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="655" y1="222" x2="649" y2="225"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="655" y1="228" x2="649" y2="225"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="742" y="238">snik-meta:</tspan>
+<tspan x="742" y="253">isResponsibleForEntityType  DR</tspan>
+<tspan x="742" y="268">snik-meta:isResponsibleFor  D</tspan>
+<tspan x="742" y="283">snik-meta:approvesEntityType  DR</tspan>
+</text>
+</g>
+<g id="2002718311"><path d="M615,1005 L1900,1005 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1002" x2="1900" y2="1005"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1008" x2="1900" y2="1005"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="619" y="988">rdfs:domain  </tspan>
+<tspan x="619" y="1003">rdfs:range  </tspan>
+</text>
+</g>
+<g id="2002718316"><path d="M313,858 L313,1123 315,1127 319,1129 1900,1129 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1126" x2="1900" y2="1129"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="1132" x2="1900" y2="1129"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="315" y="873">snik-it4it:conceptualServiceBlueprint  DR</tspan>
+</text>
+</g>
+<g id="2002718321"><path d="M2952,634 L2952,685 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2949" y1="679" x2="2952" y2="685"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2955" y1="679" x2="2952" y2="685"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2954" y="649">sioc:about  DR</tspan>
+</text>
+</g>
+<g id="2002718326"><path d="M686,1044 L615,1044 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="621" y1="1041" x2="615" y2="1044"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="621" y1="1047" x2="615" y2="1044"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="619" y="1057">shacl:path  </tspan>
+</text>
+</g>
+<g id="2002718331"><path d="M1332,477 L1332,824 1334,828 1338,830 1900,830 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="827" x2="1900" y2="830"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1894" y1="833" x2="1900" y2="830"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1334" y="492">snik-meta:isInvolvedIn  </tspan>
+</text>
+</g>
+<g id="2002718336"><path d="M2727,685 L2727,522 2725,518 2721,516 2412,516 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2418" y1="513" x2="2412" y2="516"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2418" y1="519" x2="2412" y2="516"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2611" y="681">snik-meta:chapter  R</tspan>
+</text>
+</g>
+<g id="2002718341"><path d="M2022,315 L2200,315 2204,317 2206,321 2206,407 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2203" y1="401" x2="2206" y2="407"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2209" y1="401" x2="2206" y2="407"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2026" y="313">snik-meta:chapter  R</tspan>
+</text>
+</g>
+<g id="2002718346"><path d="M649,642 L2199,642 2203,640 2205,636 2205,533 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2202" y1="539" x2="2205" y2="533"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2208" y1="539" x2="2205" y2="533"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="653" y="640">snik-meta:chapter  R</tspan>
+</text>
+</g>
+<g id="2002718351"><path d="M388,775 L388,813 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="393,785 388,775 383,785 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="390" y="790"> </tspan>
+</text>
+</g>
+<g id="2002718353"><path d="M649,380 L702,380 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="659,385 649,380 659,375 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="653" y="378"> </tspan>
+</text>
+</g>
+<g id="2002718355"><path d="M293,858 L293,1140 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="298,868 293,858 288,868 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="295" y="873"> </tspan>
+</text>
+</g>
+<g id="2002718357"><path d="M2824,142 L2791,142 2787,144 2785,148 2785,647 2783,651 2779,653 2510,653 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2814,147 2824,142 2814,137 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2810" y="155"> </tspan>
+</text>
+</g>
+<g id="2002718359"><path d="M2861,1218 L2861,1237 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2866,1228 2861,1218 2856,1228 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2863" y="1233"> </tspan>
+</text>
+</g>
+<g id="2002718361"><path d="M2308,822 L2308,669 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2313,812 2308,822 2303,812 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2296" y="818"> </tspan>
+</text>
+</g>
+<g id="2002718365"><path d="M2994,189 L2994,330 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2999,199 2994,189 2989,199 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2996" y="204"> </tspan>
+</text>
+</g>
+<g id="2002718367"><path d="M649,663 L2258,663 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="659,668 649,663 659,658 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="653" y="661"> </tspan>
+</text>
+</g>
+<g id="2002718369"><path d="M335,990 L277,990 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="325,995 335,990 325,985 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="321" y="1003"> </tspan>
+</text>
+</g>
+</svg>

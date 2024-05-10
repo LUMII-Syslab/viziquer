@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="1097" height="578" viewBox="0 0 1097 578">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002712748"><polygon points="274,31 574,31 574,76 274,76 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="355" y="46">bcn-n:Rectification (395)</tspan>
+</text>
+<line x1="278" y1="49" x2="572" y2="49"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="278" y="61">rdf:type (1938) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002712759"><polygon points="26,291 243,291 243,341 26,341 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="79" y="306">bcn-n:Treaty (2875)</tspan>
+</text>
+<line x1="30" y1="309" x2="241" y2="309"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="30" y="321">bcn-n:isTreatyWith (2184) [*] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002712770"><polygon points="827,146 1087,146 1087,226 827,226 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="915" y="161">frbr:Subject (5)</tspan>
+</text>
+<line x1="831" y1="164" x2="1085" y2="164"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="831" y="176">bcn-n:hasTag (5) [1] D</tspan>
+<tspan x="831" y="191">rdf:type (5) [*]  -&gt; IRI</tspan>
+<tspan x="831" y="206">rdfs:label (5) [*] </tspan>
+<tspan x="831" y="221">skos:prefLabel (5) [*] </tspan>
+</text>
+</g>
+<g id="2002712781"><polygon points="184,364 350,364 350,409 184,409 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="199" y="379">bcn-n:RootNorm (3.6e5)</tspan>
+</text>
+</g>
+<g id="2002712792"><polygon points="10,168 303,168 303,265 10,265 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="77" y="183">bcn-n:NormInstance (3.9e5)</tspan>
+</text>
+<line x1="14" y1="186" x2="301" y2="186"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="14" y="198">bcn-n:hasHtmlDocument (3.9e5) [*] D -&gt; IRI</tspan>
+<tspan x="14" y="213">bcn-n:hasXmlDocument (3.9e5) [*] D -&gt; IRI</tspan>
+<tspan x="14" y="228">bcn-n:isLatestVersion (3.9e5) [*] D</tspan>
+<tspan x="14" y="243">bcn-n:versionDate (4.1e5) [*] </tspan>
+</text>
+</g>
+<g id="2002712803"><polygon points="843,294 1033,294 1033,339 843,339 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="885" y="309">skos:Collection (6)</tspan>
+</text>
+<line x1="847" y1="312" x2="1031" y2="312"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="847" y="324">rdf:type (11) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002712814"><polygon points="602,26 902,26 902,76 602,76 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="678" y="41">bcn-n:RecastedText (324)</tspan>
+</text>
+<line x1="606" y1="44" x2="900" y2="44"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="606" y="56">rdf:type (1487) [*]  -&gt; IRI</tspan>
+<tspan x="606" y="71">&lt;&gt; bcn-n:agreeWith  </tspan>
+</text>
+</g>
+<g id="2002712825"><polygon points="32,417 395,417 395,568 32,568 "
+style="fill:White; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="36" y="431">PREFIX bcn-n: &lt;http://datos.bcn.cl/ontologies/bcn-norms#&gt;</tspan>
+<tspan x="36" y="446">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
+<tspan x="36" y="461">PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;</tspan>
+<tspan x="36" y="476">PREFIX frbr: &lt;http://vocab.org/frbr/core#&gt;</tspan>
+<tspan x="36" y="491">PREFIX bcn-r: &lt;http://datos.bcn.cl/ontologies/bcn-resources#&gt;</tspan>
+<tspan x="36" y="506">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
+<tspan x="36" y="521">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="36" y="536">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="36" y="551">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+</text>
+</g>
+<g id="2002712836"><polygon points="808,426 1084,426 1084,471 808,471 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="860" y="441">bcn-n:CategoryByKeyword (5)</tspan>
+</text>
+</g>
+<g id="2002712847"><polygon points="455,151 755,151 755,529 455,529 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="452,154 752,154 752,532 452,532 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="505" y="169">foaf:Document et al. G101 (7.5e5)</tspan>
+</text>
+<line x1="456" y1="172" x2="750" y2="172"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="456" y="184">bcn-n:createdBy (7.5e5) [1] D -&gt; IRI</tspan>
+<tspan x="456" y="199">bcn-n:hasNumber (7.7e5) [*] D</tspan>
+<tspan x="456" y="214">bcn-n:leychileCode (7.5e5) [*] D</tspan>
+<tspan x="456" y="229">bcn-n:promulgationDate (5.3e5) [*] </tspan>
+<tspan x="456" y="244">bcn-n:publishDate (7.7e5) [*] </tspan>
+<tspan x="456" y="259">bcn-n:type (7.5e5) [1] D -&gt; IRI</tspan>
+<tspan x="456" y="274">dc:identifier (4198) [1] </tspan>
+<tspan x="456" y="289">dc:language (5.1e5) [1] D</tspan>
+<tspan x="456" y="304">dc:title (7.7e5) [*] </tspan>
+<tspan x="456" y="319">rdf:type (3.0e6) [*]  -&gt; IRI</tspan>
+<tspan x="456" y="334">rdfs:label (8.0e5) [*] </tspan>
+<tspan x="456" y="349">skos:prefLabel (5.5e5) [*] </tspan>
+<tspan x="456" y="364">&lt;&gt; bcn-n:agreeWith  </tspan>
+<tspan x="456" y="379">&lt;&gt; bcn-n:isModifiedBy  </tspan>
+<tspan x="456" y="394">&lt;&gt; bcn-n:isRectifiedBy  </tspan>
+<tspan x="456" y="409">&lt;&gt; bcn-n:modifiesTo  </tspan>
+<tspan x="456" y="424">&lt;&gt; bcn-n:recasts  </tspan>
+<tspan x="456" y="439">&lt;&gt; bcn-n:rectifies  </tspan>
+<tspan x="456" y="454">&lt;&gt; bcn-n:regulates  </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="456" y="469">bcn-n:Norm (7.5e5)</tspan>
+<tspan x="456" y="484">bcn-r:Documento (7.5e5)</tspan>
+<tspan x="456" y="499">foaf:Document (7.5e5)</tspan>
+</text>
+</g>
+<g id="2002712680"><path d="M291,265 L291,364 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="288" y1="358" x2="291" y2="364"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="294" y1="358" x2="291" y2="364"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="293" y="280">bcn-n:versionOf  </tspan>
+</text>
+</g>
+<g id="2002712685"><path d="M1043,426 L1043,226 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1040" y1="232" x2="1043" y2="226"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1046" y1="232" x2="1043" y2="226"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="974" y="422">frbr:subject  </tspan>
+</text>
+</g>
+<g id="2002712690"><path d="M494,76 L494,154 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="491" y1="148" x2="494" y2="154"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="497" y1="148" x2="494" y2="154"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="496" y="91">bcn-n:rectifies  </tspan>
+</text>
+</g>
+<g id="2002712695"><path d="M458,154 L458,76 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="455" y1="82" x2="458" y2="76"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="461" y1="82" x2="458" y2="76"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="345" y="150">bcn-n:isRectifiedBy  </tspan>
+</text>
+</g>
+<g id="2002712700"><path d="M694,76 L694,154 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="691" y1="148" x2="694" y2="154"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="697" y1="148" x2="694" y2="154"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="696" y="91">bcn-n:agreeWith  </tspan>
+<tspan x="696" y="106">bcn-n:regulates  </tspan>
+<tspan x="696" y="121">bcn-n:recasts  </tspan>
+</text>
+</g>
+<g id="2002712705"><path d="M843,316 L752,316 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="758" y1="313" x2="752" y2="316"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="758" y1="319" x2="752" y2="316"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="756" y="329">skos:member  </tspan>
+</text>
+</g>
+<g id="2002712710"><path d="M452,215 L303,215 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="309" y1="212" x2="303" y2="215"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="309" y1="218" x2="303" y2="215"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="314" y="228">bcn-n:isRegulatedBy  D</tspan>
+<tspan x="314" y="243">bcn-n:isRecastedBy  DR</tspan>
+</text>
+</g>
+<g id="2002712715"><path d="M873,339 L873,426 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="870" y1="420" x2="873" y2="426"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="876" y1="420" x2="873" y2="426"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="875" y="354">skos:member  </tspan>
+</text>
+</g>
+<g id="2002712720"><path d="M249,364 L249,265 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="246" y1="271" x2="249" y2="265"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="252" y1="271" x2="249" y2="265"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="144" y="360">bcn-n:hasVersion  </tspan>
+</text>
+</g>
+<g id="2002712725"><path d="M644,154 L644,76 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="641" y1="82" x2="644" y2="76"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="647" y1="82" x2="644" y2="76"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="546" y="150">bcn-n:agreeWith  </tspan>
+</text>
+</g>
+<g id="2002712730"><path d="M752,171 L827,171 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="821" y1="168" x2="827" y2="171"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="821" y1="174" x2="827" y2="171"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="756" y="169">frbr:subject  </tspan>
+</text>
+</g>
+<g id="2002712735"><path d="M910,294 L910,226 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="907" y1="232" x2="910" y2="226"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="913" y1="232" x2="910" y2="226"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="825" y="290">skos:member  </tspan>
+</text>
+</g>
+<g id="2002712740"><path d="M452,386 L350,386 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="442,391 452,386 442,381 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="438" y="399"> </tspan>
+</text>
+</g>
+<g id="2002712742"><path d="M133,265 L133,291 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="138,275 133,265 128,275 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="135" y="280"> </tspan>
+</text>
+</g>
+<g id="2002712744"><path d="M452,193 L303,193 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="442,198 452,193 442,188 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="438" y="206"> </tspan>
+</text>
+</g>
+<g id="2002712746"><path d="M966,339 L966,426 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="971,349 966,339 961,349 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="968" y="354"> </tspan>
+</text>
+</g>
+</svg>
