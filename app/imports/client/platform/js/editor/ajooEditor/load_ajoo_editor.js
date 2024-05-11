@@ -59,7 +59,8 @@ Interpreter.loadAjooEditor = function(diagram) {
                     },
 
                     lineSettings: {
-                    	compartmentLayout: "processOrientedFlow",
+                    	compartmentLayout: "owlGrEdLayout",
+                    	// compartmentLayout: "processOrientedFlow",
                     },
 
                     isPanningEnabled: false,

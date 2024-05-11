@@ -548,15 +548,50 @@ LinkCompartments.prototype = {
 		var y = points[end_point_y_index];
 
 		var move_func;
-		if (shape["className"] == "Line")
+		if (shape["className"] == "Line") {
 			move_func = "moveArrowCenter";
+		}
 
-		else if (shape["className"] == "RegularPolygon" || shape["className"] == "Circle")
+		else if (shape["className"] == "RegularPolygon" || shape["className"] == "Circle")  {
 			move_func = "movePolygonCenter";
+		}
 
 		var move_center_func = {
 
 			moveArrowCenter: function() {
+
+				var rotation = rotation_obj["rotation"];
+				var points = shape.points();
+
+				var x_middle = (points[0] + points[points.length-2]) / 2;
+				var y_middle = (points[1] + points[points.length-1]) / 4;			
+
+				//left-right
+				if (rotation == 90) {
+					y = y - y_middle;
+				}
+
+				//top-down
+				else if (rotation == 180) {
+					x = x + x_middle;
+				}
+
+				//right-left
+				else if (rotation == 270) {
+					y = y + y_middle;
+				}
+
+				//bottom-up
+				else if (rotation == 360 || rotation == 0) {
+					x = x - x_middle;
+				}
+
+				return {x: x, y: y};
+			},
+
+
+
+			moveArrowCenter2: function() {
 
 				var rotation = rotation_obj["rotation"];
 				var points = shape.points();
@@ -763,8 +798,9 @@ LinkCompartments.prototype = {
 
 		var compartments = this;
 
-		if (!name)
+		if (!name) {
 			name = compartments.editor.lineSettings.compartmentLayout || "lineOrientedFlow";
+		}
 
 		var points = compartments.element.getPoints();
 
@@ -844,7 +880,7 @@ LinkCompartments.prototype = {
 
 				},
 
-				processOrientedFlow: {
+			processOrientedFlow: {
 
 				//horizontal
 					"horizontal-west-left": function() {
@@ -922,19 +958,23 @@ LinkCompartments.prototype = {
 
 				//horizontal
 					"horizontal-west-left": function() {
-						return compartments.horizontal_right_end(x1, y1, width, height, size);
+						return compartments.horizontal_left_end(x1, y1, width, height, size);
+						// return compartments.horizontal_right_end(x1, y1, width, height, size);
 					},
 
 					"horizontal-west-right": function() {
-						return compartments.horizontal_left_end(x1, y1, width, height, size);			
+						return compartments.horizontal_right_end(x1, y1, width, height, size);	
+						// return compartments.horizontal_left_end(x1, y1, width, height, size);			
 					},
 
 
 					"horizontal-east-left": function() {
+						// return compartments.horizontal_left_start(x1, y1, width, height, size);
 						return compartments.horizontal_right_start(x1, y1, width, height, size);												
 					},
 
 					"horizontal-east-right": function() {
+						// return compartments.horizontal_right_start(x1, y1, width, height, size);	
 						return compartments.horizontal_left_start(x1, y1, width, height, size);		
 					},
 
@@ -958,19 +998,23 @@ LinkCompartments.prototype = {
 
 				//vertical
 					"vertical-north-left": function() {
-						return compartments.vertical_right_end(x1, y1, width, height, size);
+						return compartments.vertical_left_end(x1, y1, width, height, size);
+						// return compartments.vertical_right_end(x1, y1, width, height, size);
 					},
 
 					"vertical-north-right": function() {
-						return compartments.vertical_left_end(x1, y1, width, height, size);											
+						return compartments.vertical_right_end(x1, y1, width, height, size);	
+						// return compartments.vertical_left_end(x1, y1, width, height, size);											
 					},
 
 					"vertical-south-left": function() {
-						return compartments.vertical_left_start(x1, y1, width, height, size);		
+						return compartments.vertical_right_start(x1, y1, width, height, size);
+						// return compartments.vertical_left_start(x1, y1, width, height, size);		
 					},
 				
 					"vertical-south-right": function() {
-						return compartments.vertical_right_start(x1, y1, width, height, size);
+						return compartments.vertical_left_start(x1, y1, width, height, size);
+						// return compartments.vertical_right_start(x1, y1, width, height, size);
 					},
 
 
