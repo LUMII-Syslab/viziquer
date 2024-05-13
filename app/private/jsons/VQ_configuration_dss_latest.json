@@ -296,7 +296,7 @@
           "dialogSize": 4
         },
 		"layoutSettings": {
-			"layout": "UNIVERSAL",
+			"layout": "HORIZONTAL",
 			"arrangeMethod": "arrangeFromScratch"
 		},
         "createdAt": "2017-03-22T15:00:39.729Z",
@@ -4255,7 +4255,85 @@
             "lineType": "Orthogonal"
           },
           "compartmentTypes": [
-			
+		    {
+              "object": {
+                "_id": "rYZ5zCMf3nmLyEVRE",
+                "elementTypeId": "vjSWyPTpvbs9JEB3a",
+                "diagramTypeId": "5MCHCcnGRwF5axfDj",
+                "diagramId": "7RrwRcGyxshqjBh9p",
+                "elementId": "dbsGQGHqCahkCgkip",
+                "tabIndex": 9,
+                "index": 0,
+                "toolId": "3v8WrqRP2oos7kaSA",
+                "versionId": "cMoFeT3YoEkLwDabd",
+                "name": "IsDelayedLink",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "true",
+					  "value": 	"\u231b"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "false",
+                      "value": ""
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "a1111fbad4da3150f0d28907",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "end-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "LH5gP2Peqhnu5rMeB",
+                "defaultValue": null,
+                "label": "Is Delayed Link"
+              }
+            },
 			{
               "object": {
                 "_id": "1S784UfnvxKqDyEfT",
@@ -4264,7 +4342,7 @@
                 "diagramId": "7RrwRcGyxshqjBh9p",
                 "elementId": "dbsGQGHqCahkCgkip",
                 "tabIndex": 8,
-                "index": 0,
+                "index": 1,
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
                 "name": "Graph/Service",

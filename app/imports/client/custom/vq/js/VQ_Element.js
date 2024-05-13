@@ -209,7 +209,6 @@ VQ_Element.prototype = {
       console.error(this.obj);
       return;
     }
-
     var elem_type_id = this.obj["elementTypeId"];
     var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
     if (comp_type) {
@@ -555,6 +554,16 @@ VQ_Element.prototype = {
     var distinctS = this.boolToString(distinct)
     this.setCompartmentValueAuto("Distinct",distinctS)
   },
+   
+  isDelayedLink: function() {
+	return this.getCompartmentValue("IsDelayedLink")=="true";
+  },
+  // bool  ->
+  setIsDelayedLink: function(delayedLink) {
+    var distinctS = this.boolToString(delayedLink)
+    this.setCompartmentValueAuto("IsDelayedLink",distinctS)
+  },
+  
   //bool ->
   setUseLabelService: function(useLabelService) {
     var useLabelServiceS = this.boolToString(useLabelService)
