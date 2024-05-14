@@ -1036,6 +1036,88 @@ LinkCompartments.prototype = {
 
 				},
 
+			viziquerLayout: {
+
+				//horizontal
+					"horizontal-west-left": function() {
+						// return compartments.horizontal_left_end(x1, y1, width, height, size);
+						return compartments.horizontal_right_end(x1, y1, width, height, size);
+					},
+
+					"horizontal-west-right": function() {
+						// return compartments.horizontal_right_end(x1, y1, width, height, size);	
+						return compartments.horizontal_left_end(x1, y1, width, height, size);			
+					},
+
+
+					"horizontal-east-left": function() {
+						return compartments.horizontal_left_start(x1, y1, width, height, size);
+						// return compartments.horizontal_right_start(x1, y1, width, height, size);												
+					},
+
+					"horizontal-east-right": function() {
+						return compartments.horizontal_right_start(x1, y1, width, height, size);	
+						// return compartments.horizontal_left_start(x1, y1, width, height, size);		
+					},
+
+
+					"horizontal-west-middle-left": function() {
+						return compartments.horizontal_left_middle(x1, y1, width, height, size);
+					},
+
+					"horizontal-west-middle-right": function() {
+						return compartments.horizontal_right_middle(x1, y1, width, height, size);											
+					},
+
+
+					"horizontal-east-middle-left": function() {
+						return compartments.horizontal_left_middle(x1, y1, width, height, size);
+					},
+
+					"horizontal-east-middle-right": function() {
+						return compartments.horizontal_right_middle(x1, y1, width, height, size);
+					},
+
+				//vertical
+					"vertical-north-left": function() {
+						// return compartments.vertical_left_end(x1, y1, width, height, size);
+						return compartments.vertical_right_end(x1, y1, width, height, size);
+					},
+
+					"vertical-north-right": function() {
+						// return compartments.vertical_right_end(x1, y1, width, height, size);	
+						return compartments.vertical_left_end(x1, y1, width, height, size);											
+					},
+
+					"vertical-south-left": function() {
+						// return compartments.vertical_right_start(x1, y1, width, height, size);
+						return compartments.vertical_left_start(x1, y1, width, height, size);		
+					},
+				
+					"vertical-south-right": function() {
+						// return compartments.vertical_left_start(x1, y1, width, height, size);
+						return compartments.vertical_right_start(x1, y1, width, height, size);
+					},
+
+
+					"vertical-north-middle-left": function() {
+						return compartments.vertical_left_middle(x1, y1, width, height, size);
+					},
+
+					"vertical-north-middle-right": function() {
+						return compartments.vertical_right_middle(x1, y1, width, height, size);
+					},
+
+					"vertical-south-middle-left": function() {
+						return compartments.vertical_left_middle(x1, y1, width, height, size);											
+					},
+
+					"vertical-south-middle-right": function() {
+						return compartments.vertical_right_middle(x1, y1, width, height, size);											
+					},
+
+				},
+
 			};
 
 		return layouts[name][position]();
