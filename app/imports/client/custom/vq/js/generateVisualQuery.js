@@ -7075,7 +7075,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						if(typeof classes[clazz] !== "function"){
 							if(classTableAdded.indexOf(clazz) !== -1){
 								if(typeof classesTable[clazz]["conditions"] === 'undefined') classesTable[clazz]["conditions"] = [];
-								classesTable[clazz]["conditions"].push("* "+attrName+ " -> " + objectNameParsed["value"]);
+								classesTable[clazz]["conditions"].push(attrName+ " -> " + objectNameParsed["value"]);
 								break;
 							}
 						}
@@ -7838,7 +7838,7 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 	
 	if(typeof predicate["termType"] !== "undefined"){
 
-		let linkResolved = await dataShapes.resolvePropertyByName({name: predicate});
+		let linkResolved = await dataShapes.resolvePropertyByName({name: predicate.value});
 		if(linkResolved.complete == true) {
 			
 			let sn = linkResolved.data[0].display_name;
@@ -7846,6 +7846,7 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 			else if(linkResolved.data[0].is_local != true || showPrefixesForAllNames == true)sn = linkResolved.data[0].prefix+ ":" + sn;
 			linkResolved.data[0].short_name = sn;
 		}
+		
 		if(linkResolved.complete == true && linkResolved.data[0].object_cnt > 0){
 			propertyPathText = propertyPathText + buildPathElement(linkResolved.data[0]);
 		} else {
@@ -9034,7 +9035,12 @@ async function generateInstanceAlias(uri, resolve){
 					return prefixes[key]["name"]+":"+splittedUri.name;
 				}
 			}
-
+			
+			usedPrefixes["n_"+counter] = splittedUri.namespace;
+			let	newShortName = "n_"+counter + ":"+splittedUri.name
+			counter++;
+			return newShortName;
+			
 			return "<" + uri + ">";
 		}
 	}else {
@@ -9426,6 +9432,27 @@ function combineKnownPrefixesWithDefinedPrefixes(knownPrefixes){
 					is_local: false,
 					name: pr,
 					value: allPrefixes[pr]
+				})
+			}
+		}
+	}
+	for(let pr in usedPrefixes){
+		if(typeof usedPrefixes[pr] !== "function"){
+			let prefixExists = false;
+			for(let kpr = 0; kpr < knownPrefixes.length; kpr++){
+				if(knownPrefixes[kpr]["name"] === pr && knownPrefixes[kpr]["value"] !== usedPrefixes[pr]){
+					prefixExists = true;
+					break;
+				} else if(knownPrefixes[kpr]["name"] === pr && knownPrefixes[kpr]["value"] === usedPrefixes[pr]){
+					prefixExists = true;
+					break;
+				}
+			}
+			if(prefixExists === false){
+				knownPrefixes.push({
+					is_local: false,
+					name: pr,
+					value: usedPrefixes[pr]
 				})
 			}
 		}

@@ -1292,7 +1292,7 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
                     conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
                     fields: elem.getFields(),
                     aggregations: elem.getAggregateFields(),
-					
+					isDelayedLink: link.link.isDelayedLink(),
                     conditions: elem.getConditions(),
                     fullSPARQL: elem.getFullSPARQL(),
 					comment: elem.getComment(),
