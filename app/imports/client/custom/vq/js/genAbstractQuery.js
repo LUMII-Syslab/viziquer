@@ -191,10 +191,12 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		let prefix = "";
 		// _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.local_name));
 		if(typeof obj_class.linkIdentification.prefix !== 'undefined' && obj_class.linkIdentification.prefix != "") prefix = obj_class.linkIdentification.prefix + ":";
+		if(obj_class.linkIdentification.local_name.startsWith(":")) obj_class.linkIdentification.local_name = obj_class.linkIdentification.local_name.substring(1);
 		var pathExpression = await parsePathExpression(prefix+obj_class.linkIdentification.local_name, obj_class.identification);
         _.extend(obj_class.linkIdentification, pathExpression);
 			
 		//link is variable name
+		
 		if(typeof pathExpression.parsed_exp !== "undefined" && pathExpression.parsed_exp !== null
 		&& typeof pathExpression.parsed_exp.PathProperty !== "undefined" && typeof pathExpression.parsed_exp.PathProperty.VariableName !== "undefined"){
 			 let expr = pathExpression.parsed_exp.PathProperty.VariableName.substring(1);
@@ -235,6 +237,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
     for (const cl of obj_class.conditionLinks) {
     // obj_class.conditionLinks.forEach(function(cl) {
       // _.extend(cl.identification,resolveLinkByName(cl.identification.local_name));
+	  if(cl.identification.local_name.startsWith(":")) cl.identification.local_name = cl.identification.local_name.substring(1);
       _.extend(cl.identification, await parsePathExpression(cl.identification.local_name, obj_class.identification))
     }
 	// );
@@ -473,7 +476,8 @@ async function resolveTypesAndBuildSymbolTable(query) {
   // JSON -->
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
   async function parseExpObject(exp_obj, context, exprType) {
-   //console.log("parseExpObject",  exp_obj, context, exprType)
+   // console.log("parseExpObject",  exp_obj, context, exprType)
+   if(exp_obj.exp.startsWith(":")) exp_obj.exp = exp_obj.exp.substring(1);
    var parse_obj = exp_obj.exp;
    if(typeof parse_obj !== 'undefined'){
 	   let schemaName = await dataShapes.schema.schema;
