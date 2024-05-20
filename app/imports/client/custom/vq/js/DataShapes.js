@@ -415,8 +415,6 @@ const dataShapes = {
 		else if (proj !== undefined && ( this.schema.projectId != proj._id || this.schema.filling === 0 )) {
 			this.schema = getEmptySchema();
 			if ( proj.schema !== undefined && proj.schema !== "") {
-				//this.schema.classCount = await this.getClassCount();
-				//if (classCount < )
 				this.schema.projectId = proj._id;
 				this.schema.projectId_in_process = proj._id;
 				this.schema.schemaName =  proj.schema;
@@ -486,9 +484,13 @@ const dataShapes = {
 					
 				}
 				this.schema.classCount = await this.getClassCount();
+				const propInfo = await this.getPropInfo();
+				this.schema.propCount = propInfo.count;
+				this.schema.propMax = propInfo.max; 
 				if ( this.schema.classCount < DIAGRAM_CLASS_LIMIT) {
 					this.schema.diagram.classList = await this.getClassListExt();
 					this.schema.diagram.filteredClassList = await this.getClassListExt();
+					this.schema.diagram.properties = await this.getPropListExt();
 				}
 				this.schema.filling = 3;
 				this.schema.projectId_in_process = "";
@@ -1096,6 +1098,11 @@ const dataShapes = {
 		//console.log(rr)
 		return rr.data;	
 	},
+	getPropListExt : async function() {
+		const rr = await this.callServerFunction("xx_getPropList3", {main: {}});
+		//console.log(rr)
+		return rr.data;	
+	},
 	getClassList : async function(par) {
 	// console.log(dataShapes.getClassList({}))
 		//par = {class_count_limit:30, class_ind:1, only_local:false, not_in:['owl','rdf','rdfs']};
@@ -1112,6 +1119,10 @@ const dataShapes = {
 	},
 	getClassCount: async function() {
 		let rr = await this.callServerFunction("xx_getClassCount", {main:{}});
+		return rr; 
+	},
+	getPropInfo: async function() {
+		let rr = await this.callServerFunction("xx_getPropertyInfo", {main:{}});
 		return rr; 
 	},
 	makeDiagr : async function(c_list, p_list, superclassType, remSmall, addIds, disconnBig, compView, schema, info ) {

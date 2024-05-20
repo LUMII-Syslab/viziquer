@@ -9,7 +9,7 @@
             <div class="modal-content">
                 <div class="modal-header" style="overflow:scroll;">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">DSS schema <b>{{info_schema}}</b> has {{classCountAll}} ({{classCountFiltered}} filtered ) classes.</h4>
+                    <h4 class="modal-title">DSS schema <b>{{info_schema}}</b> has {{classCountAll}} ({{classCountFiltered}} filtered ) classes and {{propCountAll}} properties.</h4>
 					{{#if isBig }}
 					{{else}}
 
@@ -43,12 +43,16 @@
 									</div>
 									<div class="col-sm-6">
 										<select class="form-control" id="sortPar" style="width: 400px;">
-											<option selected value=1 >Sort by class weight</option>
-											<option value=3 >Sort by count of class individuals</option>
-											<option value=4 >Sort by count of incoming properties</option>
-											<option value=2 >Sort by namespaces</option>
+											<option selected value=1 >Sort classes by class weight</option>
+											<option value=3 >Sort classes by count of class individuals</option>
+											<option value=4 >Sort classes by count of incoming triples</option>
+											<option value=2 >Sort classes by namespaces</option>
 										</select>
-										<span>Class weight = (count of class individuals) + (count of class incoming properties)power(5/6)</span>
+										<span>Class weight = (class individuals) + (incoming triples)^(5/6)</span>
+										<div class="slidecontainer" style="width: 400px; padding-top:10px;">
+											<p><span id="propCount-slider-span"> </span>. Properties in the diagram - {{propCount}}</p>
+											<input type="range" min={{propSliderMin}} max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider" {{filterDisabled}} >
+										</div>	
 									</div>
 								</div>
 							</div>
@@ -56,7 +60,7 @@
 								<span>  </span>
 							 </div>
 							<div class="explain-form-group" style="padding-top:20px;">
-								<span class="label label-default" style="font-size:15px; background-color:transparent;">Manual class list selection</span>
+								<span class="label label-default" style="font-size:15px; background-color:transparent;">Manual classes and properties selection</span>
 									<label class="form-check-label">
 										<input class="form-check-input" id="manual" name="manual" index = 1 type="checkbox" >
 										<span class="custom-checkbox"></span>
@@ -65,10 +69,10 @@
 							<div class="container-fluid">
 								<div class="row">
 									<div class="col-sm-6">
-										<span>Selected classes ({{classCountSelected}})</span>
+										<label>Selected classes ({{classCountSelected}})</label>
 									</div>
 									<div class="col-sm-6">
-										<span>Rest classes ({{classCountRest}})</span>
+										<label>Rest classes ({{classCountRest}})</label>
 									</div>
 								</div>
 							</div>	
@@ -94,9 +98,16 @@
 									</div>
 							</div>
 
-							<div class="form-group" style="padding-top:10px; padding-left:15px;">
-								<button id="getProperties" type="button" class="btn btn-primary">Show all properties</button>
-							</div>							
+							<!--<div class="container-fluid"> -->
+							<!--	<div class="row"> -->
+							<!--		<div class="col-sm-6"> -->
+	
+							<!--		</div> -->
+							<!--		<div class="col-sm-6"> -->
+							<!--			<button id="getProperties" type="button" class="btn btn-primary" >Show all properties</button> -->
+							<!--		</div> -->
+							<!--	</div> -->
+							<!--</div>	-->						
 							<div class="container-fluid">
 								<div class="row">
 									<div class="col-sm-6">
@@ -117,8 +128,8 @@
 									</select>						
 								</div>
 								<div style="display: inline-block; vertical-align:top;">
-									<button id="removeSelectedProp" type="button" class="btn btn-primary" >&rarr;</button>
-									<button id="addSelectedProp" type="button" class="btn btn-primary">&larr;</button>
+									<button id="removeSelectedProp" type="button" class="btn btn-primary" {{manualDisabled}}>&rarr;</button>
+									<button id="addSelectedProp" type="button" class="btn btn-primary" {{manualDisabled}}>&larr;</button>
 								</div>
 								<div style="display: inline-block; vertical-align:top;">
 									<select class="form-select" id="restProperties" multiple size="15"  style="width: 400px;">
@@ -150,7 +161,7 @@
 										<div class="col-sm-4">
 											<div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
 												<p><span id="classCount-slider-span2"> </span> Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
-												<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount2">
+												<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount2"  {{filterDisabled}}>
 											</div>
 											<select class="form-control" id="diffG" style="width:300px" >
 												<option value=0 >Without merging</option>
@@ -166,12 +177,17 @@
 											</label>
 										</div>
 										<div class="col-sm-4">
+											<div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
+												<p><span id="propCount-slider-span2"> </span>. Properties - {{propCount}}</p>
+												<input type="range" min={{propSliderMin}} max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider2" {{filterDisabled}} >
+											</div>										
 										</div>
 										<div class="col-sm-4" style="padding-top:10px;">
 											<div style="padding-bottom:10px;">
 												<span class="label label-default" style="font-size:15px; background-color:transparent;">Diagram parameters:</span>
 											</div>
 											<select class="form-control" id="disconnBig">
+												<option value=5 >Max. 5 one object property edges</option>
 												<option selected value=7 >Max. 7 one object property edges</option>
 												<option value=10 >Max. 10 one object property edges</option>
 												<option value=0 >Draw all object properties in the diagram</option>
@@ -192,7 +208,8 @@
 								</div>
 								<div class="container-fluid" >
 									<div class="form-group">
-										<button id="showGroups" type="button" class="btn btn-primary">Calculate groups -(skos:altLabel,skos:prefLabel,rdf:type)</button>
+										<button id="showClasses" type="button" class="btn btn-primary">Show basic classes</button>
+										<button id="showGroups" type="button" class="btn btn-primary">Show merged classes</button>
 									</div>
 									<span class="label label-default" style="font-size:15px; background-color:transparent; padding-left:0px;">Nodes- {{classCountUsed}}, groups - {{classCountGroups}}, abstract classes - {{classCountAbstr}} </span>
 								</div>
@@ -200,7 +217,7 @@
 								<div class="container-fluid" style="padding-top:10px;">
 									<div class="row">
 										<div class="col-sm-4">
-											<label>C-Class, G-Merged classes, A-Superclass</label>
+											<label>C-Class, M-Merged classes, A-Superclass</label>
 											<div style="display: inline-block; vertical-align:top;">
 												<select class="form-select" id="usedClasses" size="33"  style="width: 300px;">
 													{{#each usedClasses}}
@@ -249,7 +266,9 @@
 							<div class="form-group">
 								<button id="calck" type="button" class="btn btn-primary" data-dismiss="modal">Test</button>
 							</div>
-
+							<div class="form-group">
+								<button id="getProperties" type="button" class="btn btn-primary" >Show all properties</button>
+							</div>
 						  </div>
 					  </div>
 					{{/if}}
