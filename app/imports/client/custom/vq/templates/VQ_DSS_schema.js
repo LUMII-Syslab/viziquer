@@ -1415,7 +1415,12 @@ async function getBasicClasses() {
 	
 	rr = await dataShapes.callServerFunction("xx_getCPCInfo", allParams); 
 	cpc_info = rr.data;
-	if ( cpc_info.length > 0 ) has_cpc = true;
+	if ( cpc_info.length > 0 ) { 
+		has_cpc = true;
+		for (const cpc of cpc_info) {
+			cpc.cnt = Number(cpc.cnt);
+		}
+	}	
 	allParams.main.p_list =  p_list.map(v => v.id);
 	rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams); 
 	cp_info = rr.data;
@@ -1434,7 +1439,8 @@ async function getBasicClasses() {
 
 		if ( p.max_cardinality == -1 ) 
 			p.max_cardinality = '*';
-		p_list_full[p_id] = {id:p.id, iri:p.iri, c_from:c_from, c_to:c_to, p_name:p_name, cnt:p.cnt, object_cnt:p.object_cnt, count:0, max_cardinality:p.max_cardinality};
+		p_list_full[p_id] = {id:p.id, iri:p.iri, c_from:c_from, c_to:c_to, p_name:p_name, 
+			cnt:Number(p.cnt), object_cnt:Number(p.object_cnt), count:0, max_cardinality:p.max_cardinality};
 		
 		if ( c_to.length == 1 && p.range_class_id == c_to[0].class_id)  // TODO te varētu būt drusku savādāk, šie ir Aigas atrastie 
 			p_list_full[p_id].is_range = 'R';
