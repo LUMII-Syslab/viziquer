@@ -208,7 +208,10 @@
 								</div>
 								<div class="container-fluid" >
 									<div class="form-group">
-										<button id="showClasses" type="button" class="btn btn-primary">Show basic classes</button>
+										{{#if pub}}
+										{{else}}
+											<button id="showClasses" type="button" class="btn btn-primary">Show basic classes</button>
+										{{/if}}
 										<button id="showGroups" type="button" class="btn btn-primary">Show merged classes</button>
 									</div>
 									<span class="label label-default" style="font-size:15px; background-color:transparent; padding-left:0px;">Nodes- {{classCountUsed}}, groups - {{classCountGroups}}, abstract classes - {{classCountAbstr}} </span>
