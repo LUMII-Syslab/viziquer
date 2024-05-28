@@ -891,7 +891,6 @@ function setPropSliderInfo() {
 	propPositions = [];
 	if ( dataShapes.schema.diagram.properties != undefined ) {
 		const propPow = Math.round(Math.log10(dataShapes.schema.propMax)); 
-		console.log('power', propPow)
 		if ( propPow > 4 ) {
 			for (let i = 4; i < propPow; i++) {
 				propSliderIntValues.push(Math.pow(10, i));
@@ -1005,7 +1004,7 @@ function getDifference(classInfo1, classInfo2) {
 	function getAttrTree(atr_list) {
 		let atr_tree = {};  
 		for (const a of atr_list) {
-			if ( !unused_props.includes(a.iri) ) { ///555 te būs izslēgšana
+			if ( !unused_props.includes(p_list_full[`p_${a.p_id}`].iri) ) { ///555 te būs izslēgšana
 				const p_id = `${a.p_name}_${a.type}`;
 				atr_tree[p_id] = a;
 				if ( !all_atrs.includes(p_id) )
@@ -1158,7 +1157,7 @@ function findSimilarClasses(level, class_list = []) {
 			}
 		}
 	}
-	
+	/*
 	for (const gId of Object.keys(temp2)) {
 		temp = {};
 		// Pārskata, cik savāktas grupas ir tuvas pilnajam grafam
@@ -1199,8 +1198,8 @@ function findSimilarClasses(level, class_list = []) {
 					}
 				}	
 			}
-		}
-	}
+		} 
+	} */
 	return temp2;				
 }
 
