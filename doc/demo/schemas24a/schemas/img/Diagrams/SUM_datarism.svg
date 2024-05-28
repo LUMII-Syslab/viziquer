@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="707" height="598" viewBox="0 0 707 598">
+ width="705" height="686" viewBox="0 0 705 686">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,165 +38,172 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002712519"><polygon points="23,20 478,20 478,192 23,192 "
+<g id="2002712519"><polygon points="21,108 476,108 476,280 21,280 "
 style="fill:White; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="27" y="34">PREFIX terms: &lt;http://purl.org/dc/terms/&gt;</tspan>
-<tspan x="27" y="49">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
-<tspan x="27" y="64">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
-<tspan x="27" y="79">PREFIX gnd: &lt;http://d-nb.info/standards/elementset/gnd#&gt;</tspan>
-<tspan x="27" y="94">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
-<tspan x="27" y="109">PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;</tspan>
-<tspan x="27" y="124">PREFIX bibo: &lt;http://purl.org/ontology/bibo/&gt;</tspan>
-<tspan x="27" y="139">PREFIX ccs: &lt;https://creativecommons.org/ns#&gt;</tspan>
-<tspan x="27" y="154">PREFIX rdar: &lt;http://metadataregistry.org/uri/schema/RDARelationshipsGR2/&gt;</tspan>
-<tspan x="27" y="169">PREFIX geonames: &lt;http://www.geonames.org/ontology#&gt;</tspan>
-<tspan x="27" y="184">PREFIX umbel: &lt;http://umbel.org/umbel#&gt;</tspan>
+<tspan x="25" y="122">PREFIX terms: &lt;http://purl.org/dc/terms/&gt;</tspan>
+<tspan x="25" y="137">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="25" y="152">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
+<tspan x="25" y="167">PREFIX gnd: &lt;http://d-nb.info/standards/elementset/gnd#&gt;</tspan>
+<tspan x="25" y="182">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="25" y="197">PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;</tspan>
+<tspan x="25" y="212">PREFIX bibo: &lt;http://purl.org/ontology/bibo/&gt;</tspan>
+<tspan x="25" y="227">PREFIX ccs: &lt;https://creativecommons.org/ns#&gt;</tspan>
+<tspan x="25" y="242">PREFIX rdar: &lt;http://metadataregistry.org/uri/schema/RDARelationshipsGR2/&gt;</tspan>
+<tspan x="25" y="257">PREFIX geonames: &lt;http://www.geonames.org/ontology#&gt;</tspan>
+<tspan x="25" y="272">PREFIX umbel: &lt;http://umbel.org/umbel#&gt;</tspan>
 </text>
 </g>
-<g id="2002712530"><polygon points="475,491 621,491 621,536 475,536 "
+<g id="2002712530"><polygon points="473,579 619,579 619,624 473,624 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="520" y="506">rdf:List (1)</tspan>
+<tspan x="518" y="594">rdf:List (1)</tspan>
 </text>
-<line x1="479" y1="509" x2="619" y2="509"
+<line x1="477" y1="597" x2="617" y2="597"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="479" y="521">rdf:type (2) [*]  -&gt; IRI</tspan>
+<tspan x="477" y="609">rdf:type (2) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002712541"><polygon points="126,439 426,439 426,469 126,469 "
+<g id="2002712541"><polygon points="124,520 424,520 424,550 124,550 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="224" y="454">rdfs:Resource (41)</tspan>
+<tspan x="222" y="535">rdfs:Resource (41)</tspan>
 </text>
 </g>
-<g id="2002712552"><polygon points="251,538 396,538 396,588 251,588 "
+<g id="2002712552"><polygon points="249,626 394,626 394,676 249,676 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="276" y="553">rdfs:Datatype (1)</tspan>
+<tspan x="274" y="641">rdfs:Datatype (1)</tspan>
 </text>
-<line x1="255" y1="556" x2="394" y2="556"
+<line x1="253" y1="644" x2="392" y2="644"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="255" y="568">rdf:type (3) [*]  -&gt; IRI</tspan>
-<tspan x="255" y="583">&lt;&gt; rdfs:subClassOf  </tspan>
+<tspan x="253" y="656">rdf:type (3) [*]  -&gt; IRI</tspan>
+<tspan x="253" y="671">&lt;&gt; rdfs:subClassOf  </tspan>
 </text>
 </g>
-<g id="2002712563"><polygon points="252,488 381,488 381,519 252,519 "
+<g id="2002712563"><polygon points="250,576 379,576 379,607 250,607 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="275" y="503">rdfs:Class (18)</tspan>
+<tspan x="273" y="591">rdfs:Class (18)</tspan>
 </text>
 </g>
-<g id="2002712574"><polygon points="29,491 241,491 241,571 29,571 "
+<g id="2002712574"><polygon points="27,579 239,579 239,659 27,659 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="89" y="506">rdf:Property (22)</tspan>
+<tspan x="87" y="594">rdf:Property (22)</tspan>
 </text>
-<line x1="33" y1="509" x2="239" y2="509"
+<line x1="31" y1="597" x2="237" y2="597"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="33" y="521">rdf:type (44) [*]  -&gt; IRI</tspan>
-<tspan x="33" y="536">rdfs:domain (16) [1] D -&gt; IRI</tspan>
-<tspan x="33" y="551">rdfs:range (16) [1] D -&gt; IRI</tspan>
-<tspan x="33" y="566">&lt;&gt; rdfs:subPropertyOf  DR</tspan>
+<tspan x="31" y="609">rdf:type (44) [*]  -&gt; IRI</tspan>
+<tspan x="31" y="624">rdfs:domain (16) [1] D -&gt; IRI</tspan>
+<tspan x="31" y="639">rdfs:range (16) [1] D -&gt; IRI</tspan>
+<tspan x="31" y="654">&lt;&gt; rdfs:subPropertyOf  DR</tspan>
 </text>
 </g>
-<g id="2002712585"><polygon points="18,202 240,202 240,387 18,387 "
+<g id="2002712585"><polygon points="16,290 238,290 238,475 16,475 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="66" y="217">foaf:Document (1.3e4)</tspan>
+<tspan x="64" y="305">foaf:Document (1.3e4)</tspan>
 </text>
-<line x1="22" y1="220" x2="238" y2="220"
+<line x1="20" y1="308" x2="236" y2="308"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="22" y="232">bibo:pages (5558) [*] </tspan>
-<tspan x="22" y="247">bibo:shortTitle (5762) [*] </tspan>
-<tspan x="22" y="262">ccs:License (1.3e4) [1]  -&gt; IRI</tspan>
-<tspan x="22" y="277">dc:contributor (1.3e4) [*]  -&gt; IRI</tspan>
-<tspan x="22" y="292">dc:creator (6832) [*] </tspan>
-<tspan x="22" y="307">gnd:dateOfBirth (6431) [*] </tspan>
-<tspan x="22" y="322">gnd:dateOfDeath (2497) [1] </tspan>
-<tspan x="22" y="337">rdf:type (1.3e4) [*]  -&gt; IRI</tspan>
-<tspan x="22" y="352">terms:identifier (1.3e4) [1] </tspan>
-<tspan x="22" y="367">terms:title (1.3e4) [*] </tspan>
-<tspan x="22" y="382">umbel:isLike (821) [*]  -&gt; IRI</tspan>
+<tspan x="20" y="320">bibo:pages (5558) [*] </tspan>
+<tspan x="20" y="335">bibo:shortTitle (5762) [*] </tspan>
+<tspan x="20" y="350">ccs:License (1.3e4) [1]  -&gt; IRI</tspan>
+<tspan x="20" y="365">dc:contributor (1.3e4) [*]  -&gt; IRI</tspan>
+<tspan x="20" y="380">dc:creator (6832) [*] </tspan>
+<tspan x="20" y="395">gnd:dateOfBirth (6431) [*] </tspan>
+<tspan x="20" y="410">gnd:dateOfDeath (2497) [1] </tspan>
+<tspan x="20" y="425">rdf:type (1.3e4) [*]  -&gt; IRI</tspan>
+<tspan x="20" y="440">terms:identifier (1.3e4) [1] </tspan>
+<tspan x="20" y="455">terms:title (1.3e4) [*] </tspan>
+<tspan x="20" y="470">umbel:isLike (821) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002712596"><polygon points="378,198 697,198 697,419 378,419 "
+<g id="2002712596"><polygon points="376,286 695,286 695,507 376,507 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="483" y="213">foaf:Person (1.4e5)</tspan>
+<tspan x="481" y="301">foaf:Person (1.4e5)</tspan>
 </text>
-<line x1="382" y1="216" x2="695" y2="216"
+<line x1="380" y1="304" x2="693" y2="304"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="382" y="228">bibo:pages (1) [*] </tspan>
-<tspan x="382" y="243">bibo:shortTitle (1) [*] </tspan>
-<tspan x="382" y="258">ccs:License (1.4e5) [1]  -&gt; IRI</tspan>
-<tspan x="382" y="273">foaf:name (1.4e5) [*] </tspan>
-<tspan x="382" y="288">geonames:countryCode (3.0e4) [*] D</tspan>
-<tspan x="382" y="303">gnd:dateOfBirth (9.3e4) [*] </tspan>
-<tspan x="382" y="318">gnd:dateOfDeath (3.5e4) [1] </tspan>
-<tspan x="382" y="333">gnd:variantNameForTheConferenceOrEvent (6722) [*] D</tspan>
-<tspan x="382" y="348">rdar:alternateIdentity (1.2e5) [*] D</tspan>
-<tspan x="382" y="363">rdf:type (1.4e5) [*]  -&gt; IRI</tspan>
-<tspan x="382" y="378">terms:description (2.3e4) [*] </tspan>
-<tspan x="382" y="393">terms:identifier (1.4e5) [1] </tspan>
-<tspan x="382" y="408">umbel:isLike (8486) [*]  -&gt; IRI</tspan>
+<tspan x="380" y="316">bibo:pages (1) [*] </tspan>
+<tspan x="380" y="331">bibo:shortTitle (1) [*] </tspan>
+<tspan x="380" y="346">ccs:License (1.4e5) [1]  -&gt; IRI</tspan>
+<tspan x="380" y="361">foaf:name (1.4e5) [*] </tspan>
+<tspan x="380" y="376">geonames:countryCode (3.0e4) [*] D</tspan>
+<tspan x="380" y="391">gnd:dateOfBirth (9.3e4) [*] </tspan>
+<tspan x="380" y="406">gnd:dateOfDeath (3.5e4) [1] </tspan>
+<tspan x="380" y="421">gnd:variantNameForTheConferenceOrEvent (6722) [*] D</tspan>
+<tspan x="380" y="436">rdar:alternateIdentity (1.2e5) [*] D</tspan>
+<tspan x="380" y="451">rdf:type (1.4e5) [*]  -&gt; IRI</tspan>
+<tspan x="380" y="466">terms:description (2.3e4) [*] </tspan>
+<tspan x="380" y="481">terms:identifier (1.4e5) [1] </tspan>
+<tspan x="380" y="496">umbel:isLike (8486) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002712501"><path d="M240,310 L378,310 "
+<g id="2002794407"><polygon points="203,39 507,39 507,91 203,91 "
+style="fill:none; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:18px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="310" y="59">RISM Data</tspan>
+<tspan x="248" y="81">http://data.rism.info/sparql</tspan>
+</text>
+</g>
+<g id="2002712501"><path d="M238,398 L376,398 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="372" y1="307" x2="378" y2="310"
+<line x1="370" y1="395" x2="376" y2="398"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="372" y1="313" x2="378" y2="310"
+<line x1="370" y1="401" x2="376" y2="398"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="244" y="308">terms:creator  </tspan>
+<tspan x="242" y="396">terms:creator  </tspan>
 </text>
 </g>
-<g id="2002712506"><path d="M378,278 L240,278 "
+<g id="2002712506"><path d="M376,366 L238,366 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="246" y1="275" x2="240" y2="278"
+<line x1="244" y1="363" x2="238" y2="366"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="246" y1="281" x2="240" y2="278"
+<line x1="244" y1="369" x2="238" y2="366"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="251" y="291">foaf:isPrimaryTopicOf  </tspan>
+<tspan x="249" y="379">foaf:isPrimaryTopicOf  </tspan>
 </text>
 </g>
-<g id="2002712511"><path d="M316,469 L316,488 "
+<g id="2002712511"><path d="M314,550 L314,576 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="321,479 316,469 311,479 "
+<polygon points="319,560 314,550 309,560 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="318" y="484"> </tspan>
+<tspan x="316" y="565"> </tspan>
 </text>
 </g>
-<g id="2002712513"><path d="M403,469 L403,500 405,504 409,506 475,506 "
+<g id="2002712513"><path d="M401,550 L401,588 403,592 407,594 473,594 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="408,479 403,469 398,479 "
+<polygon points="406,560 401,550 396,560 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="405" y="484"> </tspan>
+<tspan x="403" y="565"> </tspan>
 </text>
 </g>
-<g id="2002712515"><path d="M316,519 L316,538 "
+<g id="2002712515"><path d="M314,607 L314,626 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="321,529 316,519 311,529 "
+<polygon points="319,617 314,607 309,617 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="318" y="534"> </tspan>
+<tspan x="316" y="622"> </tspan>
 </text>
 </g>
-<g id="2002712517"><path d="M183,469 L183,491 "
+<g id="2002712517"><path d="M181,550 L181,579 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="188,479 183,469 178,479 "
+<polygon points="186,560 181,550 176,560 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="185" y="484"> </tspan>
+<tspan x="183" y="565"> </tspan>
 </text>
 </g>
 </svg>

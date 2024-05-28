@@ -470,6 +470,13 @@ style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <tspan x="135" y="1942">rdf:type (1.2e7) [*]  -&gt; IRI</tspan>
 </text>
 </g>
+<g id="2002797193"><polygon points="953,37 1456,37 1456,90 953,90 "
+style="fill:none; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:18px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1103" y="57">Spanish National Library</tspan>
+<tspan x="1097" y="79">http://datos.bne.es/sparql</tspan>
+</text>
+</g>
 <g id="2002712988"><path d="M185,1767 L185,1837 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
 <line x1="182" y1="1831" x2="185" y2="1837"

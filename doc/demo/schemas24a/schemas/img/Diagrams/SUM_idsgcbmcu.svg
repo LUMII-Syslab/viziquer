@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="587" height="343" viewBox="0 0 587 343">
+ width="585" height="416" viewBox="0 0 585 416">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,71 +38,78 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002715908"><polygon points="46,42 386,42 386,129 46,129 "
+<g id="2002715930"><polygon points="363,256 575,256 575,351 363,351 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="393" y="271">skos:ConceptScheme (29)</tspan>
+</text>
+<line x1="367" y1="274" x2="573" y2="274"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="367" y="286">rdf:type (29) [1]  -&gt; IRI</tspan>
+<tspan x="367" y="301">rdfs:comment (29) [1] </tspan>
+<tspan x="367" y="316">rdfs:label (8) [1] </tspan>
+<tspan x="367" y="331">skos:prefLabel (29) [*] </tspan>
+<tspan x="367" y="346">&lt;&gt; owl:sameAs  </tspan>
+</text>
+</g>
+<g id="2002715908"><polygon points="44,106 384,106 384,193 44,193 "
 style="fill:White; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="50" y="56">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
-<tspan x="50" y="71">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
-<tspan x="50" y="86">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
-<tspan x="50" y="101">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
-<tspan x="50" y="116">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="48" y="120">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
+<tspan x="48" y="135">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
+<tspan x="48" y="150">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="48" y="165">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="48" y="180">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
 </text>
 </g>
-<g id="2002715919"><polygon points="46,148 254,148 254,333 46,333 "
+<g id="2002715919"><polygon points="44,221 252,221 252,406 44,406 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="89" y="163">skos:Concept (1.8e5)</tspan>
+<tspan x="87" y="236">skos:Concept (1.8e5)</tspan>
 </text>
-<line x1="50" y1="166" x2="252" y2="166"
+<line x1="48" y1="239" x2="250" y2="239"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="50" y="178">dct:created (1.8e5 99.9%d) [*]  -&gt; IRI</tspan>
-<tspan x="50" y="193">dct:modified (1.8e5) [1] </tspan>
-<tspan x="50" y="208">rdf:type (1.8e5) [1]  -&gt; IRI</tspan>
-<tspan x="50" y="223">skos:altLabel (6.2e4) [*] </tspan>
-<tspan x="50" y="238">skos:prefLabel (1.8e5) [*] </tspan>
-<tspan x="50" y="253">skos:scopeNote (1.6e4) [*] </tspan>
-<tspan x="50" y="268">&lt;&gt; owl:sameAs  </tspan>
-<tspan x="50" y="283">&lt;&gt; skos:broader  </tspan>
-<tspan x="50" y="298">&lt;&gt; skos:closeMatch  </tspan>
-<tspan x="50" y="313">&lt;&gt; skos:narrower  </tspan>
-<tspan x="50" y="328">&lt;&gt; skos:related  </tspan>
+<tspan x="48" y="251">dct:created (1.8e5 99.9%d) [*]  -&gt; IRI</tspan>
+<tspan x="48" y="266">dct:modified (1.8e5) [1] </tspan>
+<tspan x="48" y="281">rdf:type (1.8e5) [1]  -&gt; IRI</tspan>
+<tspan x="48" y="296">skos:altLabel (6.2e4) [*] </tspan>
+<tspan x="48" y="311">skos:prefLabel (1.8e5) [*] </tspan>
+<tspan x="48" y="326">skos:scopeNote (1.6e4) [*] </tspan>
+<tspan x="48" y="341">&lt;&gt; owl:sameAs  </tspan>
+<tspan x="48" y="356">&lt;&gt; skos:broader  </tspan>
+<tspan x="48" y="371">&lt;&gt; skos:closeMatch  </tspan>
+<tspan x="48" y="386">&lt;&gt; skos:narrower  </tspan>
+<tspan x="48" y="401">&lt;&gt; skos:related  </tspan>
 </text>
 </g>
-<g id="2002715930"><polygon points="365,183 577,183 577,278 365,278 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="395" y="198">skos:ConceptScheme (29)</tspan>
-</text>
-<line x1="369" y1="201" x2="575" y2="201"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="369" y="213">rdf:type (29) [1]  -&gt; IRI</tspan>
-<tspan x="369" y="228">rdfs:comment (29) [1] </tspan>
-<tspan x="369" y="243">rdfs:label (8) [1] </tspan>
-<tspan x="369" y="258">skos:prefLabel (29) [*] </tspan>
-<tspan x="369" y="273">&lt;&gt; owl:sameAs  </tspan>
+<g id="2002792968"><polygon points="64,22 561,22 561,74 64,74 "
+style="fill:none; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:18px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="89" y="42">List of Subject Headings for Public Libraries in SKOS</tspan>
+<tspan x="197" y="64">http://id.sgcb.mcu.es/sparql</tspan>
 </text>
 </g>
-<g id="2002715898"><path d="M254,264 L365,264 "
+<g id="2002715898"><path d="M252,337 L363,337 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="359" y1="261" x2="365" y2="264"
+<line x1="357" y1="334" x2="363" y2="337"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="359" y1="267" x2="365" y2="264"
+<line x1="357" y1="340" x2="363" y2="337"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="258" y="247">skos:inScheme  </tspan>
-<tspan x="258" y="262">owl:sameAs  </tspan>
+<tspan x="256" y="320">skos:inScheme  </tspan>
+<tspan x="256" y="335">owl:sameAs  </tspan>
 </text>
 </g>
-<g id="2002715903"><path d="M365,205 L254,205 "
+<g id="2002715903"><path d="M363,278 L252,278 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="260" y1="202" x2="254" y2="205"
+<line x1="258" y1="275" x2="252" y2="278"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="260" y1="208" x2="254" y2="205"
+<line x1="258" y1="281" x2="252" y2="278"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="287" y="218">owl:sameAs  </tspan>
+<tspan x="285" y="291">owl:sameAs  </tspan>
 </text>
 </g>
 </svg>

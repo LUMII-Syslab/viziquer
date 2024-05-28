@@ -595,6 +595,13 @@ style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <tspan x="1726" y="422">owl:DatatypeProperty (270)</tspan>
 </text>
 </g>
+<g id="2002798096"><polygon points="160,53 809,53 809,105 160,105 "
+style="fill:none; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:18px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="191" y="73">Semantic Network for Integrated Information Management in Hospitals</tspan>
+<tspan x="382" y="95">http://www.snik.eu/sparql</tspan>
+</text>
+</g>
 <g id="2002718126"><path d="M1235,844 L1235,891 1237,895 1241,897 1900,897 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
 <line x1="1894" y1="894" x2="1900" y2="897"

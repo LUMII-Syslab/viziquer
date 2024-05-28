@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="2335" height="1162" viewBox="0 0 2335 1162">
+ width="2363" height="1297" viewBox="0 0 2363 1297">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,751 +38,758 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002725319"><polygon points="741,761 1041,761 1041,826 741,826 "
+<g id="2002725319"><polygon points="727,887 1033,887 1033,954 727,954 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="771" y="776">dv-mandaat:RechtstreekseVerkiezing (10)</tspan>
+<tspan x="758" y="902">dv-mandaat:RechtstreekseVerkiezing (10)</tspan>
 </text>
-<line x1="745" y1="779" x2="1039" y2="779"
+<line x1="731" y1="906" x2="1031" y2="906"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="745" y="791">dv-mandaat:datum (10) [1] D</tspan>
-<tspan x="745" y="806">mu:uuid (10) [1] </tspan>
-<tspan x="745" y="821">rdf:type (10) [1]  -&gt; IRI</tspan>
+<tspan x="731" y="918">dv-mandaat:datum (10) [1] D</tspan>
+<tspan x="731" y="933">mu:uuid (10) [1] </tspan>
+<tspan x="731" y="948">rdf:type (10) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725330"><polygon points="2133,842 2325,842 2325,894 2133,894 "
+<g id="2002725330"><polygon points="2156,970 2352,970 2352,1023 2156,1023 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="2162" y="857">dv-dossier:Serie (3.5e4)</tspan>
+<tspan x="2185" y="985">dv-dossier:Serie (3.5e4)</tspan>
 </text>
-<line x1="2137" y1="860" x2="2323" y2="860"
+<line x1="2160" y1="988" x2="2350" y2="988"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2137" y="872">mu:uuid (3.5e4) [1] </tspan>
-<tspan x="2137" y="887">rdf:type (3.5e4) [1]  -&gt; IRI</tspan>
+<tspan x="2160" y="1000">mu:uuid (3.5e4) [1] </tspan>
+<tspan x="2160" y="1015">rdf:type (3.5e4) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725341"><polygon points="1691,404 1991,404 1991,619 1691,619 "
+<g id="2002725341"><polygon points="1694,491 2000,491 2000,711 1694,711 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1756" y="419">dv-besluit:Agendapunt (3.0e4)</tspan>
+<tspan x="1760" y="506">dv-besluit:Agendapunt (3.0e4)</tspan>
 </text>
-<line x1="1695" y1="422" x2="1989" y2="422"
+<line x1="1698" y1="509" x2="1998" y2="509"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1695" y="434">dct:created (3.0e4) [1] </tspan>
-<tspan x="1695" y="449">dct:modified (3.0e4) [*] </tspan>
-<tspan x="1695" y="464">dct:title (2.8e4) [1] </tspan>
-<tspan x="1695" y="479">dv-bv:korteTitel (1.8e4) [1] D</tspan>
-<tspan x="1695" y="494">mu:uuid (3.0e4) [1] </tspan>
-<tspan x="1695" y="509">prov:wasRevisionOf (1.1e4) [*]  -&gt;  dcat:Dataset,dv-</tspan>
-<tspan x="1695" y="524">besluit:Agendapunt,dv-bv:Agenda</tspan>
-<tspan x="1695" y="539">rdf:type (3.0e4) [1]  -&gt; IRI</tspan>
-<tspan x="1695" y="554">schema:position (3.0e4) [*] </tspan>
-<tspan x="1695" y="569">&lt;- prov:wasRevisionOf (135)  &lt;-  dcat:Dataset,dv-</tspan>
-<tspan x="1695" y="584">besluit:Agendapunt,dv-bv:Agenda</tspan>
-<tspan x="1695" y="599">&lt;&gt; dv-besluit:aangebrachtNa  DR</tspan>
-<tspan x="1695" y="614">&lt;&gt; prov:wasDerivedFrom  </tspan>
+<tspan x="1698" y="521">dct:created (3.0e4) [1] </tspan>
+<tspan x="1698" y="536">dct:modified (3.0e4) [*] </tspan>
+<tspan x="1698" y="551">dct:title (2.8e4) [1] </tspan>
+<tspan x="1698" y="566">dv-bv:korteTitel (1.8e4) [1] D</tspan>
+<tspan x="1698" y="581">mu:uuid (3.0e4) [1] </tspan>
+<tspan x="1698" y="596">prov:wasRevisionOf (1.1e4) [*]  -&gt;  dcat:Dataset,dv-</tspan>
+<tspan x="1698" y="611">besluit:Agendapunt,dv-bv:Agenda</tspan>
+<tspan x="1698" y="626">rdf:type (3.0e4) [1]  -&gt; IRI</tspan>
+<tspan x="1698" y="641">schema:position (3.0e4) [*] </tspan>
+<tspan x="1698" y="656">&lt;- prov:wasRevisionOf (135)  &lt;-  dcat:Dataset,dv-</tspan>
+<tspan x="1698" y="671">besluit:Agendapunt,dv-bv:Agenda</tspan>
+<tspan x="1698" y="686">&lt;&gt; dv-besluit:aangebrachtNa  DR</tspan>
+<tspan x="1698" y="701">&lt;&gt; prov:wasDerivedFrom  </tspan>
 </text>
 </g>
-<g id="2002725352"><polygon points="1060,360 1360,360 1360,499 1060,499 "
+<g id="2002725352"><polygon points="1053,478 1359,478 1359,620 1053,620 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1112" y="375">dv-besluit:Vergaderactiviteit (1031)</tspan>
+<tspan x="1106" y="493">dv-besluit:Vergaderactiviteit (1031)</tspan>
 </text>
-<line x1="1064" y1="378" x2="1358" y2="378"
+<line x1="1057" y1="496" x2="1357" y2="496"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1064" y="390">bs:geplandePublicatieDatumDocumenten (440) [*] D</tspan>
-<tspan x="1064" y="405">dct:identifier (971) [1] </tspan>
-<tspan x="1064" y="420">dv-besluit:geplandeStart (1031) [1] D</tspan>
-<tspan x="1064" y="435">mu:uuid (1031) [1] </tspan>
-<tspan x="1064" y="450">rdf:type (1031) [1]  -&gt; IRI</tspan>
-<tspan x="1064" y="465">&lt;- dct:subject (1553)  &lt;-  dcat:Dataset,dcat:</tspan>
-<tspan x="1064" y="480">Distribution,dv-dossier:Stuk</tspan>
+<tspan x="1057" y="508">bs:geplandePublicatieDatumDocumenten (440) [*] D</tspan>
+<tspan x="1057" y="523">dct:identifier (971) [1] </tspan>
+<tspan x="1057" y="538">dv-besluit:geplandeStart (1031) [1] D</tspan>
+<tspan x="1057" y="553">mu:uuid (1031) [1] </tspan>
+<tspan x="1057" y="568">rdf:type (1031) [1]  -&gt; IRI</tspan>
+<tspan x="1057" y="583">&lt;- dct:subject (1553)  &lt;-  dcat:Dataset,dcat:</tspan>
+<tspan x="1057" y="598">Distribution,dv-dossier:Stuk</tspan>
 </text>
 </g>
-<g id="2002725363"><polygon points="101,303 401,303 401,533 101,533 "
+<g id="2002725363"><polygon points="74,429 380,429 380,664 74,664 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="195" y="318">dcat:Dataset (1568)</tspan>
+<tspan x="170" y="444">dcat:Dataset (1568)</tspan>
 </text>
-<line x1="105" y1="321" x2="399" y2="321"
+<line x1="78" y1="447" x2="378" y2="447"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="105" y="333">dct:created (1553) [1] </tspan>
-<tspan x="105" y="348">dct:issued (1568) [*] </tspan>
-<tspan x="105" y="363">dct:modified (1576) [*] </tspan>
-<tspan x="105" y="378">dct:subject (1553) [*]  -&gt;  dv-besluit:Vergaderactiviteit,</tspan>
-<tspan x="105" y="393">nfo:FileDataObject,skos:Concept</tspan>
-<tspan x="105" y="408">dct:title (1568) [1] </tspan>
-<tspan x="105" y="423">mu:uuid (1568) [1] </tspan>
-<tspan x="105" y="438">prov:wasRevisionOf (525) [*]  -&gt;  dcat:Dataset,dv-</tspan>
-<tspan x="105" y="453">besluit:Agendapunt,dv-bv:Agenda</tspan>
-<tspan x="105" y="468">rdf:type (1568) [1]  -&gt; IRI</tspan>
-<tspan x="105" y="483">&lt;- prov:wasRevisionOf (525)  &lt;-  dcat:Dataset,dv-</tspan>
-<tspan x="105" y="498">besluit:Agendapunt,dv-bv:Agenda</tspan>
+<tspan x="78" y="459">dct:created (1553) [1] </tspan>
+<tspan x="78" y="474">dct:issued (1568) [*] </tspan>
+<tspan x="78" y="489">dct:modified (1576) [*] </tspan>
+<tspan x="78" y="504">dct:subject (1553) [*]  -&gt;  dv-besluit:Vergaderactiviteit,</tspan>
+<tspan x="78" y="519">nfo:FileDataObject,skos:Concept</tspan>
+<tspan x="78" y="534">dct:title (1568) [1] </tspan>
+<tspan x="78" y="549">mu:uuid (1568) [1] </tspan>
+<tspan x="78" y="564">prov:wasRevisionOf (525) [*]  -&gt;  dcat:Dataset,dv-</tspan>
+<tspan x="78" y="579">besluit:Agendapunt,dv-bv:Agenda</tspan>
+<tspan x="78" y="594">rdf:type (1568) [1]  -&gt; IRI</tspan>
+<tspan x="78" y="609">&lt;- prov:wasRevisionOf (525)  &lt;-  dcat:Dataset,dv-</tspan>
+<tspan x="78" y="624">besluit:Agendapunt,dv-bv:Agenda</tspan>
 </text>
 </g>
-<g id="2002725374"><polygon points="588,578 888,578 888,658 588,658 "
+<g id="2002725374"><polygon points="571,707 877,707 877,788 571,788 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="651" y="593">dv-besluit:Bestuursorgaan (29)</tspan>
+<tspan x="635" y="722">dv-besluit:Bestuursorgaan (29)</tspan>
 </text>
-<line x1="592" y1="596" x2="886" y2="596"
+<line x1="575" y1="725" x2="875" y2="725"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="592" y="608">mu:uuid (29) [1] </tspan>
-<tspan x="592" y="623">rdf:type (29) [1]  -&gt; IRI</tspan>
-<tspan x="592" y="638">skos:prefLabel (29) [1] </tspan>
-<tspan x="592" y="653">&lt;&gt; dv-generiek:isTijdspecialisatieVan  DR</tspan>
+<tspan x="575" y="737">mu:uuid (29) [1] </tspan>
+<tspan x="575" y="752">rdf:type (29) [1]  -&gt; IRI</tspan>
+<tspan x="575" y="767">skos:prefLabel (29) [1] </tspan>
+<tspan x="575" y="782">&lt;&gt; dv-generiek:isTijdspecialisatieVan  DR</tspan>
 </text>
 </g>
-<g id="2002725385"><polygon points="101,745 531,745 531,1091 101,1091 "
+<g id="2002725385"><polygon points="74,871 513,871 513,1224 74,1224 "
 style="fill:White; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="105" y="759">PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;</tspan>
-<tspan x="105" y="774">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
-<tspan x="105" y="789">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
-<tspan x="105" y="804">PREFIX dv-mandaat: &lt;http://data.vlaanderen.be/ns/mandaat#&gt;</tspan>
-<tspan x="105" y="819">PREFIX dv-besluit: &lt;http://data.vlaanderen.be/ns/besluit#&gt;</tspan>
-<tspan x="105" y="834">PREFIX dcat: &lt;http://www.w3.org/ns/dcat#&gt;</tspan>
-<tspan x="105" y="849">PREFIX dv-bv: &lt;https://data.vlaanderen.be/ns/besluitvorming#&gt;</tspan>
-<tspan x="105" y="864">PREFIX dv-dossier: &lt;https://data.vlaanderen.be/ns/dossier#&gt;</tspan>
-<tspan x="105" y="879">PREFIX org: &lt;http://www.w3.org/ns/org#&gt;</tspan>
-<tspan x="105" y="894">PREFIX nfo: &lt;http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#&gt;</tspan>
-<tspan x="105" y="909">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
-<tspan x="105" y="924">PREFIX nie: &lt;http://www.semanticdesktop.org/ontologies/2007/01/19/nie#&gt;</tspan>
-<tspan x="105" y="939">PREFIX person: &lt;http://www.w3.org/ns/person#&gt;</tspan>
-<tspan x="105" y="954">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
-<tspan x="105" y="969">PREFIX mu: &lt;http://mu.semte.ch/vocabularies/core/&gt;</tspan>
-<tspan x="105" y="984">PREFIX dbo: &lt;http://dbpedia.org/ontology/&gt;</tspan>
-<tspan x="105" y="999">PREFIX schema: &lt;http://schema.org/&gt;</tspan>
-<tspan x="105" y="1014">PREFIX bs: &lt;http://themis.vlaanderen.be/vocabularies/besluitvorming/&gt;</tspan>
-<tspan x="105" y="1029">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
-<tspan x="105" y="1044">PREFIX dv-person: &lt;https://data.vlaanderen.be/ns/persoon#&gt;</tspan>
-<tspan x="105" y="1059">PREFIX dbpedia: &lt;http://dbpedia.org/resource/&gt;</tspan>
-<tspan x="105" y="1074">PREFIX dv-generiek: &lt;https://data.vlaanderen.be/ns/generiek#&gt;</tspan>
+<tspan x="78" y="885">PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;</tspan>
+<tspan x="78" y="900">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
+<tspan x="78" y="915">PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</tspan>
+<tspan x="78" y="930">PREFIX dv-mandaat: &lt;http://data.vlaanderen.be/ns/mandaat#&gt;</tspan>
+<tspan x="78" y="945">PREFIX dv-besluit: &lt;http://data.vlaanderen.be/ns/besluit#&gt;</tspan>
+<tspan x="78" y="960">PREFIX dcat: &lt;http://www.w3.org/ns/dcat#&gt;</tspan>
+<tspan x="78" y="975">PREFIX dv-bv: &lt;https://data.vlaanderen.be/ns/besluitvorming#&gt;</tspan>
+<tspan x="78" y="990">PREFIX dv-dossier: &lt;https://data.vlaanderen.be/ns/dossier#&gt;</tspan>
+<tspan x="78" y="1005">PREFIX org: &lt;http://www.w3.org/ns/org#&gt;</tspan>
+<tspan x="78" y="1020">PREFIX nfo: &lt;http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#&gt;</tspan>
+<tspan x="78" y="1035">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
+<tspan x="78" y="1050">PREFIX nie: &lt;http://www.semanticdesktop.org/ontologies/2007/01/19/nie#&gt;</tspan>
+<tspan x="78" y="1065">PREFIX person: &lt;http://www.w3.org/ns/person#&gt;</tspan>
+<tspan x="78" y="1080">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="78" y="1095">PREFIX mu: &lt;http://mu.semte.ch/vocabularies/core/&gt;</tspan>
+<tspan x="78" y="1110">PREFIX dbo: &lt;http://dbpedia.org/ontology/&gt;</tspan>
+<tspan x="78" y="1125">PREFIX schema: &lt;http://schema.org/&gt;</tspan>
+<tspan x="78" y="1140">PREFIX bs: &lt;http://themis.vlaanderen.be/vocabularies/besluitvorming/&gt;</tspan>
+<tspan x="78" y="1155">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="78" y="1170">PREFIX dv-person: &lt;https://data.vlaanderen.be/ns/persoon#&gt;</tspan>
+<tspan x="78" y="1185">PREFIX dbpedia: &lt;http://dbpedia.org/resource/&gt;</tspan>
+<tspan x="78" y="1200">PREFIX dv-generiek: &lt;https://data.vlaanderen.be/ns/generiek#&gt;</tspan>
 </text>
 </g>
-<g id="2002725396"><polygon points="1752,675 2052,675 2052,873 1752,873 "
+<g id="2002725396"><polygon points="1780,799 2086,799 2086,1002 1780,1002 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1836" y="690">dv-dossier:Stuk (6.5e4)</tspan>
+<tspan x="1866" y="814">dv-dossier:Stuk (6.5e4)</tspan>
 </text>
-<line x1="1756" y1="693" x2="2050" y2="693"
+<line x1="1784" y1="818" x2="2084" y2="818"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1756" y="705">dct:alternative (6880) [1] D</tspan>
-<tspan x="1756" y="720">dct:issued (6.6e4) [*] </tspan>
-<tspan x="1756" y="735">dct:subject (3.6e4) [*]  -&gt;  dv-besluit:Vergaderactiviteit,</tspan>
-<tspan x="1756" y="750">nfo:FileDataObject,skos:Concept</tspan>
-<tspan x="1756" y="765">dct:title (6.5e4) [1] </tspan>
-<tspan x="1756" y="780">mu:uuid (6.5e4) [1] </tspan>
-<tspan x="1756" y="795">nie:htmlContent (2.8e4) [1] D</tspan>
-<tspan x="1756" y="810">rdf:type (6.5e4) [1]  -&gt; IRI</tspan>
-<tspan x="1756" y="825">schema:position (3.0e4) [*] </tspan>
-<tspan x="1756" y="840">&lt;&gt; dv-bv:heeftBijlage  D</tspan>
+<tspan x="1784" y="830">dct:alternative (6880) [1] D</tspan>
+<tspan x="1784" y="845">dct:issued (6.6e4) [*] </tspan>
+<tspan x="1784" y="860">dct:subject (3.6e4) [*]  -&gt;  dv-besluit:Vergaderactiviteit,</tspan>
+<tspan x="1784" y="875">nfo:FileDataObject,skos:Concept</tspan>
+<tspan x="1784" y="890">dct:title (6.5e4) [1] </tspan>
+<tspan x="1784" y="905">mu:uuid (6.5e4) [1] </tspan>
+<tspan x="1784" y="920">nie:htmlContent (2.8e4) [1] D</tspan>
+<tspan x="1784" y="935">rdf:type (6.5e4) [1]  -&gt; IRI</tspan>
+<tspan x="1784" y="950">schema:position (3.0e4) [*] </tspan>
+<tspan x="1784" y="965">&lt;&gt; dv-bv:heeftBijlage  D</tspan>
 </text>
 </g>
-<g id="2002725407"><polygon points="1209,631 1509,631 1509,711 1209,711 "
+<g id="2002725407"><polygon points="1226,771 1533,771 1533,853 1226,853 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1305" y="646">person:Person (78)</tspan>
+<tspan x="1324" y="786">person:Person (78)</tspan>
 </text>
-<line x1="1213" y1="649" x2="1507" y2="649"
+<line x1="1230" y1="789" x2="1530" y2="789"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1213" y="661">dv-person:gebruikteVoornaam (78) [1] D</tspan>
-<tspan x="1213" y="676">foaf:familyName (78) [1] D</tspan>
-<tspan x="1213" y="691">mu:uuid (78) [1] </tspan>
-<tspan x="1213" y="706">rdf:type (78) [1]  -&gt; IRI</tspan>
+<tspan x="1230" y="801">dv-person:gebruikteVoornaam (78) [1] D</tspan>
+<tspan x="1230" y="816">foaf:familyName (78) [1] D</tspan>
+<tspan x="1230" y="831">mu:uuid (78) [1] </tspan>
+<tspan x="1230" y="846">rdf:type (78) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725418"><polygon points="101,562 401,562 401,627 101,627 "
+<g id="2002725418"><polygon points="74,686 380,686 380,752 74,752 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="194" y="577">prov:Invalidation (25)</tspan>
+<tspan x="169" y="701">prov:Invalidation (25)</tspan>
 </text>
-<line x1="105" y1="580" x2="399" y2="580"
+<line x1="78" y1="704" x2="378" y2="704"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="105" y="592">mu:uuid (25) [1] </tspan>
-<tspan x="105" y="607">prov:atTime (25) [1] </tspan>
-<tspan x="105" y="622">rdf:type (25) [1]  -&gt; IRI</tspan>
+<tspan x="78" y="716">mu:uuid (25) [1] </tspan>
+<tspan x="78" y="731">prov:atTime (25) [1] </tspan>
+<tspan x="78" y="746">rdf:type (25) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725429"><polygon points="1069,744 1369,744 1369,854 1069,854 "
+<g id="2002725429"><polygon points="1062,872 1368,872 1368,984 1062,984 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1136" y="759">dv-mandaat:Mandataris (614)</tspan>
+<tspan x="1130" y="887">dv-mandaat:Mandataris (614)</tspan>
 </text>
-<line x1="1073" y1="762" x2="1367" y2="762"
+<line x1="1066" y1="890" x2="1366" y2="890"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1073" y="774">dct:title (515) [1] </tspan>
-<tspan x="1073" y="789">dv-mandaat:einde (601) [1] D</tspan>
-<tspan x="1073" y="804">dv-mandaat:rangorde (614) [1] D</tspan>
-<tspan x="1073" y="819">dv-mandaat:start (614) [1] D</tspan>
-<tspan x="1073" y="834">mu:uuid (614) [1] </tspan>
-<tspan x="1073" y="849">rdf:type (614) [1]  -&gt; IRI</tspan>
+<tspan x="1066" y="902">dct:title (515) [1] </tspan>
+<tspan x="1066" y="917">dv-mandaat:einde (601) [1] D</tspan>
+<tspan x="1066" y="932">dv-mandaat:rangorde (614) [1] D</tspan>
+<tspan x="1066" y="947">dv-mandaat:start (614) [1] D</tspan>
+<tspan x="1066" y="962">mu:uuid (614) [1] </tspan>
+<tspan x="1066" y="977">rdf:type (614) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725440"><polygon points="705,378 1005,378 1005,443 705,443 "
+<g id="2002725440"><polygon points="690,496 996,496 996,563 690,563 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="769" y="393">dv-besluit:Bestuurseenheid (2)</tspan>
+<tspan x="755" y="511">dv-besluit:Bestuurseenheid (2)</tspan>
 </text>
-<line x1="709" y1="396" x2="1003" y2="396"
+<line x1="694" y1="515" x2="994" y2="515"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="709" y="408">mu:uuid (2) [1] </tspan>
-<tspan x="709" y="423">rdf:type (2) [1]  -&gt; IRI</tspan>
-<tspan x="709" y="438">skos:prefLabel (2) [1] </tspan>
+<tspan x="694" y="527">mu:uuid (2) [1] </tspan>
+<tspan x="694" y="542">rdf:type (2) [1]  -&gt; IRI</tspan>
+<tspan x="694" y="557">skos:prefLabel (2) [1] </tspan>
 </text>
 </g>
-<g id="2002725451"><polygon points="1633,920 1933,920 1933,1152 1633,1152 "
+<g id="2002725451"><polygon points="1638,1050 1944,1050 1944,1286 1638,1286 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1708" y="935">nfo:FileDataObject (7.3e4)</tspan>
+<tspan x="1715" y="1065">nfo:FileDataObject (7.3e4)</tspan>
 </text>
-<line x1="1637" y1="938" x2="1931" y2="938"
+<line x1="1642" y1="1068" x2="1942" y2="1068"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1637" y="950">dbo:fileExtension (7.3e4) [1] D</tspan>
-<tspan x="1637" y="965">dbpedia:fileExtension (30) [1] D</tspan>
-<tspan x="1637" y="980">dct:created (3134) [1] </tspan>
-<tspan x="1637" y="995">dct:creator (1552) [1] D -&gt; IRI</tspan>
-<tspan x="1637" y="1010">dct:format (3.8e4) [1] </tspan>
-<tspan x="1637" y="1025">mu:uuid (7.3e4) [1] </tspan>
-<tspan x="1637" y="1040">nfo:fileName (7.3e4) [1] D</tspan>
-<tspan x="1637" y="1055">nfo:fileSize (7.3e4) [1] D</tspan>
-<tspan x="1637" y="1070">prov:hadPrimarySource (48) [1] D -&gt; IRI</tspan>
-<tspan x="1637" y="1085">rdf:type (7.3e4) [1]  -&gt; IRI</tspan>
-<tspan x="1637" y="1100">&lt;- dct:subject (7.2e4)  &lt;-  dcat:Dataset,dcat:</tspan>
-<tspan x="1637" y="1115">Distribution,dv-dossier:Stuk</tspan>
-<tspan x="1637" y="1130">&lt;&gt; nie:dataSource  DR</tspan>
+<tspan x="1642" y="1080">dbo:fileExtension (7.3e4) [1] D</tspan>
+<tspan x="1642" y="1095">dbpedia:fileExtension (30) [1] D</tspan>
+<tspan x="1642" y="1110">dct:created (3134) [1] </tspan>
+<tspan x="1642" y="1125">dct:creator (1552) [1] D -&gt; IRI</tspan>
+<tspan x="1642" y="1140">dct:format (3.8e4) [1] </tspan>
+<tspan x="1642" y="1155">mu:uuid (7.3e4) [1] </tspan>
+<tspan x="1642" y="1170">nfo:fileName (7.3e4) [1] D</tspan>
+<tspan x="1642" y="1185">nfo:fileSize (7.3e4) [1] D</tspan>
+<tspan x="1642" y="1200">prov:hadPrimarySource (48) [1] D -&gt; IRI</tspan>
+<tspan x="1642" y="1215">rdf:type (7.3e4) [1]  -&gt; IRI</tspan>
+<tspan x="1642" y="1230">&lt;- dct:subject (7.2e4)  &lt;-  dcat:Dataset,dcat:</tspan>
+<tspan x="1642" y="1245">Distribution,dv-dossier:Stuk</tspan>
+<tspan x="1642" y="1260">&lt;&gt; nie:dataSource  DR</tspan>
 </text>
 </g>
-<g id="2002725462"><polygon points="1092,16 1392,16 1392,256 1092,256 "
+<g id="2002725462"><polygon points="1085,127 1392,127 1392,372 1085,372 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1186" y="31">skos:Concept (790)</tspan>
+<tspan x="1181" y="142">skos:Concept (790)</tspan>
 </text>
-<line x1="1096" y1="34" x2="1390" y2="34"
+<line x1="1089" y1="145" x2="1390" y2="145"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1096" y="46">mu:uuid (790) [1] </tspan>
-<tspan x="1096" y="61">owl:deprecated (79) [1] D</tspan>
-<tspan x="1096" y="76">prov:generatedAtTime (636) [1] D</tspan>
-<tspan x="1096" y="91">prov:invalidatedAtTime (583) [1] D</tspan>
-<tspan x="1096" y="106">rdf:type (790) [1]  -&gt; IRI</tspan>
-<tspan x="1096" y="121">skos:altLabel (43) [1] D</tspan>
-<tspan x="1096" y="136">skos:definition (4) [1] D</tspan>
-<tspan x="1096" y="151">skos:prefLabel (790) [1] </tspan>
-<tspan x="1096" y="166">&lt;- dct:subject (3.6e4)  &lt;-  dcat:Dataset,dcat:</tspan>
-<tspan x="1096" y="181">Distribution,dv-dossier:Stuk</tspan>
-<tspan x="1096" y="196">&lt;&gt; skos:broader  DR</tspan>
-<tspan x="1096" y="211">&lt;&gt; skos:narrower  DR</tspan>
+<tspan x="1089" y="157">mu:uuid (790) [1] </tspan>
+<tspan x="1089" y="172">owl:deprecated (79) [1] D</tspan>
+<tspan x="1089" y="187">prov:generatedAtTime (636) [1] D</tspan>
+<tspan x="1089" y="202">prov:invalidatedAtTime (583) [1] D</tspan>
+<tspan x="1089" y="217">rdf:type (790) [1]  -&gt; IRI</tspan>
+<tspan x="1089" y="232">skos:altLabel (43) [1] D</tspan>
+<tspan x="1089" y="247">skos:definition (4) [1] D</tspan>
+<tspan x="1089" y="262">skos:prefLabel (790) [1] </tspan>
+<tspan x="1089" y="277">&lt;- dct:subject (3.6e4)  &lt;-  dcat:Dataset,dcat:</tspan>
+<tspan x="1089" y="292">Distribution,dv-dossier:Stuk</tspan>
+<tspan x="1089" y="307">&lt;&gt; skos:broader  DR</tspan>
+<tspan x="1089" y="322">&lt;&gt; skos:narrower  DR</tspan>
 </text>
 </g>
-<g id="2002725473"><polygon points="101,633 401,633 401,698 101,698 "
+<g id="2002725473"><polygon points="74,759 380,759 380,825 74,825 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="194" y="648">prov:Generation (27)</tspan>
+<tspan x="169" y="774">prov:Generation (27)</tspan>
 </text>
-<line x1="105" y1="651" x2="399" y2="651"
+<line x1="78" y1="777" x2="378" y2="777"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="105" y="663">mu:uuid (27) [1] </tspan>
-<tspan x="105" y="678">prov:atTime (27) [1] </tspan>
-<tspan x="105" y="693">rdf:type (27) [1]  -&gt; IRI</tspan>
+<tspan x="78" y="789">mu:uuid (27) [1] </tspan>
+<tspan x="78" y="804">prov:atTime (27) [1] </tspan>
+<tspan x="78" y="819">rdf:type (27) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725484"><polygon points="101,150 401,150 401,260 101,260 "
+<g id="2002725484"><polygon points="74,263 380,263 380,376 74,376 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="206" y="165">dcat:Catalog (1)</tspan>
+<tspan x="181" y="278">dcat:Catalog (1)</tspan>
 </text>
-<line x1="105" y1="168" x2="399" y2="168"
+<line x1="78" y1="282" x2="378" y2="282"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="105" y="180">dct:description (1) [1] D</tspan>
-<tspan x="105" y="195">dct:issued (1) [*] </tspan>
-<tspan x="105" y="210">dct:modified (1) [*] </tspan>
-<tspan x="105" y="225">dct:title (1) [1] </tspan>
-<tspan x="105" y="240">mu:uuid (1) [1] </tspan>
-<tspan x="105" y="255">rdf:type (1) [1]  -&gt; IRI</tspan>
+<tspan x="78" y="294">dct:description (1) [1] D</tspan>
+<tspan x="78" y="309">dct:issued (1) [*] </tspan>
+<tspan x="78" y="324">dct:modified (1) [*] </tspan>
+<tspan x="78" y="339">dct:title (1) [1] </tspan>
+<tspan x="78" y="354">mu:uuid (1) [1] </tspan>
+<tspan x="78" y="369">rdf:type (1) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725495"><polygon points="1335,896 1599,896 1599,961 1335,961 "
+<g id="2002725495"><polygon points="1333,1025 1603,1025 1603,1091 1333,1091 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1391" y="911">skos:ConceptScheme (13)</tspan>
+<tspan x="1390" y="1040">skos:ConceptScheme (13)</tspan>
 </text>
-<line x1="1339" y1="914" x2="1597" y2="914"
+<line x1="1338" y1="1043" x2="1601" y2="1043"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1339" y="926">mu:uuid (13) [1] </tspan>
-<tspan x="1339" y="941">rdf:type (13) [1]  -&gt; IRI</tspan>
-<tspan x="1339" y="956">skos:prefLabel (13) [1] </tspan>
+<tspan x="1338" y="1055">mu:uuid (13) [1] </tspan>
+<tspan x="1338" y="1070">rdf:type (13) [1]  -&gt; IRI</tspan>
+<tspan x="1338" y="1085">skos:prefLabel (13) [1] </tspan>
 </text>
 </g>
-<g id="2002725506"><polygon points="1747,188 2047,188 2047,354 1747,354 "
+<g id="2002725506"><polygon points="1754,287 2060,287 2060,456 1754,456 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1840" y="203">dv-bv:Agenda (1037)</tspan>
+<tspan x="1849" y="302">dv-bv:Agenda (1037)</tspan>
 </text>
-<line x1="1751" y1="206" x2="2045" y2="206"
+<line x1="1758" y1="305" x2="2058" y2="305"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1751" y="218">dct:created (1037) [1] </tspan>
-<tspan x="1751" y="233">dct:modified (1037) [*] </tspan>
-<tspan x="1751" y="248">dct:title (1037) [1] </tspan>
-<tspan x="1751" y="263">mu:uuid (1037) [1] </tspan>
-<tspan x="1751" y="278">prov:wasRevisionOf (55) [*]  -&gt;  dcat:Dataset,dv-</tspan>
-<tspan x="1751" y="293">besluit:Agendapunt,dv-bv:Agenda</tspan>
-<tspan x="1751" y="308">rdf:type (1037) [1]  -&gt; IRI</tspan>
-<tspan x="1751" y="323">&lt;- prov:wasRevisionOf (1)  &lt;-  dcat:Dataset,dv-besluit:</tspan>
-<tspan x="1751" y="338">Agendapunt,dv-bv:Agenda</tspan>
+<tspan x="1758" y="317">dct:created (1037) [1] </tspan>
+<tspan x="1758" y="332">dct:modified (1037) [*] </tspan>
+<tspan x="1758" y="347">dct:title (1037) [1] </tspan>
+<tspan x="1758" y="362">mu:uuid (1037) [1] </tspan>
+<tspan x="1758" y="377">prov:wasRevisionOf (55) [*]  -&gt;  dcat:Dataset,dv-</tspan>
+<tspan x="1758" y="392">besluit:Agendapunt,dv-bv:Agenda</tspan>
+<tspan x="1758" y="407">rdf:type (1037) [1]  -&gt; IRI</tspan>
+<tspan x="1758" y="422">&lt;- prov:wasRevisionOf (1)  &lt;-  dcat:Dataset,dv-besluit:</tspan>
+<tspan x="1758" y="437">Agendapunt,dv-bv:Agenda</tspan>
 </text>
 </g>
-<g id="2002725517"><polygon points="103,12 403,12 403,92 103,92 "
+<g id="2002725517"><polygon points="76,123 382,123 382,204 76,204 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="215" y="27">foaf:Agent (1)</tspan>
+<tspan x="190" y="138">foaf:Agent (1)</tspan>
 </text>
-<line x1="107" y1="30" x2="401" y2="30"
+<line x1="80" y1="141" x2="380" y2="141"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="107" y="42">dct:identifier (1) [1] </tspan>
-<tspan x="107" y="57">foaf:name (1) [1] D</tspan>
-<tspan x="107" y="72">mu:uuid (1) [1] </tspan>
-<tspan x="107" y="87">rdf:type (1) [1]  -&gt; IRI</tspan>
+<tspan x="80" y="153">dct:identifier (1) [1] </tspan>
+<tspan x="80" y="168">foaf:name (1) [1] D</tspan>
+<tspan x="80" y="183">mu:uuid (1) [1] </tspan>
+<tspan x="80" y="198">rdf:type (1) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725528"><polygon points="504,677 804,677 804,727 504,727 "
+<g id="2002725528"><polygon points="485,808 791,808 791,859 485,859 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="582" y="692">dv-mandaat:Mandaat (33)</tspan>
+<tspan x="564" y="823">dv-mandaat:Mandaat (33)</tspan>
 </text>
-<line x1="508" y1="695" x2="802" y2="695"
+<line x1="489" y1="826" x2="789" y2="826"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="508" y="707">mu:uuid (33) [1] </tspan>
-<tspan x="508" y="722">rdf:type (33) [1]  -&gt; IRI</tspan>
+<tspan x="489" y="838">mu:uuid (33) [1] </tspan>
+<tspan x="489" y="853">rdf:type (33) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725539"><polygon points="773,904 1011,904 1011,969 773,969 "
+<g id="2002725539"><polygon points="760,1033 1003,1033 1003,1100 760,1100 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="859" y="919">org:Role (7)</tspan>
+<tspan x="848" y="1048">org:Role (7)</tspan>
 </text>
-<line x1="777" y1="922" x2="1009" y2="922"
+<line x1="764" y1="1052" x2="1001" y2="1052"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="777" y="934">mu:uuid (7) [1] </tspan>
-<tspan x="777" y="949">rdf:type (7) [1]  -&gt; IRI</tspan>
-<tspan x="777" y="964">skos:prefLabel (7) [1] </tspan>
+<tspan x="764" y="1064">mu:uuid (7) [1] </tspan>
+<tspan x="764" y="1079">rdf:type (7) [1]  -&gt; IRI</tspan>
+<tspan x="764" y="1094">skos:prefLabel (7) [1] </tspan>
 </text>
 </g>
-<g id="2002725550"><polygon points="1179,545 1479,545 1479,610 1179,610 "
+<g id="2002725550"><polygon points="1174,667 1480,667 1480,733 1174,733 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1275" y="560">prov:Activity (1037)</tspan>
+<tspan x="1272" y="682">prov:Activity (1037)</tspan>
 </text>
-<line x1="1183" y1="563" x2="1477" y2="563"
+<line x1="1178" y1="685" x2="1478" y2="685"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1183" y="575">mu:uuid (1037) [1] </tspan>
-<tspan x="1183" y="590">prov:startedAtTime (1037) [1] D</tspan>
-<tspan x="1183" y="605">rdf:type (1037) [1]  -&gt; IRI</tspan>
+<tspan x="1178" y="697">mu:uuid (1037) [1] </tspan>
+<tspan x="1178" y="712">prov:startedAtTime (1037) [1] D</tspan>
+<tspan x="1178" y="727">rdf:type (1037) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725561"><polygon points="1962,988 2192,988 2192,1038 1962,1038 "
+<g id="2002725561"><polygon points="1974,1119 2208,1119 2208,1170 1974,1170 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="2005" y="1003">dv-dossier:Dossier (8184)</tspan>
+<tspan x="2017" y="1134">dv-dossier:Dossier (8184)</tspan>
 </text>
-<line x1="1966" y1="1006" x2="2190" y2="1006"
+<line x1="1978" y1="1137" x2="2206" y2="1137"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1966" y="1018">mu:uuid (8184) [1] </tspan>
-<tspan x="1966" y="1033">rdf:type (8184) [1]  -&gt; IRI</tspan>
+<tspan x="1978" y="1149">mu:uuid (8184) [1] </tspan>
+<tspan x="1978" y="1164">rdf:type (8184) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725572"><polygon points="445,10 745,10 745,208 445,208 "
+<g id="2002725572"><polygon points="425,120 731,120 731,323 425,323 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="527" y="25">dcat:Distribution (7.3e4)</tspan>
+<tspan x="508" y="136">dcat:Distribution (7.3e4)</tspan>
 </text>
-<line x1="449" y1="28" x2="743" y2="28"
+<line x1="429" y1="139" x2="729" y2="139"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="449" y="40">dcat:byteSize (7.3e4) [1] D</tspan>
-<tspan x="449" y="55">dcat:downloadURL (3.7e4) [1] D -&gt; IRI</tspan>
-<tspan x="449" y="70">dct:created (7.3e4) [1] </tspan>
-<tspan x="449" y="85">dct:format (7.3e4) [1] </tspan>
-<tspan x="449" y="100">dct:issued (7.3e4) [*] </tspan>
-<tspan x="449" y="115">dct:modified (7.3e4) [*] </tspan>
-<tspan x="449" y="130">dct:subject (7.3e4) [*]  -&gt;  dv-besluit:Vergaderactiviteit,</tspan>
-<tspan x="449" y="145">nfo:FileDataObject,skos:Concept</tspan>
-<tspan x="449" y="160">dct:title (7.3e4) [1] </tspan>
-<tspan x="449" y="175">mu:uuid (7.3e4) [1] </tspan>
-<tspan x="449" y="190">rdf:type (7.3e4) [1]  -&gt; IRI</tspan>
-</text>
-</g>
-<g id="2002725144"><path d="M1479,577 L1691,577 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1685" y1="574" x2="1691" y2="577"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1685" y1="580" x2="1691" y2="577"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1483" y="575">prov:generated  D</tspan>
+<tspan x="429" y="151">dcat:byteSize (7.3e4) [1] D</tspan>
+<tspan x="429" y="166">dcat:downloadURL (3.7e4) [1] D -&gt; IRI</tspan>
+<tspan x="429" y="181">dct:created (7.3e4) [1] </tspan>
+<tspan x="429" y="196">dct:format (7.3e4) [1] </tspan>
+<tspan x="429" y="211">dct:issued (7.3e4) [*] </tspan>
+<tspan x="429" y="226">dct:modified (7.3e4) [*] </tspan>
+<tspan x="429" y="241">dct:subject (7.3e4) [*]  -&gt;  dv-besluit:Vergaderactiviteit,</tspan>
+<tspan x="429" y="256">nfo:FileDataObject,skos:Concept</tspan>
+<tspan x="429" y="271">dct:title (7.3e4) [1] </tspan>
+<tspan x="429" y="286">mu:uuid (7.3e4) [1] </tspan>
+<tspan x="429" y="301">rdf:type (7.3e4) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002725149"><path d="M1366,545 L1366,256 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1363" y1="262" x2="1366" y2="256"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1369" y1="262" x2="1366" y2="256"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1317" y="541">dct:type  </tspan>
+<g id="2002796849"><polygon points="970,45 1395,45 1395,98 970,98 "
+style="fill:none; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:18px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1099" y="65">Themis Vlaanderen</tspan>
+<tspan x="1033" y="87">https://themis.vlaanderen.be/sparql</tspan>
 </text>
 </g>
-<g id="2002725154"><path d="M2262,842 L2262,780 2260,776 2256,774 2052,774 "
+<g id="2002725144"><path d="M1480,717 L1700,717 1700,711 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2058" y1="771" x2="2052" y2="774"
+<line x1="1697" y1="717" x2="1700" y2="711"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2058" y1="777" x2="2052" y2="774"
+<line x1="1703" y1="717" x2="1700" y2="711"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2068" y="838">dv-dossier:Collectie.bestaatUit  DR</tspan>
+<tspan x="1485" y="714">prov:generated  D</tspan>
 </text>
 </g>
-<g id="2002725159"><path d="M1842,873 L1842,920 "
+<g id="2002725149"><path d="M1365,667 L1365,372 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1839" y1="914" x2="1842" y2="920"
+<line x1="1362" y1="378" x2="1365" y2="372"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1845" y1="914" x2="1842" y2="920"
+<line x1="1368" y1="378" x2="1365" y2="372"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1844" y="888">prov:value  D</tspan>
+<tspan x="1315" y="662">dct:type  </tspan>
 </text>
 </g>
-<g id="2002725164"><path d="M1752,848 L1369,848 "
+<g id="2002725154"><path d="M2288,970 L2288,907 2286,903 2282,901 2086,901 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1375" y1="845" x2="1369" y2="848"
+<line x1="2092" y1="897" x2="2086" y2="901"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1375" y1="851" x2="1369" y2="848"
+<line x1="2092" y1="904" x2="2086" y2="901"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1596" y="861">prov:qualifiedAssociation  D</tspan>
+<tspan x="2090" y="966">dv-dossier:Collectie.bestaatUit  DR</tspan>
 </text>
 </g>
-<g id="2002725169"><path d="M671,578 L671,226 673,222 677,220 1092,220 "
+<g id="2002725159"><path d="M1851,1002 L1851,1050 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1086" y1="217" x2="1092" y2="220"
+<line x1="1848" y1="1043" x2="1851" y2="1050"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1086" y1="223" x2="1092" y2="220"
+<line x1="1854" y1="1043" x2="1851" y2="1050"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="561" y="574">org:classification  R</tspan>
+<tspan x="1853" y="1017">prov:value  D</tspan>
 </text>
 </g>
-<g id="2002725174"><path d="M793,378 L793,248 795,244 799,242 1092,242 "
+<g id="2002725164"><path d="M1780,976 L1368,976 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1086" y1="239" x2="1092" y2="242"
+<line x1="1374" y1="973" x2="1368" y2="976"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1086" y1="245" x2="1092" y2="242"
+<line x1="1374" y1="979" x2="1368" y2="976"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="683" y="374">org:classification  R</tspan>
+<tspan x="1620" y="989">prov:qualifiedAssociation  D</tspan>
 </text>
 </g>
-<g id="2002725179"><path d="M828,578 L828,443 "
+<g id="2002725169"><path d="M655,707 L655,341 658,337 662,335 1085,335 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="825" y1="449" x2="828" y2="443"
+<line x1="1079" y1="332" x2="1085" y2="335"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="831" y1="449" x2="828" y2="443"
+<line x1="1079" y1="338" x2="1085" y2="335"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="701" y="574">dv-besluit:bestuurt  DR</tspan>
+<tspan x="543" y="702">org:classification  R</tspan>
 </text>
 </g>
-<g id="2002725184"><path d="M629,727 L629,935 631,939 635,941 773,941 "
+<g id="2002725174"><path d="M780,496 L780,363 782,359 786,357 1085,357 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="767" y1="938" x2="773" y2="941"
+<line x1="1079" y1="354" x2="1085" y2="357"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="767" y1="944" x2="773" y2="941"
+<line x1="1079" y1="360" x2="1085" y2="357"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="631" y="742">org:role  DR</tspan>
+<tspan x="668" y="492">org:classification  R</tspan>
 </text>
 </g>
-<g id="2002725189"><path d="M1069,837 L715,837 711,835 709,831 709,727 "
+<g id="2002725179"><path d="M816,707 L816,563 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="706" y1="733" x2="709" y2="727"
+<line x1="813" y1="569" x2="816" y2="563"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="712" y1="733" x2="709" y2="727"
+<line x1="819" y1="569" x2="816" y2="563"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="989" y="850">org:holds  DR</tspan>
+<tspan x="686" y="702">dv-besluit:bestuurt  DR</tspan>
 </text>
 </g>
-<g id="2002725194"><path d="M588,641 L401,641 "
+<g id="2002725184"><path d="M613,859 L613,1065 615,1069 619,1071 760,1071 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="407" y1="638" x2="401" y2="641"
+<line x1="753" y1="1068" x2="760" y2="1071"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="407" y1="644" x2="401" y2="641"
+<line x1="753" y1="1074" x2="760" y2="1071"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="426" y="654">prov:qualifiedGeneration  DR</tspan>
+<tspan x="615" y="874">org:role  DR</tspan>
 </text>
 </g>
-<g id="2002725199"><path d="M2319,842 L2319,96 2317,92 2313,90 1392,90 "
+<g id="2002725189"><path d="M1062,965 L700,965 696,963 694,959 694,859 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1398" y1="87" x2="1392" y2="90"
+<line x1="691" y1="865" x2="694" y2="859"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1398" y1="93" x2="1392" y2="90"
+<line x1="697" y1="865" x2="694" y2="859"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2270" y="838">dct:type  </tspan>
+<tspan x="980" y="978">org:holds  DR</tspan>
 </text>
 </g>
-<g id="2002725204"><path d="M2122,988 L2122,857 2120,853 2116,851 2052,851 "
+<g id="2002725194"><path d="M571,765 L380,765 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="2058" y1="848" x2="2052" y2="851"
+<line x1="386" y1="762" x2="380" y2="765"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="2058" y1="854" x2="2052" y2="851"
+<line x1="386" y1="768" x2="380" y2="765"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1941" y="984">dv-dossier:Dossier.bestaatUit  R</tspan>
+<tspan x="405" y="778">prov:qualifiedGeneration  DR</tspan>
 </text>
 </g>
-<g id="2002725209"><path d="M1877,188 L1877,161 1875,157 1871,155 1392,155 "
+<g id="2002725199"><path d="M2346,970 L2346,208 2344,204 2340,202 1392,202 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1398" y1="152" x2="1392" y2="155"
+<line x1="1398" y1="199" x2="1392" y2="202"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1398" y1="158" x2="1392" y2="155"
+<line x1="1398" y1="205" x2="1392" y2="202"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1743" y="184">dv-bv:agendaStatus  DR</tspan>
+<tspan x="2296" y="966">dct:type  </tspan>
 </text>
 </g>
-<g id="2002725214"><path d="M1229,360 L1229,256 "
+<g id="2002725204"><path d="M2137,1119 L2137,985 2135,981 2131,979 2086,979 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1226" y1="262" x2="1229" y2="256"
+<line x1="2092" y1="976" x2="2086" y2="979"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1232" y1="262" x2="1229" y2="256"
+<line x1="2092" y1="982" x2="2086" y2="979"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1180" y="356">dct:type  </tspan>
+<tspan x="1952" y="1115">dv-dossier:Dossier.bestaatUit  R</tspan>
 </text>
 </g>
-<g id="2002725219"><path d="M588,601 L401,601 "
+<g id="2002725209"><path d="M1887,287 L1887,270 1885,265 1881,263 1392,263 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="407" y1="598" x2="401" y2="601"
+<line x1="1398" y1="260" x2="1392" y2="263"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="407" y1="604" x2="401" y2="601"
+<line x1="1398" y1="266" x2="1392" y2="263"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="425" y="614">prov:qualifiedInvalidation  DR</tspan>
+<tspan x="1750" y="283">dv-bv:agendaStatus  DR</tspan>
 </text>
 </g>
-<g id="2002725224"><path d="M888,650 L1076,650 1080,652 1082,656 1082,744 "
+<g id="2002725214"><path d="M1225,478 L1225,372 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1079" y1="738" x2="1082" y2="744"
+<line x1="1222" y1="378" x2="1225" y2="372"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1085" y1="738" x2="1082" y2="744"
+<line x1="1228" y1="378" x2="1225" y2="372"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="892" y="648">prov:hadMember  DR</tspan>
+<tspan x="1175" y="473">dct:type  </tspan>
 </text>
 </g>
-<g id="2002725229"><path d="M2052,749 L2191,749 2195,747 2197,743 2197,122 2195,118 2191,116 1392,116 "
+<g id="2002725219"><path d="M571,724 L380,724 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1398" y1="113" x2="1392" y2="116"
+<line x1="386" y1="721" x2="380" y2="724"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1398" y1="119" x2="1392" y2="116"
+<line x1="386" y1="727" x2="380" y2="724"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="2056" y="747">dct:type  </tspan>
+<tspan x="404" y="737">prov:qualifiedInvalidation  DR</tspan>
 </text>
 </g>
-<g id="2002725234"><path d="M1747,329 L1320,329 1316,331 1314,335 1314,360 "
+<g id="2002725224"><path d="M877,774 L1069,774 1073,776 1075,780 1075,872 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1311" y1="354" x2="1314" y2="360"
+<line x1="1072" y1="866" x2="1075" y2="872"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1317" y1="354" x2="1314" y2="360"
+<line x1="1078" y1="866" x2="1075" y2="872"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1611" y="342">dv-bv:isAgendaVoor  DR</tspan>
+<tspan x="881" y="772">prov:hadMember  DR</tspan>
 </text>
 </g>
-<g id="2002725239"><path d="M1274,545 L1274,499 "
+<g id="2002725229"><path d="M2086,875 L2207,875 2211,873 2214,869 2214,235 2211,231 2207,229 1392,229 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1271" y1="505" x2="1274" y2="499"
+<line x1="1398" y1="226" x2="1392" y2="229"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1277" y1="505" x2="1274" y2="499"
+<line x1="1398" y1="232" x2="1392" y2="229"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1194" y="541">prov:used  DR</tspan>
+<tspan x="2090" y="873">dct:type  </tspan>
 </text>
 </g>
-<g id="2002725244"><path d="M1307,744 L1307,711 "
+<g id="2002725234"><path d="M1754,439 L1318,439 1314,441 1312,445 1312,478 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1304" y1="717" x2="1307" y2="711"
+<line x1="1309" y1="472" x2="1312" y2="478"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1310" y1="717" x2="1307" y2="711"
+<line x1="1315" y1="472" x2="1312" y2="478"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1090" y="740">dv-mandaat:isBestuurlijkeAliasVan  DR</tspan>
+<tspan x="1615" y="452">dv-bv:isAgendaVoor  DR</tspan>
 </text>
 </g>
-<g id="2002725249"><path d="M251,260 L251,303 "
+<g id="2002725239"><path d="M1271,667 L1271,620 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="248" y1="297" x2="251" y2="303"
+<line x1="1268" y1="626" x2="1271" y2="620"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="254" y1="297" x2="251" y2="303"
+<line x1="1274" y1="626" x2="1271" y2="620"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="253" y="275">dcat:dataset  D</tspan>
+<tspan x="1189" y="662">prov:used  DR</tspan>
 </text>
 </g>
-<g id="2002725254"><path d="M1871,675 L1871,619 "
+<g id="2002725244"><path d="M1305,872 L1305,853 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1868" y1="625" x2="1871" y2="619"
+<line x1="1302" y1="859" x2="1305" y2="853"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1874" y1="625" x2="1871" y2="619"
+<line x1="1308" y1="859" x2="1305" y2="853"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1743" y="671">prov:wasDerivedFrom  </tspan>
+<tspan x="1083" y="868">dv-mandaat:isBestuurlijkeAliasVan  DR</tspan>
 </text>
 </g>
-<g id="2002725259"><path d="M251,150 L251,92 "
+<g id="2002725249"><path d="M227,376 L227,429 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="248" y1="98" x2="251" y2="92"
+<line x1="224" y1="423" x2="227" y2="429"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="254" y1="98" x2="251" y2="92"
+<line x1="230" y1="423" x2="227" y2="429"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="154" y="146">dct:publisher  DR</tspan>
+<tspan x="229" y="391">dcat:dataset  D</tspan>
 </text>
 </g>
-<g id="2002725264"><path d="M1862,354 L1862,404 "
+<g id="2002725254"><path d="M1881,799 L1881,711 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1859" y1="398" x2="1862" y2="404"
+<line x1="1878" y1="717" x2="1881" y2="711"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1865" y1="398" x2="1862" y2="404"
+<line x1="1884" y1="717" x2="1881" y2="711"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1864" y="369">prov:wasDerivedFrom  </tspan>
-<tspan x="1864" y="384">dct:hasPart  DR</tspan>
+<tspan x="1750" y="795">prov:wasDerivedFrom  </tspan>
 </text>
 </g>
-<g id="2002725269"><path d="M1991,514 L2172,514 2176,512 2178,508 2178,131 2176,127 2172,125 1392,125 "
+<g id="2002725259"><path d="M227,263 L227,204 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1398" y1="122" x2="1392" y2="125"
+<line x1="224" y1="210" x2="227" y2="204"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1398" y1="128" x2="1392" y2="125"
+<line x1="230" y1="210" x2="227" y2="204"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1995" y="512">dv-besluit:Agendapunt.type  DR</tspan>
+<tspan x="128" y="259">dct:publisher  DR</tspan>
 </text>
 </g>
-<g id="2002725274"><path d="M1392,209 L1582,209 1586,211 1588,215 1588,896 "
+<g id="2002725264"><path d="M1871,456 L1871,491 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1585" y1="890" x2="1588" y2="896"
+<line x1="1868" y1="485" x2="1871" y2="491"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1591" y1="890" x2="1588" y2="896"
+<line x1="1875" y1="485" x2="1871" y2="491"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1396" y="192">skos:inScheme  </tspan>
-<tspan x="1396" y="207">skos:topConceptOf  DR</tspan>
+<tspan x="1874" y="471">prov:wasDerivedFrom  </tspan>
+<tspan x="1874" y="486">dct:hasPart  DR</tspan>
 </text>
 </g>
-<g id="2002725279"><path d="M1473,545 L1473,394 1475,390 1479,388 1774,388 1778,386 1780,382 1780,354 "
+<g id="2002725269"><path d="M2000,635 L2188,635 2192,633 2194,629 2194,244 2192,240 2188,238 1392,238 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1777" y1="360" x2="1780" y2="354"
+<line x1="1398" y1="235" x2="1392" y2="238"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1783" y1="360" x2="1780" y2="354"
+<line x1="1398" y1="241" x2="1392" y2="238"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1374" y="541">prov:generated  D</tspan>
+<tspan x="2004" y="633">dv-besluit:Agendapunt.type  DR</tspan>
 </text>
 </g>
-<g id="2002725284"><path d="M1011,932 L1335,932 "
+<g id="2002725274"><path d="M1392,324 L1586,324 1590,326 1592,330 1592,1025 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="929" x2="1335" y2="932"
+<line x1="1589" y1="1019" x2="1592" y2="1025"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="935" x2="1335" y2="932"
+<line x1="1595" y1="1019" x2="1592" y2="1025"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1015" y="930">skos:inScheme  </tspan>
+<tspan x="1396" y="306">skos:inScheme  </tspan>
+<tspan x="1396" y="321">skos:topConceptOf  DR</tspan>
 </text>
 </g>
-<g id="2002725289"><path d="M745,115 L1092,115 "
+<g id="2002725279"><path d="M1474,667 L1474,480 1476,476 1480,474 1782,474 1786,472 1788,468 1788,456 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1086" y1="112" x2="1092" y2="115"
+<line x1="1785" y1="463" x2="1788" y2="456"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1086" y1="118" x2="1092" y2="115"
+<line x1="1791" y1="463" x2="1788" y2="456"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="749" y="113">dct:type  </tspan>
+<tspan x="1373" y="662">prov:generated  D</tspan>
 </text>
 </g>
-<g id="2002725294"><path d="M401,333 L589,333 593,331 595,327 595,208 "
+<g id="2002725284"><path d="M1003,1062 L1333,1062 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="592" y1="214" x2="595" y2="208"
+<line x1="1327" y1="1059" x2="1333" y2="1062"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="598" y1="214" x2="595" y2="208"
+<line x1="1327" y1="1065" x2="1333" y2="1062"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="405" y="331">dcat:distribution  DR</tspan>
+<tspan x="1007" y="1060">skos:inScheme  </tspan>
 </text>
 </g>
-<g id="2002725299"><path d="M401,354 L1163,354 1167,352 1169,348 1169,256 "
+<g id="2002725289"><path d="M731,228 L1085,228 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1166" y1="262" x2="1169" y2="256"
+<line x1="1079" y1="225" x2="1085" y2="228"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1172" y1="262" x2="1169" y2="256"
+<line x1="1079" y1="231" x2="1085" y2="228"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="405" y="352">dct:type  </tspan>
+<tspan x="735" y="225">dct:type  </tspan>
 </text>
 </g>
-<g id="2002725304"><path d="M882,761 L882,658 "
+<g id="2002725294"><path d="M380,450 L572,450 576,448 578,444 578,323 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="879" y1="664" x2="882" y2="658"
+<line x1="575" y1="329" x2="578" y2="323"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="885" y1="664" x2="882" y2="658"
+<line x1="581" y1="329" x2="578" y2="323"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="725" y="757">dv-mandaat:steltSamen  DR</tspan>
+<tspan x="384" y="448">dcat:distribution  DR</tspan>
 </text>
 </g>
-<g id="2002725309"><path d="M691,658 L691,677 "
+<g id="2002725299"><path d="M380,472 L1158,472 1162,470 1164,466 1164,372 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="688" y1="671" x2="691" y2="677"
+<line x1="1161" y1="378" x2="1164" y2="372"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="694" y1="671" x2="691" y2="677"
+<line x1="1167" y1="378" x2="1164" y2="372"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="693" y="673">org:hasPost  DR</tspan>
+<tspan x="384" y="469">dct:type  </tspan>
 </text>
 </g>
-<g id="2002725314"><path d="M1114,499 L1114,612 1112,616 1108,618 888,618 "
+<g id="2002725304"><path d="M871,887 L871,788 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="894" y1="615" x2="888" y2="618"
+<line x1="868" y1="794" x2="871" y2="788"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="894" y1="621" x2="888" y2="618"
+<line x1="874" y1="794" x2="871" y2="788"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1116" y="514">dv-bv:isGehoudenDoor  DR</tspan>
+<tspan x="711" y="883">dv-mandaat:steltSamen  DR</tspan>
+</text>
+</g>
+<g id="2002725309"><path d="M676,788 L676,808 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="673" y1="801" x2="676" y2="808"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="679" y1="801" x2="676" y2="808"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="678" y="803">org:hasPost  DR</tspan>
+</text>
+</g>
+<g id="2002725314"><path d="M1108,620 L1108,735 1106,739 1102,741 877,741 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="883" y1="738" x2="877" y2="741"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="883" y1="744" x2="877" y2="741"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1110" y="635">dv-bv:isGehoudenDoor  DR</tspan>
 </text>
 </g>
 </svg>

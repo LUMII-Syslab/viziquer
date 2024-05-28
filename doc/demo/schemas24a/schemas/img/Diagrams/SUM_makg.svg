@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="1465" height="828" viewBox="0 0 1465 828">
+ width="1466" height="899" viewBox="0 0 1466 899">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,419 +38,426 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002724136"><polygon points="76,111 306,111 306,249 76,249 "
+<g id="2002724136"><polygon points="77,182 307,182 307,320 77,320 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="134" y="126">class:Author (1.5e8)</tspan>
+<tspan x="135" y="197">class:Author (1.5e8)</tspan>
 </text>
-<line x1="80" y1="128" x2="304" y2="128"
+<line x1="81" y1="200" x2="305" y2="200"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="80" y="140">dct:created (1.5e8) [1] </tspan>
-<tspan x="80" y="155">foaf:name (1.5e8) [1] </tspan>
-<tspan x="80" y="170">property:citationCount (1.5e8) [1] </tspan>
-<tspan x="80" y="185">property:hasORCID (3.0e4) [1] </tspan>
-<tspan x="80" y="200">property:paperCount (1.5e8) [1] </tspan>
-<tspan x="80" y="215">property:paperFamilyCount (1.5e8) [1] </tspan>
-<tspan x="80" y="230">property:rank (1.5e8) [1] </tspan>
-<tspan x="80" y="245">rdf:type (1.5e8) [*]  -&gt; IRI</tspan>
+<tspan x="81" y="212">dct:created (1.5e8) [1] </tspan>
+<tspan x="81" y="227">foaf:name (1.5e8) [1] </tspan>
+<tspan x="81" y="242">property:citationCount (1.5e8) [1] </tspan>
+<tspan x="81" y="257">property:hasORCID (3.0e4) [1] </tspan>
+<tspan x="81" y="272">property:paperCount (1.5e8) [1] </tspan>
+<tspan x="81" y="287">property:paperFamilyCount (1.5e8) [1] </tspan>
+<tspan x="81" y="302">property:rank (1.5e8) [1] </tspan>
+<tspan x="81" y="317">rdf:type (1.5e8) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002724147"><polygon points="329,427 625,427 625,506 329,506 "
+<g id="2002724147"><polygon points="330,494 626,494 626,573 330,573 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="326,430 622,430 622,509 326,509 "
+<polygon points="327,497 623,497 623,576 327,576 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="364" y="445">class:JournalArticle et al. G101 (9.5e7)</tspan>
+<tspan x="365" y="512">class:JournalArticle et al. G101 (9.5e7)</tspan>
 </text>
 <text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="330" y="460">class:JournalArticle (8.6e7)</tspan>
-<tspan x="330" y="475">fabio:Book (2.1e6)</tspan>
-<tspan x="330" y="490">fabio:BookChapter (2.7e6)</tspan>
-<tspan x="330" y="505">fabio:ConferencePaper (4.7e6)</tspan>
+<tspan x="331" y="527">class:JournalArticle (8.6e7)</tspan>
+<tspan x="331" y="542">fabio:Book (2.1e6)</tspan>
+<tspan x="331" y="557">fabio:BookChapter (2.7e6)</tspan>
+<tspan x="331" y="572">fabio:ConferencePaper (4.7e6)</tspan>
 </text>
 </g>
-<g id="2002724158"><polygon points="411,670 611,670 611,734 411,734 "
+<g id="2002724158"><polygon points="412,721 612,721 612,785 412,785 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="466" y="685">rdf:Property (23)</tspan>
+<tspan x="467" y="736">rdf:Property (23)</tspan>
 </text>
-<line x1="415" y1="688" x2="609" y2="688"
+<line x1="416" y1="739" x2="610" y2="739"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="415" y="700">rdf:type (28) [*]  -&gt; IRI</tspan>
-<tspan x="415" y="715">rdfs:label (23) [1] </tspan>
-<tspan x="415" y="730">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
+<tspan x="416" y="751">rdf:type (28) [*]  -&gt; IRI</tspan>
+<tspan x="416" y="766">rdfs:label (23) [1] </tspan>
+<tspan x="416" y="781">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002724169"><polygon points="1078,528 1455,528 1455,818 1078,818 "
+<g id="2002724169"><polygon points="1079,599 1456,599 1456,889 1079,889 "
 style="fill:White; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1082" y="542">PREFIX virtrdf: &lt;http://www.openlinksw.com/schemas/virtrdf#&gt;</tspan>
-<tspan x="1082" y="557">PREFIX property: &lt;https://makg.org/property/&gt;</tspan>
-<tspan x="1082" y="572">PREFIX fabio: &lt;http://purl.org/spar/fabio/&gt;</tspan>
-<tspan x="1082" y="587">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
-<tspan x="1082" y="602">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
-<tspan x="1082" y="617">PREFIX class: &lt;https://makg.org/class/&gt;</tspan>
-<tspan x="1082" y="632">PREFIX sd: &lt;http://www.w3.org/ns/sparql-service-description#&gt;</tspan>
-<tspan x="1082" y="647">PREFIX prism: &lt;http://prismstandard.org/namespaces/basic/2.0/&gt;</tspan>
-<tspan x="1082" y="662">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
-<tspan x="1082" y="677">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
-<tspan x="1082" y="692">PREFIX cito: &lt;http://purl.org/spar/cito/&gt;</tspan>
-<tspan x="1082" y="707">PREFIX dbo: &lt;http://dbpedia.org/ontology/&gt;</tspan>
-<tspan x="1082" y="722">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
-<tspan x="1082" y="737">PREFIX wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt;</tspan>
-<tspan x="1082" y="752">PREFIX tl: &lt;http://purl.org/NET/c4dm/timeline.owl#&gt;</tspan>
-<tspan x="1082" y="767">PREFIX c4o: &lt;http://purl.org/spar/c4o/&gt;</tspan>
-<tspan x="1082" y="782">PREFIX datacite: &lt;http://purl.org/spar/datacite/&gt;</tspan>
-<tspan x="1082" y="797">PREFIX org: &lt;http://www.w3.org/ns/org#&gt;</tspan>
-<tspan x="1082" y="812">PREFIX iden: &lt;http://id.loc.gov/vocabulary/identifiers/&gt;</tspan>
+<tspan x="1083" y="613">PREFIX virtrdf: &lt;http://www.openlinksw.com/schemas/virtrdf#&gt;</tspan>
+<tspan x="1083" y="628">PREFIX property: &lt;https://makg.org/property/&gt;</tspan>
+<tspan x="1083" y="643">PREFIX fabio: &lt;http://purl.org/spar/fabio/&gt;</tspan>
+<tspan x="1083" y="658">PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;</tspan>
+<tspan x="1083" y="673">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</tspan>
+<tspan x="1083" y="688">PREFIX class: &lt;https://makg.org/class/&gt;</tspan>
+<tspan x="1083" y="703">PREFIX sd: &lt;http://www.w3.org/ns/sparql-service-description#&gt;</tspan>
+<tspan x="1083" y="718">PREFIX prism: &lt;http://prismstandard.org/namespaces/basic/2.0/&gt;</tspan>
+<tspan x="1083" y="733">PREFIX dct: &lt;http://purl.org/dc/terms/&gt;</tspan>
+<tspan x="1083" y="748">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</tspan>
+<tspan x="1083" y="763">PREFIX cito: &lt;http://purl.org/spar/cito/&gt;</tspan>
+<tspan x="1083" y="778">PREFIX dbo: &lt;http://dbpedia.org/ontology/&gt;</tspan>
+<tspan x="1083" y="793">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</tspan>
+<tspan x="1083" y="808">PREFIX wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt;</tspan>
+<tspan x="1083" y="823">PREFIX tl: &lt;http://purl.org/NET/c4dm/timeline.owl#&gt;</tspan>
+<tspan x="1083" y="838">PREFIX c4o: &lt;http://purl.org/spar/c4o/&gt;</tspan>
+<tspan x="1083" y="853">PREFIX datacite: &lt;http://purl.org/spar/datacite/&gt;</tspan>
+<tspan x="1083" y="868">PREFIX org: &lt;http://www.w3.org/ns/org#&gt;</tspan>
+<tspan x="1083" y="883">PREFIX iden: &lt;http://id.loc.gov/vocabulary/identifiers/&gt;</tspan>
 </text>
 </g>
-<g id="2002724180"><polygon points="77,574 305,574 305,683 77,683 "
+<g id="2002724180"><polygon points="78,640 306,640 306,749 78,749 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="145" y="589">owl:Ontology (1)</tspan>
+<tspan x="146" y="655">owl:Ontology (1)</tspan>
 </text>
-<line x1="81" y1="592" x2="303" y2="592"
+<line x1="82" y1="658" x2="304" y2="658"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="81" y="604">owl:imports (1) [1] D -&gt; IRI</tspan>
-<tspan x="81" y="619">owl:priorVersion (1) [1] D -&gt; IRI</tspan>
-<tspan x="81" y="634">owl:versionInfo (1) [1] D</tspan>
-<tspan x="81" y="649">rdf:type (1) [*]  -&gt; IRI</tspan>
-<tspan x="81" y="664">rdfs:comment (1) [1] D</tspan>
-<tspan x="81" y="679">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
+<tspan x="82" y="670">owl:imports (1) [1] D -&gt; IRI</tspan>
+<tspan x="82" y="685">owl:priorVersion (1) [1] D -&gt; IRI</tspan>
+<tspan x="82" y="700">owl:versionInfo (1) [1] D</tspan>
+<tspan x="82" y="715">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="82" y="730">rdfs:comment (1) [1] D</tspan>
+<tspan x="82" y="745">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002724191"><polygon points="410,539 615,539 615,618 410,618 "
+<g id="2002724191"><polygon points="411,609 616,609 616,688 411,688 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="476" y="554">owl:Class (3)</tspan>
+<tspan x="477" y="624">owl:Class (3)</tspan>
 </text>
-<line x1="414" y1="557" x2="613" y2="557"
+<line x1="415" y1="626" x2="614" y2="626"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="414" y="569">owl:unionOf (1) [1] D -&gt; IRI</tspan>
-<tspan x="414" y="584">rdf:type (3) [*]  -&gt; IRI</tspan>
-<tspan x="414" y="599">rdfs:label (2) [1] </tspan>
-<tspan x="414" y="614">&lt;&gt; owl:complementOf  DR</tspan>
+<tspan x="415" y="638">owl:unionOf (1) [1] D -&gt; IRI</tspan>
+<tspan x="415" y="653">rdf:type (3) [*]  -&gt; IRI</tspan>
+<tspan x="415" y="668">rdfs:label (2) [1] </tspan>
+<tspan x="415" y="683">&lt;&gt; owl:complementOf  DR</tspan>
 </text>
 </g>
-<g id="2002724202"><polygon points="77,689 303,689 303,797 77,797 "
+<g id="2002724202"><polygon points="78,760 304,760 304,868 78,868 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="152" y="704">sd:Service (1)</tspan>
+<tspan x="153" y="775">sd:Service (1)</tspan>
 </text>
-<line x1="81" y1="706" x2="301" y2="706"
+<line x1="82" y1="778" x2="302" y2="778"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="81" y="718">rdf:type (1) [*]  -&gt; IRI</tspan>
-<tspan x="81" y="733">sd:feature (2) [*] D -&gt; IRI</tspan>
-<tspan x="81" y="748">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
-<tspan x="81" y="763">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
-<tspan x="81" y="778">&lt;&gt; sd:endpoint  DR</tspan>
-<tspan x="81" y="793">&lt;&gt; sd:url  DR</tspan>
+<tspan x="82" y="790">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="82" y="805">sd:feature (2) [*] D -&gt; IRI</tspan>
+<tspan x="82" y="820">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
+<tspan x="82" y="835">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+<tspan x="82" y="850">&lt;&gt; sd:endpoint  DR</tspan>
+<tspan x="82" y="865">&lt;&gt; sd:url  DR</tspan>
 </text>
 </g>
-<g id="2002724213"><polygon points="77,281 305,281 305,518 77,518 "
+<g id="2002724213"><polygon points="78,347 306,347 306,584 78,584 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="127" y="296">class:Affiliation (2.6e4)</tspan>
+<tspan x="128" y="362">class:Affiliation (2.6e4)</tspan>
 </text>
-<line x1="81" y1="298" x2="303" y2="298"
+<line x1="82" y1="365" x2="304" y2="365"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="81" y="310">dct:created (2.6e4) [1] </tspan>
-<tspan x="81" y="325">foaf:homepage (1.7e4) [1]  -&gt; IRI</tspan>
-<tspan x="81" y="340">foaf:name (2.6e4) [1] </tspan>
-<tspan x="81" y="355">owl:sameAs (2.5e4) [1]  -&gt; IRI</tspan>
-<tspan x="81" y="370">property:citationCount (2.6e4) [1] </tspan>
-<tspan x="81" y="385">property:grid (1.9e4) [1] D -&gt; IRI</tspan>
-<tspan x="81" y="400">property:paperCount (2.6e4) [1] </tspan>
-<tspan x="81" y="415">property:paperFamilyCount (2.6e4) [1] </tspan>
-<tspan x="81" y="430">property:rank (2.6e4) [1] </tspan>
-<tspan x="81" y="445">rdf:type (2.6e4) [*]  -&gt; IRI</tspan>
-<tspan x="81" y="460">rdfs:seeAlso (2.5e4) [*]  -&gt; IRI</tspan>
-<tspan x="81" y="475">wgs84_pos:lat (2.5e4) [1] D</tspan>
-<tspan x="81" y="490">wgs84_pos:long (2.5e4) [1] D</tspan>
+<tspan x="82" y="377">dct:created (2.6e4) [1] </tspan>
+<tspan x="82" y="392">foaf:homepage (1.7e4) [1]  -&gt; IRI</tspan>
+<tspan x="82" y="407">foaf:name (2.6e4) [1] </tspan>
+<tspan x="82" y="422">owl:sameAs (2.5e4) [1]  -&gt; IRI</tspan>
+<tspan x="82" y="437">property:citationCount (2.6e4) [1] </tspan>
+<tspan x="82" y="452">property:grid (1.9e4) [1] D -&gt; IRI</tspan>
+<tspan x="82" y="467">property:paperCount (2.6e4) [1] </tspan>
+<tspan x="82" y="482">property:paperFamilyCount (2.6e4) [1] </tspan>
+<tspan x="82" y="497">property:rank (2.6e4) [1] </tspan>
+<tspan x="82" y="512">rdf:type (2.6e4) [*]  -&gt; IRI</tspan>
+<tspan x="82" y="527">rdfs:seeAlso (2.5e4) [*]  -&gt; IRI</tspan>
+<tspan x="82" y="542">wgs84_pos:lat (2.5e4) [1] D</tspan>
+<tspan x="82" y="557">wgs84_pos:long (2.5e4) [1] D</tspan>
 </text>
 </g>
-<g id="2002724224"><polygon points="1189,345 1451,345 1451,522 1189,522 "
+<g id="2002724224"><polygon points="1190,416 1452,416 1452,593 1190,593 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1231" y="360">class:ConferenceSeries (5.3e4)</tspan>
+<tspan x="1232" y="431">class:ConferenceSeries (5.3e4)</tspan>
 </text>
-<line x1="1193" y1="363" x2="1449" y2="363"
+<line x1="1194" y1="434" x2="1450" y2="434"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1193" y="375">dct:created (5.3e4) [1] </tspan>
-<tspan x="1193" y="390">dct:publisher (189) [1] </tspan>
-<tspan x="1193" y="405">foaf:homepage (6280) [1] </tspan>
-<tspan x="1193" y="420">foaf:name (5.3e4) [1] </tspan>
-<tspan x="1193" y="435">iden:issn (3.7e4) [1] D</tspan>
-<tspan x="1193" y="450">property:citationCount (5.3e4) [1] </tspan>
-<tspan x="1193" y="465">property:paperCount (5.3e4) [1] </tspan>
-<tspan x="1193" y="480">property:paperFamilyCount (5.3e4) [1] </tspan>
-<tspan x="1193" y="495">property:rank (5.3e4) [1] </tspan>
-<tspan x="1193" y="510">rdf:type (5.3e4) [*]  -&gt; IRI</tspan>
+<tspan x="1194" y="446">dct:created (5.3e4) [1] </tspan>
+<tspan x="1194" y="461">dct:publisher (189) [1] </tspan>
+<tspan x="1194" y="476">foaf:homepage (6280) [1] </tspan>
+<tspan x="1194" y="491">foaf:name (5.3e4) [1] </tspan>
+<tspan x="1194" y="506">iden:issn (3.7e4) [1] D</tspan>
+<tspan x="1194" y="521">property:citationCount (5.3e4) [1] </tspan>
+<tspan x="1194" y="536">property:paperCount (5.3e4) [1] </tspan>
+<tspan x="1194" y="551">property:paperFamilyCount (5.3e4) [1] </tspan>
+<tspan x="1194" y="566">property:rank (5.3e4) [1] </tspan>
+<tspan x="1194" y="581">rdf:type (5.3e4) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002724235"><polygon points="726,17 945,17 945,81 726,81 "
+<g id="2002724235"><polygon points="727,86 946,86 946,150 727,150 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="783" y="32">fabio:Work (7.5e4)</tspan>
+<tspan x="784" y="101">fabio:Work (7.5e4)</tspan>
 </text>
-<line x1="730" y1="35" x2="943" y2="35"
+<line x1="731" y1="104" x2="944" y2="104"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="730" y="47">fabio:hasURL (7.5e4) [*] </tspan>
-<tspan x="730" y="62">property:resourceType (7.5e4) [1] D</tspan>
-<tspan x="730" y="77">rdf:type (7.5e4) [*]  -&gt; IRI</tspan>
+<tspan x="731" y="116">fabio:hasURL (7.5e4) [*] </tspan>
+<tspan x="731" y="131">property:resourceType (7.5e4) [1] D</tspan>
+<tspan x="731" y="146">rdf:type (7.5e4) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002724246"><polygon points="325,357 538,357 538,406 325,406 "
+<g id="2002724246"><polygon points="326,428 539,428 539,477 326,477 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="347" y="372">fabio:PatentDocument (5.3e7)</tspan>
+<tspan x="348" y="443">fabio:PatentDocument (5.3e7)</tspan>
 </text>
-<line x1="329" y1="374" x2="536" y2="374"
+<line x1="330" y1="446" x2="537" y2="446"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="329" y="386">dbo:patent (7.4e7) [*] D -&gt; IRI</tspan>
-<tspan x="329" y="401">fabio:hasPatentNumber (7.4e7) [*] D</tspan>
+<tspan x="330" y="458">dbo:patent (7.4e7) [*] D -&gt; IRI</tspan>
+<tspan x="330" y="473">fabio:hasPatentNumber (7.4e7) [*] D</tspan>
 </text>
 </g>
-<g id="2002724257"><polygon points="1186,32 1454,32 1454,274 1186,274 "
+<g id="2002724257"><polygon points="1187,103 1455,103 1455,345 1187,345 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1225" y="47">class:ConferenceInstance (1.6e4)</tspan>
+<tspan x="1226" y="118">class:ConferenceInstance (1.6e4)</tspan>
 </text>
-<line x1="1190" y1="49" x2="1452" y2="49"
+<line x1="1191" y1="121" x2="1453" y2="121"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1190" y="61">dbo:location (1.6e4 7%d) [1] D -&gt; IRI</tspan>
-<tspan x="1190" y="76">dct:created (1.6e4) [1] </tspan>
-<tspan x="1190" y="91">foaf:homepage (1.1e4) [1]  -&gt; IRI</tspan>
-<tspan x="1190" y="106">foaf:name (1.6e4) [1] </tspan>
-<tspan x="1190" y="121">property:abstractRegistrationDate (2236) [1] D</tspan>
-<tspan x="1190" y="136">property:citationCount (1.6e4) [1] </tspan>
-<tspan x="1190" y="151">property:finalVersionDueDate (5569) [1] D</tspan>
-<tspan x="1190" y="166">property:notificationDueDate (6673) [1] D</tspan>
-<tspan x="1190" y="181">property:pageCount (1.6e4) [1] D</tspan>
-<tspan x="1190" y="196">property:paperFamilyCount (1.6e4) [1] </tspan>
-<tspan x="1190" y="211">property:submissionDeadlineDate (1.0e4) [1] D</tspan>
-<tspan x="1190" y="226">rdf:type (1.6e4) [*]  -&gt; IRI</tspan>
-<tspan x="1190" y="241">tl:end (1.4e4) [1] D</tspan>
-<tspan x="1190" y="256">tl:start (1.4e4) [1] D</tspan>
+<tspan x="1191" y="133">dbo:location (1.6e4 7%d) [1] D -&gt; IRI</tspan>
+<tspan x="1191" y="148">dct:created (1.6e4) [1] </tspan>
+<tspan x="1191" y="163">foaf:homepage (1.1e4) [1]  -&gt; IRI</tspan>
+<tspan x="1191" y="178">foaf:name (1.6e4) [1] </tspan>
+<tspan x="1191" y="193">property:abstractRegistrationDate (2236) [1] D</tspan>
+<tspan x="1191" y="208">property:citationCount (1.6e4) [1] </tspan>
+<tspan x="1191" y="223">property:finalVersionDueDate (5569) [1] D</tspan>
+<tspan x="1191" y="238">property:notificationDueDate (6673) [1] D</tspan>
+<tspan x="1191" y="253">property:pageCount (1.6e4) [1] D</tspan>
+<tspan x="1191" y="268">property:paperFamilyCount (1.6e4) [1] </tspan>
+<tspan x="1191" y="283">property:submissionDeadlineDate (1.0e4) [1] D</tspan>
+<tspan x="1191" y="298">rdf:type (1.6e4) [*]  -&gt; IRI</tspan>
+<tspan x="1191" y="313">tl:end (1.4e4) [1] D</tspan>
+<tspan x="1191" y="328">tl:start (1.4e4) [1] D</tspan>
 </text>
 </g>
-<g id="2002724268"><polygon points="79,524 303,524 303,568 79,568 "
+<g id="2002724268"><polygon points="80,590 304,590 304,634 80,634 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="116" y="539">owl:AnnotationProperty (5)</tspan>
+<tspan x="117" y="605">owl:AnnotationProperty (5)</tspan>
 </text>
-<line x1="83" y1="541" x2="301" y2="541"
+<line x1="84" y1="608" x2="302" y2="608"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="83" y="553">rdf:type (6) [*]  -&gt; IRI</tspan>
+<tspan x="84" y="620">rdf:type (6) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002724279"><polygon points="687,530 983,530 983,805 687,805 "
+<g id="2002724279"><polygon points="688,601 984,601 984,876 688,876 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="760" y="545">class:FieldOfStudy (7.4e5)</tspan>
+<tspan x="761" y="616">class:FieldOfStudy (7.4e5)</tspan>
 </text>
-<line x1="691" y1="547" x2="981" y2="547"
+<line x1="692" y1="618" x2="982" y2="618"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="691" y="559">dct:created (7.4e5) [1] </tspan>
-<tspan x="691" y="574">foaf:name (7.4e5) [1] </tspan>
-<tspan x="691" y="589">owl:sameAs (2.8e5) [1]  -&gt; IRI</tspan>
-<tspan x="691" y="604">property:citationCount (7.4e5) [1] </tspan>
-<tspan x="691" y="619">property:level (7.4e5) [1] D</tspan>
-<tspan x="691" y="634">property:paperCount (7.4e5) [1] </tspan>
-<tspan x="691" y="649">property:paperFamilyCount (7.4e5) [1] </tspan>
-<tspan x="691" y="664">property:rank (7.4e5) [1] </tspan>
-<tspan x="691" y="679">rdf:type (7.4e5) [*]  -&gt; IRI</tspan>
-<tspan x="691" y="694">rdfs:seeAlso (9.8e5) [*]  -&gt; IRI</tspan>
-<tspan x="691" y="709">&lt;&gt; property:diseaseHasDiseaseCause  DR</tspan>
-<tspan x="691" y="724">&lt;&gt; property:diseaseHasMedicalTreatment  DR</tspan>
-<tspan x="691" y="739">&lt;&gt; property:diseaseHasSymptom  DR</tspan>
-<tspan x="691" y="754">&lt;&gt; property:isRelatedTo  DR</tspan>
-<tspan x="691" y="769">&lt;&gt; property:medicalTreatmentForDiseaseCause  DR</tspan>
-<tspan x="691" y="784">&lt;&gt; property:medicalTreatmentForSymptom  DR</tspan>
-<tspan x="691" y="799">&lt;&gt; property:symptomHasDiseaseCause  DR</tspan>
+<tspan x="692" y="630">dct:created (7.4e5) [1] </tspan>
+<tspan x="692" y="645">foaf:name (7.4e5) [1] </tspan>
+<tspan x="692" y="660">owl:sameAs (2.8e5) [1]  -&gt; IRI</tspan>
+<tspan x="692" y="675">property:citationCount (7.4e5) [1] </tspan>
+<tspan x="692" y="690">property:level (7.4e5) [1] D</tspan>
+<tspan x="692" y="705">property:paperCount (7.4e5) [1] </tspan>
+<tspan x="692" y="720">property:paperFamilyCount (7.4e5) [1] </tspan>
+<tspan x="692" y="735">property:rank (7.4e5) [1] </tspan>
+<tspan x="692" y="750">rdf:type (7.4e5) [*]  -&gt; IRI</tspan>
+<tspan x="692" y="765">rdfs:seeAlso (9.8e5) [*]  -&gt; IRI</tspan>
+<tspan x="692" y="780">&lt;&gt; property:diseaseHasDiseaseCause  DR</tspan>
+<tspan x="692" y="795">&lt;&gt; property:diseaseHasMedicalTreatment  DR</tspan>
+<tspan x="692" y="810">&lt;&gt; property:diseaseHasSymptom  DR</tspan>
+<tspan x="692" y="825">&lt;&gt; property:isRelatedTo  DR</tspan>
+<tspan x="692" y="840">&lt;&gt; property:medicalTreatmentForDiseaseCause  DR</tspan>
+<tspan x="692" y="855">&lt;&gt; property:medicalTreatmentForSymptom  DR</tspan>
+<tspan x="692" y="870">&lt;&gt; property:symptomHasDiseaseCause  DR</tspan>
 </text>
 </g>
-<g id="2002724290"><polygon points="412,753 611,753 611,797 412,797 "
+<g id="2002724290"><polygon points="413,824 612,824 612,868 413,868 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="441" y="768">owl:OntologyProperty (4)</tspan>
+<tspan x="442" y="839">owl:OntologyProperty (4)</tspan>
 </text>
 </g>
-<g id="2002724301"><polygon points="331,277 518,277 518,326 331,326 "
+<g id="2002724301"><polygon points="332,348 519,348 519,397 332,397 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="364" y="292">class:Citation (1.6e8)</tspan>
+<tspan x="365" y="363">class:Citation (1.6e8)</tspan>
 </text>
-<line x1="335" y1="294" x2="516" y2="294"
+<line x1="336" y1="366" x2="517" y2="366"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="335" y="306">c4o:hasContext (2.3e8) [*] D</tspan>
-<tspan x="335" y="321">rdf:type (1.6e8) [*]  -&gt; IRI</tspan>
+<tspan x="336" y="378">c4o:hasContext (2.3e8) [*] D</tspan>
+<tspan x="336" y="393">rdf:type (1.6e8) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002724312"><polygon points="686,120 982,120 982,495 686,495 "
+<g id="2002724312"><polygon points="687,191 983,191 983,566 687,566 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="779" y="135">class:Paper (2.4e8)</tspan>
+<tspan x="780" y="206">class:Paper (2.4e8)</tspan>
 </text>
-<line x1="690" y1="137" x2="980" y2="137"
+<line x1="691" y1="208" x2="981" y2="208"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="690" y="149">datacite:doi (8.9e7) [1] D</tspan>
-<tspan x="690" y="164">dbo:publisher (3.3e7) [1] D -&gt; IRI</tspan>
-<tspan x="690" y="179">dct:abstract (1.4e8) [1] D</tspan>
-<tspan x="690" y="194">dct:created (2.4e8) [1] </tspan>
-<tspan x="690" y="209">dct:publisher (9.3e7) [1] </tspan>
-<tspan x="690" y="224">dct:title (2.4e8) [*] D</tspan>
-<tspan x="690" y="239">fabio:hasPubMedCentralId (5.6e6) [*] D -&gt; IRI</tspan>
-<tspan x="690" y="254">fabio:hasPubMedId (3.0e7) [*] D -&gt; IRI</tspan>
-<tspan x="690" y="269">fabio:hasURL (4.0e8) [*] </tspan>
-<tspan x="690" y="284">prism:endingPage (1.1e8) [1] D</tspan>
-<tspan x="690" y="299">prism:issueIdentifier (9.9e7) [1] D</tspan>
-<tspan x="690" y="314">prism:keyword (6.8e8) [*] </tspan>
-<tspan x="690" y="329">prism:publicationDate (2.4e8) [1] D</tspan>
-<tspan x="690" y="344">prism:startingPage (1.2e8) [1] D</tspan>
-<tspan x="690" y="359">prism:volume (1.0e8) [1] D</tspan>
-<tspan x="690" y="374">property:citationCount (2.4e8) [1] </tspan>
-<tspan x="690" y="389">property:estimatedCitationCount (2.4e8) [1] D</tspan>
-<tspan x="690" y="404">property:familyId (3.1e6) [1] D</tspan>
-<tspan x="690" y="419">property:rank (2.4e8) [1] </tspan>
-<tspan x="690" y="434">property:referenceCount (2.4e8) [1] D</tspan>
-<tspan x="690" y="449">rdf:type (3.9e8) [*]  -&gt; IRI</tspan>
-<tspan x="690" y="464">&lt;&gt; cito:cites  </tspan>
+<tspan x="691" y="220">datacite:doi (8.9e7) [1] D</tspan>
+<tspan x="691" y="235">dbo:publisher (3.3e7) [1] D -&gt; IRI</tspan>
+<tspan x="691" y="250">dct:abstract (1.4e8) [1] D</tspan>
+<tspan x="691" y="265">dct:created (2.4e8) [1] </tspan>
+<tspan x="691" y="280">dct:publisher (9.3e7) [1] </tspan>
+<tspan x="691" y="295">dct:title (2.4e8) [*] D</tspan>
+<tspan x="691" y="310">fabio:hasPubMedCentralId (5.6e6) [*] D -&gt; IRI</tspan>
+<tspan x="691" y="325">fabio:hasPubMedId (3.0e7) [*] D -&gt; IRI</tspan>
+<tspan x="691" y="340">fabio:hasURL (4.0e8) [*] </tspan>
+<tspan x="691" y="355">prism:endingPage (1.1e8) [1] D</tspan>
+<tspan x="691" y="370">prism:issueIdentifier (9.9e7) [1] D</tspan>
+<tspan x="691" y="385">prism:keyword (6.8e8) [*] </tspan>
+<tspan x="691" y="400">prism:publicationDate (2.4e8) [1] D</tspan>
+<tspan x="691" y="415">prism:startingPage (1.2e8) [1] D</tspan>
+<tspan x="691" y="430">prism:volume (1.0e8) [1] D</tspan>
+<tspan x="691" y="445">property:citationCount (2.4e8) [1] </tspan>
+<tspan x="691" y="460">property:estimatedCitationCount (2.4e8) [1] D</tspan>
+<tspan x="691" y="475">property:familyId (3.1e6) [1] D</tspan>
+<tspan x="691" y="490">property:rank (2.4e8) [1] </tspan>
+<tspan x="691" y="505">property:referenceCount (2.4e8) [1] D</tspan>
+<tspan x="691" y="520">rdf:type (3.9e8) [*]  -&gt; IRI</tspan>
+<tspan x="691" y="535">&lt;&gt; cito:cites  </tspan>
 </text>
 </g>
-<g id="2002724085"><path d="M982,197 L1186,197 "
+<g id="2002797414"><polygon points="598,20 951,20 951,71 598,71 "
+style="fill:none; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:18px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="747" y="40">MAKG</tspan>
+<tspan x="680" y="62">https://makg.org/sparql</tspan>
+</text>
+</g>
+<g id="2002724085"><path d="M983,268 L1187,268 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1180" y1="194" x2="1186" y2="197"
+<line x1="1181" y1="265" x2="1187" y2="268"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1180" y1="200" x2="1186" y2="197"
+<line x1="1181" y1="271" x2="1187" y2="268"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="986" y="180">property:</tspan>
-<tspan x="986" y="195">appearsInConferenceInstance  DR</tspan>
+<tspan x="987" y="251">property:</tspan>
+<tspan x="987" y="266">appearsInConferenceInstance  DR</tspan>
 </text>
 </g>
-<g id="2002724090"><path d="M982,420 L1189,420 "
+<g id="2002724090"><path d="M983,491 L1190,491 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1183" y1="417" x2="1189" y2="420"
+<line x1="1184" y1="488" x2="1190" y2="491"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1183" y1="423" x2="1189" y2="420"
+<line x1="1184" y1="494" x2="1190" y2="491"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="986" y="388">property:appearsInJournal  R</tspan>
-<tspan x="986" y="403">property:</tspan>
-<tspan x="986" y="418">appearsInConferenceSeries  DR</tspan>
+<tspan x="987" y="460">property:appearsInJournal  R</tspan>
+<tspan x="987" y="475">property:</tspan>
+<tspan x="987" y="490">appearsInConferenceSeries  DR</tspan>
 </text>
 </g>
-<g id="2002724095"><path d="M686,192 L306,192 "
+<g id="2002724095"><path d="M687,263 L307,263 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="312" y1="189" x2="306" y2="192"
+<line x1="313" y1="260" x2="307" y2="263"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="312" y1="195" x2="306" y2="192"
+<line x1="313" y1="266" x2="307" y2="263"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="611" y="205">dct:creator  R</tspan>
+<tspan x="612" y="276">dct:creator  R</tspan>
 </text>
 </g>
-<g id="2002724100"><path d="M835,495 L835,530 "
+<g id="2002724100"><path d="M836,566 L836,601 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="832" y1="524" x2="835" y2="530"
+<line x1="833" y1="595" x2="836" y2="601"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="838" y1="524" x2="835" y2="530"
+<line x1="839" y1="595" x2="836" y2="601"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="837" y="510">fabio:hasDiscipline  DR</tspan>
+<tspan x="838" y="581">fabio:hasDiscipline  DR</tspan>
 </text>
 </g>
-<g id="2002724105"><path d="M518,308 L686,308 "
+<g id="2002724105"><path d="M519,379 L687,379 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="680" y1="305" x2="686" y2="308"
+<line x1="681" y1="376" x2="687" y2="379"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="680" y1="311" x2="686" y2="308"
+<line x1="681" y1="382" x2="687" y2="379"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="522" y="292">cito:hasCitingEntity  DR</tspan>
-<tspan x="522" y="307">cito:hasCitedEntity  D</tspan>
+<tspan x="523" y="363">cito:hasCitingEntity  DR</tspan>
+<tspan x="523" y="378">cito:hasCitedEntity  D</tspan>
 </text>
 </g>
-<g id="2002724110"><path d="M134,249 L134,281 "
+<g id="2002724110"><path d="M135,320 L135,347 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="131" y1="275" x2="134" y2="281"
+<line x1="132" y1="341" x2="135" y2="347"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="137" y1="275" x2="134" y2="281"
+<line x1="138" y1="341" x2="135" y2="347"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="136" y="264">org:memberOf  DR</tspan>
+<tspan x="137" y="335">org:memberOf  DR</tspan>
 </text>
 </g>
-<g id="2002724115"><path d="M511,670 L511,618 "
+<g id="2002724115"><path d="M512,721 L512,688 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="508" y1="624" x2="511" y2="618"
+<line x1="509" y1="694" x2="512" y2="688"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="514" y1="624" x2="511" y2="618"
+<line x1="515" y1="694" x2="512" y2="688"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="429" y="651">rdfs:domain  D</tspan>
-<tspan x="429" y="666">rdfs:range  D</tspan>
+<tspan x="430" y="703">rdfs:domain  D</tspan>
+<tspan x="430" y="718">rdfs:range  D</tspan>
 </text>
 </g>
-<g id="2002724120"><path d="M1320,274 L1320,345 "
+<g id="2002724120"><path d="M1321,345 L1321,416 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1317" y1="339" x2="1320" y2="345"
+<line x1="1318" y1="410" x2="1321" y2="416"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1323" y1="339" x2="1320" y2="345"
+<line x1="1324" y1="410" x2="1321" y2="416"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1322" y="289">dct:isPartOf  DR</tspan>
+<tspan x="1323" y="360">dct:isPartOf  DR</tspan>
 </text>
 </g>
-<g id="2002724125"><path d="M835,120 L835,81 "
+<g id="2002724125"><path d="M836,191 L836,150 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="832" y1="87" x2="835" y2="81"
+<line x1="833" y1="156" x2="836" y2="150"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="838" y1="87" x2="835" y2="81"
+<line x1="839" y1="156" x2="836" y2="150"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="684" y="101">property:ownResource  DR</tspan>
-<tspan x="684" y="116">property:citedResource  DR</tspan>
+<tspan x="685" y="172">property:ownResource  DR</tspan>
+<tspan x="685" y="187">property:citedResource  DR</tspan>
 </text>
 </g>
-<g id="2002724130"><path d="M511,734 L511,753 "
+<g id="2002724130"><path d="M512,785 L512,824 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="516,744 511,734 506,744 "
+<polygon points="517,795 512,785 507,795 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="513" y="749"> </tspan>
+<tspan x="514" y="800"> </tspan>
 </text>
 </g>
-<g id="2002724132"><path d="M686,469 L622,469 "
+<g id="2002724132"><path d="M687,540 L623,540 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="676,474 686,469 676,464 "
+<polygon points="677,545 687,540 677,535 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="672" y="482"> </tspan>
+<tspan x="673" y="553"> </tspan>
 </text>
 </g>
-<g id="2002724134"><path d="M686,381 L538,381 "
+<g id="2002724134"><path d="M687,453 L539,453 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="676,386 686,381 676,376 "
+<polygon points="677,457 687,453 677,448 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="672" y="394"> </tspan>
+<tspan x="673" y="465"> </tspan>
 </text>
 </g>
 </svg>

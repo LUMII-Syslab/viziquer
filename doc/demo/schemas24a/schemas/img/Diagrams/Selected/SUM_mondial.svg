@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="1744" height="992" viewBox="0 0 1744 992">
+ width="1801" height="1082" viewBox="0 0 1801 1082">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,1886 +38,952 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002767061"><polygon points="1335,59 1553,59 1553,229 1335,229 "
+<g id="2002791104"><polygon points="1392,149 1610,149 1610,319 1392,319 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1412" y="74">:Lake (143)</tspan>
+<tspan x="1469" y="164">:Lake (143)</tspan>
 </text>
-<line x1="1339" y1="77" x2="1551" y2="77"
+<line x1="1396" y1="167" x2="1608" y2="167"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1339" y="89">:area (141) [1] </tspan>
-<tspan x="1339" y="104">:depth (120) [1] </tspan>
-<tspan x="1339" y="119">:elevation (119) [1] </tspan>
-<tspan x="1339" y="134">:latitude (143) [1] </tspan>
-<tspan x="1339" y="149">:locatedIn (442) [*]  -&gt;  :Country,:</tspan>
-<tspan x="1339" y="164">Province</tspan>
-<tspan x="1339" y="179">:longitude (143) [1] </tspan>
-<tspan x="1339" y="194">:name (143) [1] </tspan>
-<tspan x="1339" y="209">:type (66) [1] </tspan>
-<tspan x="1339" y="224">rdf:type (143) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1396" y="179">:area (141) [1] </tspan>
+<tspan x="1396" y="194">:depth (120) [1] </tspan>
+<tspan x="1396" y="209">:elevation (119) [1] </tspan>
+<tspan x="1396" y="224">:latitude (143) [1] </tspan>
+<tspan x="1396" y="239">:locatedIn (442) [*]  -&gt;  :Country,:</tspan>
+<tspan x="1396" y="254">Province</tspan>
+<tspan x="1396" y="269">:longitude (143) [1] </tspan>
+<tspan x="1396" y="284">:name (143) [1] </tspan>
+<tspan x="1396" y="299">:type (66) [1] </tspan>
+<tspan x="1396" y="314">rdf:type (143) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767072"><polygon points="1278,283 1444,283 1444,378 1278,378 "
+<g id="2002791115"><polygon points="1335,373 1501,373 1501,468 1335,468 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1335" y="298">:Sea (41)</tspan>
+<tspan x="1392" y="388">:Sea (41)</tspan>
 </text>
-<line x1="1282" y1="301" x2="1442" y2="301"
+<line x1="1339" y1="391" x2="1499" y2="391"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1282" y="313">:depth (39) [1] </tspan>
-<tspan x="1282" y="328">:locatedIn (1019) [*]  -&gt;  :</tspan>
-<tspan x="1282" y="343">Country,:Province</tspan>
-<tspan x="1282" y="358">:name (41) [1] </tspan>
-<tspan x="1282" y="373">rdf:type (41) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1339" y="403">:depth (39) [1] </tspan>
+<tspan x="1339" y="418">:locatedIn (1019) [*]  -&gt;  :</tspan>
+<tspan x="1339" y="433">Country,:Province</tspan>
+<tspan x="1339" y="448">:name (41) [1] </tspan>
+<tspan x="1339" y="463">rdf:type (41) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767083"><polygon points="801,746 981,746 981,829 801,829 "
+<g id="2002791126"><polygon points="858,836 1038,836 1038,919 858,919 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="813" y="761">owl:FunctionalProperty (40)</tspan>
+<tspan x="870" y="851">owl:FunctionalProperty (40)</tspan>
 </text>
-<line x1="805" y1="764" x2="979" y2="764"
+<line x1="862" y1="854" x2="1036" y2="854"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="805" y="776">owl:inverseOf (10) [1]  -&gt; IRI</tspan>
-<tspan x="805" y="791">rdf:type (76) [*]  -&gt;  owl:Class</tspan>
-<tspan x="805" y="806">rdfs:label (70) [*] </tspan>
+<tspan x="862" y="866">owl:inverseOf (10) [1]  -&gt; IRI</tspan>
+<tspan x="862" y="881">rdf:type (76) [*]  -&gt;  owl:Class</tspan>
+<tspan x="862" y="896">rdfs:label (70) [*] </tspan>
 </text>
 </g>
-<g id="2002767094"><polygon points="198,901 416,901 416,967 198,967 "
+<g id="2002791137"><polygon points="255,991 473,991 473,1057 255,1057 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="195,904 413,904 413,970 195,970 "
+<polygon points="252,994 470,994 470,1060 252,1060 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="216" y="919">owl:SymmetricProperty or owl:</tspan>
-<tspan x="236" y="935">DataProperty G101 (~3)</tspan>
+<tspan x="273" y="1009">owl:SymmetricProperty or owl:</tspan>
+<tspan x="293" y="1025">DataProperty G101 (~3)</tspan>
 </text>
 <text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="199" y="950">owl:DataProperty (1)</tspan>
-<tspan x="199" y="965">owl:SymmetricProperty (2)</tspan>
+<tspan x="256" y="1040">owl:DataProperty (1)</tspan>
+<tspan x="256" y="1055">owl:SymmetricProperty (2)</tspan>
 </text>
 </g>
-<g id="2002767105"><polygon points="305,176 541,176 541,466 305,466 "
+<g id="2002791148"><polygon points="362,266 598,266 598,556 362,556 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="383" y="191">:Country (244)</tspan>
+<tspan x="440" y="281">:Country (244)</tspan>
 </text>
-<line x1="309" y1="194" x2="539" y2="194"
+<line x1="366" y1="284" x2="596" y2="284"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="309" y="206">:area (244) [1] </tspan>
-<tspan x="309" y="221">:carCode (244) [1] D</tspan>
-<tspan x="309" y="236">:gdpAgri (224) [1] D</tspan>
-<tspan x="309" y="251">:gdpInd (223) [1] D</tspan>
-<tspan x="309" y="266">:gdpServ (223) [1] D</tspan>
-<tspan x="309" y="281">:gdpTotal (234) [1] D</tspan>
-<tspan x="309" y="296">:government (241) [1] D</tspan>
-<tspan x="309" y="311">:independenceDate (190) [1] D</tspan>
-<tspan x="309" y="326">:infantMortality (228) [1] D</tspan>
-<tspan x="309" y="341">:inflation (226) [1] D</tspan>
-<tspan x="309" y="356">:name (244) [1] </tspan>
-<tspan x="309" y="371">:othername (244) [*] </tspan>
-<tspan x="309" y="386">:population (244) [1] </tspan>
-<tspan x="309" y="401">:populationGrowth (234) [1] D</tspan>
-<tspan x="309" y="416">:unemployment (198) [1] D</tspan>
-<tspan x="309" y="431">rdf:type (244) [*]  -&gt;  owl:Class</tspan>
-<tspan x="309" y="446">&lt;-:locatedIn (2173)  &lt;-  :Estuary,:River..(7)</tspan>
+<tspan x="366" y="296">:area (244) [1] </tspan>
+<tspan x="366" y="311">:carCode (244) [1] D</tspan>
+<tspan x="366" y="326">:gdpAgri (224) [1] D</tspan>
+<tspan x="366" y="341">:gdpInd (223) [1] D</tspan>
+<tspan x="366" y="356">:gdpServ (223) [1] D</tspan>
+<tspan x="366" y="371">:gdpTotal (234) [1] D</tspan>
+<tspan x="366" y="386">:government (241) [1] D</tspan>
+<tspan x="366" y="401">:independenceDate (190) [1] D</tspan>
+<tspan x="366" y="416">:infantMortality (228) [1] D</tspan>
+<tspan x="366" y="431">:inflation (226) [1] D</tspan>
+<tspan x="366" y="446">:name (244) [1] </tspan>
+<tspan x="366" y="461">:othername (244) [*] </tspan>
+<tspan x="366" y="476">:population (244) [1] </tspan>
+<tspan x="366" y="491">:populationGrowth (234) [1] D</tspan>
+<tspan x="366" y="506">:unemployment (198) [1] D</tspan>
+<tspan x="366" y="521">rdf:type (244) [*]  -&gt;  owl:Class</tspan>
+<tspan x="366" y="536">&lt;-:locatedIn (2173)  &lt;-  :Estuary,:River..(7)</tspan>
 </text>
 </g>
-<g id="2002767116"><polygon points="19,308 193,308 193,358 19,358 "
+<g id="2002791159"><polygon points="76,402 250,402 250,452 76,452 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="40" y="323">:EthnicProportion (628)</tspan>
+<tspan x="97" y="417">:EthnicProportion (628)</tspan>
 </text>
-<line x1="23" y1="326" x2="191" y2="326"
+<line x1="80" y1="420" x2="248" y2="420"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="23" y="338">:percent (628) [1] </tspan>
-<tspan x="23" y="353">rdf:type (628) [*]  -&gt;  owl:Class</tspan>
+<tspan x="80" y="432">:percent (628) [1] </tspan>
+<tspan x="80" y="447">rdf:type (628) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767127"><polygon points="589,10 807,10 807,105 589,105 "
+<g id="2002791170"><polygon points="646,99 864,99 864,194 646,194 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="658" y="25">:Estuary (248)</tspan>
+<tspan x="715" y="114">:Estuary (248)</tspan>
 </text>
-<line x1="593" y1="28" x2="805" y2="28"
+<line x1="650" y1="117" x2="862" y2="117"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="593" y="40">:latitude (248) [1] </tspan>
-<tspan x="593" y="55">:locatedIn (541) [*]  -&gt;  :Country,:</tspan>
-<tspan x="593" y="70">Province</tspan>
-<tspan x="593" y="85">:longitude (248) [1] </tspan>
-<tspan x="593" y="100">rdf:type (248) [*]  -&gt;  owl:Class</tspan>
+<tspan x="650" y="129">:latitude (248) [1] </tspan>
+<tspan x="650" y="144">:locatedIn (541) [*]  -&gt;  :Country,:</tspan>
+<tspan x="650" y="159">Province</tspan>
+<tspan x="650" y="174">:longitude (248) [1] </tspan>
+<tspan x="650" y="189">rdf:type (248) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767138"><polygon points="364,642 582,642 582,782 364,782 "
+<g id="2002791181"><polygon points="421,732 639,732 639,872 421,872 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="418" y="657">owl:Restriction (21)</tspan>
+<tspan x="475" y="747">owl:Restriction (21)</tspan>
 </text>
-<line x1="368" y1="660" x2="580" y2="660"
+<line x1="425" y1="750" x2="637" y2="750"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="368" y="672">owl:allValuesFrom (6) [1] D -&gt; IRI</tspan>
-<tspan x="368" y="687">owl:cardinality (6) [1] D</tspan>
-<tspan x="368" y="702">owl:maxCardinality (2) [1] D</tspan>
-<tspan x="368" y="717">owl:maxQualifiedCardinality (3) [1] D</tspan>
-<tspan x="368" y="732">owl:minQualifiedCardinality (1) [1] D</tspan>
-<tspan x="368" y="747">owl:onClass (7) [1] D -&gt; IRI</tspan>
-<tspan x="368" y="762">owl:qualifiedCardinality (3) [1] D</tspan>
-<tspan x="368" y="777">rdf:type (21) [*]  -&gt;  owl:Class</tspan>
+<tspan x="425" y="762">owl:allValuesFrom (6) [1] D -&gt; IRI</tspan>
+<tspan x="425" y="777">owl:cardinality (6) [1] D</tspan>
+<tspan x="425" y="792">owl:maxCardinality (2) [1] D</tspan>
+<tspan x="425" y="807">owl:maxQualifiedCardinality (3) [1] D</tspan>
+<tspan x="425" y="822">owl:minQualifiedCardinality (1) [1] D</tspan>
+<tspan x="425" y="837">owl:onClass (7) [1] D -&gt; IRI</tspan>
+<tspan x="425" y="852">owl:qualifiedCardinality (3) [1] D</tspan>
+<tspan x="425" y="867">rdf:type (21) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767149"><polygon points="309,545 492,545 492,595 309,595 "
+<g id="2002791192"><polygon points="366,635 549,635 549,685 366,685 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="341" y="560">:Encompassed (249)</tspan>
+<tspan x="398" y="650">:Encompassed (249)</tspan>
 </text>
-<line x1="313" y1="563" x2="490" y2="563"
+<line x1="370" y1="653" x2="547" y2="653"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="313" y="575">:percent (249) [1] </tspan>
-<tspan x="313" y="590">rdf:type (249) [*]  -&gt;  owl:Class</tspan>
+<tspan x="370" y="665">:percent (249) [1] </tspan>
+<tspan x="370" y="680">rdf:type (249) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767160"><polygon points="644,138 862,138 862,263 644,263 "
+<g id="2002791203"><polygon points="701,228 919,228 919,353 701,353 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="707" y="153">:Province (1432)</tspan>
+<tspan x="764" y="243">:Province (1432)</tspan>
 </text>
-<line x1="648" y1="156" x2="860" y2="156"
+<line x1="705" y1="246" x2="917" y2="246"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="648" y="168">:area (1420) [1] </tspan>
-<tspan x="648" y="183">:name (1432) [1] </tspan>
-<tspan x="648" y="198">:othername (1468) [*] </tspan>
-<tspan x="648" y="213">:population (1428) [1] </tspan>
-<tspan x="648" y="228">rdf:type (1432) [*]  -&gt;  owl:Class</tspan>
-<tspan x="648" y="243">&lt;-:locatedIn (2988)  &lt;-  :Estuary,:River..</tspan>
-<tspan x="648" y="258">(7)</tspan>
+<tspan x="705" y="258">:area (1420) [1] </tspan>
+<tspan x="705" y="273">:name (1432) [1] </tspan>
+<tspan x="705" y="288">:othername (1468) [*] </tspan>
+<tspan x="705" y="303">:population (1428) [1] </tspan>
+<tspan x="705" y="318">rdf:type (1432) [*]  -&gt;  owl:Class</tspan>
+<tspan x="705" y="333">&lt;-:locatedIn (2988)  &lt;-  :Estuary,:River..</tspan>
+<tspan x="705" y="348">(7)</tspan>
 </text>
 </g>
-<g id="2002767171"><polygon points="786,329 1004,329 1004,379 786,379 "
+<g id="2002791214"><polygon points="843,419 1061,419 1061,469 843,469 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="849" y="344">:Language (103)</tspan>
+<tspan x="906" y="434">:Language (103)</tspan>
 </text>
-<line x1="790" y1="347" x2="1002" y2="347"
+<line x1="847" y1="437" x2="1059" y2="437"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="790" y="359">:name (103) [1] </tspan>
-<tspan x="790" y="374">rdf:type (103) [*]  -&gt;  owl:Class</tspan>
+<tspan x="847" y="449">:name (103) [1] </tspan>
+<tspan x="847" y="464">rdf:type (103) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767182"><polygon points="960,54 1178,54 1178,179 960,179 "
+<g id="2002791225"><polygon points="1017,144 1235,144 1235,269 1017,269 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1037" y="69">:River (248)</tspan>
+<tspan x="1094" y="159">:River (248)</tspan>
 </text>
-<line x1="964" y1="72" x2="1176" y2="72"
+<line x1="1021" y1="162" x2="1233" y2="162"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="964" y="84">:area (160) [1] </tspan>
-<tspan x="964" y="99">:length (243) [1] </tspan>
-<tspan x="964" y="114">:locatedIn (1313) [*]  -&gt;  :Country,:</tspan>
-<tspan x="964" y="129">Province</tspan>
-<tspan x="964" y="144">:name (248) [1] </tspan>
-<tspan x="964" y="159">rdf:type (248) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1021" y="174">:area (160) [1] </tspan>
+<tspan x="1021" y="189">:length (243) [1] </tspan>
+<tspan x="1021" y="204">:locatedIn (1313) [*]  -&gt;  :Country,:</tspan>
+<tspan x="1021" y="219">Province</tspan>
+<tspan x="1021" y="234">:name (248) [1] </tspan>
+<tspan x="1021" y="249">rdf:type (248) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767193"><polygon points="720,471 898,471 898,551 720,551 "
+<g id="2002791236"><polygon points="777,561 955,561 955,641 777,641 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="755" y="486">:Organization (168)</tspan>
+<tspan x="812" y="576">:Organization (168)</tspan>
 </text>
-<line x1="724" y1="489" x2="896" y2="489"
+<line x1="781" y1="579" x2="953" y2="579"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="724" y="501">:abbrev (168) [1] D</tspan>
-<tspan x="724" y="516">:established (152) [1] D</tspan>
-<tspan x="724" y="531">:name (168) [1] </tspan>
-<tspan x="724" y="546">rdf:type (168) [*]  -&gt;  owl:Class</tspan>
+<tspan x="781" y="591">:abbrev (168) [1] D</tspan>
+<tspan x="781" y="606">:established (152) [1] D</tspan>
+<tspan x="781" y="621">:name (168) [1] </tspan>
+<tspan x="781" y="636">rdf:type (168) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767204"><polygon points="644,398 862,398 862,448 644,448 "
+<g id="2002791247"><polygon points="701,488 919,488 919,538 701,538 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="705" y="413">:SpokenBy (282)</tspan>
+<tspan x="762" y="503">:SpokenBy (282)</tspan>
 </text>
-<line x1="648" y1="416" x2="860" y2="416"
+<line x1="705" y1="506" x2="917" y2="506"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="648" y="428">:percent (282) [1] </tspan>
-<tspan x="648" y="443">rdf:type (282) [*]  -&gt;  owl:Class</tspan>
+<tspan x="705" y="518">:percent (282) [1] </tspan>
+<tspan x="705" y="533">rdf:type (282) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767215"><polygon points="24,470 200,470 200,550 24,550 "
+<g id="2002791258"><polygon points="81,560 257,560 257,640 81,640 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="74" y="485">:Continent (5)</tspan>
+<tspan x="131" y="575">:Continent (5)</tspan>
 </text>
-<line x1="28" y1="488" x2="198" y2="488"
+<line x1="85" y1="578" x2="255" y2="578"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="28" y="500">:area (5) [1] </tspan>
-<tspan x="28" y="515">:name (5) [1] </tspan>
-<tspan x="28" y="530">rdf:type (5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="85" y="590">:area (5) [1] </tspan>
+<tspan x="85" y="605">:name (5) [1] </tspan>
+<tspan x="85" y="620">rdf:type (5) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767226"><polygon points="1502,566 1720,566 1720,616 1502,616 "
+<g id="2002791269"><polygon points="1559,656 1777,656 1777,706 1559,706 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1576" y="581">:Islands (68)</tspan>
+<tspan x="1633" y="671">:Islands (68)</tspan>
 </text>
-<line x1="1506" y1="584" x2="1718" y2="584"
+<line x1="1563" y1="674" x2="1775" y2="674"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1506" y="596">:name (68) [1] </tspan>
-<tspan x="1506" y="611">rdf:type (68) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1563" y="686">:name (68) [1] </tspan>
+<tspan x="1563" y="701">rdf:type (68) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767237"><polygon points="948,198 1166,198 1166,323 948,323 "
+<g id="2002791280"><polygon points="1005,288 1223,288 1223,413 1005,413 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1024" y="213">:City (3375)</tspan>
+<tspan x="1081" y="303">:City (3375)</tspan>
 </text>
-<line x1="952" y1="216" x2="1164" y2="216"
+<line x1="1009" y1="306" x2="1221" y2="306"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="952" y="228">:elevation (2533) [1] </tspan>
-<tspan x="952" y="243">:latitude (3365) [1] </tspan>
-<tspan x="952" y="258">:longitude (3365) [1] </tspan>
-<tspan x="952" y="273">:name (3375) [1] </tspan>
-<tspan x="952" y="288">:othername (3881) [*] </tspan>
-<tspan x="952" y="303">:population (3043) [1] </tspan>
-<tspan x="952" y="318">rdf:type (3375) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1009" y="318">:elevation (2533) [1] </tspan>
+<tspan x="1009" y="333">:latitude (3365) [1] </tspan>
+<tspan x="1009" y="348">:longitude (3365) [1] </tspan>
+<tspan x="1009" y="363">:name (3375) [1] </tspan>
+<tspan x="1009" y="378">:othername (3881) [*] </tspan>
+<tspan x="1009" y="393">:population (3043) [1] </tspan>
+<tspan x="1009" y="408">rdf:type (3375) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767248"><polygon points="481,844 704,844 704,969 481,969 "
+<g id="2002791291"><polygon points="538,934 761,934 761,1059 538,1059 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="552" y="859">owl:Class (23)</tspan>
+<tspan x="609" y="949">owl:Class (23)</tspan>
 </text>
-<line x1="485" y1="862" x2="702" y2="862"
+<line x1="542" y1="952" x2="759" y2="952"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="485" y="874">owl:disjointUnionOf (12) [1]  -&gt; IRI</tspan>
-<tspan x="485" y="889">owl:equivalentClass (1) [1] D -&gt; IRI</tspan>
-<tspan x="485" y="904">owl:intersectionOf (3) [1] D -&gt; IRI</tspan>
-<tspan x="485" y="919">owl:unionOf (2) [1] D -&gt; IRI</tspan>
-<tspan x="485" y="934">rdf:type (24) [*]  -&gt;  owl:Class</tspan>
-<tspan x="485" y="949">rdfs:label (4) [*] </tspan>
-<tspan x="485" y="964">&lt;-rdf:type (168)  &lt;-  :Estuary,:River..(28)</tspan>
+<tspan x="542" y="964">owl:disjointUnionOf (12) [1]  -&gt; IRI</tspan>
+<tspan x="542" y="979">owl:equivalentClass (1) [1] D -&gt; IRI</tspan>
+<tspan x="542" y="994">owl:intersectionOf (3) [1] D -&gt; IRI</tspan>
+<tspan x="542" y="1009">owl:unionOf (2) [1] D -&gt; IRI</tspan>
+<tspan x="542" y="1024">rdf:type (24) [*]  -&gt;  owl:Class</tspan>
+<tspan x="542" y="1039">rdfs:label (4) [*] </tspan>
+<tspan x="542" y="1054">&lt;-rdf:type (168)  &lt;-  :Estuary,:River..(28)</tspan>
 </text>
 </g>
-<g id="2002767259"><polygon points="100,239 269,239 269,289 100,289 "
+<g id="2002791302"><polygon points="157,329 326,329 326,379 157,379 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="130" y="254">:EthnicGroup (280)</tspan>
+<tspan x="187" y="344">:EthnicGroup (280)</tspan>
 </text>
-<line x1="104" y1="257" x2="267" y2="257"
+<line x1="161" y1="347" x2="324" y2="347"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="104" y="269">:name (280) [1] </tspan>
-<tspan x="104" y="284">rdf:type (280) [*]  -&gt;  owl:Class</tspan>
+<tspan x="161" y="359">:name (280) [1] </tspan>
+<tspan x="161" y="374">rdf:type (280) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767270"><polygon points="1248,425 1466,425 1466,565 1248,565 "
+<g id="2002791313"><polygon points="1305,515 1523,515 1523,655 1305,655 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1313" y="440">:Mountain (251)</tspan>
+<tspan x="1370" y="530">:Mountain (251)</tspan>
 </text>
-<line x1="1252" y1="443" x2="1464" y2="443"
+<line x1="1309" y1="533" x2="1521" y2="533"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1252" y="455">:elevation (251) [1] </tspan>
-<tspan x="1252" y="470">:latitude (251) [1] </tspan>
-<tspan x="1252" y="485">:locatedIn (539) [*]  -&gt;  :Country,:</tspan>
-<tspan x="1252" y="500">Province</tspan>
-<tspan x="1252" y="515">:longitude (251) [1] </tspan>
-<tspan x="1252" y="530">:name (251) [1] </tspan>
-<tspan x="1252" y="545">:type (106) [1] </tspan>
-<tspan x="1252" y="560">rdf:type (352) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1309" y="545">:elevation (251) [1] </tspan>
+<tspan x="1309" y="560">:latitude (251) [1] </tspan>
+<tspan x="1309" y="575">:locatedIn (539) [*]  -&gt;  :Country,:</tspan>
+<tspan x="1309" y="590">Province</tspan>
+<tspan x="1309" y="605">:longitude (251) [1] </tspan>
+<tspan x="1309" y="620">:name (251) [1] </tspan>
+<tspan x="1309" y="635">:type (106) [1] </tspan>
+<tspan x="1309" y="650">rdf:type (352) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767281"><polygon points="22,364 183,364 183,429 22,429 "
+<g id="2002791324"><polygon points="79,458 240,458 240,523 79,523 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="65" y="379">:Border (325)</tspan>
+<tspan x="122" y="473">:Border (325)</tspan>
 </text>
-<line x1="26" y1="382" x2="181" y2="382"
+<line x1="83" y1="476" x2="238" y2="476"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="26" y="394">:length (325) [1] </tspan>
-<tspan x="26" y="409">rdf:type (325) [*]  -&gt;  owl:</tspan>
-<tspan x="26" y="424">Class</tspan>
+<tspan x="83" y="488">:length (325) [1] </tspan>
+<tspan x="83" y="503">rdf:type (325) [*]  -&gt;  owl:</tspan>
+<tspan x="83" y="518">Class</tspan>
 </text>
 </g>
-<g id="2002767292"><polygon points="930,487 1148,487 1148,672 930,672 "
+<g id="2002791335"><polygon points="987,577 1205,577 1205,762 987,762 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="927,490 1145,490 1145,675 927,675 "
+<polygon points="984,580 1202,580 1202,765 984,765 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="946" y="505">:Source or :Desert G102 (~310)</tspan>
+<tspan x="1003" y="595">:Source or :Desert G102 (~310)</tspan>
 </text>
-<line x1="931" y1="508" x2="1143" y2="508"
+<line x1="988" y1="598" x2="1200" y2="598"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="931" y="520">:area (62) [1] </tspan>
-<tspan x="931" y="535">:elevation (157) [1] </tspan>
-<tspan x="931" y="550">:latitude (307) [1] </tspan>
-<tspan x="931" y="565">:locatedIn (708) [*]  -&gt;  :Country,:</tspan>
-<tspan x="931" y="580">Province</tspan>
-<tspan x="931" y="595">:longitude (307) [1] </tspan>
-<tspan x="931" y="610">:name (62) [1] </tspan>
-<tspan x="931" y="625">:type (12) [1] </tspan>
-<tspan x="931" y="640">rdf:type (310) [*]  -&gt;  owl:Class</tspan>
+<tspan x="988" y="610">:area (62) [1] </tspan>
+<tspan x="988" y="625">:elevation (157) [1] </tspan>
+<tspan x="988" y="640">:latitude (307) [1] </tspan>
+<tspan x="988" y="655">:locatedIn (708) [*]  -&gt;  :Country,:</tspan>
+<tspan x="988" y="670">Province</tspan>
+<tspan x="988" y="685">:longitude (307) [1] </tspan>
+<tspan x="988" y="700">:name (62) [1] </tspan>
+<tspan x="988" y="715">:type (12) [1] </tspan>
+<tspan x="988" y="730">rdf:type (310) [*]  -&gt;  owl:Class</tspan>
 </text>
 <text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="931" y="655">:Desert (62)</tspan>
-<tspan x="931" y="670">:Source (248)</tspan>
+<tspan x="988" y="745">:Desert (62)</tspan>
+<tspan x="988" y="760">:Source (248)</tspan>
 </text>
 </g>
-<g id="2002767303"><polygon points="332,19 519,19 519,69 332,69 "
+<g id="2002791346"><polygon points="389,109 576,109 576,159 389,159 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="375" y="34">:BelievedBy (547)</tspan>
+<tspan x="432" y="124">:BelievedBy (547)</tspan>
 </text>
-<line x1="336" y1="37" x2="517" y2="37"
+<line x1="393" y1="127" x2="574" y2="127"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="336" y="49">:percent (547) [1] </tspan>
-<tspan x="336" y="64">rdf:type (547) [*]  -&gt;  owl:Class</tspan>
+<tspan x="393" y="139">:percent (547) [1] </tspan>
+<tspan x="393" y="154">rdf:type (547) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767314"><polygon points="1552,330 1734,330 1734,485 1552,485 "
+<g id="2002791357"><polygon points="1609,420 1791,420 1791,575 1609,575 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1608" y="345">:Island (298)</tspan>
+<tspan x="1665" y="435">:Island (298)</tspan>
 </text>
-<line x1="1556" y1="348" x2="1732" y2="348"
+<line x1="1613" y1="438" x2="1789" y2="438"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1556" y="360">:area (294) [1] </tspan>
-<tspan x="1556" y="375">:elevation (253) [1] </tspan>
-<tspan x="1556" y="390">:latitude (297) [1] </tspan>
-<tspan x="1556" y="405">:locatedIn (599) [*]  -&gt;  :Country,:</tspan>
-<tspan x="1556" y="420">Province</tspan>
-<tspan x="1556" y="435">:longitude (297) [1] </tspan>
-<tspan x="1556" y="450">:name (298) [1] </tspan>
-<tspan x="1556" y="465">:type (107) [1] </tspan>
-<tspan x="1556" y="480">rdf:type (298) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1613" y="450">:area (294) [1] </tspan>
+<tspan x="1613" y="465">:elevation (253) [1] </tspan>
+<tspan x="1613" y="480">:latitude (297) [1] </tspan>
+<tspan x="1613" y="495">:locatedIn (599) [*]  -&gt;  :Country,:</tspan>
+<tspan x="1613" y="510">Province</tspan>
+<tspan x="1613" y="525">:longitude (297) [1] </tspan>
+<tspan x="1613" y="540">:name (298) [1] </tspan>
+<tspan x="1613" y="555">:type (107) [1] </tspan>
+<tspan x="1613" y="570">rdf:type (298) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767325"><polygon points="1273,664 1491,664 1491,709 1273,709 "
+<g id="2002791368"><polygon points="1330,754 1548,754 1548,799 1330,799 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1341" y="679">:Volcano (101)</tspan>
+<tspan x="1398" y="769">:Volcano (101)</tspan>
 </text>
-<line x1="1277" y1="682" x2="1489" y2="682"
+<line x1="1334" y1="772" x2="1546" y2="772"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1277" y="694">:lastEruption (2) [1] D</tspan>
+<tspan x="1334" y="784">:lastEruption (2) [1] D</tspan>
 </text>
 </g>
-<g id="2002767336"><polygon points="1065,408 1229,408 1229,458 1065,458 "
+<g id="2002791379"><polygon points="1122,498 1286,498 1286,548 1122,548 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1103" y="423">:Mountains (92)</tspan>
+<tspan x="1160" y="513">:Mountains (92)</tspan>
 </text>
-<line x1="1069" y1="426" x2="1227" y2="426"
+<line x1="1126" y1="516" x2="1284" y2="516"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1069" y="438">:name (92) [1] </tspan>
-<tspan x="1069" y="453">rdf:type (92) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1126" y="528">:name (92) [1] </tspan>
+<tspan x="1126" y="543">rdf:type (92) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767347"><polygon points="556,565 774,565 774,615 556,615 "
+<g id="2002791390"><polygon points="613,655 831,655 831,705 613,705 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="608" y="580">:Membership (9968)</tspan>
+<tspan x="665" y="670">:Membership (9968)</tspan>
 </text>
-<line x1="560" y1="583" x2="772" y2="583"
+<line x1="617" y1="673" x2="829" y2="673"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="560" y="595">:type (9968) [1] </tspan>
-<tspan x="560" y="610">rdf:type (9968) [*]  -&gt;  owl:Class</tspan>
+<tspan x="617" y="685">:type (9968) [1] </tspan>
+<tspan x="617" y="700">rdf:type (9968) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767358"><polygon points="94,707 312,707 312,757 94,757 "
+<g id="2002791401"><polygon points="151,791 369,791 369,841 151,841 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="108" y="722">owl:InverseFunctionalProperty (7)</tspan>
+<tspan x="165" y="806">owl:InverseFunctionalProperty (7)</tspan>
 </text>
-<line x1="98" y1="725" x2="310" y2="725"
+<line x1="155" y1="809" x2="367" y2="809"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="98" y="737">owl:inverseOf (6) [1]  -&gt; IRI</tspan>
-<tspan x="98" y="752">rdf:type (10) [*]  -&gt;  owl:Class</tspan>
+<tspan x="155" y="821">owl:inverseOf (6) [1]  -&gt; IRI</tspan>
+<tspan x="155" y="836">rdf:type (10) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767369"><polygon points="40,48 258,48 258,98 40,98 "
+<g id="2002791412"><polygon points="97,138 315,138 315,188 97,188 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="112" y="63">:Religion (44)</tspan>
+<tspan x="169" y="153">:Religion (44)</tspan>
 </text>
-<line x1="44" y1="66" x2="256" y2="66"
+<line x1="101" y1="156" x2="313" y2="156"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="44" y="78">:name (44) [1] </tspan>
-<tspan x="44" y="93">rdf:type (44) [*]  -&gt;  owl:Class</tspan>
+<tspan x="101" y="168">:name (44) [1] </tspan>
+<tspan x="101" y="183">rdf:type (44) [*]  -&gt;  owl:Class</tspan>
 </text>
 </g>
-<g id="2002767380"><polygon points="183,801 401,801 401,885 183,885 "
+<g id="2002791423"><polygon points="240,891 458,891 458,975 240,975 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="246" y="816">rdf:Property (54)</tspan>
+<tspan x="303" y="906">rdf:Property (54)</tspan>
 </text>
-<line x1="187" y1="819" x2="399" y2="819"
+<line x1="244" y1="909" x2="456" y2="909"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="187" y="831">owl:inverseOf (12) [1]  -&gt; IRI</tspan>
-<tspan x="187" y="846">rdf:type (92) [*]  -&gt;  owl:Class</tspan>
-<tspan x="187" y="861">rdfs:label (108) [*] </tspan>
+<tspan x="244" y="921">owl:inverseOf (12) [1]  -&gt; IRI</tspan>
+<tspan x="244" y="936">rdf:type (92) [*]  -&gt;  owl:Class</tspan>
+<tspan x="244" y="951">rdfs:label (108) [*] </tspan>
 </text>
 </g>
-<g id="2002767638"><polygon points="1335,59 1553,59 1553,229 1335,229 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1412" y="74">:Lake (143)</tspan>
-</text>
-<line x1="1339" y1="77" x2="1551" y2="77"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1339" y="89">:area (141) [1] </tspan>
-<tspan x="1339" y="104">:depth (120) [1] </tspan>
-<tspan x="1339" y="119">:elevation (119) [1] </tspan>
-<tspan x="1339" y="134">:latitude (143) [1] </tspan>
-<tspan x="1339" y="149">:locatedIn (442) [*]  -&gt;  :Country,:</tspan>
-<tspan x="1339" y="164">Province</tspan>
-<tspan x="1339" y="179">:longitude (143) [1] </tspan>
-<tspan x="1339" y="194">:name (143) [1] </tspan>
-<tspan x="1339" y="209">:type (66) [1] </tspan>
-<tspan x="1339" y="224">rdf:type (143) [*]  -&gt;  owl:Class</tspan>
+<g id="2002799287"><polygon points="703,28 1057,28 1057,80 703,80 "
+style="fill:none; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:18px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="848" y="48">Mondial</tspan>
+<tspan x="733" y="70">http://servolis.irisa.fr/mondial/sparql</tspan>
 </text>
 </g>
-<g id="2002767649"><polygon points="1278,283 1444,283 1444,378 1278,378 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1335" y="298">:Sea (41)</tspan>
-</text>
-<line x1="1282" y1="301" x2="1442" y2="301"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1282" y="313">:depth (39) [1] </tspan>
-<tspan x="1282" y="328">:locatedIn (1019) [*]  -&gt;  :</tspan>
-<tspan x="1282" y="343">Country,:Province</tspan>
-<tspan x="1282" y="358">:name (41) [1] </tspan>
-<tspan x="1282" y="373">rdf:type (41) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767660"><polygon points="801,746 981,746 981,829 801,829 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="813" y="761">owl:FunctionalProperty (40)</tspan>
-</text>
-<line x1="805" y1="764" x2="979" y2="764"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="805" y="776">owl:inverseOf (10) [1]  -&gt; IRI</tspan>
-<tspan x="805" y="791">rdf:type (76) [*]  -&gt;  owl:Class</tspan>
-<tspan x="805" y="806">rdfs:label (70) [*] </tspan>
-</text>
-</g>
-<g id="2002767671"><polygon points="198,901 416,901 416,967 198,967 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="195,904 413,904 413,970 195,970 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="216" y="919">owl:SymmetricProperty or owl:</tspan>
-<tspan x="236" y="935">DataProperty G101 (~3)</tspan>
-</text>
-<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="199" y="950">owl:DataProperty (1)</tspan>
-<tspan x="199" y="965">owl:SymmetricProperty (2)</tspan>
-</text>
-</g>
-<g id="2002767682"><polygon points="305,176 541,176 541,466 305,466 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="383" y="191">:Country (244)</tspan>
-</text>
-<line x1="309" y1="194" x2="539" y2="194"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="309" y="206">:area (244) [1] </tspan>
-<tspan x="309" y="221">:carCode (244) [1] D</tspan>
-<tspan x="309" y="236">:gdpAgri (224) [1] D</tspan>
-<tspan x="309" y="251">:gdpInd (223) [1] D</tspan>
-<tspan x="309" y="266">:gdpServ (223) [1] D</tspan>
-<tspan x="309" y="281">:gdpTotal (234) [1] D</tspan>
-<tspan x="309" y="296">:government (241) [1] D</tspan>
-<tspan x="309" y="311">:independenceDate (190) [1] D</tspan>
-<tspan x="309" y="326">:infantMortality (228) [1] D</tspan>
-<tspan x="309" y="341">:inflation (226) [1] D</tspan>
-<tspan x="309" y="356">:name (244) [1] </tspan>
-<tspan x="309" y="371">:othername (244) [*] </tspan>
-<tspan x="309" y="386">:population (244) [1] </tspan>
-<tspan x="309" y="401">:populationGrowth (234) [1] D</tspan>
-<tspan x="309" y="416">:unemployment (198) [1] D</tspan>
-<tspan x="309" y="431">rdf:type (244) [*]  -&gt;  owl:Class</tspan>
-<tspan x="309" y="446">&lt;-:locatedIn (2173)  &lt;-  :Estuary,:River..(7)</tspan>
-</text>
-</g>
-<g id="2002767693"><polygon points="19,308 193,308 193,358 19,358 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="40" y="323">:EthnicProportion (628)</tspan>
-</text>
-<line x1="23" y1="326" x2="191" y2="326"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="23" y="338">:percent (628) [1] </tspan>
-<tspan x="23" y="353">rdf:type (628) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767704"><polygon points="589,10 807,10 807,105 589,105 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="658" y="25">:Estuary (248)</tspan>
-</text>
-<line x1="593" y1="28" x2="805" y2="28"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="593" y="40">:latitude (248) [1] </tspan>
-<tspan x="593" y="55">:locatedIn (541) [*]  -&gt;  :Country,:</tspan>
-<tspan x="593" y="70">Province</tspan>
-<tspan x="593" y="85">:longitude (248) [1] </tspan>
-<tspan x="593" y="100">rdf:type (248) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767715"><polygon points="364,642 582,642 582,782 364,782 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="418" y="657">owl:Restriction (21)</tspan>
-</text>
-<line x1="368" y1="660" x2="580" y2="660"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="368" y="672">owl:allValuesFrom (6) [1] D -&gt; IRI</tspan>
-<tspan x="368" y="687">owl:cardinality (6) [1] D</tspan>
-<tspan x="368" y="702">owl:maxCardinality (2) [1] D</tspan>
-<tspan x="368" y="717">owl:maxQualifiedCardinality (3) [1] D</tspan>
-<tspan x="368" y="732">owl:minQualifiedCardinality (1) [1] D</tspan>
-<tspan x="368" y="747">owl:onClass (7) [1] D -&gt; IRI</tspan>
-<tspan x="368" y="762">owl:qualifiedCardinality (3) [1] D</tspan>
-<tspan x="368" y="777">rdf:type (21) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767726"><polygon points="309,545 492,545 492,595 309,595 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="341" y="560">:Encompassed (249)</tspan>
-</text>
-<line x1="313" y1="563" x2="490" y2="563"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="313" y="575">:percent (249) [1] </tspan>
-<tspan x="313" y="590">rdf:type (249) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767737"><polygon points="644,138 862,138 862,263 644,263 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="707" y="153">:Province (1432)</tspan>
-</text>
-<line x1="648" y1="156" x2="860" y2="156"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="648" y="168">:area (1420) [1] </tspan>
-<tspan x="648" y="183">:name (1432) [1] </tspan>
-<tspan x="648" y="198">:othername (1468) [*] </tspan>
-<tspan x="648" y="213">:population (1428) [1] </tspan>
-<tspan x="648" y="228">rdf:type (1432) [*]  -&gt;  owl:Class</tspan>
-<tspan x="648" y="243">&lt;-:locatedIn (2988)  &lt;-  :Estuary,:River..</tspan>
-<tspan x="648" y="258">(7)</tspan>
-</text>
-</g>
-<g id="2002767748"><polygon points="786,329 1004,329 1004,379 786,379 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="849" y="344">:Language (103)</tspan>
-</text>
-<line x1="790" y1="347" x2="1002" y2="347"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="790" y="359">:name (103) [1] </tspan>
-<tspan x="790" y="374">rdf:type (103) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767759"><polygon points="960,54 1178,54 1178,179 960,179 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1037" y="69">:River (248)</tspan>
-</text>
-<line x1="964" y1="72" x2="1176" y2="72"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="964" y="84">:area (160) [1] </tspan>
-<tspan x="964" y="99">:length (243) [1] </tspan>
-<tspan x="964" y="114">:locatedIn (1313) [*]  -&gt;  :Country,:</tspan>
-<tspan x="964" y="129">Province</tspan>
-<tspan x="964" y="144">:name (248) [1] </tspan>
-<tspan x="964" y="159">rdf:type (248) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767770"><polygon points="720,471 898,471 898,551 720,551 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="755" y="486">:Organization (168)</tspan>
-</text>
-<line x1="724" y1="489" x2="896" y2="489"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="724" y="501">:abbrev (168) [1] D</tspan>
-<tspan x="724" y="516">:established (152) [1] D</tspan>
-<tspan x="724" y="531">:name (168) [1] </tspan>
-<tspan x="724" y="546">rdf:type (168) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767781"><polygon points="644,398 862,398 862,448 644,448 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="705" y="413">:SpokenBy (282)</tspan>
-</text>
-<line x1="648" y1="416" x2="860" y2="416"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="648" y="428">:percent (282) [1] </tspan>
-<tspan x="648" y="443">rdf:type (282) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767792"><polygon points="24,470 200,470 200,550 24,550 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="74" y="485">:Continent (5)</tspan>
-</text>
-<line x1="28" y1="488" x2="198" y2="488"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="28" y="500">:area (5) [1] </tspan>
-<tspan x="28" y="515">:name (5) [1] </tspan>
-<tspan x="28" y="530">rdf:type (5) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767803"><polygon points="1502,566 1720,566 1720,616 1502,616 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1576" y="581">:Islands (68)</tspan>
-</text>
-<line x1="1506" y1="584" x2="1718" y2="584"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1506" y="596">:name (68) [1] </tspan>
-<tspan x="1506" y="611">rdf:type (68) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767814"><polygon points="948,198 1166,198 1166,323 948,323 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1024" y="213">:City (3375)</tspan>
-</text>
-<line x1="952" y1="216" x2="1164" y2="216"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="952" y="228">:elevation (2533) [1] </tspan>
-<tspan x="952" y="243">:latitude (3365) [1] </tspan>
-<tspan x="952" y="258">:longitude (3365) [1] </tspan>
-<tspan x="952" y="273">:name (3375) [1] </tspan>
-<tspan x="952" y="288">:othername (3881) [*] </tspan>
-<tspan x="952" y="303">:population (3043) [1] </tspan>
-<tspan x="952" y="318">rdf:type (3375) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767825"><polygon points="481,844 704,844 704,969 481,969 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="552" y="859">owl:Class (23)</tspan>
-</text>
-<line x1="485" y1="862" x2="702" y2="862"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="485" y="874">owl:disjointUnionOf (12) [1]  -&gt; IRI</tspan>
-<tspan x="485" y="889">owl:equivalentClass (1) [1] D -&gt; IRI</tspan>
-<tspan x="485" y="904">owl:intersectionOf (3) [1] D -&gt; IRI</tspan>
-<tspan x="485" y="919">owl:unionOf (2) [1] D -&gt; IRI</tspan>
-<tspan x="485" y="934">rdf:type (24) [*]  -&gt;  owl:Class</tspan>
-<tspan x="485" y="949">rdfs:label (4) [*] </tspan>
-<tspan x="485" y="964">&lt;-rdf:type (168)  &lt;-  :Estuary,:River..(28)</tspan>
-</text>
-</g>
-<g id="2002767836"><polygon points="100,239 269,239 269,289 100,289 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="130" y="254">:EthnicGroup (280)</tspan>
-</text>
-<line x1="104" y1="257" x2="267" y2="257"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="104" y="269">:name (280) [1] </tspan>
-<tspan x="104" y="284">rdf:type (280) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767847"><polygon points="1248,425 1466,425 1466,565 1248,565 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1313" y="440">:Mountain (251)</tspan>
-</text>
-<line x1="1252" y1="443" x2="1464" y2="443"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1252" y="455">:elevation (251) [1] </tspan>
-<tspan x="1252" y="470">:latitude (251) [1] </tspan>
-<tspan x="1252" y="485">:locatedIn (539) [*]  -&gt;  :Country,:</tspan>
-<tspan x="1252" y="500">Province</tspan>
-<tspan x="1252" y="515">:longitude (251) [1] </tspan>
-<tspan x="1252" y="530">:name (251) [1] </tspan>
-<tspan x="1252" y="545">:type (106) [1] </tspan>
-<tspan x="1252" y="560">rdf:type (352) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767858"><polygon points="22,364 183,364 183,429 22,429 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="65" y="379">:Border (325)</tspan>
-</text>
-<line x1="26" y1="382" x2="181" y2="382"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="26" y="394">:length (325) [1] </tspan>
-<tspan x="26" y="409">rdf:type (325) [*]  -&gt;  owl:</tspan>
-<tspan x="26" y="424">Class</tspan>
-</text>
-</g>
-<g id="2002767869"><polygon points="930,487 1148,487 1148,672 930,672 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="927,490 1145,490 1145,675 927,675 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="946" y="505">:Source or :Desert G102 (~310)</tspan>
-</text>
-<line x1="931" y1="508" x2="1143" y2="508"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="931" y="520">:area (62) [1] </tspan>
-<tspan x="931" y="535">:elevation (157) [1] </tspan>
-<tspan x="931" y="550">:latitude (307) [1] </tspan>
-<tspan x="931" y="565">:locatedIn (708) [*]  -&gt;  :Country,:</tspan>
-<tspan x="931" y="580">Province</tspan>
-<tspan x="931" y="595">:longitude (307) [1] </tspan>
-<tspan x="931" y="610">:name (62) [1] </tspan>
-<tspan x="931" y="625">:type (12) [1] </tspan>
-<tspan x="931" y="640">rdf:type (310) [*]  -&gt;  owl:Class</tspan>
-</text>
-<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="931" y="655">:Desert (62)</tspan>
-<tspan x="931" y="670">:Source (248)</tspan>
-</text>
-</g>
-<g id="2002767880"><polygon points="332,19 519,19 519,69 332,69 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="375" y="34">:BelievedBy (547)</tspan>
-</text>
-<line x1="336" y1="37" x2="517" y2="37"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="336" y="49">:percent (547) [1] </tspan>
-<tspan x="336" y="64">rdf:type (547) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767891"><polygon points="1552,330 1734,330 1734,485 1552,485 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1608" y="345">:Island (298)</tspan>
-</text>
-<line x1="1556" y1="348" x2="1732" y2="348"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1556" y="360">:area (294) [1] </tspan>
-<tspan x="1556" y="375">:elevation (253) [1] </tspan>
-<tspan x="1556" y="390">:latitude (297) [1] </tspan>
-<tspan x="1556" y="405">:locatedIn (599) [*]  -&gt;  :Country,:</tspan>
-<tspan x="1556" y="420">Province</tspan>
-<tspan x="1556" y="435">:longitude (297) [1] </tspan>
-<tspan x="1556" y="450">:name (298) [1] </tspan>
-<tspan x="1556" y="465">:type (107) [1] </tspan>
-<tspan x="1556" y="480">rdf:type (298) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767902"><polygon points="1273,664 1491,664 1491,709 1273,709 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1341" y="679">:Volcano (101)</tspan>
-</text>
-<line x1="1277" y1="682" x2="1489" y2="682"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1277" y="694">:lastEruption (2) [1] D</tspan>
-</text>
-</g>
-<g id="2002767913"><polygon points="1065,408 1229,408 1229,458 1065,458 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1103" y="423">:Mountains (92)</tspan>
-</text>
-<line x1="1069" y1="426" x2="1227" y2="426"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1069" y="438">:name (92) [1] </tspan>
-<tspan x="1069" y="453">rdf:type (92) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767924"><polygon points="556,565 774,565 774,615 556,615 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="608" y="580">:Membership (9968)</tspan>
-</text>
-<line x1="560" y1="583" x2="772" y2="583"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="560" y="595">:type (9968) [1] </tspan>
-<tspan x="560" y="610">rdf:type (9968) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767935"><polygon points="94,707 312,707 312,757 94,757 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="108" y="722">owl:InverseFunctionalProperty (7)</tspan>
-</text>
-<line x1="98" y1="725" x2="310" y2="725"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="98" y="737">owl:inverseOf (6) [1]  -&gt; IRI</tspan>
-<tspan x="98" y="752">rdf:type (10) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767946"><polygon points="40,48 258,48 258,98 40,98 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="112" y="63">:Religion (44)</tspan>
-</text>
-<line x1="44" y1="66" x2="256" y2="66"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="44" y="78">:name (44) [1] </tspan>
-<tspan x="44" y="93">rdf:type (44) [*]  -&gt;  owl:Class</tspan>
-</text>
-</g>
-<g id="2002767957"><polygon points="183,801 401,801 401,885 183,885 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="246" y="816">rdf:Property (54)</tspan>
-</text>
-<line x1="187" y1="819" x2="399" y2="819"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="187" y="831">owl:inverseOf (12) [1]  -&gt; IRI</tspan>
-<tspan x="187" y="846">rdf:type (92) [*]  -&gt;  owl:Class</tspan>
-<tspan x="187" y="861">rdfs:label (108) [*] </tspan>
-</text>
-</g>
-<g id="2002767391"><path d="M704,893 L813,893 817,895 819,899 819,940 817,944 813,946 704,946 "
+<g id="2002791434"><path d="M761,983 L870,983 874,985 876,989 876,1030 874,1034 870,1036 761,1036 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="710" y1="943" x2="704" y2="946"
+<line x1="767" y1="1033" x2="761" y2="1036"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="710" y1="949" x2="704" y2="946"
+<line x1="767" y1="1039" x2="761" y2="1036"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="708" y="876">owl:disjointWith  R</tspan>
-<tspan x="708" y="891">rdfs:subClassOf  </tspan>
+<tspan x="765" y="966">owl:disjointWith  R</tspan>
+<tspan x="765" y="981">rdfs:subClassOf  </tspan>
 </text>
 </g>
-<g id="2002767396"><path d="M960,132 L19,132 15,134 13,138 13,630 15,634 19,636 927,636 "
+<g id="2002791439"><path d="M1017,222 L76,222 72,224 70,228 70,720 72,724 76,726 984,726 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="921" y1="633" x2="927" y2="636"
+<line x1="978" y1="723" x2="984" y2="726"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="921" y1="639" x2="927" y2="636"
+<line x1="978" y1="729" x2="984" y2="726"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="869" y="145">:hasSource  DR</tspan>
+<tspan x="926" y="235">:hasSource  DR</tspan>
 </text>
 </g>
-<g id="2002767401"><path d="M960,90 L880,90 876,88 874,84 874,54 876,50 880,48 1016,48 1016,54 "
+<g id="2002791444"><path d="M1017,180 L937,180 933,178 931,174 931,144 933,140 937,138 1073,138 1073,144 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1013" y1="48" x2="1016" y2="54"
+<line x1="1070" y1="138" x2="1073" y2="144"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1019" y1="48" x2="1016" y2="54"
+<line x1="1076" y1="138" x2="1073" y2="144"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="898" y="103">:flowsInto  </tspan>
+<tspan x="955" y="193">:flowsInto  </tspan>
 </text>
 </g>
-<g id="2002767406"><path d="M1552,343 L1444,343 "
+<g id="2002791449"><path d="M1609,433 L1501,433 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1450" y1="340" x2="1444" y2="343"
+<line x1="1507" y1="430" x2="1501" y2="433"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1450" y1="346" x2="1444" y2="343"
+<line x1="1507" y1="436" x2="1501" y2="433"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1448" y="356">:locatedInWater  D</tspan>
+<tspan x="1505" y="446">:locatedInWater  D</tspan>
 </text>
 </g>
-<g id="2002767411"><path d="M541,280 L644,280 648,278 650,274 650,263 "
+<g id="2002791454"><path d="M598,370 L701,370 705,368 707,364 707,353 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="647" y1="269" x2="650" y2="263"
+<line x1="704" y1="359" x2="707" y2="353"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="653" y1="269" x2="650" y2="263"
+<line x1="710" y1="359" x2="707" y2="353"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="545" y="278">:hasProvince  DR</tspan>
+<tspan x="602" y="368">:hasProvince  DR</tspan>
 </text>
 </g>
-<g id="2002767416"><path d="M468,545 L468,466 "
+<g id="2002791459"><path d="M525,635 L525,556 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="465" y1="472" x2="468" y2="466"
+<line x1="522" y1="562" x2="525" y2="556"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="471" y1="472" x2="468" y2="466"
+<line x1="528" y1="562" x2="525" y2="556"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="334" y="541">:encompassedArea  DR</tspan>
+<tspan x="391" y="631">:encompassedArea  DR</tspan>
 </text>
 </g>
-<g id="2002767421"><path d="M650,398 L650,381 648,377 644,375 541,375 "
+<g id="2002791464"><path d="M707,488 L707,471 705,467 701,465 598,465 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="547" y1="372" x2="541" y2="375"
+<line x1="604" y1="462" x2="598" y2="465"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="547" y1="378" x2="541" y2="375"
+<line x1="604" y1="468" x2="598" y2="465"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="578" y="394">:ofCountry  R</tspan>
+<tspan x="635" y="484">:ofCountry  R</tspan>
 </text>
 </g>
-<g id="2002767426"><path d="M305,435 L148,435 144,437 142,441 142,470 "
+<g id="2002791469"><path d="M362,533 L205,533 201,535 199,539 199,560 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="139" y1="464" x2="142" y2="470"
+<line x1="196" y1="554" x2="199" y2="560"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="145" y1="464" x2="142" y2="470"
+<line x1="202" y1="554" x2="199" y2="560"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="194" y="448">:encompassed  DR</tspan>
+<tspan x="251" y="546">:encompassed  DR</tspan>
 </text>
 </g>
-<g id="2002767431"><path d="M801,752 L669,752 665,754 663,758 663,776 665,780 669,782 801,782 "
+<g id="2002791474"><path d="M858,842 L726,842 722,844 720,848 720,866 722,870 726,872 858,872 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="795" y1="779" x2="801" y2="782"
+<line x1="852" y1="869" x2="858" y2="872"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="795" y1="785" x2="801" y2="782"
+<line x1="852" y1="875" x2="858" y2="872"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="690" y="765">n1:subjectObject  R</tspan>
+<tspan x="747" y="855">n1:subjectObject  R</tspan>
 </text>
 </g>
-<g id="2002767436"><path d="M1708,330 L1708,45 1706,41 1702,39 1053,39 1049,41 1047,45 1047,54 "
+<g id="2002791479"><path d="M1765,420 L1765,135 1763,131 1759,129 1110,129 1106,131 1104,135 1104,144 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1044" y1="48" x2="1047" y2="54"
+<line x1="1101" y1="138" x2="1104" y2="144"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1050" y1="48" x2="1047" y2="54"
+<line x1="1107" y1="138" x2="1104" y2="144"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1606" y="326">:locatedInWater  D</tspan>
+<tspan x="1663" y="416">:locatedInWater  D</tspan>
 </text>
 </g>
-<g id="2002767441"><path d="M370,782 L370,801 "
+<g id="2002791484"><path d="M427,872 L427,891 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="367" y1="795" x2="370" y2="801"
+<line x1="424" y1="885" x2="427" y2="891"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="373" y1="795" x2="370" y2="801"
+<line x1="430" y1="885" x2="427" y2="891"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="372" y="797">owl:onProperty  D</tspan>
+<tspan x="429" y="887">owl:onProperty  D</tspan>
 </text>
 </g>
-<g id="2002767446"><path d="M305,188 L135,188 135,188 137,184 141,182 305,182 "
+<g id="2002791489"><path d="M362,278 L192,278 192,278 194,274 198,272 362,272 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="179" x2="305" y2="182"
+<line x1="356" y1="269" x2="362" y2="272"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="185" x2="305" y2="182"
+<line x1="356" y1="275" x2="362" y2="272"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="187" y="201">:neighbor  DR</tspan>
-<tspan x="187" y="216">:wasDependentOf  D</tspan>
-<tspan x="187" y="231">:dependentOf  DR</tspan>
+<tspan x="244" y="291">:neighbor  DR</tspan>
+<tspan x="244" y="306">:wasDependentOf  D</tspan>
+<tspan x="244" y="321">:dependentOf  DR</tspan>
 </text>
 </g>
-<g id="2002767451"><path d="M799,398 L799,379 "
+<g id="2002791494"><path d="M856,488 L856,469 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="796" y1="385" x2="799" y2="379"
+<line x1="853" y1="475" x2="856" y2="469"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="802" y1="385" x2="799" y2="379"
+<line x1="859" y1="475" x2="856" y2="469"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="700" y="394">:onLanguage  DR</tspan>
+<tspan x="757" y="484">:onLanguage  DR</tspan>
 </text>
 </g>
-<g id="2002767456"><path d="M1248,517 L1157,517 1153,515 1151,511 1151,458 "
+<g id="2002791499"><path d="M1305,607 L1214,607 1210,605 1208,601 1208,548 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1148" y1="464" x2="1151" y2="458"
+<line x1="1205" y1="554" x2="1208" y2="548"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1154" y1="464" x2="1151" y2="458"
+<line x1="1211" y1="554" x2="1208" y2="548"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1159" y="530">:inMountains  R</tspan>
+<tspan x="1216" y="620">:inMountains  R</tspan>
 </text>
 </g>
-<g id="2002767461"><path d="M1160,323 L1160,344 1162,348 1166,350 1278,350 "
+<g id="2002791504"><path d="M1217,413 L1217,434 1219,438 1223,440 1335,440 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1272" y1="347" x2="1278" y2="350"
+<line x1="1329" y1="437" x2="1335" y2="440"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1272" y1="353" x2="1278" y2="350"
+<line x1="1329" y1="443" x2="1335" y2="440"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1162" y="338">:locatedAt  D</tspan>
+<tspan x="1219" y="428">:locatedAt  D</tspan>
 </text>
 </g>
-<g id="2002767466"><path d="M856,263 L856,295 858,299 862,301 948,301 "
+<g id="2002791509"><path d="M913,353 L913,385 915,389 919,391 1005,391 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="942" y1="298" x2="948" y2="301"
+<line x1="999" y1="388" x2="1005" y2="391"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="942" y1="304" x2="948" y2="301"
+<line x1="999" y1="394" x2="1005" y2="391"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="858" y="278">:hasCity  R</tspan>
-<tspan x="858" y="293">:capital  R</tspan>
+<tspan x="915" y="368">:hasCity  R</tspan>
+<tspan x="915" y="383">:capital  R</tspan>
 </text>
 </g>
-<g id="2002767471"><path d="M1402,229 L1402,283 "
+<g id="2002791514"><path d="M1459,319 L1459,373 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1399" y1="277" x2="1402" y2="283"
+<line x1="1456" y1="367" x2="1459" y2="373"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1405" y1="277" x2="1402" y2="283"
+<line x1="1462" y1="367" x2="1459" y2="373"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1404" y="244">:flowsInto  </tspan>
+<tspan x="1461" y="334">:flowsInto  </tspan>
 </text>
 </g>
-<g id="2002767476"><path d="M1594,485 L1594,566 "
+<g id="2002791519"><path d="M1651,575 L1651,656 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1591" y1="560" x2="1594" y2="566"
+<line x1="1648" y1="650" x2="1651" y2="656"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1597" y1="560" x2="1594" y2="566"
+<line x1="1654" y1="650" x2="1651" y2="656"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1596" y="500">:belongsToIslands  DR</tspan>
+<tspan x="1653" y="590">:belongsToIslands  DR</tspan>
 </text>
 </g>
-<g id="2002767481"><path d="M435,69 L435,176 "
+<g id="2002791524"><path d="M492,159 L492,266 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="432" y1="170" x2="435" y2="176"
+<line x1="489" y1="260" x2="492" y2="266"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="438" y1="170" x2="435" y2="176"
+<line x1="495" y1="260" x2="492" y2="266"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="437" y="84">:ofCountry  R</tspan>
+<tspan x="494" y="174">:ofCountry  R</tspan>
 </text>
 </g>
-<g id="2002767486"><path d="M1278,295 L1172,295 1172,295 1174,291 1178,289 1278,289 "
+<g id="2002791529"><path d="M1335,385 L1229,385 1229,385 1231,381 1235,379 1335,379 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1272" y1="286" x2="1278" y2="289"
+<line x1="1329" y1="376" x2="1335" y2="379"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1272" y1="292" x2="1278" y2="289"
+<line x1="1329" y1="382" x2="1335" y2="379"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1180" y="308">:mergesWith  DR</tspan>
+<tspan x="1237" y="398">:mergesWith  DR</tspan>
 </text>
 </g>
-<g id="2002767491"><path d="M801,797 L683,797 679,799 677,803 677,844 "
+<g id="2002791534"><path d="M858,887 L740,887 736,889 734,893 734,934 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="674" y1="838" x2="677" y2="844"
+<line x1="731" y1="928" x2="734" y2="934"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="680" y1="838" x2="677" y2="844"
+<line x1="737" y1="928" x2="734" y2="934"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="725" y="810">rdfs:domain  </tspan>
-<tspan x="725" y="825">rdfs:range  </tspan>
+<tspan x="782" y="900">rdfs:domain  </tspan>
+<tspan x="782" y="915">rdfs:range  </tspan>
 </text>
 </g>
-<g id="2002767496"><path d="M94,725 L16,725 12,727 10,731 10,975 12,979 16,981 560,981 564,979 566,975 566,969 "
+<g id="2002791539"><path d="M151,809 L73,809 69,811 67,815 67,1065 69,1069 73,1071 617,1071 621,1069 623,1065 623,1059 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="563" y1="975" x2="566" y2="969"
+<line x1="620" y1="1065" x2="623" y2="1059"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="569" y1="975" x2="566" y2="969"
+<line x1="626" y1="1065" x2="623" y2="1059"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="18" y="738">rdfs:domain  </tspan>
-<tspan x="18" y="753">rdfs:range  </tspan>
+<tspan x="75" y="822">rdfs:domain  </tspan>
+<tspan x="75" y="837">rdfs:range  </tspan>
 </text>
 </g>
-<g id="2002767501"><path d="M1042,323 L1042,368 1044,372 1048,374 1261,374 1265,376 1267,380 1267,396 1269,400 1273,402 1552,402 "
+<g id="2002791544"><path d="M1099,413 L1099,458 1101,462 1105,464 1318,464 1322,466 1324,470 1324,486 1326,490 1330,492 1609,492 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1546" y1="399" x2="1552" y2="402"
+<line x1="1603" y1="489" x2="1609" y2="492"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1546" y1="405" x2="1552" y2="402"
+<line x1="1603" y1="495" x2="1609" y2="492"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1044" y="338">:locatedOnIsland  R</tspan>
+<tspan x="1101" y="428">:locatedOnIsland  R</tspan>
 </text>
 </g>
-<g id="2002767506"><path d="M338,69 L338,86 336,90 332,92 258,92 "
+<g id="2002791549"><path d="M395,159 L395,176 393,180 389,182 315,182 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="264" y1="89" x2="258" y2="92"
+<line x1="321" y1="179" x2="315" y2="182"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="264" y1="95" x2="258" y2="92"
+<line x1="321" y1="185" x2="315" y2="182"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="340" y="84">:onReligion  DR</tspan>
+<tspan x="397" y="174">:onReligion  DR</tspan>
 </text>
 </g>
-<g id="2002767511"><path d="M1178,173 L1335,173 "
+<g id="2002791554"><path d="M1235,263 L1392,263 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="170" x2="1335" y2="173"
+<line x1="1386" y1="260" x2="1392" y2="263"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="176" x2="1335" y2="173"
+<line x1="1386" y1="266" x2="1392" y2="263"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1182" y="156">:flowsInto  </tspan>
-<tspan x="1182" y="171">:flowsThrough  DR</tspan>
+<tspan x="1239" y="246">:flowsInto  </tspan>
+<tspan x="1239" y="261">:flowsThrough  DR</tspan>
 </text>
 </g>
-<g id="2002767516"><path d="M541,316 L948,316 "
+<g id="2002791559"><path d="M598,406 L1005,406 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="942" y1="313" x2="948" y2="316"
+<line x1="999" y1="403" x2="1005" y2="406"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="942" y1="319" x2="948" y2="316"
+<line x1="999" y1="409" x2="1005" y2="406"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="545" y="299">:hasCity  R</tspan>
-<tspan x="545" y="314">:capital  R</tspan>
+<tspan x="602" y="389">:hasCity  R</tspan>
+<tspan x="602" y="404">:capital  R</tspan>
 </text>
 </g>
-<g id="2002767521"><path d="M1172,179 L1172,215 1174,219 1178,221 1323,221 1327,223 1329,227 1329,283 "
+<g id="2002791564"><path d="M1229,269 L1229,305 1231,309 1235,311 1380,311 1384,313 1386,317 1386,373 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1326" y1="277" x2="1329" y2="283"
+<line x1="1383" y1="367" x2="1386" y2="373"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1332" y1="277" x2="1329" y2="283"
+<line x1="1389" y1="367" x2="1386" y2="373"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1174" y="194">:flowsInto  </tspan>
+<tspan x="1231" y="284">:flowsInto  </tspan>
 </text>
 </g>
-<g id="2002767526"><path d="M183,381 L305,381 "
+<g id="2002791569"><path d="M240,475 L362,475 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="378" x2="305" y2="381"
+<line x1="356" y1="472" x2="362" y2="475"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="384" x2="305" y2="381"
+<line x1="356" y1="478" x2="362" y2="475"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="187" y="379">:bordering  DR</tspan>
+<tspan x="244" y="473">:bordering  DR</tspan>
 </text>
 </g>
-<g id="2002767531"><path d="M653,844 L653,767 651,763 647,761 582,761 "
+<g id="2002791574"><path d="M710,934 L710,857 708,853 704,851 639,851 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="588" y1="758" x2="582" y2="761"
+<line x1="645" y1="848" x2="639" y2="851"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="588" y1="764" x2="582" y2="761"
+<line x1="645" y1="854" x2="639" y2="851"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="555" y="840">rdfs:subClassOf  </tspan>
+<tspan x="612" y="930">rdfs:subClassOf  </tspan>
 </text>
 </g>
-<g id="2002767536"><path d="M187,308 L187,289 "
+<g id="2002791579"><path d="M244,402 L244,379 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="184" y1="295" x2="187" y2="289"
+<line x1="241" y1="385" x2="244" y2="379"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="190" y1="295" x2="187" y2="289"
+<line x1="247" y1="385" x2="244" y2="379"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="76" y="304">:onEthnicGroup  DR</tspan>
+<tspan x="133" y="398">:onEthnicGroup  DR</tspan>
 </text>
 </g>
-<g id="2002767541"><path d="M541,454 L720,454 724,456 726,460 726,471 "
+<g id="2002791584"><path d="M598,544 L777,544 781,546 783,550 783,561 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="723" y1="465" x2="726" y2="471"
+<line x1="780" y1="555" x2="783" y2="561"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="729" y1="465" x2="726" y2="471"
+<line x1="786" y1="555" x2="783" y2="561"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="545" y="452">:isMember  DR</tspan>
+<tspan x="602" y="542">:isMember  DR</tspan>
 </text>
 </g>
-<g id="2002767546"><path d="M401,876 L481,876 "
+<g id="2002791589"><path d="M458,966 L538,966 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="475" y1="873" x2="481" y2="876"
+<line x1="532" y1="963" x2="538" y2="966"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="475" y1="879" x2="481" y2="876"
+<line x1="532" y1="969" x2="538" y2="966"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="405" y="859">rdfs:domain  </tspan>
-<tspan x="405" y="874">rdfs:range  </tspan>
+<tspan x="462" y="949">rdfs:domain  </tspan>
+<tspan x="462" y="964">rdfs:range  </tspan>
 </text>
 </g>
-<g id="2002767551"><path d="M638,565 L638,466 636,462 632,460 541,460 "
+<g id="2002791594"><path d="M695,655 L695,556 693,552 689,550 598,550 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="547" y1="457" x2="541" y2="460"
+<line x1="604" y1="547" x2="598" y2="550"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="547" y1="463" x2="541" y2="460"
+<line x1="604" y1="553" x2="598" y2="550"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="554" y="561">:ofMember  DR</tspan>
+<tspan x="611" y="651">:ofMember  DR</tspan>
 </text>
 </g>
-<g id="2002767556"><path d="M960,111 L801,111 801,105 "
+<g id="2002791599"><path d="M1017,201 L864,201 860,199 858,195 858,194 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="798" y1="111" x2="801" y2="105"
+<line x1="855" y1="200" x2="858" y2="194"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="804" y1="111" x2="801" y2="105"
+<line x1="861" y1="200" x2="858" y2="194"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="867" y="124">:hasEstuary  DR</tspan>
+<tspan x="924" y="214">:hasEstuary  DR</tspan>
 </text>
 </g>
-<g id="2002767561"><path d="M193,325 L305,325 "
+<g id="2002791604"><path d="M250,419 L362,419 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="322" x2="305" y2="325"
+<line x1="356" y1="416" x2="362" y2="419"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="328" x2="305" y2="325"
+<line x1="356" y1="422" x2="362" y2="419"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="197" y="323">:ofCountry  R</tspan>
+<tspan x="254" y="417">:ofCountry  R</tspan>
 </text>
 </g>
-<g id="2002767566"><path d="M1335,126 L1178,126 "
+<g id="2002791609"><path d="M1392,216 L1235,216 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1184" y1="123" x2="1178" y2="126"
+<line x1="1241" y1="213" x2="1235" y2="216"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1184" y1="129" x2="1178" y2="126"
+<line x1="1241" y1="219" x2="1235" y2="216"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1273" y="139">:flowsInto  </tspan>
+<tspan x="1330" y="229">:flowsInto  </tspan>
 </text>
 </g>
-<g id="2002767571"><path d="M1135,198 L1135,179 "
+<g id="2002791614"><path d="M1192,288 L1192,269 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1132" y1="185" x2="1135" y2="179"
+<line x1="1189" y1="275" x2="1192" y2="269"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1138" y1="185" x2="1135" y2="179"
+<line x1="1195" y1="275" x2="1192" y2="269"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1065" y="194">:locatedAt  D</tspan>
+<tspan x="1122" y="284">:locatedAt  D</tspan>
 </text>
 </g>
-<g id="2002767576"><path d="M890,471 L890,454 892,450 896,448 1004,448 1008,446 1010,442 1010,323 "
+<g id="2002791619"><path d="M947,561 L947,544 949,540 953,538 1061,538 1065,536 1067,532 1067,413 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1007" y1="329" x2="1010" y2="323"
+<line x1="1064" y1="419" x2="1067" y2="413"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1013" y1="329" x2="1010" y2="323"
+<line x1="1070" y1="419" x2="1067" y2="413"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="803" y="467">:hasHeadq  DR</tspan>
+<tspan x="860" y="557">:hasHeadq  DR</tspan>
 </text>
 </g>
-<g id="2002767581"><path d="M1583,330 L1583,229 1581,225 1577,223 1553,223 "
+<g id="2002791624"><path d="M1640,420 L1640,319 1638,315 1634,313 1610,313 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1559" y1="220" x2="1553" y2="223"
+<line x1="1616" y1="310" x2="1610" y2="313"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1559" y1="226" x2="1553" y2="223"
+<line x1="1616" y1="316" x2="1610" y2="313"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1481" y="326">:locatedInWater  D</tspan>
+<tspan x="1538" y="416">:locatedInWater  D</tspan>
 </text>
 </g>
-<g id="2002767586"><path d="M1466,533 L1580,533 1584,531 1586,527 1586,485 "
+<g id="2002791629"><path d="M1523,623 L1637,623 1641,621 1643,617 1643,575 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1583" y1="491" x2="1586" y2="485"
+<line x1="1640" y1="581" x2="1643" y2="575"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1589" y1="491" x2="1586" y2="485"
+<line x1="1646" y1="581" x2="1643" y2="575"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1470" y="531">:locatedOnIsland  R</tspan>
+<tspan x="1527" y="621">:locatedOnIsland  R</tspan>
 </text>
 </g>
-<g id="2002767591"><path d="M774,596 L886,596 890,594 892,590 892,551 "
+<g id="2002791634"><path d="M831,686 L943,686 947,684 949,680 949,641 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="889" y1="557" x2="892" y2="551"
+<line x1="946" y1="647" x2="949" y2="641"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="895" y1="557" x2="892" y2="551"
+<line x1="952" y1="647" x2="949" y2="641"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="778" y="594">:inOrganization  DR</tspan>
+<tspan x="835" y="684">:inOrganization  DR</tspan>
 </text>
 </g>
-<g id="2002767596"><path d="M326,545 L326,528 324,524 320,522 200,522 "
+<g id="2002791639"><path d="M383,635 L383,618 381,614 377,612 257,612 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="206" y1="519" x2="200" y2="522"
+<line x1="263" y1="609" x2="257" y2="612"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="206" y1="525" x2="200" y2="522"
+<line x1="263" y1="615" x2="257" y2="612"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="204" y="541">:encompassedBy  DR</tspan>
+<tspan x="261" y="631">:encompassedBy  DR</tspan>
 </text>
 </g>
-<g id="2002767601"><path d="M183,843 L69,843 65,841 63,837 63,795 65,791 69,789 295,789 299,791 301,795 301,801 "
+<g id="2002791644"><path d="M240,933 L126,933 122,931 120,927 120,885 122,881 126,879 352,879 356,881 358,885 358,891 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="298" y1="795" x2="301" y2="801"
+<line x1="355" y1="885" x2="358" y2="891"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="304" y1="795" x2="301" y2="801"
+<line x1="361" y1="885" x2="358" y2="891"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="71" y="856">rdfs:subPropertyOf  </tspan>
+<tspan x="128" y="946">rdfs:subPropertyOf  </tspan>
 </text>
 </g>
-<g id="2002767606"><path d="M1166,272 L1390,272 1394,270 1396,266 1396,229 "
+<g id="2002791649"><path d="M1223,362 L1447,362 1451,360 1453,356 1453,319 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1393" y1="235" x2="1396" y2="229"
+<line x1="1450" y1="325" x2="1453" y2="319"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1399" y1="235" x2="1396" y2="229"
+<line x1="1456" y1="325" x2="1453" y2="319"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1170" y="270">:locatedAt  D</tspan>
+<tspan x="1227" y="360">:locatedAt  D</tspan>
 </text>
 </g>
-<g id="2002767611"><path d="M1335,93 L1190,93 1186,91 1184,87 1184,75 1186,71 1190,69 1335,69 "
+<g id="2002791654"><path d="M1392,183 L1247,183 1243,181 1241,177 1241,165 1243,161 1247,159 1392,159 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="66" x2="1335" y2="69"
+<line x1="1386" y1="156" x2="1392" y2="159"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="72" x2="1335" y2="69"
+<line x1="1386" y1="162" x2="1392" y2="159"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1273" y="106">:flowsInto  </tspan>
+<tspan x="1330" y="196">:flowsInto  </tspan>
 </text>
 </g>
-<g id="2002767616"><path d="M582,681 L830,681 834,683 836,687 836,746 "
+<g id="2002791659"><path d="M639,771 L887,771 891,773 893,777 893,836 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="833" y1="740" x2="836" y2="746"
+<line x1="890" y1="830" x2="893" y2="836"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="839" y1="740" x2="836" y2="746"
+<line x1="896" y1="830" x2="893" y2="836"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="586" y="679">owl:onProperty  D</tspan>
+<tspan x="643" y="769">owl:onProperty  D</tspan>
 </text>
 </g>
-<g id="2002767621"><path d="M1096,490 L1096,458 "
+<g id="2002791664"><path d="M1153,580 L1153,548 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1093" y1="464" x2="1096" y2="458"
+<line x1="1150" y1="554" x2="1153" y2="548"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1099" y1="464" x2="1096" y2="458"
+<line x1="1156" y1="554" x2="1153" y2="548"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1009" y="486">:inMountains  R</tspan>
+<tspan x="1066" y="576">:inMountains  R</tspan>
 </text>
 </g>
-<g id="2002767626"><path d="M1411,565 L1411,664 "
+<g id="2002791669"><path d="M1468,655 L1468,754 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="1416,575 1411,565 1406,575 "
+<polygon points="1473,665 1468,655 1463,665 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1413" y="580"> </tspan>
+<tspan x="1470" y="670"> </tspan>
 </text>
 </g>
-<g id="2002767628"><path d="M341,885 L341,904 "
+<g id="2002791671"><path d="M398,975 L398,994 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="346,895 341,885 336,895 "
+<polygon points="403,985 398,975 393,985 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="343" y="900"> </tspan>
-</text>
-</g>
-<g id="2002767968"><path d="M704,893 L813,893 817,895 819,899 819,940 817,944 813,946 704,946 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="710" y1="943" x2="704" y2="946"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="710" y1="949" x2="704" y2="946"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="708" y="876">owl:disjointWith  R</tspan>
-<tspan x="708" y="891">rdfs:subClassOf  </tspan>
-</text>
-</g>
-<g id="2002767973"><path d="M960,132 L19,132 15,134 13,138 13,630 15,634 19,636 927,636 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="921" y1="633" x2="927" y2="636"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="921" y1="639" x2="927" y2="636"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="869" y="145">:hasSource  DR</tspan>
-</text>
-</g>
-<g id="2002767978"><path d="M960,90 L880,90 876,88 874,84 874,54 876,50 880,48 1016,48 1016,54 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1013" y1="48" x2="1016" y2="54"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1019" y1="48" x2="1016" y2="54"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="898" y="103">:flowsInto  </tspan>
-</text>
-</g>
-<g id="2002767983"><path d="M1552,343 L1444,343 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1450" y1="340" x2="1444" y2="343"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1450" y1="346" x2="1444" y2="343"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1448" y="356">:locatedInWater  D</tspan>
-</text>
-</g>
-<g id="2002767988"><path d="M541,280 L644,280 648,278 650,274 650,263 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="647" y1="269" x2="650" y2="263"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="653" y1="269" x2="650" y2="263"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="545" y="278">:hasProvince  DR</tspan>
-</text>
-</g>
-<g id="2002767993"><path d="M468,545 L468,466 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="465" y1="472" x2="468" y2="466"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="471" y1="472" x2="468" y2="466"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="334" y="541">:encompassedArea  DR</tspan>
-</text>
-</g>
-<g id="2002767998"><path d="M650,398 L650,381 648,377 644,375 541,375 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="547" y1="372" x2="541" y2="375"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="547" y1="378" x2="541" y2="375"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="578" y="394">:ofCountry  R</tspan>
-</text>
-</g>
-<g id="2002768003"><path d="M305,435 L148,435 144,437 142,441 142,470 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="139" y1="464" x2="142" y2="470"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="145" y1="464" x2="142" y2="470"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="194" y="448">:encompassed  DR</tspan>
-</text>
-</g>
-<g id="2002768008"><path d="M801,752 L669,752 665,754 663,758 663,776 665,780 669,782 801,782 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="795" y1="779" x2="801" y2="782"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="795" y1="785" x2="801" y2="782"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="690" y="765">n1:subjectObject  R</tspan>
-</text>
-</g>
-<g id="2002768013"><path d="M1708,330 L1708,45 1706,41 1702,39 1053,39 1049,41 1047,45 1047,54 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1044" y1="48" x2="1047" y2="54"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1050" y1="48" x2="1047" y2="54"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1606" y="326">:locatedInWater  D</tspan>
-</text>
-</g>
-<g id="2002768018"><path d="M370,782 L370,801 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="367" y1="795" x2="370" y2="801"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="373" y1="795" x2="370" y2="801"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="372" y="797">owl:onProperty  D</tspan>
-</text>
-</g>
-<g id="2002768023"><path d="M305,188 L135,188 135,188 137,184 141,182 305,182 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="179" x2="305" y2="182"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="185" x2="305" y2="182"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="187" y="201">:neighbor  DR</tspan>
-<tspan x="187" y="216">:wasDependentOf  D</tspan>
-<tspan x="187" y="231">:dependentOf  DR</tspan>
-</text>
-</g>
-<g id="2002768028"><path d="M799,398 L799,379 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="796" y1="385" x2="799" y2="379"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="802" y1="385" x2="799" y2="379"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="700" y="394">:onLanguage  DR</tspan>
-</text>
-</g>
-<g id="2002768033"><path d="M1248,517 L1157,517 1153,515 1151,511 1151,458 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1148" y1="464" x2="1151" y2="458"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1154" y1="464" x2="1151" y2="458"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1159" y="530">:inMountains  R</tspan>
-</text>
-</g>
-<g id="2002768038"><path d="M1160,323 L1160,344 1162,348 1166,350 1278,350 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1272" y1="347" x2="1278" y2="350"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1272" y1="353" x2="1278" y2="350"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1162" y="338">:locatedAt  D</tspan>
-</text>
-</g>
-<g id="2002768043"><path d="M856,263 L856,295 858,299 862,301 948,301 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="942" y1="298" x2="948" y2="301"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="942" y1="304" x2="948" y2="301"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="858" y="278">:hasCity  R</tspan>
-<tspan x="858" y="293">:capital  R</tspan>
-</text>
-</g>
-<g id="2002768048"><path d="M1402,229 L1402,283 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1399" y1="277" x2="1402" y2="283"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1405" y1="277" x2="1402" y2="283"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1404" y="244">:flowsInto  </tspan>
-</text>
-</g>
-<g id="2002768053"><path d="M1594,485 L1594,566 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1591" y1="560" x2="1594" y2="566"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1597" y1="560" x2="1594" y2="566"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1596" y="500">:belongsToIslands  DR</tspan>
-</text>
-</g>
-<g id="2002768058"><path d="M435,69 L435,176 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="432" y1="170" x2="435" y2="176"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="438" y1="170" x2="435" y2="176"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="437" y="84">:ofCountry  R</tspan>
-</text>
-</g>
-<g id="2002768063"><path d="M1278,295 L1172,295 1172,295 1174,291 1178,289 1278,289 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1272" y1="286" x2="1278" y2="289"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1272" y1="292" x2="1278" y2="289"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1180" y="308">:mergesWith  DR</tspan>
-</text>
-</g>
-<g id="2002768068"><path d="M801,797 L683,797 679,799 677,803 677,844 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="674" y1="838" x2="677" y2="844"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="680" y1="838" x2="677" y2="844"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="725" y="810">rdfs:domain  </tspan>
-<tspan x="725" y="825">rdfs:range  </tspan>
-</text>
-</g>
-<g id="2002768073"><path d="M94,725 L16,725 12,727 10,731 10,975 12,979 16,981 560,981 564,979 566,975 566,969 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="563" y1="975" x2="566" y2="969"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="569" y1="975" x2="566" y2="969"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="18" y="738">rdfs:domain  </tspan>
-<tspan x="18" y="753">rdfs:range  </tspan>
-</text>
-</g>
-<g id="2002768078"><path d="M1042,323 L1042,368 1044,372 1048,374 1261,374 1265,376 1267,380 1267,396 1269,400 1273,402 1552,402 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1546" y1="399" x2="1552" y2="402"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1546" y1="405" x2="1552" y2="402"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1044" y="338">:locatedOnIsland  R</tspan>
-</text>
-</g>
-<g id="2002768083"><path d="M338,69 L338,86 336,90 332,92 258,92 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="264" y1="89" x2="258" y2="92"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="264" y1="95" x2="258" y2="92"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="340" y="84">:onReligion  DR</tspan>
-</text>
-</g>
-<g id="2002768088"><path d="M1178,173 L1335,173 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="170" x2="1335" y2="173"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="176" x2="1335" y2="173"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1182" y="156">:flowsInto  </tspan>
-<tspan x="1182" y="171">:flowsThrough  DR</tspan>
-</text>
-</g>
-<g id="2002768093"><path d="M541,316 L948,316 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="942" y1="313" x2="948" y2="316"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="942" y1="319" x2="948" y2="316"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="545" y="299">:hasCity  R</tspan>
-<tspan x="545" y="314">:capital  R</tspan>
-</text>
-</g>
-<g id="2002768098"><path d="M1172,179 L1172,215 1174,219 1178,221 1323,221 1327,223 1329,227 1329,283 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1326" y1="277" x2="1329" y2="283"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1332" y1="277" x2="1329" y2="283"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1174" y="194">:flowsInto  </tspan>
-</text>
-</g>
-<g id="2002768103"><path d="M183,381 L305,381 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="378" x2="305" y2="381"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="384" x2="305" y2="381"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="187" y="379">:bordering  DR</tspan>
-</text>
-</g>
-<g id="2002768108"><path d="M653,844 L653,767 651,763 647,761 582,761 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="588" y1="758" x2="582" y2="761"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="588" y1="764" x2="582" y2="761"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="555" y="840">rdfs:subClassOf  </tspan>
-</text>
-</g>
-<g id="2002768113"><path d="M187,308 L187,289 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="184" y1="295" x2="187" y2="289"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="190" y1="295" x2="187" y2="289"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="76" y="304">:onEthnicGroup  DR</tspan>
-</text>
-</g>
-<g id="2002768118"><path d="M541,454 L720,454 724,456 726,460 726,471 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="723" y1="465" x2="726" y2="471"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="729" y1="465" x2="726" y2="471"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="545" y="452">:isMember  DR</tspan>
-</text>
-</g>
-<g id="2002768123"><path d="M401,876 L481,876 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="475" y1="873" x2="481" y2="876"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="475" y1="879" x2="481" y2="876"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="405" y="859">rdfs:domain  </tspan>
-<tspan x="405" y="874">rdfs:range  </tspan>
-</text>
-</g>
-<g id="2002768128"><path d="M638,565 L638,466 636,462 632,460 541,460 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="547" y1="457" x2="541" y2="460"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="547" y1="463" x2="541" y2="460"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="554" y="561">:ofMember  DR</tspan>
-</text>
-</g>
-<g id="2002768133"><path d="M960,111 L801,111 801,105 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="798" y1="111" x2="801" y2="105"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="804" y1="111" x2="801" y2="105"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="867" y="124">:hasEstuary  DR</tspan>
-</text>
-</g>
-<g id="2002768138"><path d="M193,325 L305,325 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="322" x2="305" y2="325"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="299" y1="328" x2="305" y2="325"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="197" y="323">:ofCountry  R</tspan>
-</text>
-</g>
-<g id="2002768143"><path d="M1335,126 L1178,126 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1184" y1="123" x2="1178" y2="126"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1184" y1="129" x2="1178" y2="126"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1273" y="139">:flowsInto  </tspan>
-</text>
-</g>
-<g id="2002768148"><path d="M1135,198 L1135,179 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1132" y1="185" x2="1135" y2="179"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1138" y1="185" x2="1135" y2="179"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1065" y="194">:locatedAt  D</tspan>
-</text>
-</g>
-<g id="2002768153"><path d="M890,471 L890,454 892,450 896,448 1004,448 1008,446 1010,442 1010,323 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1007" y1="329" x2="1010" y2="323"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1013" y1="329" x2="1010" y2="323"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="803" y="467">:hasHeadq  DR</tspan>
-</text>
-</g>
-<g id="2002768158"><path d="M1583,330 L1583,229 1581,225 1577,223 1553,223 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1559" y1="220" x2="1553" y2="223"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1559" y1="226" x2="1553" y2="223"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1481" y="326">:locatedInWater  D</tspan>
-</text>
-</g>
-<g id="2002768163"><path d="M1466,533 L1580,533 1584,531 1586,527 1586,485 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1583" y1="491" x2="1586" y2="485"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1589" y1="491" x2="1586" y2="485"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1470" y="531">:locatedOnIsland  R</tspan>
-</text>
-</g>
-<g id="2002768168"><path d="M774,596 L886,596 890,594 892,590 892,551 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="889" y1="557" x2="892" y2="551"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="895" y1="557" x2="892" y2="551"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="778" y="594">:inOrganization  DR</tspan>
-</text>
-</g>
-<g id="2002768173"><path d="M326,545 L326,528 324,524 320,522 200,522 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="206" y1="519" x2="200" y2="522"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="206" y1="525" x2="200" y2="522"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="204" y="541">:encompassedBy  DR</tspan>
-</text>
-</g>
-<g id="2002768178"><path d="M183,843 L69,843 65,841 63,837 63,795 65,791 69,789 295,789 299,791 301,795 301,801 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="298" y1="795" x2="301" y2="801"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="304" y1="795" x2="301" y2="801"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="71" y="856">rdfs:subPropertyOf  </tspan>
-</text>
-</g>
-<g id="2002768183"><path d="M1166,272 L1390,272 1394,270 1396,266 1396,229 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1393" y1="235" x2="1396" y2="229"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1399" y1="235" x2="1396" y2="229"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1170" y="270">:locatedAt  D</tspan>
-</text>
-</g>
-<g id="2002768188"><path d="M1335,93 L1190,93 1186,91 1184,87 1184,75 1186,71 1190,69 1335,69 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="66" x2="1335" y2="69"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1329" y1="72" x2="1335" y2="69"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1273" y="106">:flowsInto  </tspan>
-</text>
-</g>
-<g id="2002768193"><path d="M582,681 L830,681 834,683 836,687 836,746 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="833" y1="740" x2="836" y2="746"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="839" y1="740" x2="836" y2="746"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="586" y="679">owl:onProperty  D</tspan>
-</text>
-</g>
-<g id="2002768198"><path d="M1096,490 L1096,458 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1093" y1="464" x2="1096" y2="458"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1099" y1="464" x2="1096" y2="458"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1009" y="486">:inMountains  R</tspan>
-</text>
-</g>
-<g id="2002768203"><path d="M1411,565 L1411,664 "
-style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="1416,575 1411,565 1406,575 "
-style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1413" y="580"> </tspan>
-</text>
-</g>
-<g id="2002768205"><path d="M341,885 L341,904 "
-style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="346,895 341,885 336,895 "
-style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="343" y="900"> </tspan>
+<tspan x="400" y="990"> </tspan>
 </text>
 </g>
 </svg>

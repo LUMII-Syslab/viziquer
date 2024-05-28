@@ -1,8 +1,10 @@
 # A Method and a Library for Visual Data Schemas
 
-We provide the supporting material for the submission of a demonstration to the ESWC'2024 conference.
+We provide the supporting material for a demonstration at ESWC'2024 conference.
 
 Consider the `schemas` folder for the data schemas in .SVG format.
+
+The schemas can be accessed from the ViziQuer tool main page (https://viziquer.lumii.lv), as well.
 
 
 ## Schema Visualization Pipeline
@@ -50,7 +52,9 @@ This database can be used for storing further imported data schemas, as well.
 
 3. Open the project, click on the 'Data Schema' button, then choose the visualization parameters.
 
-4. Follow the instructions given on https://github.com/LUMII-Syslab/dss-schema-explorer 
+4. New! Create a schema diagram within the visual tool itself (the diagram is created and need to be clicked on to open). Choose 'Layout as Graph' from the context menu, then adjust the visual positioning of items.
+
+5. Alternatively, export the schema diagram and follow the instructions given on https://github.com/LUMII-Syslab/dss-schema-explorer 
 (installation of the Schema Explorer tool, generating the data in ViziQuer and copying them from ViziQuer to the Schema Explorer).
 
 `MS Windows` is currently required for the last step (visualization inside the web-based ViziQuer tool in a new diagram is work in progress).
@@ -59,8 +63,8 @@ This database can be used for storing further imported data schemas, as well.
 
 The schema visualization experiment description and results involves the following folders and files:
 
-- `shemas`: a folder with visual schema diagrams in .SVG format
-- `database`: the DSS (schema server) database supporting the visual queries and schemas over the example SPARQL endpoints (the database is to be loaded into a PostGres server, pointed to from the DSS).
+- `schemas`: a folder with visual schema diagrams in .SVG format
+- `database`: Enriched with new endpoint schemas! The DSS (schema server) database supporting the visual queries and schemas over the example SPARQL endpoints (the database is to be loaded into a PostGres server, pointed to from the DSS).
 - `sparql_endpoints.xls`: the selection of the considered endpoints and their analysis
 - `protocol.pdf`: a description of the work done within the schema visualization experiment
 
