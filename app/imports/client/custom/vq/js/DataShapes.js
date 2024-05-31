@@ -425,12 +425,11 @@ const dataShapes = {
 					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
 				
 				const info = await callWithGet('info/');
-
 				if (info.error) {
 					console.error(info);
+					this.schema.projectId_in_process = "";
 					return;
 				}
-
 				this.schema.info = info;
 				if (info.filter(function(o){ return o.display_name == proj.schema}).length > 0) {
 					const schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
@@ -460,7 +459,6 @@ const dataShapes = {
 								ns.name = '';
 						}
 					});
-
 					if (schema_info.profile_data.schema === 'dbpedia') {
 						this.schema.tree.class = 'All classes';
 						this.schema.tree.classes = classes;
@@ -481,20 +479,31 @@ const dataShapes = {
 					
 					if (this.schema.schemaType === 'wikidata')
 						this.schema.simple_prompt = true;
-					
+					this.schema.classCount = await this.getClassCount();
+					const propInfo = await this.getPropInfo();
+					this.schema.propCount = propInfo.count;
+					this.schema.propMax = propInfo.max; 
+					if ( this.schema.classCount < DIAGRAM_CLASS_LIMIT) {
+						this.schema.diagram.classList = await this.getClassListExt();
+						this.schema.diagram.filteredClassList = await this.getClassListExt();
+						this.schema.diagram.properties = await this.getPropListExt();
+					}
+					this.schema.filling = 3;					
 				}
-				this.schema.classCount = await this.getClassCount();
-				const propInfo = await this.getPropInfo();
-				this.schema.propCount = propInfo.count;
-				this.schema.propMax = propInfo.max; 
-				if ( this.schema.classCount < DIAGRAM_CLASS_LIMIT) {
-					this.schema.diagram.classList = await this.getClassListExt();
-					this.schema.diagram.filteredClassList = await this.getClassListExt();
-					this.schema.diagram.properties = await this.getPropListExt();
+				else { // Neatrada projekta shēmu DSS serverī
+					await this.getPublicNamespaces();
+					if (proj.endpoint !== undefined && proj.endpoint !== "") {
+						this.schema.endpoint =  proj.endpoint;
+						if ( proj.uri != undefined && proj.uri !== '' )
+							this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
+							
+						this.schema.filling = 2;
+					}
+					else {
+						this.schema.filling = 1;
+					}
 				}
-				this.schema.filling = 3;
 				this.schema.projectId_in_process = "";
-
 			}
 			else {
 				await this.getPublicNamespaces();
@@ -505,8 +514,10 @@ const dataShapes = {
 						
 					this.schema.filling = 2;
 				}
-				else
+				else {
 					this.schema.filling = 1;
+				}
+				this.schema.projectId_in_process = "";		
 			}	
 		}
 	},
