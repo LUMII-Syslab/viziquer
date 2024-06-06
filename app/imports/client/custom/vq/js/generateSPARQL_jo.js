@@ -22,6 +22,7 @@ Interpreter.customMethods({
     });
 
     var queries =  await genAbstractQueryForElementList(elems_in_diagram_ids);
+	
     // ErrorHandling - just one query at a moment allowed
     if (queries.length==0) {
        Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
@@ -1525,7 +1526,7 @@ function generateSPARQLtext(abstractQueryTable){
 			temp = temp.concat(whereInfo["grounding"]);
 			temp = temp.concat(whereInfo["phase2"]);
 			let generateServiceLabel = true;
-			if(whereInfo["graphService"].length > 0 && selectResult["selectLabels"].length > 0 && whereInfo["graphService"][0].startsWith("SERVICE")){
+			if(sparqlTable["graph"].length > 0 && whereInfo["graphService"].length > 0 && selectResult["selectLabels"].length > 0 && whereInfo["graphService"][0].startsWith("SERVICE")){
 				generateServiceLabel = false;
 				prefixTable["wikibase:"] = "<http://wikiba.se/ontology#>";
 				prefixTable["bd:"] = "<http://www.bigdata.com/rdf#>";
@@ -4276,6 +4277,10 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		tempWhereInfo = tempWhereInfo.concat(plainOptionalNotLinks);
 		tempWhereInfo = tempWhereInfo.concat(phase4);
 		tempWhereInfo = tempWhereInfo.concat(bind);
+		
+		tempWhereInfo = tempWhereInfo.filter(function (el, i, arr) {
+			return arr.indexOf(el) === i;
+		});
 
 		classes = [];
 		classes.push(sparqlTable["linkTriple"]);
@@ -4381,8 +4386,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	// graph / service from link
 	if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true && typeof sparqlTable.graphLink !== "undefined" && typeof sparqlTable.graphLink.graph !== "undefined" && sparqlTable.graphLink.graphInstruction !== "undefined"){	
 		let tempWhereInfo = [];
-		
 		tempWhereInfo = tempWhereInfo.concat(classes);
+		tempWhereInfo = tempWhereInfo.concat(plainOptionalLinks);
 		tempWhereInfo = tempWhereInfo.concat(grounding);
 		tempWhereInfo = tempWhereInfo.concat(phase2);
 		tempWhereInfo = tempWhereInfo.concat(graphService);
@@ -4392,6 +4397,10 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		tempWhereInfo = tempWhereInfo.concat(plainOptionalNotLinks);
 		tempWhereInfo = tempWhereInfo.concat(phase4);
 		tempWhereInfo = tempWhereInfo.concat(bind);
+		
+		tempWhereInfo = tempWhereInfo.filter(function (el, i, arr) {
+			return arr.indexOf(el) === i;
+		});
 
 		classes = [];
 		grounding = [];
@@ -4399,6 +4408,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		phase3 = [];
 		phase4 = [];
 		graphService = [];
+		plainOptionalLinks = [];
 		plainRequiredLinks = [];
 		plainOptionalNotLinks = [];
 		bind = [];
@@ -4421,6 +4431,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		let tempString = sparqlTable.graphLink.graphInstruction + " "+ graphName + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
 
 		graphService.push(tempString);
+		
 	}
 	graphService = graphService.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;

@@ -667,13 +667,16 @@ function getReferenceName(referenceName, symbolTable, classID){
 	return referenceName;
 }
 
-function setVariableName(varName, alias, variableData, generateNewName){
+function setVariableName(varName, alias, variableData, generateNewName, useAlias){
 	
 	var reserverNames = ["constructor", "length", "prototype"];
 	if(reserverNames.indexOf(varName) != -1) varName = varName + " ";
 	if(reserverNames.indexOf(alias) != -1) alias = alias + " ";
 	
-	if(variableData["kind"].indexOf("CLASS") !== -1) {
+	// console.log("setVariableName", varName, alias, variableData, generateNewName);
+	if(useAlias && typeof alias !== "undefined" && alias != null) return alias;
+	
+	if(variableData["kind"]!== null && variableData["kind"].indexOf("CLASS") !== -1) {
 		if(typeof alias !== "undefined" && alias != null){
 			return alias;
 		} else if(variableData["kind"] == "CLASS_ALIAS") return varName;
@@ -3535,7 +3538,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							let variable = findINExpressionTable(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							if(variable['PropertyReference'] != null){
 								
-								let name = setVariableName(variable["name"], alias, variable);
+								let name = setVariableName(variable["name"], alias, variable, null, true);
 	
 								if(variable["name"].indexOf("[") != -1 && variable["name"].indexOf("]") != -1){
 									var prefix = "";

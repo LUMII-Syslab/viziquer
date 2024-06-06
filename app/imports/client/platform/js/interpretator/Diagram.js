@@ -188,7 +188,23 @@ Interpreter.methods({
     let layoutType = layout_settings.layout;
 
     let layoutEngine = editor.layoutEngine(layoutType);
-
+		
+		let heightConst = {
+			11 : 1,
+			12 : 0,
+			14 : 3,
+			17 : 5,
+			24 : 6,
+		}
+		
+		let widthConst = {
+			11 : 5.7,
+			12 : 6,
+			14 : 7,
+			17 : 8.2,
+			24 : 12,
+		}
+		
 		let elements_to_map = {};
 		let elements_from_map = {};
 
@@ -235,11 +251,13 @@ Interpreter.methods({
 							}
 
 							//text_length = number_of_charecters_in_string / 2 rounded towards the greater value
-							let text_length = Math.ceil(font_style_coef*(row.length * Math.ceil(font_size/2)));
+							// let text_length = Math.ceil(font_style_coef*(row.length * Math.ceil(font_size/2)));
+							let text_length = Math.ceil(font_style_coef*(row.length * widthConst[font_size]));
 							tmp_width = Math.max(tmp_width, text_length);
 
 							//tmp_height = font_size + consant for gap between compartments
-							tmp_height += font_size; // ??? pagaidām noņēmu ??? + 5; // add a height gap between compartments
+
+							tmp_height += font_size + heightConst[font_size]; // ??? pagaidām noņēmu ??? + 5; // add a height gap between compartments
 
 							// Vairs nav izmēra ierobežojuma
 							//// if compartment lenght if bigger than max box width
