@@ -2374,11 +2374,11 @@ Meteor.methods({
                                 description:`${ontology.ClassCount} classes, ${ontology.NodesCount} nodes` 
 							};
         
-        if ( !ontology.hasGeneralization ) {
-            console.log('Mēģinam likt klāt citu izvietojumu', ontology.Schema)
-            diagram_object['layoutSettings'] = {layout: 'UNIVERSAL', arrangeMethod: 'arrangeFromScratch'};
-            //console.log(diagram_object, diagram_object.description, 'aaaaa')
-        }
+        //if ( !ontology.hasGeneralization ) {
+        //    console.log('Mēģinam likt klāt citu izvietojumu', ontology.Schema)
+        //    diagram_object['layoutSettings'] = {layout: 'UNIVERSAL', arrangeMethod: 'arrangeFromScratch'};
+        //    //console.log(diagram_object, diagram_object.description, 'aaaaa')
+        //}
 
         let new_diagram_id = Diagrams.insert(diagram_object);
         //console.log('Otra diagramma 5555', Diagrams.findOne({_id:new_diagram_id}))

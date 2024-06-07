@@ -229,10 +229,6 @@
           {
             "item": "Layout",
             "procedure": "ComputeLayout"
-          },
-          {
-            "item": "DSS schema",
-            "procedure": "VQ_DSS_schema"
           }
         ],
         "readModeNoCollectionContextMenu": [
@@ -5708,7 +5704,7 @@
           "dialogSize": 3
         },
         "layoutSettings": {
-          "layout": "INVERSE_VERTICAL",
+          "layout": "UNIVERSAL",
           "arrangeMethod": "arrangeFromScratch"
         },
         "versionId": "4RWs2nhwB88xc6K2F",
@@ -6822,8 +6818,8 @@
             "readModeKeyStrokes": [],
             "layoutSettings": {
               "isFlowEdge": true,
-              "startSides": 5,
-              "endSides": 5
+              "startSides": 15,
+              "endSides": 15
             },
             "contextMenu": [
               {
@@ -6893,8 +6889,8 @@
             "lineType": "Orthogonal",
 			"layoutSettings": {
 			  "isFlowEdge": true,
-			  "startSides": 5,
-			  "endSides": 5
+			  "startSides": 15,
+			  "endSides": 15
 			}
           },
           "compartmentTypes": [],

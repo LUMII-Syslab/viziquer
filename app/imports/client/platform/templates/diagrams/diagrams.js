@@ -118,7 +118,7 @@ Template.diagramsRibbon.helpers({
 
 		// tool.toolbar = "diagramsToolbar";
 		if ( project.schema != undefined ) {
-			tool.schema = ` (schema -${project.schema})`;
+			tool.schema = ` (schema - ${project.schema})`;
 			tool.hasSchema = true;
 		}
 		else {
@@ -134,9 +134,22 @@ Template.diagramsRibbon.helpers({
 
 // End of diagramsRibbon template
 
+Template.diagramsToolbar.helpers({
+	hasSchema: function() {
+		var project_id = Session.get("activeProject");
+		var project = Projects.findOne({_id: project_id,});
 
+		if (!project) {
+			return false;
+		}
 
-// Template.diagramsToolbar.helpers({
+		if ( project.schema != undefined ) {
+			return true;
+			// TODO Šeit vispār vajadzētu skatīties, vai pretī ir pareizais DSS serveris un vai ir pareizas rīks (nav tikai VQ)
+		}
+		return false;
+	},
+})
 
 Template.diagramsToolbar.events({
 
@@ -190,6 +203,12 @@ Template.diagramsToolbar.events({
 	'click #migrate' : function(e, templ) {
 		Dialog.destroyTooltip(e);
 		$("#migrate-form").modal("show");
+	},
+	'click #saveSchema': async function(e, templ) {
+		await dataShapes.changeActiveProject(Session.get("activeProject"));
+		Dialog.destroyTooltip(e);
+		await Template.VQ_DSS_schema.rendered();
+		$('#VQ-DSS-schema').modal("show");
 	},
 
 });
