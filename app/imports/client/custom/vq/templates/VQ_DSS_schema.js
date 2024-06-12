@@ -288,7 +288,7 @@ function setSubClasses(cId) {
 	Template.VQ_DSS_schema.SubClasses.set(subClasses);
 	setClassProperties(cId);
 }
-
+/*
 function calculateCount(value, list, parentCnt) {
 	//console.log('-------calculateCount---------', list, parentCnt)
 	let info = { proc10:0, proc25:0, proc50:0 };
@@ -308,7 +308,6 @@ function calculateCount(value, list, parentCnt) {
 			info.proc10 = info.proc10 + 1;
 			el.proc = 10;
 		}
-
 	}
 
 	console.log(info)
@@ -323,7 +322,7 @@ function calculateCount(value, list, parentCnt) {
 		rezValue = 	list.length;
 	
 	return rezValue;
-}
+} */
 
 Template.VQ_DSS_schema.events({
 	'click #makeDiagr2': async function() {
@@ -505,10 +504,11 @@ Template.VQ_DSS_schema.events({
 				//console.log(atrCnt);							atrCnt: atrCnt, 		
 					
 				table_representation.Class[k] = { compartments:{ 
-					Name:el.fullNameD, 
-					AttributesT:el.attributesT,
-					ClassList:[], 
-					Type:type}};
+						Name:el.fullNameD, 
+						AttributesT:el.attributesT,
+						ClassList:[],
+						Type:type},
+					Cnt:el.cnt};
 				if ( el.sub_classes_group_string != undefined )
 					table_representation.Class[k].compartments.ClassList = el.sub_classes_list;
 
@@ -564,7 +564,7 @@ Template.VQ_DSS_schema.events({
 	'change #propSlider2': function() {
 		const propSlider = $("#propSlider2").val();
 		const textValue = propSliderTextValues[propSlider];
-		document.getElementById("propCount-slider-span").innerHTML = `Property triples >${textValue}`;;
+		document.getElementById("propCount-slider-span").innerHTML = `Property triples >${textValue}`;
 		setPropList(propSlider);
 		clearData();
 	},
@@ -1004,7 +1004,7 @@ function getDifference(classInfo1, classInfo2) {
 	function getAttrTree(atr_list) {
 		let atr_tree = {};  
 		for (const a of atr_list) {
-			if ( !unused_props.includes(p_list_full[`p_${a.p_id}`].iri) ) { ///555 te būs izslēgšana
+			if ( !unused_props.includes(p_list_full[`p_${a.p_id}`].iri) ) { //TODO te būs izslēgšana, ja vispār būs
 				const p_id = `${a.p_name}_${a.type}`;
 				atr_tree[p_id] = a;
 				if ( !all_atrs.includes(p_id) )
@@ -1047,15 +1047,20 @@ function getDifference(classInfo1, classInfo2) {
 			}
 		}
 	}
+
 	//diff = Ad + Ao - Bd - Bo;
 	//return Math.round(diff);
 	//console.log(classInfo1.displayName, classInfo2.displayName, Math.round(Ad + Ao), Math.round(Bd + Bo)  )
-	let diifB = Math.round(Bd + Bo);
-		if ( diifB == 0 && Bd + Bo > 0 ) {
-			diifB = 0.5;
-		}
-	rezFull.diffMax = Math.max(rezFull.diffMax , Math.round(Ad + Ao));
-	return [Math.round(Ad + Ao), diifB]; //[Math.round(Ad + Ao), Math.round(Bd + Bo)]; 
+	let diffA = Math.round(Ad + Ao);
+	if ( diffA == 0 && Ad + Ao > 0 ) {
+		diffA = 0.5;
+	}	
+	let diffB = Math.round(Bd + Bo);
+	if ( diffB == 0 && Bd + Bo > 0 ) {
+		diffB = 0.5;
+	}
+	rezFull.diffMax = Math.max(rezFull.diffMax , diffA);
+	return [diffA, diffB]; //[Math.round(Ad + Ao), Math.round(Bd + Bo)]; 
 }	
 
 // Funkcija skaita noapaļošanai, izmanto klasēm un propertijām
@@ -1102,8 +1107,8 @@ function findSimilarClasses(level, class_list = []) {
 	// Savelk līnijas starp klasēm
 	for ( const classInfo1 of class_list) {
 		for ( const classInfo2 of class_list) {
-			const diff = getDifference(classInfo1, classInfo2);
-			if ( checkSimilarity(diff, level) && classInfo1.cnt < classInfo2.cnt ) {  
+			const diff = getDifference(classInfo1, classInfo2); 
+			if ( checkSimilarity(diff, level) && ( classInfo1.cnt < classInfo2.cnt || ( classInfo1.cnt == classInfo2.cnt && classInfo1.id_id < classInfo2.id_id) ) ) {  
 				const lId = `l_${classInfo1.id}_${classInfo2.id}`;
 				rezFull.lines[lId] = { id:lId, from:classInfo1.id, to:classInfo2.id, sim:diff[0], val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'0' };
 				linesList.push(rezFull.lines[lId]);
@@ -1157,7 +1162,7 @@ function findSimilarClasses(level, class_list = []) {
 			}
 		}
 	}
-	/*
+
 	for (const gId of Object.keys(temp2)) {
 		temp = {};
 		// Pārskata, cik savāktas grupas ir tuvas pilnajam grafam
@@ -1172,10 +1177,12 @@ function findSimilarClasses(level, class_list = []) {
 				}	
 			}
 		}
+
 		for (const clId of Object.keys(temp)) {
 			// TODO šeit izmet ārā tās klases, kuras nav parāk draudzīgas ar pārējām
 			if ( temp[clId].count < temp2[gId].length/2 ) {
-				temp2[gId].splice(temp2[gId].indexOf(clId), 1);
+				console.log('Metam klasi ārā', clId, level)
+				temp2[gId].splice(temp2[gId].indexOf(clId), 1); // TODO Šis būs jāpārtaisa
 				for (const lId of temp[clId].lines) {
 					rezFull.lines[lId].red = '5';
 				}
@@ -1199,7 +1206,7 @@ function findSimilarClasses(level, class_list = []) {
 				}	
 			}
 		} 
-	} */
+	} 
 	return temp2;				
 }
 
@@ -1635,7 +1642,7 @@ async function calculateGroups() {
 		for (const clId of Object.keys(rezFull.classes)) {
 			let classInfo = rezFull.classes[clId];
 			if ( classInfo.used ) {
-				if ( classInfo.atr_list.length == 0 && classInfo.super_classes.length == 0 ) {
+				if ( classInfo.atr_list.length == 0 && classInfo.super_classes.length == 0 && classInfo.sub_classes.length == 0 ) {
 					empty_classes.push(classInfo);
 				}
 				if ( classInfo.atr_list.length == 0 && classInfo.super_classes.length == 1 && classInfo.sub_classes.length == 0 ) {
@@ -1693,9 +1700,11 @@ async function calculateGroups() {
 				//console.log('grupas',sc_gr)
 			}
 		}
+
 		for (const clId of Object.keys(rezFull.classes)) {
 			let classInfo = rezFull.classes[clId];
-			if ( classInfo.G_id != undefined && classInfo.G_id.length != classInfo.super_classes.length ) {
+			if ( classInfo.G_id != undefined && classInfo.super_classes.length > 0 && classInfo.G_id.length != classInfo.super_classes.length ) {
+				console.log("Bija tā dīvainā situācija", classInfo)
 				classInfo.used = true;
 				let g_sc = [];
 				let c_sc = [];
@@ -1709,7 +1718,7 @@ async function calculateGroups() {
 				}
 				classInfo.super_classes = c_sc;
 			}
-		}
+		} 
 
 		const similarClassesG = findSimilarClasses(1); // Meklējam līdzīgas klases grupēšanai
 		console.log("Līdzīgās klases grupu veidošanai", similarClassesG);
