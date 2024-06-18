@@ -5061,6 +5061,9 @@ function combineWithDefinedPrefixes(knownPrefixes, prefixDeclarations){
 				} else if(knownPrefixes[kpr]["name"] === pr && knownPrefixes[kpr]["value"] !== prefixDeclarations[pr]){
 					prefixExists = true;
 					break;
+				} else if(knownPrefixes[kpr]["name"] === pr && knownPrefixes[kpr]["value"] === prefixDeclarations[pr]){
+					prefixExists = true;
+					break;
 				}
 			}
 			if(prefixExists === false){

@@ -309,11 +309,13 @@ Interpreter.customMethods({
   
   VQgetSchemaNames: function() {
 	let schemaName = dataShapes.getOntologiesSync();
-	
-	schemaName = schemaName.map(function(e) {
-      return {input:e["display_name"],value:e["display_name"]}
-	})
+	if(typeof schemaName !== "undefined"){
+		schemaName = schemaName.map(function(e) {
+		  return {input:e["display_name"],value:e["display_name"]}
+		})
 	return  schemaName;
+	}
+	return [];
   },
   
 	VQgetAggregateNames: function() {
@@ -741,18 +743,19 @@ Interpreter.customMethods({
 			}
 		}
 		let ontologies = dataShapes.getOntologiesSync();
-		
-		for(let o = 0; o < ontologies.length; o++){
-			if(prefixFound !== true){
-				// dataShapes.schema.schema = ontologies[o]["db_schema_name"];
-				// dataShapes.schema.namespaces = [];
-				if(typeof ontologies[o]["db_schema_name"] !== "undefined"){
-					let prefixes = await dataShapes.getNamespaces({schema:ontologies[o]["db_schema_name"]});
-					for(let p = 0; p < prefixes.length; p++){
-						if(prefixes[p]["name"] === prefixValue){
-							namespaceInputValue = prefixes[p]["value"];
-							prefixFound = true;
-							break;
+		if(typeof ontologies !== "undefined"){
+			for(let o = 0; o < ontologies.length; o++){
+				if(prefixFound !== true){
+					// dataShapes.schema.schema = ontologies[o]["db_schema_name"];
+					// dataShapes.schema.namespaces = [];
+					if(typeof ontologies[o]["db_schema_name"] !== "undefined"){
+						let prefixes = await dataShapes.getNamespaces({schema:ontologies[o]["db_schema_name"]});
+						for(let p = 0; p < prefixes.length; p++){
+							if(prefixes[p]["name"] === prefixValue){
+								namespaceInputValue = prefixes[p]["value"];
+								prefixFound = true;
+								break;
+							}
 						}
 					}
 				}
@@ -766,10 +769,12 @@ Interpreter.customMethods({
 		let namespaceInput = document.querySelectorAll('[id='+params+']')[1].parentElement.children[1].getElementsByTagName('input')[0];
 		let namespaceInputValue = namespaceInput.value;
 		let ontologies = dataShapes.getOntologiesSync();
-		for(let o = 0; o < ontologies.length; o++){
-			if(ontologies[o]["display_name"] === schemaValue){
-				namespaceInputValue = ontologies[o]["sparql_url"];
-				break;
+		if(typeof ontologies !== "undefined"){
+			for(let o = 0; o < ontologies.length; o++){
+				if(ontologies[o]["display_name"] === schemaValue){
+					namespaceInputValue = ontologies[o]["sparql_url"];
+					break;
+				}
 			}
 		}
 		namespaceInput.value = namespaceInputValue;	
@@ -1490,11 +1495,13 @@ async function getSchemaNameForElement(){
 	let schemaNames = setSchemaNamesForQuery(tempSymbolTable["abstractQueryTable"], [], sc);
 	let schemaNameFromABS = schemaNames[selected_elem_id];
 	
-	let ontologies = dataShapes.getOntologiesSync();	
-	for(let o = 0; o < ontologies.length; o++){
-		if(ontologies[o]["display_name"] === schemaNameFromABS) {
-			schemaNameFromABS = ontologies[o]["db_schema_name"];
-			break;
+	let ontologies = dataShapes.getOntologiesSync();
+	if(typeof ontologies !== "undefined"){
+		for(let o = 0; o < ontologies.length; o++){
+			if(ontologies[o]["display_name"] === schemaNameFromABS) {
+				schemaNameFromABS = ontologies[o]["db_schema_name"];
+				break;
+			}
 		}
 	}
 	return schemaNameFromABS;

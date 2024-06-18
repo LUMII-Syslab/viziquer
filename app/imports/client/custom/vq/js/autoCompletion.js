@@ -907,14 +907,15 @@ async function getSchemaNameFromABS(){
 		schemaNameFromABS = schemaNames[selected_elem_id];
 	}
 	
-	let ontologies = dataShapes.getOntologiesSync();	
-	for(let o = 0; o < ontologies.length; o++){
-		if(ontologies[o]["display_name"] === schemaNameFromABS) {
-			schemaNameFromABS = ontologies[o]["db_schema_name"];
-			break;
+	let ontologies = dataShapes.getOntologiesSync();
+	if(typeof ontologies !== "undefined"){
+		for(let o = 0; o < ontologies.length; o++){
+			if(ontologies[o]["display_name"] === schemaNameFromABS) {
+				schemaNameFromABS = ontologies[o]["db_schema_name"];
+				break;
+			}
 		}
 	}
-
 }
 
 export {

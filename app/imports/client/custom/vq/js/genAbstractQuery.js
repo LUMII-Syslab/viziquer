@@ -84,6 +84,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
   if (query && query.root) {
 	// query.root.defaultNamespace = schema.URI;
 	query.prefixes = await dataShapes.getNamespaces();
+	if(typeof query.prefixes.error !== "undefined" && query.prefixes.complete === false) query.prefixes = [];
 	query.classifiers = await dataShapes.getClassifiers();
 	
 	let declarations = getDeclarations();
