@@ -3818,9 +3818,8 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           // returns type of the identifier from symbol table. Null if does not exist.
           async function resolveTypeFromSymbolTable(id) {
 			var context = options.context._id;
-              			
-            if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined' || options.symbol_table === null) return null;
-
+            if(typeof options.symbol_table === 'undefined' || options.symbol_table === null || (typeof options.symbol_table !== 'undefined' && options.symbol_table !== null && typeof options.symbol_table[context] === 'undefined')) return null;
+			
             var st_row = options.symbol_table[context][id];
             if (st_row) {
           		if(st_row.length == 0) return null;
@@ -3843,8 +3842,8 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           // returns kind of the identifier from symbol table. Null if does not exist.
           async function resolveKindFromSymbolTable(id) {
              var context = options.context._id;
-
-             if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
+			
+			 if(typeof options.symbol_table === 'undefined' || options.symbol_table === null || (typeof options.symbol_table !== 'undefined' && options.symbol_table !== null && typeof options.symbol_table[context] === 'undefined')) return null;
 
              var st_row = options.symbol_table[context][id];
              if (st_row) {
