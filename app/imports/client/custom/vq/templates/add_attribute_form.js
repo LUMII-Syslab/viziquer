@@ -22,6 +22,7 @@ Template.AddNewAttribute.expression = new ReactiveVar("");
 Template.AddNewAttribute.requireValues = new ReactiveVar("false");
 Template.AddNewAttribute.helper = new ReactiveVar("false");
 Template.AddNewAttribute.attributeid = new ReactiveVar("");
+Template.AddNewAttribute.attributeidEdit = new ReactiveVar("");
 Template.AddNewAttribute.selectThis = new ReactiveVar("");
 Template.AddNewAttribute.showLabel = new ReactiveVar("false");
 Template.AddNewAttribute.showGraph = new ReactiveVar("false");
@@ -150,7 +151,9 @@ Template.AddAttribute.events({
 					
 					vq_obj.addField(name,alias,required,false,false)
 					
-				} else vq_obj.addField(name,null,required,false,false);
+				} else {
+					vq_obj.addField(name,null,required,false,false);
+				}
 	
 				$(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].className = "button button-required";
 			}
@@ -200,7 +203,9 @@ Template.AddAttribute.events({
 					
 					vq_obj.addField(name,alias,required,false,false);
 					
-				} else vq_obj.addField(name,null,required,false,false);
+				} else {
+					vq_obj.addField(name,null,required,false,false);
+				}
 			}
 		  });
 		};
@@ -507,6 +512,7 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.helper.set("");
 		Template.AddNewAttribute.selectThis.set("");
 		Template.AddNewAttribute.attributeid.set("newAttribute");
+		Template.AddNewAttribute.attributeidEdit.set("");
 		
 		autoCompletionCleanup();
 		document.getElementById("add-new-attribute-form").style.zIndex = "1051";
@@ -523,6 +529,7 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.requireValues.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("requireValues"));
 		Template.AddNewAttribute.helper.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("helper"));		
 		Template.AddNewAttribute.attributeid.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));		
+		Template.AddNewAttribute.attributeidEdit.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));		
 		Template.AddNewAttribute.addDescription.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addDescription"));		
 		Template.AddNewAttribute.addNodeLevelCondition.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addNodeLevelCondition"));		
 		Template.AddNewAttribute.addAttributeCondition.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addAttributeCondition"));		
@@ -615,8 +622,11 @@ Template.AddNewAttribute.helpers({
 		//var compart_type_id = $(this).$(".multi-field").attr("id");
 		//var compart_type_id = Session.get("multiRowCompartmentTypeId");
 
-		var compart_type_id = data_in["compartmentTypeId"];
-		var compart = Compartments.findOne({_id: Session.get("multFieldCompartmentId")});
+		// var compart_type_id = data_in["compartmentTypeId"];
+		var compart_type_id = data_in["_id"];
+		let compart_id = Session.get("multFieldCompartmentId");
+		if(compart_id === null || typeof compart_id === "undefined") compart_id = Template.AddNewAttribute.attributeidEdit.get();
+		var compart = Compartments.findOne({_id: compart_id});
 
 		var fields = [];
 
@@ -626,7 +636,6 @@ Template.AddNewAttribute.helpers({
 		}
 
 		var sub_compartment;
-		var compart_id;
 		if (compart) {
 			sub_compartment = compart["subCompartments"][compart_type["name"]];
 			compart_id = compart["_id"];
@@ -765,10 +774,8 @@ Template.AddNewAttribute.events({
 		// }
 		
 		elem = document.getElementById("add-new-attribute-form");
-		
-
-		if(elem.getAttribute("compartmentId") === null && document.getElementById("add-new-attribute-id").getAttribute("attributeid") == "newAttribute"){
-
+	
+		if(elem.getAttribute("compartmentId") === null && document.getElementById("add-new-attribute-id").getAttribute("attributeid") === "newAttribute"){
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				let vq_obj = new VQ_Element(selected_elem_id);
 				vq_obj.addField(expression,alias,requireValues,false,helper,addLabel,addAltLabel,addDescription,graph,graphInstruction,selectionCondition,addAttributeCondition,addNodeLevelCondition);
@@ -777,6 +784,7 @@ Template.AddNewAttribute.events({
 		} else {
 			
 			var attribute = document.getElementsByName(document.getElementById("add-new-attribute-id").getAttribute("attributeid"))[0];
+			
 			if(typeof attribute !== "undefined"){
 				attribute.setAttribute("alias", alias);
 				attribute.setAttribute("expression", expression);
@@ -800,7 +808,7 @@ Template.AddNewAttribute.events({
 				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 				let value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-
+				
 				compart.subCompartments["Attributes"]["Attributes"]["Expression"]["value"] = expression;
 				compart.subCompartments["Attributes"]["Attributes"]["Expression"]["input"] = expression;
 				if(alias!="" || alias!=null)compart.subCompartments["Attributes"]["Attributes"]["Field Name"]["value"] = alias+"<-";
@@ -832,6 +840,7 @@ Template.AddNewAttribute.events({
 			}
 			let value = $("#mySearch-attribute").val().toLowerCase();
 			let attributes = await getAttributes(value);
+			
 			var associations = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attributes);
 			Template.AddAttribute.linkList.set(associations);

@@ -1608,7 +1608,8 @@ function generateSPARQLtext(abstractQueryTable){
 			 var groupBy = groupByTemp.join(" ");
 			 if(groupBy != "") groupBy = "\nGROUP BY " + groupBy;
 
-			 if(rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + groupBy;
+			 // if(rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + groupBy;
+			 if(typeof selectResult["aggregate"]!== "undefined" && selectResult["aggregate"].length > 0) SPARQL_text = SPARQL_text + groupBy;
 
 			 //ORDER BY
 
@@ -3678,7 +3679,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	
 	// grounding. phase 1.
 	
-	if(classes.length == 0 && typeof sparqlTable["linkTriple"] !== "undefined"){
+	if(classes.length == 0 && typeof sparqlTable["linkTriple"] !== "undefined" && typeof sparqlTable["graph"] === "undefined"){
 		var groundingTemp = [];
 		
 		for(let triple = 0; triple < sparqlTable["simpleTriples"].length; triple++){
@@ -3705,7 +3706,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 				}
 			}
 		}
-		if(groundingTemp.length == 0){
+		if(groundingTemp.length == 0 ){
 			messages.push({
 				"type" : "Warning",
 				"message" : " Please ensure that each node in the query has either a class name or a required link, or its field list starts with a required property.",
