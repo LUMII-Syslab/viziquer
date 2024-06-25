@@ -2403,6 +2403,7 @@ Meteor.methods({
         };
         list.diagram_id = new_diagram_id;
 		list.diagram_type_id = diagram_type._id;
+        list.compactClassView = ontology.CompactClassView;
 
         let ns_element = Elements.insert(ns_object);
         //const nsProc = (ontology.Namespaces.n_0.compartments.List.length > 35) ? Math.round(3500/ontology.Namespaces.n_0.compartments.List.length) : 100; 
@@ -2607,12 +2608,12 @@ function add_class_compartments(list, item ) {
         add_one_compartment_from_list(list, "PropOut", compartments.AttributesT.out, '', cut_info)
     }
     if ( compartments.AttributesT.in.length > 0 ) {
-        cut_info.cut = compartments.AttributesT.out.length > outCount;
+        cut_info.cut = compartments.AttributesT.out.length > inCount;
         cut_info.max = inCount; 
         add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, '<- ', cut_info)
     }
     if ( compartments.AttributesT.c.length > 0 ) {
-        cut_info.cut = compartments.AttributesT.c.length > outCount;
+        cut_info.cut = compartments.AttributesT.c.length > inCount;
         cut_info.max = inCount; 
         add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, '<> ', cut_info)
     }
@@ -2629,7 +2630,9 @@ function add_class_compartments(list, item ) {
 function add_one_compartment_from_list(list, compartmentName, value_list, pref, cut_info, sort = true) {
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const length = value_list.length;  
-    let max_count = value_list.length;  
+    let max_count = value_list.length; 
+    if ( !list.compactClassView && compartmentName != 'ClassList')
+        cut_info.cut = false; 
     if ( cut_info.cut ) {
         const values75 = value_list.filter(function(v){ return v.cnt > 0.75*cut_info.class_cnt; });
         const values50 = value_list.filter(function(v){ return v.cnt > 0.5*cut_info.class_cnt; });
