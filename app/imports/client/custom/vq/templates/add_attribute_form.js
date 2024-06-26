@@ -775,7 +775,9 @@ Template.AddNewAttribute.events({
 		
 		elem = document.getElementById("add-new-attribute-form");
 	
-		if(elem.getAttribute("compartmentId") === null && document.getElementById("add-new-attribute-id").getAttribute("attributeid") === "newAttribute"){
+		//console.log("UUUUUUUUUUUUUUUU", typeof elem.getAttribute("compartmentId"), document.getElementById("add-new-attribute-id").getAttribute("attributeid"))
+	
+		if((elem.getAttribute("compartmentId") === null || elem.getAttribute("compartmentId") === "") && document.getElementById("add-new-attribute-id").getAttribute("attributeid") === "newAttribute"){
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				let vq_obj = new VQ_Element(selected_elem_id);
 				vq_obj.addField(expression,alias,requireValues,false,helper,addLabel,addAltLabel,addDescription,graph,graphInstruction,selectionCondition,addAttributeCondition,addNodeLevelCondition);

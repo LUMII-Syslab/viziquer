@@ -1022,15 +1022,29 @@ Interpreter.customMethods({
             		Template.AggregateWizard.startClassId.set(classId);
             	}else {
             		var classUp = classObj.getLinkToRoot();
+					
             		Template.AggregateWizard.showDisplay.set("block");
             		Template.AggregateWizard.linkId.set(classUp.link.obj._id);
             		//console.log("root id = ", getRootId(classObj.obj._id));
             		//Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
-            		if (classUp.start) {
-        				Template.AggregateWizard.startClassId.set(classUp.link.getElements().start.obj._id);
-        			} else {
-        				Template.AggregateWizard.startClassId.set(classUp.link.getElements().end.obj._id);
-        			}            		
+					let isSubQuery = false;
+					while(isSubQuery === false){
+						let linkO = new VQ_Element(classUp.link.obj._id);
+						let parClass;
+						if (classUp.start) {	
+							console.log("linkO", linkO, linkO.isSubQuery());
+							parClass = new VQ_Element(classUp.link.getElements().start.obj._id);
+							Template.AggregateWizard.startClassId.set(classUp.link.getElements().start.obj._id);
+						} else {
+							Template.AggregateWizard.startClassId.set(classUp.link.getElements().end.obj._id);
+							parClass = new VQ_Element(classUp.link.getElements().end.obj._id);
+						}   
+						if(linkO.isSubQuery() === true || linkO.isGlobalSubQuery() === true) isSubQuery = true;
+						else {
+							classUp = parClass.getLinkToRoot();
+						}
+					}					
+					
             	}
 
                 //Attribute generation

@@ -3592,13 +3592,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								let relation = expressionTable[key]['Relation'];
 								if(relation === "<>") relation = "!=";
 								SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + " " + relation + " " + variable["type"]["prefix"] + ":" + variable["name"];
+								
 							}
 							visited = 1;
 						}
 					}
 					
 
-					//property = `pr:attribute				
+					//property = `pr:attribute		
 					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined'){
 						if(typeof expressionTable[key]['NumericExpressionR'] !== 'undefined'
 						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression'] !== 'undefined'
@@ -3636,7 +3637,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							let variable = findINExpressionTable(expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							let varName = variable["name"];
 							varName = setVariableName(varName, null,variable);
-
 							if(isSimpleFilter && typeof variable["type"] !== 'undefined' && variable["type"] != null) {
 								
 								let namespace = variable["type"]["Namespace"]

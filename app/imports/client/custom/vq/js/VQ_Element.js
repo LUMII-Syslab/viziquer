@@ -394,6 +394,8 @@ VQ_Element.prototype = {
     var className = this.getName();
 	var fields = this.getFields();
 	var aggregation = this.getAggregateFields();
+	var graphs = this.getGraphsServices();
+	
 	
 	var isOptional = false;
 	
@@ -416,7 +418,7 @@ VQ_Element.prototype = {
 			break;
 		}
 	}
-	return ((alias == null || alias == "") && (className == null || className == "") && isOptional == false && aggregation.length < 1);
+	return ((alias == null || alias == "") && (className == null || className == "") && graphs.length === 0 && isOptional == false && aggregation.length < 1);
 
   },
   // gets class variable name (e.g. X for ?X)

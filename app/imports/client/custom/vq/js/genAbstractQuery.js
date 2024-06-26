@@ -278,10 +278,11 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	for (const f of obj_class.aggregations) {
     // obj_class.aggregations.forEach(function(f) {
         if (f.alias) {
-          if ((obj_class.linkType == "REQUIRED" || obj_class.linkType == "OPTIONAL") && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
+          my_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
+		  if ((obj_class.linkType == "REQUIRED" || obj_class.linkType == "OPTIONAL") && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
              // TODO: longer path!
              // TODO: resolve type
-             parents_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id, upBySubQuery:1, distanceFromClass:1});
+             // parents_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id, upBySubQuery:1, distanceFromClass:1});
           } else if(typeof obj_class.linkIdentification === "undefined") {
 			  diagram_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
 		  };
@@ -320,7 +321,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 				if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
 				  if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
 			    };
-				if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
+				if (clone_ca["upBySubQuery"] && clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
                 parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
             }
 			// );
@@ -347,6 +348,25 @@ async function resolveTypesAndBuildSymbolTable(query) {
              parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
          }
 		 // );
+       };
+	   
+	   if (obj_class.linkType == "REQUIRED" && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
+			for (const ca of my_scope_table.AGGREGATE_ALIAS) {
+				let clone_ca = _.clone(ca);
+				if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
+				if (clone_ca["upBySubQuery"] && clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
+                parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
+            }
+       };
+	   
+       if (obj_class.linkType == "OPTIONAL"  && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
+		   for (const ca of my_scope_table.AGGREGATE_ALIAS) {
+             let clone_ca = _.clone(ca);
+             clone_ca["upByOptional"] = true;
+             if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
+				if (clone_ca["upBySubQuery"] && clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
+                parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
+		  }
        };
 
 	   // subquery/global subquery required/optional
