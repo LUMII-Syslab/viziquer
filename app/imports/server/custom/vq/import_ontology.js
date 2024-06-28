@@ -2527,7 +2527,7 @@ Meteor.methods({
             element_map[key] = new_line_id;
             cut_info.class_cnt = ontology.Class[item.source].Cnt;
             const lineCompCount = 5;
-            cut_info.cut = item.compartments.Name.length > item.compartments.Name.length > lineCompCount;
+            cut_info.cut = item.compartments.Name.length > lineCompCount;
             cut_info.max = lineCompCount; 
             add_one_compartment_from_list(list, "Name", item.compartments.Name, '', cut_info);
 		});
@@ -2646,7 +2646,7 @@ function add_one_compartment_from_list(list, compartmentName, value_list, pref, 
         else
             max_count = cut_info.max;
 
-        if ( length - max_count == 1 )
+        if ( length - max_count < 3 )
             max_count = length;
     }
  
