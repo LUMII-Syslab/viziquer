@@ -1504,6 +1504,7 @@ async function getBasicClasses() {
 			cpc.cnt = Number(cpc.cnt);
 		}
 	}	
+
 	allParams.main.p_list =  p_list.map(v => v.id);
 	rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams); 
 	cp_info = rr.data;
@@ -1747,17 +1748,33 @@ async function calculateGroups() {
 			makeClassGroup(empty_classes.filter(function(c){ return c.type == 'Classif'; }), 'Empty classes');
 		}
 
-		for (const sup_id of Object.keys(empty_sub_classes)) {
-			const classGrId =  makeClassGroup(empty_sub_classes[sup_id].filter(function(c){ return c.type == 'Class'; }), 'Empty subClasses');
+		console.log("Tukšās apakšklases", empty_sub_classes)
+		function makeEmptySubclassesGroup(classList, sup_id) {
+			const classGrId =  makeClassGroup(classList, 'Empty subClasses');
+			const supClass = rezFull.classes[sup_id];
 			if ( classGrId != '' ) {
 				rezFull.classes[classGrId].super_classes = [sup_id];
-				rezFull.classes[sup_id].sub_classes.push(classGrId); // TODO Jāpadomā, vai nevajag savilktās apakšklases izmest laukā no saraksta
+				const classListIds = classList.map( c => c.id);
+				let sub_classes = [classGrId];
+				for (const s of supClass.sub_classes) {
+					if ( !classListIds.includes(s))
+						sub_classes.push(s);
+				}
+				supClass.sub_classes = sub_classes;
 			}
-			const classifGrId =  makeClassGroup(empty_sub_classes[sup_id].filter(function(c){ return c.type == 'Classif'; }), 'Empty subClasses');
-			if ( classifGrId != '' ) {
-				rezFull.classes[classifGrId].super_classes = [sup_id];
-				rezFull.classes[sup_id].sub_classes.push(classGrId);
-			}
+		}
+		for (const sup_id of Object.keys(empty_sub_classes)) {
+			makeEmptySubclassesGroup(empty_sub_classes[sup_id].filter(function(c){ return c.type == 'Class'; }), sup_id);
+			makeEmptySubclassesGroup(empty_sub_classes[sup_id].filter(function(c){ return c.type == 'Classif'; }), sup_id);
+			//const classGrId =  makeClassGroup(empty_sub_classes[sup_id].filter(function(c){ return c.type == 'Class'; }), 'Empty subClasses');
+			//if ( classGrId != '' ) {
+			//	rezFull.classes[classGrId].super_classes = [sup_id];
+			//	rezFull.classes[sup_id].sub_classes.push(classGrId); // TODO Jāpadomā, vai nevajag savilktās apakšklases izmest laukā no saraksta
+			//}
+			//const classifGrId =  makeClassGroup(empty_sub_classes[sup_id].filter(function(c){ return c.type == 'Classif'; }), 'Empty subClasses');
+			//if ( classifGrId != '' ) {
+			//	rezFull.classes[classifGrId].super_classes = [sup_id];
+			//}
 		} 
 		
 		// Veido klašu grupas, skatoties uz atribūtiem, klasēm, kas neietilpst vispārinašanās
