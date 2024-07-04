@@ -192,6 +192,13 @@
 												<option value=10 >Max. 10 one object property edges</option>
 												<option value=0 >Draw all object properties in the diagram</option>
 											</select>	
+											<select class="form-control" id="hideSmall">
+												<option selected value=0 >Draw all object properties in the diagram</option>
+												<option value=5 >Draw object properties ( triples > 5 ) </option>
+												<option value=10 >Draw object properties ( triples > 10 )</option>
+												<option value=100 >Draw object properties ( triples > 100 )</option>
+
+											</select>
 											<label class="form-check-label" style="padding-top:10px;">
 												<input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">
 												<span class="custom-checkbox"></span>
@@ -213,6 +220,22 @@
 											<button id="showClasses" type="button" class="btn btn-primary">Show basic classes</button>
 										{{/if}}
 										<button id="showGroups" type="button" class="btn btn-primary">Show merged classes</button>
+										{{#if pub}}
+										{{else}}
+											<label class="form-check-label">
+												<input class="form-check-input" name = "newDifs" id="newDifs" type="checkbox">
+												<span class="custom-checkbox"></span>
+												New diffs
+											</label>
+											<select class="form-control" id="pw" style="width:200px" >
+												<option selected value=5 >dw pow = 1/5 </option>
+												<option value=10 >dw pow = 1/10 </option>
+												<option value=20 >dw pow = 1/20 </option>
+												<option value=50 >dw pow = 1/50 </option>
+												<option value=100 >dw pow = 1/100 </option>
+												<option value=0 >Use d </option>
+											</select>
+										{{/if}}
 									</div>
 									<span class="label label-default" style="font-size:15px; background-color:transparent; padding-left:0px;">Nodes- {{classCountUsed}}, groups - {{classCountGroups}}, abstract classes - {{classCountAbstr}}, lines - {{linesCount}} </span>
 								</div>

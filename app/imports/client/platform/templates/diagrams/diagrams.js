@@ -63,12 +63,12 @@ Template.diagramsRibbon.events({
 		$('#add-diagram').modal("show");
 	},
 
-	'click #saveSchema': async function(e, templ) {
-		await dataShapes.changeActiveProject(Session.get("activeProject"));
-		Dialog.destroyTooltip(e);
-		await Template.VQ_DSS_schema.rendered();
-		$('#VQ-DSS-schema').modal("show");
-	},
+	//'click #saveSchema': async function(e, templ) {
+	//	await dataShapes.changeActiveProject(Session.get("activeProject"));
+	//	Dialog.destroyTooltip(e);
+	//	await Template.VQ_DSS_schema.rendered();
+	//	$('#VQ-DSS-schema').modal("show");
+	//},
 
 // //shows button's tooltip on mouse over
 //     'mouseenter .btn-ribbon' : function(e, templ) {
