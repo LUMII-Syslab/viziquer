@@ -1188,9 +1188,21 @@ function getPathFullGrammar(expressionTable){
 				if(expressionTable[key]["var"]["name"].indexOf("/") !== -1) pathPart = "<" + expressionTable[key]["var"]["type"]["iri"] +">";
 				path = path + pathPart;
 				
-				//console.log("p1", pathPart)
-				
-				prTable[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"]+">";
+				// console.log("p1", pathPart)
+				let namespace = knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"]
+				if(typeof namespace !== "undefined") prTable[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"] = "<"+namespace+">";
+				else {
+					mes.push({
+						"type" : "Error",
+						"message" : "Undefined prefix '" +  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) +"' please specify the prefix",
+						"isBlocking" : false
+					});
+					mes.push({
+						"type" : "Error",
+						"message" : "Undefined property '" +  path +"' can't be used in navigation expression",
+						"isBlocking" : false
+					});
+				}
 				
 				variable = expressionTable[key];
 			
@@ -1203,7 +1215,7 @@ function getPathFullGrammar(expressionTable){
 		//IRIREF
 		if(key == "IRIREF"){
 			path = path + expressionTable[key];
-			//console.log("p2", expressionTable[key])
+			// console.log("p2", expressionTable[key])
 		}
 		//PrefixedName
 		if(key == "PrefixedName"){
@@ -1222,8 +1234,20 @@ function getPathFullGrammar(expressionTable){
 
 				let namespace = expressionTable[key]["var"]["type"]["Namespace"]
 				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-				
-				prTable[getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"]+">"
+				if(typeof namespace === 'undefined') namespace = knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])];
+				if(typeof namespace !== 'undefined') prTable[getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"]+">"
+				else {
+					mes.push({
+						"type" : "Error",
+						"message" : "Undefined prefix '" +  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) +"' please specify the prefix",
+						"isBlocking" : false
+					});
+					mes.push({
+						"type" : "Error",
+						"message" : "Undefined property '" +  path +"' can't be used in navigation expression",
+						"isBlocking" : false
+					});
+				}
 				variable = expressionTable[key];
 				visited = 1;
 			} else {
@@ -1233,6 +1257,18 @@ function getPathFullGrammar(expressionTable){
 					if(expressionTable[key]["var"]["name"].indexOf("/") !== -1) path = path + "<" + expressionTable[key]["var"]["type"]["iri"] +">";
 					else path = path + expressionTable[key]["Prefix"] + expressionTable[key]["var"]["name"];
 					if(knownNamespaces[expressionTable[key]["Prefix"]] != null){prTable[expressionTable[key]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["Prefix"]]+">";}
+					else {
+						mes.push({
+							"type" : "Error",
+							"message" : "Undefined prefix '" +  expressionTable[key]["Prefix"] +"' please specify the prefix",
+							"isBlocking" : false
+						});
+						mes.push({
+							"type" : "Error",
+							"message" : "Undefined property '" +  path +"' can't be used in navigation expression",
+							"isBlocking" : false
+						});
+					}
 					visited = 1;
 					variable = expressionTable[key];
 					mes.push({
@@ -1257,11 +1293,11 @@ function getPathFullGrammar(expressionTable){
 		if(key == "Alternative" || key == "PathMod" || key == "inv"){
 			if(key == "inv" && expressionTable[key] != null && expressionTable[key] != "") {cardinality = -1;}
 			if( expressionTable[key] != null)path = path + expressionTable[key];
-			//console.log("p5", path)
+			// console.log("p5", path)
 		}
 		
 		if(expressionTable[key] == ")" || expressionTable[key] == "(" || expressionTable[key] == "!" || expressionTable[key] == "a") path = path + expressionTable[key];          
-		//console.log("p6", path)
+		// console.log("p6", path)
 		
 		if(visited == 0 && typeof expressionTable[key] == 'object'){
 			let temp = getPathFullGrammar(expressionTable[key]);
@@ -1271,7 +1307,7 @@ function getPathFullGrammar(expressionTable){
 				prTable[prefix] = temp["prefixTable"][prefix];
 			}
 			path = path + temp["path"];
-			//console.log("p7", path)
+			// console.log("p7", path)
 			if(typeof temp["variable"] !== 'undefined') variable = temp["variable"];
 			if(temp["isPath"] != null) isPath = temp["isPath"];
 		}
@@ -3813,14 +3849,25 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					{
 						
 						let property = right;
-						if(typeof left["var"] !== "undefined") property = left;
-						if((expressionTable[key]['Relation'] == "=" && typeof property["type"] !== "undefined" && property["type"] !== null && property["type"]["max_cardinality"] == 1) || expressionTable[key]['Relation'] == "->"){
+						let constant = left;
+						if(typeof property["iri"] !== 'undefined' && typeof property["iri"]["PrefixedName"] !== 'undefined') property = property["iri"]["PrefixedName"];
+						if(typeof left["var"] !== "undefined") {
+							property = left;
+							constant = right;
+						} else if (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] !== 'undefined'){
+							property = left["iri"]["PrefixedName"];
+							constant = right;
+						}
+						
+						if((expressionTable[key]['Relation'] == "=" && typeof property["var"]["type"] !== "undefined" && property["var"]["type"] !== null && 
+						(property["var"]["type"]["max_cardinality"] == 1 || typeof constant["NumericLiteral"] !== "undefined" || typeof constant["RDFLiteral"] !== "undefined")
+						) || expressionTable[key]['Relation'] == "->"){
 						
 							let tripleTableTemp = tripleTable;
 							tripleTable = [];
 							let VarL = generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 							let VarR = generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
-
+							
 							tripleTable = tripleTable.filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;
 							});

@@ -759,6 +759,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 async function generateAbstractTable(parsedQuery, allClasses, variableList, parentNodeList){
 	// x = 200;
 	// y = 10;
+	// console.log("generateAbstractTable", parsedQuery, allClasses, variableList, parentNodeList)
 
 	var selectVariables = transformSelectVariables(parsedQuery["variables"]);
 	
@@ -4954,11 +4955,19 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		
 		let graphName = await generateInstanceAlias(where.name.value, false);
 		let wherePattern = {where:patterns};
+		let allClassesTemp = allClasses;
+		let parentNodeListTemp = [];
+		
 		if(patterns.length === 1 && patterns[0]["type"] === "query"){
 			wherePattern = patterns[0];
 		}
-		
-		let abstractTable = await generateAbstractTable(wherePattern, allClasses, variableList, []);	
+		if(patterns.length === 1 && patterns[0]["type"] === "group" && patterns[0]["patterns"].length === 1 && patterns[0]["patterns"][0]["type"] === "query"){
+			allClassesTemp = classesTable;
+			parentNodeListTemp = nodeLitsTemp;
+		}
+		// console.log("SERVICE", allClasses, nodeLitsTemp)
+		// let abstractTable = await generateAbstractTable(wherePattern, allClasses, variableList, []);	
+		let abstractTable = await generateAbstractTable(wherePattern, allClassesTemp, variableList, parentNodeListTemp);	
 				
 		for(let clazz in abstractTable["classesTable"]){
 			if(typeof abstractTable["classesTable"][clazz] !== "function"){
@@ -4972,46 +4981,53 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			if(typeof nodeList[node] !== 'undefined' && typeof nodeList[node] !== 'function'){
 				//find links outside subquery
 				for(let subLink = 0; subLink < abstractTable["linkTable"].length; subLink++){
-					if((typeof classesTable[abstractTable["linkTable"][subLink]["subject"]]!=='undefined' && classesTable[abstractTable["linkTable"][subLink]["subject"]]["variableName"] == node) 
-						|| (typeof classesTable[abstractTable["linkTable"][subLink]["object"]] !== 'undefined' && classesTable[abstractTable["linkTable"][subLink]["object"]]["variableName"] == node)){
-						if(linkFound==false){
-							// let subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject", nodeList[node]);
-							// pn = nodeList[node];
-							// if(subSelectMainClass == null){
-								// for(let subClass in abstractTable["classesTable"]){
-									// if(typeof abstractTable["classesTable"][subClass] !== "function"){
-										// subSelectMainClass = subClass;
-										// break;
+					if(typeof abstractTable["linkTable"][subLink] !== "undefined"){
+						if((typeof classesTable[abstractTable["linkTable"][subLink]["subject"]]!=='undefined' && classesTable[abstractTable["linkTable"][subLink]["subject"]]["variableName"] == node) 
+							|| (typeof classesTable[abstractTable["linkTable"][subLink]["object"]] !== 'undefined' && classesTable[abstractTable["linkTable"][subLink]["object"]]["variableName"] == node)){
+							if(linkFound==false){
+								// let subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject", nodeList[node]);
+								// pn = nodeList[node];
+								// if(subSelectMainClass == null){
+									// for(let subClass in abstractTable["classesTable"]){
+										// if(typeof abstractTable["classesTable"][subClass] !== "function"){
+											// subSelectMainClass = subClass;
+											// break;
+										// }
 									// }
-								// }
-							 // } 
+								 // } 
 
-							abstractTable["linkTable"][subLink]["graphInstructionLink"] = where["type"].toUpperCase();
-							abstractTable["linkTable"][subLink]["graphLink"] = graphName;
-							abstractTable["linkTable"][subLink]["serviceSchemaName"] = serviceSchemaName;
-							abstractTable["linkTable"][subLink]["linkType"] = linkType;
-							
-							let subSelectMainClass = abstractTable["linkTable"][subLink]["object"];
-							if(subSelectMainClass === node) subSelectMainClass = abstractTable["linkTable"][subLink]["subject"];
-							
-							// abstractTable["linkTable"][subLink]["isSubQuery"] = isSubQuery;
-							// abstractTable["linkTable"][subLink]["isGlobalSubQuery"] = isGlobalSubQuery;
-							// if(where["type"] == "optional") abstractTable["linkTable"][subLink]["linkType"] = "OPTIONAL";
-							linkFound = true;
-
-							for(let subLink2 = 0; subLink2 < abstractTable["linkTable"].length; subLink2++){
-								if((abstractTable["linkTable"][subLink2]["subject"] === node || abstractTable["linkTable"][subLink2]["object"] === node) && abstractTable["linkTable"][subLink2] !== abstractTable["linkTable"][subLink]){
-									if(abstractTable["linkTable"][subLink2]["linkIdentification"]["short_name"] === "++"){
-										if(abstractTable["linkTable"][subLink2]["subject"] === node) abstractTable["linkTable"][subLink2]["subject"] = subSelectMainClass;
-										else abstractTable["linkTable"][subLink2]["object"] = subSelectMainClass;
-									} else {
-										
+								abstractTable["linkTable"][subLink]["graphInstructionLink"] = where["type"].toUpperCase();
+								abstractTable["linkTable"][subLink]["graphLink"] = graphName;
+								abstractTable["linkTable"][subLink]["serviceSchemaName"] = serviceSchemaName;
+								abstractTable["linkTable"][subLink]["linkType"] = linkType;
+								
+								let subSelectMainClass = abstractTable["linkTable"][subLink]["object"];
+								if(subSelectMainClass === node) subSelectMainClass = abstractTable["linkTable"][subLink]["subject"];
+								
+								// abstractTable["linkTable"][subLink]["isSubQuery"] = isSubQuery;
+								// abstractTable["linkTable"][subLink]["isGlobalSubQuery"] = isGlobalSubQuery;
+								// if(where["type"] == "optional") abstractTable["linkTable"][subLink]["linkType"] = "OPTIONAL";
+								linkFound = true;
+								
+								
+								
+								for(let subLink2 = 0; subLink2 < abstractTable["linkTable"].length; subLink2++){
+									if(typeof abstractTable["linkTable"][subLink2] !== "undefined"){
+										if((abstractTable["linkTable"][subLink2]["subject"] === node || abstractTable["linkTable"][subLink2]["object"] === node) && abstractTable["linkTable"][subLink2] !== abstractTable["linkTable"][subLink]){
+											if(abstractTable["linkTable"][subLink2]["linkIdentification"]["short_name"] === "++"){
+												if(abstractTable["linkTable"][subLink2]["subject"] === node) abstractTable["linkTable"][subLink2]["subject"] = subSelectMainClass;
+												else abstractTable["linkTable"][subLink2]["object"] = subSelectMainClass;
+											} else {
+												
+											}
+										}
 									}
 								}
 							}
 						}
+						linkTable.push(abstractTable["linkTable"][subLink]);
 					}
-					linkTable.push(abstractTable["linkTable"][subLink]);
+
 				}
 			}
 		}
