@@ -5849,10 +5849,139 @@
                 }
               },
               {
-                "id": "cbc28f89d8e2ecd86f312865",
-                "name": "AbstractClass",
+                "id": "765dcc6f279762657846f197",
+                "name": "Class0",
                 "elementStyle": {
-                  "fill": "rgb(251,236,174)",
+                  "fill": "rgb(254,250,231)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": "0",
+                  "shadowOffsetY": "0",
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    0
+                  ],
+                  "shape": "Rectangle"
+                }
+              },
+			  {
+                "id": "765dcc6f279762657846f198",
+                "name": "Class1",
+                "elementStyle": {
+                  "fill": "rgb(252,239,186)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": "0",
+                  "shadowOffsetY": "0",
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    0
+                  ],
+                  "shape": "Rectangle"
+                }
+              },
+			  {
+                "id": "765dcc6f279762657846f199",
+                "name": "Class2",
+                "elementStyle": {
+                  "fill": "rgb(237,192,14)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": "0",
+                  "shadowOffsetY": "0",
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    0
+                  ],
+                  "shape": "Rectangle"
+                }
+              },
+              {
+                "id": "cbc28f89d8e2ecd86f312865",
+                "name": "AbstractClass0",
+                "elementStyle": {
+                  "fill": "rgb(254,250,231)",
                   "fillPriority": "color",
                   "fillLinearGradientStartPointX": 0.5,
                   "fillLinearGradientStartPointY": 0,
@@ -5885,15 +6014,179 @@
                   "shadowOffsetY": 0,
                   "tension": 0,
                   "opacity": 1,
-                  "dash": [],
+                  "dash": [3,2],
+                  "shape": "Rectangle"
+                }
+              },
+			                {
+                "id": "cbc28f89d8e2ecd86f312866",
+                "name": "AbstractClass1",
+                "elementStyle": {
+                  "fill": "rgb(252,239,186)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [3,2],
+                  "shape": "Rectangle"
+                }
+              },
+			  {
+                "id": "cbc28f89d8e2ecd86f312867",
+                "name": "AbstractClass2",
+                "elementStyle": {
+                  "fill": "rgb(237,192,14)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [3,2],
                   "shape": "Rectangle"
                 }
               },
               {
                 "id": "0400d1735e9f6ccbae9529c2",
-                "name": "ClassGroup",
+                "name": "ClassGroup0",
                 "elementStyle": {
-                  "fill": "rgb(244,208,63)",
+                  "fill": "rgb(254,250,231)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "rgb(0,0,0)",
+                  "shadowBlur": "0",
+                  "shadowOpacity": 0.5,
+                  "shadowOffsetX": 4,
+                  "shadowOffsetY": 3,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "shape": "Rectangle"
+                }
+              },
+			  {
+                "id": "0400d1735e9f6ccbae9529c3",
+                "name": "ClassGroup1",
+                "elementStyle": {
+                  "fill": "rgb(252,239,186)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "rgb(0,0,0)",
+                  "shadowBlur": "0",
+                  "shadowOpacity": 0.5,
+                  "shadowOffsetX": 4,
+                  "shadowOffsetY": 3,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "shape": "Rectangle"
+                }
+              },
+			  {
+                "id": "0400d1735e9f6ccbae9529c4",
+                "name": "ClassGroup2",
+                "elementStyle": {
+                  "fill": "rgb(237,192,14)",
                   "fillPriority": "color",
                   "fillLinearGradientStartPointX": 0.5,
                   "fillLinearGradientStartPointY": 0,

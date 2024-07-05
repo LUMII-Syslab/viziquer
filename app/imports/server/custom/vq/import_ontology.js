@@ -2427,15 +2427,18 @@ Meteor.methods({
 				return;
 			}
 
-            let class_style = class_type["styles"].find(function(s){ return s.name == item.compartments.Type});
-            if ( class_style == undefined )
-                class_style = class_type["styles"][0];
-            let class_style_id = class_style["id"];
+            let class_style = class_type["styles"][0];
+            let class_style_old = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeOld});
+            let class_style_new = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeNew});
+            if ( class_style_old != undefined )
+                class_style = class_style_old; 
+            if ( class_style_new != undefined )
+                class_style = class_style_new; 
 
 			let object = {diagramId: new_diagram_id,
 							type: "Box",
 							location: {x: 10, y: 10, width: 5, height: 5},
-							styleId: class_style_id,
+							styleId: class_style["id"],
 							style: class_style,
 							elementTypeId: class_type._id,
 							diagramTypeId: diagram_type._id,
@@ -2458,7 +2461,6 @@ Meteor.methods({
 		}
 
 		let gen_style = gen_type["styles"][0];
-		let gen_style_id = gen_style["id"];
         let gen_layoutSettings = ( gen_type.layoutSettings != undefined) ?  gen_type.layoutSettings : {};
 
 		_.each(ontology.Generalization, function(item, key) {
@@ -2469,7 +2471,7 @@ Meteor.methods({
 							endElement: element_map[item.source],
                             startSides: gen_type.startSides || 4,
                             endSides: gen_type.endSides || 1,
-							styleId: gen_style_id,
+							styleId: gen_style["id"],
 							elementTypeId: gen_type._id,
 							diagramTypeId: diagram_type._id,
                             style:{
@@ -2498,7 +2500,6 @@ Meteor.methods({
         list.element_type_id = line_type._id;
 
 		let line_style = line_type["styles"][0];
-		let line_style_id = line_style["id"];
         let line_layoutSettings = ( line_type.layoutSettings != undefined) ?  line_type.layoutSettings : {};
         let cut_info = {cut:false, class_cnt:0, max:5};
 
@@ -2508,7 +2509,7 @@ Meteor.methods({
 							points: [0, 10, 10, 10],
 							startElement: element_map[item.source],
 							endElement: element_map[item.target],
-							styleId: line_style_id,
+							styleId: line_style["id"],
                             style:{
 								elementStyle: line_style.elementStyle,
 								startShapeStyle: line_style.startShapeStyle,
@@ -2608,7 +2609,7 @@ function add_class_compartments(list, item ) {
         add_one_compartment_from_list(list, "PropOut", compartments.AttributesT.out, '', cut_info)
     }
     if ( compartments.AttributesT.in.length > 0 ) {
-        cut_info.cut = compartments.AttributesT.out.length > inCount;
+        cut_info.cut = compartments.AttributesT.in.length > inCount;
         cut_info.max = inCount; 
         add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, '<- ', cut_info)
     }

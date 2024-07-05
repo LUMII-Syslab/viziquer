@@ -176,7 +176,7 @@ Template.VQ_DSS_schema.helpers({
 
 function getParams() {
 	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:$("#newDifs").is(":checked"),
-		pw:$("#pw").val(), diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema};
+		pw:$("#pw").val(), diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 ) 
 		//	par.supPar = 2;
 		if ( $("#abstr").is(":checked") )
@@ -469,15 +469,29 @@ Template.VQ_DSS_schema.events({
 			const el = rezFull.classes[k];
 			if ( el.used ) {
 				let type = el.type;
-				if ( type == 'Classif') 
-					if ( el.sub_classes_group_string != undefined )
+				let typeNew = el.type;
+				if ( type == 'Classif') { 
+					if ( el.sub_classes_group_string != undefined ) {
 						type = 'ClassifierGroup'
-					else
+						typeNew = 'ClassifierGroup'
+					}	
+					else {
 						type = 'Classifier';
-				if ( type == 'Class' && el.sub_classes_group_string != undefined )
+						typeNew = 'Classifier';
+					}
+				}
+				if ( type == 'Class' && el.sub_classes_group_string != undefined ) {
 					type = 'ClassGroup';
-				if ( type== 'Abstract')
+					typeNew = `ClassGroup${el.size}`;
+				}
+				if ( type == 'Class' && el.sub_classes_group_string == undefined ) {
+					type = 'Class';
+					typeNew = `Class${el.size}`;
+				}
+				if ( type== 'Abstract') {
 					type = 'AbstractClass';
+					typeNew = `AbstractClass${el.size}`;
+				}
 
 				//const atrCnt = calculateCount(7, el.attributesT.out, el.cnt);  // Pagaidām neizmantosim
 				//console.log(atrCnt);							atrCnt: atrCnt, 		
@@ -486,7 +500,8 @@ Template.VQ_DSS_schema.events({
 						Name:el.fullNameD, 
 						AttributesT:el.attributesT,
 						ClassList:[],
-						Type:type},
+						TypeOld:type,
+						TypeNew:typeNew},
 					Cnt:el.cnt};
 				if ( el.sub_classes_group_string != undefined )
 					table_representation.Class[k].compartments.ClassList = el.sub_classes_list;
@@ -1771,6 +1786,17 @@ async function calculateGroups() {
 	} */
 
 	// Virsklašu virkņu apvienošana - compTree un compChain ir savstarpēji izslēdzoši
+	/*
+	if ( params.withoutGen ) {
+		let class_list = [];
+		for (const clId of Object.keys(rezFull.classes)) {
+			class_list.push(rezFull.classes[clId]);
+		}
+		const similar_classes = findSimilarClasses(1, class_list);
+		console.log('Draudzīgās klases', similar_classes)
+		makeClassGroupFromTree(similar_classes, 'Similar classes');
+		return;
+	} */
 	if ( compChain) {
 		let top_classes = [];
 		for (const clId of Object.keys(rezFull.classes)) {
@@ -1978,6 +2004,7 @@ async function calculateGroups() {
 			}
 		}
 		console.log('Virsklases ar bērniem', super_classes)
+		let grouped_classes = [];
 		for (const sc of Object.keys(super_classes)) {
 			if ( super_classes[sc].length > 1 ) {
 				//console.log('virsklase', sc)
@@ -1987,6 +2014,11 @@ async function calculateGroups() {
 				}
 				const sc_gr = findSimilarClasses(level, super_classes[sc]);
 				console.log("Apakšklašu grupas", sc, sc_gr)
+				for (const c of Object.keys(sc_gr)) {
+					for (const cId of sc_gr[c]) {
+						grouped_classes.push(cId);
+					}
+				}
 				makeClassGroupFromTree(sc_gr, 'Similar subClasses', sc);
 				//console.log('grupas',sc_gr)
 			}
@@ -1994,7 +2026,7 @@ async function calculateGroups() {
 
 		for (const clId of Object.keys(rezFull.classes)) {
 			let classInfo = rezFull.classes[clId];
-			if ( classInfo.super_classes.length > 1 && classInfo.G_id != undefined ) {
+			if ( grouped_classes.includes(classInfo.id) && classInfo.super_classes.length > 1 && classInfo.G_id != undefined ) {
 				let gr_sup = [];
 				for (const gr of classInfo.G_id ) {
 					if ( rezFull.classes[gr].used ) {
@@ -2009,7 +2041,7 @@ async function calculateGroups() {
 						rest_sp.push(s);
 				}
 				if ( rest_sp.length > 0 ) {
-					console.log("Bija tā dīvainā situācija apakšklasēm", classInfo)
+					console.log("Bija tā dīvainā situācija apakšklasēm", classInfo, rest_sp)
 					classInfo.used = true;
 					classInfo.super_classes = rest_sp;
 				}
@@ -2152,7 +2184,7 @@ function makeSuperClasses() {
 				for (const cId of similarClassesS[k]) {
 					c_list_full.push(rezFull.classes[cId]);
 				}
-				const atrTree = makeAtrTree(c_list_full);
+				const atrTree = makeAtrTree(c_list_full, 'atr_list');
 				makeSupClass(c_list_full, atrTree);
 			}
 		}
