@@ -189,6 +189,8 @@ Interpreter.methods({
 
     let layoutEngine = editor.layoutEngine(layoutType);
 		
+		let minWidth = 100;
+		
 		let heightConst = {
 			11 : 1,
 			12 : 0,
@@ -228,11 +230,13 @@ Interpreter.methods({
 			if (box.compartments) {
 				let compart_width = 0;
 				let compart_height = 0;
-
+				let nonEmptyRowCount = 0;
+				let longestRow = {};
+				let secondLongestRow = {};
 				Compartments.find({elementId: box._id}).forEach(function(compart) {
 					//calculate width and height only for visible compartments
 					if(compart.style.visible == true){
-            if (!compart.value) return;
+						if (!compart.value) return;
 						let value = compart.value.trimStart();
 						if (value == "") {
 							return;
@@ -249,6 +253,8 @@ Interpreter.methods({
 							if (row == "") {
 								return;
 							}
+							nonEmptyRowCount++;
+							
 
 							//text_length = number_of_charecters_in_string / 2 rounded towards the greater value
 							// let text_length = Math.ceil(font_style_coef*(row.length * Math.ceil(font_size/2)));
@@ -265,13 +271,66 @@ Interpreter.methods({
 							//	//compartment height = font_size * (text_length/max_box_width/2 rounded towards the greater value)
 							//	tmp_height += font_size * Math.ceil(text_length/500/2) + 5;
 							//}
+							if(typeof longestRow.row === "undefined"){
+								longestRow = {
+									row:row,
+									font_size:font_size,
+									text_length:text_length,
+									font_style_coef:font_style_coef
+								}
+								secondLongestRow = {
+									row:row,
+									font_size:font_size,
+									text_length:text_length,
+									font_style_coef:font_style_coef
+								}
+							// if current compartment is longer then longest found so far
+							} else if(longestRow.text_length < text_length){
+								longestRow = {
+									row:row,
+									font_size:font_size,
+									text_length:text_length,
+									font_style_coef:font_style_coef
+								}
+							// if current compartment is longer then second longest found so far
+							} else if(secondLongestRow.text_length < text_length){
+								secondLongestRow = {
+									row:row,
+									font_size:font_size,
+									text_length:text_length,
+									font_style_coef:font_style_coef
+								}
+							}
+							
 						});
 
 						compart_width = Math.max(compart_width, tmp_width);
 						compart_height += tmp_height;
 					}
 				});
-
+				
+				//if only 1 non-empty compartment, that is longer then min width
+				if(nonEmptyRowCount === 1 && longestRow.text_length > minWidth){
+					let rowMiddlePoint = Math.ceil((longestRow.row.length)/2);
+					let rowMiddle = longestRow.row.substring(rowMiddlePoint);
+					let rowStart = longestRow.row.substring(1, rowMiddlePoint-1);
+					// if string has space after the middle part
+					if(rowMiddle.indexOf(" ") !== -1){					
+						compart_width = Math.ceil(longestRow.font_style_coef*((rowMiddle.indexOf(" ") + rowMiddlePoint) * widthConst[longestRow.font_size]));						
+					// if string has space before the middle part
+					} else if (rowStart.indexOf(" ") !== -1){
+						compart_width = Math.ceil(longestRow.font_style_coef*((longestRow.row.length - rowStart.indexOf(" ")) * widthConst[longestRow.font_size]));						
+					// if string does not has space
+					} else {
+						compart_width = Math.ceil(longestRow.font_style_coef*(rowMiddlePoint) * widthConst[longestRow.font_size]);					
+					}
+					compart_height += longestRow.font_size + heightConst[longestRow.font_size];
+				} else if(secondLongestRow.text_length < longestRow.text_length){
+					if((100-(secondLongestRow.text_length*100/longestRow.text_length)) > 20){
+						compart_width = secondLongestRow.text_length;
+						compart_height += (longestRow.font_size + heightConst[longestRow.font_size]) * Math.ceil(longestRow.text_length/secondLongestRow.text_length);
+					}
+				}
 				if (compart_width != 0) {
 					width = compart_width + 5;
 				}
