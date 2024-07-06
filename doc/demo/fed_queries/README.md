@@ -2,7 +2,7 @@
 
 We provide the supporting material for a submission of a demo paper to the Semantics'2024 conference.
 
-ToDo: provide the StarWars schema and query picture information as .pdf file, or as a library of .png files.
+~~ToDo: provide the StarWars schema and query picture information as .pdf file, or as a library of .png files.~~
 
 Consider ViziQuer tool main page (https://viziquer.lumii.lv) for further information on the ViziQuer tool.
 
@@ -21,12 +21,18 @@ After opening https://viziquer.app, register a user (anonymous e-mail formatted 
 
 Within a project environment, activate the `Data Schema` button. Then choose the intial class and property lists and switch to the tab `Class Merging parameters` to choose the options for configuring the class merging strength and other visualization parameters.
 
+Resulting data schema visualization:
+
+![StarWars data schema visualization](data_schema.png)
+
 ## (Federated) Visual Queries
 
 ToDo: The visual query creation is described in ..
 
 ToDo: Describe specifics for federated visual query creation
 
+StarWars federated visual query examples:
+![StarWars visual query examples](visual_queries.png)
 
 ## Local ViziQuer Tool Suite installation
 
