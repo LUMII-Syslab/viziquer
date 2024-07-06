@@ -12,7 +12,7 @@ The star_wars_example.json file contains the example project information and can
 
 The ViziQuer Playground available at https://viziquer.app contains a list of data schemas, including the StarWars data schema, as well as schemas for Wikidata and DBPedia, and can be used for repeating the experiments described in the paper.
 
-After opening https://viziquer.app, register a user (anonymous e-mail formatted usernames are accepted), then proceed to create a new project (use the 'Initialize by the StarWars example project' option from the project creation dialogue).
+After opening https://viziquer.app, register a user (anonymous e-mail formatted usernames are accepted), then proceed to create a new project (use the 'Initialise by StarWars sample project' option from the project creation dialogue).
 
 The process for exploring pre-defined ViziQuer projects such as this demo is described in [Exploring ViziQuer Projects](https://github.com/LUMII-Syslab/viziquer/wiki/Exploring-ViziQuer-Projects).
 
