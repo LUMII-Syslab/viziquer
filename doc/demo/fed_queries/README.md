@@ -26,9 +26,15 @@ Resulting data schema visualization:
 
 ## (Federated) Visual Queries
 
-ToDo: The visual query creation is described in ..
+The visual query creation is described in:
+- [Short introduction to ViziQuer](https://viziquer.lumii.lv/DBPedia_ShortIntro.pdf)
+- [Visual Diagrammatic Queries in ViziQuer: Overview and Implementation](https://www.bjmc.lu.lv/fileadmin/user_upload/lu_portal/projekti/bjmc/Contents/11_2_07_Ovcinnikova.pdf)
 
 ToDo: Describe specifics for federated visual query creation
+
+A federated query (as any other query) is created in the context of a certain data schema that serves the class and property vocabulary (including the entity labels that can be used in the visual query) and provides the resources for the query auto-completion.
+
+To create a federated query, a SERVICE specification can be introduced either at the node level or at the edge level to attribute the node/edge and the entire query fragment behind it to another data schema and include its SPARQL code in a SERVICE block that is to be executed over the specified SPARQL endpoint.
 
 StarWars federated visual query examples:
 ![StarWars visual query examples](visual_queries.png)
