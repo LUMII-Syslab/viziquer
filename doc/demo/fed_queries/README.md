@@ -35,6 +35,12 @@ StarWars federated visual query examples:
 
 ## Local ViziQuer Tool Suite installation
 
+The ViziQuer tool suite consists of the ViziQuer visual query environment itself and the Data Shape Server (DSS) for serving data schemas to ViziQuer. DSS stores its data in a PostgreSQL database which also needs to be present.
+
+Data schemas are collected from SPARQL servers using the OBIS Schema Extractor tool.
+
+See also the wiki page on [Local Installation of ViziQuer](https://github.com/LUMII-Syslab/viziquer/wiki/Local-Installation).
+
 ### ViziQuer
 
 Follow the instructions from https://github.com/LUMII-Syslab/viziquer
@@ -42,7 +48,7 @@ Follow the instructions from https://github.com/LUMII-Syslab/viziquer
 ### Data Shape server
 
 1. Install / setup the Data Shape Server (DSS): https://github.com/LUMII-Syslab/data-shape-server
-This includes setting up a PostGres server with a respective database. The folder `database` contains a (large) dump of the ViziQuer Playground database that can be used to initialize the locally installed PostGres server with a data suitable for the use in the visual tool.
+This includes setting up a Postgres server with a respective database. The folder `database` contains a (large) dump of the ViziQuer Playground database that can be used to initialize the locally installed Postgres server with a data suitable for the use in the visual tool.
 This database can be used for storing further imported data schemas, as well.
 
 2. Instructions and software for importing the data schema is in https://github.com/LUMII-Syslab/data-shape-server/tree/main/import-generic
