@@ -49,7 +49,7 @@ Follow the instructions from https://github.com/LUMII-Syslab/viziquer
 
 1. Install / setup the Data Shape Server (DSS): https://github.com/LUMII-Syslab/data-shape-server
 
-This includes setting up a Postgres server with a respective database. The folder `database` contains a (large) dump of the ViziQuer Playground database that can be used to initialize the locally installed Postgres server with a data suitable for the use in the visual tool.
+This includes setting up a Postgres server with a respective database. The file [vq_playground.pgsql.gz](https://viziquer.lumii.lv/dss/resources/vq_playground.pgsql.gz) contains a (large) dump of the ViziQuer Playground database that can be used to initialize the locally installed Postgres server with a data suitable for the use in the visual tool.
 This database can be used for storing further imported data schemas, as well.
 
 2. Instructions and software for importing the data schema is in https://github.com/LUMII-Syslab/data-shape-server/tree/main/import-generic
