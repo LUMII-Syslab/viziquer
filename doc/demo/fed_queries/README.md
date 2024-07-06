@@ -8,6 +8,15 @@ Consider ViziQuer tool main page (https://viziquer.lumii.lv) for further informa
 
 ToDo: provide links to ViziQuer wiki (at this place, or maybe somewhere else).
 
+The star_wars_example.json file contains the example project information and can be loaded into the visual tool project also after the project creation.
+
+
+## Running the demo in ViziQuer Playground
+
+The ViziQuer Playground, available at https://viziquer.app contains a list of data schemas, including the StarWars data schema, as well as schemas for Wikidata and DBPedia, and can be used for repeating the experiments described in the paper.
+
+After opening https://viziquer.app, register a user (anonymous e-mail formatted usernames are accepted), then proceed to create a new project (use the 'Initialize by the StarWars example project' option from the project creation dialogue).
+
 ## Schema Visualization
 
 Within a project environment, activate the `Data Schema` button. Then choose the intial class and property lists and switch to the tab `Class Merging parameters` to choose the options for configuring the class merging strength and other visualization parameters.
@@ -17,14 +26,6 @@ Within a project environment, activate the `Data Schema` button. Then choose the
 ToDo: The visual query creation is described in ..
 
 ToDo: Describe specifics for federated visual query creation
-
-## Running the demo in ViziQuer Playground
-
-The ViziQuer Playground, available at https://viziquer.app contains a list of data schemas, including the StarWars data schema, as well as schemas for Wikidata and DBPedia, and can be used for repeating the experiments described in the paper.
-
-After opening https://viziquer.app, register a user (anonymous e-mail formatted usernames are accepted), then proceed to create a new project (use the 'Initialize by the StarWars example project' option from the project creation dialogue).
-
-The starwars.json file contains the example project information and can be loaded into the visual tool project also after the project creation.
 
 
 ## Local ViziQuer Tool Suite installation
