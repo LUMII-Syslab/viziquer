@@ -2,14 +2,11 @@
 
 We provide the supporting material for a submission of a demo paper to the Semantics'2024 conference.
 
-~~ToDo: provide the StarWars schema and query picture information as .pdf file, or as a library of .png files.~~
+Consult the main page of the ViziQuer tool (https://viziquer.lumii.lv) for further information about it.
 
-Consider ViziQuer tool main page (https://viziquer.lumii.lv) for further information on the ViziQuer tool.
+[ViziQuer wiki](https://github.com/LUMII-Syslab/viziquer/wiki) contains additional information on installing and using ViziQuer.
 
-ToDo: provide links to ViziQuer wiki (at this place, or maybe somewhere else).
-
-The star_wars_example.json file contains the example project information and can be loaded into the visual tool project also after the project creation.
-
+The star_wars_example.json file contains the example project information and can be loaded into the visual tool project also after the project creation. To do this, press the Upload Project icon at the top of the ViziQuer project diagrams view.
 
 ## Running the demo in ViziQuer Playground
 
