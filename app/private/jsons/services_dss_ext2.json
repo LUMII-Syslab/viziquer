@@ -3,6 +3,12 @@
 	],
 	"projects": [
 	{
+		"caption": "StarWars sample project",
+		"name": "StarWars_sample",
+		"link": "https://github.com/LUMII-Syslab/viziquer/blob/development/doc/demo/fed_queries/star_wars_example.json",
+		"description": "Data Schema and Federated Query Examples over StarWars Data Set"
+	},
+	{
 		"caption": "DBPedia sample project",
 		"name": "DBPedia_sample",
 		"link": "https://viziquer.lumii.lv/dss/resources/DBPedia_Sample.json",
