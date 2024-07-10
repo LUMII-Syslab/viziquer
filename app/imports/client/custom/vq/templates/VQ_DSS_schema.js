@@ -956,21 +956,23 @@ function checkSimilarity(diff, level) {
 			result = true;
 		}
 		else {
-			if ( diffs.diffG == 10  ) { // TODO ļoti pagaidu risinājums
-				if ( diff[1] < 6 && diff[0] > 0 )
-					result = true;
-				if ( diff[0] > 25 )
-					result = true;
-			}
-			else if ( diff[1] < diffs.diffG && diff[0] > diff[1] ) // TODO padomāt, vai prasīt līdzību, vai neprasīt
+			if ( diff[1] < diffs.diffG && diff[0] > diff[1] ) 
 				result = true;
+			//if ( diffs.diffG == 10  ) { // TODO ļoti pagaidu risinājums   55555
+			//	if ( diff[1] < 6 && diff[0] > 0 )
+			//		result = true;
+			//	if ( diff[0] > 25 )
+			//		result = true;
+			//}
+			//else if ( diff[1] < diffs.diffG && diff[0] > diff[1] ) // TODO padomāt, vai prasīt līdzību, vai neprasīt
+			//	result = true;
 		}
 	}
-	else if ( level == 2 )  {
+	else if ( level == 2 )  {  // Abstrakto virsklašu taisīšanai
 		if ( diff[0] > diffs.diffS )
 			result = true;
 	}
-	else if ( level == 5 )  {
+	else if ( level == 5 )  { // TODO Tas bija tikai vecajam varaintam
 		if ( diff[1] < diffs.diffG )
 			result = true;
 	}

@@ -163,12 +163,24 @@
 												<p><span id="classCount-slider-span2"> </span> Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
 												<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount2"  {{filterDisabled}}>
 											</div>
+											<!--
+											<label class="form-check-label" style="padding-bottom:10px; padding-top:10px;">
+												<input class="form-check-input" name = "merge" id="merge" type="checkbox">
+												<span class="custom-checkbox"></span>
+												Enable merging 
+											</label>
+											<div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
+												<p><span id="DiffG-slider-span"> </span> Classes in the diagram - {{diffG}}</p>
+												<input type="range" min="1" max="20" value={{diffG}} class="slider" id="DiffG-slider"  {{filterDisabled}}>
+											</div> -->
+
 											<select class="form-control" id="diffG" style="width:300px" >
 												<option value=0 >Without merging</option>
 												<option value=1 >Merge equivalent classes</option>
 												<option value=2 >Weak merging</option>
-												<option selected value=5 >Basic merging</option>
-												<option value=10 >Strong merging</option>
+												<option selected value=5 >Basic merging (5)</option>
+												<option value=10 >Strong merging (10)</option>
+												<option value=20 >Strong merging (20)</option>
 											</select>
 											<label class="form-check-label" style="padding-bottom:10px; padding-top:10px;">
 												<input class="form-check-input" name = "abstr" id="abstr" type="checkbox">
@@ -223,7 +235,7 @@
 										{{#if pub}}
 										{{else}}
 											<label class="form-check-label">
-												<input class="form-check-input" name = "newDifs" id="newDifs" type="checkbox">
+												<input class="form-check-input" name = "newDifs" id="newDifs" type="checkbox" checked = "checked">
 												<span class="custom-checkbox"></span>
 												New diffs
 											</label>
