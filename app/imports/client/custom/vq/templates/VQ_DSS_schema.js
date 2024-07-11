@@ -423,6 +423,7 @@ Template.VQ_DSS_schema.events({
 		makeAssociations();
 		showClasses();
 		Template.VQ_DSS_schema.LinesCount.set(countAssociations());
+		rezFull.lines = {};
 		console.log('rezFull', rezFull);
 	},
 	'click #makeDiagr': async function() {
@@ -2199,10 +2200,11 @@ function countAssociations() {
 	let assoc = {}
 	for (const aa of Object.keys(rezFull.assoc)) {
 		const aInfo = rezFull.assoc[aa];
-		if ( !aInfo.removed) {
+		if ( !aInfo.removed && aInfo.from != aInfo.to) {
 			assoc[`${aInfo.from}_${aInfo.to}`] = 1;
 		}	
 	}
+	console.log('Līniju skaitīšanai', assoc)
 	for (const a of Object.keys(assoc)) {
 		count = count + assoc[a];
 	} 
