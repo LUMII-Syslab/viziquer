@@ -2349,13 +2349,14 @@ function makeDiagramData() {
 				rez = `${rez} -> IRI`;
 		}
 		else {
-			// TODO klašu saraksta rādīšanā būtu jāskatās, vai kompaktie, vai nekompaktie atribūti
 			let classNames = '';
 			if ( !(atr_info.class_list2 == undefined) ) {
-				if ( atr_info.class_list2.length > 3 ) 
+				if (params.compView && atr_info.class_list2.length > 3 ) {
 					classNames = ` ${rezFull.classes[atr_info.class_list2[0]].displayName},${rezFull.classes[atr_info.class_list2[1]].displayName}..(${atr_info.class_list2.length})`;
-				else 
+				}
+				else {
 					classNames = ` ${atr_info.class_list2.map(cl => rezFull.classes[cl].displayName).sort().join(',')}`;
+				}
 			}
 			if ( atr_info.type == 'out' ) {
 				if ( p_list_full[`p_${atr_info.p_id}`].in_diagram )
