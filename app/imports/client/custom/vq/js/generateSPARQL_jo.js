@@ -3274,7 +3274,6 @@ function generateSPARQLWHEREInfoPhase2(sparqlTable, ws, fil, lin, referenceTable
 					tempSelect= tempSelect.concat(wheresubInfo["subSelectResult"]);
 
 					if(sparqlTable["subClasses"][subclass]["linkType"] != "NOT"){
-						
 						var tempTable = selectResult["select"];
 						tempTable = tempTable.concat(selectResult["aggregate"]);
 						if(tempTable.length > 0 || sparqlTable["subClasses"][subclass]["equalityLink"] == true){
@@ -3346,6 +3345,7 @@ function generateSPARQLWHEREInfoPhase2(sparqlTable, ws, fil, lin, referenceTable
 							//GROUP BY
 							var groupByFromFields = sparqlTable["subClasses"][subclass]["groupBy"];
 							//ad triples from group by
+							
 							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) {
 								temp = temp.concat(groupByFromFields["triples"])
 							}
@@ -3968,7 +3968,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							//GROUP BY
 							var groupByFromFields = sparqlTable["subClasses"][subclass]["groupBy"];
 							//ad triples from group by
-							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) {
+							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) {
 								temp = temp.concat(groupByFromFields["triples"])
 							}
 
@@ -4025,7 +4025,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 							// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
-							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + groupBy;
+							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) subQuery = subQuery + groupBy;
 
 
 							//ORDER BY
@@ -4606,7 +4606,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						
 						// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
-						if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + groupBy;
+						if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) subQuery = subQuery + groupBy;
 
 						
 						//ORDER BY
@@ -4715,8 +4715,8 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 			});
 			
 			returnValue = "{SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n"+SPARQL_interval.substring(2) + returnValue + "}";
-			
-			if(sparqlTable["agregationInside"]== true) returnValue = returnValue + "\n"+SPARQL_interval.substring(2)+"GROUP BY " + unionGroupStaterents.join(" ");
+			 
+			if(sparqlTable["agregationInside"]== true || sparqlTable["selectMain"]["aggregateVariables"].length > 0) returnValue = returnValue + "\n"+SPARQL_interval.substring(2)+"GROUP BY " + unionGroupStaterents.join(" ");
 			returnValue = returnValue + "\n"+SPARQL_interval.substring(4)+"}";
 			if(sparqlTable["linkType"] == "OPTIONAL") returnValue = "OPTIONAL" + returnValue;
 

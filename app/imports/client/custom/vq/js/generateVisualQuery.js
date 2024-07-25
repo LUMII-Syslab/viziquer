@@ -124,7 +124,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		
 		console.log("queryId:", queries[query]["id"], "--------------------------");
 		
-		parsedQuery = transformParsedQuery(parsedQuery);		
+		parsedQuery = transformParsedQuery(parsedQuery, 0).expression;		
 		// console.log(JSON.stringify(parsedQuery, 0, 2));
 
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
@@ -282,7 +282,8 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 					"addLabel":false,
 					"addAltLabel":false,
 					"addDescription":false,
-					"counter":0
+					"counter":0,
+					"orderCounter":0
 				}
 			startClass["class"] = addAttributeToClass(startClass["class"], attributeInfo);
 		};
@@ -300,7 +301,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
 
-		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion, usedPrefixes, starInSelect);
+		await visualizeQuery(classesTable, variableListAlias, null, null, variableListCount, queryId, queryQuestion, usedPrefixes, starInSelect);
 
 		for (let condLink of conditionLinks) {
 			const linkName = condLink.identification.display_name ?? condLink.identification.short_name;
@@ -415,7 +416,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		MaxY = y+120;
 		counter = 0;
 				  // console.log(JSON.stringify(parsedQuery, 0, 2));
-		parsedQuery = transformParsedQuery(parsedQuery);
+		parsedQuery = transformParsedQuery(parsedQuery, 0).expression;
 		// console.log(JSON.stringify(parsedQuery, 0, 2));
 
 		directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
@@ -621,7 +622,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 					"addLabel":false,
 					"addAltLabel":false,
 					"addDescription":false,
-					"counter":0
+					"counter":0,
+					"orderCounter":0
 				}
 			startClass["class"] = addAttributeToClass(startClass["class"], attributeInfo);
 		}
@@ -636,7 +638,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		VQ_Links = {};
 		var link_count2 = abstractTable["linkTable"].length;
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
-		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion, usedPrefixes, starInSelect);
+		await visualizeQuery(classesTable, variableListAlias, null, null, variableListCount, queryId, queryQuestion, usedPrefixes, starInSelect);
 		// var i = 0;
 		// while((Object.keys(VQ_Elements).length < classCount || link_count < link_count2)&& i < 100){
 			// await delay(100);
@@ -759,7 +761,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 async function generateAbstractTable(parsedQuery, allClasses, variableList, parentNodeList){
 	// x = 200;
 	// y = 10;
-	// console.log("generateAbstractTable", parsedQuery, allClasses, variableList, parentNodeList)
+	//console.log("generateAbstractTable", parsedQuery, allClasses, variableList, parentNodeList)
 
 	var selectVariables = transformSelectVariables(parsedQuery["variables"]);
 	
@@ -948,6 +950,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 
 	starInSelect = false;
 	for(let key = 0; key < variables.length; key++){
+		
 		if(typeof variables[key] === 'string' && variables[key] == "*"){
 			starInSelect = true;
 			break;
@@ -1074,7 +1077,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 							"addLabel":addLabel,
 							"addAltLabel":addAltLabel,
 							"addDescription":addDescription,
-							"counter":0
+							"counter":0,
+							"orderCounter":0
 						}
 
 						orderCounter++;
@@ -1123,7 +1127,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 										"addLabel":addLabel,
 										"addAltLabel":addAltLabel,
 										"addDescription":addDescription,
-										"counter":orderCounter
+										"counter":orderCounter,
+										"orderCounter":orderCounter
 									}
 								
 									orderCounter++;
@@ -1172,7 +1177,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 									"addLabel":addLabel,
 									"addAltLabel":addAltLabel,
 									"addDescription":addDescription,
-									"counter":orderCounter
+									"counter":orderCounter,
+									"orderCounter":orderCounter
 								}
 							
 								orderCounter++;
@@ -1204,7 +1210,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 								"isInternal":false,
 								"groupValues":false,
 								"exp":bindTable[parsedAttribute]["exp"],
-								"counter":orderCounter
+								"counter":orderCounter,
+								"orderCounter":orderCounter
 							}
 			
 							orderCounter++;
@@ -1265,6 +1272,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 									"graph":attributeInfoTemp["graph"],
 									"graphInstruction":attributeInfoTemp["graphInstruction"],
 									"counter":attributeInfoTemp["counter"],
+									"orderCounter":attributeInfoTemp["orderCounter"],
 									"attributeConditionSelection": attributeConditionSelection,
 									"attributeCondition":attributeCondition
 								}
@@ -1285,7 +1293,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 				}
 			}
 			
-		} else if(typeof variables[key] === 'object'){
+		} else if(typeof variables[key] === 'object' && typeof variables[key]["tableCounter"] === "undefined"){
 			// if attribute with same name exists, use name_expr
 			if(typeof attributeTable[variables[key]["variable"]] != "undefined" && typeof variableList[variables[key]["variable"]] !== "undefined" && variableList[variables[key]["variable"]] > 3) {	
 				variableList[variables[key]["variable"]] = variableList[variables[key]["variable"]] - 3;
@@ -1462,7 +1470,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					"isInternal":false,
 					"groupValues":false,
 					"exp":operationExpression,
-					"counter":orderCounter
+					"counter":orderCounter,
+					"orderCounter":orderCounter
 				} 
 				orderCounter++;
 				for(let attr = 0; attr < temp["viziQuerExpr"]["exprVariables"].length; attr++){
@@ -1544,7 +1553,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					"isInternal":false,
 					"groupValues":false,
 					"exp":operationExpression,
-					"counter":orderCounter
+					"counter":orderCounter,
+					"orderCounter":orderCounter
 				} 
 				
 				orderCounter++;
@@ -1625,7 +1635,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 									"addLabel":addLabel,
 									"addAltLabel":addAltLabel,
 									"addDescription":addDescription,
-									"counter":0
+									"counter":0,
+									"orderCounter":0
 							} 
 							orderCounter++;
 							classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
@@ -1649,7 +1660,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 							"isInternal":true,
 							"groupValues":false,
 							"exp":bindTable[bind]["exp"],
-							"counter":bindTable[bind]["counter"]
+							"counter":bindTable[bind]["counter"],
+							"orderCounter":bindTable[bind]["orderCounter"]
 				}
 				// orderCounter++;
 				for(let clazz in classesTable){
@@ -1815,7 +1827,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 						"exp":exp,
 						"graph":attributeInfoTemp["graph"],
 						"graphInstruction":attributeInfoTemp["graphInstruction"],
-						"counter":attributeInfoTemp["counter"]
+						"counter":attributeInfoTemp["counter"],
+						"orderCounter":attributeInfoTemp["orderCounter"]
 				} 
 			
 				classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
@@ -2096,6 +2109,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					"exp": attributeTable[attributeTableAdded[attr]]["identification"]["short_name"]+"@"+ patterns[1]["expression"]["args"][1]["value"].replace(/\"/g,''),
 					// "exp": attributeTable[attributeTableAdded[attr]]["identification"]["short_name"]+ patterns[1]["expression"]["args"][1].replace(/\"/g,''),
 					"counter":attributeTable[attributeTableAdded[attr]]["counter"],
+					"orderCounter":attributeTable[attributeTableAdded[attr]]["orderCounter"],
 					"isInternal":isInternal,
 				}
 
@@ -2129,6 +2143,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					"exp": linkTableAdded[attr]["linkIdentification"]["short_name"]+"@"+ patterns[1]["expression"]["args"][1]["value"].replace(/\"/g,''),
 					// "exp": attributeTable[attributeTableAdded[attr]]["identification"]["short_name"]+ patterns[1]["expression"]["args"][1].replace(/\"/g,''),
 					"counter":orderCounter,
+					"orderCounter":linkTableAdded[attr]["orderCounter"],
 					"isInternal":isInternal,
 				}
 				orderCounter ++;
@@ -2333,7 +2348,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							"graphInstruction":linkTableAdded[0]["graphInstruction"],
 							"serviceSchemaName":linkTableAdded[0]["serviceSchemaName"],
 							"seen":true,
-							"counter":linkTableAdded[0]["counter"]
+							"counter":linkTableAdded[0]["counter"],
+							"orderCounter":linkTableAdded[0]["orderCounter"]
 						}
 
 						if(typeof attributeTable[variableName] === "undefined") attributeTable[variableName] = attributeInfo;
@@ -2382,12 +2398,13 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		
 		let values = [];
 		for(let v = 0; v < where["values"].length; v++){
-			values = values.concat(Object.keys(where["values"][v]));	
+			values = values.concat(Object.keys(where["values"][v]));
+			if(values.indexOf("tableCounter") !== -1) delete values[values.indexOf("tableCounter")];
 		}
 		values = values.filter(function (el, i, arr) {
 			return arr.indexOf(el) === i;
 		});
-
+		
 		var valueData = [];
 		for(let v = 0; v < where["values"].length; v++){
 			var vData = {};
@@ -2395,9 +2412,10 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				vData[values[vv]] = "UNDEF";
 			}
 			for(let vv in where["values"][v]){
-			  if(typeof where["values"][v][vv] !== "function"){
+			  if(typeof where["values"][v][vv] !== "function" && vv !== "tableCounter"){
+				  
 				var parsedValue = getVariable(where["values"][v][vv]);
-				
+
 				if(parsedValue["type"] == "iri") {
 					let params = {name: where["values"][v][vv]["value"]};
 					if(schemaName !== dataShapes.schema.schema) params.schema = schemaName;
@@ -2450,7 +2468,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							}
 						}
 					}
-				} else vData[vv] = parsedValue["value"];
+				} else {
+					vData[vv] = parsedValue["value"];
+				}
 			  }
 			}
 			valueData.push(vData);
@@ -2499,10 +2519,11 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			"isInternal":isInternal,
 			"groupValues":false,
 			"exp":exp,
-			"counter":orderCounter
+			"counter":orderCounter,
+			"orderCounter":where["values"]["tableCounter"]
 		}
 		orderCounter++;
-				
+			
 		var added = false;
 		for(let v = 0; v < values.length; v++){
 			let attributes = findByVariableName(attributeTable, values[v]);
@@ -3032,7 +3053,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							"isInternal":false,
 							"groupValues":false,
 							"exp":"[["+ pathExpression.join(" | ")+ "]]",
-							"counter":orderCounter
+							"counter":orderCounter,
+							"orderCounter":orderCounter
 						}
 						orderCounter++;
 						classesTable[subjectClass] = addAttributeToClass(classesTable[subjectClass], attributeInfo);
@@ -3046,7 +3068,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						"instanceAlias":objectResolved,
 						"isVariable":false,
 						"isUnit":false,
-						"isUnion":false
+						"isUnion":false,
+						"orderCounter":orderCounter
 					};
 					classTableAdded.push(object);
 					nodeList[object]= {uses: {[object]: "class"}, count:1};
@@ -3060,7 +3083,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						"instanceAlias":objectResolved,
 						"isVariable":false,
 						"isUnit":false,
-						"isUnion":false
+						"isUnion":false,
+						"orderCounter":orderCounter
 					};
 					classTableAdded.push(object+counter);
 					if(typeof nodeList[object] === 'undefined') nodeList[object] = {uses: [], count:1}
@@ -3536,7 +3560,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			// type=minus (global sybquery, negation)
 			else if(unionBlock["type"] == "minus"){
 				for(let minusPattern = 0; minusPattern < unionBlock["patterns"].length; minusPattern++){
+					
 					var minusUnionBlock = unionBlock["patterns"][minusPattern];
+					
 					if(minusUnionBlock["type"] == "filter" && typeof minusUnionBlock["expression"] !== "undefined" && 
 					minusUnionBlock["expression"]["type"] == "operation" && minusUnionBlock["expression"]["operator"] == "notexists"){
 						let args = minusUnionBlock["expression"]["args"];
@@ -3844,6 +3870,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	}
 	// type=bind
 	if(where["type"] == "bind"){
+		
 		let temp = await parseSPARQLjsStructureWhere(where["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, bgptype, allClasses, variableList, patternType, bindTable, generateOnlyExpression);
 		classesTable = temp["classesTable"];
 		attributeTable = temp["attributeTable"];
@@ -3870,7 +3897,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							"instanceAlias":className,
 							"isVariable":false,
 							"isUnit":false,
-							"isUnion":false
+							"isUnion":false,
+							"orderCounter":where["tableCounter"]
 						};
 			classTableAdded.push(subjectNameParsed["value"]);
 			nodeList[subjectNameParsed["value"]] = [];
@@ -3899,7 +3927,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			"isInternal":isInternal,
 			"groupValues":false,
 			"exp":bindExpr,
-			"counter":orderCounter
+			"counter":orderCounter,
+			"orderCounter":where["variable"]["tableCounter"]
+			
 		}
 		orderCounter++;
 		bindTable[where["variable"]["value"]] = attributeInfo;
@@ -4564,6 +4594,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
 					linkTableAdded[link]["linkType"] = "NOT";
 					if(patternType == "minus") linkTableAdded[link]["isGlobalSubQuery"] = true;
+					
 					for(let attr = 0; attr < attributeTableAdded.length; attr++){
 						let addAttribute = true;
 						for(let filter = 0; filter < filterTable.length; filter++){
@@ -4577,7 +4608,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							"isInternal":false,
 							"groupValues":false,
 							"exp":attributeInfoTemp["identification"]["short_name"],
-							"counter":attributeInfoTemp["counter"]
+							"counter":attributeInfoTemp["counter"],
+							"orderCounter":attributeInfoTemp["orderCounter"]
 						}
 						
 						if(addAttribute === true)classesTable[attributeTable[attributeTableAdded[attr]]["class"]] = addAttributeToClass(classesTable[attributeTable[attributeTableAdded[attr]]["class"]], attributeInfo);
@@ -4833,7 +4865,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							"isInternal":false,
 							"groupValues":false,
 							"exp":attributeInfoTemp["identification"]["short_name"],
-							"counter":attributeInfoTemp["counter"]
+							"counter":attributeInfoTemp["counter"],
+							"orderCounter":attributeInfoTemp["orderCounter"]
 						}
 						classesTable[attributeTable[attributeTableAdded[attr]]["class"]] = addAttributeToClass(classesTable[attributeTable[attributeTableAdded[attr]]["class"]], attributeInfo);
 						// console.log("20", attributeInfo)
@@ -4967,7 +5000,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 		// console.log("SERVICE", allClasses, nodeLitsTemp)
 		// let abstractTable = await generateAbstractTable(wherePattern, allClasses, variableList, []);	
-		let abstractTable = await generateAbstractTable(wherePattern, allClassesTemp, variableList, parentNodeListTemp);	
+		let abstractTable = await generateAbstractTable(wherePattern, allClassesTemp, variableList, parentNodeListTemp);
+	
 				
 		for(let clazz in abstractTable["classesTable"]){
 			if(typeof abstractTable["classesTable"][clazz] !== "function"){
@@ -5292,6 +5326,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				}
 			}
 		}
+		
+		abstractTable["classesTable"][subSelectMainClass]["fullSPARQL"] = abstractTable["fullSPARQL"];
 		
 		if(linkFound == false){
 			
@@ -5658,7 +5694,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 								"addLabel":false,
 								"addAltLabel":false,
 								"addDescription":false,
-								"counter":orderCounter
+								"counter":orderCounter,
+								"orderCounter":orderCounter
 							}
 							attributeTable[alias] = {
 								"seen":true,
@@ -5686,7 +5723,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 										"addLabel":false,
 										"addAltLabel":false,
 										"addDescription":false,
-										"counter":orderCounter
+										"counter":orderCounter,
+										"orderCounter":orderCounter
 									}
 									orderCounter++
 									attributeTable[alias] = {
@@ -5716,7 +5754,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							"addLabel":false,
 							"addAltLabel":false,
 							"addDescription":false,
-							"counter":orderCounter
+							"counter":orderCounter,
+							"orderCounter":orderCounter
 						}
 						orderCounter++
 						attributeTable[alias] = {
@@ -5751,7 +5790,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 								"addLabel":false,
 								"addAltLabel":false,
 								"addDescription":false,
-								"counter":orderCounter
+								"counter":orderCounter,
+								"orderCounter":orderCounter
 							}
 							orderCounter++
 												
@@ -6170,6 +6210,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	
 	// type = minus
 	if(where["type"] == "minus"){
+		
 		let patterns = where["patterns"];
 		let nodeLitsTemp = [];
 		var parenNodeLitsTemp;
@@ -6186,7 +6227,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			nodeLitsTemp = nodeList;
 			parenNodeLitsTemp = parentNodeList;
 		}
-			
+		
 		let classTableTemp = [];
 		let linkTableTemp = [];
 		var directClassMembershipRoleTemp = directClassMembershipRole;
@@ -6257,6 +6298,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp"){
 			//find links outside subquery
 			let linkFound = false;
+			
 			for(let link = 0; link< linkTableAdded.length; link++){
 				for(let node in parenNodeLitsTemp){
 					if(typeof parenNodeLitsTemp[node] !== "function"){
@@ -6270,8 +6312,27 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				}
 			}
 			if(linkFound === false && linkTableAdded.length === 1){
-				linkTableAdded[0]["isGlobalSubQuery"] = true;
-				linkTableAdded[0]["linkType"] = "NOT";
+				if(parenNodeLitsTemp.length == 0){
+					if(classTableAdded.indexOf(linkTableAdded[0]["subject"]) !== -1 && typeof allClasses[linkTableAdded[0]["subject"]] === "undefined"){
+						classesTable[linkTableAdded[0]["subject"]+ counter] = {
+							"variableName":classesTable[linkTableAdded[0]["subject"]]["variableName"],
+							"identification":classesTable[linkTableAdded[0]["subject"]]["identification"],
+							"instanceAlias":classesTable[linkTableAdded[0]["subject"]]["instanceAlias"],
+							"isVariable":false,
+							"isUnit":false,
+							"isUnion":false,
+							"orderCounter":classesTable[linkTableAdded[0]["subject"]]["orderCounter"]
+						};
+						linkTableAdded[0]["isGlobalSubQuery"] = true;
+						linkTableAdded[0]["linkType"] = "NOT";
+						
+						linkTableAdded[0]["subject"] = linkTableAdded[0]["subject"]+ counter;
+						counter++;
+					}
+				} else {
+					linkTableAdded[0]["isGlobalSubQuery"] = true;
+					linkTableAdded[0]["linkType"] = "NOT";
+				}
 			}
 		}
 		
@@ -6826,14 +6887,15 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				if(typeof parentNodeList[triples[triple]["subject"]["value"]] === 'undefined'){
 					if(typeof allClasses[subjectNameParsed["value"]] === 'undefined'){
 						// If class first time used in a query – create new class box
-						 // console.log("CLASS 1", subjectNameParsed["value"], classResolved, instanceAlias);
+						 // console.log("CLASS 1", subjectNameParsed["value"], classResolved, instanceAlias, triples[triple]);
 						classesTable[subjectNameParsed["value"]] = {
 							"variableName":triples[triple]["subject"]["value"],
 							"identification":classResolved,
 							"instanceAlias":instanceAlias,
 							"isVariable":false,
 							"isUnit":false,
-							"isUnion":false
+							"isUnion":false,
+							"orderCounter":triples[triple]["tableCounter"]
 						};
 						classTableAdded.push(subjectNameParsed["value"]);
 						
@@ -6847,7 +6909,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							"instanceAlias":instanceAlias,
 							"isVariable":false,
 							"isUnit":false,
-							"isUnion":false
+							"isUnion":false,
+							"orderCounter":triples[triple]["tableCounter"]
 						};
 						classTableAdded.push(subjectNameParsed["value"]+counter);
 						nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed["value"]+counter] = "class";
@@ -6877,7 +6940,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							"instanceAlias":instanceAlias,
 							"isVariable":false,
 							"isUnit":false,
-							"isUnion":false
+							"isUnion":false,
+							"orderCounter":triples[triple]["tableCounter"]
 						};
 						classTableAdded.push(subjectNameParsed["value"]+counter);
 						nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed["value"]+counter] = "class";
@@ -6891,7 +6955,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							"instanceAlias":instanceAlias,
 							"isVariable":false,
 							"isUnit":false,
-							"isUnion":false
+							"isUnion":false,
+							"orderCounter":triples[triple]["tableCounter"]
 						};
 						classTableAdded.push(createClass);
 						nodeList[triples[triple]["subject"]["value"]]["uses"][createClass] = "class";
@@ -6924,7 +6989,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						"instanceAlias":instanceAlias,
 						"isVariable":false,
 						"isUnit":false,
-						"isUnion":false
+						"isUnion":false,
+						"orderCounter":triples[triple]["tableCounter"]
 					};
 					classTableAdded.push(subjectNameParsed["value"]+counter);
 					nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed["value"]+counter] = "class";
@@ -6944,7 +7010,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						"instanceAlias":instanceAlias,
 						"isVariable":false,
 						"isUnit":false,
-						"isUnion":false
+						"isUnion":false,
+						"orderCounter":triples[triple]["tableCounter"]
 					};
 					classTableAdded.push(subjectNameParsed["value"]+counter);
 					nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed["value"]+counter] = "class";
@@ -6984,7 +7051,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								"instanceAlias":instanceAlias,
 								"isVariable":false,
 								"isUnit":false,
-								"isUnion":false
+								"isUnion":false,
+								"orderCounter":triples[triple]["tableCounter"]
 							};
 							classTableAdded.push(subjectNameParsed);
 							nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed] = "dataProperty";
@@ -6997,7 +7065,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								"instanceAlias":instanceAlias,
 								"isVariable":false,
 								"isUnit":false,
-								"isUnion":false
+								"isUnion":false,
+								"orderCounter":triples[triple]["tableCounter"]
 							};
 							classTableAdded.push(subjectNameParsed+counter);
 							nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed+counter] = "dataProperty";
@@ -7015,7 +7084,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									"instanceAlias":instanceAlias,
 									"isVariable":false,
 									"isUnit":false,
-									"isUnion":false
+									"isUnion":false,
+									"orderCounter":triples[triple]["tableCounter"]
 								};
 								classTableAdded.push(use);
 								nodeList[triples[triple]["subject"]["value"]]["uses"][use] = "dataProperty";
@@ -7028,7 +7098,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
-										"isUnion":false
+										"isUnion":false,
+									"orderCounter":triples[triple]["tableCounter"]
 									};
 									classTableAdded.push(subjectNameParsed+counter);
 									nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed+counter] = "objectProperty";
@@ -7078,7 +7149,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
-										"isUnion":false
+										"isUnion":false,
+										"orderCounter":triples[triple]["tableCounter"]
 									};
 									classTableAdded.push(subjectNameParsed);
 									nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed] = "objectProperty";
@@ -7090,7 +7162,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
-										"isUnion":false
+										"isUnion":false,
+										"orderCounter":triples[triple]["tableCounter"]
 									};
 									classTableAdded.push(subjectNameParsed+counter);
 									nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed+counter] = "objectProperty";
@@ -7121,7 +7194,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
-										"isUnion":false
+										"isUnion":false,
+										"orderCounter":triples[triple]["tableCounter"]
 									};
 									classTableAdded.push(objectNameParsed);
 									nodeList[triples[triple]["object"]["value"]]["uses"][objectNameParsed] = "objectProperty";
@@ -7133,7 +7207,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
-										"isUnion":false
+										"isUnion":false,
+										"orderCounter":triples[triple]["tableCounter"]
 									};
 									classTableAdded.push(objectNameParsed+counter);
 									nodeList[triples[triple]["object"]["value"]]["uses"][objectNameParsed+counter] = "objectProperty";
@@ -7159,7 +7234,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												"instanceAlias":instanceAlias,
 												"isVariable":false,
 												"isUnit":false,
-												"isUnion":false
+												"isUnion":false,
+												"orderCounter":triples[triple]["tableCounter"]
 											};
 											classTableAdded.push(use);
 											nodeList[triples[triple]["object"]["value"]]["uses"][use] = "dataProperty";
@@ -7171,7 +7247,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												"instanceAlias":instanceAlias,
 												"isVariable":false,
 												"isUnit":false,
-												"isUnion":false
+												"isUnion":false,
+												"orderCounter":triples[triple]["tableCounter"]
 											};
 											classTableAdded.push(use+counter);
 											nodeList[triples[triple]["object"]["value"]]["uses"][use+counter] = "objectProperty";
@@ -7202,7 +7279,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
-										"isUnion":false
+										"isUnion":false,
+										"orderCounter":triples[triple]["tableCounter"]
 									};
 									classTableAdded.push(subjectNameParsed);
 									nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed] = "objectProperty";
@@ -7214,7 +7292,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
-										"isUnion":false
+										"isUnion":false,
+										"orderCounter":triples[triple]["tableCounter"]
 									};
 									classTableAdded.push(subjectNameParsed+counter);
 									nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed+counter] = "objectProperty";
@@ -7247,7 +7326,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									"instanceAlias":instanceAlias,
 									"isVariable":false,
 									"isUnit":false,
-									"isUnion":false
+									"isUnion":false,
+									"orderCounter":triples[triple]["tableCounter"]
 								};
 								classTableAdded.push(subjectNameParsed);
 								nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed] = "objectProperty";
@@ -7259,7 +7339,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									"instanceAlias":instanceAlias,
 									"isVariable":false,
 									"isUnit":false,
-									"isUnion":false
+									"isUnion":false,
+									"orderCounter":triples[triple]["tableCounter"]
 								};
 								classTableAdded.push(subjectNameParsed+counter);
 								nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed+counter] = "objectProperty";
@@ -7276,7 +7357,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											"instanceAlias":instanceAlias,
 											"isVariable":false,
 											"isUnit":false,
-											"isUnion":false
+											"isUnion":false,
+											"orderCounter":triples[triple]["tableCounter"]
 										};
 										classTableAdded.push(use);
 										nodeList[triples[triple]["subject"]["value"]]["uses"][use] = "dataProperty";
@@ -7288,7 +7370,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											"instanceAlias":instanceAlias,
 											"isVariable":false,
 											"isUnit":false,
-											"isUnion":false
+											"isUnion":false,
+											"orderCounter":triples[triple]["tableCounter"]
 										};
 										classTableAdded.push(subjectNameParsed+counter);
 										nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed+counter] = "objectProperty";
@@ -7325,7 +7408,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									"instanceAlias":instanceAlias,
 									"isVariable":false,
 									"isUnit":false,
-									"isUnion":false
+									"isUnion":false,
+									"orderCounter":triples[triple]["tableCounter"]
 								};
 								classTableAdded.push(objectNameParsed);
 								nodeList[triples[triple]["object"]["value"]]["uses"][objectNameParsed] = "objectProperty";
@@ -7337,7 +7421,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									"instanceAlias":instanceAlias,
 									"isVariable":false,
 									"isUnit":false,
-									"isUnion":false
+									"isUnion":false,
+									"orderCounter":triples[triple]["tableCounter"]
 								};
 								classTableAdded.push(objectNameParsed+counter);
 								nodeList[triples[triple]["object"]["value"]]["uses"][objectNameParsed+counter] = "objectProperty";
@@ -7363,7 +7448,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											"instanceAlias":instanceAlias,
 											"isVariable":false,
 											"isUnit":false,
-											"isUnion":false
+											"isUnion":false,
+											"orderCounter":triples[triple]["tableCounter"]
 										};
 										classTableAdded.push(use);
 										nodeList[triples[triple]["object"]["value"]]["uses"][use] = "dataProperty";
@@ -7375,7 +7461,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											"instanceAlias":instanceAlias,
 											"isVariable":false,
 											"isUnit":false,
-											"isUnion":false
+											"isUnion":false,
+											"orderCounter":triples[triple]["tableCounter"]
 										};
 										classTableAdded.push(use+counter);
 										nodeList[triples[triple]["object"]["value"]]["uses"][use+counter] = "objectProperty";
@@ -7486,7 +7573,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									"requireValues":requireValues,
 									"seen":false,
 									"counter":orderCounter,
-									"bgp":true
+									"bgp":true,
+									"orderCounter":triples[triple]["tableCounter"]
 								};
 								attributeTableAdded.push(objectNameParsed["value"]);
 								orderCounter++;
@@ -7499,7 +7587,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									"requireValues":requireValues,
 									"seen":false,
 									"counter":orderCounter,
-									"bgp":true
+									"bgp":true,
+									"orderCounter":triples[triple]["tableCounter"]
 								};
 								attributeTableAdded.push(objectNameParsed["value"]+counter);
 								orderCounter++;
@@ -7536,7 +7625,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									"isSubQuery":false,
 									"isGlobalSubQuery":false,
 									"isVariable":true,
-									"counter":orderCounter
+									"counter":orderCounter,
+									"orderCounter":triples[triple]["tableCounter"]
 								}
 								linkTable.push(link);
 								linkTableAdded.push(link);
@@ -7637,7 +7727,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											"linkType":linkType,
 											"isSubQuery":false,
 											"isGlobalSubQuery":false,
-											"counter":orderCounter
+											"counter":orderCounter,
+											"orderCounter":triples[triple]["tableCounter"]
 										}
 										linkTable.push(link);
 										linkTableAdded.push(link);
@@ -7809,7 +7900,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 																	"linkType":linkType,
 																	"isSubQuery":false,
 																	"isGlobalSubQuery":false,
-																	"counter":orderCounter
+																	"counter":orderCounter,
+																	"orderCounter":triples[triple]["tableCounter"]
 																}
 																linkTable.push(link);
 																linkTableAdded.push(link);
@@ -7856,7 +7948,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												"addLabel":false,
 												"addAltLabel":false,
 												"addDescription":false,
-												"counter":orderCounter
+												"counter":orderCounter,
+												"orderCounter":triples[triple]["tableCounter"]
 											}
 											
 											classesTable[sclass] = addAttributeToClass(classesTable[sclass], attributeInfo);
@@ -7887,7 +7980,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 															"linkType":linkType,
 															"isSubQuery":false,
 															"isGlobalSubQuery":false,
-															"counter":orderCounter
+															"counter":orderCounter,
+															"orderCounter":triples[triple]["tableCounter"]
 														}
 														linkTable.push(link);
 														linkTableAdded.push(link);
@@ -8002,7 +8096,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												"exp":pathText.join("."),
 												"seen":false,
 												"counter":orderCounter,
-												"bgp":true
+												"bgp":true,
+												"orderCounter":triples[triple]["tableCounter"]
 											};
 											attributeTableAdded.push(objectNameParsed["value"]);
 											orderCounter++;
@@ -8016,7 +8111,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												"exp":pathText.join("."),
 												"seen":false,
 												"counter":orderCounter,
-												"bgp":true
+												"bgp":true,
+												"orderCounter":triples[triple]["tableCounter"]
 											};
 											attributeTableAdded.push(objectNameParsed["value"]+counter);
 											orderCounter++;
@@ -8069,7 +8165,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												"linkType":linkType,
 												"isSubQuery":false,
 												"isGlobalSubQuery":false,
-												"counter":orderCounter
+												"counter":orderCounter,
+												"orderCounter":triples[triple]["tableCounter"]
 											}
 											linkTable.push(link);
 											linkTableAdded.push(link);
@@ -8099,7 +8196,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											"exp":"^" + buildPathElement(attrResolved),
 											"seen":false,
 											"counter":orderCounter,
-											"bgp":true
+											"bgp":true,
+											"orderCounter":triples[triple]["tableCounter"]
 										};
 										attributeTableAdded.push(objectNameParsed["value"]);
 										orderCounter++;
@@ -8113,7 +8211,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											"exp":"^" + buildPathElement(attrResolved),
 											"seen":false,
 											"counter":orderCounter,
-											"bgp":true
+											"bgp":true,
+											"orderCounter":triples[triple]["tableCounter"]
 										};
 										attributeTableAdded.push(objectNameParsed["value"]+counter);
 										counter++;
@@ -8154,7 +8253,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											"linkType":linkType,
 											"isSubQuery":false,
 											"isGlobalSubQuery":false,
-											"counter":orderCounter
+											"counter":orderCounter,
+											"orderCounter":triples[triple]["tableCounter"]
 										}
 										linkTable.push(link);
 										linkTableAdded.push(link);
@@ -8197,7 +8297,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												"linkType":linkType,
 												"isSubQuery":false,
 												"isGlobalSubQuery":false,
-												"counter":orderCounter
+												"counter":orderCounter,
+												"orderCounter":triples[triple]["tableCounter"]
 											}
 											linkTable.push(link);
 											linkTableAdded.push(link);
@@ -8369,6 +8470,7 @@ function generateArgument(argument){
 }
 
 function addAttributeToClass(classesTable, identification){
+
 	if(typeof classesTable["fields"] === 'undefined')classesTable["fields"] = [];
 	
 	var fieldExists = false;
@@ -8438,9 +8540,9 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 	clazz.c_id = className;
 	for(let linkName = 0; linkName < linkTable.length; linkName++){
 		if(typeof linkTable[linkName]["isConditionLink"] === 'undefined'){
-
 			if(linkTable[linkName]["subject"] == className && linkTable[linkName]["isVisited"] == false && typeof classesTable[linkTable[linkName]["object"]] !== "undefined" && classesTable[linkTable[linkName]["object"]]["toBeDeleted"] !== true && classesTable[linkTable[linkName]["subject"]]["toBeDeleted"] != true){	
 				linkTable[linkName]["isVisited"] = true;
+				linkTable[linkName]["linkIdentification"]["orderCounter"] = linkTable[linkName]["orderCounter"];
 				let tempAddClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], linkTable[linkName]["graph"], linkTable[linkName]["graphInstruction"], false, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList);
 				
 				visitedClasses = tempAddClass["visitedClasses"];
@@ -8524,7 +8626,8 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 							"graph":linkTable[linkName]["graph"],
 							"graphInstruction":linkTable[linkName]["graphInstruction"],
 							"serviceSchemaName":linkTable[linkName]["serviceSchemaName"],
-							"counter":linkTable[linkName]["counter"]
+							"counter":linkTable[linkName]["counter"],
+							"orderCounter":linkTable[linkName]["orderCounter"]
 						}
 						
 						
@@ -8666,7 +8769,15 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 			}
 		}
 	}
-	
+	clazz.orderCounterDelayed = 10000;
+	if(typeof clazz["fields"] !== "undefined"){
+		for(let field = 0; field < clazz["fields"].length; field++){
+			if(clazz["fields"][field].exp !== "(select this)"){
+				if(clazz.orderCounterDelayed > clazz["fields"][field].orderCounter) clazz.orderCounterDelayed = clazz["fields"][field].orderCounter;
+			}
+		}
+	}
+
 	return {clazz:clazz, conditionLinks:conditionLinks};
 }
 
@@ -9016,8 +9127,10 @@ function getAllVariableCountInQuery(expression, variableTable){
 	return variableTable;
 }
 
-function transformParsedQuery(expression){
+function transformParsedQuery(expression, tableCounter){
 	if(typeof expression === 'object'){
+		if(Object.keys(expression).length > 0)expression["tableCounter"] = tableCounter;
+		tableCounter++;
 		for(let key in expression){
 		  if(typeof expression[key] !== 'function'){
 			if(key == "patterns"){			
@@ -9039,12 +9152,14 @@ function transformParsedQuery(expression){
 						}
 					}
 				}
-			}		
-			expression[key] = transformParsedQuery(expression[key]);
+			}
+			let tempTransformParsedQuery = transformParsedQuery(expression[key],tableCounter);
+			expression[key] = tempTransformParsedQuery.expression;
+			tableCounter = tempTransformParsedQuery.tableCounter;
 		  }
 		}
 	}
-	return expression;
+	return {expression:expression, tableCounter:tableCounter};
 }
 
 function checkIfOrAndInFilter(expression, value){
@@ -9066,7 +9181,7 @@ function buildPathElement(pathElement){
 }
 
 // Visualize query based on tree structure
-async function visualizeQuery(clazz, variableListAlias, parentClass, variableList, queryId, queryQuestion, usedPrefixesinQuery, starInSelectQuery){
+async function visualizeQuery(clazz, variableListAlias, parentClass, parentClassOrderCounter, variableList, queryId, queryQuestion, usedPrefixesinQuery, starInSelectQuery){
 	
 	//used prefixes
 	if(usedPrefixesinQuery && Object.keys(usedPrefixesinQuery).length > 0){
@@ -9219,7 +9334,8 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 
 	//attributes	
 	if (clazz.fields) {
-      clazz.fields = clazz.fields.sort((a, b) =>  a.counter - b.counter);
+      clazz.fields = clazz.fields.sort((a, b) =>  a.orderCounter - b.orderCounter);
+ 
       for (const field of clazz.fields) {
         let alias = field["alias"];		
 		let proj = Projects.findOne({_id: Session.get("activeProject")});
@@ -9242,6 +9358,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 		let { exp, requireValues, isInternal, groupValues, addLabel, addAltLabel, addDescription, graph, graphInstruction } = field;
 		let condition = field.attributeConditionSelection;
 		let attributeCondition = field.attributeCondition;
+		
 		if(starInSelectQuery === true) isInternal = false;
         classBox.addField(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,null, null,condition,attributeCondition);
       }
@@ -9342,7 +9459,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 
 	//full SPARQL
 	var fullSPARQL = clazz["fullSPARQL"];
-	
+
 	classBox.setFullSPARQL(fullSPARQL);
 		
 	//link
@@ -9382,6 +9499,11 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 				// linkLine.setGraphInstruction(graphInstruction);
 				linkLine.addGraphsServices(graph, graphInstruction, serviceSchemaName);
 			}
+			if((isSubQuery === true || isGlobalSubQuery === true || linkType === "OPTIONAL" || linkType === "NOT" || typeof graph !== "undefined") && parentClassOrderCounter<clazz.linkIdentification.orderCounter){
+				linkLine.setIsDelayedLink(true);
+			} else if(linkQueryType === "PLAIN" && linkType === "REQUIRED" && typeof graph === "undefined" && parentClassOrderCounter<clazz.orderCounterDelayed) clazz.orderCounterDelayed = parentClassOrderCounter;
+			
+
 			link_count = link_count + 1;
 			VQ_Links[linkLine.obj._id] = linkLine.obj._id;
 		} else {
@@ -9395,6 +9517,10 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 				// linkLine.setGraphInstruction(graphInstruction);
 				linkLine.addGraphsServices(graph, graphInstruction, serviceSchemaName);
 			}
+			if((isSubQuery === true || isGlobalSubQuery === true || linkType === "OPTIONAL" || linkType === "NOT" || typeof graph !== "undefined") && parentClassOrderCounter<clazz.linkIdentification.orderCounter){
+				linkLine.setIsDelayedLink(true);
+			} else if(linkQueryType === "PLAIN" && linkType === "REQUIRED" && typeof graph === "undefined" && parentClassOrderCounter<clazz.orderCounterDelayed) clazz.orderCounterDelayed = parentClassOrderCounter;
+			
 			link_count = link_count + 1;
 			VQ_Links[linkLine.obj._id] = linkLine.obj._id;
 		}
@@ -9405,7 +9531,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 			y = y + 100;
 			if(subclazz.isSubQuery === true || subclazz.isGlobalSubQuery === true || subclazz.linkType === "NOT") starInSelectQuery = false;
 			// vizualizējām klases apakšklases
-			await visualizeQuery(subclazz, variableListAlias, classBox, variableList, null, null, null, starInSelectQuery);		 
+			await visualizeQuery(subclazz, variableListAlias, classBox, clazz.orderCounterDelayed, variableList, null, null, null, starInSelectQuery);		 
 		}
 	}
 	VQ_Elements[clazz.c_id] = classBox.obj._id;

@@ -266,7 +266,7 @@ Interpreter.methods({
 							tmp_height += font_size + heightConst[font_size]; // ??? pagaidām noņēmu ??? + 5; // add a height gap between compartments
 
 							// Vairs nav izmēra ierobežojuma
-							//// if compartment lenght if bigger than max box width
+							//// if compartment length if bigger than max box width
 							//if(text_length > 500){
 							//	//compartment height = font_size * (text_length/max_box_width/2 rounded towards the greater value)
 							//	tmp_height += font_size * Math.ceil(text_length/500/2) + 5;
@@ -311,26 +311,63 @@ Interpreter.methods({
 				
 				//if only 1 non-empty compartment, that is longer then min width
 				if(nonEmptyRowCount === 1 && longestRow.text_length > minWidth){
-					let rowMiddlePoint = Math.ceil((longestRow.row.length)/2);
-					let rowMiddle = longestRow.row.substring(rowMiddlePoint);
-					let rowStart = longestRow.row.substring(1, rowMiddlePoint-1);
+					let row = longestRow.row.trim() 
+					let rowMiddlePoint = Math.ceil((row.length)/2);
+					let rowMiddle = row.substring(rowMiddlePoint);
+					let rowStart = row.substring(1, rowMiddlePoint-1);
 					// if string has space after the middle part
-					if(rowMiddle.indexOf(" ") !== -1){					
+					if(rowMiddle.indexOf(" ") !== -1){						
 						compart_width = Math.ceil(longestRow.font_style_coef*((rowMiddle.indexOf(" ") + rowMiddlePoint) * widthConst[longestRow.font_size]));						
 					// if string has space before the middle part
 					} else if (rowStart.indexOf(" ") !== -1){
-						compart_width = Math.ceil(longestRow.font_style_coef*((longestRow.row.length - rowStart.indexOf(" ")) * widthConst[longestRow.font_size]));						
+						compart_width = Math.ceil(longestRow.font_style_coef*((row.length - rowStart.indexOf(" ")) * widthConst[longestRow.font_size]));						
 					// if string does not has space
 					} else {
 						compart_width = Math.ceil(longestRow.font_style_coef*(rowMiddlePoint) * widthConst[longestRow.font_size]);					
 					}
 					compart_height += longestRow.font_size + heightConst[longestRow.font_size];
-				} else if(secondLongestRow.text_length < longestRow.text_length){
-					if((100-(secondLongestRow.text_length*100/longestRow.text_length)) > 20){
-						compart_width = secondLongestRow.text_length;
-						compart_height += (longestRow.font_size + heightConst[longestRow.font_size]) * Math.ceil(longestRow.text_length/secondLongestRow.text_length);
+				} 
+				// more then one non-empty compartment.
+				// if longest row is longer then second longest more then 20%
+				else if(nonEmptyRowCount > 1 && secondLongestRow.text_length < longestRow.text_length){
+					if(secondLongestRow.text_length < minWidth) secondLongestRow.text_length = minWidth;
+					let longestCoefficient = 100-(secondLongestRow.text_length*100/longestRow.text_length)
+					if(longestCoefficient > 20){
+						// if longest row is no longer then second longest more then 50% set width as second longest
+						if(longestCoefficient < 50){
+							compart_width = secondLongestRow.text_length;
+							compart_height += (longestRow.font_size + heightConst[longestRow.font_size]) * Math.ceil(longestRow.text_length/secondLongestRow.text_length);
+						} else {
+						// if longest row is longer then second longest more then 50%, split longest row in half by space 
+							let row = longestRow.row.trim() 
+							let rowMiddlePoint = Math.ceil((row.length)/2);
+							let rowMiddle = row.substring(rowMiddlePoint);
+							let rowStart = row.substring(1, rowMiddlePoint-1);
+	
+							// if string has space after the middle part
+							if(rowMiddle.indexOf(" ") !== -1){
+								//if string has space in the 4/4 of the string, split in half
+								if(rowMiddle.indexOf(" ") < rowMiddle.length/2)	{
+									compart_width = Math.ceil(longestRow.font_style_coef*(rowMiddlePoint) * widthConst[longestRow.font_size]);
+								}				
+								else compart_width = Math.ceil(longestRow.font_style_coef*((rowMiddle.indexOf(" ") + rowMiddlePoint) * widthConst[longestRow.font_size]));						
+							// if string has space before the middle part
+							} else if (rowStart.indexOf(" ") !== -1){
+								//if string has space in the 1/4 of the string, split in half
+								if(rowStart.indexOf(" ") < rowStart.length/2){
+									compart_width = Math.ceil(longestRow.font_style_coef*(rowMiddlePoint) * widthConst[longestRow.font_size]);	
+								}
+								else compart_width = Math.ceil(longestRow.font_style_coef*((row.length - rowStart.indexOf(" ")) * widthConst[longestRow.font_size]));
+								// if the row split is in the first part of the string and containce "<-" (tipically for VQ attributes with aliass), then add extra height
+								if(row.indexOf("<-") !== -1) compart_height += longestRow.font_size + heightConst[longestRow.font_size];								
+							// if string does not has space, split in half
+							} else {
+								compart_width = Math.ceil(longestRow.font_style_coef*(rowMiddlePoint) * widthConst[longestRow.font_size]);					
+							}
+							compart_height += longestRow.font_size + heightConst[longestRow.font_size];
+						}
 					}
-				}
+				} 
 				if (compart_width != 0) {
 					width = compart_width + 5;
 				}
