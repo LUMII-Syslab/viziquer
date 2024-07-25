@@ -383,6 +383,16 @@ const dataShapes = {
 
 		return NaN;
 	},
+	getOntologiesAndTags : async function() {
+		let rr = await callWithGet('infoOntTags/');
+
+		if (!_.isEmpty(rr) && !rr.error) {
+			//console.log("rr ", rr)
+			return await rr;
+		}
+
+		return NaN;
+	},
 	getOntologiesSync : function() {
 		return this.schema.info;
 	},

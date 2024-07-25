@@ -11,15 +11,15 @@ Template.structureTemplate.helpers({
 
 	categories: function() {
 
-	    //selelcts project properties
+		//selelcts project properties
 
-	    var categories = {};
+		var categories = {};
 
-	    var active_project = Session.get("activeProject");
-	    var user_id = Session.get("userSystemId");
+		var active_project = Session.get("activeProject");
+		var user_id = Session.get("userSystemId");
 
 		ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).forEach(
-			function(user_proj, i) {
+			function(user_proj) {
 				var proj_id = user_proj["projectId"];
 				var project = Projects.findOne({_id: proj_id});
 				
@@ -82,7 +82,7 @@ Template.structureTemplate.events({
 
 		var proj_container = $(e.target).closest(".container");
 		var width = proj_container.width();
-		var height = proj_container.height();
+		//var height = proj_container.height();
 
 		container.find(".project-dropdown-container").removeClass("hidden")
 														.css("left", width-10);
@@ -99,15 +99,14 @@ Template.structureTemplate.events({
 		var proj_id = src.attr("id");
 		var version_id = Utilities.changeUserActiveProject(proj_id);
 		await dataShapes.changeActiveProject(proj_id);
-    	FlowRouter.go("diagrams", {projectId: proj_id, versionId: version_id});
+		FlowRouter.go("diagrams", {projectId: proj_id, versionId: version_id});
 
 		//return;
 	},
   
-  	'click .project-dropdown-container': function(e) {
+	'click .project-dropdown-container': function(e) {
 		e.stopPropagation();
-		$(e.target).closest(".container").find(".project-dropdown-container").addClass("open")
-		                                                                  	.removeClass("hidden");
+		$(e.target).closest(".container").find(".project-dropdown-container").addClass("open").removeClass("hidden");
 	},
 
 	'click .edit-project-obj': function(e) {
@@ -117,8 +116,7 @@ Template.structureTemplate.events({
 		var proj_id = $(e.target).closest(".project-path").attr("id");
 		Session.set("editProjectId", proj_id);
 
-		$(e.target).closest(".container").find(".project-dropdown-container").removeClass("open")
-		                                                                  		.addClass("hidden");
+		$(e.target).closest(".container").find(".project-dropdown-container").removeClass("open").addClass("hidden");
 
 		$("#edit-project-form").modal("show");
 
@@ -180,7 +178,9 @@ Template.structureRibbon.events({
 
 Template.createProjectModal.loading = new ReactiveVar(false);
 Template.createProjectModal.services = new ReactiveVar("");
-Template.createProjectModal.schemas = new ReactiveVar([{name: ""}]);
+Template.createProjectModal.schemas = new ReactiveVar();
+Template.createProjectModal.allSchemas = new ReactiveVar();
+Template.createProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
 
 function setServices (tool_id) {
 	var result = {};
@@ -215,6 +215,9 @@ Template.createProjectModal.helpers({
 	},
 	schemas: function() {
 		return Template.createProjectModal.schemas.get();
+	},
+	schema_tags:function() {
+		return Template.createProjectModal.schemaTags.get();
 	},
 	tools: function() {
 		var tools = Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}}); 
@@ -277,7 +280,7 @@ Template.createProjectModal.helpers({
 
 Template.createProjectModal.events({
 
-	'click #create-project': function(e) {
+	'click #create-project': function() {
 
 		var project_name_obj = $('#project-name');
 		var icon_name_obj = $("#icon-name");
@@ -344,7 +347,7 @@ Template.createProjectModal.events({
 			}
 
 			Template.createProjectModal.loading.set(true);
-			Utilities.callMeteorMethod("insertProject", list, function(proj_id) {
+			Utilities.callMeteorMethod("insertProject", list, function() {
 				$("#add-project").modal("hide");
 				Template.createProjectModal.loading.set(false);
 			});
@@ -357,16 +360,43 @@ Template.createProjectModal.events({
 			document.getElementById("project-name-required").style.display = "block";
 		}
 	},
-	'change #tool' : function(e){
+	'change #tool' : function(){
 		var tool_id = $("#tool").find(":selected").attr("id");
 		setServices (tool_id); 
 		//Session.set("tool", tool_id);
 	},
+	'change #schema-tags' : function(){
+		var tag = $("#schema-tags").val();
+		Template.createProjectModal.schemas.set(getSchemas(tag));
+		//var tag = $("#schema-tags").find(":selected").attr("id");
+	},
 });
 
+function getSchemas(tag) {
+	let schemas = [];
+	const allSchemas = Template.createProjectModal.allSchemas.get();
+
+	for ( const sc of allSchemas ) {
+		if ( tag != 'All' && sc.tags.includes(tag))
+			schemas.push(sc);
+		else if ( tag == 'All' )
+			schemas.push(sc);
+	}
+
+	schemas.unshift({display_name: ""});
+	return schemas;
+}
+
 Template.createProjectModal.rendered = async function() {
-	var rr = await dataShapes.getOntologies();
-	Template.createProjectModal.schemas.set(rr);
+	// var rr = await dataShapes.getOntologies();
+	var rr = await dataShapes.getOntologiesAndTags();
+	var tags = rr.tags;
+	tags.unshift({name:"All", display_name: "All schemas"});
+	Template.createProjectModal.schemaTags.set(tags);
+
+	var schemas = rr.schemas;
+	Template.createProjectModal.allSchemas.set(schemas);
+	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
 }
 //Template.createProjectModal.onDestroyed(function() {
 //	Session.set("tool", reset_variable()) ;  
