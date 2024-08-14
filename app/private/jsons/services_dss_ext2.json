@@ -5,7 +5,7 @@
 	{
 		"caption": "StarWars sample project",
 		"name": "StarWars_sample",
-		"link": "https://github.com/LUMII-Syslab/viziquer/blob/development/doc/demo/fed_queries/star_wars_example.json",
+		"link": "https://viziquer.lumii.lv/dss/resources/StarWars_Example.json",
 		"description": "Data Schema and Federated Query Examples over StarWars Data Set"
 	},
 	{

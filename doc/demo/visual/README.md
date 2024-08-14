@@ -10,9 +10,9 @@ Schema database ..
 
 ## ViziQuer Playground
 
-The ViziQuer Playground available at https://viziquer.app contains a list of data schemas
+The ViziQuer Playground is available at https://viziquer.app and it contains a list of data schemas.
 
-After opening https://viziquer.app, register a user (anonymous e-mail formatted usernames are accepted), then proceed to create a new project 
+After opening https://viziquer.app, register a user (anonymous e-mail formatted usernames are accepted), then proceed to create a new project. 
 
 The process for exploring pre-defined ViziQuer projects is described in [Exploring ViziQuer Projects](https://github.com/LUMII-Syslab/viziquer/wiki/Exploring-ViziQuer-Projects).
 

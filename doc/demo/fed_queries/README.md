@@ -1,10 +1,11 @@
 # Towards Visual Federated SPARQL Queries
 
-We provide the supporting material for a submission of a demo paper to the Semantics'2024 conference.
+We provide supporting material for a demo paper at Semantics'2024 conference.
 
-Consult the main page of the ViziQuer tool (https://viziquer.lumii.lv) for further information about it.
+The basic information on getting started with the ViziQuer tool is available in
+[ViziQuer wiki](https://github.com/LUMII-Syslab/viziquer/wiki).
 
-[ViziQuer wiki](https://github.com/LUMII-Syslab/viziquer/wiki) contains additional information on installing and using ViziQuer.
+The [ViziQuer tool main page] (https://viziquer.lumii.lv) can be consulted for further information.
 
 The star_wars_example.json file contains the example project information and can be loaded into the visual tool project also after the project creation. To do this, press the Upload Project icon at the top of the ViziQuer project diagrams view.
 
@@ -57,9 +58,9 @@ This includes setting up a Postgres server with a respective database. The file 
 This database can be used for storing further imported data schemas, as well.
 
 2. Instructions and software for importing the data schema is in https://github.com/LUMII-Syslab/data-shape-server/tree/main/import-generic
-(the schemas from OBIS Schema Explorer are expected).
+(the schemas from OBIS Schema Extractor are expected).
 
-### OBIS Schema Explorer
+### OBIS Schema Extractor
 
 The schema extraction is performed by the OBIS Schema Extractor tool (https://github.com/LUMII-Syslab/OBIS-SchemaExtractor).
 Use Services V2. 
