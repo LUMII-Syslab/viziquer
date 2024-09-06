@@ -2592,7 +2592,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				} else if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1) varName = expressionTable[key]['type']['local_name'];
 				else varName = expressionTable[key]["name"];
 				
-				if(varName.startsWith("[") && varName.endsWith("]")) varName = varName.substring(2, varName.length-2);
+				if(varName.startsWith("[") && varName.endsWith("]")) varName = varName.substring(1, varName.length-1);
 				
 				if(expressionTable[key]['kind'] !== null){
 						

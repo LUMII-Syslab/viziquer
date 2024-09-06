@@ -378,7 +378,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	boxMoveY = 0;
 	useRef = false;
 	isUnderUnion = false;
-	let prefixes = await dataShapes.getNamespaces();
+	let prefixes = [];
+	if(typeof dataShapes.schema.schema !== "undefined") prefixes = await dataShapes.getNamespaces();
 	prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
 	
 
@@ -405,7 +406,25 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		Interpreter.destroyErrorMsg();
-		if(parsedQuery.status === "ERROR")  Interpreter.showErrorMsg(parsedQuery.error, -3);
+		if(parsedQuery.status === "ERROR")  {
+			if(typeof dataShapes.schema.schema === "undefined"){
+				if(parsedQuery.error.startsWith("Error: Unknown prefix: ")) {
+					let prefix = parsedQuery.error.substring(23);
+					prefixes = await dataShapes.getNamespaces();
+					let prefixFound = false;
+					for(let p = 0; p < prefixes.length; p++){
+						if(prefixes[p]["name"] === prefix){
+							text = "PREFIX " + prefix + ": <" + prefixes[p]["value"] + ">\n" + text;
+							prefixFound = true;
+							Interpreter.customExtensionPoints.generateVisualQuery(text, xx, yy);
+							break;
+						}
+					}
+					if(prefixFound === false) Interpreter.showErrorMsg(parsedQuery.error, -3);
+				}
+			}
+			else Interpreter.showErrorMsg(parsedQuery.error, -3);
+		}
 		else {
 		parsedQuery = parsedQuery.parsedQuery;
 		schemaName = dataShapes.schema.schema;
@@ -2304,6 +2323,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			}
 			bgptype = "plain";
 			
+			// Ja zem optional ir viens objektu propertijas trijnieks, kur trijnieka object virsotne ir tukša (vai ar (select this) atribūtu), bez izejošām saitēm, pārveido saiti par subject klases atribūtu.
 			if(patterns.length == 1 && patterns[0]["type"] == "bgp" && patterns[0]["triples"].length == 1 && linkTableAdded.length == 1){
 				if(typeof classesTable[linkTableAdded[0]["object"]] !== "undefined" && typeof classesTable[linkTableAdded[0]["subject"]] !== "undefined" 
 				&& linkTableAdded[0]["object"].indexOf("[") == -1 && linkTableAdded[0]["object"].indexOf(":") == -1
@@ -2582,7 +2602,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				}
 				
 				if(uriResolved.complete === true) {
-					classesTable[arg1["value"]]["instanceAlias"] =   uriResolved["data"][0]["localName"];
+					classesTable[arg1["value"]]["instanceAlias"] = uriResolved["data"][0]["localName"];
 					generateFilter = false;
 				}
 			}
@@ -3180,9 +3200,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		var allNodesUnderUnion = [];
 		
 		// for all union blocks
-		
-		
-		
 		for(let u = 0; u < where["patterns"].length; u++){
 			
 			let unionBlock = where["patterns"][u];	
