@@ -1,6 +1,5 @@
 import { makeString } from './parserCommon';
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
-
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';																 
   "use strict";
 
   /*
@@ -2021,103 +2020,12 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
               if (peg$silentFails === 0) { await peg$fail(peg$c44); }
             }
             if (s3 === peg$FAILED) {
-              if (input.charCodeAt(peg$currPos) === 32) {
-                s3 = peg$c69;
+              if (input.charCodeAt(peg$currPos) === 58) {
+                s3 = peg$c41;
                 peg$currPos++;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c70); }
-              }
-              if (s3 === peg$FAILED) {
-                if (input.charCodeAt(peg$currPos) === 47) {
-                  s3 = peg$c47;
-                  peg$currPos++;
-                } else {
-                  s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c48); }
-                }
-                if (s3 === peg$FAILED) {
-                  if (input.charCodeAt(peg$currPos) === 39) {
-                    s3 = peg$c71;
-                    peg$currPos++;
-                  } else {
-                    s3 = peg$FAILED;
-                    if (peg$silentFails === 0) { await peg$fail(peg$c72); }
-                  }
-                  if (s3 === peg$FAILED) {
-                    if (input.charCodeAt(peg$currPos) === 44) {
-                      s3 = peg$c73;
-                      peg$currPos++;
-                    } else {
-                      s3 = peg$FAILED;
-                      if (peg$silentFails === 0) { await peg$fail(peg$c74); }
-                    }
-                    if (s3 === peg$FAILED) {
-                      if (input.charCodeAt(peg$currPos) === 45) {
-                        s3 = peg$c49;
-                        peg$currPos++;
-                      } else {
-                        s3 = peg$FAILED;
-                        if (peg$silentFails === 0) { await peg$fail(peg$c50); }
-                      }
-                      if (s3 === peg$FAILED) {
-                        if (input.charCodeAt(peg$currPos) === 40) {
-                          s3 = peg$c14;
-                          peg$currPos++;
-                        } else {
-                          s3 = peg$FAILED;
-                          if (peg$silentFails === 0) { await peg$fail(peg$c15); }
-                        }
-                        if (s3 === peg$FAILED) {
-                          if (input.charCodeAt(peg$currPos) === 41) {
-                            s3 = peg$c16;
-                            peg$currPos++;
-                          } else {
-                            s3 = peg$FAILED;
-                            if (peg$silentFails === 0) { await peg$fail(peg$c17); }
-                          }
-                          if (s3 === peg$FAILED) {
-                            if (peg$c51.test(input.charAt(peg$currPos))) {
-                              s3 = input.charAt(peg$currPos);
-                              peg$currPos++;
-                            } else {
-                              s3 = peg$FAILED;
-                              if (peg$silentFails === 0) { await peg$fail(peg$c52); }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        while (s3 !== peg$FAILED) {
-          s2.push(s3);
-          if (peg$c67.test(input.charAt(peg$currPos))) {
-            s3 = input.charAt(peg$currPos);
-            peg$currPos++;
-          } else {
-            s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c68); }
-          }
-          if (s3 === peg$FAILED) {
-            if (input.charCodeAt(peg$currPos) === 95) {
-              s3 = peg$c39;
-              peg$currPos++;
-            } else {
-              s3 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c40); }
-            }
-            if (s3 === peg$FAILED) {
-              if (input.charCodeAt(peg$currPos) === 46) {
-                s3 = peg$c43;
-                peg$currPos++;
-              } else {
-                s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c44); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c42); }
               }
               if (s3 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 32) {
@@ -2182,6 +2090,115 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
                               } else {
                                 s3 = peg$FAILED;
                                 if (peg$silentFails === 0) { await peg$fail(peg$c52); }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        while (s3 !== peg$FAILED) {
+          s2.push(s3);
+          if (peg$c67.test(input.charAt(peg$currPos))) {
+            s3 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { await peg$fail(peg$c68); }
+          }
+          if (s3 === peg$FAILED) {
+            if (input.charCodeAt(peg$currPos) === 95) {
+              s3 = peg$c39;
+              peg$currPos++;
+            } else {
+              s3 = peg$FAILED;
+              if (peg$silentFails === 0) { await peg$fail(peg$c40); }
+            }
+            if (s3 === peg$FAILED) {
+              if (input.charCodeAt(peg$currPos) === 46) {
+                s3 = peg$c43;
+                peg$currPos++;
+              } else {
+                s3 = peg$FAILED;
+                if (peg$silentFails === 0) { await peg$fail(peg$c44); }
+              }
+              if (s3 === peg$FAILED) {
+                if (input.charCodeAt(peg$currPos) === 58) {
+                  s3 = peg$c41;
+                  peg$currPos++;
+                } else {
+                  s3 = peg$FAILED;
+                  if (peg$silentFails === 0) { await peg$fail(peg$c42); }
+                }
+                if (s3 === peg$FAILED) {
+                  if (input.charCodeAt(peg$currPos) === 32) {
+                    s3 = peg$c69;
+                    peg$currPos++;
+                  } else {
+                    s3 = peg$FAILED;
+                    if (peg$silentFails === 0) { await peg$fail(peg$c70); }
+                  }
+                  if (s3 === peg$FAILED) {
+                    if (input.charCodeAt(peg$currPos) === 47) {
+                      s3 = peg$c47;
+                      peg$currPos++;
+                    } else {
+                      s3 = peg$FAILED;
+                      if (peg$silentFails === 0) { await peg$fail(peg$c48); }
+                    }
+                    if (s3 === peg$FAILED) {
+                      if (input.charCodeAt(peg$currPos) === 39) {
+                        s3 = peg$c71;
+                        peg$currPos++;
+                      } else {
+                        s3 = peg$FAILED;
+                        if (peg$silentFails === 0) { await peg$fail(peg$c72); }
+                      }
+                      if (s3 === peg$FAILED) {
+                        if (input.charCodeAt(peg$currPos) === 44) {
+                          s3 = peg$c73;
+                          peg$currPos++;
+                        } else {
+                          s3 = peg$FAILED;
+                          if (peg$silentFails === 0) { await peg$fail(peg$c74); }
+                        }
+                        if (s3 === peg$FAILED) {
+                          if (input.charCodeAt(peg$currPos) === 45) {
+                            s3 = peg$c49;
+                            peg$currPos++;
+                          } else {
+                            s3 = peg$FAILED;
+                            if (peg$silentFails === 0) { await peg$fail(peg$c50); }
+                          }
+                          if (s3 === peg$FAILED) {
+                            if (input.charCodeAt(peg$currPos) === 40) {
+                              s3 = peg$c14;
+                              peg$currPos++;
+                            } else {
+                              s3 = peg$FAILED;
+                              if (peg$silentFails === 0) { await peg$fail(peg$c15); }
+                            }
+                            if (s3 === peg$FAILED) {
+                              if (input.charCodeAt(peg$currPos) === 41) {
+                                s3 = peg$c16;
+                                peg$currPos++;
+                              } else {
+                                s3 = peg$FAILED;
+                                if (peg$silentFails === 0) { await peg$fail(peg$c17); }
+                              }
+                              if (s3 === peg$FAILED) {
+                                if (peg$c51.test(input.charAt(peg$currPos))) {
+                                  s3 = input.charAt(peg$currPos);
+                                  peg$currPos++;
+                                } else {
+                                  s3 = peg$FAILED;
+                                  if (peg$silentFails === 0) { await peg$fail(peg$c52); }
+                                }
                               }
                             }
                           }
@@ -2502,7 +2519,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
     			// parse can have multiple arguments
     			// parse(string, options) where options is an object
     			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
-          options = arguments[1];
+                    options = arguments[1];
     			//console.log(options);
 
     			function makeVar(o) {return makeString(o);};
