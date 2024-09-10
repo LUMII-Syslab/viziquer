@@ -37,7 +37,7 @@ Interpreter.methods({
 	// TODO Nav pārāk skaisti, pagaidu risinājums, lai 'neizlien tie garie saraksti'
 		var compart_type = this;
 		var compartment = Compartments.findOne({elementId: elem_id, compartmentTypeId: compart_type["_id"]});
-		if ( compartment.input.length != compartment.value.length) {
+		if (  compartment && compartment.input.length != compartment.value.length) {
 			console.log('Imaiņas netiek veiktas! Saīsināto datu situācija.')
 			return;
 		}
