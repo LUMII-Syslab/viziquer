@@ -177,7 +177,7 @@
 											<select class="form-control" id="diffG" style="width:300px" >
 												<option value=0 >Without merging</option>
 												<option value=1 >Merge equivalent classes</option>
-												<option value=2 >Weak merging</option>
+												<option value=2 >Weak merging (2)</option>
 												<option selected value=5 >Basic merging (5)</option>
 												<option value=10 >Strong merging (10)</option>
 												<option value=20 >Strong merging (20)</option>
@@ -192,7 +192,16 @@
 											<div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
 												<p><span id="propCount-slider-span2"> </span>. Properties - {{propCount}}</p>
 												<input type="range" min="0" max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider2" {{filterDisabled}} >
-											</div>										
+											</div>	
+											<select class="form-control" id="pw" style="width:300px" >
+												<option value=0 >Size factor: power = 0 </option>
+												<option value=3 >Size factor: power = 1/3 </option>
+												<option selected value=5 >Size factor: power =  1/5 </option>
+												<option value=10 >Size factor: power =  1/10 </option>
+												<option value=20 >Size factor: power =  1/20 </option>
+												<option value=50 >Size factor: power =  1/50 </option>
+												<option value=100 >Size factor: power =  1/100 </option>
+											</select>
 										</div>
 										<div class="col-sm-4" style="padding-top:10px;">
 											<div style="padding-bottom:10px;">
@@ -235,24 +244,16 @@
 										{{#if pub}}
 										{{else}}
 											<label class="form-check-label">
-												<input class="form-check-input" name = "newDifs" id="newDifs" type="checkbox" checked = "checked">
+												<input class="form-check-input" name = "odlDifs" id="aldDifs" type="checkbox">
 												<span class="custom-checkbox"></span>
-												New diffs
+												Old diffs
 											</label>
 											<!--<label class="form-check-label"> 
 												<input class="form-check-input" name = "withoutGen" id="withoutGen" type="checkbox">
 												<span class="custom-checkbox"></span>
 												Without generalizations
 											</label> -->
-											<select class="form-control" id="pw" style="width:200px" >
-												<option value=3 >dw pow = 1/3 </option>
-												<option selected value=5 >dw pow = 1/5 </option>
-												<option value=10 >dw pow = 1/10 </option>
-												<option value=20 >dw pow = 1/20 </option>
-												<option value=50 >dw pow = 1/50 </option>
-												<option value=100 >dw pow = 1/100 </option>
-												<option value=0 >Use d </option>
-											</select>
+
 										{{/if}}
 									</div>
 									<span class="label label-default" style="font-size:15px; background-color:transparent; padding-left:0px;">Nodes- {{classCountUsed}}, groups - {{classCountGroups}}, abstract classes - {{classCountAbstr}}, lines - {{linesCount}} </span>

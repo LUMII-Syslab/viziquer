@@ -57,7 +57,7 @@ Interpreter.customMethods({
 
 Template.VQ_DSS_schema.rendered = function() {
 	clearData();
-	Template.VQ_DSS_schema.IsPublic.set(false); // TODO kā lai atšķir, publiskais vai nepubliskais varaints?
+	Template.VQ_DSS_schema.IsPublic.set(true); // TODO kā lai atšķir, publiskais vai nepubliskais varaints?
 	Template.VQ_DSS_schema.SchemaName.set(dataShapes.schema.schemaName);
 	Template.VQ_DSS_schema.ClassCountAll.set(dataShapes.schema.classCount);
 	Template.VQ_DSS_schema.PropCountAll.set(dataShapes.schema.propCount);
@@ -175,18 +175,21 @@ Template.VQ_DSS_schema.helpers({
 });
 
 function getParams() {
-	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:$("#newDifs").is(":checked"),
+	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:true,
 		pw:$("#pw").val(), diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 ) 
 		//	par.supPar = 2;
-		if ( $("#abstr").is(":checked") )
-			par.diffS = 50;
-		if ( $("#diffG").val() == 0 )
-			par.supPar = 0;
+	if ( $("#abstr").is(":checked") )
+		par.diffS = 50;
+	if ( $("#diffG").val() == 0 )
+		par.supPar = 0;
+	if ( $("#oldDifs").is(":checked") )
+		par.newDifs = false;
 
 	if ( !Template.VQ_DSS_schema.IsPublic.get() ) {
 		par.addIds = $("#addIds").is(":checked"); 
 	}
+	console.log('Kāds parametrs newDiffs', par.newDifs)
 	return par;
 }
 
@@ -945,7 +948,7 @@ function getDiffs() {
 }
 // ***************** Konstantes***************************
 function checkSimilarity(diff, level) {
-	//Ekvivalentās klases (level 0) , līdzīgās klases (level = 1), abstraktajām virsklasēm (level = 2), apaksklašu savilkšana (level = 5) 
+	//Ekvivalentās klases (level 0) , līdzīgās klases (level = 1), abstraktajām virsklasēm (level = 2), apaksklašu savilkšana (level = 5 vairs nebūs) 
 	const diffs = getDiffs();
 	let result = false;
 	if ( level == 0 ) {
@@ -982,7 +985,7 @@ function checkSimilarity(diff, level) {
 
 // Funkcija, kas pārbauda, vai klases (sarakstus) var apvienot
 function areSimilar(rezFull, classList1, classList2, level) {
-	//Ekvivalentās klases (level 0) , līdzīgās klases (level = 1), abstraktajām virsklasēm (level = 2), apaksklašu savilkšana (level = 5) 
+	//Ekvivalentās klases (level 0) , līdzīgās klases (level = 1), abstraktajām virsklasēm (level = 2), apakšklašu savilkšana (level = 5 /vairs nebūs) 
 	let rezult = true;
 	//const diffs = getDiffs();
 	if ( level > 1 )
@@ -994,7 +997,7 @@ function areSimilar(rezFull, classList1, classList2, level) {
 			const classInfo1 = rezFull.classes[c1]; 
 			const classInfo2 = rezFull.classes[c2];
 			const diff = getDifference(classInfo1, classInfo2);
-				if ( diff[0] <= diff[1] && !(diff[0] == 0 && diff[1] == 0 ) )
+				if ( diff[0] <= diff[1] && !(diff[0] == 0 && diff[1] == 0 )) // Tukšās vienādās - diff[0] == 0 && diff[1] == 0  
 					rezult = false;
 		}
 	}
@@ -1175,7 +1178,7 @@ function roundCount(cnt) {
 	}
 }
 
-// Līdzīgo klašu atrašana // Ekvivalentās klases (level 0) , līdzīgās klases (level = 1), abstraktajām virsklasēm (level = 2), apaksklašu savilkšana (level = 5) 
+// Līdzīgo klašu atrašana // Ekvivalentās klases (level 0) , līdzīgās klases (level = 1), abstraktajām virsklasēm (level = 2), apaksklašu savilkšana (level = 5 / vecais varaints) 
 function findSimilarClasses(level, class_list = []) {
 	// Klašu saraksts tiek padots tikai mēģinot apvienot apakšklases (level 5)
 	// TODO te bija kaut kas arī virsklašu taisīšanai
