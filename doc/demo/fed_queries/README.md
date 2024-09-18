@@ -5,7 +5,7 @@ We provide supporting material for a demo paper at Semantics'2024 conference.
 The basic information on getting started with the ViziQuer tool is available in
 [ViziQuer wiki](https://github.com/LUMII-Syslab/viziquer/wiki).
 
-The [ViziQuer tool main page] (https://viziquer.lumii.lv) can be consulted for further information.
+The [ViziQuer tool main page](https://viziquer.lumii.lv) can be consulted for further information.
 
 The star_wars_example.json file contains the example project information and can be loaded into the visual tool project also after the project creation. To do this, press the Upload Project icon at the top of the ViziQuer project diagrams view.
 
