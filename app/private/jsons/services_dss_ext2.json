@@ -9,6 +9,12 @@
 		"description": "Data Schema and Federated Query Examples over StarWars Data Set"
 	},
 	{
+		"caption": "LOD data schema examples",
+		"name": "LOD_data_schemas",
+		"link": "https://viziquer.lumii.lv/dss/resources/LOD_Schemas.json",
+		"description": "Examples of visual LOD data set schemas"
+	},
+	{
 		"caption": "DBPedia sample project",
 		"name": "DBPedia_sample",
 		"link": "https://viziquer.lumii.lv/dss/resources/DBPedia_Sample.json",
