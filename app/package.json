@@ -10,15 +10,15 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@babel/runtime": "^7.24.4",
+    "@babel/runtime": "^7.25.6",
     "ClientStorage": "^4.0.1",
     "dotenv": "^16.4.5",
     "html2canvas": "^1.4.1",
     "jquery": "^3.7.1",
     "json2csv": "^5.0.7",
-    "meteor-node-stubs": "^1.2.9",
+    "meteor-node-stubs": "^1.2.10",
     "node-fetch": "^2.7.0",
-    "sparqljs": "^3.7.1"
+    "sparqljs": "^3.7.3"
   },
   "meteor": {
     "mainModule": {
@@ -30,7 +30,7 @@
     "@babel/core": "^7.24.4",
     "@babel/eslint-parser": "^7.24.1",
     "@babel/preset-env": "^7.24.4",
-    "@types/jquery": "^3.5.29",
+    "@types/jquery": "^3.5.31",
     "@types/meteor": "^2.9.8",
     "@types/node": "^14.18.56",
     "@types/node-fetch": "^2.6.11",
