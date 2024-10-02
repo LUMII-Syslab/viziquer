@@ -488,7 +488,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			
 		for(let fil = 0; fil < abstractTable["filterTable"].length; fil++){
 			if((typeof abstractTable["filterTable"][fil]["filterAdded"] !== "undefined" && abstractTable["filterTable"][fil]["filterAdded"] == false) || typeof tempGetStartClass.emptyClassSet !== "undefined"){
-				let _ = false;
+				let filterAdded = false;
 				for(let v = 0; v < abstractTable["filterTable"][fil]["filterVariables"].length; v++){
 					let filterVariable = abstractTable["filterTable"][fil]["filterVariables"][v];
 					if(filterVariable.startsWith("@")) filterVariable = filterVariable.substring(1, filterVariable.length);
