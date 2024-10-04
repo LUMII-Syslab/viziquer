@@ -101,6 +101,7 @@ Meteor.startup(() => {
     } else {
         console.log('no env found');
     }
+    console.log('Effective environment:', process.env);
     // }
 
 
