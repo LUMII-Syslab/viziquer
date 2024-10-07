@@ -18,6 +18,7 @@ DATA_BASE_NAME = os.getenv('DATA_BASE_NAME')
 USER_NAME = os.getenv('USER_NAME')
 USER_PSW = os.getenv('USER_PSW')
 
+TRG_DIR_FOR_RDF_FILES = './GeneratedRDF/'
 FPATH_TO_CLASS_MAPPINGS = 'Mappings_1.csv'
 FPATH_TO_LINK_MAPPINGS = 'Mappings_links_1.csv'
 
@@ -112,7 +113,7 @@ class LinkMapping:
             # Fetch all rows from the executed query
             records = cursor.fetchall()
 
-            with open(self.sourceClassName + "_"+self.linkName+".nt", mode='w') as file:
+            with open(os.path.join(TRG_DIR_FOR_RDF_FILES,self.sourceClassName + "_"+self.linkName+".nt"), mode='w') as file:
 
                 # Print the fetched records
                 for record in records:
@@ -201,7 +202,7 @@ class Class2Table:
             # Fetch all rows from the executed query
             records = cursor.fetchall()
 
-            with open(self.owl_class_name +"_"+self.owl_attribute_name + "_attr.nt", mode='w') as file:
+            with open(os.path.join(TRG_DIR_FOR_RDF_FILES,self.owl_class_name +"_"+self.owl_attribute_name + "_attr.nt"), mode='w') as file:
 
                 # Print the fetched records
                 for record in records:
@@ -238,7 +239,7 @@ class Class2Table:
             # Fetch all rows from the executed query
             records = cursor.fetchall()
 
-            with open(self.owl_class_name + "_type.nt", mode='w') as file:
+            with open(os.path.join(TRG_DIR_FOR_RDF_FILES,self.owl_class_name + "_type.nt"), mode='w') as file:
 
                 # Print the fetched records
                 for record in records:
@@ -276,7 +277,7 @@ class Class2Table:
             records = cursor.fetchall()
 
             # with open(subcl['name'] + "_type.nt", mode='w') as file:
-            with open(self.owl_subclass_name + "_type.nt", mode='w') as file:
+            with open(os.path.join(TRG_DIR_FOR_RDF_FILES,self.owl_subclass_name + "_type.nt"), mode='w') as file:
 
                 # Print the fetched records
                 for record in records:
@@ -429,7 +430,8 @@ def generate_triples_for_one_subclass(sub_cl_map, subcl):
         # Fetch all rows from the executed query
         records = cursor.fetchall()
 
-        with open(subcl['name'] + "_type.nt", mode='w') as file:
+        
+        with open(os.path.join(TRG_DIR_FOR_RDF_FILES, subcl['name'] + "_type.nt"), mode='w') as file:
 
             # Print the fetched records
             for record in records:
@@ -503,6 +505,16 @@ def generateTriplesForTag():
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed")
+
+
+
+if not os.path.exists(TRG_DIR_FOR_RDF_FILES):
+    os.makedirs(TRG_DIR_FOR_RDF_FILES)
+    print("Directory ", TRG_DIR_FOR_RDF_FILES, " has been created.")
+    print()
+else:
+    print("Using ", TRG_DIR_FOR_RDF_FILES , " as target directory for rdf files.")
+    print()
 
 
 print_constants()

@@ -1,0 +1,80 @@
+Classifier;ResourceClassifier;;;select * from classes where is_literal=false;
+Classifier;LiteralClassifier;;;select * from classes where is_literal=true;
+Classifier;;;;classes;
+;;displayName;string;classes;display_name
+;;instanceCount;integer;classes;cnt
+;;propsInSchema;boolean;classes;props_in_schema
+;;namestring;string;classes;local_name
+;;self_cp_rels;boolean;classes;self_cp_rels
+;;cp_ask_endpoint;boolean;classes;cp_ask_endpoint
+;;isLiteral;boolean;classes;is_literal
+;;classif_adomment;string;classes;classification_adornment
+;;instanceNamePattern;string;classes;instance_name_pattern
+;;hide_in_main;boolean;classes;hide_in_main
+;;URI;string;classes;iri
+;;local_name;string;classes;local_name
+;;;;;
+Property;;;;properties;
+;;displayName;string;properties;display_name
+;;tripleCount;integer;properties;cnt
+;;dataTripleCount;integer;properties;data_cnt
+;;objectTripleCount;integer;properties;object_cnt
+;;maxCardinality;integer;properties;max_cardinality
+;;invMaxCardinality;integer;properties;inverse_max_cardinality
+;;sourceCoverComplete;boolean;properties;source_cover_complete
+;;targetCoverComplete;boolean;properties;target_cover_complete
+;;classes_in_schema;boolean;properties;classes_in_schema
+;;props_in_schema;boolean;properties;props_in_schema
+;;is_classifier;boolean;properties;is_classifier
+;;pp_ask_endpoint;boolean;properties;pp_ask_endpoint
+;;pc_ask_endpoint;boolean;properties;pc_ask_endpoint
+;;URI;string;properties;iri
+;;local_name;string;properties;local_name
+;;;;;
+Datatype;;;;datatypes;
+;;URI;string;datatypes;iri
+;;local_name;string;datatypes;local_name
+;;;;;
+Parameters;;;;parameters;
+;;name;string;parameters;name
+;;order_inx;integer;parameters;order_inx
+;;textValue;string;parameters;textvalue
+;;jsonValue;string;parameters;jsonvalue
+;;comment;string;parameters;comment
+;;;;;
+ClassClassRel;SubClass;;;select * from cc_rels where type_id=1;
+ClassClassRel;EqClass;;;select * from cc_rels where type_id=2;
+ClassClassRel;;;;cc_rels;
+;;cc_rel_type;integer;cc_rels;type_id
+;;;;;
+PropertyPropertyRel;PPOut;;;select * from pp_rels where type_id=2;
+PropertyPropertyRel;Ppin;;;select * from pp_rels where type_id=3;
+PropertyPropertyRel;PPFollows;;;select * from pp_rels where type_id=1;
+PropertyPropertyRel;;;;pp_rels;
+;;pprel_type;integer;pp_rels;type_id
+;;tripleCount;integer;pp_rels;cnt
+;;;;;
+CPC_Rel;;;;cpc_rels;
+;;tripleCount;integer;cpc_rels;cnt
+;;importanceIndex;integer;cpc_rels;cover_set_index
+;;;;;
+ClassPropertyPair;ClassToProperty;;;select * from cp_rels where type_id=2;
+ClassPropertyPair;PropertyToClass;;;select * from cp_rels where type_id=1;
+ClassPropertyPair;;;;cp_rels;
+;;cprel_type;integer;cp_rels;type_id
+;;tripleCount;integer;cp_rels;cnt
+;;maxCardinalityInContext;integer;cp_rels;max_cardinality
+;;minCardinalityInContext;integer;cp_rels;min_cardinality
+;;importanceIndex;integer;cp_rels;cover_set_index
+;;detailsLevel;integer;cp_rels;details_level
+;;;;;
+CP_Datatype;;;;cpd_rels;
+;;tripleCount;integer;cpd_rels;cnt
+;;;;;
+PropertyToDatatype;;;;pd_rels;
+;;tripleCount;integer;pd_rels;cnt
+;;;;;
+Namespace;;;;ns;
+;;prefix;string;ns;name
+;;URI;string;ns;value
+;;isDefault;boolean;ns;is_local
