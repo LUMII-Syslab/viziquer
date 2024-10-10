@@ -202,6 +202,15 @@
 												<option value=50 >Size factor: power =  1/50 </option>
 												<option value=100 >Size factor: power =  1/100 </option>
 											</select>
+
+											<select class="form-control" id="kValue" style="width:300px" >
+												<option selected value=1 > dw(A,B)/(sw(A,B)+ε) &lt; 1 </option>
+												<option value=2 > dw(A,B)/(sw(A,B)+ε) &lt; 2 </option>
+												<option value=3 > dw(A,B)/(sw(A,B)+ε) &lt; 3 </option>
+												<option value=5 > dw(A,B)/(sw(A,B)+ε) &lt; 5 </option>
+												<option value=10 > dw(A,B)/(sw(A,B)+ε) &lt; 10 </option>
+											</select>
+
 										</div>
 										<div class="col-sm-4" style="padding-top:10px;">
 											<div style="padding-bottom:10px;">
@@ -218,7 +227,6 @@
 												<option value=5 >Draw object properties ( triples > 5 ) </option>
 												<option value=10 >Draw object properties ( triples > 10 )</option>
 												<option value=100 >Draw object properties ( triples > 100 )</option>
-
 											</select>
 											<label class="form-check-label" style="padding-top:10px;">
 												<input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">

@@ -176,7 +176,7 @@ Template.VQ_DSS_schema.helpers({
 
 function getParams() {
 	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:true,
-		pw:$("#pw").val(), diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema}; // withoutGen:$("#withoutGen").is(":checked"),
+		pw:$("#pw").val(), k:1, diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 ) 
 		//	par.supPar = 2;
 	if ( $("#abstr").is(":checked") )
@@ -188,6 +188,7 @@ function getParams() {
 
 	if ( !Template.VQ_DSS_schema.IsPublic.get() ) {
 		par.addIds = $("#addIds").is(":checked"); 
+		par.k = $("#kValue").val();
 	}
 	console.log('Kāds parametrs newDiffs', par.newDifs)
 	return par;
@@ -960,7 +961,7 @@ function checkSimilarity(diff, level) {
 			result = true;
 		}
 		else {
-			if ( diff[1] < diffs.diffG && diff[0] > diff[1] ) 
+			if ( diff[1] < diffs.diffG && params.k * diff[0] > diff[1] ) 
 				result = true;
 			//if ( diffs.diffG == 10  ) { // TODO ļoti pagaidu risinājums   55555
 			//	if ( diff[1] < 6 && diff[0] > 0 )
@@ -997,7 +998,7 @@ function areSimilar(rezFull, classList1, classList2, level) {
 			const classInfo1 = rezFull.classes[c1]; 
 			const classInfo2 = rezFull.classes[c2];
 			const diff = getDifference(classInfo1, classInfo2);
-				if ( diff[0] <= diff[1] && !(diff[0] == 0 && diff[1] == 0 )) // Tukšās vienādās - diff[0] == 0 && diff[1] == 0  
+				if ( params.k * diff[0] <= diff[1] && !(diff[0] == 0 && diff[1] == 0 )) // Tukšās vienādās - diff[0] == 0 && diff[1] == 0  
 					rezult = false;
 		}
 	}
@@ -1299,7 +1300,7 @@ function findSimilarClasses(level, class_list = []) {
 					const lId2 = `l_${cId2}_${cId1}`;
 					if ( rezFull.lines[lId1] == undefined && rezFull.lines[lId2] == undefined) {
 						const diff = getDifference(classInfo1, classInfo2);
-						if ( diff[0] > diff[1]) // TODO šet arī kaut kādu līdzību pieprasa, it ka 'else' varētu arī neiestāties
+						if ( params.k * diff[0] > diff[1]) // TODO šet arī kaut kādu līdzību pieprasa, it ka 'else' varētu arī neiestāties
 							rezFull.lines[lId1] = { id:lId1, from:cId1, to:cId2, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'1' };
 						else
 							rezFull.lines[lId1] = { id:lId1, from:cId1, to:cId2, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'2' };
