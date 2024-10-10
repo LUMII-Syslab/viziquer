@@ -1,4 +1,5 @@
 import { Projects, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
+import { Services } from '/imports/db/custom/vq/collections.js'
 import { faas } from '/imports/client/custom/vq/js/faas.js'
 import { VQ_Element } from './VQ_Element';
 
@@ -49,7 +50,7 @@ const callWithPost = async (funcName, data = {}) => {
 
 const callWithGet = async (funcName) => {
 	try {
-    const schemaServerUrl = await getSchemaServerUrl();
+		const schemaServerUrl = await getSchemaServerUrl();
 		const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
 			method: 'GET',
 			mode: 'cors',
@@ -62,6 +63,22 @@ const callWithGet = async (funcName) => {
     console.error(err)
 		return {};
   }
+}
+const callWithGetS = async (pr_info) => {
+	//console.log('Izsaucam...', pr_info.name)
+	let rez = false;
+	try {
+		//const response = await window.fetch(`${pr_info.link}`, {
+		await window.fetch(`${pr_info.link}`, {
+			method: 'GET',
+			cache: 'no-cache'
+		});
+		rez = true;
+	}
+	catch(err) {
+		//console.error(err)
+	}
+	return rez;
 }
 //'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=Q633795&language=en&limit=50&format=json&origin=*'
 const callWithGetWD = async (filter, limit) => {
@@ -598,6 +615,32 @@ const dataShapes = {
 		}
 		
 		return rr;
+	},
+	checkServices : async function(services) {
+		for (const s of services) {
+			for (const pr of s.projects) {
+				//console.log('********************')
+				const rr = await callWithGetS(pr);
+				//console.log('**** rezultāts  ', rr)
+				pr.ok = rr;
+			}
+		}
+
+		return services;
+	},
+	getServices : async function() {
+		Meteor.subscribe("Services", {});
+		var services = Services.find().map(function(s) {
+			return s;
+		});
+
+		for (const s of services) {
+			for (const pr of s.projects) {
+				const rr = await callWithGetS(pr);
+				pr.ok = rr;
+			}
+		}
+		return services;
 	},
 	getNamespaces : async function(params = {}) {
 		// *** console.log("------------getNamespaces ------------------")

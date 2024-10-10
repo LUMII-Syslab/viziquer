@@ -178,12 +178,28 @@ Template.structureRibbon.events({
 
 Template.createProjectModal.loading = new ReactiveVar(false);
 Template.createProjectModal.services = new ReactiveVar("");
+Template.createProjectModal.allServices = new ReactiveVar("");
 Template.createProjectModal.schemas = new ReactiveVar();
 Template.createProjectModal.allSchemas = new ReactiveVar();
 Template.createProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
 
 function setServices (tool_id) {
 	var result = {};
+
+	if ( tool_id != 'undefined') {
+		const services = Template.createProjectModal.allServices.get();
+		for (const s of services) {
+			if ( s.toolId == tool_id ) {
+				result.projects = [];
+				for (const pr of s.projects) {
+					if ( pr.ok ) {
+						result.projects.push({caption: "Initialise by " + pr.caption, name: pr.name, link: pr.link});
+					}
+				}
+			}
+		}
+	}
+	/*
 	Meteor.subscribe("Services", {});	
 	
 	if ( tool_id != 'undefined')
@@ -201,10 +217,11 @@ function setServices (tool_id) {
 		{
 			result.projects = [];
 			_.each(services.projects, function (p){
+			
 				result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
 			});
 		}			
-	}
+	} */
 				
 	Template.createProjectModal.services.set(result);
 }
@@ -250,29 +267,6 @@ Template.createProjectModal.helpers({
 		return result;
 	},
 	services: function() {
-		/*var result = {};
-	    Meteor.subscribe("Services", {});	
-		
-		if ( tool_id != 'undefined')
-		{
-			var services = Services.findOne({toolId: tool_id });
-			if (services && services.schemas)
-			{
-				result.schemas = [];
-				_.each(services.schemas, function (s){
-					result.schemas.push({caption: "Initialise project by " + s.caption, name: s.name, link: s.link});
-				});
-			}
-			
-			if (services && services.projects)
-			{
-				result.projects = [];
-				_.each(services.projects, function (p){
-					result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
-				});
-			}			
-		} */
-					
 		return Template.createProjectModal.services.get();
 	},
 
@@ -393,11 +387,22 @@ Template.createProjectModal.rendered = async function() {
 	var tags = rr.tags;
 	tags.unshift({name:"All", display_name: "All schemas"});
 	Template.createProjectModal.schemaTags.set(tags);
-
+	Template.createProjectModal.loading.set(false);
+	
 	var schemas = rr.schemas;
 	Template.createProjectModal.allSchemas.set(schemas);
 	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
+	
+	Meteor.subscribe("Services", {});
+	var services_all = Services.find().map(function(s) {
+		return s;
+    });
+
+	services_all = await dataShapes.checkServices(services_all);
+	//console.log('Pēc pārbaudes createProjectModal', services_all)
+	Template.createProjectModal.allServices.set(services_all);
 }
+
 //Template.createProjectModal.onDestroyed(function() {
 //	Session.set("tool", reset_variable()) ;  
 //});

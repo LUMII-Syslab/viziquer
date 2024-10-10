@@ -2,7 +2,7 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { UserVersionSettings, Projects, ProjectsGroups, Tools, DiagramTypes, Diagrams, FoundDiagrams } from '/imports/db/platform/collections'
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
-import { Services } from '/imports/db/custom/vq/collections.js'
+//import { Services } from '/imports/db/custom/vq/collections.js'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
@@ -586,18 +586,47 @@ Template.addDiagram.events({
 
 
 Template.uploadProject.loading = new ReactiveVar(false);
+Template.uploadProject.allServices = new ReactiveVar("");
+
+Template.uploadProject.rendered = async function() {
+	//Meteor.subscribe("Services", {});
+	//var services_all = Services.find().map(function(s) {
+	//	return s;
+    //});
+	//services_all = await dataShapes.checkServices(services_all);
+
+	const services_all = await dataShapes.getServices();
+	//console.log('Pēc pārbaudes uploadProject', services_all)
+	Template.uploadProject.allServices.set(services_all);
+}
+
 
 Template.uploadProject.helpers({
 	loading: function() {
 		return Template.uploadProject.loading.get();
 	},
 	projects: function() {
-		var result = null;
+		var result = [];
 		
 		var project = Projects.findOne({_id: Session.get("activeProject")});
 		if (project) {
 			var tool_id = project.toolId;
 
+			if ( tool_id ) {
+				const services = Template.uploadProject.allServices.get();
+				for (const s of services) {
+					if ( s.toolId == tool_id ) {
+						result.projects = [];
+						for (const pr of s.projects) {
+							if ( pr.ok ) {
+								result.push({caption: "Upload " + pr.caption, name: pr.name, link: pr.link});
+							}
+						}
+					}
+				}
+			}
+
+			/*
 		    Meteor.subscribe("Services", {});
 
 			if (tool_id) {
@@ -611,6 +640,7 @@ Template.uploadProject.helpers({
 					});
 				}
 			}
+			*/
 		}
 
 		return result;
