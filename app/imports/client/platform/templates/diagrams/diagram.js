@@ -166,6 +166,58 @@ Template.diagramTemplate.helpers({
 });
 
 
+Template.diagramTemplate.events({
+
+	"click #toggle-dialoge-bar": function(e, template) {
+		e.preventDefault();
+
+		const diagram_type = Template.instance().view.template.__helpers.get('diagram_type').call();
+
+		let dialog_obj = $(".compartment-dialog");
+		let diagram_obj = $("#diagram_and_sparql");
+		let diagram_default_width = "col-lg-" + diagram_type.diagram_size;
+		let diagram_max_width = "col-lg-12";
+
+		// set back to default state
+		if (diagram_obj.hasClass(diagram_max_width)) {
+			diagram_obj.removeClass(diagram_max_width).addClass(diagram_default_width);
+			dialog_obj.show();
+		}
+		// expanding diagram
+		else {
+			diagram_obj.removeClass(diagram_default_width).addClass(diagram_max_width);
+			dialog_obj.hide();
+		}
+
+		update_editor_size($("#diagram").width(), $("#diagram").height());
+	},
+
+	"click #toggle-footer": function(e, template) {
+		e.preventDefault();
+
+		let footer = $(".footer");
+
+		let hidden_class = "hidden";
+		let new_height = screen.height * 0.7;
+
+		// show footer
+		if (footer.hasClass(hidden_class)) {
+			footer.removeClass("hidden").show();
+			new_height = new_height * 0.4;
+			// new_height = 20;
+		}
+
+		// hide footer
+		else {
+			footer.addClass("hidden").hide();
+		}
+
+		update_editor_size(Interpreter.editor.size.state.width, new_height);
+	},
+
+});
+
+
 Template.editingMessage.helpers({
 
 	editing: function() {
@@ -479,12 +531,8 @@ Template.diagramEditor.onRendered(function() {
 
     $('.padding-md').on('mousemove', function(e) {
     	if (is_mouse_down) {
-
-    		var new_height = e.pageY - Math.round($("#ajoo_scene").offset().top);
-
-    	    $("#ajoo_scene").height(new_height);
-    	    $("#ajoo_palette").height(new_height);
-    	    editor.size.setSize(editor.size.state.width, new_height);
+			var new_height = e.pageY - Math.round($("#ajoo_scene").offset().top);
+			update_editor_size(editor.size.state.width, new_height);
     	}
     });
 
@@ -880,3 +928,13 @@ function set_locked_diagram() {
 	}
 
 }
+
+
+function update_editor_size(new_width, new_height) {
+	$("#ajoo_scene").height(new_height);
+	$("#ajoo_palette").height(new_height);
+
+	let editor = Interpreter.editor;
+	editor.size.setSize(new_width, new_height);
+}
+

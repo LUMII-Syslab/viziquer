@@ -32,17 +32,27 @@
 
           </div>
 
+          <div class="row">
+            <div class="col-lg-12 text-right">
+                <button id="toggle-footer" type="button" class="btn btn-primary btn-sm">Toggle Footer</button>
+                <button id="toggle-dialoge-bar" type="button" class="btn btn-primary btn-sm">Toggle Dialog</button>
+            </div>
+          </div>
+
           <div class="row" style="display:{{plain.showDiagram}}" >
 
               {{#with diagram_type}}
-                  <div id="diagram_and_sparql" class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10" style="padding-left:2px;padding-right:2px;">
+                  <!-- <div id="diagram_and_sparql" class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10" style="padding-left:2px;padding-right:2px;"> -->
+                  <div id="diagram_and_sparql" class="col-lg-{{diagram_size}}" style="padding-left:2px;padding-right:2px;">
+
                       <div class="row">
                         <div id="diagram" class="col-sm-12 col-md-12 col-lg-12 col-xl-12" style="padding-left:2px;">
+                        <!-- <div id="diagram" class="col-sm-12 col-md-12 col-lg-12 col-xl-12" style="padding-left:2px;"> -->
                             {{> diagramEditor}}
                         </div>
                       </div>
                         {{#if diagram_type.footer}}
-                            <div class="row">
+                            <div class="row footer">
                                 {{> Template.dynamic template=diagram_type.footer }}
                                 <!-- {{> sparqlForm}} -->
                             </div>
@@ -50,7 +60,7 @@
                   </div>
 
 
-                  <div id="compartment-forms" class="col-sm-2 col-md-2 col-lg-{{dialog_size}} col-xl-2" style="padding-left: 8px;padding-right: 1px;">
+                  <div id="compartment-forms" class="col-lg-{{dialog_size}} compartment-dialog" style="padding-left:8px;padding-right: 1px;">
 
                       {{> editingMessage editing=editing}}
 

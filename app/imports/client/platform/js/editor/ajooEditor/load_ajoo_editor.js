@@ -10,8 +10,6 @@ import { compute_new_line_type } from '/imports/client/platform/js/interpretator
 
 Interpreter.loadAjooEditor = function(diagram) {
 
-	console.log("diagram ", diagram, diagram.layoutSettings)
-
 	if (!(diagram && diagram["style"])) {
 		console.error("Error: no diagram");
 		return;
