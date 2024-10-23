@@ -28,10 +28,10 @@ RUN apk --no-cache add \
 COPY --from=0 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
 
 # Copy in app bundle
-COPY --from=0 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
+COPY --from=0 $APP_BUNDLE_FOLDER $APP_BUNDLE_FOLDER/
 
 # COPY ./app/private/jsons /opt/meteor/dist/bundle/private/jsons
-COPY ./app/private/jsons $APP_BUNDLE_FOLDER/bundle/private/jsons
+COPY ./app/private/jsons $APP_BUNDLE_FOLDER/private/jsons
 
 RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh
 
