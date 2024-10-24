@@ -601,6 +601,13 @@ VQ_Element.prototype = {
   setFullSPARQL: function(sparql) {
     this.setCompartmentValueAuto("FullSPARQL",sparql)
   },
+  getHaving: function() {
+    return this.getCompartmentValue("Having");
+  },
+  // string -->
+  setHaving: function(having) {
+    this.setCompartmentValueAuto("Having",having)
+  },
   // --> string
   getLimit: function() {
     return this.getCompartmentValue("Show rows");
@@ -832,6 +839,7 @@ VQ_Element.prototype = {
       {name:"Name",value:exp}
     ])
   },
+    
   // --> [{exp:string}]
   // returns an array of having's expressions
   getHavings: function() {

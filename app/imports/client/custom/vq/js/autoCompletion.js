@@ -67,6 +67,12 @@ Interpreter.customMethods({
 		grammarType = "group"
 		await autoCompletion(e);
 	},
+	
+	havingAutoCompletion: async function(e, compart) {
+		grammarType = "attribute"
+		await autoCompletion(e);
+	},
+	
 	languageAutoCompletion: async function(e, compart) {
 		grammarType = "language"
 		await autoCompletion(e);

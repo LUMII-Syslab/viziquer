@@ -86,7 +86,6 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	query.prefixes = await dataShapes.getNamespaces();
 	if(typeof query.prefixes.error !== "undefined" && query.prefixes.complete === false) query.prefixes = [];
 	query.classifiers = await dataShapes.getClassifiers();
-	
 	let declarations = getDeclarations();
 	query.prefixDeclarations = declarations.prefixes;
 	query.schemaDeclarations = declarations.schemas;
@@ -1088,24 +1087,21 @@ async function resolveTypesAndBuildSymbolTable(query) {
 			}
 		}
 	 };
-	// obj_class.conditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);});
+
 	for (const a of obj_class.aggregations) {await parseExpObject(a,obj_class.identification);};
-    // obj_class.aggregations.forEach(async function(a) {await parseExpObject(a,obj_class.identification);});
 
     if (obj_class.orderings) { 
 		for (const c of obj_class.orderings){await parseExpObject(c,obj_class.identification);}
-		// obj_class.orderings.forEach(async function(c) {await parseExpObject(c,obj_class.identification);}) 
 	};
     if (obj_class.groupings) { 
-		for (const c of obj_class.groupings){await parseExpObject(c,obj_class.identification);}
-		// obj_class.groupings.forEach(await parseExpObject) 
+		for (const c of obj_class.groupings){
+			await parseExpObject(c,obj_class.identification);
+		}
 	};
-    // if (obj_class.havingConditions) { obj_class.havingConditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);}) };
-
-	
-    // obj_class.children.forEach(async function(ch) { await resolveClassExpressions(ch,obj_class); });
-	
-	
+	if (obj_class.having) { 
+		obj_class.having = {exp:obj_class.having};
+		await parseExpObject(obj_class.having, obj_class.identification);
+	};
 	
     return;
   };
@@ -1329,6 +1325,7 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
                 if (elem.isGlobalSubQueryRoot()) {
                   _.extend(linkedElem_obj,{  orderings: elem.getOrderings(),
                                              groupings: elem.getGroupings(),
+                                             having: elem.getHaving(),
                                              distinct:elem.isDistinct(),
                                              limit:elem.getLimit(),
                                              offset:elem.getOffset() });
@@ -1345,7 +1342,7 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 				};
 					
                 if (elem.isSubQueryRoot()) {
-                  _.extend(linkedElem_obj,{ distinct:elem.isDistinct(), groupings: elem.getGroupings(), });
+                  _.extend(linkedElem_obj,{ distinct:elem.isDistinct(), groupings: elem.getGroupings(), having: elem.getHaving(),});
 				  if(link.link.getName() == "++" || link.link.getName() == "=="){
 						 _.extend(linkedElem_obj,{ graphs: elem.getGraphs() });
 					}
@@ -1433,6 +1430,7 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
       distinct:e.isDistinct(),
       selectAll:e.isSelectAll(),
       groupByThis:e.isGroupByThis(),
+	  having: e.getHaving(),
       limit:e.getLimit(),
       offset:e.getOffset(),
       fullSPARQL:e.getFullSPARQL(),

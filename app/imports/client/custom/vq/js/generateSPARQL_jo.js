@@ -406,6 +406,15 @@ Interpreter.customMethods({
     GenerateSPARQL_for_all_queries(elems_in_diagram_ids)
   },
   
+  ExecuteSPARQL_form_class_DSS: async function() {
+	  let SPARQL_text = await generateSPARQLtextFromSchema();
+	  executeSparqlString(SPARQL_text);
+  },
+  
+  GenereteSPARQL_form_class_DSS: async function() {
+    await generateSPARQLtextFromSchema();
+  },
+  
   Collect_prefixes_from_diagram_for_all_queries: async function() {
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
@@ -434,6 +443,72 @@ Interpreter.customMethods({
       executeSparqlString(text, paging_info);
   },
 });
+
+async function generateSPARQLtextFromSchema(){
+	let n = 7;
+	
+	let editor = Interpreter.editor;
+	let elem = _.keys(editor.getSelectedElements());
+	let selected_elem = new VQ_Element(elem[0]);
+	let name = selected_elem.getCompartmentValue("Name");
+	let nameIndex = name.indexOf(" ");
+	if(nameIndex === -1) nameIndex = name.length;
+	name = name.substring(0, nameIndex);
+	
+
+	let params = {name: name};
+	let cls = await dataShapes.resolveClassByName(params);
+
+	params = {main:{propertyKind:'Data',"limit": n}}
+	params.element = {className: name};
+	let props = await dataShapes.getPropertiesFull(params);
+	
+	let prefixTable = [];	
+	let prefixes = await dataShapes.getNamespaces();
+	
+	let sparqlQueryText = "SELECT * WHERE{\n";
+	if(cls.complete === true){
+		let className = cls["data"][0]["local_name"];
+		let dirRole = "a";
+		
+		let proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			if (proj.directClassMembershipRole) {
+				dirRole = proj.directClassMembershipRole;
+			}
+		}
+		
+		let classifProp = getPropertyShortForm(cls["data"][0]["classification_property"], prefixes);
+		if(classifProp["name"] !== dirRole && classifProp["name"] !== "rdf:type" && dirRole !== "a") {
+			dirRole = classifProp["name"];
+		}
+		
+		let clazz = cls["data"][0]["prefix"] +":"+cls["data"][0]["local_name"];
+		sparqlQueryText = sparqlQueryText + "  ?" + className + " " + dirRole + " " + clazz + " .\n";
+		prefixTable[cls["data"][0]["prefix"]] = "";
+	
+		for(let prop = 0; prop < props.data.length; prop++){
+			let dataProperty = props.data[prop];
+			let dataProp = dataProperty.prefix +":"+dataProperty.local_name;
+	
+			sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + dataProp + " ?" +dataProperty.local_name+ " .}\n";
+			prefixTable[dataProperty.prefix] = "";
+		}
+	}
+	sparqlQueryText = sparqlQueryText + "}";
+	
+	let prefixText = "";
+	for(let p = 0; p < prefixes.length; p++){
+		if(typeof prefixTable[prefixes[p]["name"]] !== "undefined"){
+			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
+		}
+	}
+	sparqlQueryText = prefixText + sparqlQueryText;
+	
+	setText_In_SPARQL_Editor(sparqlQueryText);
+	return sparqlQueryText;
+}
+
 
 // generate SPARQL for given id-s
 async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
@@ -1503,6 +1578,10 @@ function generateSPARQLtext(abstractQueryTable){
 			 groupByTemp = groupByTemp.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
 			});
+			
+			
+			let having = getHaving(rootClass["having"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable, generateIdsResult.variableNamesTable, generateIdsResult.variableNamesCounter);
+
 
 			 //SELECT DISTINCT
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0){
@@ -1573,6 +1652,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 //add triples from order by
 			 temp = temp.concat(orderBy["triples"]);
 			 if(rootClass["aggregations"].length > 0) temp = temp.concat(groupByFromFields["triples"]);
+			 if(having !== null) temp = temp.concat(having["triples"]);
 
 			 temp = temp.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
@@ -1610,6 +1690,9 @@ function generateSPARQLtext(abstractQueryTable){
 
 			 // if(rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + groupBy;
 			 if(typeof selectResult["aggregate"]!== "undefined" && selectResult["aggregate"].length > 0) SPARQL_text = SPARQL_text + groupBy;
+			 
+			 // having
+			 if (having !== null && having["exp"] != "") SPARQL_text = SPARQL_text + "\nHAVING(" + having["exp"] +")";
 
 			 //ORDER BY
 
@@ -2827,6 +2910,8 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				//GROUP BY
 
 				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
+				
+				temp["sparqlTable"]["having"] = getHaving(subclazz["having"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
 
 				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
 				messages = messages.concat(temp["sparqlTable"]["groupBy"]["messages"]);
@@ -3084,6 +3169,15 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	
 	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
 }
+
+function getHaving(having, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes, variableNamesTable, variableNamesCounter){
+	let messages = [];
+	let havingTripleTable = [];
+	let result = null;
+	if(typeof having !== "undefined" && having !== null && having["exp"] !== "")result = parse_attrib(null, having["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, having["parsed_exp"], null, idTable[rootClass_id],idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes, 99999999);
+	return result;
+}
+
 
 function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes, variableNamesTable, variableNamesCounter){
 	var messages = [];
@@ -3363,6 +3457,11 @@ function generateSPARQLWHEREInfoPhase2(sparqlTable, ws, fil, lin, referenceTable
 							});
 
 							var groupBy = selectResult["groupBy"].join(" ");
+							
+							var having = sparqlTable["subClasses"][subclass]["having"];
+							//ad triples from order by
+							temp = temp.concat(having["triples"])
+							if (having["exp"] != "") subQuery = subQuery + "\n"+SPARQL_interval+"HAVING(" + having["exp"] + ")";
 
 							var SPARQL_interval_sub_temp = SPARQL_interval;
 							
@@ -3976,6 +4075,10 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								return arr.indexOf(el) === i;
 							});
 							
+							var having = sparqlTable["subClasses"][subclass]["having"];
+							//ad triples from order by
+							temp = temp.concat(having["triples"])
+							
 							selectResult["groupBy"] = selectResult["groupBy"].concat(refTable);
 							selectResult["groupBy"] = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
 							selectResult["groupBy"] = selectResult["groupBy"].concat(groupByFromFields["groupings"]);
@@ -4022,12 +4125,13 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 
 							if(groupBy != "") groupBy = "\n"+SPARQL_interval+"GROUP BY " + groupBy;
+							
 
 							// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
 							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) subQuery = subQuery + groupBy;
 
-
+							if(having.exp != "") subQuery = subQuery + "\n"+SPARQL_interval + "HAVING(" + having.exp + ")";
 							//ORDER BY
 							 if (orderBy["orders"] != "") subQuery = subQuery + "\n"+SPARQL_interval+"ORDER BY " + orderBy["orders"];
 
@@ -4592,6 +4696,10 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						//union parent triple
 						if(parentClassTriple != null) subQuery = subQuery + SPARQL_interval+parentClassTriple + "\n";
 
+						var having = sparqlTable["subClasses"][subclass]["having"];
+				
+						temp = temp.concat(havingv["triples"]);
+						
 						var orderBy = sparqlTable["subClasses"][subclass]["order"];
 						//add triples from order by
 						temp = temp.concat(orderBy["triples"]);
@@ -4604,13 +4712,14 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						}
 						if(groupBy != "") groupBy = "\n"+SPARQL_interval+"GROUP BY " + groupBy;
 						
+						
+						
 						// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
 						if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) subQuery = subQuery + groupBy;
-
+						if(having.exp != "") subQuery = subQuery + SPARQL_interval+"\nHAVING(" + having["exp"] + ")";
 						
 						//ORDER BY
-
 						if (orderBy["orders"] != "") subQuery = subQuery + SPARQL_interval+"\nORDER BY " + orderBy["orders"];
 
 						//OFFSET
@@ -5017,6 +5126,13 @@ function parseAggregationMultiple(expressionTable, symbolTable){
 }
 
 function getPropertyShortForm(classM, knownNamespaces){
+	if(classM.lastIndexOf("#") != -1){
+		let prefix = classM.substring(0, classM.lastIndexOf("#")+1)
+		let name = classM.substring(classM.lastIndexOf("#")+1)
+		for(let kp in knownNamespaces){
+			if(knownNamespaces[kp]["value"] == prefix) return {name:knownNamespaces[kp]["name"]+":"+name, namespace:knownNamespaces[kp]["value"], prefix:knownNamespaces[kp]["name"]+":"};
+		}
+	}
 	
 	if(classM.lastIndexOf("/") != -1){
 		let prefix = classM.substring(0, classM.lastIndexOf("/")+1)
