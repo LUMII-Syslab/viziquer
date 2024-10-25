@@ -178,7 +178,6 @@ Template.structureRibbon.events({
 
 Template.createProjectModal.loading = new ReactiveVar(false);
 Template.createProjectModal.services = new ReactiveVar("");
-Template.createProjectModal.allServices = new ReactiveVar("");
 Template.createProjectModal.schemas = new ReactiveVar();
 Template.createProjectModal.allSchemas = new ReactiveVar();
 Template.createProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
@@ -186,25 +185,12 @@ Template.createProjectModal.schemaTags = new ReactiveVar([{name:"All", display_n
 function setServices (tool_id) {
 	var result = {};
 
-	if ( tool_id != 'undefined') {
-		const services = Template.createProjectModal.allServices.get();
-		for (const s of services) {
-			if ( s.toolId == tool_id ) {
-				result.projects = [];
-				for (const pr of s.projects) {
-					if ( pr.ok ) {
-						result.projects.push({caption: "Initialise by " + pr.caption, name: pr.name, link: pr.link});
-					}
-				}
-			}
-		}
-	}
-	/*
 	Meteor.subscribe("Services", {});	
 	
 	if ( tool_id != 'undefined')
 	{
 		var services = Services.findOne({toolId: tool_id });
+		console.log("Atrada rīkam services", services)
 		if (services && services.schemas)
 		{
 			result.schemas = [];
@@ -221,7 +207,7 @@ function setServices (tool_id) {
 				result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
 			});
 		}			
-	} */
+	} 
 				
 	Template.createProjectModal.services.set(result);
 }
@@ -393,14 +379,9 @@ Template.createProjectModal.rendered = async function() {
 	Template.createProjectModal.allSchemas.set(schemas);
 	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
 	
-	Meteor.subscribe("Services", {});
-	var services_all = Services.find().map(function(s) {
-		return s;
-    });
+	var services_all = await dataShapes.getServices();
+	console.log('Pārbaude createProjectModal, kas ir services kolekcijā ', services_all)
 
-	services_all = await dataShapes.checkServices(services_all);
-	//console.log('Pēc pārbaudes createProjectModal', services_all)
-	Template.createProjectModal.allServices.set(services_all);
 }
 
 //Template.createProjectModal.onDestroyed(function() {
