@@ -2323,6 +2323,76 @@
                 "label": "Aggregates"
               }
             },
+			{
+              "object": {
+                "_id": "nqX45ioVnTnw6pIG",
+                "elementTypeId": "2uLFFsW4oQ3Myr4sB",
+                "diagramTypeId": "5MCHCcnGRwF5axfDj",
+                "diagramId": "7RrwRcGyxshqjBh9p",
+                "elementId": "r4MZYEQtHdDWvwSfd",
+                "tabIndex": 420,
+                "index": 1299,
+                "toolId": "3v8WrqRP2oos7kaSA",
+                "versionId": "cMoFeT3YoEkLwDabd",
+                "name": "Having",
+                "label": "Having",
+                "prefix": "HAVING ",
+                "suffix": null,
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "5b1b143be71eebd6c1fa062a",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+				  {
+					"extensionPoint": "processKeyStroke",
+					"procedure": "havingAutoCompletion"
+				  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "Exf3sEg8fpo7hYYRc"
+              }
+            },
             {
               "object": {
                 "_id": "JNfohYdRxKAn9SFK2",
@@ -5739,6 +5809,7 @@
           ]
         },
         "name": "DataSchema",
+		"footer": "sparqlForm",
         "editorType": "ajooEditor"
       },
       "dialog": [
@@ -5801,6 +5872,14 @@
               {
                 "item": "Delete",
                 "procedure": "Delete"
+              },
+              {
+                "item": "Generate SPARQL",
+                "procedure": "GenereteSPARQL_form_class_DSS"
+              },
+              {
+                "item": "Execute SPARQL",
+                "procedure": "ExecuteSPARQL_form_class_DSS"
               }
             ],
             "readModeContextMenu": [],
