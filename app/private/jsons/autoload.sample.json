@@ -1,0 +1,12 @@
+[
+  {
+    "toolName": "My ViziQuer",
+    "configuration": "VQ_configuration_dss_latest.json",
+    "services": "services_dss_ext2.json"
+  },
+  {
+    "toolName": "OWLGrEd",
+    "configuration": "owlgred_latest.json",
+    "services": "services2.json"
+  }
+]

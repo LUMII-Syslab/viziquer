@@ -1,4 +1,6 @@
 [
-  "VQ_configuration_dss_latest.json",
-  "services_dss_ext2.json"
+  {
+    "toolName": "My ViziQuer",
+    "configurationFile": "VQ_configuration_dss_latest.json",
+  }
 ]

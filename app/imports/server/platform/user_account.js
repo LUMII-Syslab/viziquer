@@ -4,8 +4,10 @@ import { get_current_time } from '/imports/server/platform/_helpers';
 import { build_power_user_role, is_project_admin, is_system_admin } from '/imports/libs/platform/user_rights';
 import { load_configurator } from '/imports/server/platform/load_configuration';
 import { Users, Tools, ToolVersions } from '/imports/db/platform/collections';
+import { Services } from '/imports/db/custom/vq/collections'
 import { is_test_user } from '/imports/server/platform/_global_functions';
 import { send_email } from '/imports/libs/platform/lib';
+import { config } from 'dotenv';
 
 
 Meteor.methods({
@@ -50,68 +52,89 @@ Meteor.methods({
 				//loading configurator data
 				load_configurator(user_id);
 
-	  			var new_tool = {name: "Viziquer",
-	  							createdAt: new Date,
-	  							createdBy: user_id,
-	  							documents: true,
-	  							archive: true,
-	  							analytics: true,
-	  							users: true,
-	  							forum: true,
-	  							tasks: true,
-	  							training: true,
-	  						};
+				// var fs = Npm.require('fs');
+				// var current_dir = process.env.PWD;
 
-				var tool_id = Tools.insert(new_tool);
-				var version_id = ToolVersions.insert({createdAt: new_tool.createdAt,
-														createdBy: user_id,
-														status: "New",
-														toolId: tool_id,
-													});
-
-				var fs = Npm.require('fs');
-				var current_dir = process.env.PWD;
-
-        var configList;
+        let configList;
         try {
           if (Meteor.settings && Meteor.settings.configurationName) {
-            configList = [ Meteor.settings.configurationName ];
+            configList = [ { configurationFile: Meteor.settings.configurationName } ];
           } else {
             configList = JSON.parse(Assets.getText("jsons/autoload.json"));
           }
         } catch (err) {
-          console.log(`autoload file not found; will use [ "VQ_configuration_latest.json" ]`);
-          configList = [ "VQ_configuration_latest.json" ];
+          console.log(`Neither configurationName nor autoload file not found; will use "VQ_configuration_latest.json" `);
+          configList = [ { configurationFile: "VQ_configuration_latest.json" } ];
         }
         console.log('configurations to be loaded:', configList);
 
-        let configData = {}
-        for (let fn of configList) {
-          let data;
+        if (!Array.isArray(configList)) configList = [ configList ];
+
+        for (const cfg of configList) {
+          console.log(`🧰 loading initial configuration`, cfg);
+
+          let configurationFile = (typeof cfg === 'string') ? cfg : cfg.configurationFile;
           try {
-            data = JSON.parse(Assets.getText(`jsons/${fn}`));
+            const configData = JSON.parse(Assets.getText(`jsons/${configurationFile}`));
+            let toolName = configData?.tool?.name;
+            if (typeof cfg === 'object' && cfg.toolName) {
+              toolName = cfg.toolName
+            }
+            if (!toolName) toolName = 'Perhaps ViziQuer';
+
+            const new_tool = {
+              // name: "Viziquer",
+              name: toolName,
+              createdAt: new Date,
+              createdBy: user_id,
+              documents: true,
+              archive: true,
+              analytics: true,
+              users: true,
+              forum: true,
+              tasks: true,
+              training: true,
+            };
+
+            const tool_id = Tools.insert(new_tool);
+            const version_id = ToolVersions.insert({
+              createdAt: new_tool.createdAt,
+              createdBy: user_id,
+              status: "New",
+              toolId: tool_id,
+            });
+
+            Meteor.call("importAjooConfiguration", {
+              toolId: tool_id, 
+              versionId: version_id, 
+              data: configData 
+            });
+
+            if (typeof cfg === 'object' && cfg.services) {
+              const servicesJsonName = cfg.services;
+              try {
+                Services.remove({ toolId: tool_id }); //???
+                const servicesData = JSON.parse(Assets.getText(`jsons/${servicesJsonName}`));
+                servicesData.toolId = tool_id;
+                console.log('servicesData:', servicesData)
+
+                // Services.batchInsert( [ servicesData ] )
+                Services.insert(servicesData)
+
+              } catch (err) {
+                console.error(`Error loading services from  ${servicesJsonName}; skipping it`);
+              }
+            }
+    
           } catch (err) {
-            console.error(`Error loading config file ${fn}; skipping it`);
+            console.error(`Error loading configuration ${cfg}; skipping it`);
+            continue;
           }
-          if (data) configData = Object.assign(configData, data);
         }
-
-				// var file_name = "VQ_configuration_dss_latest.json";
-				// if (Meteor.settings && Meteor.settings.configurationName) {
-				// 	file_name = Meteor.settings.configurationName;
-				// }
-
-				// // var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
-				// var file = JSON.parse(Assets.getText("jsons/" + file_name));
-
-        // console.log(`loading configuration from ./private/jsons/${file_name}`);
-
-				var list = {toolId: tool_id, versionId: version_id, data: configData };
-				Meteor.call("importAjooConfiguration", list);
-			}
-
-			return id;
+      }
 		}
+
+		return id;
 	},
 
 	updateUser: function(list) {
