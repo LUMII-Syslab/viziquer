@@ -1059,18 +1059,18 @@ function getDifferenceNew(classInfo1, classInfo2) {
 
 	for (const aId of all_atrs) {
 		if ( atrTree1[aId] != undefined && atrTree2[aId] != undefined) { // Atribūts ir abām klasēm
-			s = s + Math.sqrt(Math.max(atrTree1[aId].cnt/classInfo1.cnt,1)*Math.max(atrTree2[aId].cnt/classInfo2.cnt,1))*pw;     //s(A,B) = ∑sqrt(max(pA/cA,1) * max(pB/cB,1)) *pw 
+			s = s + Math.sqrt(Math.min(atrTree1[aId].cnt/classInfo1.cnt,1)*Math.max(atrTree2[aId].cnt/classInfo2.cnt,1))*pw;     //s(A,B) = ∑sqrt(max(pA/cA,1) * max(pB/cB,1)) *pw 
 			// Bija data - Ad = Ad + Math.sqrt((atrTree1[aId].cnt/classInfo1.cnt)*(atrTree2[aId].cnt/classInfo2.cnt));
 			// Bija obj - Ao = Ao + atrTree1[aId].class_list.length*Math.sqrt((atrTree1[aId].cnt/classInfo1.cnt)*(atrTree2[aId].cnt/classInfo2.cnt));
 		}
 		else if ( atrTree1[aId] != undefined ) { // Atribūts ir tikai pirmajai klasei
-			d =d + Math.sqrt(Math.max(Math.pow(atrTree1[aId].cnt/classInfo1.cnt,1),2)*(classInfo1.cnt/(classInfo1.cnt+classInfo2.cnt))); //d(A,B) = ∑sqrt(max(pA/cA,1)^2*(cA/(cA+cB))) 
+			d =d + Math.sqrt(Math.min(Math.pow(atrTree1[aId].cnt/classInfo1.cnt,1),2)*(classInfo1.cnt/(classInfo1.cnt+classInfo2.cnt))); //d(A,B) = ∑sqrt(max(pA/cA,1)^2*(cA/(cA+cB))) 
 			// Bija data - Bd = Bd + Math.sqrt(atrTree1[aId].cnt/Math.sqrt(classInfo1.cnt*(classInfo1.cnt+classInfo2.cnt)));  
 			// Bija obj - Bo = Bo + Math.sqrt(atrTree1[aId].cnt/Math.sqrt(classInfo1.cnt*(classInfo1.cnt+classInfo2.cnt)));  
 
 		}
 		else if ( atrTree2[aId] != undefined ) { // Atribūts ir tikai otrajai klasei
-			d =d + Math.sqrt(Math.max(Math.pow(atrTree2[aId].cnt/classInfo2.cnt,1),2)*(classInfo2.cnt/(classInfo1.cnt+classInfo2.cnt)));
+			d =d + Math.sqrt(Math.min(Math.pow(atrTree2[aId].cnt/classInfo2.cnt,1),2)*(classInfo2.cnt/(classInfo1.cnt+classInfo2.cnt)));
 			// Bija data - Bd = Bd + Math.sqrt(atrTree2[aId].cnt/Math.sqrt(classInfo2.cnt*(classInfo1.cnt+classInfo2.cnt)));  
 			// Bija obj - Bo = Bo + Math.sqrt(atrTree2[aId].cnt/Math.sqrt(classInfo2.cnt*(classInfo1.cnt+classInfo2.cnt)));  
 
