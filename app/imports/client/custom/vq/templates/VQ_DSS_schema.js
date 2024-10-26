@@ -190,7 +190,7 @@ function getParams() {
 		par.addIds = $("#addIds").is(":checked"); 
 		par.k = $("#kValue").val();
 	}
-	console.log('Kāds parametrs newDiffs', par.newDifs)
+	//console.log('Kāds parametrs newDiffs', par.newDifs)
 	return par;
 }
 
@@ -462,6 +462,7 @@ Template.VQ_DSS_schema.events({
 			ClassCount:Template.VQ_DSS_schema.ClassCountSelected.get(),
 			CompactClassView:$("#compClassView").is(":checked"),
 			NodesCount:Template.VQ_DSS_schema.ClassCountUsed.get(),
+			LinesCount:countAssociations(),
 			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces}}},
 			Class:{}, 
 			ObjectProperty:{}, 
@@ -528,6 +529,7 @@ Template.VQ_DSS_schema.events({
 		}
 		table_representation.hasGeneralization = hasGeneralization;
 		table_representation.generalizationCount = generalizationCount;
+		table_representation.params = getParams();
 		console.log(table_representation)
 		Meteor.call("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
 
@@ -1059,7 +1061,7 @@ function getDifferenceNew(classInfo1, classInfo2) {
 
 	for (const aId of all_atrs) {
 		if ( atrTree1[aId] != undefined && atrTree2[aId] != undefined) { // Atribūts ir abām klasēm
-			s = s + Math.sqrt(Math.min(atrTree1[aId].cnt/classInfo1.cnt,1)*Math.max(atrTree2[aId].cnt/classInfo2.cnt,1))*pw;     //s(A,B) = ∑sqrt(max(pA/cA,1) * max(pB/cB,1)) *pw 
+			s = s + Math.sqrt(Math.min(atrTree1[aId].cnt/classInfo1.cnt,1)*Math.min(atrTree2[aId].cnt/classInfo2.cnt,1))*pw;     //s(A,B) = ∑sqrt(max(pA/cA,1) * max(pB/cB,1)) *pw 
 			// Bija data - Ad = Ad + Math.sqrt((atrTree1[aId].cnt/classInfo1.cnt)*(atrTree2[aId].cnt/classInfo2.cnt));
 			// Bija obj - Ao = Ao + atrTree1[aId].class_list.length*Math.sqrt((atrTree1[aId].cnt/classInfo1.cnt)*(atrTree2[aId].cnt/classInfo2.cnt));
 		}
