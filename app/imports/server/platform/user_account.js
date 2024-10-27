@@ -64,8 +64,9 @@ Meteor.methods({
             configList = JSON.parse(Assets.getText("jsons/autoload.json"));
           }
         } catch (err) {
-          console.log(`Neither configurationName nor autoload file not found; will use "VQ_configuration_latest.json" `);
-          configList = [ { configurationFile: "VQ_configuration_latest.json" } ];
+          console.error(err);
+          console.log(`Neither configurationName nor autoload file not found; will use "VQ_configuration_dss_latest.json" `);
+          configList = [ { configurationFile: "VQ_configuration_dss_latest.json" } ];
         }
         console.log('configurations to be loaded:', configList);
 
@@ -76,6 +77,7 @@ Meteor.methods({
 
           let configurationFile = (typeof cfg === 'string') ? cfg : cfg.configurationFile;
           try {
+            console.log('Trying to load configuration from', `jsons/${configurationFile}`)
             const configData = JSON.parse(Assets.getText(`jsons/${configurationFile}`));
             let toolName = configData?.tool?.name;
             if (typeof cfg === 'object' && cfg.toolName) {
@@ -114,10 +116,9 @@ Meteor.methods({
             });
 
             if (typeof cfg === 'object' && cfg.services) {
-              const servicesJsonName = cfg.services;
               try {
                 // Services.remove({ toolId: tool_id });
-                const servicesData = JSON.parse(Assets.getText(`jsons/${servicesJsonName}`));
+                const servicesData = JSON.parse(Assets.getText(`jsons/${cfg.services}`));
                 console.log('servicesData is', servicesData)
                 servicesData.toolId = tool_id;
 
@@ -125,13 +126,13 @@ Meteor.methods({
                 Services.insert(servicesData)
 
               } catch (err) {
-                console.error(`Error loading services from ${servicesJsonName}; skipping it`);
                 console.error(err);
+                console.error(`Error loading services from ${Assets.absoluteFilePath(`jsons/${cfg.services}`)}; skipping it`);
               }
             }
     
           } catch (err) {
-            console.error(`Error loading configuration ${cfg}; skipping it`);
+            console.error(`Error loading configuration ${JSON.stringify(cfg)}; skipping it`);
             console.error(err);
             continue;
           }
