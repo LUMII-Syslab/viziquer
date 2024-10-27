@@ -54,6 +54,7 @@ Meteor.methods({
 
 				// var fs = Npm.require('fs');
 				// var current_dir = process.env.PWD;
+        console.log(`App assets are here: ${Assets.absoluteFilePath("jsons/autoload.json")}`)
 
         let configList;
         try {
@@ -97,6 +98,8 @@ Meteor.methods({
             };
 
             const tool_id = Tools.insert(new_tool);
+            console.log('New tool created:', toolName, tool_id);
+
             const version_id = ToolVersions.insert({
               createdAt: new_tool.createdAt,
               createdBy: user_id,
@@ -113,21 +116,23 @@ Meteor.methods({
             if (typeof cfg === 'object' && cfg.services) {
               const servicesJsonName = cfg.services;
               try {
-                Services.remove({ toolId: tool_id }); //???
+                // Services.remove({ toolId: tool_id });
                 const servicesData = JSON.parse(Assets.getText(`jsons/${servicesJsonName}`));
+                console.log('servicesData is', servicesData)
                 servicesData.toolId = tool_id;
-                console.log('servicesData:', servicesData)
 
                 // Services.batchInsert( [ servicesData ] )
                 Services.insert(servicesData)
 
               } catch (err) {
-                console.error(`Error loading services from  ${servicesJsonName}; skipping it`);
+                console.error(`Error loading services from ${servicesJsonName}; skipping it`);
+                console.error(err);
               }
             }
     
           } catch (err) {
             console.error(`Error loading configuration ${cfg}; skipping it`);
+            console.error(err);
             continue;
           }
         }

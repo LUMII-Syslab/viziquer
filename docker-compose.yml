@@ -1,18 +1,22 @@
-version: "2"
-services:
- main:
-  image: viziquer/viziquer
-  ports:
-   - "80:3000"
-  links:
-   - mongodb
-  environment:
-   ROOT_URL: http://185.23.162.165
-   METEOR_SETTINGS: "{\"configurationName\":\"VQ_configuration_dump_v0.14.json\"}"
-   MONGO_URL: mongodb://mongodb/vq
-   STARTUP_DELAY: 10
- mongodb:
-  image: mongo
-  volumes:
-   - ./data/mongo:/data/db
+# version: '3'
 
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '80:3000'
+    depends_on:
+      - mongo
+    environment:
+      ROOT_URL: ${APP_ROOT_URL:-http://localhost}
+      MONGO_URL: mongodb://mongo:27017/meteor
+      PORT: 3000
+
+  mongo:
+    image: mongo:latest
+    command:
+      - --storageEngine=wiredTiger
+    volumes:
+      - ./data/mongo:/data/db

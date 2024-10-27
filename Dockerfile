@@ -31,7 +31,8 @@ COPY --from=0 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
 COPY --from=0 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
 
 # COPY ./app/private/jsons /opt/meteor/dist/bundle/private/jsons
-COPY ./app/private/jsons $APP_BUNDLE_FOLDER/bundle/private/jsons
+# COPY ./app/private/jsons $APP_BUNDLE_FOLDER/bundle/private/jsons
+COPY ./app/private/jsons $APP_BUNDLE_FOLDER/bundle/programs/server/assets/app/jsons
 
 RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh
 

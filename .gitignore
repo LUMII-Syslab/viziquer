@@ -2,6 +2,7 @@
 _doc
 build
 jsconfig.json
+**/_legacy
 
 # MongoDB data directory
 data/mongo
