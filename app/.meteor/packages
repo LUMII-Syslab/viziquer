@@ -6,7 +6,7 @@
 
 meteor-base@1.5.1             # Packages every Meteor app needs to have
 mobile-experience@1.1.1       # Packages for a great mobile UX
-mongo@1.16.8                   # The database Meteor supports right now
+mongo@1.16.10                   # The database Meteor supports right now
 blaze-html-templates    # Compile .html files into Meteor Blaze views
 #jquery                  # Wrapper package for npm-installed jquery
 reactive-var@1.0.12            # Reactive variable for tracker
@@ -27,7 +27,7 @@ blaze-hot               # Update files using Blaze's API with HMR
 
 #aldeed:collection2@3.5.0
 #iron:router
-underscore@1.6.0
+underscore@1.6.1
 alanning:roles
 mrt:jquery-ui-sortable
 tmeasday:publish-with-relations
@@ -39,7 +39,7 @@ http@1.0.8
 #tap:i18n-db
 spacebars-compiler
 #natestrauser:bootstrap-colorpicker
-email@2.2.5
+email@2.2.6
 nilsdannemann:pdfmake
 session@1.2.1
 nimble:restivus

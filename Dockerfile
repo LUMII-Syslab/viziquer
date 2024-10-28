@@ -1,5 +1,5 @@
 # The tag here should match the Meteor version of your app, per .meteor/release
-FROM geoffreybooth/meteor-base:2.15
+FROM geoffreybooth/meteor-base:2.16
 
 # Ensure Python and build tools are available (for cross-platform build)
 RUN apt-get update && apt-get install -y python3 build-essential && \
