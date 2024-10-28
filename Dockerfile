@@ -1,5 +1,5 @@
 # The tag here should match the Meteor version of your app, per .meteor/release
-FROM geoffreybooth/meteor-base:2.14
+FROM geoffreybooth/meteor-base:2.15
 
 # Ensure Python and build tools are available (for cross-platform build)
 RUN apt-get update && apt-get install -y python3 build-essential && \
@@ -39,7 +39,7 @@ COPY --from=0 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
 
 # COPY ./app/private/jsons /opt/meteor/dist/bundle/private/jsons
 # COPY ./app/private/jsons $APP_BUNDLE_FOLDER/bundle/private/jsons
-COPY ./app/private/jsons $APP_BUNDLE_FOLDER/bundle/programs/server/assets/app/jsons
+# COPY ./app/private/jsons $APP_BUNDLE_FOLDER/bundle/programs/server/assets/app/jsons
 
 RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh
 
