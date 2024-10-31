@@ -450,15 +450,103 @@ async function generateSPARQLtextFromSchema(){
 	let editor = Interpreter.editor;
 	let elem = _.keys(editor.getSelectedElements());
 	let selected_elem = new VQ_Element(elem[0]);
+	let dirRole = "a";
+		
+	let proj = Projects.findOne({_id: Session.get("activeProject")});
+	if (proj) {
+		if (proj.directClassMembershipRole) {
+			dirRole = proj.directClassMembershipRole;
+		}
+	}
+	let classList = selected_elem.getCompartmentValue("ClassList");
+	
+	if(classList === null){
+		return simpleSchemaBox(selected_elem, n, dirRole);
+	} else {
+		return groupSchemaBox(selected_elem, n, dirRole, classList);
+	}	
+}
+
+function getClassListFromString(classList){
+	const stringValues = classList.match(/^[^\(]+/gm).map(str => str.trim());
+	return stringValues;
+}
+
+async function groupSchemaBox(selected_elem, n, dirRole, classListString){
+	let classList = getClassListFromString(classListString);
+	let sparqlQueryText = "SELECT * WHERE{\n";
+	let classUnionTable = [];
+	let propertyTable = [];
+	let className = "exp";
+	let prefixTable = [];
+	let prefixes = await dataShapes.getNamespaces();
+	
+	for(let clazz = 0; clazz < classList.length; clazz++){
+		let params = {name: classList[clazz]};
+		let cls = await dataShapes.resolveClassByName(params);
+
+		if(cls.complete === true){
+			let classifProp = getPropertyShortForm(cls["data"][0]["classification_property"], prefixes);
+			if(classifProp["name"] !== dirRole && classifProp["name"] !== "rdf:type" && dirRole !== "a") {
+				dirRole = classifProp["name"];
+			}
+			let classPrefix = cls["data"][0]["prefix"];
+			if(classPrefix === null || classPrefix === "null") classPrefix = "";
+			let clazz = classPrefix +":"+cls["data"][0]["local_name"];
+			classUnionTable.push( "    {?" + className + " " + dirRole + " " + clazz + " .}\n");
+			prefixTable[classPrefix] = "";
+			
+			let propParams = {main:{propertyKind:'Data',"limit": 30}};
+			propParams.element = {className: classList[clazz]};
+			let props = await dataShapes.getPropertiesFull(propParams);
+			for(let prop = 0; prop < props.data.length; prop++){
+				let dataProperty = props.data[prop];
+				let dataProp = dataProperty.prefix +":"+dataProperty.local_name;
+				if(typeof propertyTable[dataProp] === "undefined") propertyTable[dataProp] = dataProperty.data_cnt;
+				else{
+					if(dataProperty.data_cnt > propertyTable[dataProp]) propertyTable[dataProp] = dataProperty.data_cnt;
+				}
+			}
+		}
+	}
+	sparqlQueryText = sparqlQueryText + classUnionTable.join("  UNION\n");
+	
+	const sortedObj = Object.fromEntries(
+	  Object.entries(propertyTable).sort(([, a], [, b]) => b - a)
+	);
+	
+	const firstNEntries = Object.entries(sortedObj).slice(0, n);
+	const firstNResults = Object.fromEntries(firstNEntries);
+	
+	for(let p in firstNResults){
+		sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + p + " ?" + p.substring(p.indexOf(":")+1) + " .}\n";
+		prefixTable[p.substring(0, p.indexOf(":"))] = "";
+	}
+	
+	sparqlQueryText = sparqlQueryText + "}";
+	
+	let prefixText = "";
+	for(let p = 0; p < prefixes.length; p++){
+		if(typeof prefixTable[prefixes[p]["name"]] !== "undefined"){
+			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
+		}
+	}
+	sparqlQueryText = prefixText + sparqlQueryText;
+	
+	setText_In_SPARQL_Editor(sparqlQueryText);
+	return sparqlQueryText;
+}
+
+
+async function simpleSchemaBox(selected_elem, n, dirRole){
 	let name = selected_elem.getCompartmentValue("Name");
-	let nameIndex = name.indexOf(" ");
+	let nameIndex = name.lastIndexOf(" (");
 	if(nameIndex === -1) nameIndex = name.length;
 	name = name.substring(0, nameIndex);
-	
 
 	let params = {name: name};
 	let cls = await dataShapes.resolveClassByName(params);
-
+	
 	params = {main:{propertyKind:'Data',"limit": n}}
 	params.element = {className: name};
 	let props = await dataShapes.getPropertiesFull(params);
@@ -466,26 +554,20 @@ async function generateSPARQLtextFromSchema(){
 	let prefixTable = [];	
 	let prefixes = await dataShapes.getNamespaces();
 	
+	let classifProp = getPropertyShortForm(cls["data"][0]["classification_property"], prefixes);
+	if(classifProp["name"] !== dirRole && classifProp["name"] !== "rdf:type" && dirRole !== "a") {
+		dirRole = classifProp["name"];
+	}
+		
 	let sparqlQueryText = "SELECT * WHERE{\n";
 	if(cls.complete === true){
 		let className = cls["data"][0]["local_name"];
-		let dirRole = "a";
 		
-		let proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			if (proj.directClassMembershipRole) {
-				dirRole = proj.directClassMembershipRole;
-			}
-		}
-		
-		let classifProp = getPropertyShortForm(cls["data"][0]["classification_property"], prefixes);
-		if(classifProp["name"] !== dirRole && classifProp["name"] !== "rdf:type" && dirRole !== "a") {
-			dirRole = classifProp["name"];
-		}
-		
-		let clazz = cls["data"][0]["prefix"] +":"+cls["data"][0]["local_name"];
+		let classPrefix = cls["data"][0]["prefix"];
+		if(classPrefix === null || classPrefix === "null") classPrefix = "";
+		let clazz = classPrefix +":"+cls["data"][0]["local_name"];
 		sparqlQueryText = sparqlQueryText + "  ?" + className + " " + dirRole + " " + clazz + " .\n";
-		prefixTable[cls["data"][0]["prefix"]] = "";
+		prefixTable[classPrefix] = "";
 	
 		for(let prop = 0; prop < props.data.length; prop++){
 			let dataProperty = props.data[prop];
