@@ -4159,7 +4159,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							
 							var having = sparqlTable["subClasses"][subclass]["having"];
 							//ad triples from order by
-							temp = temp.concat(having["triples"])
+							if(having !== null)temp = temp.concat(having["triples"])
 							
 							selectResult["groupBy"] = selectResult["groupBy"].concat(refTable);
 							selectResult["groupBy"] = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
@@ -4213,7 +4213,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) subQuery = subQuery + groupBy;
 
-							if(having.exp != "") subQuery = subQuery + "\n"+SPARQL_interval + "HAVING(" + having.exp + ")";
+							if(having!== null && having.exp != "") subQuery = subQuery + "\n"+SPARQL_interval + "HAVING(" + having.exp + ")";
 							//ORDER BY
 							 if (orderBy["orders"] != "") subQuery = subQuery + "\n"+SPARQL_interval+"ORDER BY " + orderBy["orders"];
 
