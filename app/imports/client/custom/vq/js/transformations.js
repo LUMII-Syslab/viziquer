@@ -978,7 +978,11 @@ Interpreter.customMethods({
                     	Template.AggregateWizard.defaultAlias.set(userAlias);                    
                  	} else {
 						if(Template.AggregateWizard.expression.get() != "")Template.AggregateWizard.defaultAlias.set("");             
-						else Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+						else {
+							let defaultAlias = class_name.charAt(0);
+							if(class_name.indexOf(":") !== -1) defaultAlias = class_name.charAt(class_name.indexOf(":")+1);
+							Template.AggregateWizard.defaultAlias.set(defaultAlias + "_count");
+						}
 						
                     }
 					Template.AggregateWizard.fromAddLink.set(false); 
@@ -1089,7 +1093,11 @@ Interpreter.customMethods({
                     	Template.AggregateWizard.defaultAlias.set(userAlias);     
                  	} else {
 						if(Template.AggregateWizard.expression.get() != "")Template.AggregateWizard.defaultAlias.set("");             
-						else Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+						else {
+							let defaultAlias = class_name.charAt(0);
+							if(class_name.indexOf(":") !== -1) defaultAlias = class_name.charAt(class_name.indexOf(":")+1);
+							Template.AggregateWizard.defaultAlias.set(defaultAlias + "_count");
+						}
 						
                     }
 					Template.AggregateWizard.fromAddLink.set(true); 

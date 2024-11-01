@@ -250,7 +250,9 @@ Template.AggregateWizard.events({
 			var defaultName = cName.charAt(0) + "_" + newFunction;
 			var defaultFieldName = newFunction + "_" + f.attribute;
 			if ((alias == defaultName || alias == defaultFieldName) && fieldName.length == 0) {
-				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
+				let defaultAlias = cName.charAt(0);
+				if(cName.indexOf(":") !== -1) defaultAlias = cName.charAt(cName.indexOf(":")+1);
+				Template.AggregateWizard.defaultAlias.set(defaultAlias + "_" + newFunction);
 			} else if ((alias == defaultName || alias == defaultFieldName) && fieldName.length != 0) {
 				Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
 			}
@@ -363,7 +365,9 @@ function onAggregationChange(){
 				if (newAttrList.indexOf(fieldName) > -1) {
 					Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
 				} else {
-					Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
+					let defaultAlias = cName.charAt(0);
+					if(cName.indexOf(":") !== -1) defaultAlias = cName.charAt(cName.indexOf(":")+1);
+					Template.AggregateWizard.defaultAlias.set(defaultAlias + "_" + newFunction);
 				}
 			}
 		})

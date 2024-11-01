@@ -434,7 +434,9 @@ Template.AddLink.events({
 				//Alias name
 				if (class_name) {
 					Interpreter.destroyErrorMsg();
-					Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+					let defaultAlias = class_name.charAt(0);
+					if(class_name.indexOf(":") !== -1) defaultAlias = class_name.charAt(class_name.indexOf(":")+1);
+					Template.AggregateWizard.defaultAlias.set(defaultAlias + "_count");
 					Template.AggregateWizard.showDisplay.set("block");
 					Template.AggregateWizard.fromAddLink.set(true);
 					Template.AggregateWizard.placeholder.set("("+class_name+")");
