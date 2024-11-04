@@ -1404,15 +1404,14 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 	} else {
 		if(clazz.isUnit != true){
 			_.each(fields,function(field) {
-				
 				if(typeof field["alias"] !== "undefined" && field["alias"] != null && field["alias"] != "") variableNamesCounter[field["alias"]] = 1;
 				
 				var attributeName = field["exp"];
 				if(field["isSimplePath"]){		
 					attributeName = field["exp"].split(/[/.\s]/).slice(-1)[0];
 				}
-				
-				if((typeof field["alias"] === "undefined" || field["alias"] == null || field["alias"] == "") && (field["isSimple"] || field["isSimplePath"])){
+				const pattern = /^(.*:)?[a-zA-Z0-9]+@[a-zA-Z0-9]+$/;
+				if((typeof field["alias"] === "undefined" || field["alias"] == null || field["alias"] == "") && (field["isSimple"] || field["isSimplePath"] || pattern.test(attributeName) === true)){
 					
 					if(attributeName.indexOf(":") !== -1) attributeName = attributeName.substring(attributeName.indexOf(":")+1)
 
@@ -1429,6 +1428,9 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 						
 						attributeName = textPart
 					}
+					
+					if(pattern.test(attributeName)) attributeName = attributeName.substring(0, attributeName.indexOf("@"));
+					
 					attributeName = attributeName.replace(/-/g, '_');
 					
 					var generatedName = attributeName;
