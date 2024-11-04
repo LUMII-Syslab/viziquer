@@ -26,7 +26,10 @@ ENV SCRIPTS_FOLDER=/docker
 # Runtime dependencies; if your dependencies need compilation (native modules such as bcrypt) or you are using Meteor <1.8.1, use app-with-native-dependencies.dockerfile instead
 RUN apk --no-cache add \
 		bash \
-		ca-certificates
+		ca-certificates \
+    python3 \
+    build-base && \
+    meteor npm config set python python3
 
 # Copy in entrypoint
 COPY --from=0 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
