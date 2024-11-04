@@ -29,7 +29,7 @@ RUN apk --no-cache add \
 		ca-certificates \
     python3 \
     build-base && \
-    meteor npm config set python python3
+    npm config set python python3
 
 # Copy in entrypoint
 COPY --from=0 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
