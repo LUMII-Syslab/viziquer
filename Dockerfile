@@ -1,6 +1,10 @@
 # The tag here should match the Meteor version of your app, per .meteor/release
 FROM geoffreybooth/meteor-base:2.14
 
+# Ensure Python and build tools are available (for cross-platform build)
+RUN apt-get update && apt-get install -y python3 build-essential && \
+    npm config set python python3
+    
 # Copy app package.json and package-lock.json into container
 COPY ./app/package*.json $APP_SOURCE_FOLDER/
 
