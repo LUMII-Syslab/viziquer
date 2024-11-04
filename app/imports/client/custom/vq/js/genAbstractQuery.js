@@ -268,8 +268,10 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		} else {
           // field without alias? We should somehow identify it
           // obj_id + exp
- 
-          my_scope_table.UNRESOLVED_NAME.push({id:obj_class.identification._id+f.exp, type:null, context:obj_class.identification._id});
+			
+		  let fName = f.exp;
+		  if(fName.startsWith(":")) fName = fName.substring(1);
+		  my_scope_table.UNRESOLVED_NAME.push({id:obj_class.identification._id+fName, type:null, context:obj_class.identification._id});
         };
     }
 
@@ -543,7 +545,8 @@ async function resolveTypesAndBuildSymbolTable(query) {
   //update all entries of identifier name from context = sets kind and type (optional)
   function updateSymbolTable(name, context, kind, type, parentType) {
       _.each(symbol_table, function(name_list, current_context) {
-          if (name_list[name]) {
+          
+		  if (name_list[name]) {
             let name_in_context = _.find(name_list[name], function(n) {return n.context == context} );
             if (name_in_context) {
               if (kind) {
