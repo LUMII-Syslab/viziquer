@@ -379,8 +379,8 @@ Template.createProjectModal.rendered = async function() {
 	Template.createProjectModal.allSchemas.set(schemas);
 	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
 	
-	var services_all = await dataShapes.getServices();
-	console.log('Pārbaude createProjectModal, kas ir services kolekcijā ', services_all)
+	//var services_all = await dataShapes.getServices();
+	//console.log('Pārbaude createProjectModal, kas ir services kolekcijā ', services_all)
 
 }
 
