@@ -1085,6 +1085,8 @@ function getDifferenceNew(classInfo1, classInfo2) {
 
 	const diff1 =  d/(s+0.1);
 	const diff2 =  dw/(s+0.1);
+	if ( params.newDifs && classInfo1.id != classInfo2.id ) 
+		rezFull.diffMax = Math.max(rezFull.diffMax , s);
 
 	return {s1_dal:Math.round(diff1*10)/10, s2_dal:Math.round(diff2*10)/10, s1_s:Math.round(s*10)/10, s1_d:Math.round(d*10)/10, s2_dw:Math.round(dw*10)/10}; 
 }	
@@ -1154,7 +1156,8 @@ function getDifferenceOld(classInfo1, classInfo2) {
 	if ( diffB == 0 && Bd + Bo > 0 ) {
 		diffB = 0.5;
 	}
-	rezFull.diffMax = Math.max(rezFull.diffMax , diffA);
+	if ( !params.newDifs ) 
+		rezFull.diffMax = Math.max(rezFull.diffMax , diffA);
 	return [diffA, diffB]; //[Math.round(Ad + Ao), Math.round(Bd + Bo)]; 
 }	
 

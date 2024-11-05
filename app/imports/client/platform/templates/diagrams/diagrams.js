@@ -15,7 +15,7 @@ import { joined_date } from '../../js/utilities/time_utilities'
 Template.diagramsTemplate.helpers({
 
 	isDefaultView: function() {
-		var user_diagram = UserVersionSettings.findOne({versionId: Session.get("versionId")});;
+		var user_diagram = UserVersionSettings.findOne({versionId: Session.get("versionId")});
 		if (user_diagram && user_diagram["view"] == "Tree")
 			return false;
 		else {
@@ -39,7 +39,7 @@ Template.diagramsTemplate.helpers({
 Template.diagramsTemplate.events({
 
 //searches on every key stroke for diagram title or compartment value
-	'keyup #searchDiagrams' : function(e, templ) {
+	'keyup #searchDiagrams' : function() {
 
 		//searched text
 		var text = $("#searchDiagrams").val();
@@ -58,8 +58,8 @@ Template.diagramsTemplate.events({
 Template.diagramsRibbon.events({
 
 //shows dialog window to enter diagram name
-	'click #add': function(e, templ) {
-		Dialog.destroyTooltip(e);
+	'click #add': function() {
+		Dialog.destroyTooltip();
 		$('#add-diagram').modal("show");
 	},
 
@@ -163,7 +163,7 @@ Template.diagramsToolbar.events({
 		Utilities.callMeteorMethod("getProjectJson", list, function(resp) {
 
 			if (resp.diagrams) {
-			 //    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resp, 0, 4));
+				//    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resp, 0, 4));
 				// var link = $('<a href="data:' + data + '" download="data.json">download JSON</a>');
 				// link.appendTo('#download-hack')
 				// link[0].click();
@@ -185,26 +185,26 @@ Template.diagramsToolbar.events({
 		});
 	},
 
-	'click #upload-project': function(e, templ) {
+	'click #upload-project': function(e) {
 		// e.preventDefault();
 		Dialog.destroyTooltip(e);
 		$('#upload-project-form').modal("show");
 	},
 
-	'click #import': function(e, templ) {
+	'click #import': function(e) {
 		Dialog.destroyTooltip(e);
 		$('#import-ontology-form').modal("show");
 	},
 
-	'click #settings': function(e, templ) {
+	'click #settings': function(e) {
 		Dialog.destroyTooltip(e);
 		$('#ontology-settings-form').modal("show");
 	},
-	'click #migrate' : function(e, templ) {
+	'click #migrate' : function(e) {
 		Dialog.destroyTooltip(e);
 		$("#migrate-form").modal("show");
 	},
-	'click #saveSchema': async function(e, templ) {
+	'click #saveSchema': async function(e) {
 		await dataShapes.changeActiveProject(Session.get("activeProject"));
 		Dialog.destroyTooltip(e);
 		await Template.VQ_DSS_schema.rendered();
@@ -219,7 +219,7 @@ Template.diagramsViewButton.helpers({
 	diagramViews: function() {
 
 		var style = {};
-		var user_version_settings = UserVersionSettings.findOne({versionId: Session.get("versionId")});;
+		var user_version_settings = UserVersionSettings.findOne({versionId: Session.get("versionId")});
 		if (user_version_settings && user_version_settings["view"] == "Tree") {
 			style["defaultStyle"] = "visibility:hidden;";
 			style["treeStyle"] = "";
@@ -387,8 +387,7 @@ Template.defaultDiagramsView.events({
 
 		var width = container.width();
 
-		drop_down.removeClass("hidden")
-		 			.css("left", width);
+		drop_down.removeClass("hidden").css("left", width);
 	},
 
 	"mouseleave .diagram": function(e) {
@@ -449,8 +448,7 @@ Template.defaultDiagramsView.events({
 
 		var drop_down = $(e.target).closest(".diagram").find(".diagram-dropdown-container");
 
-		drop_down.addClass("hidden")
-					.removeClass("open");
+		drop_down.addClass("hidden").removeClass("open");
 	},
 
 });
@@ -529,7 +527,7 @@ Template.treeDiagramsView.events({
 	},
 
 	//destroys the popover on mouse leave
-	'mouseleave .diagram' : function(e) {
+	'mouseleave .diagram' : function() {
 		// $(".popover").each(function(i, popover) {
 		// 	//$(popover).popover("destroy");
 		// 	$(popover).remove();
@@ -558,7 +556,7 @@ Template.diagramsSearchBar.helpers({
 
 Template.addDiagram.events({
 
-	'click #create-diagram' : function(e, templ) {
+	'click #create-diagram' : function() {
 
 		$('#add-diagram').attr("OKPressed", true);
 
@@ -567,7 +565,7 @@ Template.addDiagram.events({
 	},
 
 	//if ok was clicked, then starting a new chat
-	'hidden.bs.modal #add-diagram' : function(e) {
+	'hidden.bs.modal #add-diagram' : function() {
 
 		var src = $('#add-diagram');
 		if (src.attr("OKPressed")) {
@@ -620,7 +618,7 @@ Template.uploadProject.helpers({
 
 Template.uploadProject.events({
 
-	'click #ok-upload-project' : function(e, templ) {
+	'click #ok-upload-project' : function() {
 
 		//hidding the form
 		//$('#upload-project-form').modal("hide");
@@ -630,7 +628,7 @@ Template.uploadProject.events({
 		};
 
 		var url_value = $("#import-projecturl").val();
-		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
+		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");
 
 		if (url_value) {
 			list.url = url_value;
@@ -654,7 +652,7 @@ Template.uploadProject.events({
 
 				var reader = new FileReader();
 
-				reader.onload = function(event) {
+				reader.onload = function() {
 					var diagrams = JSON.parse(reader.result)
 					list.data = diagrams;
 					Template.uploadProject.loading.set(true);
@@ -698,19 +696,19 @@ Template.ontologySettings.onDestroyed(function() {
 
 Template.ontologySettings.events({
 
-	'click #ok-ontology-settings' : async function(e, templ) {
+	'click #ok-ontology-settings' : async function() {
 		
 		// var myRows = [];
 		// var $headers = $("th");
 		// var $rows = $("tbody tr").each(function(index) {
-		  // let $cells = $(this).find("td");
-		  // myRows[index] = {};
-		  // $cells.each(function(cellIndex) {
-			  // if($($headers[cellIndex]).html() == "Graph/Service shorthand" || $($headers[cellIndex]).html() == "Expansion (e.g., URI)"){
-				  // myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
-			  // }
-		  // });
-		  // myRows[index]["index"] = index;
+		// let $cells = $(this).find("td");
+		// myRows[index] = {};
+		// $cells.each(function(cellIndex) {
+		// if($($headers[cellIndex]).html() == "Graph/Service shorthand" || $($headers[cellIndex]).html() == "Expansion (e.g., URI)"){
+			// myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
+		// }
+		// });
+		// myRows[index]["index"] = index;
 		// });
 
 		
@@ -720,8 +718,8 @@ Template.ontologySettings.events({
 					uri: $("#ontology-uri").val(),
 					endpoint: $("#ontology-endpoint").val(),
 					schema: $("#dss-schema").val(),
-		          	useStringLiteralConversion: $("#use-string-literal-conversion").val(),
-		          	queryEngineType: $("#query-engine-type").val(),
+					useStringLiteralConversion: $("#use-string-literal-conversion").val(),
+					queryEngineType: $("#query-engine-type").val(),
 					useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(":checked"),
 					defaultGroupingSeparator: $("#default-grouping-separator").val(),
 					directClassMembershipRole: $("#direct-class-membership-role").val(),
@@ -752,11 +750,11 @@ Template.ontologySettings.events({
 		
 	},
 
-	'click #use-default-grouping-separator' : function(e, templ) {
+	'click #use-default-grouping-separator' : function() {
 						$("#default-grouping-separator").prop('disabled', !$("#use-default-grouping-separator").is(":checked"))
 
 	},
-	'click #auto-hide-default-property-name' : function(e, templ) {
+	'click #auto-hide-default-property-name' : function() {
 		// var parent_query = {"parentDiagrams.0": {$exists: false}};
 
 		// Diagrams.find(parent_query, {$sort: 1}).map(
@@ -767,48 +765,49 @@ Template.ontologySettings.events({
 
 	},
 
-	'click #cancel-ontology-settings' : function(e, templ) {
-	 var proj = Projects.findOne({_id: Session.get("activeProject")});
-	 if (proj) {
-		 $("#ontology-uri").val(proj.uri);
-		 $("#ontology-endpoint").val(proj.endpoint);
-		 $("#dss-schema").val(proj.schema);
-		 $("#use-string-literal-conversion").val(proj.useStringLiteralConversion);
-		 $("#query-engine-type").val(proj.queryEngineType);
-		 $("#use-default-grouping-separator").prop("checked", proj.useDefaultGroupingSeparator);
-		 $("#default-grouping-separator").prop('disabled', proj.useDefaultGroupingSeparator=="false");
-		 $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
-		 $("#direct-class-membership-role").val(proj.directClassMembershipRole);
-		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
-		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="true");
-		 $("#decorate-instance-position-variable").prop("checked", proj.decorateInstancePositionVariable=="true");
-		 $("#decorate-instance-position-constants").prop("checked", proj.decorateInstancePositionConstants=="true");
-		 $("#simple-condition-implementation").prop("checked", proj.simpleConditionImplementation=="true");
-		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
-		 $("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="true");
-		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="true");
-		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="true");
-		 $("#show-graph-service-compartments").prop("checked", proj.showGraphServiceCompartments=="true");
-		 $("#enable-wikibase-label-services").prop("checked", proj.enableWikibaseLabelServices=="true");
-		 $("#allow-top-down-names-in-BINDs").prop("checked", proj.allowTopDownNamesInBINDs=="true");
-		 $("#keep-variable-names").prop("checked", proj.keepVariableNames=="true");
-		 $("#endpoint-username").val(proj.endpointUsername);
-		 $("#endpoint-password").val(proj.endpointPassword);
-	 }
-	 Template.ontologySettings.uri.set(proj.uri);
-	 Template.ontologySettings.endpoint.set(proj.endpoint);
-	 Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
-	 Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
-	 Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
-	 //Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
-	 // if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) 
-		// Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
-	 // else 
-		// Template.ontologySettings.graphs.set([]);
+	'click #cancel-ontology-settings' : function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			$("#ontology-uri").val(proj.uri);
+			$("#ontology-endpoint").val(proj.endpoint);
+			$("#dss-schema").val(proj.schema);
+			$("#use-string-literal-conversion").val(proj.useStringLiteralConversion);
+			$("#query-engine-type").val(proj.queryEngineType);
+			$("#use-default-grouping-separator").prop("checked", proj.useDefaultGroupingSeparator);
+			$("#default-grouping-separator").prop('disabled', proj.useDefaultGroupingSeparator=="false");
+			$("#default-grouping-separator").val(proj.defaultGroupingSeparator);
+			$("#direct-class-membership-role").val(proj.directClassMembershipRole);
+			$("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
+			$("#show-cardinalities").prop("checked", proj.showCardinalities=="true");
+			$("#decorate-instance-position-variable").prop("checked", proj.decorateInstancePositionVariable=="true");
+			$("#decorate-instance-position-constants").prop("checked", proj.decorateInstancePositionConstants=="true");
+			$("#simple-condition-implementation").prop("checked", proj.simpleConditionImplementation=="true");
+			$("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
+			$("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="true");
+			$("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="true");
+			$("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="true");
+			$("#show-graph-service-compartments").prop("checked", proj.showGraphServiceCompartments=="true");
+			$("#enable-wikibase-label-services").prop("checked", proj.enableWikibaseLabelServices=="true");
+			$("#allow-top-down-names-in-BINDs").prop("checked", proj.allowTopDownNamesInBINDs=="true");
+			$("#keep-variable-names").prop("checked", proj.keepVariableNames=="true");
+			$("#endpoint-username").val(proj.endpointUsername);
+			$("#endpoint-password").val(proj.endpointPassword);
+		}
+
+		Template.ontologySettings.uri.set(proj.uri);
+		Template.ontologySettings.endpoint.set(proj.endpoint);
+		Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
+		Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
+		Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
+		//Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+		// if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) 
+			// Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+		// else 
+			// Template.ontologySettings.graphs.set([]);
 
 	},
 
-	"click #test-endpoint": function(e) {
+	"click #test-endpoint": function() {
 
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
@@ -845,7 +844,7 @@ Template.ontologySettings.events({
 
 	},
 	// 'click #dss-schema' : function(e) {
-	'change #dss-schema' : function(e) {
+	'change #dss-schema' : function() {
 		var schema = $("#dss-schema").val();
 		var schema_info = Template.ontologySettings.schemas.get().filter(function(o){ return o.display_name == schema});
 		if ( schema_info.length > 0 && schema_info[0].display_name != "") {
@@ -865,7 +864,7 @@ Template.ontologySettings.events({
 	},
 	
 	//adds context menu item
-	'click #add-graph-menu-item': function(e) {
+	'click #add-graph-menu-item': function() {
 		var graphs = Template.ontologySettings.graphs.get();
 		graphs.push({index: graphs.length, Instruction: "", Graph: ""});
 		Template.ontologySettings.graphs.set(graphs);
@@ -881,14 +880,14 @@ Template.ontologySettings.events({
 		var myRows = [];
 		var $headers = $("th");
 		var $rows = $("tbody tr").each(function(index) {
-		  let $cells = $(this).find("td");
-		  myRows[index] = {};
-		  $cells.each(function(cellIndex) {
-			  if($($headers[cellIndex]).html() == "Instruction" || $($headers[cellIndex]).html() == "Graph"){
-				  myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
-			  }
-		  });
-		  myRows[index]["index"] = index;
+			let $cells = $(this).find("td");
+			myRows[index] = {};
+			$cells.each(function(cellIndex) {
+				if($($headers[cellIndex]).html() == "Instruction" || $($headers[cellIndex]).html() == "Graph"){
+					myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
+				}
+			});
+			myRows[index]["index"] = index;
 		});
 		
 		var graphsT = [];
@@ -957,7 +956,7 @@ Template.ontologySettings.helpers({
 	},
 	
 	schemas: function() {
-		return Template.ontologySettings.schemas.get();;
+		return Template.ontologySettings.schemas.get();
 	},
 	
 	useStringLiteralConversionList: function() {
@@ -1133,7 +1132,7 @@ Template.configuratorDiagramOptions.helpers({
 
 Template.renameDiagramForm.events({
 
-	"click #rename-diagram-form-ok": function(e) {
+	"click #rename-diagram-form-ok": function() {
 
 		var form = $("#rename-diagram-form");
 		var diagram_id = form.attr("diagramId");
@@ -1305,15 +1304,15 @@ function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, s
 	return diagram;
 }
 
-function autoHideDefaultPropertyNameForDiagrams(diagram, sort_by){
-	var id = diagram["_id"];
-
+//function autoHideDefaultPropertyNameForDiagrams(diagram, sort_by){
+//	var id = diagram["_id"];
+//
 	//selecting child diagrams
-	Diagrams.find({parentDiagrams: id}, {sort: sort_by}).map(
-		function(child_diagram) {
-			autoHideDefaultPropertyNameForDiagrams(child_diagram, sort_by);
-	});
-}
+//	Diagrams.find({parentDiagrams: id}, {sort: sort_by}).map(
+//		function(child_diagram) {
+//			autoHideDefaultPropertyNameForDiagrams(child_diagram, sort_by);
+//	});
+//}
 
 Template.migrateForm.helpers({
 
@@ -1326,7 +1325,7 @@ Template.migrateForm.helpers({
 
 Template.migrateForm.events({
 
-	'click #migrate-to': function(e, templ) {
+	'click #migrate-to': function() {
 
 		$('#migrate-form').modal("hide");
 		var tool_name = $("#migrate-tools").find(":selected").attr("value");
