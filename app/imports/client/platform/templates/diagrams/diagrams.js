@@ -58,8 +58,8 @@ Template.diagramsTemplate.events({
 Template.diagramsRibbon.events({
 
 //shows dialog window to enter diagram name
-	'click #add': function() {
-		Dialog.destroyTooltip();
+	'click #add': function(e) {
+		Dialog.destroyTooltip(e);
 		$('#add-diagram').modal("show");
 	},
 
