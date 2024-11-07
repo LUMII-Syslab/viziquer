@@ -2418,8 +2418,10 @@ function makeDiagramData() {
 				if ( atr.type == 'data' )
 					restAtrList.push(atr);
 				if ( atr.type == 'out' ) {
-					if ( !(p_list_full[`p_${atr.p_id}`].in_diagram && atr.object_cnt_dgr == atr.object_cnt) )
+					if ( !(p_list_full[`p_${atr.p_id}`].in_diagram && atr.object_cnt_dgr >= atr.object_cnt) )
 						restAtrList.push(atr);
+					if ( p_list_full[`p_${atr.p_id}`].in_diagram && atr.object_cnt_dgr > atr.object_cnt)
+						console.log('******* Aizdomīgs atribūts  ********', classInfo.displayName, atr.p_name)
 				}
 				if ( atr.type == 'in' && !p_list_full[`p_${atr.p_id}`].in_diagram)
 					inPropList.push(atr);

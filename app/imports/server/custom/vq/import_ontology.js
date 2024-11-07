@@ -2371,7 +2371,7 @@ Meteor.methods({
 								projectId: list.projectId,
 								versionId: list.versionId,
 								isLayoutComputationNeededOnLoad: 1,
-                                description:`${ontology.ClassCount} classes, ${ontology.NodesCount} nodes, ${ontology.LinesCount} lines, Merging level - ${ontology.params.diffG}` 
+                                description:`${ontology.ClassCount} classes, ${ontology.NodesCount} nodes, ${ontology.LinesCount + ontology.generalizationCount} (${ontology.LinesCount}a + ${ontology.generalizationCount}g) lines, Merging level - ${ontology.params.diffG}` 
 							};
         
         //if ( !ontology.hasGeneralization ) {
