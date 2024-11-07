@@ -3198,7 +3198,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					}
 					//student = S
 					//objectProperty = CLASS_ALIAS
-					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined'){
+					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined' && (expressionTable[key]['Relation'] == "=" || expressionTable[key]['Relation'] == "!=" || expressionTable[key]['Relation'] == "<>")){
 						if(typeof expressionTable[key]['NumericExpressionL'] !== 'undefined'
 						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression'] !== 'undefined'
 						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
@@ -3257,7 +3257,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					}
 					//S = student
 					//CLASS_ALIAS = objectProperty
-					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined'){
+					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined' && (expressionTable[key]['Relation'] == "=" || expressionTable[key]['Relation'] == "!=" || expressionTable[key]['Relation'] == "<>")){
 						if(typeof expressionTable[key]['NumericExpressionR'] !== 'undefined'
 						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression'] !== 'undefined'
 						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
@@ -3940,7 +3940,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							))
 						{
 						if(typeof symbolTable[classID][right["var"]["name"]] !== "undefined"){
-
+							
 									let tripleTableTemp = tripleTable;
 									tripleTable = [];
 									let VarL = generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);

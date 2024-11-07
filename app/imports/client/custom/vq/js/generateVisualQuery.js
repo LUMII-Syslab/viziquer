@@ -1622,6 +1622,47 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 		}	
 	}
 	
+	// if class is in the parent node list, has attributes that is not (select this) or has link, where subject and object are in the query - it is not parent query.
+	for(let clazz in parentNodeList){
+		if(typeof parentNodeList[clazz] !== "function"){
+			let classes = findByVariableName(classesTable, clazz);
+			
+			for(let clazzQ in classes){
+				let createNewClass = false;
+				if(typeof classes[clazzQ] !== "function"){
+					if(typeof classes[clazzQ].fields !== "undefined"){
+						for(let field = 0; field < classes[clazzQ].fields.length; field++){
+							if(classes[clazzQ].fields[field].exp !== "(select this)") createNewClass = true;
+						}
+					}
+					for(let link = 0; link< linkTable.length; link++){
+					  if(typeof linkTable[link] !== "undefined"){
+						if((linkTable[link]["subject"] == clazzQ && typeof classesTable[linkTable[link]["object"]] !== "undefined") || (linkTable[link]["object"] == clazzQ && typeof classesTable[linkTable[link]["subject"]] !== "undefined")) {
+							createNewClass = true;
+						}
+					  }
+					}
+					
+					if(createNewClass === true){
+						classesTable[clazzQ+counter] = classesTable[clazzQ];
+						delete classesTable[clazzQ];
+						for(let link = 0; link< linkTable.length; link++){
+						  if(typeof linkTable[link] !== "undefined"){
+							if(linkTable[link]["subject"] == clazzQ) {
+								linkTable[link]["subject"] = clazzQ+counter;
+							}
+							if(linkTable[link]["object"] == clazzQ) {
+								linkTable[link]["object"] = clazzQ+counter;
+							}
+						  }
+						}
+						counter++;
+					}
+				}
+			}
+		}
+	}
+		
 	for(let key = 0; key < variables.length; key++){	
 		if(typeof variables[key]=== 'string' && serviceLabelLang != "" && 
 		((variables[key].endsWith("Label") == true && typeof variableList[variables[key].substring(0, variables[key].length-5)] !== "undefined")
@@ -2006,6 +2047,7 @@ function connectEqualClasses(node, nodeList, linkTable){
 				let subject = linkNodes[0];
 				for (let i = 1; i < linkNodes.length; i++) {
 					if(!subject.includes("[ + ]") && !linkNodes[i].includes("[ + ]")){
+						
 						let link = {
 							"linkIdentification":{local_name: "==", display_name: "==", short_name: "=="},
 							"object":subject,
@@ -2649,12 +2691,14 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				let className;
 
 				for(let fil = 0; fil < viziQuerExpr["exprVariables"].length; fil++){
+					
 					let classes = [];
 					// class name as property
 					var conditionExpr = viziQuerExpr["exprVariables"][fil];
 					if(conditionExpr.startsWith("@")) conditionExpr = conditionExpr.substring(1);
 					if(typeof classesTable[conditionExpr] !== 'undefined') {
-						className = viziQuerExpr["exprVariables"][fil];
+						className = conditionExpr;
+						// className = viziQuerExpr["exprVariables"][fil];
 						classes = findByVariableName(classesTable, className);
 					} 
 					// attribute
@@ -2684,6 +2728,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						}
 
 					} 
+					
+					
 					//class name
 					/*else if(typeof classesTable[conditionExpr] !== 'undefined') {
 						className = classesTable[conditionExpr]["variableName"];
@@ -5890,7 +5936,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 									}
 								}
 							 } 
-								
 							for(let clazz in abstractTable["classesTable"]){
 								if(typeof abstractTable["classesTable"][clazz] !== "function"){
 									if(clazz !== subSelectMainClass && (typeof abstractTable["classesTable"][clazz]["aggregations"] !== "undefined" || abstractTable["classesTable"][clazz]["aggregations"] != null)){
@@ -5944,7 +5989,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			}
 		}
 		
-		
+ 
 		// UNIT
 		let subSelectMainClass = null;
 		if(Object.keys(nodeList).length == 0){
@@ -6082,20 +6127,22 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						if(typeof abstractTable["nodeList"][node]["uses"][classNode] !== "function"){
 							for(let classParentNode in nodeList[node]["uses"]){
 								if(typeof nodeList[node]["uses"][classParentNode] !== "function"){
-									let link = {
-										"linkIdentification":{local_name: "==", short_name: "=="},
-										"object":classParentNode,
-										"subject":classNode,
-										"isVisited":false,
-										"linkType":linkType,
-										"isSubQuery":true,
-										"isGlobalSubQuery":false,
-										"counter":orderCounter
+									if(classParentNode !== classNode){
+										let link = {
+											"linkIdentification":{local_name: "==", display_name: "==", short_name: "=="},
+											"object":classParentNode,
+											"subject":classNode,
+											"isVisited":false,
+											"linkType":linkType,
+											"isSubQuery":true,
+											"isGlobalSubQuery":false,
+											"counter":orderCounter
+										}
+										
+										linkTable.push(link);
+										linkTableAdded.push(link);
+										orderCounter++;
 									}
-									
-									linkTable.push(link);
-									linkTableAdded.push(link);
-									orderCounter++;
 								}
 							}
 						}
@@ -6107,6 +6154,41 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			
 			// if no equals nodes found, connect subquery main class, with parent query class, without outgoing links
 			// TO DO
+		}
+		
+		const obj1VariableNames = new Set(Object.values(abstractTable["classesTable"]).map(item => item.variableName));
+
+		// Find common variable names in abstractTable["classesTable"] and classesTable;
+		const commonValues = Object.values(classesTable)
+			.filter(item => obj1VariableNames.has(item.variableName))
+			.map(item => item.variableName);
+
+
+		if(commonValues.length >0){
+			subSelectMainClass = findByVariableName(abstractTable["classesTable"], commonValues[0]);
+			for(let cl in subSelectMainClass){
+				subSelectMainClass = cl;
+				let parentClass = findByVariableName(classesTable, commonValues[0]);
+				for(let pl in parentClass){
+					let link = {
+						"linkIdentification":{local_name: "==", display_name: "==", short_name: "=="},
+						"object":pl,
+						"subject":subSelectMainClass,
+						"isVisited":false,
+						"linkType":"REQUIRED",
+						"isSubQuery":true,
+						"isGlobalSubQuery":false,
+						"counter":orderCounter
+					}
+									
+					abstractTable["linkTable"].push(link);
+					linkTable.push(link);
+					linkTableAdded.push(link);
+					orderCounter++
+					break;
+				}
+				break;
+			}
 		}
 		
 		if(subSelectMainClass === null) subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject", pn);
@@ -6213,7 +6295,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			if(typeof abstractTable["classesTable"][subClass] !== "function"){
 				if(typeof classesTable[subClass] === 'undefined')classesTable[subClass] = abstractTable["classesTable"][subClass];
 				else {
-					
 					if(typeof abstractTable["classesTable"][subClass]["fields"] !== "undefined" && abstractTable["classesTable"][subClass]["fields"].length > 0){
 						var fields = abstractTable["classesTable"][subClass]["fields"];
 						for(let f = 0; f < fields.length; f++){
@@ -8701,7 +8782,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 										if(typeof clazz["conditions"] === 'undefined') clazz["conditions"] = [];
 										if(typeof variableList[attrAlias] !== "undefined" && variableList[attrAlias] <=1){
 											if(!exp.startsWith("?") && typeof variableList[ attrAlias] !== "undefined" && childerenClass["conditions"][condition].indexOf(attrAlias) != -1 && childerenClass["conditions"][condition].indexOf(" != ") === -1) {
-												childerenClass["conditions"][condition] = childerenClass["conditions"][condition].replace(attrAlias, exp);
+												childerenClass["conditions"][condition] = childerenClass["conditions"][condition].replace("@"+attrAlias, exp);
 												createAttribute = false;
 											}
 										}
