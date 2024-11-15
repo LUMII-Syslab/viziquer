@@ -33,7 +33,7 @@ Template.projectsT.events({
 //opens new project dialog (modal)
   'click #createProject' : function(e, templ) {
       e.preventDefault();
-
+	  Template.createProjectModal.loading.set(false);
       $("#add-project").modal("show");
 
       return false;

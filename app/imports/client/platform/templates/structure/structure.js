@@ -169,7 +169,7 @@ Template.structureRibbon.events({
 
 	'click #add': function(e) {
 		e.preventDefault();
-
+		Template.createProjectModal.loading.set(false);
 		$("#add-project").modal("show");
 		return;
 	},
@@ -190,7 +190,6 @@ function setServices (tool_id) {
 	if ( tool_id != 'undefined')
 	{
 		var services = Services.findOne({toolId: tool_id });
-		console.log("Atrada rīkam services", services)
 		if (services && services.schemas)
 		{
 			result.schemas = [];

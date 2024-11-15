@@ -368,7 +368,7 @@
 
 <template name="configuratorDiagramOptions">
     {{#each configuratorDiagrams}}
-        <option id="{{_id}}">{{name}}</option>
+        <option {{selected}} id="{{_id}}" >{{name}}</option>
     {{/each}}
 </template>
 
@@ -539,6 +539,17 @@
     												</select>
     											</div>
     										</div>
+
+                                            <div class="form-group">
+                                                <label for="schema-tag" class="col-sm-3 control-label">Schema Tag</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" id="schema-tags" >
+                                                        {{#each schema_tags}}
+                                                            <option value="{{name}}">{{display_name}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
 
     									    <div class="form-group">
     										    <label for="ontology-endpoint" class="col-sm-3 control-label">SPARQL Endpoint</label>

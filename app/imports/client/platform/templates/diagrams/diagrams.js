@@ -60,6 +60,14 @@ Template.diagramsRibbon.events({
 //shows dialog window to enter diagram name
 	'click #add': function(e) {
 		Dialog.destroyTooltip(e);
+		let dt = [];
+		for (const d of DiagramTypes.find({}, {$sort: {name: 1}})) {
+			let e = {_id:d._id, name:d.name};
+			if ( d.name == 'Query' )
+				e.selected = 'selected';
+			dt.push(e);
+		}
+		Template.configuratorDiagramOptions.configuratorDiagrams.set(dt);
 		$('#add-diagram').modal("show");
 	},
 
@@ -188,6 +196,7 @@ Template.diagramsToolbar.events({
 	'click #upload-project': function(e) {
 		// e.preventDefault();
 		Dialog.destroyTooltip(e);
+		Template.uploadProject.loading.set(false);
 		$('#upload-project-form').modal("show");
 	},
 
@@ -675,6 +684,8 @@ Template.uploadProject.events({
 
 
 Template.ontologySettings.schemas = new ReactiveVar([{name: ""}]);
+Template.ontologySettings.allSchemas = new ReactiveVar();
+Template.ontologySettings.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
 Template.ontologySettings.uri = new ReactiveVar("");
 Template.ontologySettings.endpoint = new ReactiveVar("");
 Template.ontologySettings.queryEngineType = new ReactiveVar("");
@@ -862,7 +873,11 @@ Template.ontologySettings.events({
 			Template.ontologySettings.indirectClassMembershipRole.set("");
 		}
 	},
-	
+	'change #schema-tags' : function(){
+		var tag = $("#schema-tags").val();
+		Template.ontologySettings.schemas.set(getSchemas(tag));
+		//var tag = $("#schema-tags").find(":selected").attr("id");
+	},
 	//adds context menu item
 	'click #add-graph-menu-item': function() {
 		var graphs = Template.ontologySettings.graphs.get();
@@ -905,8 +920,32 @@ Template.ontologySettings.events({
 });
 
 
+function getSchemas(tag) {
+	let schemas = [];
+	const allSchemas = Template.ontologySettings.allSchemas.get();
+
+	for ( const sc of allSchemas ) {
+		if ( tag != 'All' && sc.tags.includes(tag))
+			schemas.push(sc);
+		else if ( tag == 'All' )
+			schemas.push(sc);
+	}
+
+	schemas.unshift({display_name: ""});
+	return schemas;
+}
+
 Template.ontologySettings.rendered = async function() {
-	var rr = await dataShapes.getOntologies();
+	var rr = await dataShapes.getOntologiesAndTags();
+	var tags = rr.tags;
+	tags.unshift({name:"All", display_name: "All schemas"});
+	Template.ontologySettings.schemaTags.set(tags);
+	
+	var schemas = rr.schemas;
+	Template.ontologySettings.allSchemas.set(schemas);
+	schemas = getSchemas('All');
+
+	// var schemas = await dataShapes.getOntologies();
 	var proj = Projects.findOne({_id: Session.get("activeProject")});
 
 	if (proj) {
@@ -920,14 +959,14 @@ Template.ontologySettings.rendered = async function() {
 		// else Template.ontologySettings.graphs.set([]);
 		
 		if (proj.schema != undefined && proj.schema != "") {
-			var selected = rr.filter(function(o){ return o.display_name == proj.schema});
+			var selected = schemas.filter(function(o){ return o.display_name == proj.schema});
 			if ( selected.length > 0 ) {
 				selected[0]["selected"] = "selected";
 			}
 		}
 	}
 
-	Template.ontologySettings.schemas.set(rr);
+	Template.ontologySettings.schemas.set(schemas);
 }
 
 Template.ontologySettings.helpers({
@@ -957,6 +996,10 @@ Template.ontologySettings.helpers({
 	
 	schemas: function() {
 		return Template.ontologySettings.schemas.get();
+	},
+
+	schema_tags:function() {
+		return Template.ontologySettings.schemaTags.get();
 	},
 	
 	useStringLiteralConversionList: function() {
@@ -1123,10 +1166,12 @@ Template.ontologySettings.helpers({
 
 
 //returns diagram types for drop down when user creates a new diagram
+Template.configuratorDiagramOptions.configuratorDiagrams = new ReactiveVar();
 
 Template.configuratorDiagramOptions.helpers({
 	configuratorDiagrams: function() {
-		return DiagramTypes.find({}, {$sort: {name: 1}});
+		return Template.configuratorDiagramOptions.configuratorDiagrams.get();
+		//return DiagramTypes.find({}, {$sort: {name: 1}});
 	},
 });
 
