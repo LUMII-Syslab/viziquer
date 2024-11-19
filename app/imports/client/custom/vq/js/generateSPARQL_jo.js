@@ -415,6 +415,15 @@ Interpreter.customMethods({
     await generateSPARQLtextFromSchema();
   },
   
+  ExecuteSPARQL_form_object_property_DSS: async function() {
+	  let SPARQL_text = await generateSPARQLtextFromSchemaForObjectProperty();
+	  executeSparqlString(SPARQL_text);
+  },
+  
+  GenereteSPARQL_form_object_property_DSS: async function() {
+    await generateSPARQLtextFromSchemaForObjectProperty();
+  },
+  
   Collect_prefixes_from_diagram_for_all_queries: async function() {
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
@@ -444,6 +453,99 @@ Interpreter.customMethods({
   },
 });
 
+async function generateSPARQLtextFromSchemaForObjectProperty(){
+	let prefixTable = [];	
+	let prefixes = await dataShapes.getNamespaces();
+	let usedNames = [];
+	
+	let editor = Interpreter.editor;
+	let elem = _.keys(editor.getSelectedElements());
+	
+	let dirRole = "a";
+		
+	let proj = Projects.findOne({_id: Session.get("activeProject")});
+	if (proj) {
+		if (proj.directClassMembershipRole) {
+			dirRole = proj.directClassMembershipRole;
+		}
+	}
+	
+	let link = new VQ_Element(elem[0]);
+	let startElement = link.getStartElement();
+	let endElement = link.getEndElement();
+	
+	let linkName = link.getCompartmentValue("Name");
+	let startElementName = startElement.getCompartmentValue("Name");
+	let endElementName = endElement.getCompartmentValue("Name");
+	
+	let startClassSPRAQL = "";
+	let endClassSPRAQL = "";
+		
+	let classList = startElement.getCompartmentValue("ClassList");
+	
+	if(classList === null){
+		let startSimpleSchemaBox = await simpleSchemaBox(startElement, 1, dirRole, usedNames,true);
+		prefixTable = { ...prefixTable, ...startSimpleSchemaBox.prefixes};
+		usedNames = { ...usedNames, ...startSimpleSchemaBox.usedNames};
+		startElementName = startSimpleSchemaBox.className;
+		startClassSPRAQL = startSimpleSchemaBox.sparql;
+	} else {
+		let startGroupSchemaBox =  await groupSchemaBox(startElement, 1, dirRole, classList, usedNames, true);
+		prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
+		usedNames = { ...usedNames, ...startGroupSchemaBox.usedNames};
+		startElementName = startGroupSchemaBox.className;
+		startClassSPRAQL = startGroupSchemaBox.sparql;
+		prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
+	}	
+	
+	classList = endElement.getCompartmentValue("ClassList");
+	
+	if(classList === null){
+		let startSimpleSchemaBox = await simpleSchemaBox(endElement, 1, dirRole, usedNames, true);
+		prefixTable = { ...prefixTable, ...startSimpleSchemaBox.prefixes};
+		usedNames = { ...usedNames, ...startSimpleSchemaBox.usedNames};
+		endElementName = startSimpleSchemaBox.className;
+		endClassSPRAQL = startSimpleSchemaBox.sparql;
+	} else {
+		let startGroupSchemaBox =  await groupSchemaBox(endElement, 1, dirRole, classList, usedNames, true);
+		prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
+		usedNames = { ...usedNames, ...startGroupSchemaBox.usedNames};
+		endElementName = startGroupSchemaBox.className;
+		endClassSPRAQL = startGroupSchemaBox.sparql;
+	}	
+	
+	const regex = /(?:\b\w+\b)?:\b\w+\b/g;
+
+	// Find all matches in the linkName string
+	const objectProperties = linkName.match(regex);
+
+	let objectPropertiesUnion = [];
+	for(let prop = 0; prop < objectProperties.length; prop++){	
+		let params = {name: objectProperties[prop]};
+		let propertyResolved = await dataShapes.resolvePropertyByName(params);
+		objectPropertiesUnion.push("  ?" + startElementName + " " + propertyResolved.name + " ?"+endElementName+". ");
+		prefixTable[propertyResolved.data[0].prefix] = "";
+	}
+	
+	let prefixText = "";
+	for(let p = 0; p < prefixes.length; p++){
+		if(typeof prefixTable[prefixes[p]["name"]] !== "undefined"){
+			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
+		}
+	}
+	
+	// Check if the array length is more than 1
+	let result = objectPropertiesUnion.length > 1 
+    ? objectPropertiesUnion.map(str => `{${str}}`).join("\nUNION\n")  // Wrap with "{" and "}" and join with "\nUNION\n"
+    : objectPropertiesUnion[0];  // If only one element, leave it as is
+	
+	result = prefixText + "\nSELECT * WHERE{\n" + result + "\n\n" + startClassSPRAQL + "\n" + endClassSPRAQL + "\n}";
+	setText_In_SPARQL_Editor(result);
+
+	return result;
+}
+
+
 async function generateSPARQLtextFromSchema(){
 	let n = 7;
 	
@@ -468,16 +570,33 @@ async function generateSPARQLtextFromSchema(){
 }
 
 function getClassListFromString(classList){
-	const stringValues = classList.match(/^[^\(]+/gm).map(str => str.trim());
+	// Regular expression to trim the optional beginning and ending parts
+	const regex = /^(?:\(\w+\)\s*)?(.*?)(?:\s*\(\d+\))?$/gm;
+	// Extract only the "prefix:name", ":name", or "name" part
+	const stringValues = classList.match(regex).map(line => line.replace(regex, '$1')).filter(Boolean);
+	// const stringValues = classList.match(/^[^\(]+/gm).map(str => str.trim());
+	
 	return stringValues;
 }
 
-async function groupSchemaBox(selected_elem, n, dirRole, classListString){
+async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNames, onlyWhere){
 	let classList = getClassListFromString(classListString);
-	let sparqlQueryText = "SELECT * WHERE{\n";
+	let sparqlQueryText = "";
+	if(!onlyWhere) sparqlQueryText = "SELECT * WHERE{\n";
 	let classUnionTable = [];
 	let propertyTable = [];
 	let className = "exp";
+	// Regular expression to match and remove the optional parts at the beginning and end
+	className = selected_elem.getName().replace(/^(?:\(\w+\)\s*)?(?:\w*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
+										.replace(/\s+et al\..*$/, '');               // Remove " et al. string" at the end
+	
+	if(usedNames !== null && typeof usedNames[className] !== "undefined") {
+		className = className + "_" + usedNames[className];
+		usedNames[className] = usedNames[className]+1;
+	} else {
+		usedNames[className] = 1;
+	}
+	
 	let prefixTable = [];
 	let prefixes = await dataShapes.getNamespaces();
 	
@@ -519,11 +638,20 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString){
 	const firstNResults = Object.fromEntries(firstNEntries);
 	
 	for(let p in firstNResults){
-		sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + p + " ?" + p.substring(p.indexOf(":")+1) + " .}\n";
+		let dataPropName = p.substring(p.indexOf(":")+1);
+		if(usedNames !== null && typeof usedNames[dataPropName] !== "undefined") {
+			dataPropName = dataPropName + "_" + usedNames[dataPropName];
+			usedNames[dataPropName] = usedNames[dataPropName]+1;
+		} else {
+			usedNames[dataPropName] = 1;
+		}
+		
+		sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + p + " ?" + dataPropName + " .}\n";
 		prefixTable[p.substring(0, p.indexOf(":"))] = "";
+		
 	}
 	
-	sparqlQueryText = sparqlQueryText + "}";
+	if(!onlyWhere)sparqlQueryText = sparqlQueryText + "}";
 	
 	let prefixText = "";
 	for(let p = 0; p < prefixes.length; p++){
@@ -531,15 +659,17 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString){
 			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
 		}
 	}
-	sparqlQueryText = prefixText + sparqlQueryText;
+	if(!onlyWhere)sparqlQueryText = prefixText + sparqlQueryText;
 	
-	setText_In_SPARQL_Editor(sparqlQueryText);
+	if(!onlyWhere)setText_In_SPARQL_Editor(sparqlQueryText);
+	if(onlyWhere) return {sparql:sparqlQueryText,  prefixes:prefixTable, className:className};
 	return sparqlQueryText;
 }
 
 
-async function simpleSchemaBox(selected_elem, n, dirRole){
+async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 	let name = selected_elem.getCompartmentValue("Name");
+	if(name.startsWith("(")) name = name.substring(name.indexOf("(")+1);
 	let nameIndex = name.lastIndexOf(" (");
 	if(nameIndex === -1) nameIndex = name.length;
 	name = name.substring(0, nameIndex);
@@ -558,10 +688,17 @@ async function simpleSchemaBox(selected_elem, n, dirRole){
 	if(classifProp["name"] !== dirRole && classifProp["name"] !== "rdf:type" && dirRole !== "a") {
 		dirRole = classifProp["name"];
 	}
-		
-	let sparqlQueryText = "SELECT * WHERE{\n";
+	let className = "";
+	let sparqlQueryText = "";
+	if(!onlyWhere) sparqlQueryText = "SELECT * WHERE{\n";
 	if(cls.complete === true){
-		let className = cls["data"][0]["local_name"];
+		className = cls["data"][0]["local_name"];
+		if(usedNames !== null && typeof usedNames[className] !== "undefined") {
+			className = className + "_" + usedNames[className];
+			usedNames[className] = usedNames[className]+1;
+		} else {
+			usedNames[className] = 1;
+		}
 		
 		let classPrefix = cls["data"][0]["prefix"];
 		if(classPrefix === null || classPrefix === "null") classPrefix = "";
@@ -572,12 +709,19 @@ async function simpleSchemaBox(selected_elem, n, dirRole){
 		for(let prop = 0; prop < props.data.length; prop++){
 			let dataProperty = props.data[prop];
 			let dataProp = dataProperty.prefix +":"+dataProperty.local_name;
+			let dataPropName = dataProperty.local_name;
+			if(usedNames !== null && typeof usedNames[dataPropName] !== "undefined") {
+				dataPropName = dataPropName + "_" + usedNames[dataPropName];
+				usedNames[dataPropName] = usedNames[dataPropName]+1;
+			} else {
+				usedNames[dataPropName] = 1;
+			}
 	
-			sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + dataProp + " ?" +dataProperty.local_name+ " .}\n";
+			sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + dataProp + " ?" +dataPropName+ " .}\n";
 			prefixTable[dataProperty.prefix] = "";
 		}
 	}
-	sparqlQueryText = sparqlQueryText + "}";
+	if(!onlyWhere) sparqlQueryText = sparqlQueryText + "}";
 	
 	let prefixText = "";
 	for(let p = 0; p < prefixes.length; p++){
@@ -585,9 +729,10 @@ async function simpleSchemaBox(selected_elem, n, dirRole){
 			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
 		}
 	}
-	sparqlQueryText = prefixText + sparqlQueryText;
+	if(!onlyWhere) sparqlQueryText = prefixText + sparqlQueryText;
 	
-	setText_In_SPARQL_Editor(sparqlQueryText);
+	if(!onlyWhere) setText_In_SPARQL_Editor(sparqlQueryText);
+	if(onlyWhere) return {sparql:sparqlQueryText, prefixes:prefixTable, className:className, usedNames:usedNames};
 	return sparqlQueryText;
 }
 

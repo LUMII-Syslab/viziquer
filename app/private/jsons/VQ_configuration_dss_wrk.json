@@ -2610,6 +2610,7 @@
                   "inputType": "text",
                   "templateName": "classConditionsField"
                 },
+				"prefix": "\uf0b0 ",
                 "styles": [
                   {
                     "name": "Default",
@@ -2622,7 +2623,7 @@
                       "visible": true,
                       "fontSize": 17,
                       "fontStyle": "normal",
-                      "fontFamily": "Calibri",
+                      "fontFamily": "FontAwesome",
                       "fontVariant": "normal",
                       "strokeWidth": "1"
                     }
@@ -2657,7 +2658,7 @@
                     "_id": "df9ba48f1ab1f830222cf2cc",
                     "name": "Conditions",
                     "extensionPoints": [],
-                    "prefix": null,
+                    "prefix": "\uf0b0 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -7011,6 +7012,14 @@
               {
                 "item": "Delete",
                 "procedure": "Delete"
+              },
+			  {
+                "item": "Generate SPARQL",
+                "procedure": "GenereteSPARQL_form_object_property_DSS"
+              },
+              {
+                "item": "Execute SPARQL",
+                "procedure": "ExecuteSPARQL_form_object_property_DSS"
               }
             ],
             "readModeContextMenu": [],

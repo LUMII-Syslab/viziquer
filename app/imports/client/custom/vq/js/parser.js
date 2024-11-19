@@ -716,8 +716,11 @@ function setVariableName(varName, alias, variableData, generateNewName, useAlias
 			return alias;
 		} else {
 			
-			if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId] !== "undefined" ){
-				//is simbol table has variable, wiht kind ALIAS and ather class context
+			if(variableData["kind"] == "INDIVIDUAL" && variableData["type"] !== null){
+				return variableData["type"]["prefix"] +":"+variableData["type"]["local_name"];
+			}
+			else if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId] !== "undefined" ){
+				//is simbol table has variable, wiht kind ALIAS and other class context
 				if(typeof classSimbolTable[varFullName] !== "undefined"){
 					for(let st = 0; st < classSimbolTable[varFullName].length; st++){
 						if(typeof classSimbolTable[varFullName][st] === "object"){
@@ -2638,6 +2641,10 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					if(variableToUse == null && expressionTable[key]["ref"] == null) {
 						
 						variable = setVariableName(varName, alias, expressionTable[key]);
+
+						if(expressionTable[key]["kind"] === "INDIVIDUAL"){
+							generateTriples = false;
+						}
 					}
 					else variable = variableToUse;
 					
@@ -2650,8 +2657,12 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						SPARQLstring = SPARQLstring + variable;		
 					} else {
 						variable = variable.replace("/", "_")
-						SPARQLstring = SPARQLstring + "?" + variable;
-						variableTable.push("?" + variable);	
+						if(expressionTable[key]["kind"] !== "INDIVIDUAL"){
+							SPARQLstring = SPARQLstring + "?" + variable;
+							variableTable.push("?" + variable);	
+						} else {
+							SPARQLstring = SPARQLstring + variable;
+						}
 					}			
 					
 					if(generateTriples == true && expressionTable[key]['type'] != null && className != "[ ]" && className != "[ + ]") {

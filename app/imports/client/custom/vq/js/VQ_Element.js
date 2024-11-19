@@ -1463,6 +1463,8 @@ VQ_Element.prototype = {
   addCompartmentSubCompartments: function(compartment_name, subcompartment_value_list) {
     var ct = CompartmentTypes.findOne({name: compartment_name, elementTypeId: this.obj["elementTypeId"]});
 		if (ct) {
+		let prefix = ct["prefix"] || "";
+		let sufix = ct["sufix"] || "";
       var c_to_create = {
                 compartment: {
                   projectId: Session.get("activeProject"),
@@ -1488,7 +1490,8 @@ VQ_Element.prototype = {
       c_to_create["compartment"]["subCompartments"][compartment_name] = {};
       c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name] = {};
 
-      if (ct.inputType.type == "custom" && ct.inputType.templateName == "multiField") {
+      if (ct.inputType.type == "custom") {
+      // if (ct.inputType.type == "custom" && ct.inputType.templateName == "multiField") {
            var ct_comparts_indexes = Compartments.find({compartmentTypeId: ct._id, elementId: this._id()}, {sort: {index: 1}})
                                     .map(function(c) {return c.index; });
           // search for hole in the array of indexes
@@ -1535,6 +1538,7 @@ VQ_Element.prototype = {
       value_array.pop();
       c_to_create["compartment"]["value"] = value_array.join("");
       c_to_create["compartment"]["input"] = c_to_create["compartment"]["value"];
+	  c_to_create["compartment"]["value"] = prefix + value_array.join("") + sufix;
       Utilities.callMeteorMethod("insertCompartment", c_to_create);
     };
   },

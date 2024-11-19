@@ -1042,7 +1042,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	}
 	
 	 for (const c of obj_class.conditions) {
-		await parseExpObject(c,obj_class.identification);
+		await parseExpObject(c,obj_class.identification, "condition");
 		if(obj_class.isBlankNode == true ){
 			if(c.exp.indexOf("=") === -1 && c.exp.indexOf("->") === -1){
 				obj_class.isBlankNode = false;
@@ -1769,13 +1769,10 @@ async function resolveTypeFromSchemaForClass(id, schemaName) {
 async function resolveTypeFromSchemaForIndividual(id, schemaName) {
 					if(schemaName.toLowerCase() == "wikidata" && ((id.indexOf("[") > -1 && id.endsWith("]"))) ){
 						id = "wd:"+id;
-						// var cls = await dataShapes.resolveIndividualByName({name: id})
-						// if(schemaName !== "" && schemaName !== null) dataShapes.schema.schema = schemaName;
-						var cls = await dataShapes.getIndividualName(id,true)
-						if(cls != null && cls != ""){
-							return {local_name: cls.substring(3), prefix: "wd"};
-						}
-		
+					};
+					var cls = await dataShapes.getIndividualName(id,true)
+					if(cls != null && cls != ""){
+						return {local_name: cls.substring(3), prefix: "wd"};
 					}
     				return null;
 };
@@ -1909,6 +1906,8 @@ async function resolveKind(id, exprType, context, symbol_table, schemaName, isSi
         									 k="CLASS_NAME";
         							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
         									 k="PROPERTY_NAME";
+        							  } else if (exprType === "condition" && await resolveTypeFromSchemaForIndividual(id, schemaName)) {
+        									 k="INDIVIDUAL";
         							  }
 									}
 								}

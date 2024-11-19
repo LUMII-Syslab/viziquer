@@ -97,6 +97,9 @@ Template.AddCondition.events({
 					else allowMultiplication = "false";
 					
 					// fullText = "\uD83D\uDD05 " + fullText;
+					let prefix = compart_type["prefix"] || "";
+					let sufix = compart_type["sufix"] || "";
+					fullText = prefix + fullText + sufix;
 					compart.subCompartments.Conditions.Conditions["Allow result multiplication"].input = allowMultiplication;
 					compart.subCompartments.Conditions.Conditions["Allow result multiplication"].value = allowMultiplicationInput;
 					compart.subCompartments.Conditions.Conditions.Expression.value = condition;
