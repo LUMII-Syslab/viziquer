@@ -1234,10 +1234,11 @@ function getPathFullGrammar(expressionTable){
 				if(expressionTable[key]["var"]["name"].indexOf("/") !== -1) pathPart = "<" + expressionTable[key]["var"]["type"]["iri"] +">";
 				path = path + pathPart;
 				// console.log("p3", pathPart, expressionTable[key])
-
+				
 				let namespace = expressionTable[key]["var"]["type"]["Namespace"]
 				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 				if(typeof namespace === 'undefined') namespace = knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])];
+				if(typeof namespace === 'undefined') namespace = knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"];
 				if(typeof namespace !== 'undefined') prTable[getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"]+">"
 				else {
 					mes.push({
