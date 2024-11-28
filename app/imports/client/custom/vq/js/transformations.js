@@ -1511,8 +1511,8 @@ function setSchemaNamesForQuery(abstractQueryTable, schemaNamesTable, parentSche
 }
 
 async function getSchemaNameForElement(elem_id){
-	let selected_elem_id = Session.get("activeElement");
-	if(typeof elem_id !== "undefined" && elem_id !== null) selected_elem_id = elem_id;
+	let selected_elem_id = elem_id;
+	if(typeof selected_elem_id === "undefined" || selected_elem_id === null) selected_elem_id = Session.get("activeElement");
 	let tempSymbolTable = await generateSymbolTable(true);
 	let sc = await dataShapes.schema.schema;
 	let schemaNames = setSchemaNamesForQuery(tempSymbolTable["abstractQueryTable"], [], sc);
