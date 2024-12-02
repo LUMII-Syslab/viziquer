@@ -1,7 +1,8 @@
 import { Projects, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 import { Services } from '/imports/db/custom/vq/collections.js'
 import { faas } from '/imports/client/custom/vq/js/faas.js'
-import { VQ_Element } from './VQ_Element';
+import { VQ_Element } from './VQ_Element'
+import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
 
 // ***********************************************************************************
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
@@ -118,7 +119,7 @@ function isIndividual(individual) {
 		return true;
 }
 
-const getPListI = (vq_obj) => {
+const getPListI = async (vq_obj) => {
 	let pListI = {};
 	const link_list =  vq_obj.getLinks();
 	const link_list_filtered = link_list.map( function(l) { const type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
@@ -132,8 +133,11 @@ const getPListI = (vq_obj) => {
 				link.type = 'in';
 		}
 	})
-	_.each(link_list_filtered, function(link) {
-		if (link.typeO === 'out' && link.name !== null && link.name !== undefined && link.name !== '++' ) {
+	const el_schema = await getSchemaNameForElement(vq_obj._id());
+	//_.each(link_list_filtered, async function(link) {
+	for (const link of link_list_filtered) {
+		const l_schema = await getSchemaNameForElement(link.element);
+		if (link.typeO === 'out' && link.name !== null && link.name !== undefined && link.name !== '++' && el_schema == l_schema ) {
 			const eE = new VQ_Element(link.eE);
 			const individual =  eE.getInstanceAlias();
 			if (isIndividual(individual)) {
@@ -142,7 +146,7 @@ const getPListI = (vq_obj) => {
 				pListI.uriIndividual = dataShapes.getIndividualName(individual);
 			}
 		}
-		if (link.typeO === 'in' && link.name !== null && link.name !== undefined && link.name !== '++' ) {
+		if (link.typeO === 'in' && link.name !== null && link.name !== undefined && link.name !== '++' && el_schema == l_schema ) {
 			const sE = new VQ_Element(link.sE);
 			const individual =  sE.getInstanceAlias();
 			if (isIndividual(individual)) {
@@ -151,11 +155,12 @@ const getPListI = (vq_obj) => {
 				pListI.uriIndividual = dataShapes.getIndividualName(individual);
 			}
 		}
-	});
+	}
+	//});
 	return pListI;	
 }
 
-const getPList = (vq_obj) => {
+const getPList = async (vq_obj) => {
 	let pList = {in: [], out: []};
 	const field_list = vq_obj.getFields().filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
 	_.each(field_list, function(link) {
@@ -180,8 +185,12 @@ const getPList = (vq_obj) => {
 		else
 			link.element = link.eE
 	})
-	_.each(link_list_filtered, function(link) {
-		if (link.type === 'in' && link.name !== null && link.name !== undefined ) {
+	const el_schema = await getSchemaNameForElement(vq_obj._id());
+
+	//_.each(link_list_filtered, function(link) {
+	for (const link of link_list_filtered) {
+		const l_schema = await getSchemaNameForElement(link.element);
+		if (link.type === 'in' && link.name !== null && link.name !== undefined  && link.name !== '++' && el_schema == l_schema ) { // Šeit nebija tas ++
 			if ( link.t === 'REQUIRED' ) {
 				pList.in.push(link);
 			}
@@ -194,7 +203,7 @@ const getPList = (vq_obj) => {
 			}
 		}
 
-		if (link.type === 'out' && link.name !== null && link.name !== undefined ) {
+		if (link.type === 'out' && link.name !== null && link.name !== undefined  && link.name !== '++' && el_schema == l_schema ) {
 			if ( link.t === 'REQUIRED' ) {
 				pList.out.push(link);
 			}
@@ -228,22 +237,24 @@ const getPList = (vq_obj) => {
 					link.uriIndividual = dataShapes.getIndividualName(individual);
 			}
 		})
-	});
+	}
+	//});
+
 	return pList;
 }
 
-const findElementDataForClass = (vq_obj) => {
+const findElementDataForClass = async (vq_obj) => {
 	let params = {}
 	const individual =  vq_obj.getInstanceAlias();
 	if (isIndividual(individual)) 
 		params.uriIndividual = dataShapes.getIndividualName(individual);
 
-	const pList = getPList(vq_obj);
+	const pList = await getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	return params;
 }
 
-const findElementDataForProperty = (vq_obj) => {
+const findElementDataForProperty = async (vq_obj) => {
 	let params = {};
 	const individual =  vq_obj.getInstanceAlias();
 	const class_name = vq_obj.getName();
@@ -254,18 +265,17 @@ const findElementDataForProperty = (vq_obj) => {
 
 	let pList = {in: [], out: []};	
 	//if (dataShapes.schema.use_pp_rels) 
-	pList = getPList(vq_obj);
+	pList = await getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
 	//if (dataShapes.schema.schemaType !== 'wikidata') { // Ir uztaisīts, bet strādā drusku palēni
 	//	const pListI = getPListI(vq_obj);
 	//	if ( pListI.type != undefined) params.pListI = pListI;
 	// }
-	
 	return params;
 }
 
-const findElementDataForIndividual = (vq_obj) => {
+const findElementDataForIndividual = async (vq_obj) => {
 	let params = {};
 	const class_name = vq_obj.getName();
 	if (class_name !== null && class_name !== undefined)
@@ -274,11 +284,11 @@ const findElementDataForIndividual = (vq_obj) => {
 	if (vq_obj.isIndirectClassMembership())
 		params.isIndirectClassMembership = true;
 
-	const pList = getPList(vq_obj);
+	const pList = await getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
 	//if (dataShapes.schema.schemaType !== 'wikidata') {
-		const pListI = getPListI(vq_obj);
+		const pListI = await getPListI(vq_obj);
 		if ( pListI.type != undefined) params.pListI = pListI;
 	// }
 	
@@ -688,7 +698,7 @@ const dataShapes = {
 		}		
 		let allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined ) {
-			allParams.element = findElementDataForClass(vq_obj);
+			allParams.element = await findElementDataForClass(vq_obj);
 			//allParams.main.orderByPrefix = `case when v.is_local = true then 0 else 1 end,`;
 		}
 
@@ -796,9 +806,9 @@ const dataShapes = {
 		}
 		let allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined )
-			allParams.element = findElementDataForProperty(vq_obj);
+			allParams.element = await findElementDataForProperty(vq_obj);
 		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
-			allParams.elementOE = findElementDataForProperty(vq_obj_2);
+			allParams.elementOE = await findElementDataForProperty(vq_obj_2);
 		return await this.getPropertiesF(allParams); //this.callServerFunction("getProperties", allParams);
 	},
 	getPropertiesFull : async function(params = {}) {
@@ -879,7 +889,7 @@ const dataShapes = {
 
 		let allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined ) {
-			allParams.element = findElementDataForIndividual(vq_obj);
+			allParams.element = await findElementDataForIndividual(vq_obj);
 		}
 
 		if (this.schema.schemaType === 'wikidata' && faasEnabled == true) {
