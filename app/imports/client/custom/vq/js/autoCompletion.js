@@ -667,7 +667,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 			// dataShapes.schema.schemaType = schemaNameFromABS;
 		}
 		
-		var inst = await dataShapes.getClassIndividuals(params, act_el);
+		var inst = await dataShapes.getClassIndividuals(params, act_el.getName());
 		//if (dataShapes.schema.schemaType == 'wikidata' && fullText != "")
 		//	inst = await dataShapes.getIndividualsWD(fullText); 
 		//else
