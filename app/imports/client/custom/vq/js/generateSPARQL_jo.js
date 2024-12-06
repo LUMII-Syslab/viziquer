@@ -563,15 +563,15 @@ async function generateSPARQLtextFromSchema(){
 	let classList = selected_elem.getCompartmentValue("ClassList");
 	
 	if(classList === null){
-		return simpleSchemaBox(selected_elem, n, dirRole);
+		return simpleSchemaBox(selected_elem, n, dirRole, []);
 	} else {
-		return groupSchemaBox(selected_elem, n, dirRole, classList);
+		return groupSchemaBox(selected_elem, n, dirRole, classList, []);
 	}	
 }
 
 function getClassListFromString(classList){
 	// Regular expression to trim the optional beginning and ending parts
-	const regex = /^(?:\(\w+\)\s*)?(.*?)(?:\s*\(\d+\))?$/gm;
+	const regex = /^(?:\(\w+\)\s*)?(.*?)(?:\s*\((\d|\.)+[A-Z]\))?$/gm;
 	// Extract only the "prefix:name", ":name", or "name" part
 	const stringValues = classList.match(regex).map(line => line.replace(regex, '$1')).filter(Boolean);
 	// const stringValues = classList.match(/^[^\(]+/gm).map(str => str.trim());
@@ -589,8 +589,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	// Regular expression to match and remove the optional parts at the beginning and end
 	className = selected_elem.getName().replace(/^(?:\(\w+\)\s*)?(?:\w*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
 										.replace(/\s+et al\..*$/, '');               // Remove " et al. string" at the end
-	
-	if(usedNames !== null && typeof usedNames[className] !== "undefined") {
+	if(typeof usedNames !== "undefined" && usedNames !== null && typeof usedNames[className] !== "undefined") {
 		className = className + "_" + usedNames[className];
 		usedNames[className] = usedNames[className]+1;
 	} else {
