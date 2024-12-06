@@ -776,6 +776,7 @@ const dataShapes = {
 			params.main.limit = this.schema.limit;
 		
 		params.main.limit = params.main.limit + 1;
+		console.log("*************** getProperties **********************", params)
 		let rr = await this.callServerFunction("getProperties", params);
 		if ( rr.data.length == params.main.limit ) {
 			rr.data.pop();

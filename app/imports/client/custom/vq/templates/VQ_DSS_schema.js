@@ -239,7 +239,8 @@ async function getClassesAndProperties() {
 		if ( fullNs != undefined && ns != 'null' && ns != dataShapes.schema.local_ns )
 			namespacesL.push({name:`PREFIX ${ns}: <${fullNs.value}>`,cnt:namespaces[ns]});
 
-		namespacesL = namespacesL.sort((a, b) => { return b.cnt - a.cnt; })
+		namespacesL = namespacesL.sort((a, b) => { return b.name > a.name; })
+		//namespacesL = namespacesL.sort((a, b) => { return b.cnt - a.cnt; })
 	}
 	namespacesL.unshift({name:`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`,cnt:namespaces[dataShapes.schema.local_ns]});
 
@@ -944,8 +945,10 @@ function getDiffs() {
 	if ( diffS > 0 ) {
 		if ( rezFull.diffMax < 50 && rezFull.diffMax > 25 )
 			diffS = 25;
-		else if ( rezFull.diffMax < 25 )
+		else if ( rezFull.diffMax <= 25 && rezFull.diffMax > 5)
 			diffS = 5;
+		else if ( rezFull.diffMax <= 5 )
+			diffS = rezFull.diffMax - 1;
 	}
 	return {diffG:$("#diffG").val(), diffS:diffS};
 }
@@ -1088,7 +1091,8 @@ function getDifferenceNew(classInfo1, classInfo2) {
 	if ( params.newDifs && classInfo1.id != classInfo2.id ) 
 		rezFull.diffMax = Math.max(rezFull.diffMax , s);
 
-	return {s1_dal:Math.round(diff1*10)/10, s2_dal:Math.round(diff2*10)/10, s1_s:Math.round(s*10)/10, s1_d:Math.round(d*10)/10, s2_dw:Math.round(dw*10)/10}; 
+	//return {s1_dal:Math.round(diff1*10)/10, s2_dal:Math.round(diff2*10)/10, s1_s:Math.round(s*10)/10, s1_d:Math.round(d*10)/10, s2_dw:Math.round(dw*10)/10}; 
+	return {s1_dal:Math.round(diff1*10)/10, s2_dal:Math.round(diff2*10)/10, s1_s:s, s1_d:Math.round(d*10)/10, s2_dw:dw}; 
 }	
 
 // Funkcija klašu attāluma izrēķināšanai, ļoti svarīga funkcija ******
@@ -1177,10 +1181,12 @@ function roundCount(cnt) {
 	} 
 	else {
 		cnt = Number(cnt);
-	if ( cnt < 10000)
-			return cnt;
-		else
-			return cnt.toPrecision(2).replace("+", "");				
+		const formatter = Intl.NumberFormat('en', { notation: 'compact' });
+		return formatter.format(cnt);
+	//if ( cnt < 10000)
+	//		return cnt;
+	//	else
+	//		return cnt.toPrecision(2).replace("+", "");				
 	}
 }
 
