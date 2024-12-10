@@ -738,8 +738,22 @@ function setVariableName(varName, alias, variableData, generateNewName, useAlias
 				//if variableNamesTable has property with given field id, use it
 				return variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId]["name"];
 			} else {
+					
+				let conditionInDifferentContext = false;
+				if(parseType === "condition" &&  typeof classSimbolTable !== "undefined" && typeof classSimbolTable[varFullName] !== "undefined"){
+					for(let st = 0; st < classSimbolTable[varFullName].length; st++){
+						if(typeof classSimbolTable[varFullName][st] === "object"){
+							if(classSimbolTable[varFullName][st]["context"] !== classID){
+								conditionInDifferentContext = true;
+							} else {
+								conditionInDifferentContext = false;
+								break;
+							}
+						}
+					}
+				}
 				// if variable is not in a simbol table, make new name 
-				if(variableData["kind"] == "PROPERTY_NAME" && typeof classSimbolTable[varFullName] === "undefined"){
+				if(variableData["kind"] == "PROPERTY_NAME" && (typeof classSimbolTable[varFullName] === "undefined" || conditionInDifferentContext === true)){
 					
 					//variableNamesCounter has no name
 					if(varName.indexOf("[") !== -1 && varName.indexOf("]") !== -1){
