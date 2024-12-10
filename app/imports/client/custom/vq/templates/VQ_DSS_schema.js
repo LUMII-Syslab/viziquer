@@ -1181,7 +1181,7 @@ function roundCount(cnt) {
 	} 
 	else {
 		cnt = Number(cnt);
-		const formatter = Intl.NumberFormat('en', { notation: 'compact' });
+		const formatter = Intl.NumberFormat('en', { notation: 'compact', maximumSignificantDigits: 3 });
 		return formatter.format(cnt);
 	//if ( cnt < 10000)
 	//		return cnt;
