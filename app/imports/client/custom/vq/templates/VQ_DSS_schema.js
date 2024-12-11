@@ -239,11 +239,11 @@ async function getClassesAndProperties() {
 		if ( fullNs != undefined && ns != 'null' && ns != dataShapes.schema.local_ns )
 			namespacesL.push({name:`PREFIX ${ns}: <${fullNs.value}>`,cnt:namespaces[ns]});
 
-		namespacesL = namespacesL.sort((a, b) => { return b.name > a.name; })
+		namespacesL = namespacesL.sort((a, b) => { return a.name.localeCompare(b.name); }); 
 		//namespacesL = namespacesL.sort((a, b) => { return b.cnt - a.cnt; })
 	}
-	namespacesL.unshift({name:`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`,cnt:namespaces[dataShapes.schema.local_ns]});
 
+	namespacesL.unshift({name:`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`,cnt:namespaces[dataShapes.schema.local_ns]});
 	return [classList, propList, namespacesL];
 }
 
@@ -1682,7 +1682,7 @@ async function getBasicClasses() {
 				const from_id = `c_${c_1.class_id}`;
 				if ( c_1.object_cnt > 0 ) { 
 					let cl_list = c_to.map( c => c.class_id);
-					const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id }); 
+					const cpc_i = cpc_info.filter(function(i){ return i.class_id == c_1.id });  // ??? { return i.cp_rel_id == c_1.id }); 
 					if ( !compView && has_cpc && cpc_i.length > 0 )
 						cl_list = cpc_i.map( c => c.other_class_id);
 					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt), 
@@ -1700,7 +1700,7 @@ async function getBasicClasses() {
 			for (const c_2 of c_to) {
 				const to_id = `c_${c_2.class_id}`;
 				let cl_list = c_from.map( c => c.class_id);
-				const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_2.id }); 
+				const cpc_i = cpc_info.filter(function(i){ return i.other_class_id == c_2.id });  //{ return i.cp_rel_id == c_2.id });
 				if ( !compView && has_cpc && cpc_i.length > 0 )
 					cl_list = cpc_i.map( c => c.other_class_id);
 				const p_info = {p_name:pp.p_name, p_id:pp.id, type:'in', cnt:Number(c_2.cnt), cnt2:Number(c_2.cnt), object_cnt:Number(c_2.object_cnt), 
@@ -1734,7 +1734,9 @@ async function getBasicClasses() {
 	for (const p of Object.keys(p_list_full)) {	
 		const pp = p_list_full[p];
 		const c_from = pp.c_from;
-		const c_to = pp.c_to;
+		let c_to = pp.c_to;
+		if (has_cpc)
+			c_to = pp.c_to_full; 
 		addProperty(pp, c_from, c_to);
 		if ( !unused_props.includes(pp.iri) )
 			addPropertyFull(pp, pp.c_from_full, pp.c_to_full);
