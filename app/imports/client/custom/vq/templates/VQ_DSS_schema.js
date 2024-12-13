@@ -1365,6 +1365,7 @@ function makeClassGroup(list, group_type, sum = true ) { // ekv = false) {
 		else
 			cInfo.G_id.push(g_id);
 	}
+	let hasGen = false;
 	let g_id = '';
 	if ( list.length > 1 ) {
 		let atr_list = [];
@@ -1385,6 +1386,8 @@ function makeClassGroup(list, group_type, sum = true ) { // ekv = false) {
 		let i_in_props = 0;
 		for (let classInfo of list ) {
 			classInfo.used = false;
+			if (classInfo.hasGen) 
+				hasGen = true;
 			i_cnt = i_cnt + classInfo.cnt;
 			i_in_props = i_in_props + classInfo.in_props;
 			if ( classInfo.isGroup ) {
@@ -1440,7 +1443,7 @@ function makeClassGroup(list, group_type, sum = true ) { // ekv = false) {
 		//	fullNameD = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} G${Gnum} (${roundCount(cnt)})`;
 		//	displayName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName}`;
 		//}
-		rezFull.classes[g_id] = { id:g_id, super_classes:[], used:true, hasGen:false, type:class_type, group_type:group_type,  
+		rezFull.classes[g_id] = { id:g_id, super_classes:[], used:true, hasGen:hasGen, type:class_type, group_type:group_type,  
 			displayName:displayName, fullName:fullName, fullNameD:fullNameD, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
 			sub_classes_group_string:c_list_full.map(c => c.fullNameD).sort().join('\n'),
 			sub_classes_list:c_list_full.map(c => c.fullNameD).sort(), sub_classes:[],				
