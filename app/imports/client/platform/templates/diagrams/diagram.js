@@ -168,6 +168,16 @@ Template.diagramTemplate.helpers({
 
 Template.diagramTemplate.events({
 
+	"click #download-diagram-image": function(e, template) {
+		e.preventDefault();
+
+    const diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
+
+    // TODO cleaner stage discovery
+    const dataURL = Konva.stages[1].toDataURL({ pixelRatio: 3 });
+    downloadURI(dataURL, `${diagram.name}.png`);
+  },
+
 	"click #toggle-dialoge-bar": function(e, template) {
 		e.preventDefault();
 
@@ -936,5 +946,16 @@ function update_editor_size(new_width, new_height) {
 
 	let editor = Interpreter.editor;
 	editor.size.setSize(new_width, new_height);
+}
+
+// function from https://stackoverflow.com/a/15832662/512042
+function downloadURI(uri, name) {
+  var link = document.createElement('a');
+  link.download = name;
+  link.href = uri;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  delete link;
 }
 

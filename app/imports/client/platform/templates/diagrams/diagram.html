@@ -18,7 +18,7 @@
 
 <!-- Start of diagram template -->
 <template name="diagramTemplate">
-    
+
 <!--     <script src='//cdn.jsdelivr.net/yasr/2.4/yasr.bundled.min.js'></script>
     <script src='//cdn.jsdelivr.net/yasqe/2.2/yasqe.bundled.min.js'></script>
 
@@ -34,6 +34,7 @@
 
           <div class="row">
             <div class="col-lg-12 text-right">
+                <button id="download-diagram-image" type="button" class="btn btn-primary btn-sm">Download .png</button>
                 <button id="toggle-footer" type="button" class="btn btn-primary btn-sm">Toggle Footer</button>
                 <button id="toggle-dialoge-bar" type="button" class="btn btn-primary btn-sm">Toggle Dialog</button>
             </div>
@@ -359,7 +360,7 @@
 <template name="editingMessage">
 
     {{#with editing}}
-        
+
         {{#if lockingButton}}
             <div class="alert alert-success clearfix">
                 <button id="lockDiagram" type="button" class="btn btn-success btn-xs pull-right1">{{_ "diagram_edit_button"}}</button>
