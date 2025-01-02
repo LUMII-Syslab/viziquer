@@ -173,8 +173,8 @@ Template.diagramTemplate.events({
 
     const diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
 
-    // TODO cleaner stage discovery
-    const dataURL = Konva.stages[1].toDataURL({ pixelRatio: 3 });
+    // const dataURL = Konva.stages[1].toDataURL({ pixelRatio: 3 });
+    const dataURL = Interpreter.editor.stage.toDataURL({ pixelRatio: 3 });
     downloadURI(dataURL, `${diagram.name}.png`);
   },
 
