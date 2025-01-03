@@ -2611,12 +2611,12 @@ function add_class_compartments(list, item ) {
     if ( compartments.AttributesT.in.length > 0 ) {
         cut_info.cut = compartments.AttributesT.in.length > inCount;
         cut_info.max = inCount; 
-        add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, '<- ', cut_info)
+        add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, '\u21a4 ', cut_info)
     }
     if ( compartments.AttributesT.c.length > 0 ) {
         cut_info.cut = compartments.AttributesT.c.length > inCount;
         cut_info.max = inCount; 
-        add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, '<> ', cut_info)
+        add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, '\u27F2 ', cut_info)
     }
 
     //SubClasses
