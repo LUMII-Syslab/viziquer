@@ -888,9 +888,9 @@ var propSliderIntValues = [];
 var propSliderTextValues = [];
 var propPositions = [];
 var params = {};
-const u_to_type =  '\u2B62'; // '\u21D2'; dubultā bulta
-const u_from_type = '\u2B60'; // '\u21D0';
-const u_in_prop = '\u21E4'; //'\u2B70';
+const u_to_type =   '\u21D2'; 
+const u_from_type = '\u21D0';
+const u_in_prop = '\u21A4'; //'\u21E4'; //'\u2B70'; 
 const u_c_prop = '\u27F2'; //'\u21B6'; Pusloka aplis
 const unused_props = [
 	'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
