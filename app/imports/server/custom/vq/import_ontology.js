@@ -2404,6 +2404,7 @@ Meteor.methods({
         list.diagram_id = new_diagram_id;
 		list.diagram_type_id = diagram_type._id;
         list.compactClassView = ontology.CompactClassView;
+        list.uStrings = ontology.uStrings;
 
         let ns_element = Elements.insert(ns_object);
         //const nsProc = (ontology.Namespaces.n_0.compartments.List.length > 35) ? Math.round(3500/ontology.Namespaces.n_0.compartments.List.length) : 100; 
@@ -2590,7 +2591,6 @@ function add_compartment(list, item, diagram_id, diagram_type_id, element_id, el
 
 function add_class_compartments(list, item ) {
 	let compartments = item.compartments;
-
     // Class Name
     add_one_compartment(list, "Name", compartments.Name, compartments.Name)
   
@@ -2611,12 +2611,12 @@ function add_class_compartments(list, item ) {
     if ( compartments.AttributesT.in.length > 0 ) {
         cut_info.cut = compartments.AttributesT.in.length > inCount;
         cut_info.max = inCount; 
-        add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, '\u21a4 ', cut_info)
+        add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, `${list.uStrings.u_in_prop} `, cut_info)
     }
     if ( compartments.AttributesT.c.length > 0 ) {
         cut_info.cut = compartments.AttributesT.c.length > inCount;
         cut_info.max = inCount; 
-        add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, '\u27F2 ', cut_info)
+        add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, `${list.uStrings.u_c_prop} `, cut_info)
     }
 
     //SubClasses
