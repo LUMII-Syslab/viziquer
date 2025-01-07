@@ -92,6 +92,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		 }
 		 
 		let prefixes = await dataShapes.getNamespaces();
+		if(prefixes.complete === false) prefixes = [];
 		prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
 
 		if(typeof prefixes["complete"] === "undefined"){
@@ -373,6 +374,11 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
   },
   
 generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
+	
+	// console.log(text)
+	// const extractedTriples = extractTriplePatternsFromQuery(text);
+	// console.log(extractedTriples);
+	
 	usedPrefixes = [];
 	allPrefixes = [];
 	starInSelect = false;
@@ -382,10 +388,13 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	isUnderUnion = false;
 	let prefixes = [];
 	if(typeof dataShapes.schema.schema !== "undefined") prefixes = await dataShapes.getNamespaces();
+	if(prefixes.complete === false) prefixes = [];
 	prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
 	
 
 	var classif = await dataShapes.getClassifiers();
+	//classif = [];
+	//classif.data = [];
 	
 	if(classif["data"].length > 0){
 		for(let c = 0; c < classif["data"].length; c++){	
@@ -397,7 +406,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		let prefixesText = [];
 
 		for (const p of prefixes) {
-			prefixesText.push("PREFIX " + p["name"] + ": <" + p["value"] + ">");
+			if(typeof p["name"] !== "undefined" && p["name"] !== null && p["name"] !== "" && isNaN(p["name"]) && 
+				typeof p["value"] !== "undefined" && p["value"] !== null && p["value"] !== "") prefixesText.push("PREFIX " + p["name"] + ": <" + p["value"] + ">");
 		}
 
 		text  = prefixesText.join('\n') + text;
@@ -408,15 +418,18 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		Interpreter.destroyErrorMsg();
+		// console.log("parsedQuery", parsedQuery);
 		if(parsedQuery.status === "ERROR")  {
 			if(typeof dataShapes.schema.schema === "undefined"){
 				if(parsedQuery.error.startsWith("Error: Unknown prefix: ")) {
 					let prefix = parsedQuery.error.substring(23);
 					prefixes = await dataShapes.getNamespaces();
+					if(prefixes.complete === false) prefixes = [];
 					let prefixFound = false;
 					for(let p = 0; p < prefixes.length; p++){
 						if(prefixes[p]["name"] === prefix){
-							text = "PREFIX " + prefix + ": <" + prefixes[p]["value"] + ">\n" + text;
+							if(typeof prefix !== "undefined" && prefix !== null && prefix !== "" && isNaN(p["prefix"]) &&
+							typeof prefixes[p]["value"] !== "undefined" && prefixes[p]["value"] !== null && prefixes[p]["value"] !== "")text = "PREFIX " + prefix + ": <" + prefixes[p]["value"] + ">\n" + text;
 							prefixFound = true;
 							Interpreter.customExtensionPoints.generateVisualQuery(text, xx, yy);
 							break;
@@ -777,6 +790,38 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	  });
   },
 });
+
+
+function extractTriplePatternsFromQuery(sparqlQuery) {
+    // Locate the `WHERE` clause
+    const whereIndex = sparqlQuery.toUpperCase().indexOf(" WHERE");
+    if (whereIndex === -1) {
+        return []; // No `WHERE` clause found, return an empty array
+    }
+
+    // Extract the portion of the query starting from the `WHERE` clause
+    const whereClause = sparqlQuery.slice(whereIndex);
+
+    // Regex to match triple patterns
+    const triplePatternRegex = /([^\s;{}]+)\s+([^\s;{}()]+(?:\([^)]*\))?)\s+((["'].*?["'](?:\^\^<[^>]+>|@[a-zA-Z]+)?)|<[^>]+>|[^\s;{}()]+)\s*\.\s*/g;
+
+    const triples = [];
+    let match;
+
+    while ((match = triplePatternRegex.exec(whereClause)) !== null) {
+        const [fullMatch, subject, predicate, object] = match;
+
+        triples.push({
+            subject,
+            predicate,
+            object,
+        });
+    }
+
+    return triples;
+}
+
+
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -1816,7 +1861,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			}
 			if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["alias"] != "" && (typeof variableList[attributeInfoTemp["alias"]] === "undefined" || variableList[attributeInfoTemp["alias"]] <=1 || variableList[attribute] == 3)){
 				//agregations
-				if(typeof classesTable[attributeTable[attribute]["class"]]["aggregations"] !== "undefined"){
+				if(typeof classesTable[attributeTable[attribute]["class"]] !== "undefined" && typeof classesTable[attributeTable[attribute]["class"]]["aggregations"] !== "undefined"){
 					
 					
 
@@ -1938,9 +1983,11 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	//having
 	var having = parsedQuery["having"];
 	for(let key in having){
-		if(typeof having[key] !== "function" && key !== "tableCounter"){					
+		if(typeof having[key] !== "function" && key !== "tableCounter"){	
+			
 			let temp = await parseSPARQLjsStructureWhere(having[key], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, "plain", allClasses, variableList, null, bindTable, null);
 			havingString = temp["viziQuerExpr"]["exprString"];
+		
 		}
 	}
 	
@@ -3052,6 +3099,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							if(splittedUri == null) pathExpr = "<"+unionBlock["triples"][triple]["predicate"]["value"]+">";
 							else {
 								let prefixes = await dataShapes.getNamespaces();
+								if(prefixes.complete === false) prefixes = [];
+
 								prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
 	
 								for(let key = 0; key < prefixes.length; key++){
@@ -4092,7 +4141,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		if(ignoreFunction == false) viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + ")";
 	}
 	if(where["type"] == "aggregate"){
+		
 		viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + where["aggregation"] + "(";
+		if(where["distinct"] === true) viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + "DISTINCT ";
 		if(typeof where["expression"]["termType"]!== "undefined" && where["expression"]["termType"] === "Variable"){
 			let arg = generateArgument(where["expression"]);
 	
@@ -9260,12 +9311,14 @@ function getAllVariableCountInQuery(expression, variableTable){
 	return variableTable;
 }
 
-function transformParsedQuery(expression, tableCounter){
+function transformParsedQuery(expression, tableCounter, key){
 	if(typeof expression === 'object'){
-		if(Object.keys(expression).length > 0)expression["tableCounter"] = tableCounter;
+		if(Object.keys(expression).length > 0){
+			expression["tableCounter"] = tableCounter;
+		}
 		tableCounter++;
 		for(let key in expression){
-		  if(typeof expression[key] !== 'function'){
+		  if(typeof expression[key] !== 'function' && key != "prefixes"){
 			if(key == "patterns"){			
 				for(let pattern = 0; pattern < expression[key].length; pattern++){
 					if(expression[key][pattern]["type"] == "bgp"){		
@@ -9286,7 +9339,7 @@ function transformParsedQuery(expression, tableCounter){
 					}
 				}
 			}
-			let tempTransformParsedQuery = transformParsedQuery(expression[key],tableCounter);
+			let tempTransformParsedQuery = transformParsedQuery(expression[key],tableCounter, key);
 			expression[key] = tempTransformParsedQuery.expression;
 			tableCounter = tempTransformParsedQuery.tableCounter;
 		  }
@@ -9701,6 +9754,8 @@ async function generateInstanceAlias(uri, resolve){
 			if(splittedUri == null) return uri;
 			
 			let prefixes = await dataShapes.getNamespaces();
+			if(prefixes.complete === false) prefixes = [];
+
 			prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
 	
 			for(let key = 0; key < prefixes.length; key++){
@@ -9725,6 +9780,8 @@ async function generateInstanceAlias(uri, resolve){
 		}
 		
 		let prefixes = await dataShapes.getNamespaces();
+		if(prefixes.complete === false) prefixes = [];
+
 		prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
 
 		for(let key = 0; key < prefixes.length; key++){
@@ -10085,11 +10142,13 @@ function combineKnownPrefixesWithDefinedPrefixes(knownPrefixes){
 				}
 			}
 			if(prefixExists === false){
-				knownPrefixes.push({
-					is_local: false,
-					name: pr,
-					value: prefixDeclarations[pr]
-				})
+				if(typeof pr !== "undefined" && isNaN(pr) && pr !== null && pr !== "" && typeof prefixDeclarations[pr] !== "undefined" && isNaN(prefixDeclarations[pr]) && prefixDeclarations[pr] !== null && prefixDeclarations[pr] !== ""){
+					knownPrefixes.push({
+						is_local: false,
+						name: pr,
+						value: prefixDeclarations[pr]
+					})
+				}
 			}
 		}
 	}
@@ -10106,11 +10165,13 @@ function combineKnownPrefixesWithDefinedPrefixes(knownPrefixes){
 				}
 			}
 			if(prefixExists === false){
-				knownPrefixes.push({
-					is_local: false,
-					name: pr,
-					value: allPrefixes[pr]
-				})
+				if(typeof pr !== "undefined" && isNaN(pr) && pr !== null && pr !== "" && typeof allPrefixes[pr] !== "undefined" && isNaN(allPrefixes[pr]) && allPrefixes[pr] !== null && allPrefixes[pr] !== ""){
+					knownPrefixes.push({
+						is_local: false,
+						name: pr,
+						value: allPrefixes[pr]
+					})
+				}
 			}
 		}
 	}
@@ -10127,11 +10188,13 @@ function combineKnownPrefixesWithDefinedPrefixes(knownPrefixes){
 				}
 			}
 			if(prefixExists === false){
-				knownPrefixes.push({
-					is_local: false,
-					name: pr,
-					value: usedPrefixes[pr]
-				})
+				if(typeof pr !== "undefined" && isNaN(pr) && pr !== null && pr !== "" && typeof usedPrefixes[pr] !== "undefined" && isNaN(usedPrefixes[pr]) && usedPrefixes[pr] !== null && usedPrefixes[pr] !== ""){
+					knownPrefixes.push({
+						is_local: false,
+						name: pr,
+						value: usedPrefixes[pr]
+					})
+				}
 			}
 		}
 	}

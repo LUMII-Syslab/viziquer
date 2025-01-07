@@ -2760,7 +2760,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 									&& symbolTable[classID][varName][k]["type"]["parentType"] != null){
 										isOwnProperty = true;
 									}
-									if(symbolTable[classID][varName][k]["context"] != classID && (alias == null || alias == "") && typeof variableNamesTable[classID][varName] === "undefined") isReference = true;
+									if(symbolTable[classID][varName][k]["context"] != classID && (alias == null || alias == "") && typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varName] === "undefined") isReference = true;
 								}
 							}
 	

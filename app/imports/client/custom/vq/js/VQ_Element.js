@@ -1536,10 +1536,15 @@ VQ_Element.prototype = {
         };
       });
       value_array.pop();
+	 
       c_to_create["compartment"]["value"] = value_array.join("");
       c_to_create["compartment"]["input"] = c_to_create["compartment"]["value"];
-	  c_to_create["compartment"]["value"] = prefix + value_array.join("") + sufix;
-      Utilities.callMeteorMethod("insertCompartment", c_to_create);
+	  c_to_create["compartment"]["value"] = value_array.join("");
+	  if(!c_to_create["compartment"]["value"].startsWith(prefix)) c_to_create["compartment"]["value"] = prefix + c_to_create["compartment"]["value"];
+	  if(!c_to_create["compartment"]["value"].endsWith(sufix)) c_to_create["compartment"]["value"] = c_to_create["compartment"]["value"] + sufix;
+	  // c_to_create["compartment"]["value"] = prefix + value_array.join("") + sufix; 
+
+	  Utilities.callMeteorMethod("insertCompartment", c_to_create);
     };
   },
 
