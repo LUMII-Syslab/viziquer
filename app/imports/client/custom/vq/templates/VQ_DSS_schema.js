@@ -1336,7 +1336,7 @@ function makeAtrTree(cl_list, key) {
 		for (const atr of classInfo[key] ) {
 			let prop = `${atr.p_name}_${atr.type}`;
 			if ( atrTree[prop] == undefined) {
-				atrTree[prop] = { class_list:atr.class_list, cnt:atr.cnt, cnt2:atr.cnt2,  is_domain:atr.is_domain, is_range:atr.is_range, max_cardinality:atr.max_cardinality, 
+				atrTree[prop] = { class_list:atr.class_list, cnt:atr.cnt, cnt2:atr.cnt2,  is_domain:atr.is_domain, range_id:atr.range_id, max_cardinality:atr.max_cardinality, 
 					object_cnt:atr.object_cnt, p_id:atr.p_id, p_name:atr.p_name, type:atr.type, count:1, cnt_full:atr.cnt_full};	
 			}	
 			else {
@@ -1348,8 +1348,8 @@ function makeAtrTree(cl_list, key) {
 					atrTree[prop].max_cardinality = '*';
 				if ( !(atrTree[prop].is_domain == 'D' && atr.is_domain == 'D'))
 					atrTree[prop].is_domain = '';
-				if ( !(atrTree[prop].is_range == 'R' && atr.is_range == 'R'))
-					atrTree[prop].is_range = '';
+				if ( atrTree[prop].range_id != atr.range_id)
+					atrTree[prop].range_id = '';
 				if ( atr.class_list != undefined ) {
 					for (const cl of atr.class_list) {
 						if ( !atrTree[prop].class_list.includes(cl))
@@ -1415,26 +1415,7 @@ function makeClassGroup(list, group_type, sum = true ) { // ekv = false) {
 		for (const c of Object.keys(c_tree)) {
 			c_list_full.push(c_tree[c]);
 		}
-		/* 5555 Šī ir tukšo atribūtu pielikšanas vieta, liekas, ka vairs nevajadzēs
-		for (const classInfo of c_list_full) {
-			if ( !ekv ) {
-				for (const atr of atr_list) {
-					if ( classInfo.atr_list.filter(function(a){ return a.p_name == atr.p_name && a.type == atr.type}).length == 0 ) {
-						const a2 = {p_name:atr.p_name, type:atr.type, gId:g_id, cnt:0, cnt2:atr.cnt2, class_list:atr.class_list,
-							cnt_full:atr.cnt_full, count:0, is_domain:atr.is_domain, is_range:atr.is_range,
-							max_cardinality:atr.max_cardinality, object_cnt:atr.object_cnt, p_id:atr.p_id };
-						classInfo.atr_list.push(a2);
-					}
-					else {
-						const cAtr = classInfo.atr_list.find(function(a){ return a.p_name == atr.p_name && a.type == atr.type});
-						cAtr.cnt2 = atr.cnt2;
-					}
-				}
-			}
-			else {
-				classInfo.atr_list = atr_list;
-			}
-		} */
+
 		const cnt = ( sum ) ? i_cnt : list[0].cnt;
 		const cnt_sum = ( sum ) ? getWeight(i_cnt, i_in_props) : getWeight(list[0].cnt, list[0].in_props);
 
@@ -1664,12 +1645,9 @@ async function getBasicClasses() {
 			cnt:Number(p.cnt), object_cnt:Number(p.object_cnt), count:0, max_cardinality:p.max_cardinality};
 		
 		if ( c_to.length == 1 && p.range_class_id == c_to[0].class_id)  // TODO te varētu būt drusku savādāk, šie ir Aigas atrastie 
-		{
-			p_list_full[p_id].is_range = 'R';
-			p_list_full[p_id].range_class = p.range_class_id;
-		}	
+			p_list_full[p_id].range_id = `c_${p.range_class_id}`;
 		else
-			p_list_full[p_id].is_range = '';
+			p_list_full[p_id].range_id = '';
 			
 		if ( c_from.length > 0 && p.domain_class_id == c_from[0].class_id)  
 			p_list_full[p_id].is_domain = 'D';
@@ -1683,7 +1661,7 @@ async function getBasicClasses() {
 			for (const cl of c_from) {
 				const cl_id = `c_${cl.class_id}`;
 				const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(cl.cnt), cnt2:Number(cl.cnt), object_cnt:Number(cl.object_cnt), 
-					is_domain:pp.is_domain, is_range:'', max_cardinality:pp.max_cardinality, class_list:[], cnt_full:Number(pp.cnt)};
+					is_domain:pp.is_domain, range_id:'', max_cardinality:pp.max_cardinality, class_list:[], cnt_full:Number(pp.cnt)};
 				rezFull.classes[cl_id].atr_list.push(p_info);
 				rezFull.classes[cl_id].used = true;
 				if ( !rezFull.classes[cl_id].all_atr.includes(pp.id)) rezFull.classes[cl_id].all_atr.push(pp.id);	
@@ -1700,12 +1678,12 @@ async function getBasicClasses() {
 					if ( has_cpc && cpc_i.length > 0 ) // ( !compView && has_cpc && cpc_i.length > 0 )
 						cl_list = cpc_i.map( c => c.other_class_id);
 					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt), 
-						is_domain:pp.is_domain, is_range:pp.is_range, max_cardinality:pp.max_cardinality, class_list:cl_list.sort(), cnt_full:Number(pp.cnt)};
+						is_domain:pp.is_domain, range_id:pp.range_id, max_cardinality:pp.max_cardinality, class_list:cl_list.sort(), cnt_full:Number(pp.cnt)};
 					rezFull.classes[from_id].atr_list.push(p_info);
 				}
 				else {
 					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt), 
-						is_domain:pp.is_domain, is_range:'', max_cardinality:pp.max_cardinality, class_list:[], cnt_full:Number(pp.cnt)};
+						is_domain:pp.is_domain, range_id:'', max_cardinality:pp.max_cardinality, class_list:[], cnt_full:Number(pp.cnt)};
 					rezFull.classes[from_id].atr_list.push(p_info);
 				}
 				rezFull.classes[from_id].used = true;
@@ -1719,7 +1697,7 @@ async function getBasicClasses() {
 				if ( has_cpc && cpc_i.length > 0 ) // ( !compView && has_cpc && cpc_i.length > 0 )
 					cl_list = cpc_i.map( c => c.other_class_id);
 				const p_info = {p_name:pp.p_name, p_id:pp.id, type:'in', cnt:Number(c_2.cnt), cnt2:Number(c_2.cnt), object_cnt:Number(c_2.object_cnt), 
-					is_domain:pp.is_domain, is_range:pp.is_range, class_list:cl_list.sort(), cnt_full:Number(pp.cnt)};
+					is_domain:pp.is_domain, range_id:pp.range_id, class_list:cl_list.sort(), cnt_full:Number(pp.cnt)};
 				rezFull.classes[to_id].atr_list.push(p_info);
 				rezFull.classes[to_id].used = true;
 				if ( !rezFull.classes[to_id].all_atr_in.includes(pp.id)) rezFull.classes[to_id].all_atr_in.push(pp.id);
@@ -2315,9 +2293,10 @@ function makeAssociations() {
 
 					for (const to_id of atr.class_list2) {
 						const aId = `${clId}_${to_id}_${atr.p_name}`;
+						const is_range = ( atr.range_id == to_id ) ? 'R':'';
 						const p_name = ( params.addIds ) ? `${atr.p_name}(ID-${atr.p_id})`: atr.p_name;
 						if ( !has_cpc) {
-							rezFull.assoc[aId] = {string:`${p_name}  ${atr.is_domain}${atr.is_range}`, cnt:0, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
+							rezFull.assoc[aId] = {string:`${p_name}  ${atr.is_domain}${is_range}`, cnt:0, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
 							hasAssoc = true;
 						}
 						else {
@@ -2325,7 +2304,7 @@ function makeAssociations() {
 								return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && rezFull.classes[to_id].c_list_id.includes(i.other_class_id)}); 
 							const aCnt = cpc_info_a.map( v => v.cnt).reduce((a, b) => a + b, 0);
 							if ( aCnt > 0 ) {
-								rezFull.assoc[aId] = {string:`${p_name} (${roundCount(aCnt)}) ${atr.is_domain}${atr.is_range}`,cnt:aCnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
+								rezFull.assoc[aId] = {string:`${p_name} (${roundCount(aCnt)}) ${atr.is_domain}${is_range}`,cnt:aCnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
 								hasAssoc = true;
 							}	
 						}
@@ -2338,7 +2317,8 @@ function makeAssociations() {
 	
 	// Saskaita cik vietās propertija ir iezīmēta
 	for (const aa of Object.keys(rezFull.assoc)) {
-		if ( !rezFull.assoc[aa].removed) {
+		const aInfo = rezFull.assoc[aa];
+		if ( !aInfo.removed && aInfo.from != aInfo.to ) {
 			p_list_full[rezFull.assoc[aa].p_id].count++;
 		}
 	}
@@ -2387,6 +2367,9 @@ function makeDiagramData() {
 		}
 		else {
 			let classNames = '';
+			let is_range = '';
+			if ( atr_info.class_list2.length == 1 && atr_info.class_list2[0] == atr_info.range_id )
+				is_range = 'R';
 			if ( !(atr_info.class_list2 == undefined) ) {
 				if (params.compView && atr_info.class_list2.length > 3 ) {
 					classNames = ` ${rezFull.classes[atr_info.class_list2[0]].displayName},${rezFull.classes[atr_info.class_list2[1]].displayName}..(${atr_info.class_list2.length})`;
@@ -2400,23 +2383,20 @@ function makeDiagramData() {
 			if ( atr_info.type == 'out' ) {
 				if ( p_list_full[`p_${atr_info.p_id}`].in_diagram ) {
 					if ( atr_info.object_cnt_dgr > 0 )
-						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}${atr_info.is_range} ${u_to_type} dgr,IRI`;
+						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}$ ${u_to_type} dgr,IRI`;
 					else
-						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}${atr_info.is_range} ${u_to_type} IRI`;
+						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} IRI`;
 				}	
 				else { 
-					rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}${atr_info.is_range} ${u_to_type}${classNames}`;
+					rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}${is_range} ${u_to_type}${classNames}`;
 				}
 			}
-			if (atr_info.type == 'in') 
-				rez = `${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} ${u_from_type}${classNames}`;
-			//if (atr_info.type == 'cycle') liekas, ka tāda vairs nav
-			//	rez = `${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} \u2194 ${classNames}`;
-			if (atr_info.type == 'cycle') 
-				console.log('************ cycle ***********************')
+			if (atr_info.type == 'in') {
+				rez = `${p_name} ${cntString} ${is_range}${atr_info.is_domain} ${u_from_type}${classNames}`;
+			}
 		}	
 
-		rez = rez.replace('  ', ' ');
+		rez = rez.replaceAll('  ', ' ');
 		return rez; 
 		//const clCount = ( atr_info.type != 'data') ? ` (${atr_info.class_list2.length})` : '';
 		//if ( atr_info.type == 'data' )
@@ -2483,13 +2463,15 @@ function makeDiagramData() {
 				inPropList = getAtrList(inPropList);
 				//classInfo.atr_string = `${classInfo.atr_string}\n${inPropList.filter(function(a){ return a.cnt > 0 }).map(a => `\u21a4 ${getAtrString(a)}`).sort().join('\n')}`;
 				//classInfo.attributesT.in = getAtrList(inPropList);
-				classInfo.atr_string = `${classInfo.atr_string}\n${inPropList.map(a => `\u21E4 ${a.name}`).sort().join('\n')}`;  // \u2193
+				classInfo.atr_string = `${classInfo.atr_string}\n${inPropList.map(a => `<- ${a.name}`).sort().join('\n')}`;  // \u2193
 				classInfo.attributesT.in = inPropList;
 			}
 			if ( classInfo.attributesT.c.length > 0 ) {
 				//classInfo.atr_string = `${classInfo.atr_string}\n${classInfo.attributesT.c.filter(function(a){ return a.cnt > 0 }).map(a => `\u27F2 ${a.name}`).sort().join('\n')}`;
-				classInfo.atr_string = `${classInfo.atr_string}\n${classInfo.attributesT.c.map(a => `\u21B6 ${a.name}`).sort().join('\n')}`; // \u2195
-			}	
+				classInfo.atr_string = `${classInfo.atr_string}\n${classInfo.attributesT.c.map(a => `<> ${a.name}`).sort().join('\n')}`; // \u2195
+			}
+			classInfo.atr_string = classInfo.atr_string.replaceAll(u_to_type,'=>');
+			classInfo.atr_string = classInfo.atr_string.replaceAll(u_from_type,'<=');
 		}
 	}
 	// Savāc kopā asociācijas
