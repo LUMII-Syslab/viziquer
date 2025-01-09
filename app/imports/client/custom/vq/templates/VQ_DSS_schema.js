@@ -176,7 +176,7 @@ Template.VQ_DSS_schema.helpers({
 
 function getParams() {
 	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:true,
-		pw:$("#pw").val(), k:1, diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema}; // withoutGen:$("#withoutGen").is(":checked"),
+		pw:$("#pw").val(), k:1, diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked")}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 ) 
 		//	par.supPar = 2;
 	if ( $("#abstr").is(":checked") )
@@ -353,8 +353,6 @@ function calculateCount(value, list, parentCnt) {
 
 Template.VQ_DSS_schema.events({
 	'click #calck': async function() {
-		console.log('************', Template.VQ_DSS_schema.Classes.get(), Template.VQ_DSS_schema.RestClasses.get(), Template.VQ_DSS_schema.Properties.get(), Template.VQ_DSS_schema.RestProperties.get())
-		
 		//let cl; 
 		//cl = await dataShapes.getClasses();
 		//console.log('getClasses', cl.data);
@@ -883,6 +881,7 @@ var p_list_full = {};
 var Gnum = 101;
 var Snum = 101;
 var cpc_info = [];
+var cc_info_type3 = [];
 var has_cpc = false;
 var propSliderIntValues = [];
 var propSliderTextValues = [];
@@ -1619,6 +1618,8 @@ async function getBasicClasses() {
 			cpc.cnt = Number(cpc.cnt);
 		}
 	}	
+	rr = await dataShapes.callServerFunction("xx_getCCInfo_Type3", allParams);
+	cc_info_type3 = rr.data; 
 
 	allParams.main.p_list =  p_list.map(v => v.id);
 	rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams); 
@@ -2226,8 +2227,9 @@ function makeAssociations() {
 	const remBig = params.disconnBig > 0;
 	const remCount = params.disconnBig;
 	const hideSmall = params.hideSmall;
+	const showIntersect = params.showIntersect;
 
-	function findNewClassList(atr, type) {
+	function findNewClassList(atr, type = '') {
 		let c_list2 = [];
 		for ( const cl of atr.class_list) {
 			const cInfo = rezFull.classes[`c_${cl}`];
@@ -2340,6 +2342,17 @@ function makeAssociations() {
 			}
 			else {
 				p_list_full[assoc.p_id].in_diagram = true;
+			}
+		}
+	}
+	rezFull.lines = {};
+	// Savieno klases, kuras šķeļās
+	if ( showIntersect) {
+		for (const p of cc_info_type3) {
+			const c1 = findNewClassList({p_name:'',class_list:[p.class_1_id]})[0];
+			const c2 = findNewClassList({p_name:'',class_list:[p.class_2_id]})[0];
+			if ( c1 != c2) {
+				rezFull.lines[`${c1}_${c2}_i`] = {from:c1, to:c2};
 			}
 		}
 	}
@@ -2489,6 +2502,10 @@ function makeDiagramData() {
 				names:[{name:aInfo.string, cnt:aInfo.cnt}]};
 			}
 		}	
+	}
+	for (const aa of Object.keys(rezFull.lines)) {
+		const lInfo = rezFull.lines[aa];
+		assoc[aa] = {from:lInfo.from, to:lInfo.to, removed:false, string:'', names:[]};
 	}
 	for (const aa of Object.keys(assoc)) {
 		const aInfo = assoc[aa];
