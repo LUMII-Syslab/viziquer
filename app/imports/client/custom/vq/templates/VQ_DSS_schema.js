@@ -2156,7 +2156,7 @@ function makeSuperClasses() {
 			}
 		} 
 
-		if ( g_list.length > 1 ) {
+		if ( g_list.length > 1 && params.diffG > 0) {
 			const grId = makeClassGroup(g_list, 'in makeSuperClasses');
 			const gClass =  rezFull.classes[grId];
 			gClass.super_classes.push(sc_id);
