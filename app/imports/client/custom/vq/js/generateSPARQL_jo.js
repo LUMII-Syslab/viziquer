@@ -533,6 +533,11 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
 		}
 	}
+	let prefixMembership = getPrefixFromClassMembership(dirRole);
+	for(let prefix in prefixMembership) {
+		if(typeof prefixMembership[prefix] !== 'function') prefixText = prefixText+"PREFIX " + prefix + " " + prefixMembership[prefix] + "\n";
+	}
+
 	
 	// Check if the array length is more than 1
 	let result = objectPropertiesUnion.length > 1 
@@ -658,6 +663,12 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
 		}
 	}
+	let prefixMembership = getPrefixFromClassMembership(dirRole);
+	for(let prefix in prefixMembership) {
+		if(typeof prefixMembership[prefix] !== 'function') prefixText = prefixText+"PREFIX " + prefix + " " + prefixMembership[prefix] + "\n";
+	}
+
+	
 	if(!onlyWhere)sparqlQueryText = prefixText + sparqlQueryText;
 	
 	if(!onlyWhere)setText_In_SPARQL_Editor(sparqlQueryText);
@@ -683,9 +694,11 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 	let prefixTable = [];	
 	let prefixes = await dataShapes.getNamespaces();
 	
-	let classifProp = getPropertyShortForm(cls["data"][0]["classification_property"], prefixes);
-	if(classifProp["name"] !== dirRole && classifProp["name"] !== "rdf:type" && dirRole !== "a") {
-		dirRole = classifProp["name"];
+	if(typeof cls["data"] !== "undefined" && typeof cls["data"][0] !== "undefined"){
+		let classifProp = getPropertyShortForm(cls["data"][0]["classification_property"], prefixes);
+		if(classifProp["name"] !== dirRole && classifProp["name"] !== "rdf:type" && dirRole !== "a") {
+			dirRole = classifProp["name"];
+		}
 	}
 	let className = "";
 	let sparqlQueryText = "";
@@ -722,12 +735,19 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 	}
 	if(!onlyWhere) sparqlQueryText = sparqlQueryText + "}";
 	
+	
+	
 	let prefixText = "";
 	for(let p = 0; p < prefixes.length; p++){
 		if(typeof prefixTable[prefixes[p]["name"]] !== "undefined"){
 			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
 		}
 	}
+	let prefixMembership = getPrefixFromClassMembership(dirRole);
+	for(let prefix in prefixMembership) {
+		if(typeof prefixMembership[prefix] !== 'function') prefixText = prefixText+"PREFIX " + prefix + " " + prefixMembership[prefix] + "\n";
+	}
+
 	if(!onlyWhere) sparqlQueryText = prefixText + sparqlQueryText;
 	
 	if(!onlyWhere) setText_In_SPARQL_Editor(sparqlQueryText);
