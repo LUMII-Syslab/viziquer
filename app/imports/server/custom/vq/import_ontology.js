@@ -2153,24 +2153,24 @@ let ontology5 = {
 
 Meteor.methods({
 
-	importOntology1: function(list) {
-		Meteor.call("importOntology", list, ontology1);
+	importOntology1: async function(list) {
+		await Meteor.callAsync("importOntology", list, ontology1);
 	},
 
-	importOntology2: function(list) {
-		Meteor.call("importOntology", list, ontology2);
+	importOntology2: async function(list) {
+		await Meteor.callAsync("importOntology", list, ontology2);
 	},
 
-	importOntology3: function(list) {
-		Meteor.call("importOntology", list, ontology3);
+	importOntology3: async function(list) {
+		await Meteor.callAsync("importOntology", list, ontology3);
 	},
 
-	importOntology4: function(list) {
-		Meteor.call("importOntology", list, ontology4);
+	importOntology4: async function(list) {
+		await Meteor.callAsync("importOntology", list, ontology4);
 	},
 
-	importOntology5: function(list) {
-		Meteor.call("importOntology", list, ontology5);
+	importOntology5: async function(list) {
+		await Meteor.callAsync("importOntology", list, ontology5);
 	},
 
 

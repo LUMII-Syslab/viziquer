@@ -12,7 +12,7 @@ import { config } from 'dotenv';
 
 Meteor.methods({
 
-	makeUser: function(list) {
+	makeUser: async function(list) {
 
 		// var connection = this.connection;
 		//if (list && check_captcha(connection, list["recaptcha-response"])) {
@@ -109,7 +109,7 @@ Meteor.methods({
               toolId: tool_id,
             });
 
-            Meteor.call("importAjooConfiguration", {
+            await Meteor.callAsync("importAjooConfiguration", {
               toolId: tool_id, 
               versionId: version_id, 
               data: configData 
@@ -249,7 +249,7 @@ Meteor.methods({
 									projectId: list["projectId"],
 								};
 
-				Meteor.call("insertProjectsUsers", invitation);
+				await Meteor.callAsync("insertProjectsUsers", invitation);
 
 			}
 		}

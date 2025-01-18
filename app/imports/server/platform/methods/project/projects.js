@@ -107,7 +107,7 @@ Projects.hookOptions.after.remove = {fetchPrevious: false};
 
 Meteor.methods({
 
-	insertProject: function(list) {
+	insertProject: async function(list) {
 		var project_link = null;
 		var versionId = null;
 		var user_id = Meteor.userId();
@@ -137,7 +137,7 @@ Meteor.methods({
 							 versionId: versionId, 	
 							 url: project_link,
 							};
-				Meteor.call("uploadProjectDataByUrl", list);
+				await Meteor.callAsync("uploadProjectDataByUrl", list);
 			}
 			return project._id;
 		}

@@ -9,7 +9,7 @@ import { build_compartment } from '/imports/server/platform/methods/diagrams/com
 
 Meteor.methods({
 
-	importConfiguration: function(list) {
+	importConfiguration: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
@@ -23,7 +23,7 @@ Meteor.methods({
 			}
 
 			else if (list.data && list.data.types) {
-				Meteor.call("importAjooConfiguration", list);
+				await Meteor.callAsync("importAjooConfiguration", list);
 			}
 			else { 
                 var user_id = Meteor.userId();

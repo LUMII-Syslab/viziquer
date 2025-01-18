@@ -28,7 +28,7 @@ Meteor.methods({
 		}
 	},
 
-	addPublicDiagram: function(list_in) {
+	addPublicDiagram: async function(list_in) {
 
     if (!list_in["query"]) {
       list_in["query"] = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX dbo: <http://dbpedia.org/ontology/>\nPREFIX dbr: <http://dbpedia.org/resource/>\nSELECT ?areaCode ?City WHERE{\n  ?City rdf:type dbo:City.\n  OPTIONAL{?City dbo:areaCode ?areaCode.}\n  FILTER(?City = dbr:Riga)\n}";
@@ -49,7 +49,7 @@ Meteor.methods({
 			return;
 		}
 
-		const schema_server = Meteor.call("getEnvVariable", "SCHEMA_SERVER_URL");
+		const schema_server = await Meteor.callAsync("getEnvVariable", "SCHEMA_SERVER_URL");
 		const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
 
 		let schema;
