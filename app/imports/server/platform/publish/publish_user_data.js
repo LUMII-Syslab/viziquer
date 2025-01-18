@@ -150,7 +150,7 @@ Meteor.publish("Chats_Authors", function(list) {
 });
 
 
-Meteor.publish("Chats", function(list) {
+Meteor.publish("Chats", async function(list) {
 
 	if (!list || list["noQuery"])
 		return this.stop();
@@ -176,7 +176,7 @@ Meteor.publish("Chats", function(list) {
 			query["users"] = system_id;
 		}
 
-		build_chats_query_by_phrase(query, list)
+		await build_chats_query_by_phrase(query, list)
 
 		//removes unnecessary chat fields
 		var limit = {};
@@ -237,7 +237,7 @@ Meteor.publish("Chats", function(list) {
 });
 
 //returns the latest chat's time, to be able to sort chats in the page
-Meteor.publish("maxChatDatePerPage", function (list) {
+Meteor.publish("maxChatDatePerPage", async function(list) {
 
 	var system_id = this.userId;
 	if (system_id) {
@@ -258,7 +258,7 @@ Meteor.publish("maxChatDatePerPage", function (list) {
 			var list = [];
 			var id_date_map = {};
 
-			var query = build_chats_query(system_id, list);
+			var query = await build_chats_query(system_id, list);
 
 			var chats = Chats.find(query,
 									{sort: {lastModified: -1},
@@ -366,7 +366,7 @@ Meteor.publish("maxChatDatePerPage", function (list) {
 });
 
 // server: publish the current size of a collection
-Meteor.publish("chatMessageCount", function (list) {
+Meteor.publish("chatMessageCount", async function(list) {
 
 	var system_id = this.userId;
 	if (system_id) {
@@ -375,7 +375,7 @@ Meteor.publish("chatMessageCount", function (list) {
 		var count = 0;
 		var initializing = true;
 
-		var query = build_chats_query(system_id, list);
+		var query = await build_chats_query(system_id, list);
 
 		var handle = Chats.find(query).observeChanges({
 			added: function (id) {
@@ -505,7 +505,7 @@ async function build_chats_query_by_phrase(query, list) {
 	}
 }
 
-function build_chats_query(system_id, list) {
+async function build_chats_query(system_id, list) {
 
 	var query = {messageCount: {$gt: 0}};
 
@@ -518,7 +518,7 @@ function build_chats_query(system_id, list) {
 		query["users"] = system_id;
 	}
 
-	build_chats_query_by_phrase(query, list);
+	await build_chats_query_by_phrase(query, list);
 
 	return query;
 }

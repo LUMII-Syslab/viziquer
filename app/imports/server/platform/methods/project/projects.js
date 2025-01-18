@@ -184,8 +184,8 @@ Meteor.methods({
 			project._id = new_project_id;
 			var new_version_id = afterInsert(user_id, project);
 
-			await Diagrams.find({projectId: project_id}).forEachAsync(function(diagram) {
-				duplicateDiagram(diagram, new_project_id, new_version_id);
+			await Diagrams.find({projectId: project_id}).forEachAsync(async function(diagram) {
+				await duplicateDiagram(diagram, new_project_id, new_version_id);
 			});
 			
 		}

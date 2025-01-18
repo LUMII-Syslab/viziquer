@@ -57,8 +57,8 @@ Meteor.publish("ViewData", function(list) {
 //	    var handle = ViewFilter.find({userId: user_id, viewId: list.viewId, projectId: list.projectId, versionId: list.versionId}).observeChanges({
 	    var handle = ViewFilter.find({viewId: list.viewId, projectId: list.projectId, versionId: list.versionId}).observeChanges({
 
-	    	added: function(id, fields) {
-	    		var data = collect_data(id, fields, list, view_filter);
+	    	added: async function(id, fields) {
+	    		var data = await collect_data(id, fields, list, view_filter);
 
 	    		self.added("TimeChartData", list.viewId, data.timeChartData);
 	    		self.added("NetChartData", list.viewId, data.netChartData);
@@ -66,10 +66,10 @@ Meteor.publish("ViewData", function(list) {
 	    		self.added("DataTableData", list.viewId, data.transactionsTable);
 			},
 
-	    	changed: function(id, fields) {
+	    	changed: async function(id, fields) {
 
 	    		var change = true;
-	    		var data = collect_data(id, fields, list, view_filter, change);
+	    		var data = await collect_data(id, fields, list, view_filter, change);
 
 	    		if (data.timeChartData) {
 	    			self.changed("TimeChartData", list.viewId, data.timeChartData);
@@ -188,7 +188,7 @@ async function collect_data(id, fields, list, view_filter, change) {
 		}
 
 		else if (filter_type === "pieChartFilter") {
-			var pie_chart_data = collect_pie_chart_data(data_links);
+			var pie_chart_data = await collect_pie_chart_data(data_links);
 
 			return {netChartData: {nodes: nodes, edges: edges,},
 					pieChartData: pie_chart_data,
@@ -197,7 +197,7 @@ async function collect_data(id, fields, list, view_filter, change) {
 
 		else if (filter_type === "transactionsFilter") {
 
-			var transactions_res = collect_transactions_table(list, fields)
+			var transactions_res = await collect_transactions_table(list, fields)
 			return {
 					transactionsTable: transactions_res,
 				};
@@ -205,16 +205,16 @@ async function collect_data(id, fields, list, view_filter, change) {
 
 		else {
 
-			var time_chart_data = collect_time_chart_data(data_links, actual_key_index);
+			var time_chart_data = await collect_time_chart_data(data_links, actual_key_index);
 
-			var pie_chart_data = collect_pie_chart_data(data_links);
+			var pie_chart_data = await collect_pie_chart_data(data_links);
 
 			return {netChartData: {nodes: nodes, edges: edges,},
 
 					timeChartData: time_chart_data,
 					pieChartData: pie_chart_data,
 
-					transactionsTable: collect_transactions_table(list, fields),
+					transactionsTable: await collect_transactions_table(list, fields),
 					//objectsTable: collect_objects_table(list),
 				};
 		}
@@ -223,10 +223,10 @@ async function collect_data(id, fields, list, view_filter, change) {
 	//if filter was loaded
 	else {
 
-		var time_chart_data = collect_time_chart_data(data_links, actual_key_index);
+		var time_chart_data = await collect_time_chart_data(data_links, actual_key_index);
 
-		var pie_chart_data = collect_pie_chart_data(data_links);
-		var table_data = collect_transactions_table(list, fields);
+		var pie_chart_data = await collect_pie_chart_data(data_links);
+		var table_data = await collect_transactions_table(list, fields);
 
 		return {netChartData: {nodes: nodes, edges: edges,},
 

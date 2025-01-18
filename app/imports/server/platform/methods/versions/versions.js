@@ -132,7 +132,7 @@ Versions.after.insert(async function(user_id, doc) {
 						versionId: new_version_id
 					};
 
-	send_notifications(user_id, notification);
+	await send_notifications(user_id, notification);
 });
 Versions.hookOptions.after.insert = {fetchPrevious: false};
 
@@ -158,7 +158,7 @@ Versions.hookOptions.after.insert = {fetchPrevious: false};
 // });
 // Versions.hookOptions.after.update = {fetchPrevious: false};
 
-Versions.after.remove(function(user_id, doc) {
+Versions.after.remove(async function(user_id, doc) {
 
 	var new_version_id = doc["_id"];
 	var project_id = doc["projectId"];
@@ -182,7 +182,7 @@ Versions.after.remove(function(user_id, doc) {
 		ProjectsUsers.update({projectId: project_id, versionId: new_version_id}, 
 							{$set: {versionId: last_version_id}});
 
-	send_notifications(user_id, notification);
+	await send_notifications(user_id, notification);
 
 	//deleting diagrams, elements, compartments, ...
 	Diagrams.remove({projectId: project_id, versionId: new_version_id});

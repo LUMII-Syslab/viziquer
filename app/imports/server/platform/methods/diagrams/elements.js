@@ -392,7 +392,7 @@ Meteor.methods({
 		}
 	},
 
-	changeCollectionPosition: function(list) {
+	changeCollectionPosition: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
@@ -401,7 +401,7 @@ Meteor.methods({
 								diagramId: list["diagramId"],
 							};
 
-				change_position(list, query, user_id);
+				await change_position(list, query, user_id);
 
 				if (list.isLayoutComputationNeededOnLoad != undefined) {
 					Diagrams.update({_id: list.diagramId, projectId: list["projectId"],},
@@ -416,7 +416,7 @@ Meteor.methods({
 						diagramId: list["diagramId"],
 					};
 
-			change_position(list, query, user_id);
+			await change_position(list, query, user_id);
 		}
 	},
 
