@@ -3,7 +3,7 @@ import { Notifications, ProjectsUsers, Users, UserVersionSettings, Versions } fr
 import { user_not_logged_in } from '/imports/server/platform/_helpers';
 
 
-Notifications.after.update(function (user_id, doc, fieldNames, modifier, options) {
+Notifications.after.update(async function(user_id, doc, fieldNames, modifier, options) {
 
 	if (!doc || !modifier || !modifier.$set)
 		return false;
@@ -33,7 +33,7 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 			tmp_role = "Reader";
 
 		//generating project reader roles for all the versions
-		var roles = versions.map(function(version) {
+		var roles = await versions.mapAsync(function(version) {
 
 			//generating role names for all the project versions
 			return build_project_version_reader_role(proj_id, version["_id"], tmp_role);
@@ -46,7 +46,7 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 		if (role == "Admin") {
 			roles.push(build_project_admin_role(proj_id));
 
-			var version_fetch = versions.fetch();
+			var version_fetch = await versions.fetchAsync();
 			if (versions && version_fetch) {
 				var last_version = version_fetch[0];
 				if (last_version && last_version["status"] == "New")
@@ -56,9 +56,9 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 		}
 
 		//selecting the first version's id
-		if (versions && versions.count() > 0) {
+		if (versions && (await versions.countAsync()) > 0) {
 
-			var active_version = versions.fetch()[0]["_id"];
+			var active_version = (await versions.fetchAsync())[0]["_id"];
 
 			//adding the user to the project
 			ProjectsUsers.update({projectId: proj_id, userSystemId: user_id},

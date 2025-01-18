@@ -15,7 +15,7 @@ CompartmentTypes.before.insert(function (user_id, doc) {
 	//}
 });
 
-CompartmentTypes.after.update(function (user_id, doc, fields, modifier, options) {
+CompartmentTypes.after.update(async function(user_id, doc, fields, modifier, options) {
 
 	if (!doc || !modifier)
 		return false;
@@ -24,7 +24,7 @@ CompartmentTypes.after.update(function (user_id, doc, fields, modifier, options)
 	if (modifier && modifier.$set && modifier.$set["isObjectRepresentation"] == true) {
 
 		//selecting compartment type ids
-		var ids = CompartmentTypes.find({elementTypeId: doc["elementTypeId"], _id: {$ne: doc["_id"]}}).map(
+		var ids = await CompartmentTypes.find({elementTypeId: doc["elementTypeId"], _id: {$ne: doc["_id"]}}).mapAsync(
 			function(compart_type) {
 				return compart_type["_id"];
 			});
@@ -208,7 +208,7 @@ Meteor.methods({
 		}
 	},
 
-    updateSelectionItem: function(list) {
+    updateSelectionItem: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id, list)) {
 
@@ -238,7 +238,7 @@ Meteor.methods({
 				//selecting element ids that need update
 				var query = {input: list["input"], compartmentTypeId: list["id"]};
 
-				var elem_ids = Compartments.find(query).map(
+				var elem_ids = await Compartments.find(query).mapAsync(
 					function(compart) {
 						return compart["elementId"];
 				});	

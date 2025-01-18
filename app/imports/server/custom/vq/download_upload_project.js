@@ -4,7 +4,7 @@ import { is_public_diagram } from '/imports/server/platform/_helpers'
 
 Meteor.methods({	
 
-	getProjectJson: function(list) {
+	getProjectJson: async function(list) {
 
 		console.log("zzz")
 		console.log("getProjectJson", list)
@@ -37,7 +37,7 @@ Meteor.methods({
 
 			var tool_name = tool.name;
 
-			var diagrams = Diagrams.find({projectId: project_id, versionId: version_id}).map(function(diagram) {  
+			var diagrams = await Diagrams.find({projectId: project_id, versionId: version_id}).mapAsync(async function(diagram) {  
 
 				var diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
 				if (!diagram_type) {
@@ -49,7 +49,7 @@ Meteor.methods({
 
 				var elems_map = {};
 
-				diagram.elements = Elements.find({diagramId: diagram._id, projectId: project_id, versionId: version_id}).map(function(element) {
+				diagram.elements = await Elements.find({diagramId: diagram._id, projectId: project_id, versionId: version_id}).mapAsync(async function(element) {
 
 					var element_type = ElementTypes.findOne({_id: element.elementTypeId,});
 					if (!element_type) {
@@ -59,9 +59,9 @@ Meteor.methods({
 
 					_.extend(element, {elementTypeName: element_type.name, toolName: tool_name,});
 
-					element.compartments = Compartments.find({elementId: element._id, diagramId: element.diagramId,
+					element.compartments = await Compartments.find({elementId: element._id, diagramId: element.diagramId,
 															projectId: project_id, versionId: version_id})
-														.map(function(compartment) {
+														.mapAsync(function(compartment) {
 
 															var compartment_type = CompartmentTypes.findOne({_id: compartment.compartmentTypeId,});
 															if (!compartment_type) {

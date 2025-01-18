@@ -3,7 +3,7 @@ import {
 } from '/imports/db/platform/collections'
 
 
-ToolVersions.after.insert(function (user_id, doc) {
+ToolVersions.after.insert(async function(user_id, doc) {
 
 	if (!doc) {
 		return false;
@@ -53,7 +53,7 @@ ToolVersions.after.insert(function (user_id, doc) {
 //diagram things
 	//presentation things
 	var diagram_list = {};
-	_.each(diagrams.fetch(), function(diagram) {
+	_.each(await diagrams.fetchAsync(), function(diagram) {
 		diagram["versionId"] = new_version_id;
 
 		var old_id = diagram["_id"];
@@ -63,7 +63,7 @@ ToolVersions.after.insert(function (user_id, doc) {
 	});
 
 	var element_list = {};
-	_.each(elements.fetch(), function(element) {
+	_.each(await elements.fetchAsync(), function(element) {
 		element["versionId"] = new_version_id;
 		element["diagramId"] = diagram_list[element["diagramId"]];
 
@@ -74,7 +74,7 @@ ToolVersions.after.insert(function (user_id, doc) {
 	});
 
 	var compartment_list = {};
-	_.each(compartments.fetch(), function(compartment) {
+	_.each(await compartments.fetchAsync(), function(compartment) {
 		compartment["versionId"] = new_version_id;
 		compartment["diagramId"] = diagram_list[compartment["diagramId"]];
 		compartment["elementId"] = element_list[compartment["elementId"]];;
@@ -87,7 +87,7 @@ ToolVersions.after.insert(function (user_id, doc) {
 
 
 	var diagram_type_list = {};
-	_.each(diagram_types.fetch(), function(diagram_type) {
+	_.each(await diagram_types.fetchAsync(), function(diagram_type) {
 		diagram_type["versionId"] = new_version_id;
 		diagram_type["diagramId"] = diagram_list[diagram_type["diagramId"]];
 
@@ -98,7 +98,7 @@ ToolVersions.after.insert(function (user_id, doc) {
 	});
 
 	var element_type_list = {};
-	_.each(element_types.fetch(), function(element_type) {
+	_.each(await element_types.fetchAsync(), function(element_type) {
 		element_type["versionId"] = new_version_id;
 		element_type["diagramTypeId"] = diagram_type_list[element_type["diagramTypeId"]];
 
@@ -108,7 +108,7 @@ ToolVersions.after.insert(function (user_id, doc) {
 		element_type_list[old_elem_id] = new_elem_id;
 	});
 
-	_.each(compartment_types.fetch(), function(compartment) {
+	_.each(await compartment_types.fetchAsync(), function(compartment) {
 		compartment_type["versionId"] = new_version_id;
 		compartment_type["diagramTypeId"] = element_list[compartment_type["diagramTypeId"]];
 		compartment_type["elementTypeId"] = element_list[compartment_type["elementTypeId"]];
@@ -118,7 +118,7 @@ ToolVersions.after.insert(function (user_id, doc) {
 	});
 
 	var palette_button_list = {};
-	_.each(palette_buttons.fetch(), function(palette_button) {
+	_.each(await palette_buttons.fetchAsync(), function(palette_button) {
 		palette_button["versionId"] = new_version_id;
 
 		var old_palette_button_id = palette_button["_id"];
@@ -128,7 +128,7 @@ ToolVersions.after.insert(function (user_id, doc) {
 		});
 
 	var dialog_tab_list = {};
-	_.each(dialog_tabs.fetch(), function(dialog_tab) {
+	_.each(await dialog_tabs.fetchAsync(), function(dialog_tab) {
 		dialog_tab["versionId"] = new_version_id;
 
 		var old_tab = dialog_tab["_id"];

@@ -215,7 +215,7 @@ Meteor.methods({
 		}
 	},
 
-	enrollUser: function(list) {
+	enrollUser: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_admin(user_id, list)) {
@@ -223,7 +223,7 @@ Meteor.methods({
 			if (list["email"]) {
 
 				var new_user_id;
-				var new_user = Meteor.users.findOne({"emails.address": list["email"]});
+				var new_user = await Meteor.users.findOneAsync({"emails.address": list["email"]});
 
 				//if user is not registred in the system, then sending an invitation email
 				if (!new_user) {
@@ -255,13 +255,13 @@ Meteor.methods({
 		}
 	},
 
-	enrollUserAccepted: function(list) {
+	enrollUserAccepted: async function(list) {
 
 		if (!list) {
 			return;
 		}
 
-		var user = Meteor.users.findOne({"services.password.reset.token": list["token"]});
+		var user = await Meteor.users.findOneAsync({"services.password.reset.token": list["token"]});
 		if (user) {
 
 			if (list["name"] || list["surname"])
@@ -272,14 +272,14 @@ Meteor.methods({
 
 			var email = user["emails"][0]["address"];
 
-			Meteor.users.update({_id: user["_id"], "emails.address": email},
+			await Meteor.users.updateAsync({_id: user["_id"], "emails.address": email},
 								{$set: {"emails.$.verified": true,}});
 			return email;
 		}
 
 	},
 
-	verifyAccount: function(list) {
+	verifyAccount: async function(list) {
 
 		if (!list) {
 			return;
@@ -294,15 +294,15 @@ Meteor.methods({
 		//   text: "The contents of our email in plain text.",
 		// });
 
-		var user = Meteor.users.findOne({"services.email.verificationTokens.token": list["token"]});
+		var user = await Meteor.users.findOneAsync({"services.email.verificationTokens.token": list["token"]});
 		if (user) {
 			var email = user["emails"][0]["address"];
-			Meteor.users.update({_id: user["_id"], "emails.address": email}, {$set: {"emails.$.verified": true,}});
+			await Meteor.users.updateAsync({_id: user["_id"], "emails.address": email}, {$set: {"emails.$.verified": true,}});
 		}
 	},
 
 	//for testing
-	generate_users: function(list) {
+	generate_users: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id)) {
@@ -311,7 +311,7 @@ Meteor.methods({
 			var count = list["count"];
 
 			//start indexing from users count
-			var users_count = Users.find().count();
+			var users_count = await Users.find().countAsync();
 
 			for (var i=0;i<count;i++) {
 

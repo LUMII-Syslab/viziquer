@@ -24,7 +24,7 @@ Versions.before.insert(function (user_id, doc) {
 Versions.hookOptions.before.insert = {fetchPrevious: false};
 
 
-Versions.after.insert(function (user_id, doc) {
+Versions.after.insert(async function(user_id, doc) {
 
 	if (!doc)
 		return false;
@@ -58,7 +58,7 @@ Versions.after.insert(function (user_id, doc) {
 
 	//diagram things
 	var diagram_list = {};
-	_.each(diagrams.fetch(), function(diagram) {
+	_.each(await diagrams.fetchAsync(), function(diagram) {
 		diagram["versionId"] = new_version_id;
 
 		var old_id = diagram["_id"];
@@ -71,7 +71,7 @@ Versions.after.insert(function (user_id, doc) {
 		diagram_list[old_id] = new_id;
 	});
 
-	_.each(users_settings.fetch(), function(user_settings) {
+	_.each(await users_settings.fetchAsync(), function(user_settings) {
 		user_settings["versionId"] = new_version_id;
 		user_settings["diagramId"] = diagram_list[user_settings["diagramId"]];
 
@@ -94,7 +94,7 @@ Versions.after.insert(function (user_id, doc) {
 	});
 
 	var element_list = {};
-	_.each(elements.fetch(), function(element) {
+	_.each(await elements.fetchAsync(), function(element) {
 		element["versionId"] = new_version_id;
 		element["diagramId"] = diagram_list[element["diagramId"]];
 
@@ -112,7 +112,7 @@ Versions.after.insert(function (user_id, doc) {
 	});
 
 
-	_.each(compartments.fetch(), function(compartment) {
+	_.each(await compartments.fetchAsync(), function(compartment) {
 		compartment["versionId"] = new_version_id;
 
 		compartment["diagramId"] = diagram_list[compartment["diagramId"]];
@@ -256,12 +256,12 @@ function add_admin_role(proj_id, version_id) {
 	Roles.addUsersToRoles(admins, admin_role);
 }
 
-function add_read_role(proj_id, version_id) {
+async function add_read_role(proj_id, version_id) {
 
 	var users_by_roles = {};
 
 	//selecting project users and classifying them by their roles
-	ProjectsUsers.find({projectId: proj_id}).forEach(
+	await ProjectsUsers.find({projectId: proj_id}).forEachAsync(
 		function(proj_user) {
 
 			var role = proj_user["role"];
@@ -296,7 +296,7 @@ function remove_from_admin_role(proj_id, version_id, is_remove_role) {
 		Roles.deleteRole(admin_role);
 }
 
-function send_notifications(user_id, list) {
+async function send_notifications(user_id, list) {
 
 	var proj_id = list["projectId"];
 	var query = {projectId: proj_id, status: "Member"};
@@ -311,7 +311,7 @@ function send_notifications(user_id, list) {
 	if (project)
 		proj_name = project["name"];
 
-	ProjectsUsers.find(query).forEach(
+	await ProjectsUsers.find(query).forEachAsync(
 		function(project_user) {
 
 			var receiver_id = project_user["userSystemId"];

@@ -295,7 +295,7 @@ Meteor.methods({
 	},
 
 
-	duplicateDiagram: function(list) {
+	duplicateDiagram: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
@@ -315,7 +315,7 @@ Meteor.methods({
 
 
 			var elems_map = {};
-			Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEach(function(box) {
+			await Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEachAsync(function(box) {
 
 				var old_box_id = box._id;
 				// box._id = undefined;
@@ -327,7 +327,7 @@ Meteor.methods({
 			});
 
 
-			Elements.find({diagramId: diagram_id, projectId: project_id, type: "Line"}).forEach(function(line) {
+			await Elements.find({diagramId: diagram_id, projectId: project_id, type: "Line"}).forEachAsync(function(line) {
 
 				var old_line_id = line._id;
 
@@ -342,7 +342,7 @@ Meteor.methods({
 			});
 
 
-			Compartments.find({diagramId: diagram_id, projectId: project_id}).forEach(function(compart) {
+			await Compartments.find({diagramId: diagram_id, projectId: project_id}).forEachAsync(function(compart) {
 
 				// compart._id = undefined;
 				delete compart._id;

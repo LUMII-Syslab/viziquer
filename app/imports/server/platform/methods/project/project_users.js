@@ -74,7 +74,7 @@ ProjectsUsers.hookOptions.after.insert = {fetchPrevious: false};
 // 		modifier.$set.modifiedAt = new Date();
 // });
 
-ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options) {
+ProjectsUsers.after.update(async function(user_id, doc, fieldNames, modifier, options) {
 
 	//if not changing the role, then no notifications are sent
 	if (!doc || !modifier.$set)
@@ -104,7 +104,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 			var old_roles = [build_project_admin_role(proj_id)];
 
 			//removing admins rights from any project version
-			proj_versions.forEach(function(version) {
+			await proj_versions.forEachAsync(function(version) {
 				old_roles.push(build_project_version_admin_role(proj_id, version["_id"]));
 				old_roles.push(build_project_version_reader_role(proj_id, version["_id"], prev_role));
 			});
@@ -124,7 +124,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 		}
 
 		//adding reading rights
-		proj_versions.forEach(function(version) {
+		await proj_versions.forEachAsync(function(version) {
 			roles.push(build_project_version_reader_role(proj_id, version["_id"], role)); 
 		});
 
@@ -203,7 +203,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 });
 //ProjectsUsers.hookOptions.after.update = {fetchPrevious: false};
 
-ProjectsUsers.after.remove(function (user_id, doc) {
+ProjectsUsers.after.remove(async function(user_id, doc) {
 
 	if (!doc)
 		return false;
@@ -221,7 +221,7 @@ ProjectsUsers.after.remove(function (user_id, doc) {
 	var roles = [build_project_admin_role(proj_id), build_project_role(proj_id)];
 
 	//removing admin and reader rights from any project version
-	Versions.find({projectId: proj_id}).forEach(function(version) {
+	await Versions.find({projectId: proj_id}).forEachAsync(function(version) {
 		roles.push(build_project_version_admin_role(proj_id, version["_id"]));
 		roles.push(build_project_version_reader_role(proj_id, version["_id"], role)); 		
 	});

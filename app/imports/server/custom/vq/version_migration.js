@@ -13,7 +13,7 @@ Meteor.methods({
 		migrateProjectByTool(target_tool, list);
 	},	
 
-	migrateProject: function(list) {
+	migrateProject: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id)) {
 			var target_tool = Tools.findOne({_id: list.targetToolId});
@@ -22,22 +22,22 @@ Meteor.methods({
 				return;
 			}
 
-			Projects.find({toolId: list.toolId}).forEach(function(project) {
+			await Projects.find({toolId: list.toolId}).forEachAsync(function(project) {
 				migrateProjectByTool(target_tool, {projectId: project._id,});
 			});
 		}
 	},
 	
-	migrateIndexes: function(projectId) {
+	migrateIndexes: async function(projectId) {
 
-		Diagrams.find({projectId: projectId}).forEach(function(diagram) {
+		await Diagrams.find({projectId: projectId}).forEachAsync(async function(diagram) {
 
 			var diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
 
-			Elements.find({diagramId: diagram._id, diagramTypeId: diagram_type._id}).forEach(function(elem) {
+			await Elements.find({diagramId: diagram._id, diagramTypeId: diagram_type._id}).forEachAsync(async function(elem) {
 
 				var elem_type = ElementTypes.findOne({_id: elem.elementTypeId,});
-				CompartmentTypes.find({elementTypeId:elem_type._id}).forEach(function(compType){
+				await CompartmentTypes.find({elementTypeId:elem_type._id}).forEachAsync(function(compType){
 					compartments = Compartments.find({projectId:projectId, elementId:elem._id, compartmentTypeId:compType._id });
 					if (compartments.count() == 1 ){
 					    compartments.forEach(function(c){
@@ -67,9 +67,9 @@ Meteor.methods({
 });
 
 
-function migrateProjectByTool(target_tool, list) {
+async function migrateProjectByTool(target_tool, list) {
 
-	Diagrams.find({projectId: list.projectId}).forEach(function(diagram) {
+	await Diagrams.find({projectId: list.projectId}).forEachAsync(async function(diagram) {
 
 		var current_diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
 		if (!current_diagram_type) {
@@ -83,7 +83,7 @@ function migrateProjectByTool(target_tool, list) {
 			return;
 		}
 
-		Elements.find({diagramId: diagram._id, diagramTypeId: current_diagram_type._id}).forEach(function(elem) {
+		await Elements.find({diagramId: diagram._id, diagramTypeId: current_diagram_type._id}).forEachAsync(async function(elem) {
 
 			var current_elem_type = ElementTypes.findOne({_id: elem.elementTypeId,});
 			if (!current_elem_type) {
@@ -97,7 +97,7 @@ function migrateProjectByTool(target_tool, list) {
 				return;
 			}
 
-			Compartments.find({elementId: elem._id, diagramId: diagram._id, projectId: list.projectId}).forEach(function(compart) {
+			await Compartments.find({elementId: elem._id, diagramId: diagram._id, projectId: list.projectId}).forEachAsync(function(compart) {
 
 				var current_compart_type = CompartmentTypes.findOne({_id: compart.compartmentTypeId,});
 				if (!current_compart_type) {

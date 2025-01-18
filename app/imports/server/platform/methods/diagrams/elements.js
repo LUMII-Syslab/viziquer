@@ -53,7 +53,7 @@ Elements.hookOptions.after.remove = {fetchPrevious: false};
 
 Meteor.methods({
 
-	insertElement: function(list) {
+	insertElement: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 			var compartments = list.initialCompartments;
@@ -137,7 +137,7 @@ Meteor.methods({
 
 					if (list["swimlane"]) {
 
-						CompartmentTypes.find({elementTypeId: list["elementTypeId"]}).forEach(
+						await CompartmentTypes.find({elementTypeId: list["elementTypeId"]}).forEachAsync(
 							function(compart_type) {
 
 								delete compart_type["_id"];
@@ -240,7 +240,7 @@ Meteor.methods({
 		}
 	},
 
-	pasteElements: function(list) {
+	pasteElements: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
@@ -279,9 +279,9 @@ Meteor.methods({
 
 					var element_ids = clipboard["elements"];
 
-					var elements = Elements.find({_id: {$in: element_ids}}).fetch();
-					var compartments = Compartments.find({elementId: {$in: element_ids}}).fetch();
-					var elements_sections = ElementsSections.find({elementId: {$in: element_ids}}).fetch();
+					var elements = await Elements.find({_id: {$in: element_ids}}).fetchAsync();
+					var compartments = await Compartments.find({elementId: {$in: element_ids}}).fetchAsync();
+					var elements_sections = await ElementsSections.find({elementId: {$in: element_ids}}).fetchAsync();
 
 					//var elements = clipboard["elements"];
 					//var compartments = clipboard["compartments"];
@@ -532,7 +532,7 @@ function resize_element(list, query, system_id) {
 	});
 }
 
-function change_position(list, query, system_id) {
+async function change_position(list, query, system_id) {
 
 	//selecting edges
 	var edge_points = {};
@@ -556,7 +556,7 @@ function change_position(list, query, system_id) {
 	DiagramLogs.insert(notification);
 
 	//updating edges
-	Elements.find(lines_query).forEach(
+	await Elements.find(lines_query).forEachAsync(
 		function(edge) {
 			var id = edge["_id"];
 			Elements.update({_id: id}, {$set: {points: edge_points[id]}});
@@ -657,14 +657,14 @@ function build_diagram_notification(system_id, list, edit) {
 }
 
 
-function get_element_type_names(elements) {
+async function get_element_type_names(elements) {
 
 	let element_type_ids = _.map(elements, function(elem) {
 									return elem.elementTypeId;
 								});
 
 	let element_types_map = {};
-	ElementTypes.find({_id: {"$in": element_type_ids}}).forEach(function(element_type) {
+	await ElementTypes.find({_id: {"$in": element_type_ids}}).forEachAsync(function(element_type) {
 		element_types_map[element_type._id] = element_type.name;
 	});
 
@@ -672,13 +672,13 @@ function get_element_type_names(elements) {
 }
 
 
-function get_compartment_type_names(compartments) {
+async function get_compartment_type_names(compartments) {
 	let compartment_type_ids = _.map(compartments, function(compartment) {
 									return compartment.compartmentTypeId;
 								});
 
 	let compartment_types_map = {};
-	CompartmentTypes.find({_id: {"$in": compartment_type_ids}}).forEach(function(compartment_type) {
+	await CompartmentTypes.find({_id: {"$in": compartment_type_ids}}).forEachAsync(function(compartment_type) {
 		compartment_types_map[compartment_type._id] = compartment_type.name;
 	});
 
@@ -700,7 +700,7 @@ function add_compartment_type_names(compartments, compartemnt_type_names) {
 }
 
 
-function add_element_type_ids(elements, diagram_id) {
+async function add_element_type_ids(elements, diagram_id) {
 
 	let diagram = Diagrams.findOne({_id: diagram_id});
 	if (!diagram) {
@@ -710,7 +710,7 @@ function add_element_type_ids(elements, diagram_id) {
 
 	let elem_types_ids_map = {};
 	let elem_types_names_map = {};
-	ElementTypes.find({diagramTypeId: diagram.diagramTypeId}).forEach(function(elem_type) {
+	await ElementTypes.find({diagramTypeId: diagram.diagramTypeId}).forEachAsync(function(elem_type) {
 		elem_types_ids_map[elem_type._id] = 1;
 		elem_types_names_map[elem_type.name] = elem_type._id; 
 	});
@@ -727,7 +727,7 @@ function add_element_type_ids(elements, diagram_id) {
 }
 
 
-function add_compartment_type_ids(compartments, diagram_id) {
+async function add_compartment_type_ids(compartments, diagram_id) {
 
 	let diagram = Diagrams.findOne({_id: diagram_id});
 	if (!diagram) {
@@ -737,7 +737,7 @@ function add_compartment_type_ids(compartments, diagram_id) {
 
 	let compart_types_ids_map = {};
 	let compart_types_names_map = {};
-	CompartmentTypes.find({diagramTypeId: diagram.diagramTypeId}).forEach(function(compart_type) {
+	await CompartmentTypes.find({diagramTypeId: diagram.diagramTypeId}).forEachAsync(function(compart_type) {
 		compart_types_ids_map[compart_type._id] = 1;
 		compart_types_names_map[compart_type.name] = compart_type._id; 
 	});

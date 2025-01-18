@@ -7,7 +7,7 @@ import {
 } from '/imports/server/platform/methods/configurator/initialTypes/compartment_types'
 
 
-function load_configurator(user_id) {
+async function load_configurator(user_id) {
 	
 	if (!user_id) {
 		return;
@@ -45,7 +45,7 @@ function load_configurator(user_id) {
 
 	//Element types
 	var elem_type_list = {};
-	if (ElementTypes.find({toolId: tool_id}).count() === 0) {
+	if ((await ElementTypes.find({toolId: tool_id}).countAsync()) === 0) {
 		var super_box_id = build_super_box(tool_id, version_id, diagram_type_id);
 		
 		build_box_type(tool_id, version_id, diagram_type_id, super_box_id);

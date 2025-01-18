@@ -1280,7 +1280,7 @@ var ImportTDAConfiguration = {
 			};
 	},
 
-	addVQProperties: function(ids) {
+	addVQProperties: async function(ids) {
 
 		var id = ids[0];
 		var diagram_type = DiagramTypes.findOne({_id: id,});
@@ -1317,7 +1317,7 @@ var ImportTDAConfiguration = {
 		DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu}});
 
 
-		ElementTypes.find({diagramTypeId: diagram_type_id, }).forEach(function(elem_type) {
+		await ElementTypes.find({diagramTypeId: diagram_type_id, }).forEachAsync(async function(elem_type) {
 
 			var name = elem_type.name;
 
@@ -1335,7 +1335,7 @@ var ImportTDAConfiguration = {
 				}
 
 
-				CompartmentTypes.find({elementTypeId: class_type_id,}).forEach(function(compart_type) {
+				await CompartmentTypes.find({elementTypeId: class_type_id,}).forEachAsync(function(compart_type) {
 
 					if (compart_type.name == "ClassType") {
 						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
@@ -1407,7 +1407,7 @@ var ImportTDAConfiguration = {
 
 			if (name == "Link") {
 
-				CompartmentTypes.find({elementTypeId: elem_type._id,}).forEach(function(compart_type) {
+				await CompartmentTypes.find({elementTypeId: elem_type._id,}).forEachAsync(function(compart_type) {
 
 					if (compart_type.name == "Name") {
 

@@ -492,12 +492,12 @@ Meteor.publish("ContactsSuggestions", function(list) {
 
 
 //the search by phrase in chats is NOT REACTIVE and NOT EFFECTIVE
-function build_chats_query_by_phrase(query, list) {
+async function build_chats_query_by_phrase(query, list) {
 
 	if (list["phrase"] && !list["userId"]) {
 
 		//selects the chat id's that contain the message having the searched phrase
-		var chat_ids = Chats.find({messagesLC: {'$regex': ".*" + list["phrase"].toLowerCase() + ".*"}}).map(
+		var chat_ids = await Chats.find({messagesLC: {'$regex': ".*" + list["phrase"].toLowerCase() + ".*"}}).mapAsync(
 								function(chat) {return chat["_id"]});
 
 		//adding found chat ids to the query

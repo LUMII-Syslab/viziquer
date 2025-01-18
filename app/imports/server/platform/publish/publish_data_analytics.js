@@ -99,7 +99,7 @@ Meteor.publish("ViewData", function(list) {
 
 });
 
-function collect_data(id, fields, list, view_filter, change) {
+async function collect_data(id, fields, list, view_filter, change) {
 
 	var filter_type;
 	if (fields.action && fields.action.filterType) {
@@ -123,7 +123,7 @@ function collect_data(id, fields, list, view_filter, change) {
     	var edge_query = build_edge_query(fields, list);
 
 
-		edges = DataLinks.find(edge_query).map(function(data_elem) {
+		edges = await DataLinks.find(edge_query).mapAsync(function(data_elem) {
 
 			var data_obj = {_id: data_elem._id,
 							to: data_elem.to,
@@ -160,7 +160,7 @@ function collect_data(id, fields, list, view_filter, change) {
 	//selecting nodes
 	var box_query = build_box_query(fields, node_ids, list);
 
-	var nodes = DataNodes.find(box_query).map(function(data_elem) {
+	var nodes = await DataNodes.find(box_query).mapAsync(function(data_elem) {
 
 		var data_obj = {_id: data_elem._id,
 						representation: data_elem.representation,
@@ -239,7 +239,7 @@ function collect_data(id, fields, list, view_filter, change) {
 	}
 }
 
-function collect_time_chart_data(data_links, actual_key_index) {
+async function collect_time_chart_data(data_links, actual_key_index) {
 
     var start_time1 = new Date();
 
@@ -251,7 +251,7 @@ function collect_time_chart_data(data_links, actual_key_index) {
     var start_time12 = new Date();
 
 	var link_ids = [];
-	data_links.forEach(function(data_elem) {
+	await data_links.forEachAsync(function(data_elem) {
 
 		link_ids.push(data_elem.to);
 		link_ids.push(data_elem.from);
@@ -285,12 +285,12 @@ function collect_time_chart_data(data_links, actual_key_index) {
 
 
 	return {data: {values: values, interval: timeInterval},
-			transactionsCount: data_links.count(),
-			objectsCount: data_nodes.count()
+			transactionsCount: await data_links.countAsync(),
+			objectsCount: await data_nodes.countAsync()
 		};
 }
 
-function collect_pie_chart_data(data_links) {
+async function collect_pie_chart_data(data_links) {
     var start_time1 = new Date();
 
 	// console.log("in collect pie chart data ")
@@ -299,7 +299,7 @@ function collect_pie_chart_data(data_links) {
 	var valKey = [, , , , , , ];
 	var accountIds = {};
 	var v;
-	data_links.forEach(function(data_elem, i) {
+	await data_links.forEachAsync(function(data_elem, i) {
 		_.each(data_elem.data, function(d) {
 			if (keySet[d.key]) {
 				valKey[keySet[d.key]] = d.value;	
@@ -391,7 +391,7 @@ function build_box_query(fields, node_ids, list) {
 	return box_query;
 }
 
-function collect_transactions_table(list, fields) {
+async function collect_transactions_table(list, fields) {
 
 	var query = {projectId: list.projectId, versionId: list.versionId};
 
@@ -437,19 +437,19 @@ function collect_transactions_table(list, fields) {
 
 	// var objects = DataNodes.find(box_query, {limit: step, skip: skip});
 
-	return {transactions: data_links.fetch(), transactionsCount: data_links.count(),
+	return {transactions: await data_links.fetchAsync(), transactionsCount: await data_links.countAsync(),
 			//objects: objects.fetch(), objectsCount: objects.count(),
 		};
 }
 	
-function collect_objects_table(list) {
+async function collect_objects_table(list) {
 
 	var query = {projectId: list.projectId, versionId: list.versionId};
 	if (list.phrase) {
 		query["data.value"] = {$regex: list.phrase, $options: 'i'};		
 	}
 
-	var data = DataNodes.find(query).fetch();
+	var data = await DataNodes.find(query).fetchAsync();
 
 	var limited_data = _.first(data, 10);
 

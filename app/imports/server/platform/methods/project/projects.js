@@ -166,7 +166,7 @@ Meteor.methods({
 	},
 
 
-	duplicateProject: function(list) {
+	duplicateProject: async function(list) {
 		var user_id = Meteor.userId();
 		var versionId = null;
 		if (is_project_member(user_id, list)) {
@@ -184,7 +184,7 @@ Meteor.methods({
 			project._id = new_project_id;
 			var new_version_id = afterInsert(user_id, project);
 
-			Diagrams.find({projectId: project_id}).forEach(function(diagram) {
+			await Diagrams.find({projectId: project_id}).forEachAsync(function(diagram) {
 				duplicateDiagram(diagram, new_project_id, new_version_id);
 			});
 			
@@ -205,7 +205,7 @@ Meteor.methods({
 
 
 
-function duplicateDiagram(diagram, new_project_id, new_version_id) {
+async function duplicateDiagram(diagram, new_project_id, new_version_id) {
 
 	var diagram_id = diagram._id;
 	var project_id = diagram.projectId;
@@ -217,7 +217,7 @@ function duplicateDiagram(diagram, new_project_id, new_version_id) {
 
 
 	var elems_map = {};
-	Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEach(function(box) {
+	await Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEachAsync(function(box) {
 
 		var old_box_id = box._id;
 		_.extend(box, {_id: undefined, diagramId: new_diagram_id, projectId: new_project_id, versionId: new_version_id,});
@@ -227,7 +227,7 @@ function duplicateDiagram(diagram, new_project_id, new_version_id) {
 	});
 
 
-	Elements.find({diagramId: diagram_id, projectId: project_id, type: "Line"}).forEach(function(line) {
+	await Elements.find({diagramId: diagram_id, projectId: project_id, type: "Line"}).forEachAsync(function(line) {
 
 		var old_line_id = line._id;
 
@@ -240,7 +240,7 @@ function duplicateDiagram(diagram, new_project_id, new_version_id) {
 	});
 
 
-	Compartments.find({diagramId: diagram_id, projectId: project_id}).forEach(function(compart) {
+	await Compartments.find({diagramId: diagram_id, projectId: project_id}).forEachAsync(function(compart) {
 
 		_.extend(compart, {_id: undefined, elementId: elems_map[compart.elementId], diagramId: new_diagram_id, projectId: new_project_id, versionId: new_version_id, });
 

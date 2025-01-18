@@ -41,11 +41,11 @@ ExportDiagramConfig.prototype = {
 		}
 	},
 
-	exportDiagramTypes: function(tool_id) {
+	exportDiagramTypes: async function(tool_id) {
 		var self = this;
 
 		// var diagram_type = DiagramTypes.findOne({toolId: tool_id});
-		this.types = DiagramTypes.find({toolId: tool_id}).map(function(diagram_type) {
+		this.types = await DiagramTypes.find({toolId: tool_id}).mapAsync(function(diagram_type) {
 
 						if (!diagram_type) {
 							console.error("No diagram type");
@@ -69,11 +69,11 @@ ExportDiagramConfig.prototype = {
 		// }
 	},
 
-	exportBoxTypes: function(diagram_type_id) {
+	exportBoxTypes: async function(diagram_type_id) {
 
 		var self = this;
 
-		return ElementTypes.find({diagramTypeId: diagram_type_id, type: "Box"}).map(function(elem_type) {
+		return await ElementTypes.find({diagramTypeId: diagram_type_id, type: "Box"}).mapAsync(function(elem_type) {
 
 			var elem_type_id = elem_type._id
 
@@ -84,11 +84,11 @@ ExportDiagramConfig.prototype = {
 		});
 	},
 
-	exportLineTypes: function(diagram_type_id) {
+	exportLineTypes: async function(diagram_type_id) {
 
 		var self = this;
 
-		return ElementTypes.find({diagramTypeId: diagram_type_id, type: "Line"}).map(function(elem_type) {
+		return await ElementTypes.find({diagramTypeId: diagram_type_id, type: "Line"}).mapAsync(function(elem_type) {
 
 			var elem_type_id = elem_type._id
 
@@ -100,43 +100,43 @@ ExportDiagramConfig.prototype = {
 
 	},
 
-	exportDiagramTypeCompartmentTypes: function(diagram_type_id) {
+	exportDiagramTypeCompartmentTypes: async function(diagram_type_id) {
 
 		var self = this;
 
-		return CompartmentTypes.find({diagramTypeId: diagram_type_id, elementTypeId: {$exists: false}}).map(function(compart_type) {
+		return await CompartmentTypes.find({diagramTypeId: diagram_type_id, elementTypeId: {$exists: false}}).mapAsync(function(compart_type) {
 			return {object: compart_type,};
 		});
 	},
 
 
 
-	exportCompartmentTypes: function(elem_type_id) {
+	exportCompartmentTypes: async function(elem_type_id) {
 
 		var self = this;
 
-		return CompartmentTypes.find({elementTypeId: elem_type_id}).map(function(compart_type) {
+		return await CompartmentTypes.find({elementTypeId: elem_type_id}).mapAsync(function(compart_type) {
 			return {object: compart_type,};
 		});
 	},
 
-	exportPalette: function(diagram_type_id) {
-		return PaletteButtons.find({diagramTypeId: diagram_type_id}).fetch();
+	exportPalette: async function(diagram_type_id) {
+		return await PaletteButtons.find({diagramTypeId: diagram_type_id}).fetchAsync();
 	},
 
-	exportDiagramTypeDialog: function(diagram_type_id) {
-		return DialogTabs.find({diagramTypeId: diagram_type_id, elementTypeId: {$exists: false},}).fetch();
+	exportDiagramTypeDialog: async function(diagram_type_id) {
+		return await DialogTabs.find({diagramTypeId: diagram_type_id, elementTypeId: {$exists: false},}).fetchAsync();
 	},
 
-	exportElementTypeDialog: function(diagram_type_id, elem_type_id) {
-		return DialogTabs.find({elementTypeId: elem_type_id,}).fetch();
+	exportElementTypeDialog: async function(diagram_type_id, elem_type_id) {
+		return await DialogTabs.find({elementTypeId: elem_type_id,}).fetchAsync();
 	},
 
-	exportDiagrams: function(tool_id) {
+	exportDiagrams: async function(tool_id) {
 
 		var self = this;
 
-		self.presentations = Diagrams.find({toolId: tool_id,}).map(function(diagram) {
+		self.presentations = await Diagrams.find({toolId: tool_id,}).mapAsync(function(diagram) {
 
 			if (!diagram) {
 				console.error("No diagram");
@@ -158,33 +158,33 @@ ExportDiagramConfig.prototype = {
 		// self.presentations.push(diagram_out);
 	},
 
-	exportBoxes: function(diagram_id) {
+	exportBoxes: async function(diagram_id) {
 
 		var self = this;
 
-		return Elements.find({type: "Box", diagramId: diagram_id,}).map(function(box) {
+		return await Elements.find({type: "Box", diagramId: diagram_id,}).mapAsync(function(box) {
 			return {object: box,
 					compartments: self.exportCompartments(box._id),
 				};
 		});
 	},
 
-	exportLines: function(diagram_id) {
+	exportLines: async function(diagram_id) {
 
 		var self = this;
 
-		return Elements.find({type: "Line", diagramId: diagram_id,}).map(function(line) {
+		return await Elements.find({type: "Line", diagramId: diagram_id,}).mapAsync(function(line) {
 			return {object: line,
 					compartments: self.exportCompartments(line._id),
 				};
 		});
 	},
 
-	exportCompartments: function(element_id) {
+	exportCompartments: async function(element_id) {
 
 		var self = this;
 
-		return Compartments.find({elementId: element_id}).map(function(compart) {
+		return await Compartments.find({elementId: element_id}).mapAsync(function(compart) {
 			return {object: compart};
 		});
 	},

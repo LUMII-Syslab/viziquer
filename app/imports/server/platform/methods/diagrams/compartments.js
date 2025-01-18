@@ -130,13 +130,13 @@ function update_compartment(user_id, doc) {
 	}
 }
 
-function add_compartments_by_values(list, compartments) {
+async function add_compartments_by_values(list, compartments) {
 
 	var compart_ids = _.map(compartments, function(item) {
 							return item.compartmentTypeId;
 						});
 		
-	CompartmentTypes.find({_id: {$in: compart_ids,}}, {$sort: {index: 1}}).forEach(function(compart_type, i) {
+	await CompartmentTypes.find({_id: {$in: compart_ids,}}, {$sort: {index: 1}}).forEachAsync(function(compart_type, i) {
 		add_compartment(compart_type, list,  _.find(compartments, function(c) { return c.compartmentTypeId == compart_type._id }));
 	});
 
@@ -144,9 +144,9 @@ function add_compartments_by_values(list, compartments) {
 
 
 //adding compartments in the DB
-function add_compartments(list) {
+async function add_compartments(list) {
 
-	CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEach(
+	await CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEachAsync(
 		function(compart_type) {
 			if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField") {
 				return;

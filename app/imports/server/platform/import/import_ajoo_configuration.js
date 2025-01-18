@@ -278,7 +278,7 @@ ImportAjooConfiguration.prototype = {
 	importPaletteButtons: function(palette_buttons) {
 
 		var self = this;
-		_.each(palette_buttons, function(object) {
+		_.each(palette_buttons, async function(object) {
 
 			_.extend(object, {
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
@@ -293,7 +293,7 @@ ImportAjooConfiguration.prototype = {
 			});
 
 
-			if (ElementTypes.find({_id: {$in: object.elementTypeIds,}, isAbstract: true,}).count() == 0) {
+			if ((await ElementTypes.find({_id: {$in: object.elementTypeIds,}, isAbstract: true,}).countAsync()) == 0) {
 				var new_palette_button_id = PaletteButtons.insert(object);
 			}
 		});

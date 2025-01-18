@@ -47,7 +47,7 @@ Meteor.publish("Diagrams", function(list) {
 	}
 });
 
-Meteor.publish("FoundDiagrams", function(list) {
+Meteor.publish("FoundDiagrams", async function(list) {
 
 	var user_id = this.userId;
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
@@ -71,7 +71,7 @@ Meteor.publish("FoundDiagrams", function(list) {
 			//THIS IS NOT REACTIVE
 			var comparts = Compartments.find({projectId: proj_id, versionId: version_id,
 											valueLC: {$regex: make_regex_subsring(list["text"])}});
-			var diagram_ids = comparts.map(function(compart){return compart["diagramId"]});
+			var diagram_ids = await comparts.mapAsync(function(compart){return compart["diagramId"]});
 
 			var diagram_regex = {"$regex": make_regex_subsring(list["text"]), $options: 'i'};
 			
@@ -171,7 +171,7 @@ Meteor.publish("DiagramTypes_UserVersionSettings", function(list) {
 });
 
 					
-Meteor.publish("Diagram_Palette_ElementType", function(list) {
+Meteor.publish("Diagram_Palette_ElementType", async function(list) {
 	var user_id = this.userId || get_unknown_public_user_name();
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
 		return this.stop();
@@ -241,7 +241,7 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 			}
 
 			// var diagrams = Diagrams.find(diagram_query, diagram_limit);
-			if (diagrams.count() == 0) {
+			if ((await diagrams.countAsync()) == 0) {
 				error_msg();
 				return this.stop();				
 			}
@@ -848,7 +848,7 @@ Meteor.publish("Forum_PostComments", function(list) {
 
 
 //Forum_Tags
-Meteor.publish("Forum_Tags", function(list) {
+Meteor.publish("Forum_Tags", async function(list) {
 
 	var user_id = this.userId;
 	if (!user_id || !list || list["noQuery"]) {
@@ -861,7 +861,7 @@ Meteor.publish("Forum_Tags", function(list) {
 		filter = {projectId: list["projectId"]};
 
 	else {
-		var project_ids = ProjectsUsers.find({userSystemId: user_id}).map(
+		var project_ids = await ProjectsUsers.find({userSystemId: user_id}).mapAsync(
 			function(proj_user) {
 				return proj_user["projectId"];
 			});
@@ -892,7 +892,7 @@ function build_forum_project_users_query(list) {
 	return {projectId: list["projectId"]};
 }
 
-function select_project_users(user_id, list) {
+async function select_project_users(user_id, list) {
 
 	var query_out = {}
 
@@ -912,7 +912,7 @@ function select_project_users(user_id, list) {
 		query["projectId"] = list["projectId"];
 
 
-	var proj_ids = ProjectsUsers.find(query).map(
+	var proj_ids = await ProjectsUsers.find(query).mapAsync(
 		function(proj_user) {
 			return proj_user["projectId"];
 		});
@@ -926,10 +926,10 @@ function select_project_users(user_id, list) {
 }
 
 
-function is_public_diagrams(diagrams) {
+async function is_public_diagrams(diagrams) {
 	let resp = true;
 
-	_.each(diagrams.fetch(), function(diagram) {
+	_.each(await diagrams.fetchAsync(), function(diagram) {
 		if (!is_public_diagram(diagram._id)) {
 			resp = false;
 		}	
