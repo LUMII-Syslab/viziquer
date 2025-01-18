@@ -1,7 +1,7 @@
 
 
 Meteor.methods({
-	parseSPARQLText: async function(text) {	 
+	parseSPARQLText: function(text) {	 
 		try{
 			let SparqlParser = Npm.require('sparqljs').Parser;
 			let parser = new SparqlParser();
