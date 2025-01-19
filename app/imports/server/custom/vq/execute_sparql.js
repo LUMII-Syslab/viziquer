@@ -91,8 +91,8 @@ function buildEnhancedQuery(originalQuery, fragmentToFind, fragmentToInsert, fra
   throw new Error('No SELECT in the query');
 }
 
-function add_sparql_log(log) {
-  VQ_sparql_logs.insert(log);
+async function add_sparql_log(log) {
+  await VQ_sparql_logs.insertAsync(log);
 }
 
 function hasAuthInfo(params) {
@@ -230,7 +230,7 @@ function doHttpRequestP1b(url, httpOptions, query, namedGraph, preferJSON, callb
     fullOptions.params['default-graph-uri'] = namedGraph;
   }
 
-  fullOptions.headers = { ...COMMON_HEADERS};
+  fullOptions.headers = { ...COMMON_HEADERS };
   if (preferJSON) {
     fullOptions.params.format = JSON_FORMAT_SHORT;
     fullOptions.headers.Accept = JSON_FORMAT;
@@ -292,7 +292,7 @@ function doHttpRequestP2(url, httpOptions, query, namedGraph, preferJSON, callba
 function doHttpRequestP2b(url, httpOptions, query, namedGraph, preferJSON, callback) {
   // console.log("profile P2b", url, query, namedGraph, httpOptions, preferJSON);
   const fullUrl = url;
-  const fullOptions = { ...httpOptions, timeout: TIMEOUT};
+  const fullOptions = { ...httpOptions, timeout: TIMEOUT };
   fullOptions.headers = {
     ...COMMON_HEADERS,
     'Content-Type': 'application/x-www-form-urlencoded',
@@ -644,7 +644,7 @@ Meteor.methods({
     }
 
     console.log(testResults);
-    return { 
+    return {
       status: 200,
     };
   },

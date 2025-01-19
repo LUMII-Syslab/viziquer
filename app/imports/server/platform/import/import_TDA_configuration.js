@@ -9,1444 +9,1463 @@ import { build_compartment } from '/imports/server/platform/methods/diagrams/com
 
 Meteor.methods({
 
-	importConfiguration: async function(list) {
+  importConfiguration: async function (list) {
 
-		var user_id = Meteor.userId();
-		if (is_system_admin(user_id) && list) {
+    var user_id = Meteor.userId();
+    if (is_system_admin(user_id) && list) {
 
-			if (list.data && list.data.diagramTypes) {
+      if (list.data && list.data.diagramTypes) {
 
-				ImportTDAConfiguration.init(list, user_id);
-				var ids = ImportTDAConfiguration.importDiagramTypes(user_id);
+        ImportTDAConfiguration.init(list, user_id);
+        var ids = ImportTDAConfiguration.importDiagramTypes(user_id);
 
-				ImportTDAConfiguration.addVQProperties(ids);
-			}
+        ImportTDAConfiguration.addVQProperties(ids);
+      }
 
-			else if (list.data && list.data.types) {
-				await Meteor.callAsync("importAjooConfiguration", list);
-			}
-			else { 
-                var user_id = Meteor.userId();
-                if (is_project_version_admin(user_id, list)) {
-				    //console.log("Liekam iekšā")
-					//console.log(Services.find({toolId: list.toolId }).count())
-					//console.log(list.toolId)
-					Services.remove({toolId: list.toolId});
-					//console.log(Services.find({toolId: list.toolId }).count())
-					var data = list.data;
-					var services = _.extend(data, {toolId: list.toolId});
-					Services.batchInsert([services]); 
-					//console.log(Services.find({toolId: list.toolId }).count())
-				}
-				
-			}
+      else if (list.data && list.data.types) {
+        await Meteor.callAsync("importAjooConfiguration", list);
+      }
+      else {
+        var user_id = Meteor.userId();
+        if (is_project_version_admin(user_id, list)) {
+          //console.log("Liekam iekšā")
+          //console.log(Services.find({toolId: list.toolId }).count())
+          //console.log(list.toolId)
+          Services.remove({ toolId: list.toolId });
+          //console.log(Services.find({toolId: list.toolId }).count())
+          var data = list.data;
+          var services = _.extend(data, { toolId: list.toolId });
+          Services.batchInsert([services]);
+          //console.log(Services.find({toolId: list.toolId }).count())
+        }
 
-		}
-	},
+      }
+
+    }
+  },
 
 });
 
 
 var ImportTDAConfiguration = {
 
-	init: function(list, user_id) {
+  init: async function (list, user_id) {
 
-		var self = this;
+    var self = this;
 
-		self.toolData = {toolId: list.toolId, versionId: list.versionId};
-		self.data = list.data;
+    self.toolData = { toolId: list.toolId, versionId: list.versionId };
+    self.data = list.data;
 
-		self.userId = user_id;
-		self.time = new Date();
+    self.userId = user_id;
+    self.time = new Date();
 
 
-		self.mappings = {};
+    self.mappings = {};
 
 
-		//selecting configurator diagram type
-		var config_dgr_type = DiagramTypes.findOne({name: "_ConfiguratorDiagramType"});
-		if (!config_dgr_type) {
-			return;
-		}
+    //selecting configurator diagram type
+    var config_dgr_type = await DiagramTypes.findOneAsync({ name: "_ConfiguratorDiagramType" });
+    if (!config_dgr_type) {
+      return;
+    }
 
-		self.configuratorDiagramType = config_dgr_type;
-		var config_dgr_type_id = config_dgr_type._id;
+    self.configuratorDiagramType = config_dgr_type;
+    var config_dgr_type_id = config_dgr_type._id;
 
-		//configurator types
-		var line_type = ElementTypes.findOne({diagramTypeId: config_dgr_type_id, name: "Line"});	
-		var box_type = ElementTypes.findOne({diagramTypeId: config_dgr_type_id, name: "Box"});
+    //configurator types
+    var line_type = await ElementTypes.findOneAsync({ diagramTypeId: config_dgr_type_id, name: "Line" });
+    var box_type = await ElementTypes.findOneAsync({ diagramTypeId: config_dgr_type_id, name: "Box" });
 
-		if (!box_type || !line_type) {
-			return;
-		}
+    if (!box_type || !line_type) {
+      return;
+    }
 
-		self.configuratorLineType = line_type;
-		self.configuratorBoxType = box_type;
+    self.configuratorLineType = line_type;
+    self.configuratorBoxType = box_type;
 
-		var box_compart_type_name = CompartmentTypes.findOne({name: "Name", elementTypeId: box_type._id});
-		self.configuratorBoxCompartmetmentType = box_compart_type_name;
-	},
+    var box_compart_type_name = await CompartmentTypes.findOneAsync({ name: "Name", elementTypeId: box_type._id });
+    self.configuratorBoxCompartmetmentType = box_compart_type_name;
+  },
 
-	importDiagramTypes: function() {
+  importDiagramTypes: function () {
 
-		var self = this;
+    var self = this;
 
-		return _.map(this.data.diagramTypes, function(diagram_type_in) {
-						var target_diagram = self.buildDiagramPresentation(diagram_type_in);
-						var _id = self.buildDiagramType(diagram_type_in, target_diagram);
-						return _id;
-					});
-	},
+    return _.map(this.data.diagramTypes, function (diagram_type_in) {
+      var target_diagram = self.buildDiagramPresentation(diagram_type_in);
+      var _id = self.buildDiagramType(diagram_type_in, target_diagram);
+      return _id;
+    });
+  },
 
-	buildDiagramPresentation: function(diagram_type_in) {
+  buildDiagramPresentation: async function (diagram_type_in) {
 
-		var self = this;
+    var self = this;
 
-		//building diagram style
-		var target_diagram_style = self.buildDiagramDefaultStyle();	
-		var style_overriding = {fill: diagram_type_in["style"]["bkgColor"]};
+    //building diagram style
+    var target_diagram_style = self.buildDiagramDefaultStyle();
+    var style_overriding = { fill: diagram_type_in["style"]["bkgColor"] };
 
-		_.extend(target_diagram_style, style_overriding);
+    _.extend(target_diagram_style, style_overriding);
 
-		//adding diagram
-		var target_diagram = {
-								name: diagram_type_in.attributes["id"],
-								diagramTypeId: self.configuratorDiagramType._id,
-								style: target_diagram_style,
+    //adding diagram
+    var target_diagram = {
+      name: diagram_type_in.attributes["id"],
+      diagramTypeId: self.configuratorDiagramType._id,
+      style: target_diagram_style,
 
-								createdAt: self.time,
-								createdBy: self.userId,
-								editorType: "ajooEditor",
+      createdAt: self.time,
+      createdBy: self.userId,
+      editorType: "ajooEditor",
 
-								imageUrl: "http://placehold.it/770x347",
-								parentDiagrams: [],
-								allowedGroups: [],
-								editing: {},
-								seenCount: 0,
-							};
+      imageUrl: "http://placehold.it/770x347",
+      parentDiagrams: [],
+      allowedGroups: [],
+      editing: {},
+      seenCount: 0,
+    };
 
-		_.extend(target_diagram, self.toolData);
+    _.extend(target_diagram, self.toolData);
 
-		self.newDiagramId = Diagrams.insert(target_diagram);
+    self.newDiagramId = await Diagrams.insertAsync(target_diagram);
 
-		return target_diagram;
-	},
+    return target_diagram;
+  },
 
-	buildDiagramType: function(diagram_type_in, target_diagram) {
+  buildDiagramType: async function (diagram_type_in, target_diagram) {
 
-		var self = this;
+    var self = this;
 
-		//adding diagram type
-		var target_diagram_type = {};
-		build_initial_diagram_type(target_diagram_type);
+    //adding diagram type
+    var target_diagram_type = {};
+    build_initial_diagram_type(target_diagram_type);
 
-		var diagram_type_override = {
-								createdAt: self.time,
-								createdBy: self.userId,
-								diagramId: self.newDiagramId,
-								name: diagram_type_in.attributes["id"],
-								editorType: "ajooEditor",
-								style: target_diagram.style,
-							};
+    var diagram_type_override = {
+      createdAt: self.time,
+      createdBy: self.userId,
+      diagramId: self.newDiagramId,
+      name: diagram_type_in.attributes["id"],
+      editorType: "ajooEditor",
+      style: target_diagram.style,
+    };
 
-		_.extend(target_diagram_type, diagram_type_override);
-		_.extend(target_diagram_type, self.toolData);
+    _.extend(target_diagram_type, diagram_type_override);
+    _.extend(target_diagram_type, self.toolData);
 
-		//context menus
-		self.addContextMenu(target_diagram_type, diagram_type_in, "noCollectionContextMenu");
-		self.addContextMenu(target_diagram_type, diagram_type_in, "collectionContextMenu");
+    //context menus
+    self.addContextMenu(target_diagram_type, diagram_type_in, "noCollectionContextMenu");
+    self.addContextMenu(target_diagram_type, diagram_type_in, "collectionContextMenu");
 
-		//keystrokes
-		self.addKeystrokes(diagram_type_in, target_diagram_type, "noCollectionKeyStrokes");
-		self.addKeystrokes(diagram_type_in, target_diagram_type, "collectionKeyStrokes");
+    //keystrokes
+    self.addKeystrokes(diagram_type_in, target_diagram_type, "noCollectionKeyStrokes");
+    self.addKeystrokes(diagram_type_in, target_diagram_type, "collectionKeyStrokes");
 
-		//toolbar
-		self.addToolbar(diagram_type_in, target_diagram_type);
+    //toolbar
+    self.addToolbar(diagram_type_in, target_diagram_type);
 
-		//extension points
-		var translet_collection = [];
-		self.addTranslets(diagram_type_in, target_diagram_type, translet_collection);
+    //extension points
+    var translet_collection = [];
+    self.addTranslets(diagram_type_in, target_diagram_type, translet_collection);
 
-		self.newDiagramTypeId = DiagramTypes.insert(target_diagram_type);
-		
-		self.insertTranslets(translet_collection, target_diagram_type, self.newDiagramTypeId);
+    self.newDiagramTypeId = await DiagramTypes.insertAsync(target_diagram_type);
 
-		//adding elements and element types
-		self.addElementTypes(diagram_type_in["elementTypes"]);
-		self.addSpecializations(diagram_type_in["specializations"]);
+    self.insertTranslets(translet_collection, target_diagram_type, self.newDiagramTypeId);
 
-		return self.newDiagramTypeId;
-	},
+    //adding elements and element types
+    self.addElementTypes(diagram_type_in["elementTypes"]);
+    self.addSpecializations(diagram_type_in["specializations"]);
 
+    return self.newDiagramTypeId;
+  },
 
-	buildDiagramDefaultStyle: function() {
-		return diagram_default_style();
-	},
 
-	addContextMenu: function(obj_type_obj, obj_type, name) {
+  buildDiagramDefaultStyle: function () {
+    return diagram_default_style();
+  },
 
-		var self = this;
+  addContextMenu: function (obj_type_obj, obj_type, name) {
 
-		var not_needed_items = self.getNotNeededItems();
-		var transformed_items = self.getTransformedItems();
+    var self = this;
 
-		var items = [];
-		_.each(obj_type[name], function(menu) {
+    var not_needed_items = self.getNotNeededItems();
+    var transformed_items = self.getTransformedItems();
 
-		 	var procedure_name = menu["procedureName"];
+    var items = [];
+    _.each(obj_type[name], function (menu) {
 
-		 	if (not_needed_items[procedure_name]) {
-		 		return;
-		 	}
+      var procedure_name = menu["procedureName"];
 
-		 	else if (transformed_items[procedure_name]) {
-		 		procedure_name = transformed_items[procedure_name];
-		 	}
+      if (not_needed_items[procedure_name]) {
+        return;
+      }
 
-	 		var procedure_name = procedure_name || "";
-			var new_proc_name = _.last(procedure_name.split("."));
+      else if (transformed_items[procedure_name]) {
+        procedure_name = transformed_items[procedure_name];
+      }
 
-		 	//context_menu_list.push({item: menu["caption"], procedure: procedure_name});
-		 	items.push({item: menu["caption"], procedure: new_proc_name});
-		});
+      var procedure_name = procedure_name || "";
+      var new_proc_name = _.last(procedure_name.split("."));
 
-		obj_type_obj[name] = items;
-	},
+      //context_menu_list.push({item: menu["caption"], procedure: procedure_name});
+      items.push({ item: menu["caption"], procedure: new_proc_name });
+    });
 
-	addElementTypes: function(elem_types_in) {
+    obj_type_obj[name] = items;
+  },
 
-		var self = this
+  addElementTypes: function (elem_types_in) {
 
+    var self = this
 
-		var refs = {};
-		var target_refs = {};
 
-		_.each(elem_types_in, function(elem_type_in, i) {
+    var refs = {};
+    var target_refs = {};
 
-			var target_element = self.buildingElementPresentation(elem_type_in);
-			var target_type = self.buildingElementType(elem_type_in, target_element);
+    _.each(elem_types_in, async function (elem_type_in, i) {
 
-			//dialog
-			self.addDialog(target_type, elem_type_in);
+      var target_element = self.buildingElementPresentation(elem_type_in);
+      var target_type = self.buildingElementType(elem_type_in, target_element);
 
-			if (!target_type["isAbstract"]) {
+      //dialog
+      self.addDialog(target_type, elem_type_in);
 
-				//palette button
-				var palette_button = {
-										diagramTypeId: self.newDiagramTypeId,
-										diagramId: self.newDiagramId,
-										elementTypeIds: [self.newElementTypeId],
-										name: elem_type_in["attributes"]["caption"],
-										type: target_type.type,
-										index: i,
-									};
+      if (!target_type["isAbstract"]) {
 
-				_.extend(palette_button, self.toolData);
+        //palette button
+        var palette_button = {
+          diagramTypeId: self.newDiagramTypeId,
+          diagramId: self.newDiagramId,
+          elementTypeIds: [self.newElementTypeId],
+          name: elem_type_in["attributes"]["caption"],
+          type: target_type.type,
+          index: i,
+        };
 
-				PaletteButtons.insert(palette_button);
-			}
+        _.extend(palette_button, self.toolData);
 
-			//compartment types			
-			self.addCompartmentTypes(target_type, elem_type_in);
+        await PaletteButtons.insertAsync(palette_button);
+      }
 
-		});
+      //compartment types			
+      self.addCompartmentTypes(target_type, elem_type_in);
 
-		//PaletteButtons.batchInsert(palette_buttons);
-	},
+    });
 
-	buildingElementPresentation: function(elem_type_in) {
+    //PaletteButtons.batchInsert(palette_buttons);
+  },
 
-		var self = this;
+  buildingElementPresentation: function (elem_type_in) {
 
-		var target_element = {};
+    var self = this;
 
-		if (elem_type_in["className"] == "NodeType" || elem_type_in["className"] == "FreeBoxType") {			
-			target_element = self.loadNode(elem_type_in.presentation);
-			self.addBoxCompartment(elem_type_in, target_element);
-		}
+    var target_element = {};
 
-		else if (elem_type_in["className"] == "EdgeType") {
-		 	//load_edge(elem, elem_type_id, element_mappings, element_list, config_dgr_type_id, refs, target_refs);
-		 	target_element = self.loadEdge(elem_type_in.presentation);
-		}
-		
-		else {
-			console.error("Not supported className: ", elem_type_in["className"]);
-			return;	
-		}
+    if (elem_type_in["className"] == "NodeType" || elem_type_in["className"] == "FreeBoxType") {
+      target_element = self.loadNode(elem_type_in.presentation);
+      self.addBoxCompartment(elem_type_in, target_element);
+    }
 
-		return target_element;
-	},
+    else if (elem_type_in["className"] == "EdgeType") {
+      //load_edge(elem, elem_type_id, element_mappings, element_list, config_dgr_type_id, refs, target_refs);
+      target_element = self.loadEdge(elem_type_in.presentation);
+    }
 
-	buildingElementType: function(elem_type_in, target_element) {
+    else {
+      console.error("Not supported className: ", elem_type_in["className"]);
+      return;
+    }
 
-		var self = this;
+    return target_element;
+  },
 
-		var target_type = build_initial_element_type(target_element, "ajooEditor");
+  buildingElementType: async function (elem_type_in, target_element) {
 
-		var attrs = elem_type_in.attributes;
+    var self = this;
 
-		//overriding the intitial values
-		var overriding = {diagramTypeId: self.newDiagramTypeId,
-							name: attrs.caption,
-							isAbstract: elem_type_in.isAbstract,
-							elementId: self.newElementId,
-						};
+    var target_type = build_initial_element_type(target_element, "ajooEditor");
 
-		_.extend(target_type, overriding);
-		_.extend(target_type, self.toolData);
+    var attrs = elem_type_in.attributes;
 
-		if (target_element.type == "Line") {
+    //overriding the intitial values
+    var overriding = {
+      diagramTypeId: self.newDiagramTypeId,
+      name: attrs.caption,
+      isAbstract: elem_type_in.isAbstract,
+      elementId: self.newElementId,
+    };
 
-			//by default line is directional and orthogonal
-			var direction_list = {UniDirectional: "Directional",
-									BiDirectional: "BiDirectional",
-									ReverseBiDirectional: "ReverseDirectional",
-								};
+    _.extend(target_type, overriding);
+    _.extend(target_type, self.toolData);
 
-			var element_type_mapping = self.mappings;
+    if (target_element.type == "Line") {
 
-			var line_overriding = {direction: direction_list[elem_type_in.attributes["direction"]],
-									lineType: "Orthogonal",
-									startElementTypeId: element_type_mapping[elem_type_in["startElementTypeId"]],
-									endElementTypeId: element_type_mapping[elem_type_in["endElementTypeId"]],
-								};
+      //by default line is directional and orthogonal
+      var direction_list = {
+        UniDirectional: "Directional",
+        BiDirectional: "BiDirectional",
+        ReverseBiDirectional: "ReverseDirectional",
+      };
 
-			_.extend(target_type, line_overriding);
-		}
+      var element_type_mapping = self.mappings;
 
-		//styles
-		self.addElementStyle(target_type, elem_type_in);
+      var line_overriding = {
+        direction: direction_list[elem_type_in.attributes["direction"]],
+        lineType: "Orthogonal",
+        startElementTypeId: element_type_mapping[elem_type_in["startElementTypeId"]],
+        endElementTypeId: element_type_mapping[elem_type_in["endElementTypeId"]],
+      };
 
-		//keystrokes
-		self.addKeystrokes(elem_type_in, target_type, "keyStrokes");
+      _.extend(target_type, line_overriding);
+    }
 
-		//context menu
-		self.addContextMenu(elem_type_in, target_type, "contextMenu");
+    //styles
+    self.addElementStyle(target_type, elem_type_in);
 
-		//extension points
-		var translet_collection = [];
-		self.addTranslets(elem_type_in, target_type, translet_collection);
+    //keystrokes
+    self.addKeystrokes(elem_type_in, target_type, "keyStrokes");
 
-		//adding element type
-		var new_elem_type_id = ElementTypes.insert(target_type);
+    //context menu
+    self.addContextMenu(elem_type_in, target_type, "contextMenu");
 
-		self.insertTranslets(translet_collection, target_type, new_elem_type_id);
+    //extension points
+    var translet_collection = [];
+    self.addTranslets(elem_type_in, target_type, translet_collection);
 
-		self.mappings[elem_type_in.repId] = new_elem_type_id;
-		self.newElementTypeId = new_elem_type_id;
+    //adding element type
+    var new_elem_type_id = await ElementTypes.insertAsync(target_type);
 
-		return target_type;
-	},
+    self.insertTranslets(translet_collection, target_type, new_elem_type_id);
 
-	addSpecializations: function(specializations, element_type_mapping, element_mappings, diagram_id, diagram_type_id, config_dgr_type_id) {
+    self.mappings[elem_type_in.repId] = new_elem_type_id;
+    self.newElementTypeId = new_elem_type_id;
 
-		var self = this;
+    return target_type;
+  },
 
-		var elem_type = ElementTypes.findOne({diagramTypeId: config_dgr_type_id, name: "Specialization"});
-		if (!elem_type) {
-			return;
-		}
+  addSpecializations: async function (specializations, element_type_mapping, element_mappings, diagram_id, diagram_type_id, config_dgr_type_id) {
 
-		var specialization_id = elem_type["_id"];
-		var list = {};
-		_.each(specializations, function(specialization) {
+    var self = this;
 
-			var sub_type_id_in = specialization["subTypeId"];
-			var super_type_id_in = specialization["superTypeId"];
+    var elem_type = await ElementTypes.findOneAsync({ diagramTypeId: config_dgr_type_id, name: "Specialization" });
+    if (!elem_type) {
+      return;
+    }
 
-			var sub_type_id = element_type_mapping[sub_type_id_in];
-			var super_type_id = element_type_mapping[super_type_id_in];
+    var specialization_id = elem_type["_id"];
+    var list = {};
+    _.each(specializations, function (specialization) {
 
-			if (list[sub_type_id]) {
-				list[sub_type_id].push(super_type_id);
-			}
+      var sub_type_id_in = specialization["subTypeId"];
+      var super_type_id_in = specialization["superTypeId"];
 
-			else {
-				list[sub_type_id] = [super_type_id]
-			}
+      var sub_type_id = element_type_mapping[sub_type_id_in];
+      var super_type_id = element_type_mapping[super_type_id_in];
 
-			var edge = specialization["edge"];
+      if (list[sub_type_id]) {
+        list[sub_type_id].push(super_type_id);
+      }
 
-			edge["style"] = undefined;
+      else {
+        list[sub_type_id] = [super_type_id]
+      }
 
-			var element_list = {diagramId: diagram_id,};
+      var edge = specialization["edge"];
 
-			_.extend(element_list, self.toolData);
+      edge["style"] = undefined;
 
-		  	self.loadEdge(edge);
-		});
+      var element_list = { diagramId: diagram_id, };
 
-		_.each(list, function(item, key) {
-			ElementTypes.update({_id: key}, {$set: {superTypeIds: item}});
-		});
-	},	
+      _.extend(element_list, self.toolData);
 
-	addDialog: function(target_type, elem_type_in) {
+      self.loadEdge(edge);
+    });
 
-		var self = this;
+    _.each(list, async function (item, key) {
+      await ElementTypes.updateAsync({ _id: key }, { $set: { superTypeIds: item } });
+    });
+  },
 
-		var prop_diagram = elem_type_in["propertyDiagram"];
+  addDialog: function (target_type, elem_type_in) {
 
-		var tabs = prop_diagram["propertyTabs"];
-		var rows = prop_diagram["rows"];
+    var self = this;
 
-		//if there is no tabs or there are rows on the main tab
-		if (!tabs || rows) {
-			if (!tabs) {
-				tabs = {};
-			}
+    var prop_diagram = elem_type_in["propertyDiagram"];
 
-			tabs["noTab"] = {id: "Main"};
-		}
+    var tabs = prop_diagram["propertyTabs"];
+    var rows = prop_diagram["rows"];
 
-		var i = 0;
-		_.each(tabs, function(tab) {
+    //if there is no tabs or there are rows on the main tab
+    if (!tabs || rows) {
+      if (!tabs) {
+        tabs = {};
+      }
 
-			//setting tab properties
-		 	var dialog_tab = {
-		 					diagramId: self.newDiagramId,
-		 					diagramTypeId: self.newDiagramTypeId,
-		 					elementTypeId: self.newElementTypeId,
-		 					name: tab["id"],
-		 					index: i++,
-		 				};
+      tabs["noTab"] = { id: "Main" };
+    }
 
-		 	_.extend(dialog_tab, self.toolData);
+    var i = 0;
+    _.each(tabs, async function (tab) {
 
-		 	//inserting the tab
-		 	var tab_id = DialogTabs.insert(dialog_tab);
+      //setting tab properties
+      var dialog_tab = {
+        diagramId: self.newDiagramId,
+        diagramTypeId: self.newDiagramTypeId,
+        elementTypeId: self.newElementTypeId,
+        name: tab["id"],
+        index: i++,
+      };
 
-		 	//mapping the old tab id to the new one
-		 	self.mappings[tab.repId] = tab_id;
-		});
-	},
+      _.extend(dialog_tab, self.toolData);
 
-	addToolbar: function(type_in, target_type) {
+      //inserting the tab
+      var tab_id = await DialogTabs.insertAsync(dialog_tab);
 
-		var toolbar_list = _.map(type_in["toolbar"], function(item) {
+      //mapping the old tab id to the new one
+      self.mappings[tab.repId] = tab_id;
+    });
+  },
 
-								var proc_name = item["procedureName"] || "";
-								var new_proc_name = _.last(proc_name.split("."));
+  addToolbar: function (type_in, target_type) {
 
-							 	return {name: item["caption"],
-										id: generate_id(),
-										icon: item.icon || "fa-gear",
-										procedure: new_proc_name,
-										template: item["template"],
-									};
-							});
+    var toolbar_list = _.map(type_in["toolbar"], function (item) {
 
-		_.each(target_type["toolbar"], function(item) {
-			toolbar_list.push(item);
-		});
+      var proc_name = item["procedureName"] || "";
+      var new_proc_name = _.last(proc_name.split("."));
 
-		target_type["toolbar"] = toolbar_list;
-	},
+      return {
+        name: item["caption"],
+        id: generate_id(),
+        icon: item.icon || "fa-gear",
+        procedure: new_proc_name,
+        template: item["template"],
+      };
+    });
 
-	addKeystrokes: function(target_type, type_in, name) {
+    _.each(target_type["toolbar"], function (item) {
+      toolbar_list.push(item);
+    });
 
-		var self = this;
+    target_type["toolbar"] = toolbar_list;
+  },
 
-		var not_needed_items = self.getNotNeededItems();
-		var transformed_items = self.getTransformedItems();
+  addKeystrokes: function (target_type, type_in, name) {
 
-		var key_strokes_list = [];
-		_.each(type_in[name], function(key_stroke, key) {
+    var self = this;
 
-		 	var procedure_name = key_stroke["procedureName"];
+    var not_needed_items = self.getNotNeededItems();
+    var transformed_items = self.getTransformedItems();
 
-		 	if (not_needed_items[procedure_name]) {
-		 		return;
-		 	}
+    var key_strokes_list = [];
+    _.each(type_in[name], function (key_stroke, key) {
 
-		 	else if (transformed_items[procedure_name]) {
-		 		procedure_name = transformed_items[procedure_name];
-		 	}
+      var procedure_name = key_stroke["procedureName"];
 
-		 	var procedure_name = procedure_name || "";
-			var new_proc_name = _.last(procedure_name.split("."));
+      if (not_needed_items[procedure_name]) {
+        return;
+      }
 
-			key_strokes_list.push({keyStroke: key_stroke["key"],
-									procedure: new_proc_name});
-			
-		});
+      else if (transformed_items[procedure_name]) {
+        procedure_name = transformed_items[procedure_name];
+      }
 
-		target_type[name] = key_strokes_list;
-	},
+      var procedure_name = procedure_name || "";
+      var new_proc_name = _.last(procedure_name.split("."));
 
+      key_strokes_list.push({
+        keyStroke: key_stroke["key"],
+        procedure: new_proc_name
+      });
 
-	getNotNeededItems: function() {
-		return {
-				"interpreter.Properties.Properties": true,
-				"utilities.symbol_style": true,
-				"utilities.Reroute": true,
-			};
-	},
+    });
 
-	getTransformedItems: function() {
-		return  {
-				"interpreter.Delete.Delete": "Delete",
-				"interpreter.CutCopyPaste.Cut": "Cut",
-				"interpreter.CutCopyPaste.Copy": "Copy",
-				"interpreter.CutCopyPaste.Paste": "Paste",
-			};
-	},
+    target_type[name] = key_strokes_list;
+  },
 
-	addCompartmentTypes: function(target_type, elem_type_in) {
 
-		var self = this;
+  getNotNeededItems: function () {
+    return {
+      "interpreter.Properties.Properties": true,
+      "utilities.symbol_style": true,
+      "utilities.Reroute": true,
+    };
+  },
 
-		var rows2 = {};
+  getTransformedItems: function () {
+    return {
+      "interpreter.Delete.Delete": "Delete",
+      "interpreter.CutCopyPaste.Cut": "Cut",
+      "interpreter.CutCopyPaste.Copy": "Copy",
+      "interpreter.CutCopyPaste.Paste": "Paste",
+    };
+  },
 
-		var prop_diagram = elem_type_in["propertyDiagram"];
-		self.collectPropTabsAndRows(prop_diagram);
+  addCompartmentTypes: function (target_type, elem_type_in) {
 
-		var old_new_rows_map = self.getOldNewRowsMap();
+    var self = this;
 
-		var dialog_tab_id;
+    var rows2 = {};
 
-		var is_edge;
-		if (target_type["type"] == "Line") {
-			is_edge = true;
-		}
+    var prop_diagram = elem_type_in["propertyDiagram"];
+    self.collectPropTabsAndRows(prop_diagram);
 
-		_.each(elem_type_in["compartmentTypes"], function(compart_type_in, i) {
+    var old_new_rows_map = self.getOldNewRowsMap();
 
-			//selecting the compartment type properties
-			var translets_collection = [];
+    var dialog_tab_id;
 
-			//building the initial compart type
-			var target_compart_type = {elementTypeId: self.newElementTypeId,
-										diagramTypeId: self.newDiagramTypeId,
-										diagramId: self.newDiagramId,
-										elementId: self.newElementId,
-										tabIndex: i,
-										index: i,
-									};
-			_.extend(target_compart_type, self.toolData);
+    var is_edge;
+    if (target_type["type"] == "Line") {
+      is_edge = true;
+    }
 
-			build_initial_compartment_type(target_compart_type, target_type["type"], "ajooEditor");
+    _.each(elem_type_in["compartmentTypes"], async function (compart_type_in, i) {
 
-			//overriding the initial compart type
-			var attributes_json = compart_type_in["attributes"];
-			target_compart_type["name"] = attributes_json["caption"];
+      //selecting the compartment type properties
+      var translets_collection = [];
 
-			if (attributes_json["startValue"]) {
-				target_compart_type["defaultValue"] = attributes_json["startValue"];
-			}
+      //building the initial compart type
+      var target_compart_type = {
+        elementTypeId: self.newElementTypeId,
+        diagramTypeId: self.newDiagramTypeId,
+        diagramId: self.newDiagramId,
+        elementId: self.newElementId,
+        tabIndex: i,
+        index: i,
+      };
+      _.extend(target_compart_type, self.toolData);
 
-			if (attributes_json["adornmentPrefix"]) {
-				target_compart_type["prefix"] = attributes_json["adornmentPrefix"];
-			}
+      build_initial_compartment_type(target_compart_type, target_type["type"], "ajooEditor");
 
-			if (attributes_json["adornmentSuffix"]) {
-				target_compart_type["suffix"] = attributes_json["adornmentSuffix"];
-			}
+      //overriding the initial compart type
+      var attributes_json = compart_type_in["attributes"];
+      target_compart_type["name"] = attributes_json["caption"];
 
-			if (attributes_json["concatStyle"]) {
-				target_compart_type["concatStyle"] = attributes_json["concatStyle"];
-			}
+      if (attributes_json["startValue"]) {
+        target_compart_type["defaultValue"] = attributes_json["startValue"];
+      }
 
-			//styles
-			self.addCompartmentTypeStyles(target_compart_type, compart_type_in, is_edge);
+      if (attributes_json["adornmentPrefix"]) {
+        target_compart_type["prefix"] = attributes_json["adornmentPrefix"];
+      }
 
-			//row
-			var old_row_id = compart_type_in["rowId"];
-			var old_tab_id = compart_type_in["tabId"];
+      if (attributes_json["adornmentSuffix"]) {
+        target_compart_type["suffix"] = attributes_json["adornmentSuffix"];
+      }
 
-			//if the compartment was linked with a row
-			if (old_row_id) {
+      if (attributes_json["concatStyle"]) {
+        target_compart_type["concatStyle"] = attributes_json["concatStyle"];
+      }
 
-				var row = self.mappings[old_row_id];
+      //styles
+      self.addCompartmentTypeStyles(target_compart_type, compart_type_in, is_edge);
 
-				//if there is such a row (should be always true)
-				if (row) {
+      //row
+      var old_row_id = compart_type_in["rowId"];
+      var old_tab_id = compart_type_in["tabId"];
 
-					var row_type = row["rowType"];
-					var new_row_type;
-					if (row_type == "ComboBox" && row.isEditable == "true" ) {
-						new_row_type = "combobox";
-					}
+      //if the compartment was linked with a row
+      if (old_row_id) {
 
-					else {
-						var old_new_rows_map = self.getOldNewRowsMap();
-						new_row_type = old_new_rows_map[row_type];
+        var row = self.mappings[old_row_id];
 
-					}
+        //if there is such a row (should be always true)
+        if (row) {
 
+          var row_type = row["rowType"];
+          var new_row_type;
+          if (row_type == "ComboBox" && row.isEditable == "true") {
+            new_row_type = "combobox";
+          }
 
-					//if there is no row type, then the default is input (this should never happen)
-					if (!new_row_type) {
-						new_row_type = "custom";
-					}
+          else {
+            var old_new_rows_map = self.getOldNewRowsMap();
+            new_row_type = old_new_rows_map[row_type];
 
-					//if there is inputType and type (this should always be true)
-					if (target_compart_type["inputType"] && target_compart_type["inputType"]["type"]) {
+          }
 
-						target_compart_type["inputType"]["type"] = new_row_type;
 
-						//if textarea, then setting the area size
-						if (new_row_type == "textarea")
-							target_compart_type["inputType"]["rows"] = 3;
+          //if there is no row type, then the default is input (this should never happen)
+          if (!new_row_type) {
+            new_row_type = "custom";
+          }
 
-						if (new_row_type == "selection" || new_row_type == "checkbox" || new_row_type === "combobox" || new_row_type === "radio") {
+          //if there is inputType and type (this should always be true)
+          if (target_compart_type["inputType"] && target_compart_type["inputType"]["type"]) {
 
-							var values = self.transformChoiceItems(compart_type_in, target_compart_type);
-							target_compart_type["inputType"]["values"] = values;
-						}
+            target_compart_type["inputType"]["type"] = new_row_type;
 
-						if (row_type == "TextArea+Button") {
-							target_compart_type["inputType"]["templateName"] = "multiField";
+            //if textarea, then setting the area size
+            if (new_row_type == "textarea")
+              target_compart_type["inputType"]["rows"] = 3;
 
-							dialog_tab_id = self.addSubCompartmentTypes(target_compart_type, compart_type_in, translets_collection);
-						}
+            if (new_row_type == "selection" || new_row_type == "checkbox" || new_row_type === "combobox" || new_row_type === "radio") {
 
-					}
-				}
+              var values = self.transformChoiceItems(compart_type_in, target_compart_type);
+              target_compart_type["inputType"]["values"] = values;
+            }
 
-				else {
-					console.error("ERROR: No new row id");
-				}
-			}
+            if (row_type == "TextArea+Button") {
+              target_compart_type["inputType"]["templateName"] = "multiField";
 
-			else {
-				target_compart_type["inputType"]["type"] = "custom";
-				target_compart_type["inputType"]["templateName"] = "value_from_subcompartments";
+              dialog_tab_id = self.addSubCompartmentTypes(target_compart_type, compart_type_in, translets_collection);
+            }
 
-				target_compart_type["data"] = {subCompartmentTypes: compart_type_in["subCompartments"]};
-				
-				dialog_tab_id = self.addSubCompartmentTypes(target_compart_type, compart_type_in, translets_collection);
-			}
+          }
+        }
 
-			//adding dialog tab
-			var old_tab_id = compart_type_in["tabId"];
-			if (old_tab_id || dialog_tab_id) {
+        else {
+          console.error("ERROR: No new row id");
+        }
+      }
 
-				var new_tab_id = self.mappings[old_tab_id];
-				if (!new_tab_id) {
-					target_compart_type["dialogTabId"] = dialog_tab_id;
-				}
+      else {
+        target_compart_type["inputType"]["type"] = "custom";
+        target_compart_type["inputType"]["templateName"] = "value_from_subcompartments";
 
-				else if (new_tab_id) {
-					target_compart_type["dialogTabId"] = new_tab_id; //tab["_id"];
-				}
-			}
+        target_compart_type["data"] = { subCompartmentTypes: compart_type_in["subCompartments"] };
 
-			//if there is no row, but the compartment type was linked to a row
-			else {
-				if (old_row_id) {
+        dialog_tab_id = self.addSubCompartmentTypes(target_compart_type, compart_type_in, translets_collection);
+      }
 
-					var tab = DialogTabs.findOne({toolId: target_compart_type["toolId"],
-												elementTypeId: target_compart_type["elementTypeId"]},
-												{sort: {index: -1}});
+      //adding dialog tab
+      var old_tab_id = compart_type_in["tabId"];
+      if (old_tab_id || dialog_tab_id) {
 
-					target_compart_type["dialogTabId"] = tab["_id"];
-				}
+        var new_tab_id = self.mappings[old_tab_id];
+        if (!new_tab_id) {
+          target_compart_type["dialogTabId"] = dialog_tab_id;
+        }
 
-			}
+        else if (new_tab_id) {
+          target_compart_type["dialogTabId"] = new_tab_id; //tab["_id"];
+        }
+      }
 
-			//translets
-			var translet_collection = [];
-			self.addTranslets(compart_type_in, target_compart_type, translet_collection);
+      //if there is no row, but the compartment type was linked to a row
+      else {
+        if (old_row_id) {
 
-			//adding the compart type
-			var new_compart_type_id = CompartmentTypes.insert(target_compart_type, {removeEmptyStrings: false});
+          var tab = await DialogTabs.findOneAsync({
+            toolId: target_compart_type["toolId"],
+            elementTypeId: target_compart_type["elementTypeId"]
+          },
+            { sort: { index: -1 } });
 
-			//compartment transelets
-			self.insertTranslets(translet_collection, target_compart_type, new_compart_type_id);
+          target_compart_type["dialogTabId"] = tab["_id"];
+        }
 
-			//subcompartment translets
-			_.each(translets_collection, function(item) {
-				self.insertTranslets(item["translets"], target_compart_type, new_compart_type_id, item["id"]);
-			});
+      }
 
-		});
+      //translets
+      var translet_collection = [];
+      self.addTranslets(compart_type_in, target_compart_type, translet_collection);
 
-	},
+      //adding the compart type
+      var new_compart_type_id = await CompartmentTypes.insertAsync(target_compart_type, { removeEmptyStrings: false });
 
-	addElementStyle: function(target_type, elem_type_in) {
+      //compartment transelets
+      self.insertTranslets(translet_collection, target_compart_type, new_compart_type_id);
 
-		var self = this;
+      //subcompartment translets
+      _.each(translets_collection, function (item) {
+        self.insertTranslets(item["translets"], target_compart_type, new_compart_type_id, item["id"]);
+      });
 
-		_.each(elem_type_in["styles"], function(style_in, i) {
+    });
 
-			//if there is a style obj, overriding the default properties
-			if (i == 0) {
+  },
 
-				var style_out = target_type["styles"][0];
+  addElementStyle: function (target_type, elem_type_in) {
 
-				var new_style_obj = target_type["styles"][i];
+    var self = this;
 
-				self.mappings[style_in.repId] = new_style_obj.id;
+    _.each(elem_type_in["styles"], function (style_in, i) {
 
-				ImportTDAData.transformElementStyle(style_in, style_out);
-			}
+      //if there is a style obj, overriding the default properties
+      if (i == 0) {
 
-			//creating a new style obj
-			else {
+        var style_out = target_type["styles"][0];
 
-				var style_name = style_in["id"];
+        var new_style_obj = target_type["styles"][i];
 
-				var new_style_obj = {id: generate_id(), name: style_name, };
+        self.mappings[style_in.repId] = new_style_obj.id;
 
-				self.mappings[style_in.repId] = new_style_obj.id;
+        ImportTDAData.transformElementStyle(style_in, style_out);
+      }
 
-				if (target_type["type"] == "Box") {
-					new_style_obj.elementStyle = {}
-					_.extend(new_style_obj.elementStyle, build_initial_box_style("ajooEditor"))
-				}
+      //creating a new style obj
+      else {
 
-				else if (target_type["type"] == "Line") {
-					_.extend(new_style_obj, build_initial_line_style("ajooEditor"));
-				}
+        var style_name = style_in["id"];
 
-				ImportTDAData.transformElementStyle(style_in, new_style_obj);
+        var new_style_obj = { id: generate_id(), name: style_name, };
 
-				target_type["styles"].push(new_style_obj);
-			}
+        self.mappings[style_in.repId] = new_style_obj.id;
 
-		});
+        if (target_type["type"] == "Box") {
+          new_style_obj.elementStyle = {}
+          _.extend(new_style_obj.elementStyle, build_initial_box_style("ajooEditor"))
+        }
 
-	},
+        else if (target_type["type"] == "Line") {
+          _.extend(new_style_obj, build_initial_line_style("ajooEditor"));
+        }
 
-	addCompartmentTypeStyles: function(target_compart_type, compart_type_in, is_edge) {
+        ImportTDAData.transformElementStyle(style_in, new_style_obj);
 
-		var self = this;
+        target_type["styles"].push(new_style_obj);
+      }
 
-		_.each(compart_type_in["styles"], function(style_in, i) {
+    });
 
-			//selecting the style object
-			if (i == 0) {
+  },
 
-				var style_out = target_compart_type["styles"][0].style;
+  addCompartmentTypeStyles: function (target_compart_type, compart_type_in, is_edge) {
 
-				var new_style_obj = target_compart_type["styles"][i];
-				self.mappings[style_in.repId] = new_style_obj.id;
+    var self = this;
 
-				self.transformCompartmentStyle(style_in, style_out, is_edge);
-			}
+    _.each(compart_type_in["styles"], function (style_in, i) {
 
-			//creating a new style obj
-			else {
+      //selecting the style object
+      if (i == 0) {
 
-				var style_name = style_in["id"];		
+        var style_out = target_compart_type["styles"][0].style;
 
-				var new_style_obj = {id: generate_id(), name: style_name, style: {}};
+        var new_style_obj = target_compart_type["styles"][i];
+        self.mappings[style_in.repId] = new_style_obj.id;
 
-				self.mappings[style_in.repId] = new_style_obj.id;
+        self.transformCompartmentStyle(style_in, style_out, is_edge);
+      }
 
-				var type = "Box";
-				if (is_edge) {
-					type = "Line";
-				}
+      //creating a new style obj
+      else {
 
-				_.extend(new_style_obj.style, get_default_compartment_style(type, "ajooEditor"));
+        var style_name = style_in["id"];
 
-				self.transformCompartmentStyle(style_in, new_style_obj.style, is_edge);
+        var new_style_obj = { id: generate_id(), name: style_name, style: {} };
 
-				target_compart_type["styles"].push(new_style_obj);
-			}
+        self.mappings[style_in.repId] = new_style_obj.id;
 
-		});
-	},
+        var type = "Box";
+        if (is_edge) {
+          type = "Line";
+        }
 
-	loadNode: function(presentation) {
+        _.extend(new_style_obj.style, get_default_compartment_style(type, "ajooEditor"));
 
-		var self = this;
-		var elem_type = self.configuratorBoxType;
+        self.transformCompartmentStyle(style_in, new_style_obj.style, is_edge);
 
-		var style_out = elem_type["styles"][0];
-		ImportTDAData.transformBoxStyle(presentation["style"], style_out);
+        target_compart_type["styles"].push(new_style_obj);
+      }
 
-		var target_element = {
-							diagramId: self.newDiagramId,
+    });
+  },
 
-							type: "Box",
-							location: ImportTDAData.transformNodeLocation(presentation.location),
-							styleId: elem_type["styles"][0]["id"],
+  loadNode: async function (presentation) {
 
-							elementTypeId: elem_type._id,
-							diagramTypeId: self.configuratorDiagramType._id,
+    var self = this;
+    var elem_type = self.configuratorBoxType;
 
-							style: style_out,
-						};
+    var style_out = elem_type["styles"][0];
+    ImportTDAData.transformBoxStyle(presentation["style"], style_out);
 
-		_.extend(target_element, self.toolData);
-					
-		var id = Elements.insert(target_element);
+    var target_element = {
+      diagramId: self.newDiagramId,
 
-		self.mappings[presentation["id"]] = id;
-		self.newElementId = id;
+      type: "Box",
+      location: ImportTDAData.transformNodeLocation(presentation.location),
+      styleId: elem_type["styles"][0]["id"],
 
-		return target_element;
-	},
+      elementTypeId: elem_type._id,
+      diagramTypeId: self.configuratorDiagramType._id,
 
-	addBoxCompartment: function(elem_type_in, target_element) {
+      style: style_out,
+    };
 
-		var self = this;
+    _.extend(target_element, self.toolData);
 
-		var compart = build_compartment(self.configuratorBoxCompartmetmentType, target_element);
+    var id = await Elements.insertAsync(target_element);
 
-		//overriding the defaults
-		var overriding = {value: elem_type_in["attributes"]["caption"],
-							valueLC: compart["value"].toLowerCase(),
-							input: compart["value"],
+    self.mappings[presentation["id"]] = id;
+    self.newElementId = id;
 
-							elementId: self.newElementId,
-						};
+    return target_element;
+  },
 
-		_.extend(compart, overriding);
+  addBoxCompartment: async function (elem_type_in, target_element) {
 
-		Compartments.insert(compart);
-	},
+    var self = this;
 
+    var compart = build_compartment(self.configuratorBoxCompartmetmentType, target_element);
 
-	loadEdge: function(edge) {
+    //overriding the defaults
+    var overriding = {
+      value: elem_type_in["attributes"]["caption"],
+      valueLC: compart["value"].toLowerCase(),
+      input: compart["value"],
 
-		var self = this;
-		var elem_type = self.configuratorLineType;
+      elementId: self.newElementId,
+    };
 
-		//transforming points
-		var points = [];
-		_.each(edge["location"], function(point) {
-			var x = Number(point["xPos"]);
-			var y = Number(point["yPos"]);
+    _.extend(compart, overriding);
 
-			if (x && y) {
-				points.push(x);
-				points.push(y);
-			}
-		});
+    await Compartments.insertAsync(compart);
+  },
 
-		//selecting style
-		var style_in = edge["style"];
-		var style_obj = elem_type["styles"][0];
-		var style_out = {elementStyle: style_obj["elementStyle"] || {},
-							startShapeStyle: style_obj["startShapeStyle"] || {},
-							endShapeStyle: style_obj["endShapeStyle"] || {},
-						};
 
-		ImportTDAData.transformLineStyle(style_in, style_out);
+  loadEdge: async function (edge) {
 
-		var element_mappings = self.mappings;
+    var self = this;
+    var elem_type = self.configuratorLineType;
 
-		var target_element = {
-						diagramId: self.newDiagramId,
+    //transforming points
+    var points = [];
+    _.each(edge["location"], function (point) {
+      var x = Number(point["xPos"]);
+      var y = Number(point["yPos"]);
 
-						type: "Line",
-						//location: transform_node_location(presentation.location),
-						points: points,
-						startElement: element_mappings[edge["start_elem_id"]],
-						endElement: element_mappings[edge["end_elem_id"]],
+      if (x && y) {
+        points.push(x);
+        points.push(y);
+      }
+    });
 
-						styleId: elem_type["styles"][0]["id"],
+    //selecting style
+    var style_in = edge["style"];
+    var style_obj = elem_type["styles"][0];
+    var style_out = {
+      elementStyle: style_obj["elementStyle"] || {},
+      startShapeStyle: style_obj["startShapeStyle"] || {},
+      endShapeStyle: style_obj["endShapeStyle"] || {},
+    };
 
-						elementTypeId: elem_type._id,
-						diagramTypeId: self.configuratorDiagramType._id,
+    ImportTDAData.transformLineStyle(style_in, style_out);
 
-						style: style_out,
-					};
+    var element_mappings = self.mappings;
 
-		_.extend(target_element, self.toolData);
-					
-		var id = Elements.insert(target_element);
+    var target_element = {
+      diagramId: self.newDiagramId,
 
-		self.mappings[edge["id"]] = id;
-		self.newElementId = id;
+      type: "Line",
+      //location: transform_node_location(presentation.location),
+      points: points,
+      startElement: element_mappings[edge["start_elem_id"]],
+      endElement: element_mappings[edge["end_elem_id"]],
 
-		return target_element;
-	},
+      styleId: elem_type["styles"][0]["id"],
 
-	addTranslets: function(obj_type_in, obj_type_type, translet_collection) {
+      elementTypeId: elem_type._id,
+      diagramTypeId: self.configuratorDiagramType._id,
 
-		var remove_translets = {
-							l2ClickEvent: true,
-							procProperties: true,
-							//procDeleteElement: true, //This is ????
-							//procCopied: true,
-						};
+      style: style_out,
+    };
 
-		var transform_translet = {
-							procCreateElementDomain: "afterCreateElement",
-							procNewElement: "afterCreateElement",
+    _.extend(target_element, self.toolData);
 
-							procGenerateItemsClickBox: "dynamicDropDown",
-							procDynamicPopUpE: "dynamicNoCollectionContextMenu",
-							procDynamicPopUpC: "dynamicCollectionContextMenu",
-							procFieldEntered: "afterUpdate",
+    var id = await Elements.insertAsync(target_element);
 
-							procGetPrefix: "dynamicPrefix",
-							procGetSuffix: "dynamicSuffix",
+    self.mappings[edge["id"]] = id;
+    self.newElementId = id;
 
-							procGenerateInputValue: "dynamicDefaultValue",
-						};
+    return target_element;
+  },
 
-		var transformed_proc_names = {	
-									"OWL_specific.annotation_types": "annotation_types",
-									"OWL_specific.language_values": "language_values",
-									"OWL_specific.get_object_ns": "get_object_ns",
-									"OWL_specific.get_class_names_for_object": "get_class_names_for_object",
-									"OWL_specific.default_types": "default_types",
-									"OWL_specific.get_namespaces": "get_namespaces",
-									"OWL_specific.get_properties": "get_properties",
-									"OWL_specific.get_attribute_ns": "get_attribute_ns",
-									"OWL_specific.default_types": "default_types",
-									"OWL_specific.default_multiplicity": "default_multiplicity",
-									"OWL_specific.class_name_from_ns": "class_name_from_ns",
-									"OWL_specific.get_generalization_ns": "get_generalization_ns",
-									"OWL_specific.role_name_from_ns": "role_name_from_ns",
-									"OWL_specific.get_link_ns": "get_link_ns",
+  addTranslets: function (obj_type_in, obj_type_type, translet_collection) {
 
+    var remove_translets = {
+      l2ClickEvent: true,
+      procProperties: true,
+      //procDeleteElement: true, //This is ????
+      //procCopied: true,
+    };
 
-									"transformations.setClassTypeValue": "",
-									"transformations.setEnabledFieldsFromClassTypeChange": "",
+    var transform_translet = {
+      procCreateElementDomain: "afterCreateElement",
+      procNewElement: "afterCreateElement",
 
-									"transformations.getClassNames": "",
-									"transformations.setInstance": "",
-									"transformations.setShowInstanceName": "",
-									"transformations.attributeGrammar": "",									
+      procGenerateItemsClickBox: "dynamicDropDown",
+      procDynamicPopUpE: "dynamicNoCollectionContextMenu",
+      procDynamicPopUpC: "dynamicCollectionContextMenu",
+      procFieldEntered: "afterUpdate",
 
-									"transformations.setIsNegationAttribute": "",
-									"transformations.setIsOptionalAttribute": "",			
-									"transformations.getAttributeNames": "",
-								
+      procGetPrefix: "dynamicPrefix",
+      procGetSuffix: "dynamicSuffix",
 
-									//setIsGroup
-									//setIsCondition
-									//setIsOptional
-									//setIsNegation
-									//getAssociationIsInverse
-									//setSubQueryInverseLink
-									//getAssociationName
-									//setIsInverse
-									//getAssociationNames
-									//setSubQueryNameSuffix
-									//getAttributeNames
-									//setIsOptionalAttribute
-									//setIsNegationAttribute
-									//attributeGrammar
-									//setShowInstanceName
-									//setInstance
-									//getClassNames
-									//setEnabledFieldsFromClassTypeChange
-									//setClassTypeValue
-								};
+      procGenerateInputValue: "dynamicDefaultValue",
+    };
 
-		var translets_list = obj_type_type["extensionPoints"];
+    var transformed_proc_names = {
+      "OWL_specific.annotation_types": "annotation_types",
+      "OWL_specific.language_values": "language_values",
+      "OWL_specific.get_object_ns": "get_object_ns",
+      "OWL_specific.get_class_names_for_object": "get_class_names_for_object",
+      "OWL_specific.default_types": "default_types",
+      "OWL_specific.get_namespaces": "get_namespaces",
+      "OWL_specific.get_properties": "get_properties",
+      "OWL_specific.get_attribute_ns": "get_attribute_ns",
+      "OWL_specific.default_types": "default_types",
+      "OWL_specific.default_multiplicity": "default_multiplicity",
+      "OWL_specific.class_name_from_ns": "class_name_from_ns",
+      "OWL_specific.get_generalization_ns": "get_generalization_ns",
+      "OWL_specific.role_name_from_ns": "role_name_from_ns",
+      "OWL_specific.get_link_ns": "get_link_ns",
 
-		_.each(obj_type_in["translets"], function(translet) {
 
-		 	var extension_point = translet["extensionPoint"];
-		 	if (remove_translets[extension_point]) {
-		 		return;
-		 	}
+      "transformations.setClassTypeValue": "",
+      "transformations.setEnabledFieldsFromClassTypeChange": "",
 
-		 	if (transform_translet[extension_point]) {
-		 		extension_point = transform_translet[extension_point];
-		 	}
+      "transformations.getClassNames": "",
+      "transformations.setInstance": "",
+      "transformations.setShowInstanceName": "",
+      "transformations.attributeGrammar": "",
 
+      "transformations.setIsNegationAttribute": "",
+      "transformations.setIsOptionalAttribute": "",
+      "transformations.getAttributeNames": "",
 
-			var proc_name = translet["procedureName"];
-		 	var tmp_proc_name = transformed_proc_names[translet["procedureName"]];
-		 	if (!_.isUndefined(tmp_proc_name)) {
-		 		proc_name = tmp_proc_name;
-		 	}
 
-		 	var found_translet = _.find(translets_list, function(tmp_translet) {
-		 		if (tmp_translet["extensionPoint"] == extension_point) {
-		 			return true;
-		 		}
-		 	});
+      //setIsGroup
+      //setIsCondition
+      //setIsOptional
+      //setIsNegation
+      //getAssociationIsInverse
+      //setSubQueryInverseLink
+      //getAssociationName
+      //setIsInverse
+      //getAssociationNames
+      //setSubQueryNameSuffix
+      //getAttributeNames
+      //setIsOptionalAttribute
+      //setIsNegationAttribute
+      //attributeGrammar
+      //setShowInstanceName
+      //setInstance
+      //getClassNames
+      //setEnabledFieldsFromClassTypeChange
+      //setClassTypeValue
+    };
 
+    var translets_list = obj_type_type["extensionPoints"];
 
-		 	if (found_translet) {
-		 		found_translet.procedure = proc_name;
-		 	}
-		 	else {
-		 		translets_list.push({extensionPoint: extension_point, procedure: proc_name,});
-		 	}
+    _.each(obj_type_in["translets"], function (translet) {
 
-	 		if (translet["procedureName"] !== proc_name) {
+      var extension_point = translet["extensionPoint"];
+      if (remove_translets[extension_point]) {
+        return;
+      }
 
-				var proc_name = translet["procedureName"] || "";
-				var new_proc_name = _.last(proc_name.split("."));
+      if (transform_translet[extension_point]) {
+        extension_point = transform_translet[extension_point];
+      }
 
-	 			translet_collection.push({extensionPoint: extension_point,
-	 										procedureName: new_proc_name});
-	 		}
 
-		});
+      var proc_name = translet["procedureName"];
+      var tmp_proc_name = transformed_proc_names[translet["procedureName"]];
+      if (!_.isUndefined(tmp_proc_name)) {
+        proc_name = tmp_proc_name;
+      }
 
-		obj_type_type["extensionPoints"] = translets_list;
-	},
+      var found_translet = _.find(translets_list, function (tmp_translet) {
+        if (tmp_translet["extensionPoint"] == extension_point) {
+          return true;
+        }
+      });
 
-	//add_sub_compartment_types
-	addSubCompartmentTypes: function(target_compart_type, compart_type_in, translets_collection) {
 
-		var self = this;
+      if (found_translet) {
+        found_translet.procedure = proc_name;
+      }
+      else {
+        translets_list.push({ extensionPoint: extension_point, procedure: proc_name, });
+      }
 
-		var dialog_tab_id;
+      if (translet["procedureName"] !== proc_name) {
 
-		target_compart_type["subCompartmentTypes"] = _.map(compart_type_in["subCompartments"], function(sub_compart_in) {
+        var proc_name = translet["procedureName"] || "";
+        var new_proc_name = _.last(proc_name.split("."));
 
-			var attrs_in = sub_compart_in["attributes"];
-			var sub_compart_type = {_id: generate_id(),
-									name: attrs_in["caption"],
-									extensionPoints: [],
-									prefix: attrs_in["adornmentPrefix"],
-									suffix: attrs_in["adornmentSuffix"],
-									defaultValue: attrs_in["startValue"],
-								};
+        translet_collection.push({
+          extensionPoint: extension_point,
+          procedureName: new_proc_name
+        });
+      }
 
-			var translet_collection = [];
-			self.addTranslets(sub_compart_in, sub_compart_type, translet_collection);
+    });
 
-			if (translet_collection.length > 0) {
-				translets_collection.push({id: sub_compart_type["_id"], translets: translet_collection});
-			}
+    obj_type_type["extensionPoints"] = translets_list;
+  },
 
-			//insert_translets(translet_collection, base_compart_type, base_compart_type["_id"], sub_compart_type["_id"]);
+  //add_sub_compartment_types
+  addSubCompartmentTypes: function (target_compart_type, compart_type_in, translets_collection) {
 
-			if (sub_compart_in["rowId"]) {
+    var self = this;
 
-				var row = self.mappings[sub_compart_in["rowId"]];
-				if (row) {
-					sub_compart_type["inputType"] = {};
+    var dialog_tab_id;
 
-					var old_new_rows_map = self.getOldNewRowsMap();
-					var new_row_type = old_new_rows_map[row["rowType"]];
+    target_compart_type["subCompartmentTypes"] = _.map(compart_type_in["subCompartments"], function (sub_compart_in) {
 
-					if (row["rowType"] == "ComboBox" && row.isEditable == "true" ) {
-						new_row_type = "combobox";
-					}
+      var attrs_in = sub_compart_in["attributes"];
+      var sub_compart_type = {
+        _id: generate_id(),
+        name: attrs_in["caption"],
+        extensionPoints: [],
+        prefix: attrs_in["adornmentPrefix"],
+        suffix: attrs_in["adornmentSuffix"],
+        defaultValue: attrs_in["startValue"],
+      };
 
-					sub_compart_type["inputType"]["type"] = new_row_type;
+      var translet_collection = [];
+      self.addTranslets(sub_compart_in, sub_compart_type, translet_collection);
 
-					if (new_row_type == "textarea") {
-						sub_compart_type["inputType"]["rows"] = 3;
-					}
+      if (translet_collection.length > 0) {
+        translets_collection.push({ id: sub_compart_type["_id"], translets: translet_collection });
+      }
 
-					if (new_row_type == "checkbox") {
+      //insert_translets(translet_collection, base_compart_type, base_compart_type["_id"], sub_compart_type["_id"]);
 
-						var values = self.transformChoiceItems(sub_compart_in, target_compart_type);
-						sub_compart_type["inputType"]["values"] = values;
-					}
+      if (sub_compart_in["rowId"]) {
 
-					if (row["rowType"] == "TextArea+Button") {
-						sub_compart_type["inputType"]["type"] = "custom";
-						sub_compart_type["inputType"]["templateName"] = "multiField";
-					}
+        var row = self.mappings[sub_compart_in["rowId"]];
+        if (row) {
+          sub_compart_type["inputType"] = {};
 
+          var old_new_rows_map = self.getOldNewRowsMap();
+          var new_row_type = old_new_rows_map[row["rowType"]];
 
-					//adding dialog tab
-					var old_tab_id = sub_compart_in["tabId"];
-					if (old_tab_id) {
+          if (row["rowType"] == "ComboBox" && row.isEditable == "true") {
+            new_row_type = "combobox";
+          }
 
-						var new_tab_id = self.mappings[old_tab_id];
-						if (new_tab_id) {
-							sub_compart_type["dialogTabId"] = new_tab_id;
-							dialog_tab_id = new_tab_id;
-						}
-					}
-				}
+          sub_compart_type["inputType"]["type"] = new_row_type;
 
-				else {
+          if (new_row_type == "textarea") {
+            sub_compart_type["inputType"]["rows"] = 3;
+          }
 
-					sub_compart_type["inputType"] = {};
-					sub_compart_type["inputType"]["type"] = "input";
-				}
-			}
+          if (new_row_type == "checkbox") {
 
-			var tmp_tab_id = self.addSubCompartmentTypes(sub_compart_type, sub_compart_in, translets_collection);
-			dialog_tab_id = tmp_tab_id || dialog_tab_id;
-	
-			return sub_compart_type;
-		});
+            var values = self.transformChoiceItems(sub_compart_in, target_compart_type);
+            sub_compart_type["inputType"]["values"] = values;
+          }
 
-		return dialog_tab_id; 
-	},
+          if (row["rowType"] == "TextArea+Button") {
+            sub_compart_type["inputType"]["type"] = "custom";
+            sub_compart_type["inputType"]["templateName"] = "multiField";
+          }
 
-	transformCompartmentStyle: function(style, style_out, is_edge) {
 
-		//overriding style properties
-		style_out["fontFamily"] = style["fontTypeFace"];
-		style_out["fill"] = style["fontColor"];
+          //adding dialog tab
+          var old_tab_id = sub_compart_in["tabId"];
+          if (old_tab_id) {
 
-		if (Math.abs(Number(style["fontSize"]))) {
-			style_out["fontSize"] = Math.abs(Number(style["fontSize"])) + 3;
-		}
+            var new_tab_id = self.mappings[old_tab_id];
+            if (new_tab_id) {
+              sub_compart_type["dialogTabId"] = new_tab_id;
+              dialog_tab_id = new_tab_id;
+            }
+          }
+        }
 
-		var aligns = {	"0": "left",
-						"1": "center",
-						"2": "right",
-					};
+        else {
 
-		style_out["align"] = aligns[style["alignment"]] || "left";
+          sub_compart_type["inputType"] = {};
+          sub_compart_type["inputType"]["type"] = "input";
+        }
+      }
 
-		//visibility
-		style_out["visible"] = Number(style["isVisible"]) == 1 ? true : false;
+      var tmp_tab_id = self.addSubCompartmentTypes(sub_compart_type, sub_compart_in, translets_collection);
+      dialog_tab_id = tmp_tab_id || dialog_tab_id;
 
-		//fonts
-		var font_styles = {	"0": "normal",
-							"1": "bold",
-							"2": "italic",
-						};
+      return sub_compart_type;
+    });
 
-		style_out["fontStyle"] = font_styles[style["alignment"]] || "normal";
+    return dialog_tab_id;
+  },
 
-		//	 lc_Start = 1, 
-		//   lc_End = 2, 
+  transformCompartmentStyle: function (style, style_out, is_edge) {
 
-		//   lc_Left = 4, 
-		//   lc_Right = 8, 
+    //overriding style properties
+    style_out["fontFamily"] = style["fontTypeFace"];
+    style_out["fill"] = style["fontColor"];
 
-		//   lc_Middle = 16,
-		//   lc_Inside = 32 
-		//   lc_Any =
+    if (Math.abs(Number(style["fontSize"]))) {
+      style_out["fontSize"] = Math.abs(Number(style["fontSize"])) + 3;
+    }
 
-		if (is_edge) {
+    var aligns = {
+      "0": "left",
+      "1": "center",
+      "2": "right",
+    };
 
-			var placements = {
-							"5": "start-left",
-							"9": "start-right",
-							"6": "end-left",
-							"10": "end-right",
-							"20": "middle-left",
-							"24": "middle-right",
-						};
+    style_out["align"] = aligns[style["alignment"]] || "left";
 
-			style_out["placement"] = placements[style["adjustment"]] || "start-left";			
-		}
-		
-		style_out["strokeWidth"] = style["lineWidth"] || style_out["strokeWidth"];
+    //visibility
+    style_out["visible"] = Number(style["isVisible"]) == 1 ? true : false;
 
-		return style_out;
-	},
+    //fonts
+    var font_styles = {
+      "0": "normal",
+      "1": "bold",
+      "2": "italic",
+    };
 
+    style_out["fontStyle"] = font_styles[style["alignment"]] || "normal";
 
-	//function insert_translets(translet_collection, obj_type, obj_type_id, sub_compart_type_id) {
-	insertTranslets: function(translet_collection, obj_type, obj_type_id, sub_compart_type_id) {
+    //	 lc_Start = 1, 
+    //   lc_End = 2, 
 
-		var translets_out = _.map(translet_collection, function(translet) {
+    //   lc_Left = 4, 
+    //   lc_Right = 8, 
 
-			var item = {extensionPoint: translet["extensionPoint"],
-						procedureName: translet["procedureName"],
-						toolId: obj_type["toolId"],
-						versionId: obj_type["versionId"],
-					};
+    //   lc_Middle = 16,
+    //   lc_Inside = 32 
+    //   lc_Any =
 
-			//if compartment type
-			if (obj_type["diagramTypeId"] && obj_type["elementTypeId"]) {
+    if (is_edge) {
 
-				var tmp = {
-							diagramTypeId: obj_type["diagramTypeId"],
-							elementTypeId: obj_type["elementTypeId"],
-							compartmentTypeId: obj_type_id,
-						};
+      var placements = {
+        "5": "start-left",
+        "9": "start-right",
+        "6": "end-left",
+        "10": "end-right",
+        "20": "middle-left",
+        "24": "middle-right",
+      };
 
-				if (sub_compart_type_id) {
-					tmp["subCompartmentTypeId"] = sub_compart_type_id;
-				}
+      style_out["placement"] = placements[style["adjustment"]] || "start-left";
+    }
 
-				_.extend(item, tmp);	
-			}
+    style_out["strokeWidth"] = style["lineWidth"] || style_out["strokeWidth"];
 
-			//if element type
-			else if (obj_type["diagramTypeId"]) {
-				var tmp = {diagramTypeId: obj_type["diagramTypeId"],
-							elementTypeId: obj_type_id,
-						};
+    return style_out;
+  },
 
-				_.extend(item, tmp);
-			}
 
-			//if compartment type
-			else {
-				var tmp = {diagramTypeId: obj_type_id};
-				_.extend(item, tmp);
-			}
+  //function insert_translets(translet_collection, obj_type, obj_type_id, sub_compart_type_id) {
+  insertTranslets: function (translet_collection, obj_type, obj_type_id, sub_compart_type_id) {
 
-			return item;
-		});
+    var translets_out = _.map(translet_collection, function (translet) {
 
-		if (translets_out.length > 0) {
-			//ImportedTranslets.batchInsert(translets_out);
-		}
-	},
-	
-	findCompartmentStyleByName: function(styles, style_name) {
+      var item = {
+        extensionPoint: translet["extensionPoint"],
+        procedureName: translet["procedureName"],
+        toolId: obj_type["toolId"],
+        versionId: obj_type["versionId"],
+      };
 
-		var style = _.find(styles, function(style_obj) {
-			return style_obj.repId === style_name;
-		});
+      //if compartment type
+      if (obj_type["diagramTypeId"] && obj_type["elementTypeId"]) {
 
-		if (style) {
-			return style.style;
-		}
-	},
+        var tmp = {
+          diagramTypeId: obj_type["diagramTypeId"],
+          elementTypeId: obj_type["elementTypeId"],
+          compartmentTypeId: obj_type_id,
+        };
 
-	findElementStyleByName: function(styles, style_name) {		
-		return _.find(styles, function(style_obj) {
-			return style_obj.repId === style_name;
-		});
-	},
+        if (sub_compart_type_id) {
+          tmp["subCompartmentTypeId"] = sub_compart_type_id;
+        }
 
-	transformChoiceItems: function(compart_type_in, target_compart_type) {
+        _.extend(item, tmp);
+      }
 
-		var self = this;
-		var elem_type_id = self.newElementTypeId;
+      //if element type
+      else if (obj_type["diagramTypeId"]) {
+        var tmp = {
+          diagramTypeId: obj_type["diagramTypeId"],
+          elementTypeId: obj_type_id,
+        };
 
-		return _.map(compart_type_in["choiceItems"], function(item_obj) {
+        _.extend(item, tmp);
+      }
 
-			var compart_style = "NoStyle";
-			if (item_obj["compartmentStyle"]) {
-				var compart_style_name = item_obj["compartmentStyle"];
+      //if compartment type
+      else {
+        var tmp = { diagramTypeId: obj_type_id };
+        _.extend(item, tmp);
+      }
 
-				compart_style = self.mappings[compart_style_name];
-			}
+      return item;
+    });
 
-			var elem_style = "NoStyle";
-			if (item_obj["elementStyle"]) {
-				var elem_style_name = item_obj["elementStyle"];
+    if (translets_out.length > 0) {
+      //ImportedTranslets.batchInsert(translets_out);
+    }
+  },
 
-				var tmp_elem_type = ElementTypes.findOne({_id: elem_type_id});
-				if (tmp_elem_type) {
-					var elem_styles = tmp_elem_type["styles"];
+  findCompartmentStyleByName: function (styles, style_name) {
 
-					elem_style = self.mappings[elem_style_name];
-				}
-			}
+    var style = _.find(styles, function (style_obj) {
+      return style_obj.repId === style_name;
+    });
 
-			var val = "";
-			if (item_obj["notation"]) {
-				val = item_obj["notation"];
-			}
+    if (style) {
+      return style.style;
+    }
+  },
 
-			return {compartmentStyle: compart_style,
-					elementStyle: elem_style,
-					input: item_obj["value"],
-					value: val,
-				};
-		});
+  findElementStyleByName: function (styles, style_name) {
+    return _.find(styles, function (style_obj) {
+      return style_obj.repId === style_name;
+    });
+  },
 
-	},
+  transformChoiceItems: function (compart_type_in, target_compart_type) {
 
-	collectPropTabsAndRows: function(prop_diagram) {
+    var self = this;
+    var elem_type_id = self.newElementTypeId;
 
-		var self = this;
+    return _.map(compart_type_in["choiceItems"], async function (item_obj) {
 
-		if (!prop_diagram) {
-			return;
-		}
+      var compart_style = "NoStyle";
+      if (item_obj["compartmentStyle"]) {
+        var compart_style_name = item_obj["compartmentStyle"];
 
-		//collecting rows that are on the diagram
-		var rows = prop_diagram["rows"];
-		self.collectRows(rows);
+        compart_style = self.mappings[compart_style_name];
+      }
 
-		//collecting tabs and its rows
-		var tabs = prop_diagram["propertyTabs"];
-		if (tabs) {
+      var elem_style = "NoStyle";
+      if (item_obj["elementStyle"]) {
+        var elem_style_name = item_obj["elementStyle"];
 
-			_.each(tabs, function(tab) {
-				var tab_rows = tab["rows"];
-				self.collectRows(tab_rows);
-			});
-		}
-	},
+        var tmp_elem_type = await ElementTypes.findOneAsync({ _id: elem_type_id });
+        if (tmp_elem_type) {
+          var elem_styles = tmp_elem_type["styles"];
 
-	collectRows: function(rows) {
+          elem_style = self.mappings[elem_style_name];
+        }
+      }
 
-		var self = this;
+      var val = "";
+      if (item_obj["notation"]) {
+        val = item_obj["notation"];
+      }
 
-		_.each(rows, function(row) {
-		
-			self.mappings[row.repId] = row;
+      return {
+        compartmentStyle: compart_style,
+        elementStyle: elem_style,
+        input: item_obj["value"],
+        value: val,
+      };
+    });
 
-			var prop_dgr = row["propertyDiagram"];
-			self.collectPropTabsAndRows(prop_dgr)
-		});
-	},
+  },
 
-	getOldNewRowsMap: function() {
+  collectPropTabsAndRows: function (prop_diagram) {
 
-		return {
-				InputField: "input",
-				TextArea: "textarea",
-				ComboBox: "selection",
-				CheckBox: "checkbox",
-				Radio: "radio",
-				//"TextArea+Button": "multiField",
-			};
-	},
+    var self = this;
 
-	addVQProperties: async function(ids) {
+    if (!prop_diagram) {
+      return;
+    }
 
-		var id = ids[0];
-		var diagram_type = DiagramTypes.findOne({_id: id,});
-		if (!diagram_type) {
-			console.error("No diagram type inserted");
-			return;
-		}
+    //collecting rows that are on the diagram
+    var rows = prop_diagram["rows"];
+    self.collectRows(rows);
 
-		var diagram_type_id = diagram_type._id;
+    //collecting tabs and its rows
+    var tabs = prop_diagram["propertyTabs"];
+    if (tabs) {
 
-		var no_collection_menu = diagram_type.noCollectionContextMenu;
-		var no_menu_item = _.find(no_collection_menu, function(menu) {
-			return menu.item == "Generate SPARQL";
-		});
+      _.each(tabs, function (tab) {
+        var tab_rows = tab["rows"];
+        self.collectRows(tab_rows);
+      });
+    }
+  },
 
-		if (no_menu_item) {
-			no_menu_item.procedure = "GenerateSPARQL";
-		}
+  collectRows: function (rows) {
 
+    var self = this;
 
-		var collection_menu = diagram_type.collectionContextMenu;
-		var menu_item = _.find(collection_menu, function(menu) {
-			return menu.item == "Generate SPARQL from selection";
-		});
+    _.each(rows, function (row) {
 
-		if (menu_item) {
-			menu_item.procedure = "GenerateSPARQL";
-		}
+      self.mappings[row.repId] = row;
 
-		var execute_sparql = {item: "ExecuteSPARQL", procedure: "ExecuteSPARQL",};
-		collection_menu.push(execute_sparql);
-		no_collection_menu.push(execute_sparql);
+      var prop_dgr = row["propertyDiagram"];
+      self.collectPropTabsAndRows(prop_dgr)
+    });
+  },
 
-		DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu}});
+  getOldNewRowsMap: function () {
 
+    return {
+      InputField: "input",
+      TextArea: "textarea",
+      ComboBox: "selection",
+      CheckBox: "checkbox",
+      Radio: "radio",
+      //"TextArea+Button": "multiField",
+    };
+  },
 
-		await ElementTypes.find({diagramTypeId: diagram_type_id, }).forEachAsync(async function(elem_type) {
+  addVQProperties: async function (ids) {
 
-			var name = elem_type.name;
+    var id = ids[0];
+    var diagram_type = await DiagramTypes.findOneAsync({ _id: id, });
+    if (!diagram_type) {
+      console.error("No diagram type inserted");
+      return;
+    }
 
-			if (name == "Class") {
+    var diagram_type_id = diagram_type._id;
 
-				var class_type_id = elem_type._id;
+    var no_collection_menu = diagram_type.noCollectionContextMenu;
+    var no_menu_item = _.find(no_collection_menu, function (menu) {
+      return menu.item == "Generate SPARQL";
+    });
 
-				var menu = elem_type.contextMenu;
-				menu = _.union([{item: "AddLink", procedure: "AddLink", }], menu);
-				ElementTypes.update({_id: elem_type._id}, {$set: {contextMenu: menu},});
+    if (no_menu_item) {
+      no_menu_item.procedure = "GenerateSPARQL";
+    }
 
-				if (menu_item) {
-					menu_item.procedure = "GenerateSPARQL";
-					DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu}});
-				}
 
+    var collection_menu = diagram_type.collectionContextMenu;
+    var menu_item = _.find(collection_menu, function (menu) {
+      return menu.item == "Generate SPARQL from selection";
+    });
 
-				await CompartmentTypes.find({elementTypeId: class_type_id,}).forEachAsync(function(compart_type) {
+    if (menu_item) {
+      menu_item.procedure = "GenerateSPARQL";
+    }
 
-					if (compart_type.name == "ClassType") {
-						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
-					}
+    var execute_sparql = { item: "ExecuteSPARQL", procedure: "ExecuteSPARQL", };
+    collection_menu.push(execute_sparql);
+    no_collection_menu.push(execute_sparql);
 
-					if (compart_type.name == "Distinct") {
-						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
-					}
+    DiagramTypes.update({ _id: diagram_type_id, }, { $set: { noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu } });
 
-					if (compart_type.name == "OrderBy") {
-						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
-					}
 
-					if (compart_type.name == "Name") {
+    await ElementTypes.find({ diagramTypeId: diagram_type_id, }).forEachAsync(async function (elem_type) {
 
-						var extension_points = compart_type.extensionPoints;
-						var item = _.find(extension_points, function(extension_point) {
-							return extension_point.extensionPoint == "dynamicDropDown";
-						});
+      var name = elem_type.name;
 
-						if (item) {
-							item.procedure = "VQgetClassNames";
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
-						}
+      if (name == "Class") {
 
-					}
+        var class_type_id = elem_type._id;
 
+        var menu = elem_type.contextMenu;
+        menu = _.union([{ item: "AddLink", procedure: "AddLink", }], menu);
+        ElementTypes.update({ _id: elem_type._id }, { $set: { contextMenu: menu }, });
 
-					if (compart_type.name == "Attributes") {
+        if (menu_item) {
+          menu_item.procedure = "GenerateSPARQL";
+          DiagramTypes.update({ _id: diagram_type_id, }, { $set: { noCollectionContextMenu: no_collection_menu } });
+        }
 
-						var sub_compart_types = compart_type.subCompartmentTypes
 
-						var attr_sub_compart_type_first = _.find(sub_compart_types, function(sub_compart_type) {
-							return sub_compart_type.name == "Attributes";
-						});
+        await CompartmentTypes.find({ elementTypeId: class_type_id, }).forEachAsync(function (compart_type) {
 
-						if (attr_sub_compart_type_first) {
+          if (compart_type.name == "ClassType") {
+            CompartmentTypes.update({ _id: compart_type._id }, { $set: { defaultValue: "", } });
+          }
 
-							var attr_sub_compart_type = _.find(attr_sub_compart_type_first.subCompartmentTypes, function(sub_compart_type) {
-								return sub_compart_type.name == "Name";
-							});
+          if (compart_type.name == "Distinct") {
+            CompartmentTypes.update({ _id: compart_type._id }, { $set: { defaultValue: "", } });
+          }
 
-							var extension_points = attr_sub_compart_type.extensionPoints;
-							var item = _.find(extension_points, function(extension_point) {
-								return extension_point.extensionPoint == "dynamicDropDown";
-							});	
+          if (compart_type.name == "OrderBy") {
+            CompartmentTypes.update({ _id: compart_type._id }, { $set: { defaultValue: "", } });
+          }
 
+          if (compart_type.name == "Name") {
 
-							if (item) {
-								item.procedure = "VQgetAttributeNames";
-							}
+            var extension_points = compart_type.extensionPoints;
+            var item = _.find(extension_points, function (extension_point) {
+              return extension_point.extensionPoint == "dynamicDropDown";
+            });
 
-							else {
-								extension_points.push({extensionPoint: "dynamicDropDown", procedure: "VQgetAttributeNames"})
-							}
+            if (item) {
+              item.procedure = "VQgetClassNames";
+              CompartmentTypes.update({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
+            }
 
-							var item = _.find(extension_points, function(extension_point) {
-								return extension_point.extensionPoint == "dynamicDropDown";
-							});	
+          }
 
 
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {subCompartmentTypes: sub_compart_types,}});
-						}
+          if (compart_type.name == "Attributes") {
 
-					}
-				});
-			}
+            var sub_compart_types = compart_type.subCompartmentTypes
 
+            var attr_sub_compart_type_first = _.find(sub_compart_types, function (sub_compart_type) {
+              return sub_compart_type.name == "Attributes";
+            });
 
-			if (name == "Link") {
+            if (attr_sub_compart_type_first) {
 
-				await CompartmentTypes.find({elementTypeId: elem_type._id,}).forEachAsync(function(compart_type) {
+              var attr_sub_compart_type = _.find(attr_sub_compart_type_first.subCompartmentTypes, function (sub_compart_type) {
+                return sub_compart_type.name == "Name";
+              });
 
-					if (compart_type.name == "Name") {
+              var extension_points = attr_sub_compart_type.extensionPoints;
+              var item = _.find(extension_points, function (extension_point) {
+                return extension_point.extensionPoint == "dynamicDropDown";
+              });
 
-						var extension_points = compart_type.extensionPoints;
-						var item = _.find(extension_points, function(extension_point) {
-							return extension_point.extensionPoint == "dynamicDropDown";
-						});
 
-						if (item) {
-							item.procedure = "VQgetAssociationNames";
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
-						}
+              if (item) {
+                item.procedure = "VQgetAttributeNames";
+              }
 
-					}
+              else {
+                extension_points.push({ extensionPoint: "dynamicDropDown", procedure: "VQgetAttributeNames" })
+              }
 
+              var item = _.find(extension_points, function (extension_point) {
+                return extension_point.extensionPoint == "dynamicDropDown";
+              });
 
-					if (compart_type.name == "Subquery Link") {
 
-						var extension_points = compart_type.extensionPoints;
-						var item = _.find(extension_points, function(extension_point) {
-							return extension_point.extensionPoint == "afterUpdate";
-						});
+              CompartmentTypes.update({ _id: compart_type._id }, { $set: { subCompartmentTypes: sub_compart_types, } });
+            }
 
-						if (item) {
-							item.procedure = "VQsetSubQueryInverseLink";
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
-						}
+          }
+        });
+      }
 
-					}
 
+      if (name == "Link") {
 
-				});
+        await CompartmentTypes.find({ elementTypeId: elem_type._id, }).forEachAsync(function (compart_type) {
 
-			}
+          if (compart_type.name == "Name") {
 
-		});
+            var extension_points = compart_type.extensionPoints;
+            var item = _.find(extension_points, function (extension_point) {
+              return extension_point.extensionPoint == "dynamicDropDown";
+            });
 
+            if (item) {
+              item.procedure = "VQgetAssociationNames";
+              CompartmentTypes.update({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
+            }
 
-	},
+          }
+
+
+          if (compart_type.name == "Subquery Link") {
+
+            var extension_points = compart_type.extensionPoints;
+            var item = _.find(extension_points, function (extension_point) {
+              return extension_point.extensionPoint == "afterUpdate";
+            });
+
+            if (item) {
+              item.procedure = "VQsetSubQueryInverseLink";
+              CompartmentTypes.update({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
+            }
+
+          }
+
+
+        });
+
+      }
+
+    });
+
+
+  },
 
 };
 

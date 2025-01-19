@@ -21,7 +21,7 @@ Meteor.methods({
 			var is_system_admin = false;
 			var is_first_user = false;;
 
-			var first_user = Users.findOne();
+			var first_user = await Users.findOneAsync();
 
 			//if the user is the first, then this is a system admin
 			if (!first_user) {
@@ -36,7 +36,7 @@ Meteor.methods({
 			var user_data = build_user_data(user_id, list);
 			user_data["isSystemAdmin"] = is_system_admin;
 
-			var id = Users.insert(user_data);
+			var id = await Users.insertAsync(user_data);
 
 			// if (!is_test_user(list["email"]))
 				// Accounts.sendVerificationEmail(user_id, list["email"]);
@@ -99,10 +99,10 @@ Meteor.methods({
               training: true,
             };
 
-            const tool_id = Tools.insert(new_tool);
+            const tool_id = await Tools.insertAsync(new_tool);
             console.log('New tool created:', toolName, tool_id);
 
-            const version_id = ToolVersions.insert({
+            const version_id = await ToolVersions.insertAsync({
               createdAt: new_tool.createdAt,
               createdBy: user_id,
               status: "New",
@@ -123,7 +123,7 @@ Meteor.methods({
                 servicesData.toolId = tool_id;
 
                 // Services.batchInsert( [ servicesData ] )
-                Services.insert(servicesData)
+                await Services.insertAsync(servicesData)
 
               } catch (err) {
                 console.error(err);
@@ -166,54 +166,50 @@ Meteor.methods({
 		}
 	},
 
-	sendResetPasswordLink: function(list) {
-
+	sendResetPasswordLink: async function(list) {
 		if (list) {
-
 			//var secret_phrase = list["secretPhrase"] || "";
 
-			var user = Users.findOne({email: list["email"]});
+			var user = await Users.findOneAsync({email: list["email"]});
 			if (user) {
-
 				var user_id = user["systemId"];
 				if (!is_test_user(list["email"]))
 					Accounts.sendResetPasswordEmail(user_id);
 
 				//reseting fails count
-				Users.update({systemId: user_id}, {$set: {loginFailsCount: 0}});
+				await Users.updateAsync({systemId: user_id}, {$set: {loginFailsCount: 0}});
 			}
 		}
-
 	},
 
-	isRegisteredUser: function(list) {
-
-		var user = Users.findOne({email: list["email"]});
+	isRegisteredUser: async function(list) {
+		var user = await Users.findOneAsync({email: list["email"]});
 
 		//checking if there is a user with a given email
 		if (user)
 			return true;
 	},
 
-	passwordChanged: function(list) {
+  passwordChanged: async function (list) {
 
-		var user_id = Meteor.userId();
-		if (user_id) {
+    var user_id = Meteor.userId();
+    if (user_id) {
 
-			//sending email to inform that the user's password was changed
-			var user = Users.findOne({systemId: user_id});
-			if (user) {
+      //sending email to inform that the user's password was changed
+      var user = await Users.findOneAsync({ systemId: user_id });
+      if (user) {
 
-				var email = {email: user["email"],
-							subject: "Password changed",
-					    	//html: list["html"],
-					    	text: "Your password was recently changed.",
-						};
+        var email = {
+          email: user["email"],
+          subject: "Password changed",
+          //html: list["html"],
+          text: "Your password was recently changed.",
+        };
 
-				send_email(email);
-			}
-		}
-	},
+        send_email(email);
+      }
+    }
+  },
 
 	enrollUser: async function(list) {
 
@@ -234,7 +230,7 @@ Meteor.methods({
 
 					//inserting user
 					var user_data = build_user_data(new_user_id, list);
-					Users.insert(user_data);
+					await Users.insertAsync(user_data);
 
 					// Accounts.sendEnrollmentEmail(new_user_id);
 				}
@@ -302,54 +298,55 @@ Meteor.methods({
 	},
 
 	//for testing
-	generate_users: async function(list) {
+  generate_users: async function (list) {
 
-		var user_id = Meteor.userId();
-		if (is_system_admin(user_id)) {
+    var user_id = Meteor.userId();
+    if (is_system_admin(user_id)) {
 
-			//number of users to add
-			var count = list["count"];
+      //number of users to add
+      var count = list["count"];
 
-			//start indexing from users count
-			var users_count = await Users.find().countAsync();
+      //start indexing from users count
+      var users_count = await Users.find().countAsync();
 
-			for (var i=0;i<count;i++) {
+      for (var i = 0; i < count; i++) {
 
-				var index = users_count + i + 1;
+        var index = users_count + i + 1;
 
-				//user properties
-				var name = "Mr";
-				var surname ="test"+ index;
-				var mail = surname + "@test.com";
-				var password = surname + surname;
+        //user properties
+        var name = "Mr";
+        var surname = "test" + index;
+        var mail = surname + "@test.com";
+        var password = surname + surname;
 
-				//inserting user in accounts
-				var user_id = Accounts.createUser({email: mail, password: password});
+        //inserting user in accounts
+        var user_id = Accounts.createUser({ email: mail, password: password });
 
-				var date = get_current_time();
+        var date = get_current_time();
 
-				//inserting in Users collection
-				var id = Users.insert({systemId: user_id,
-										createdAt: date,
-										lastModified: date,
-										profileImage: "/img/user.jpg",
-										language: "en",
-										tags: [],
-										activeProject: "no-project",
-										name: name,
-										surname: surname,
-										nameLC: name.toLowerCase(),
-										surnameLC: surname.toLowerCase(),
-										email: mail,
-										//secretPhrase: surname,
-										logins: [],
-										loginFails: [],
-										loginFailsCount: 0,
-										isSystemAdmin: false,
-									});
-			}
-		}
-	},
+        //inserting in Users collection
+        var id = await Users.insertAsync({
+          systemId: user_id,
+          createdAt: date,
+          lastModified: date,
+          profileImage: "/img/user.jpg",
+          language: "en",
+          tags: [],
+          activeProject: "no-project",
+          name: name,
+          surname: surname,
+          nameLC: name.toLowerCase(),
+          surnameLC: surname.toLowerCase(),
+          email: mail,
+          //secretPhrase: surname,
+          logins: [],
+          loginFails: [],
+          loginFailsCount: 0,
+          isSystemAdmin: false,
+        });
+      }
+    }
+  },
 
 });
 
@@ -462,64 +459,65 @@ Accounts.onLoginFailure(function(obj) {
 // };
 
 Accounts.urls.resetPassword = function (token) {
-    return Meteor.absoluteUrl('reset-password/' + token);
+  return Meteor.absoluteUrl('reset-password/' + token);
 };
 
 Accounts.urls.verifyEmail = function (token) {
-    return Meteor.absoluteUrl('verify-email/' + token);
+  return Meteor.absoluteUrl('verify-email/' + token);
 };
 
 Accounts.urls.enrollAccount = function (token) {
-    return Meteor.absoluteUrl('enroll-account/' + token);
+  return Meteor.absoluteUrl('enroll-account/' + token);
 };
 
 Accounts.emailTemplates.enrollAccount.text = function (user, url) {
-    //return "Hello, " + user.profile.name + "\n" +
-   	//	"This is from ajoo , click on the link: " + url;
+  //return "Hello, " + user.profile.name + "\n" +
+  //	"This is from ajoo , click on the link: " + url;
 
-   	return "Hello, you have successfully been registred in ajoo system.\n" +
-			"To activate the account, click on the link: " + url;
+  return "Hello, you have successfully been registred in ajoo system.\n" +
+    "To activate the account, click on the link: " + url;
 };
 
 Accounts.emailTemplates.resetPassword.subject = function (user) {
-    return "ajoo reset password";
+  return "ajoo reset password";
 };
 
-Accounts.emailTemplates.resetPassword.text = function (user_obj, url) {
+Accounts.emailTemplates.resetPassword.text = async function (user_obj, url) {
 
-	var user = Users.findOne({systemId: user_obj["_id"]});
-    return "Hello, " + user.name + " " + user.surname + "\n" +
-   			"Click on the link: " + url;
+  var user = await Users.findOneAsync({ systemId: user_obj["_id"] });
+  return "Hello, " + user.name + " " + user.surname + "\n" +
+    "Click on the link: " + url;
 };
 
 function build_user_data(user_id, list) {
 
-	var date = get_current_time();
+  var date = get_current_time();
 
-	var user = {systemId: user_id,
-				createdAt: date,
-				lastModified: date,
-				profileImage: "/img/user.jpg",
-				language: "en",
-				tags: [],
-				activeProject: "no-project",
-				name: list["name"],
-				surname: list["surname"],
-				email: list["email"],
-				//secretPhrase: list["secretPhrase"],
-				logins: [],
-				loginFails: [],
-				loginFailsCount: 0,
-				isSystemAdmin: false,
-			};
+  var user = {
+    systemId: user_id,
+    createdAt: date,
+    lastModified: date,
+    profileImage: "/img/user.jpg",
+    language: "en",
+    tags: [],
+    activeProject: "no-project",
+    name: list["name"],
+    surname: list["surname"],
+    email: list["email"],
+    //secretPhrase: list["secretPhrase"],
+    logins: [],
+    loginFails: [],
+    loginFailsCount: 0,
+    isSystemAdmin: false,
+  };
 
-	if (list["name"])
-		user["nameLC"] = list["name"].toLowerCase();
+  if (list["name"])
+    user["nameLC"] = list["name"].toLowerCase();
 
-	if (list["surname"])
-		user["surnameLC"] = list["surname"].toLowerCase();
+  if (list["surname"])
+    user["surnameLC"] = list["surname"].toLowerCase();
 
-	return user;
+  return user;
 }
 
 

@@ -5,14 +5,14 @@ import { Users } from '/imports/db/platform/collections'
 
 Template.nav.helpers({
 
-    skin: function() {
-        return 6;
-    },
+  skin: function () {
+    return 6;
+  },
 });
 
 Template.nav.events({
 
-  "click #sidebarToggle": function(e) {
+  "click #sidebarToggle": function (e) {
     e.preventDefault();
 
     var side_bar_class = "sidebar-display";
@@ -26,7 +26,7 @@ Template.nav.events({
     return;
   },
 
-  "click #menuToggle": function(e) {
+  "click #menuToggle": function (e) {
     e.preventDefault();
 
     var side_bar_class = "sidebar-hide";
@@ -44,11 +44,11 @@ Template.nav.events({
 });
 
 
-Template.userT.onCreated(function() {
+Template.userT.onCreated(function () {
   var clientStorage = new ClientStorage("localStorage");
   var user = JSON.parse(clientStorage.get('current_user') || "{}");
   if (!_.isEmpty(user)) {
-      Session.set("userSystemId", user["systemId"]);
+    Session.set("userSystemId", user["systemId"]);
   }
 
   Meteor.subscribe('navbar_user', {});
@@ -58,45 +58,47 @@ Template.userT.onCreated(function() {
 
 //sets user name
 Template.userT.helpers({
-  profile: function() {
-    var user = Users.findOne({systemId: Session.get("userSystemId")});
+  profile: async function () {
+    var user = await Users.findOneAsync({ systemId: Session.get("userSystemId") });
     if (user) {
 
-        console.log("user changed")
+      console.log("user changed")
 
 
-        Session.set("activeProject", user["activeProject"]);
-        Session.set("versionId", user["activeVersion"]);
+      Session.set("activeProject", user["activeProject"]);
+      Session.set("versionId", user["activeVersion"]);
 
-        return {name: user["name"],
-                surname: user["surname"],
-                profileImage: user["profileImage"]};
+      return {
+        name: user["name"],
+        surname: user["surname"],
+        profileImage: user["profileImage"]
+      };
     }
   },
 });
 
 Template.userT.events({
 
-//logs out the user
-  'click #logout' : function(e, templ) {
-      e.preventDefault();
-      Meteor.logout(function(err){
-          if (err) {
-              console.error("Logout error", err)
-          }
+  //logs out the user
+  'click #logout': function (e, templ) {
+    e.preventDefault();
+    Meteor.logout(function (err) {
+      if (err) {
+        console.error("Logout error", err)
+      }
 
-          else {
-              const clientStorage = new ClientStorage("localStorage"); 
-              clientStorage.set('current_user', "{}");
+      else {
+        const clientStorage = new ClientStorage("localStorage");
+        clientStorage.set('current_user', "{}");
 
-              // if (UserStatus.isMonitoring())
-              //   UserStatus.stopMonitor();
-          }
+        // if (UserStatus.isMonitoring())
+        //   UserStatus.stopMonitor();
+      }
 
-      });
+    });
 
-      FlowRouter.go("index");
-      return false;
+    FlowRouter.go("index");
+    return false;
   },
 });
 //End of user
