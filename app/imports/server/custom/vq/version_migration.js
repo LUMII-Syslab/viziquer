@@ -15,7 +15,7 @@ Meteor.methods({
 
   migrateProject: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id)) {
+    if (await is_system_admin(user_id)) {
       var target_tool = await Tools.findOneAsync({ _id: list.targetToolId });
       if (!target_tool) {
         console.error("No target tool", list.targetToolId);

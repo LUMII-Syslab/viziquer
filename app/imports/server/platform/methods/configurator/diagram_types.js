@@ -30,7 +30,7 @@ Meteor.methods({
   insertDiagramType: async function (list) {
 
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
 
       var time = new Date();
       var style = diagram_default_style();
@@ -87,7 +87,7 @@ Meteor.methods({
   updateConfiguratorExtension: async function (list) {
 
     var system_id = Meteor.userId();
-    if (is_system_admin(system_id, list) && list && list["update"]) {
+    if (await is_system_admin(system_id, list) && list && list["update"]) {
 
       //attribute pair storing attribute name and its value
       var attr_name = list["update"]["_attr"];
@@ -160,7 +160,7 @@ Meteor.methods({
 
   reorderTabIndexes: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var prev_index = list["prevIndex"];
       var current_index = list["currentIndex"];
@@ -197,7 +197,7 @@ Meteor.methods({
   reorderPaletteButtonIndexes: async function (list) {
 
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var prev_index = list["prevIndex"];
       var current_index = list["currentIndex"];
@@ -229,14 +229,14 @@ Meteor.methods({
 
   addDiagramTypeKeystrokeOrItem: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
       await DiagramTypes.updateAsync({ _id: list["id"] }, { $push: list["push"] });
     }
   },
 
   deleteDiagramTypeKeystrokeOrItem: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
       update[list.array] = list.data;
@@ -247,14 +247,14 @@ Meteor.methods({
 
   updateDiagramTypeKeystrokeOrItem: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
       await DiagramTypes.updateAsync({ _id: list["id"] }, { $set: list["field"] });
     }
   },
 
   updateDiagramSize: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var dialog_size, diagram_size;
       if (list["attrName"] == "size.dialogSize") {
@@ -278,7 +278,7 @@ Meteor.methods({
   updateDiagramType: async function (list) {
     var user_id = Meteor.userId();
 
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
       update[list["attrName"]] = list["attrValue"];
@@ -289,7 +289,7 @@ Meteor.methods({
 
   updateDiagramTypeStyle: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
       update['style.' + list["attrName"]] = list["attrValue"];
@@ -303,7 +303,7 @@ Meteor.methods({
 
   addToolbarItem: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
       update[list["attrName"]] = list["push"];
@@ -314,7 +314,7 @@ Meteor.methods({
 
   removeToolbarItem: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
       update[list["attrName"]] = list["pull"];

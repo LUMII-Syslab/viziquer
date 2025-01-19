@@ -12,7 +12,7 @@ Meteor.methods({
   importConfiguration: async function (list) {
 
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
 
       if (list.data && list.data.diagramTypes) {
 
@@ -196,13 +196,11 @@ var ImportTDAConfiguration = {
 
       if (not_needed_items[procedure_name]) {
         return;
-      }
-
-      else if (transformed_items[procedure_name]) {
+      } else if (transformed_items[procedure_name]) {
         procedure_name = transformed_items[procedure_name];
       }
 
-      var procedure_name = procedure_name || "";
+      procedure_name = procedure_name || "";
       var new_proc_name = _.last(procedure_name.split("."));
 
       //context_menu_list.push({item: menu["caption"], procedure: procedure_name});
@@ -461,13 +459,11 @@ var ImportTDAConfiguration = {
 
       if (not_needed_items[procedure_name]) {
         return;
-      }
-
-      else if (transformed_items[procedure_name]) {
+      } else if (transformed_items[procedure_name]) {
         procedure_name = transformed_items[procedure_name];
       }
 
-      var procedure_name = procedure_name || "";
+      procedure_name = procedure_name || "";
       var new_proc_name = _.last(procedure_name.split("."));
 
       key_strokes_list.push({
@@ -609,9 +605,7 @@ var ImportTDAConfiguration = {
             }
 
           }
-        }
-
-        else {
+        } else {
           console.error("ERROR: No new row id");
         }
       }
@@ -637,10 +631,7 @@ var ImportTDAConfiguration = {
         else if (new_tab_id) {
           target_compart_type["dialogTabId"] = new_tab_id; //tab["_id"];
         }
-      }
-
-      //if there is no row, but the compartment type was linked to a row
-      else {
+      } else { //if there is no row, but the compartment type was linked to a row
         if (old_row_id) {
 
           var tab = await DialogTabs.findOneAsync({
@@ -689,14 +680,11 @@ var ImportTDAConfiguration = {
         self.mappings[style_in.repId] = new_style_obj.id;
 
         ImportTDAData.transformElementStyle(style_in, style_out);
-      }
-
-      //creating a new style obj
-      else {
+      } else { //creating a new style obj
 
         var style_name = style_in["id"];
 
-        var new_style_obj = { id: generate_id(), name: style_name, };
+        new_style_obj = { id: generate_id(), name: style_name, };
 
         self.mappings[style_in.repId] = new_style_obj.id;
 
@@ -733,14 +721,11 @@ var ImportTDAConfiguration = {
         self.mappings[style_in.repId] = new_style_obj.id;
 
         self.transformCompartmentStyle(style_in, style_out, is_edge);
-      }
-
-      //creating a new style obj
-      else {
+      } else { //creating a new style obj
 
         var style_name = style_in["id"];
 
-        var new_style_obj = { id: generate_id(), name: style_name, style: {} };
+        new_style_obj = { id: generate_id(), name: style_name, style: {} };
 
         self.mappings[style_in.repId] = new_style_obj.id;
 
@@ -901,7 +886,6 @@ var ImportTDAConfiguration = {
       "OWL_specific.get_namespaces": "get_namespaces",
       "OWL_specific.get_properties": "get_properties",
       "OWL_specific.get_attribute_ns": "get_attribute_ns",
-      "OWL_specific.default_types": "default_types",
       "OWL_specific.default_multiplicity": "default_multiplicity",
       "OWL_specific.class_name_from_ns": "class_name_from_ns",
       "OWL_specific.get_generalization_ns": "get_generalization_ns",
@@ -1166,21 +1150,15 @@ var ImportTDAConfiguration = {
         }
 
         _.extend(item, tmp);
-      }
-
-      //if element type
-      else if (obj_type["diagramTypeId"]) {
-        var tmp = {
+      } else if (obj_type["diagramTypeId"]) { //if element type
+        tmp = {
           diagramTypeId: obj_type["diagramTypeId"],
           elementTypeId: obj_type_id,
         };
 
         _.extend(item, tmp);
-      }
-
-      //if compartment type
-      else {
-        var tmp = { diagramTypeId: obj_type_id };
+      } else { //if compartment type
+        tmp = { diagramTypeId: obj_type_id };
         _.extend(item, tmp);
       }
 

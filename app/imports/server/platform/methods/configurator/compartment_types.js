@@ -54,7 +54,7 @@ Meteor.methods({
 
   insertCompartmentType: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var compart_type_obj = list["compartmentType"];
       var type = list["type"];
@@ -69,7 +69,7 @@ Meteor.methods({
 
   removeCompartmentType: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       if (!list["id"])
         return;
@@ -81,7 +81,7 @@ Meteor.methods({
 
   addCompartmentTypeStyle: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var style = get_default_compartment_style(list["elementType"], list["editorType"]);
       await CompartmentTypes.updateAsync({ _id: list["id"] },
@@ -100,7 +100,7 @@ Meteor.methods({
 
   updateCompartmentTypeStyle: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
       update["styles." + list["styleIndex"] + "." + list["attrName"]] = list["attrValue"];
@@ -122,7 +122,7 @@ Meteor.methods({
 
   updateCompartmentType: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
       update[list["attrName"]] = list["attrValue"];
@@ -133,7 +133,7 @@ Meteor.methods({
 
   updateInputType: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
 
@@ -146,7 +146,7 @@ Meteor.methods({
   insertTabWIthCompartmentType: async function (list) {
 
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var tab_id = await DialogTabs.insertAsync(list["tab"]);
       await CompartmentTypes.updateAsync({ _id: list["compartmentTypeId"] },
@@ -156,7 +156,7 @@ Meteor.methods({
 
   reorderCompartmentTypeTabIndexes: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var prev_index = list["prevIndex"];
       var current_index = list["currentIndex"];
@@ -207,7 +207,7 @@ Meteor.methods({
 
   addSelectionItem: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var push = {};
       push[list["attrName"]] = list["attrValue"];
@@ -218,7 +218,7 @@ Meteor.methods({
 
   updateSelectionItem: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var update = {};
       update["inputType.values." + list["index"] + "." + list["attrName"]] = list["attrValue"];
@@ -268,8 +268,9 @@ Meteor.methods({
         if (!compart_type || !compart_type["styles"])
           return;
 
-        var style_update = {};
-        style_update["styleId"] = style_id;
+        var style_update = {
+          styleId: style_id
+        };
 
         var styles = compart_type["styles"];
         if (!styles)
@@ -299,7 +300,7 @@ Meteor.methods({
 
   reorderCompartmentTypeIndexes: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id, list)) {
+    if (await is_system_admin(user_id, list)) {
 
       var prev_index = list["prevIndex"];
       var current_index = list["currentIndex"];

@@ -183,7 +183,7 @@ Meteor.methods({
         await resize_element(list, query, user_id);
       }
     }
-    else if (is_system_admin(user_id, list)) {
+    else if (await is_system_admin(user_id, list)) {
       var query = {
         toolId: list["toolId"],
         versionId: list["versionId"],
@@ -252,7 +252,7 @@ Meteor.methods({
         }
       }
     }
-    else if (is_system_admin(system_id) && is_version_not_published(list)) {
+    else if (await is_system_admin(system_id) && is_version_not_published(list)) {
       console.log("copying configurator elmeents")
     }
   },
@@ -404,7 +404,7 @@ Meteor.methods({
         }
       }
     }
-    else if (is_system_admin(user_id) && is_version_not_published(list)) {
+    else if (await is_system_admin(user_id) && is_version_not_published(list)) {
       console.log("pasting configurator elmeents")
 
     }
@@ -429,7 +429,7 @@ Meteor.methods({
 
       }
     }
-    else if (is_system_admin(user_id, list)) {
+    else if (await is_system_admin(user_id, list)) {
       var query = {
         toolId: list["toolId"],
         versionId: list["versionId"],
@@ -447,7 +447,7 @@ Meteor.methods({
         await delete_elements(user_id, list);
       }
     }
-    else if (is_system_admin(user_id, list)) {
+    else if (await is_system_admin(user_id, list)) {
       await delete_elements(user_id, list);
     }
   },
@@ -512,7 +512,7 @@ Meteor.methods({
 
         await Compartments.updateAsync(query2, compart_update, { multi: true });
       }
-    } else if (is_system_admin(user_id, list)) {
+    } else if (await is_system_admin(user_id, list)) {
 
       var update = {
         $set: {

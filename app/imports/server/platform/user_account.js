@@ -301,7 +301,7 @@ Meteor.methods({
   generate_users: async function (list) {
 
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id)) {
+    if (await is_system_admin(user_id)) {
 
       //number of users to add
       var count = list["count"];

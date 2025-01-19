@@ -18,7 +18,7 @@ Meteor.methods({
   addConfiguratorExportButtonInToolbar: async function () {
 
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id)) {
+    if (await is_system_admin(user_id)) {
 
       var diagram_type = await DiagramTypes.findOneAsync({ name: "_ConfiguratorDiagramType" });
       if (!diagram_type) {
@@ -50,7 +50,7 @@ function addConfiguratorExportButtonInToolbar() {
   console.log("addConfiguratorExportButtonInToolbar")
 
   // var user_id = Meteor.userId();
-  // if (is_system_admin(user_id)) {
+  // if (await is_system_admin(user_id)) {
 
   // 	var diagram_type = DiagramTypes.findOne({name: "_ConfiguratorDiagramType"});
   // 	if (!diagram_type) {

@@ -5,7 +5,7 @@ Meteor.methods({
 
   addDocumentType: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
       await DocumentTypes.insertAsync({
         createdAt: new Date(),
         createdBy: user_id,
@@ -19,7 +19,7 @@ Meteor.methods({
 
   updateDocumentType: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
       await DocumentTypes.updateAsync({
         _id: list["id"],
         toolId: list["toolId"],
@@ -30,7 +30,7 @@ Meteor.methods({
 
   updateDocumentTypeIndex: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
 
       var prev_index = list["prevIndex"];
       var current_index = list["currentIndex"];
@@ -61,7 +61,7 @@ Meteor.methods({
 
   removeDocumentType: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
 
       if (!list["id"])
         return;

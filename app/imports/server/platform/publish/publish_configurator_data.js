@@ -32,7 +32,7 @@ Meteor.publish("Tools", function (list) {
   }
 
   var user_id = this.userId;
-  if (is_system_admin(user_id)) {
+  if (await is_system_admin(user_id)) {
 
     //removes the configurator from the query
     var query = { _id: { $ne: get_configurator_tool_id() } };
@@ -56,7 +56,7 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", function (list) {
 
   //gets user's id
   var user_id = this.userId;
-  if (is_system_admin(user_id)) {
+  if (await is_system_admin(user_id)) {
 
     var version_id = list["versionId"];
 
@@ -111,7 +111,7 @@ Meteor.publish("ConfiguratorDiagram", function (list) {
   if (!list || list["noQuery"])
     return this.stop();
 
-  if (is_system_admin(this.userId)) {
+  if (await is_system_admin(this.userId)) {
 
     var diagram_query = {
       _id: list["diagramId"],
@@ -186,7 +186,7 @@ Meteor.publish("ConfiguratorDiagramTypes", function (list) {
   if (!list || list["noQuery"])
     return this.stop();
 
-  if (is_system_admin(this.userId)) {
+  if (await is_system_admin(this.userId)) {
 
     var diagram_query = {
       _id: list["diagramId"],

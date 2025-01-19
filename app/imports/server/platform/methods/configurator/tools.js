@@ -15,7 +15,7 @@ Meteor.methods({
 
   insertTool: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
 
       var time = new Date();
       list["createdAt"] = time;
@@ -45,14 +45,14 @@ Meteor.methods({
 
   updateTool: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
       await Tools.updateAsync({ _id: list["toolId"] }, { $set: list["set"] });
     }
   },
 
   removeTool: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
 
       // checking if atleast one project exitst, then no delete
       var project = await Projects.findOneAsync({ toolId: list.toolId, });
@@ -68,7 +68,7 @@ Meteor.methods({
 
   upsertUserTool: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
       await UserTools.updateAsync({ toolId: list["toolId"], userSystemId: user_id },
         { $set: { versionId: list["versionId"] } }, { upsert: true });
     }
@@ -76,7 +76,7 @@ Meteor.methods({
 
   newToolVersion: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
 
       var version_id = await ToolVersions.insertAsync({
         toolId: list["toolId"],
@@ -91,7 +91,7 @@ Meteor.methods({
 
   publishToolVersion: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
 
       await ToolVersions.updateAsync({ _id: list["versionId"], status: "New", toolId: list["toolId"] },
         {
@@ -110,7 +110,7 @@ Meteor.methods({
 
   removeToolVersion: async function (list) {
     var user_id = Meteor.userId();
-    if (is_system_admin(user_id) && list) {
+    if (await is_system_admin(user_id) && list) {
       await ToolVersions.removeAsync({
         toolId: list["toolId"],
         versionId: list["versionId"],

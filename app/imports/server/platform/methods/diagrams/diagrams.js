@@ -199,7 +199,7 @@ Meteor.methods({
         versionId: list["versionId"]
       },
         { $set: update });
-    } else if (is_system_admin(user_id, list)) {
+    } else if (await is_system_admin(user_id, list)) {
       await Diagrams.updateAsync({
         _id: list["diagramId"], toolId: list["toolId"],
         versionId: list["versionId"]
@@ -215,7 +215,7 @@ Meteor.methods({
       await Diagrams.removeAsync({ _id: list["id"], projectId: list["projectId"], versionId: list["versionId"] });
     }
 
-    else if (is_system_admin(user_id, list)) {
+    else if (await is_system_admin(user_id, list)) {
       await Diagrams.removeAsync({ _id: list["id"], toolId: list["toolId"], versionId: list["versionId"] });
     }
   },
