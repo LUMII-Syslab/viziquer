@@ -2254,7 +2254,7 @@ Meteor.methods({
       let new_box_id = await Elements.insertAsync(object);
       element_map[key] = new_box_id;
 
-      add_compartment(list, item, new_diagram_id, diagram_type._id, new_box_id, box_type._id);
+      await add_compartment(list, item, new_diagram_id, diagram_type._id, new_box_id, box_type._id);
     });
 
     // Gen part
@@ -2298,7 +2298,7 @@ Meteor.methods({
       let new_line_id = await Elements.insertAsync(object);
       element_map[key] = new_line_id;
 
-      add_compartment(list, item, new_diagram_id, diagram_type._id, new_line_id, gen_type._id);
+      await add_compartment(list, item, new_diagram_id, diagram_type._id, new_line_id, gen_type._id);
     });
 
 
@@ -2338,7 +2338,7 @@ Meteor.methods({
       let new_line_id = await Elements.insertAsync(object);
       element_map[key] = new_line_id;
 
-      add_compartment(list, item, new_diagram_id, diagram_type._id, new_line_id, line3_type._id);
+      await add_compartment(list, item, new_diagram_id, diagram_type._id, new_line_id, line3_type._id);
     });
 
 

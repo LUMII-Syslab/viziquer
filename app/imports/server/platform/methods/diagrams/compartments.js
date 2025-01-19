@@ -8,7 +8,7 @@ Compartments.after.update(async function (user_id, doc, fields, modifier, option
   if (!doc)
     return;
 
-  update_compartment(user_id, doc);
+  await update_compartment(user_id, doc);
 
   //if element compartment was updated
   if (doc["elementId"]) {
@@ -37,7 +37,7 @@ Compartments.after.insert(async function (user_id, doc) {
     return;
 
   if (doc["isObjectRepresentation"])
-    update_compartment(user_id, doc);
+    await update_compartment(user_id, doc);
 });
 
 Meteor.methods({
@@ -140,8 +140,8 @@ async function add_compartments_by_values(list, compartments) {
     return item.compartmentTypeId;
   });
 
-  await CompartmentTypes.find({ _id: { $in: compart_ids, } }, { $sort: { index: 1 } }).forEachAsync(function (compart_type, i) {
-    add_compartment(compart_type, list, _.find(compartments, function (c) { return c.compartmentTypeId == compart_type._id }));
+  await CompartmentTypes.find({ _id: { $in: compart_ids, } }, { $sort: { index: 1 } }).forEachAsync(async function(compart_type, i) {
+    await add_compartment(compart_type, list, _.find(compartments, function (c) { return c.compartmentTypeId == compart_type._id }));
   });
 
 }
