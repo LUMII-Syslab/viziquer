@@ -4041,7 +4041,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 
     var bindExpr = viziQuerExpr["exprString"];
 
-    if (bindExpr == "" && typeof where["expression"]["termType"] !== "undefined" && where["expression"]["termType"] !== "Variable") bindExpr = "`" + await generateInstanceAlias(where["expression"]["value"]);
+    if (bindExpr == "" && typeof where["expression"]["termType"] !== "undefined" && where["expression"]["termType"] !== "Variable") bindExpr = "`" + (await generateInstanceAlias(where["expression"]["value"]));
     else if (bindExpr == "") bindExpr = await generateInstanceAlias(where["expression"]["value"]);
     if (typeof where["expression"]["termType"] !== "undefined") {
       var bindExprParse = getVariable(where["expression"]);
@@ -7693,7 +7693,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
             && Object.keys(findByVariableName(classesTable, triples[triple]["object"]["value"])).length == 0
             && Object.keys(findByVariableName(classesTable, getVariable(triples[triple]["object"])["value"])).length == 0
             && getVariable(triples[triple]["object"])["type"] != "iri"
-            && attributeResolved.complete == true && attributeResolved.data[0].data_cnt > 0 && attributeResolved.data[0].object_cnt == 0 && await dataShapes.resolveClassByName(params).complete != true)) {
+            && attributeResolved.complete == true && attributeResolved.data[0].data_cnt > 0 && attributeResolved.data[0].object_cnt == 0 && (await dataShapes.resolveClassByName(params).complete) != true)) {
           // console.log("DATA PROPERTY", triples[triple]);
           let alias = "";
           let objectNameParsed = getVariable(triples[triple]["object"]);
@@ -9376,9 +9376,9 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
     var active_diagram_type_id = await Diagrams.findOneAsync({ _id: Session.get("activeDiagram") })["diagramTypeId"];
 
     let elem_type = await ElementTypes.findOneAsync({ name: "Declaration", diagramTypeId: active_diagram_type_id });
-    var elems_in_diagram_ids = Elements.find({ diagramId: diagramId, type: "Box", elementTypeId: elem_type._id })
+    var elems_in_diagram_ids = await Elements.find({ diagramId: diagramId, type: "Box", elementTypeId: elem_type._id })
 
-      .map(function (e) {
+      .mapAsync(function (e) {
         return e["_id"]
       });
 

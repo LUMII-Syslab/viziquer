@@ -224,7 +224,7 @@ Template.diagram_toolbar.helpers({
 
 Template.diagram_log.helpers({
 
-	logs: function() {
+	logs: async function() {
 
 		var build_element_names = function(elementIds, delimiter) {
 
@@ -234,7 +234,7 @@ Template.diagram_log.helpers({
 			return names.join(delimiter);
 		}
 
-		return DiagramLogs.find({diagramId: Session.get("activeDiagram")}, {$sort: {createdAt: -1}}).map(function(diagram_log) {
+		return await DiagramLogs.find({diagramId: Session.get("activeDiagram")}, {$sort: {createdAt: -1}}).mapAsync(function(diagram_log) {
 
 			var user = Users.findOne({systemId: diagram_log["authorId"]});
 			if (user) {

@@ -9,7 +9,7 @@ import './structure.html'
 
 Template.structureTemplate.helpers({
 
-	categories: function() {
+	categories: async function() {
 
 		//selelcts project properties
 
@@ -18,7 +18,7 @@ Template.structureTemplate.helpers({
 		var active_project = Session.get("activeProject");
 		var user_id = Session.get("userSystemId");
 
-		ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).forEach(
+		await ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).forEachAsync(
 			function(user_proj) {
 				var proj_id = user_proj["projectId"];
 				var project = Projects.findOne({_id: proj_id});
@@ -221,12 +221,12 @@ Template.createProjectModal.helpers({
 	schema_tags:function() {
 		return Template.createProjectModal.schemaTags.get();
 	},
-	tools: function() {
+	tools: async function() {
 		var tools = Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}}); 
 		var result = {tools:[]};
 		var tool_id = "";
 
-		tools.forEach(function(t) {
+		await tools.forEachAsync(function(t) {
 			var tt = {_id: t._id, name: t.name};
 			if ( t.name == "Viziquer" || t.name == "ViziQuer") {
 				tt["selected"] = "selected";
@@ -235,7 +235,7 @@ Template.createProjectModal.helpers({
 			result.tools.push(tt); 
 		});
 		
-		if ( tool_id == "" && tools.count() > 0) {
+		if ( tool_id == "" && (await tools.countAsync()) > 0) {
 			result.tools[0]["selected"] = "selected";
 			tool_id = result.tools[0]._id;
 		}

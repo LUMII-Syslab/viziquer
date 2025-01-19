@@ -50,24 +50,24 @@ Interpreter.customMethods({
     }
 
   },
-  GenerateSQL_from_diagram: function() {
+  GenerateSQL_from_diagram: async function() {
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
-    var elems_in_diagram_ids = Elements.find({diagramId:diagramId}).map(function(e) {
+    var elems_in_diagram_ids = await Elements.find({diagramId:diagramId}).mapAsync(function(e) {
       return e["_id"]
     });
 
     GenerateSQL_for_ids(elems_in_diagram_ids)
   },
   
-  GenerateSQL_from_diagram_for_all_queries: function() {
+  GenerateSQL_from_diagram_for_all_queries: async function() {
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
-    var elems_in_diagram_ids = Elements.find({diagramId:diagramId}).map(function(e) {
+    var elems_in_diagram_ids = await Elements.find({diagramId:diagramId}).mapAsync(function(e) {
       return e["_id"]
     });
 

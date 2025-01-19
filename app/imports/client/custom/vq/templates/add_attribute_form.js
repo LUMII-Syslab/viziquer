@@ -398,10 +398,10 @@ Template.AddAttribute.events({
 	
 	
 	
-	"click #attribute-move-button": function(e) {
+	"click #attribute-move-button": async function(e) {
 		var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
 
-		var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
+		var compartments = await Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetchAsync();
 		var compart_id = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name");
 
 		var index = -1;
@@ -1039,7 +1039,7 @@ async function getAttributes(filter, waiting){
 						if(typeof prop[cl] !== "function"){
 							var prefix;
 							if(dataShapes.schema.schema === schemaName &&
-							((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							((prop[cl]["is_local"] == true && (await dataShapes.schema.showPrefixes) === "false")
 								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt")))prefix = "";
 							else prefix = prop[cl]["prefix"]+":";
 							attr_list.push({name: prefix+prop[cl]["display_name"]})
@@ -1135,7 +1135,7 @@ async function getAssociations(filter){
 				if(typeof prop[cl] !== "function"){
 					var prefix;
 					if(dataShapes.schema.schema === schemaName &&
-					((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					((prop[cl]["is_local"] == true && (await dataShapes.schema.showPrefixes) === "false")
 						|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt")))prefix = "";
 					else prefix = prop[cl]["prefix"]+":";
 					attr_list.push({name: prefix+prop[cl]["display_name"]})

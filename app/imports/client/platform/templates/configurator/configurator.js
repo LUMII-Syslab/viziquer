@@ -31,7 +31,7 @@ Interpreter.methods({
 
 
 Template.configuratorTemplate.helpers({
-	tools: function() {
+	tools: async function() {
 
 		var rows = 4;
 		var row_elems = 1;
@@ -45,7 +45,7 @@ Template.configuratorTemplate.helpers({
 
 		var divider = rows * row_elems;
 
-		return Tools.find({}, {sort: {name: 1}}).map(function(tool, i) {
+		return await Tools.find({}, {sort: {name: 1}}).mapAsync(function(tool, i) {
 
 			tool["date"] = joined_date(tool["createdAt"]);
 			tool["color"] = color_list[i % divider];

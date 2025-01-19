@@ -17,7 +17,7 @@ Interpreter.customMethods({
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
-    var elems_in_diagram_ids = Elements.find({ diagramId: diagramId }).map(function (e) {
+    var elems_in_diagram_ids = await Elements.find({ diagramId: diagramId }).mapAsync(function (e) {
       return e["_id"]
     });
 
@@ -387,7 +387,7 @@ Interpreter.customMethods({
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
-    var elems_in_diagram_ids = Elements.find({ diagramId: diagramId }).map(function (e) {
+    var elems_in_diagram_ids = await Elements.find({ diagramId: diagramId }).mapAsync(function (e) {
       return e["_id"]
     });
 
@@ -399,7 +399,7 @@ Interpreter.customMethods({
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
-    var elems_in_diagram_ids = Elements.find({ diagramId: diagramId }).map(function (e) {
+    var elems_in_diagram_ids = await Elements.find({ diagramId: diagramId }).mapAsync(function (e) {
       return e["_id"]
     });
 
@@ -429,7 +429,7 @@ Interpreter.customMethods({
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
-    var elems_in_diagram_ids = Elements.find({ diagramId: diagramId }).map(function (e) {
+    var elems_in_diagram_ids = await Elements.find({ diagramId: diagramId }).mapAsync(function (e) {
       return e["_id"]
     });
 
@@ -441,7 +441,7 @@ Interpreter.customMethods({
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
-    var elems_in_diagram_ids = Elements.find({ diagramId: diagramId }).map(function (e) {
+    var elems_in_diagram_ids = await Elements.find({ diagramId: diagramId }).mapAsync(function (e) {
       return e["_id"]
     });
 

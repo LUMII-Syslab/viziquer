@@ -639,7 +639,7 @@ const dataShapes = {
   },
   getServices: async function () {
     Meteor.subscribe("Services", {});
-    var services = Services.find().map(function (s) {
+    var services = await Services.find().mapAsync(function (s) {
       return s;
     });
 
@@ -1110,14 +1110,14 @@ const dataShapes = {
       link.click();
     }
   },
-  tt: function (all = 1) {
+  tt: async function(all = 1) {
     const el = new VQ_Element(Session.get("activeElement"));
     //const comparts = Compartments.find({elementId: el._id()}, {sort: {index: 1}}).fetch();
     //console.log(comparts)
-    Compartments.find({ elementId: el._id() }, { sort: { index: 1 } }).forEach(async function (cc) {
+    await Compartments.find({ elementId: el._id() }, { sort: { index: 1 } }).forEachAsync(async function (cc) {
       console.log(cc)
       if (all == 1 || cc["style"].visible)
-        console.log(await CompartmentTypes.findOneAsync({ _id: cc.compartmentTypeId })["name"] + "--" + cc["value"] + "*--" + cc["style"].visible.toString() + "--" + cc["index"])
+        console.log((await CompartmentTypes.findOneAsync({ _id: cc.compartmentTypeId })["name"]) + "--" + cc["value"] + "*--" + cc["style"].visible.toString() + "--" + cc["index"])
       //console.log(cc["value"])
       //console.log(cc["style"])
     })

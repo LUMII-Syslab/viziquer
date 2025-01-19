@@ -11,7 +11,7 @@ Interpreter.methods({
 	},
 
 	//deletes element collection
-	Delete: function(e) {
+	Delete: async function(e) {
 
 		var selection_list;
 
@@ -28,7 +28,7 @@ Interpreter.methods({
 			var selected_elem_ids = _.keys(selection_list);
 			
 			//selecting the linked line
-			var linked_elem_ids = Elements.find({$or: [{startElement: {$in: selected_elem_ids}}, {endElement: {$in: selected_elem_ids}}]}).map(
+			var linked_elem_ids = await Elements.find({$or: [{startElement: {$in: selected_elem_ids}}, {endElement: {$in: selected_elem_ids}}]}).mapAsync(
 				function(elem) {
 					return elem["_id"];
 				});

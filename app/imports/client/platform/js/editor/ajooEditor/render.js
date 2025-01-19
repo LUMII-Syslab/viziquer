@@ -60,7 +60,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
    	var elem_handle = Elements.find({isInVisible: {$ne: true}}).observeChanges({
 
-		added: function (id, elem) {
+		added: async function(id, elem) {
 			elem["_id"] = id;
 
 			//if initializing, then collecting all the data
@@ -74,7 +74,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 				var comparts_query = build_comparts_query();
 				_.extend(comparts_query, {elementId: elem["_id"]});
-				elem["compartments"] = Compartments.find(comparts_query, {sort: {index: 1}}).fetch();
+				elem["compartments"] = await Compartments.find(comparts_query, {sort: {index: 1}}).fetchAsync();
 			}
 
 			//if added later
@@ -264,7 +264,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    	var comparts_query = build_comparts_query();
    	var compart_handle = Compartments.find(comparts_query).observeChanges({
 
-   		added: function (id, doc) {
+   		added: async function(id, doc) {
 
    			if (!init) {
 
@@ -290,7 +290,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 	   			else {
 
 	   				element.compartments.removeAllRespresentations();
-	   				var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
+	   				var compartments = await Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetchAsync();
 	   				element.compartments.create(compartments);
 
 	   				var element_presentation = element.presentation;
@@ -313,7 +313,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    			}
    		},
 
-   		changed: function(id, fields) {
+   		changed: async function(id, fields) {
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
 
@@ -331,7 +331,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 
 			elem.compartments.removeAllRespresentations();
-			var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
+			var compartments = await Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetchAsync();
 
 			elem.compartments.create(compartments);
 
@@ -465,7 +465,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 						compartments.removeAllRespresentations();
 					}
 
-					var comparts_in = Compartments.find({elementId: element._id}, {sort: {index: 1}}).fetch();
+					var comparts_in = await Compartments.find({elementId: element._id}, {sort: {index: 1}}).fetchAsync();
 					compartments.create(comparts_in);
 					element_presentation.draw();
 
@@ -583,11 +583,11 @@ function get_shape_group_from_text(text) {
 	return shape_group;
 }
 
-function rebuild_labels(element) {
+async function rebuild_labels(element) {
 
 	//selecting element compartments
 	var elem_id = element._id;
-	var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
+	var compartments = await Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetchAsync();
 
 	//adding compartments
 	create_compartments(shape_group, compartments);
@@ -661,9 +661,9 @@ function build_palette_button(id, palette_button) {
 	palette_button["data"] = {elementTypeId: elem_type["_id"]};
 }
 
-function compute_palette() {
+async function compute_palette() {
 
-	var palette = PaletteButtons.find({diagramTypeId: Session.get("diagramType")}).map(
+	var palette = await PaletteButtons.find({diagramTypeId: Session.get("diagramType")}).mapAsync(
 		function(palette_button) {
 
 			build_palette_button(palette_button["_id"], palette_button);

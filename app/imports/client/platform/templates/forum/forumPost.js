@@ -76,10 +76,10 @@ Template.forumPostComments.helpers({
 			return forum_post["commentsCount"];
 	},
 
-	comments: function() {
+	comments: async function() {
 
 		var user_id = Session.get("userSystemId");
-		return ForumPostComments.find({parentCommentId: {$exists: false}}, {sort: {createdAt: 1}}).map(
+		return await ForumPostComments.find({parentCommentId: {$exists: false}}, {sort: {createdAt: 1}}).mapAsync(
 			function(post) {
 
 				//post["time"] = joined_date(post["createdAt"]);

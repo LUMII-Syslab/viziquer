@@ -24,7 +24,7 @@ Interpreter.customMethods({
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
-    var elems_in_diagram_ids = Elements.find({ diagramId: diagramId }).map(function (e) {
+    var elems_in_diagram_ids = await Elements.find({ diagramId: diagramId }).mapAsync(function (e) {
       return e["_id"]
     });
     //console.log(elems_in_diagram_ids);
@@ -46,7 +46,7 @@ async function getDeclarations() {
   let declarationPrefixes = [];
   let declarationSchemas = [];
   if (typeof elem_type !== "undefined") {
-    var elems_in_diagram_ids = Elements.find({ diagramId: diagramId, elementTypeId: elem_type["_id"] }).map(function (e) {
+    var elems_in_diagram_ids = await Elements.find({ diagramId: diagramId, elementTypeId: elem_type["_id"] }).mapAsync(function (e) {
       return e["_id"]
     });
 
@@ -1916,7 +1916,7 @@ async function resolveKind(id, exprType, context, symbol_table, schemaName, isSi
                 k = "CLASS_NAME";
               } else if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
                 k = "PROPERTY_NAME";
-              } else if (exprType === "condition" && await resolveTypeFromSchemaForIndividual(id, schemaName)) {
+              } else if (exprType === "condition" && (await resolveTypeFromSchemaForIndividual(id, schemaName))) {
                 k = "INDIVIDUAL";
               }
             }

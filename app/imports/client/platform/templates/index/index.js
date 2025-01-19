@@ -54,7 +54,7 @@ Template.index.helpers({
 });
 
 //login function
-function login(e, name, password) {
+async function login(e, name, password) {
 
 	console.log("in login")
 
@@ -66,7 +66,7 @@ function login(e, name, password) {
 	if (name != "" && password != "") {
 
 		//checks if the user is already logged in, then opens the active project
-		var meteor_user = Meteor.user();
+		var meteor_user = await Meteor.userAsync();
 
 		console.log("meteor_user", meteor_user)
 
@@ -129,12 +129,12 @@ function loginWithPassword(name, password) {
 }
 
 
-function login_on_success() {
+async function login_on_success() {
 
 	console.log("login_on_success")
 
 	var list = {};
-	var meteor_user = Meteor.user();
+	var meteor_user = await Meteor.userAsync();
 	Meteor.subscribe("LoginUser", list, function() {
 		
 		var user = Users.findOne({systemId: meteor_user["_id"]});

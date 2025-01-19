@@ -211,10 +211,10 @@ Template.membersDefaultView.events(members_tab_events());
 // Start of found users
 Template.foundUsers.helpers({
 
-  foundUsers: function () {
+  foundUsers: async function() {
 
     //selects the user ids that are the members of the project
-    var user_ids = ProjectsUsers.find({ projectId: Session.get("activeProject") }).map(
+    var user_ids = await ProjectsUsers.find({ projectId: Session.get("activeProject") }).mapAsync(
       function (proj_user) {
         return proj_user["userSystemId"];
       });
@@ -232,8 +232,8 @@ Template.foundUsers.helpers({
     var query2 = { systemId: { $nin: user_ids } };
     var query = { $and: [query1, query2] };
 
-    var groups = ProjectsGroups.find().fetch();
-    return Users.find(query).map(function (user) {
+    var groups = await ProjectsGroups.find().fetchAsync();
+    return await Users.find(query).mapAsync(function (user) {
       user["groups"] = groups;
       return user;
     });
@@ -303,13 +303,13 @@ Template.inviteUserForm.events({
 //Functions
 
 // returns an array of project users
-function get_project_members() {
+async function get_project_members() {
 
   ///building the filter that is entered in the project members search bar
   var members_filter = Session.get("membersFilter");
   var filter_query;
   if (members_filter) {
-    var user_ids = Users.find(members_filter).map(function (user) { return user["systemId"] });
+    var user_ids = await Users.find(members_filter).mapAsync(function (user) { return user["systemId"] });
     if (user_ids.length > 0)
       filter_query = { systemId: { $in: user_ids } };
 
@@ -319,7 +319,7 @@ function get_project_members() {
   }
 
   //selecting project members
-  return ProjectsUsers.find({ projectId: Session.get("activeProject") }).map(
+  return await ProjectsUsers.find({ projectId: Session.get("activeProject") }).mapAsync(
     function (proj_user, i) {
 
       //building the query
@@ -425,16 +425,16 @@ function build_user_search_query(search_entered) {
   return query;
 }
 
-function get_project_users_by_group(role) {
-  return ProjectsUsers.find({ role: role, projectId: Session.get("activeProject") }).count();
+async function get_project_users_by_group(role) {
+  return await ProjectsUsers.find({ role: role, projectId: Session.get("activeProject") }).countAsync();
 }
 
-function render_members() {
+async function render_members() {
 
-  var groups = ProjectsGroups.find().fetch();
+  var groups = await ProjectsGroups.find().fetchAsync();
   var members = get_project_members();
 
-  return _.map(members, function (member) {
+  return _.map(members, async function(member) {
 
     if (!member)
       return;
@@ -454,7 +454,7 @@ function render_members() {
         member["roleName"] = group["name"];
     }
 
-    var meteor_user = Meteor.users.findOne({ _id: member["systemId"] });
+    var meteor_user = await Meteor.users.findOneAsync({ _id: member["systemId"] });
     if (meteor_user) {
       var status = meteor_user.status;
 

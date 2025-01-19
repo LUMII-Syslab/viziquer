@@ -236,12 +236,12 @@ VQ_Element.prototype = {
   },
   // string --> [string]
   // Returns the array of values of the given compartment by name or [] if such compartment does not exist
-  getMultiCompartmentValues: function(compartment_name) {
+  getMultiCompartmentValues: async function(compartment_name) {
     var elem_type_id = this.obj["elementTypeId"];
     var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
     if (comp_type) {
       var comp_type_id = comp_type["_id"];
-      return Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id}).map(function(c){return c["input"];});
+      return await Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id}).mapAsync(function(c){return c["input"];});
     };
     return [];
   },
@@ -267,13 +267,13 @@ VQ_Element.prototype = {
   //              "isDescending": true
   //            }
   //          ]
-  getMultiCompartmentSubCompartmentValues: function(compartment_name, subcompartment_name_list) {
+  getMultiCompartmentSubCompartmentValues: async function(compartment_name, subcompartment_name_list) {
     var elem_type_id = this.obj["elementTypeId"];
     var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
     if (comp_type) {
       var comp_type_id = comp_type["_id"];
       var compartments = Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id});
-      return compartments.map(function(c) {
+      return await compartments.mapAsync(function(c) {
         var res = { fulltext:c["input"], _id:c["_id"] };
         if (c.subCompartments) {
         if (c.subCompartments[compartment_name]) {
@@ -291,7 +291,7 @@ VQ_Element.prototype = {
         }}
 
         return res;
-      })
+      });
     };
     return [];
   },
@@ -649,7 +649,7 @@ VQ_Element.prototype = {
   },
   // --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of attributes: expression, stereotype, alias, etc. ...
-  getFields: function() {
+  getFields: async function() {
     var field_list =  this.getMultiCompartmentSubCompartmentValues("Attributes",
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"},
@@ -667,7 +667,7 @@ VQ_Element.prototype = {
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
 	  
 	var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: this.obj.elementTypeId})["_id"];
-	var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: this.obj._id, }, {sort: {index: 1}}).fetch();
+	var compartments = await Compartments.find({compartmentTypeId: compart_type_id, elementId: this.obj._id, }, {sort: {index: 1}}).fetchAsync();
 	
 	var compratmentList = [];
 
@@ -852,12 +852,12 @@ VQ_Element.prototype = {
   // --> [{link:VQ_Element, start:bool}, ...]
   // returns an array of objects containing links as VQ_Elements and flag whether is has been retrieved by opposite end as start
   // start true means that the link has been retrieved from link "end"
-  getLinks: function() {
+  getLinks: async function() {
 		return _.filter(_.union(
-      Elements.find({startElement: this.obj["_id"]}).map(function(link) {
+      await Elements.find({startElement: this.obj["_id"]}).mapAsync(function(link) {
         return { link: new VQ_Element(link["_id"]), start: false };
       }),
-      Elements.find({endElement: this.obj["_id"]}).map(function(link) {
+      await Elements.find({endElement: this.obj["_id"]}).mapAsync(function(link) {
         return { link: new VQ_Element(link["_id"]), start: true };
       })), function(linkobj) { return linkobj.link.isLink()}
     );
@@ -1460,7 +1460,7 @@ VQ_Element.prototype = {
   },
   // adds comparment with subcompartments
   // string, [{name: string, value:string, transformer: function}]
-  addCompartmentSubCompartments: function(compartment_name, subcompartment_value_list) {
+  addCompartmentSubCompartments: async function(compartment_name, subcompartment_value_list) {
     var ct = CompartmentTypes.findOne({name: compartment_name, elementTypeId: this.obj["elementTypeId"]});
 		if (ct) {
 		let prefix = ct["prefix"] || "";
@@ -1492,8 +1492,8 @@ VQ_Element.prototype = {
 
       if (ct.inputType.type == "custom") {
       // if (ct.inputType.type == "custom" && ct.inputType.templateName == "multiField") {
-           var ct_comparts_indexes = Compartments.find({compartmentTypeId: ct._id, elementId: this._id()}, {sort: {index: 1}})
-                                    .map(function(c) {return c.index; });
+           var ct_comparts_indexes = await Compartments.find({compartmentTypeId: ct._id, elementId: this._id()}, {sort: {index: 1}})
+                                    .mapAsync(function(c) {return c.index; });
           // search for hole in the array of indexes
            for (var idx of ct_comparts_indexes) {
              if (idx > c_to_create.compartment.index) { break; };
@@ -1587,7 +1587,7 @@ VQ_Element.prototype = {
 	// Temporal solution: Put new element below target element, as close as possible without overlapping
 	// d - step to move below after each try
 	// Returns {x: x, y: y1, width: w, height: h} (the left upper corner + dimensions)
-	getNewLocation: function (d = 30) {
+	getNewLocation: async function(d = 30) {
 	    //console.log(this);
 	    var boxCoord = this.getCoordinates();
 	    var x = boxCoord["x"];
@@ -1601,7 +1601,7 @@ VQ_Element.prototype = {
 	    var elem_over = []; //Potentionally - for more complex search for a better place
 	    var max_y;
 
-	    Elements.find({type: "Box"}).forEach(function(el) {
+	    await Elements.find({type: "Box"}).forEachAsync(function(el) {
 	        elem_list.push(el);
 	    })
 
