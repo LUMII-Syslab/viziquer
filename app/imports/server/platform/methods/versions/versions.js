@@ -5,17 +5,17 @@ import { send_email } from '/imports/libs/platform/lib';
 import { Users } from '/imports/db/platform/collections.js';
 
 
-Versions.before.insert(function (user_id, doc) {
+Versions.before.insert(async function (user_id, doc) {
 
   if (!doc)
     return false;
 
   //if this is not the first version, then perform some checking
-  var version = Versions.findOne({ projectId: doc["projectId"] });
+  var version = await Versions.findOneAsync({ projectId: doc["projectId"] });
   if (version) {
 
     //prevents from adding multiple versions with the status New
-    var new_version = Versions.findOne({ projectId: doc["projectId"], status: "New" });
+    var new_version = await Versions.findOneAsync({ projectId: doc["projectId"], status: "New" });
     if (new_version)
       return false;
   }
@@ -33,11 +33,11 @@ Versions.after.insert(async function (user_id, doc) {
   var new_version_id = doc["_id"];
 
   //the creator's current version is updated to the new one
-  ProjectsUsers.update({ userSystemId: user_id, projectId: project_id },
+  await ProjectsUsers.updateAsync({ userSystemId: user_id, projectId: project_id },
     { $set: { versionId: new_version_id } });
 
   //the last published project version
-  var last_version = Versions.findOne({ projectId: project_id, status: "Published" },
+  var last_version = await Versions.findOneAsync({ projectId: project_id, status: "Published" },
     { sort: { publishedAt: -1 } });
 
   //if the inserted version is the first version, then nothing to do
@@ -174,7 +174,7 @@ Versions.after.remove(async function (user_id, doc) {
   };
 
   //selects the last published version to assign it to the users who had the removed version
-  var last_version = Versions.findOne({ projectId: project_id, status: "Published" },
+  var last_version = await Versions.findOneAsync({ projectId: project_id, status: "Published" },
     { sort: { publishedAt: -1 } });
   var last_version_id;
   if (last_version)
@@ -182,15 +182,15 @@ Versions.after.remove(async function (user_id, doc) {
 
   //a transaction needed
   if (last_version_id)
-    ProjectsUsers.update({ projectId: project_id, versionId: new_version_id },
+    await ProjectsUsers.updateAsync({ projectId: project_id, versionId: new_version_id },
       { $set: { versionId: last_version_id } });
 
   await send_notifications(user_id, notification);
 
   //deleting diagrams, elements, compartments, ...
-  Diagrams.remove({ projectId: project_id, versionId: new_version_id });
+  await Diagrams.removeAsync({ projectId: project_id, versionId: new_version_id });
 
-  UserVersionSettings.remove({ projectId: project_id, versionId: new_version_id });
+  await UserVersionSettings.removeAsync({ projectId: project_id, versionId: new_version_id });
 
   //removing roles
   remove_from_admin_role(project_id, new_version_id, true);
@@ -248,14 +248,14 @@ Meteor.methods({
 
 });
 
-function add_admin_role(proj_id, version_id) {
+async function add_admin_role(proj_id, version_id) {
 
   //building role name
   var admin_role = build_project_version_admin_role(proj_id, version_id);
 
   //selecting project admins
   var project_admin_role = build_project_admin_role(proj_id);
-  var admins = Roles.getUsersInRole(project_admin_role).fetch();
+  var admins = await Roles.getUsersInRole(project_admin_role).fetchAsync();
 
   //adding admin and read roles in the new version to the admins
   Roles.addUsersToRoles(admins, admin_role);
@@ -287,11 +287,11 @@ async function add_read_role(proj_id, version_id) {
   }
 }
 
-function remove_from_admin_role(proj_id, version_id, is_remove_role) {
+async function remove_from_admin_role(proj_id, version_id, is_remove_role) {
 
   //selecting admins
   var admin_role = build_project_version_admin_role(proj_id, version_id);
-  var users = Roles.getUsersInRole(admin_role).fetch();
+  var users = await Roles.getUsersInRole(admin_role).fetchAsync();
 
   //removing users from the roles
   Roles.removeUsersFromRoles(users, admin_role);
@@ -312,7 +312,7 @@ async function send_notifications(user_id, list) {
   var date = new Date();
 
   var proj_name = "";
-  var project = Projects.findOne({ _id: proj_id });
+  var project = await Projects.findOneAsync({ _id: proj_id });
   if (project)
     proj_name = project["name"];
 
@@ -339,9 +339,9 @@ async function send_notifications(user_id, list) {
     });
 }
 
-function sending_notification_email(notification_type, user_id, proj_name) {
+async function sending_notification_email(notification_type, user_id, proj_name) {
 
-  var receiver_user = Users.findOne({ systemId: user_id })
+  var receiver_user = await Users.findOneAsync({ systemId: user_id })
   if (receiver_user) {
 
     var subject = "";

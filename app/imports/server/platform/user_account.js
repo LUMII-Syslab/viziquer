@@ -143,7 +143,7 @@ Meteor.methods({
 		return id;
 	},
 
-	updateUser: function(list) {
+	updateUser: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (user_id) {
@@ -161,7 +161,7 @@ Meteor.methods({
 				var update = {};
 				update[operation] = list["update"];
 
-				Users.update({systemId: user_id}, update);
+				await Users.updateAsync({systemId: user_id}, update);
 			}
 		}
 	},
@@ -437,7 +437,7 @@ Accounts.validateLoginAttempt(function(obj) {
 
 // });
 
-Accounts.onLoginFailure(function(obj) {
+Accounts.onLoginFailure(async function(obj) {
 
 	if (obj && obj["error"] == "too-many-fails")
 		return;
@@ -446,7 +446,7 @@ Accounts.onLoginFailure(function(obj) {
 		var item = {ipAddress: obj["connection"]["clientAddress"], time: get_current_time()};
 
 		if (obj && obj["user"] && obj["user"]["_id"]) {
-			Users.update({systemId: obj["user"]["_id"]},
+			await Users.updateAsync({systemId: obj["user"]["_id"]},
 					{$push: {loginFails: item}, $inc: {loginFailsCount: 1}});
 		}
 	}

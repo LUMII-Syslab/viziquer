@@ -3,14 +3,12 @@ import { Tools, ToolVersions, UserTools, Projects } from '/imports/db/platform/c
 import { is_system_admin } from '/imports/libs/platform/user_rights'
 
 
-Tools.after.remove(function (user_id, doc) {
+Tools.after.remove(async function (user_id, doc) {
   var tool_id = doc["_id"];
 
-  Projects.remove({ toolId: tool_id });
-
-  ToolVersions.remove({ toolId: tool_id });
-  UserTools.remove({ toolId: tool_id });
-
+  await Projects.removeAsync({ toolId: tool_id });
+  await ToolVersions.removeAsync({ toolId: tool_id });
+  await UserTools.removeAsync({ toolId: tool_id });
 });
 
 Meteor.methods({
@@ -62,7 +60,7 @@ Meteor.methods({
         return 0;
       }
 
-      Tools.remove({ _id: list["toolId"] });
+      await Tools.removeAsync({ _id: list["toolId"] });
 
       return 1;
     }

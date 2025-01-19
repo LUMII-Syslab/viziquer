@@ -1,3 +1,5 @@
+import { Roles } from 'meteor/alanning:roles';
+
 import { build_project_version_reader_role, build_project_role, build_project_admin_role, build_project_version_admin_role } from '/imports/libs/platform/user_rights'
 import { Notifications, ProjectsUsers, Users, UserVersionSettings, Versions } from '/imports/db/platform/collections'
 import { user_not_logged_in } from '/imports/server/platform/_helpers';
@@ -97,20 +99,18 @@ Notifications.after.update(async function (user_id, doc, fieldNames, modifier, o
 
     //roles
     Roles.addUsersToRoles(user_id, roles);
-  }
-
-  else if (modifier.$set.status == "rejected") {
-    ProjectsUsers.remove({ projectId: doc["projectId"], userSystemId: user_id });
+  } else if (modifier.$set.status == "rejected") {
+    await ProjectsUsers.removeAsync({ projectId: doc["projectId"], userSystemId: user_id });
   }
 });
 //Notifications.hookOptions.after.update = {fetchPrevious: false};
 
 Meteor.methods({
 
-  setNotifcationsSeen: function (list) {
+  setNotifcationsSeen: async function (list) {
     var user_id = Meteor.userId();
     if (user_id) {
-      Notifications.update({ receiver: user_id, status: "new" },
+      await Notifications.updateAsync({ receiver: user_id, status: "new" },
         { $set: { status: "seen" } }, { multi: true });
     }
     else {
@@ -118,14 +118,14 @@ Meteor.methods({
     }
   },
 
-  updateNotification: function (list) {
+  updateNotification: async function (list) {
     var user_id = Meteor.userId();
     if (user_id) {
-      Notifications.update({ _id: list["id"], receiver: user_id }, list["update"]);
+      await Notifications.updateAsync({ _id: list["id"], receiver: user_id }, list["update"]);
     }
   },
 
-  removeNotification: function (list) {
+  removeNotification: async function (list) {
     var user_id = Meteor.userId();
     if (user_id) {
 
@@ -133,7 +133,7 @@ Meteor.methods({
         return;
       }
 
-      Notifications.remove({ _id: list["id"], receiver: user_id });
+      await Notifications.removeAsync({ _id: list["id"], receiver: user_id });
     }
   },
 

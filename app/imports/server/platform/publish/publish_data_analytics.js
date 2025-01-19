@@ -44,7 +44,7 @@ Meteor.publish("View", function(list) {
 
 });
 
-Meteor.publish("ViewData", function(list) {
+Meteor.publish("ViewData", async function(list) {
 
 	var user_id = this.userId;
 	if (is_project_member(user_id, list)) {
@@ -52,7 +52,7 @@ Meteor.publish("ViewData", function(list) {
 		var self = this;
 		var initializing = true;
 
-		var view_filter = ViewFilter.findOne({viewId: list.viewId, projectId: list.projectId, versionId: list.versionId});
+		var view_filter = await ViewFilter.findOneAsync({viewId: list.viewId, projectId: list.projectId, versionId: list.versionId});
 
 //	    var handle = ViewFilter.find({userId: user_id, viewId: list.viewId, projectId: list.projectId, versionId: list.versionId}).observeChanges({
 	    var handle = ViewFilter.find({viewId: list.viewId, projectId: list.projectId, versionId: list.versionId}).observeChanges({

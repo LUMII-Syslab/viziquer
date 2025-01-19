@@ -6,7 +6,7 @@ import { error_msg } from '../../_global_functions';
 Meteor.methods({
 
 	//saves searched phrases for documents, diagrams and users
-	searchInProject: function(list) {
+	searchInProject: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_member(user_id, list)) {
@@ -22,7 +22,7 @@ Meteor.methods({
 				if (list["projectId"])
 					update["projects." + list["projectId"]] = 1;
 
-				Searches.update({type: list["type"],
+				await Searches.updateAsync({type: list["type"],
 								phrase: list["phrase"].toLowerCase()},
 							{$inc: update}, {upsert: true});
 			}
@@ -31,7 +31,7 @@ Meteor.methods({
 			error_msg();	
 	},
 
-	searchInChats: function(list) {
+	searchInChats: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (user_id) {
@@ -43,7 +43,7 @@ Meteor.methods({
 
 			if (list["phrase"] && list["phrase"] != "") {
 
-				Searches.update({type: type,
+				await Searches.updateAsync({type: type,
 							userSystemId: user_id,
 							phrase: list["phrase"].toLowerCase()},
 							{$inc: {counter: 1}}, {upsert: true});
@@ -55,7 +55,7 @@ Meteor.methods({
 			error_msg();
 	},
 
-	searchInContacts: function(list) {
+	searchInContacts: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (user_id) {
@@ -65,7 +65,7 @@ Meteor.methods({
 				update["counter"] = 1;
 				update["users." + user_id] = 1;
 
-				Searches.update({type: list["type"],
+				await Searches.updateAsync({type: list["type"],
 								phrase: list["phrase"].toLowerCase(),},
 								{$inc: update}, {upsert: true});
 			}

@@ -3,156 +3,165 @@ import { Tools, ToolVersions, Versions, DiagramTypes, ElementTypes, CompartmentT
 
 Meteor.methods({
 
-	migrate: async function(list) {
-		var target_tool = Tools.findOne({name: list.toolName});
-		if (!target_tool) {
-			console.error("No target tool", list.toolName);
-			return;
-		}
+  migrate: async function (list) {
+    var target_tool = await Tools.findOneAsync({ name: list.toolName });
+    if (!target_tool) {
+      console.error("No target tool", list.toolName);
+      return;
+    }
 
-		await migrateProjectByTool(target_tool, list);
-	},	
+    await migrateProjectByTool(target_tool, list);
+  },
 
-	migrateProject: async function(list) {
-		var user_id = Meteor.userId();
-		if (is_system_admin(user_id)) {
-			var target_tool = Tools.findOne({_id: list.targetToolId});
-			if (!target_tool) {
-				console.error("No target tool", list.targetToolId);
-				return;
-			}
+  migrateProject: async function (list) {
+    var user_id = Meteor.userId();
+    if (is_system_admin(user_id)) {
+      var target_tool = await Tools.findOneAsync({ _id: list.targetToolId });
+      if (!target_tool) {
+        console.error("No target tool", list.targetToolId);
+        return;
+      }
 
-			await Projects.find({toolId: list.toolId}).forEachAsync(async function(project) {
-				await migrateProjectByTool(target_tool, {projectId: project._id,});
-			});
-		}
-	},
-	
-	migrateIndexes: async function(projectId) {
+      await Projects.find({ toolId: list.toolId }).forEachAsync(async function (project) {
+        await migrateProjectByTool(target_tool, { projectId: project._id, });
+      });
+    }
+  },
 
-		await Diagrams.find({projectId: projectId}).forEachAsync(async function(diagram) {
+  migrateIndexes: async function (projectId) {
 
-			var diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
+    await Diagrams.find({ projectId: projectId }).forEachAsync(async function (diagram) {
 
-			await Elements.find({diagramId: diagram._id, diagramTypeId: diagram_type._id}).forEachAsync(async function(elem) {
+      var diagram_type = await DiagramTypes.findOneAsync({ _id: diagram.diagramTypeId, });
 
-				var elem_type = ElementTypes.findOne({_id: elem.elementTypeId,});
-				await CompartmentTypes.find({elementTypeId:elem_type._id}).forEachAsync(function(compType){
-					compartments = Compartments.find({projectId:projectId, elementId:elem._id, compartmentTypeId:compType._id });
-					if (compartments.count() == 1 ){
-					    compartments.forEach(function(c){
-							Compartments.update({_id: c._id, projectId:projectId,},{$set: { index: compType.index,}});
-						})  
-					}
-					if (compartments.count() > 1 ){
-						comp_ind = compartments.map(function (c) {
-							return {_id:c._id, index:c.index, input:c.input};
-						});
-						comp_ind.sort(function(a, b) { return a.index - b.index; })
-						var i = 0; 
-						comp_ind.forEach(function(c)
-						{
-							Compartments.update({_id: c._id, projectId: projectId,},{$set: { index: compType.index+i,}});					   
-							i = i + 1
-						})		   
-					}
-				});
-				
-						
+      await Elements.find({ diagramId: diagram._id, diagramTypeId: diagram_type._id }).forEachAsync(async function (elem) {
 
-			});
-		});
-		console.log("Done");
-	}, 
+        var elem_type = await ElementTypes.findOneAsync({ _id: elem.elementTypeId, });
+        await CompartmentTypes.find({ elementTypeId: elem_type._id }).forEachAsync(function (compType) {
+          compartments = Compartments.find({ projectId: projectId, elementId: elem._id, compartmentTypeId: compType._id });
+          if (await compartments.countAsync() === 1) {
+            compartments.forEach(async function (c) {
+              await Compartments.updateAsync({ _id: c._id, projectId: projectId, }, { $set: { index: compType.index, } });
+            })
+          }
+          if (await compartments.countAsync() > 1) {
+            comp_ind = await compartments.mapAsync(function (c) {
+              return { _id: c._id, index: c.index, input: c.input };
+            });
+            comp_ind.sort(function (a, b) { return a.index - b.index; })
+            var i = 0;
+            comp_ind.forEach(function (c) {
+              await Compartments.updateAsync({ _id: c._id, projectId: projectId, }, { $set: { index: compType.index + i, } });
+              i = i + 1
+            })
+          }
+        });
+
+
+
+      });
+    });
+    console.log("Done");
+  },
 });
 
 
 async function migrateProjectByTool(target_tool, list) {
 
-	await Diagrams.find({projectId: list.projectId}).forEachAsync(async function(diagram) {
+  await Diagrams.find({ projectId: list.projectId }).forEachAsync(async function (diagram) {
 
-		var current_diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
-		if (!current_diagram_type) {
-			console.error("No current digram types ", current_diagram_type);
-			return;
-		}
+    var current_diagram_type = await DiagramTypes.findOneAsync({ _id: diagram.diagramTypeId, });
+    if (!current_diagram_type) {
+      console.error("No current digram types ", current_diagram_type);
+      return;
+    }
 
-		var target_diagram_type = DiagramTypes.findOne({name: current_diagram_type.name, toolId: target_tool._id,});
-		if (!target_diagram_type) {
-			console.error("No taget diagram types ", current_diagram_type.name);
-			return;
-		}
+    var target_diagram_type = await DiagramTypes.findOneAsync({ name: current_diagram_type.name, toolId: target_tool._id, });
+    if (!target_diagram_type) {
+      console.error("No taget diagram types ", current_diagram_type.name);
+      return;
+    }
 
-		await Elements.find({diagramId: diagram._id, diagramTypeId: current_diagram_type._id}).forEachAsync(async function(elem) {
+    await Elements.find({ diagramId: diagram._id, diagramTypeId: current_diagram_type._id }).forEachAsync(async function (elem) {
 
-			var current_elem_type = ElementTypes.findOne({_id: elem.elementTypeId,});
-			if (!current_elem_type) {
-				console.error("No current element type ", current_element_type);
-				return;
-			}
+      var current_elem_type = await ElementTypes.findOneAsync({ _id: elem.elementTypeId, });
+      if (!current_elem_type) {
+        console.error("No current element type ", current_element_type);
+        return;
+      }
 
-			var target_elem_type = ElementTypes.findOne({name: current_elem_type.name, diagramTypeId: target_diagram_type._id,});
-			if (!target_elem_type) {
-				console.error("No target element type ", current_elem_type.name);
-				return;
-			}
+      var target_elem_type = await ElementTypes.findOneAsync({ name: current_elem_type.name, diagramTypeId: target_diagram_type._id, });
+      if (!target_elem_type) {
+        console.error("No target element type ", current_elem_type.name);
+        return;
+      }
 
-			await Compartments.find({elementId: elem._id, diagramId: diagram._id, projectId: list.projectId}).forEachAsync(function(compart) {
+      await Compartments.find({ elementId: elem._id, diagramId: diagram._id, projectId: list.projectId }).forEachAsync(async function (compart) {
 
-				var current_compart_type = CompartmentTypes.findOne({_id: compart.compartmentTypeId,});
-				if (!current_compart_type) {
-					console.error("No current compartment type ", current_compart_type);
-					return;
-				}
+        var current_compart_type = await CompartmentTypes.findOneAsync({ _id: compart.compartmentTypeId, });
+        if (!current_compart_type) {
+          console.error("No current compartment type ", current_compart_type);
+          return;
+        }
 
-				var target_compart_type = CompartmentTypes.findOne({name: current_compart_type.name, elementTypeId: target_elem_type._id});
-				if (!target_compart_type) {
-					console.error("No target compartment type ", current_compart_type.name);
-					return;
-				}
+        var target_compart_type = await CompartmentTypes.findOneAsync({ name: current_compart_type.name, elementTypeId: target_elem_type._id });
+        if (!target_compart_type) {
+          console.error("No target compartment type ", current_compart_type.name);
+          return;
+        }
 
-				Compartments.update({_id: compart._id, projectId: list.projectId,},
-									{$set: {
-										compartmentTypeId: target_compart_type._id,
-										elementTypeId: target_elem_type._id,
-										diagramTypeId: target_diagram_type._id,
-										toolId: target_tool._id,
-									}});
-			});
+        await Compartments.updateAsync({ _id: compart._id, projectId: list.projectId, },
+          {
+            $set: {
+              compartmentTypeId: target_compart_type._id,
+              elementTypeId: target_elem_type._id,
+              diagramTypeId: target_diagram_type._id,
+              toolId: target_tool._id,
+            }
+          });
+      });
 
-			Elements.update({_id: elem._id, diagramId: diagram._id, projectId: list.projectId,},
-							{$set: {
-								elementTypeId: target_elem_type._id,
-								diagramTypeId: target_diagram_type._id,
-								toolId: target_tool._id,
-							}});
-		});
+      await Elements.updateAsync({ _id: elem._id, diagramId: diagram._id, projectId: list.projectId, },
+        {
+          $set: {
+            elementTypeId: target_elem_type._id,
+            diagramTypeId: target_diagram_type._id,
+            toolId: target_tool._id,
+          }
+        });
+    });
 
-		Diagrams.update({_id: diagram._id, projectId: list.projectId,},
-						{$set: {
-							diagramTypeId: target_diagram_type._id,
-							toolId: target_tool._id,
-						}});
-	});
+    await Diagrams.updateAsync({ _id: diagram._id, projectId: list.projectId, },
+      {
+        $set: {
+          diagramTypeId: target_diagram_type._id,
+          toolId: target_tool._id,
+        }
+      });
+  });
 
-	Projects.update({_id: list.projectId},
-					{$set: {
-						toolId: target_tool._id,
-					}});
+  await Projects.updateAsync({ _id: list.projectId },
+    {
+      $set: {
+        toolId: target_tool._id,
+      }
+    });
 
-	var tool_version = ToolVersions.findOne({toolId: target_tool._id});
-	if (!tool_version) {
-		console.error("No tool version", tool_version);
-		return;
-	}
+  var tool_version = await ToolVersions.findOneAsync({ toolId: target_tool._id });
+  if (!tool_version) {
+    console.error("No tool version", tool_version);
+    return;
+  }
 
-	Versions.update({projectId: list.projectId},
-					{$set: {
-						toolId: target_tool._id,
-						toolVersionId: tool_version._id,
-					}},
-					{multi: true}
-				);
+  await Versions.updateAsync({ projectId: list.projectId },
+    {
+      $set: {
+        toolId: target_tool._id,
+        toolVersionId: tool_version._id,
+      }
+    },
+    { multi: true }
+  );
 
-	console.log("Done");
+  console.log("Done");
 }

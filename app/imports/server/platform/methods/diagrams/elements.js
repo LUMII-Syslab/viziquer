@@ -77,7 +77,7 @@ Meteor.methods({
           var sub_type_id = data["startElementTypeId"];
           var super_type_id = data["endElementTypeId"];
 
-          ElementTypes.update({ _id: sub_type_id }, { $addToSet: { superTypeIds: super_type_id } });
+          await ElementTypes.updateAsync({ _id: sub_type_id }, { $addToSet: { superTypeIds: super_type_id } });
         }
 
         //inserting box or line target type
@@ -169,7 +169,7 @@ Meteor.methods({
     }
   },
 
-  resizeElement: async function(list) {
+  resizeElement: async function (list) {
 
     var user_id = Meteor.userId() || get_unknown_public_user_name();
     if (list["projectId"]) {
@@ -203,7 +203,7 @@ Meteor.methods({
       var update_element = {};
       update_element['style.' + list["attrName"]] = list["attrValue"];
 
-      Elements.update({
+      await Elements.updateAsync({
         _id: list["elementId"], diagramId: list["diagramId"],
         projectId: list["projectId"]
       }, { $set: update_element });
@@ -222,18 +222,19 @@ Meteor.methods({
       error_msg(rights);
   },
 
-  copyElements: function (list) {
+  copyElements: async function (list) {
 
     var user_id = Meteor.userId() || get_unknown_public_user_name();
     if (list["projectId"]) {
       if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
         if (list["elements"]) {
-          Clipboard.update({
-            userId: user_id,
-            // toolId: list.toolId,
-            // diagramTypeId: list.diagramTypeId,
-          },
+          await Clipboard.updateAsync(
+            {
+              userId: user_id,
+              // toolId: list.toolId,
+              // diagramTypeId: list.diagramTypeId,
+            },
 
             {
               $set: {
@@ -422,7 +423,7 @@ Meteor.methods({
         await change_position(list, query, user_id);
 
         if (list.isLayoutComputationNeededOnLoad != undefined) {
-          Diagrams.update({ _id: list.diagramId, projectId: list["projectId"], },
+          await Diagrams.updateAsync({ _id: list.diagramId, projectId: list["projectId"], },
             { $set: { isLayoutComputationNeededOnLoad: list.isLayoutComputationNeededOnLoad, } });
         }
 
@@ -439,7 +440,7 @@ Meteor.methods({
     }
   },
 
-  deleteElements: async function(list) {
+  deleteElements: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
     if (list["projectId"]) {
       if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
@@ -451,7 +452,7 @@ Meteor.methods({
     }
   },
 
-  updateSwimlaneLines: function (list) {
+  updateSwimlaneLines: async function (list) {
 
     var user_id = Meteor.userId() || get_unknown_public_user_name();
     if (list["projectId"]) {
@@ -470,7 +471,7 @@ Meteor.methods({
           }
         };
 
-        Elements.update(query, update);
+        await Elements.updateAsync(query, update);
 
         var compart_update = {};
         var query2 = {
@@ -506,14 +507,12 @@ Meteor.methods({
 
         //if removing
         if (inc < 0) {
-          Compartments.remove(query3);
+          await Compartments.removeAsync(query3);
         }
 
-        Compartments.update(query2, compart_update, { multi: true });
+        await Compartments.updateAsync(query2, compart_update, { multi: true });
       }
-    }
-
-    else if (is_system_admin(user_id, list)) {
+    } else if (is_system_admin(user_id, list)) {
 
       var update = {
         $set: {
@@ -522,16 +521,18 @@ Meteor.methods({
         }
       };
 
-      Elements.update({
-        _id: list["elementId"], toolId: list["toolId"],
-        versionId: list["versionId"], diagramId: list["diagramId"]
-      },
+      await Elements.updateAsync(
+        {
+          _id: list["elementId"], toolId: list["toolId"],
+          versionId: list["versionId"], diagramId: list["diagramId"]
+        },
         update);
 
-      ElementTypes.update({
-        elementId: list["elementId"], toolId: list["toolId"],
-        versionId: list["versionId"], diagramId: list["diagramId"]
-      },
+      await ElementTypes.updateAsync(
+        {
+          elementId: list["elementId"], toolId: list["toolId"],
+          versionId: list["versionId"], diagramId: list["diagramId"]
+        },
         update);
     }
 
@@ -616,7 +617,7 @@ async function change_position(list, query, system_id) {
 
   if (list["movedBoxes"]) {
 
-    _.each(list["movedBoxes"], function (box) {
+    _.each(list["movedBoxes"], async function (box) {
       var box_query = { _id: box.id, type: "Box" };
       _.extend(box_query, query);
 
@@ -637,7 +638,7 @@ async function change_position(list, query, system_id) {
         update["location.height"] = box.position.height;
       }
 
-      Elements.update(box_query, { $set: update });
+      await Elements.updateAsync(box_query, { $set: update });
     });
 
   }
@@ -673,7 +674,7 @@ async function delete_elements(system_id, list) {
   else
     return;
 
-  Elements.remove(query);
+    await Elements.removeAsync(query);
 }
 
 function build_diagram_notification(system_id, list, edit) {

@@ -35,7 +35,7 @@ ExportDiagramConfig.prototype = {
 	},
 
 	exportTool: function(tool_id) {
-		var tool = Tools.findOne({_id: tool_id});
+		var tool = await Tools.findOneAsync({_id: tool_id});
 		if (tool) {
 			_.extend(this.tool, {name: tool.name, toolbar: tool.toolbar})
 		}

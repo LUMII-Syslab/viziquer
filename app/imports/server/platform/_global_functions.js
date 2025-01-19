@@ -1,13 +1,13 @@
 import { ProjectsUsers, Versions, ToolVersions, Projects } from '/imports/db/platform/collections'
 
 //checks whether user is allowed to access the project
-function get_user_rights_to_access_project(list, user_system_id) {
+async function get_user_rights_to_access_project(list, user_system_id) {
 	if (list) {
 		var proj_id = list["projectId"];
 		
 		//checks if user has logged in
 		if (user_system_id) {
-			var user = ProjectsUsers.findOne({userSystemId: user_system_id, projectId: proj_id});
+			var user = await ProjectsUsers.findOneAsync({userSystemId: user_system_id, projectId: proj_id});
 			if (user) {
 
 				//if version is specified,
@@ -26,7 +26,7 @@ function get_user_rights_to_access_project(list, user_system_id) {
 						var tool_id = list["toolId"];
 
 						//checking if the project uses the specified too
-						var project = Projects.findOne({_id: proj_id, toolId: tool_id});
+						var project = await Projects.findOneAsync({_id: proj_id, toolId: tool_id});
 						if (project) {
 
 							//selects the tool version
@@ -39,7 +39,7 @@ function get_user_rights_to_access_project(list, user_system_id) {
 						}
 					}
 					
-					var version = Versions.findOne(version_query);
+					var version = await Versions.findOneAsync(version_query);
 					if (version) {
 
 						//Only the published versions are available for every project member
@@ -100,8 +100,8 @@ function check_user_rights(user_rights, privacy_level) {
 }
 
 //checks if the project version is in the state that can be edited
-function is_allowed_version(list) {
-	var version = Versions.findOne({_id: list["versionId"],
+async function is_allowed_version(list) {
+	var version = await Versions.findOneAsync({_id: list["versionId"],
 									projectId: list["projectId"],
 									status: "New"});
 	
@@ -118,8 +118,8 @@ function error_msg(err) {
 		console.log("Unspecified error");
 }
 
-function is_version_not_published(list) {
-	var tool_version = ToolVersions.findOne({_id: list["versionId"],
+async function is_version_not_published(list) {
+	var tool_version = await ToolVersions.findOneAsync({_id: list["versionId"],
 											toolId: list["toolId"],
 											status: "New",
 										});

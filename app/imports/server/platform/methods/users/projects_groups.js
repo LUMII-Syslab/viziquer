@@ -1,7 +1,7 @@
 import { is_project_admin } from '/imports/libs/platform/user_rights'
 import { ProjectsGroups, ProjectsUsers, Diagrams, Documents } from '/imports/db/platform/collections'
 
-ProjectsGroups.after.remove(function (user_id, doc) {
+ProjectsGroups.after.remove(async function (user_id, doc) {
 
   if (!doc)
     return;
@@ -10,8 +10,8 @@ ProjectsGroups.after.remove(function (user_id, doc) {
   var proj_id = doc["projectId"];
 
   //removing the group from the allowed groups
-  Diagrams.update({ projectId: proj_id }, { $pull: { allowedGroups: group_id } });
-  Documents.update({ projectId: proj_id }, { $pull: { allowedGroups: group_id } });
+  await Diagrams.updateAsync({ projectId: proj_id }, { $pull: { allowedGroups: group_id } });
+  await Documents.updateAsync({ projectId: proj_id }, { $pull: { allowedGroups: group_id } });
 });
 ProjectsGroups.hookOptions.after.remove = { fetchPrevious: false };
 
@@ -80,7 +80,7 @@ Meteor.methods({
       if (!list["id"])
         return;
 
-      ProjectsGroups.remove({ _id: list["id"], projectId: list["projectId"] });
+      await ProjectsGroups.removeAsync({ _id: list["id"], projectId: list["projectId"] });
     }
   },
 

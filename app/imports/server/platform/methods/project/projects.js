@@ -90,16 +90,16 @@ Projects.before.remove(function (user_id, doc) {
 Projects.hookOptions.before.remove = { fetchPrevious: false };
 
 //TODO: needs some cheking if this ok
-Projects.after.remove(function (user_id, doc) {
+Projects.after.remove(async function (user_id, doc) {
 
   var proj_id = doc["_id"]
 
   //a transaction is needed
-  ProjectsUsers.remove({ projectId: proj_id });
-  Versions.remove({ projectId: proj_id });
+  await ProjectsUsers.removeAsync({ projectId: proj_id });
+  await Versions.removeAsync({ projectId: proj_id });
 
-  Posts.remove({ projectId: proj_id });
-  ForumPosts.remove({ projectId: proj_id });
+  await Posts.removeAsync({ projectId: proj_id });
+  await ForumPosts.removeAsync({ projectId: proj_id });
 
   //roles???
 });
@@ -122,8 +122,8 @@ Meteor.methods({
 
       await Projects.insertAsync(list);
 
-      var project = Projects.findOne({ createdAt: list["createdAt"], createdBy: user_id, name: list["name"] });
-      var projectsUsers = ProjectsUsers.findOne({ projectId: project._id })
+      var project = await Projects.findOneAsync({ createdAt: list["createdAt"], createdBy: user_id, name: list["name"] });
+      var projectsUsers = await ProjectsUsers.findOneAsync({ projectId: project._id })
       if (projectsUsers)
         versionId = projectsUsers.versionId;
 
@@ -143,25 +143,25 @@ Meteor.methods({
     }
   },
 
-  updateProject: function (list) {
+  updateProject: async function (list) {
     var user_id = Meteor.userId();
     if (is_project_admin(user_id, list)) {
-      Projects.update({ _id: list["projectId"] }, { $set: list["set"] });
+      await Projects.updateAsync({ _id: list["projectId"] }, { $set: list["set"] });
     }
   },
 
-  removeProject: function (list) {
+  removeProject: async function (list) {
     var user_id = Meteor.userId();
     if (is_project_admin(user_id, list)) {
-      Projects.remove({ _id: list["projectId"] })
+      await Projects.removeAsync({ _id: list["projectId"] })
     }
   },
 
-  updateUserVersionSettings: function (list) {
+  updateUserVersionSettings: async function (list) {
 
     var user_id = Meteor.userId();
     if (user_id) {
-      UserVersionSettings.update({ userSystemId: user_id, versionId: list["versionId"] }, list["update"]);
+      await UserVersionSettings.updateAsync({ userSystemId: user_id, versionId: list["versionId"] }, list["update"]);
     }
   },
 
@@ -171,7 +171,7 @@ Meteor.methods({
     var versionId = null;
     if (is_project_member(user_id, list)) {
       var project_id = list.projectId;
-      var project = Projects.findOne({ _id: project_id });
+      var project = await Projects.findOneAsync({ _id: project_id });
       if (!project) {
         console.error("No project object");
         return;
@@ -192,11 +192,11 @@ Meteor.methods({
 
   },
 
-  leaveProject: function (list) {
+  leaveProject: async function (list) {
 
     var user_id = Meteor.userId();
     if (is_project_member(user_id, list)) {
-      ProjectsUsers.remove({ userSystemId: user_id, projectId: list.projectId, });
+      await ProjectsUsers.removeAsync({ userSystemId: user_id, projectId: list.projectId, });
     }
 
   },
@@ -263,7 +263,7 @@ async function afterInsert(user_id_in, doc) {
   var date = new Date();
 
   //selects the last tool version
-  var tool_version = ToolVersions.findOne({ toolId: tool_id }, { $sort: { createdAt: -1 } });
+  var tool_version = await ToolVersions.findOneAsync({ toolId: tool_id }, { $sort: { createdAt: -1 } });
   if (!tool_version) {
     // console.error("There is no tool version for tool: ", tool_id);
     return;
@@ -305,7 +305,7 @@ async function afterInsert(user_id_in, doc) {
     documentsSelectedGroup: "none",
   });
 
-  Users.update({ systemId: user_id }, { $set: { activeProject: proj_id, activeVersion: version_id } });
+  await Users.updateAsync({ systemId: user_id }, { $set: { activeProject: proj_id, activeVersion: version_id } });
 
   //managing roles/permissons
   var project_role = build_project_role(proj_id);

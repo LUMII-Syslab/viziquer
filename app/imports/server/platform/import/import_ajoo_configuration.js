@@ -37,7 +37,7 @@ Meteor.methods({
 
       toolbar = _.union([add_export_button], toolbar);
 
-      DiagramTypes.update({ _id: diagram_type._id }, { $set: { toolbar: toolbar } });
+      await DiagramTypes.updateAsync({ _id: diagram_type._id }, { $set: { toolbar: toolbar } });
     }
 
   },
@@ -99,7 +99,7 @@ ImportAjooConfiguration.prototype = {
       });
   },
 
-  importDiagramTypes: async function (diagram_types) {
+  importDiagramTypes: function(diagram_types) {
 
     var self = this;
     _.each(diagram_types, async function (diagram_type_in) {
@@ -163,7 +163,7 @@ ImportAjooConfiguration.prototype = {
     });
   },
 
-  importLineTypes: async function (line_types) {
+  importLineTypes: function(line_types) {
     var self = this;
 
     _.each(line_types, async function (line_type) {
@@ -194,7 +194,7 @@ ImportAjooConfiguration.prototype = {
     });
   },
 
-  importCompartmentTypes: async function (compart_types) {
+  importCompartmentTypes: function(compart_types) {
     var self = this;
 
     _.each(compart_types, async function (compart_type) {

@@ -30,21 +30,21 @@ CompartmentTypes.after.update(async function (user_id, doc, fields, modifier, op
       });
 
     //unsetting the property from any compartment type 
-    CompartmentTypes.update({ _id: { $in: ids } },
+    await CompartmentTypes.updateAsync({ _id: { $in: ids } },
       { $set: { isObjectRepresentation: false } }, { multi: true });
 
     //unsetting the property from any compartment
-    Compartments.update({ compartmentTypeId: { $in: ids } },
+    await Compartments.updateAsync({ compartmentTypeId: { $in: ids } },
       { $set: { isObjectRepresentation: false } }, { multi: true });
 
     //setting the property for the compartments that correspond to the compart type
-    Compartments.update({ compartmentTypeId: doc["_id"] },
+    await Compartments.updateAsync({ compartmentTypeId: doc["_id"] },
       { $set: { isObjectRepresentation: true } }, { multi: true });
   }
 
   if (modifier && modifier.$inc && modifier.$inc["index"]) {
     var index = doc["index"];
-    Compartments.update({ compartmentTypeId: doc["_id"] }, { $set: { index: index } }, { multi: true });
+    await Compartments.updateAsync({ compartmentTypeId: doc["_id"] }, { $set: { index: index } }, { multi: true });
   }
 
 });
@@ -67,24 +67,24 @@ Meteor.methods({
     }
   },
 
-  removeCompartmentType: function (list) {
+  removeCompartmentType: async function (list) {
     var user_id = Meteor.userId();
     if (is_system_admin(user_id, list)) {
 
       if (!list["id"])
         return;
 
-      CompartmentTypes.remove({ _id: list["id"] });
-      Compartments.remove({ compartmentTypeId: list["id"] });
+      await CompartmentTypes.removeAsync({ _id: list["id"] });
+      await Compartments.removeAsync({ compartmentTypeId: list["id"] });
     }
   },
 
-  addCompartmentTypeStyle: function (list) {
+  addCompartmentTypeStyle: async function (list) {
     var user_id = Meteor.userId();
     if (is_system_admin(user_id, list)) {
 
       var style = get_default_compartment_style(list["elementType"], list["editorType"]);
-      CompartmentTypes.update({ _id: list["id"] },
+      await CompartmentTypes.updateAsync({ _id: list["id"] },
         {
           $push:
           {
@@ -98,14 +98,14 @@ Meteor.methods({
     }
   },
 
-  updateCompartmentTypeStyle: function (list) {
+  updateCompartmentTypeStyle: async function (list) {
     var user_id = Meteor.userId();
     if (is_system_admin(user_id, list)) {
 
       var update = {};
       update["styles." + list["styleIndex"] + "." + list["attrName"]] = list["attrValue"];
 
-      CompartmentTypes.update({ _id: list["id"] }, { $set: update });
+      await CompartmentTypes.updateAsync({ _id: list["id"] }, { $set: update });
 
       //if changing the styles attribute, then changing compartments as well
       if (list["attrName"] != "name") {
@@ -114,20 +114,20 @@ Meteor.methods({
         compart_update[list["attrName"]] = list["attrValue"];
 
         //updating only compartments with styleId
-        Compartments.update({ compartmentTypeId: list["id"], styleId: list["styleId"] },
+        await Compartments.updateAsync({ compartmentTypeId: list["id"], styleId: list["styleId"] },
           { $set: compart_update }, { multi: true });
       }
     }
   },
 
-  updateCompartmentType: function (list) {
+  updateCompartmentType: async function (list) {
     var user_id = Meteor.userId();
     if (is_system_admin(user_id, list)) {
 
       var update = {};
       update[list["attrName"]] = list["attrValue"];
 
-      CompartmentTypes.update({ _id: list["id"] }, { $set: update }, { trimStrings: false });
+      await CompartmentTypes.updateAsync({ _id: list["id"] }, { $set: update }, { trimStrings: false });
     }
   },
 
@@ -149,7 +149,7 @@ Meteor.methods({
     if (is_system_admin(user_id, list)) {
 
       var tab_id = await DialogTabs.insertAsync(list["tab"]);
-      CompartmentTypes.update({ _id: list["compartmentTypeId"] },
+      await CompartmentTypes.updateAsync({ _id: list["compartmentTypeId"] },
         { $set: { dialogTabId: tab_id } });
     }
   },

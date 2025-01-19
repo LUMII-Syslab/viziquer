@@ -23,13 +23,13 @@ Meteor.methods({
       var project_id = list.projectId;
       var version_id = list.versionId;
 
-      var project = Projects.findOne({ _id: project_id, });
+      var project = await Projects.findOneAsync({ _id: project_id, });
       if (!project) {
         console.error("No project ", project_id);
         return;
       }
 
-      var tool = Tools.findOne({ _id: project.toolId, });
+      var tool = await Tools.findOneAsync({ _id: project.toolId, });
       if (!tool) {
         console.error("No tool", project.toolId);
         return;
@@ -39,7 +39,7 @@ Meteor.methods({
 
       var diagrams = await Diagrams.find({ projectId: project_id, versionId: version_id }).mapAsync(async function (diagram) {
 
-        var diagram_type = DiagramTypes.findOne({ _id: diagram.diagramTypeId, });
+        var diagram_type = await DiagramTypes.findOneAsync({ _id: diagram.diagramTypeId, });
         if (!diagram_type) {
           console.error("No DiagramType ", diagram.diagramTypeId);
           return;
@@ -51,7 +51,7 @@ Meteor.methods({
 
         diagram.elements = await Elements.find({ diagramId: diagram._id, projectId: project_id, versionId: version_id }).mapAsync(async function (element) {
 
-          var element_type = ElementTypes.findOne({ _id: element.elementTypeId, });
+          var element_type = await ElementTypes.findOneAsync({ _id: element.elementTypeId, });
           if (!element_type) {
             console.error("No ElementType ", element.elementTypeId);
             return;
@@ -65,7 +65,7 @@ Meteor.methods({
           })
             .mapAsync(function (compartment) {
 
-              var compartment_type = CompartmentTypes.findOne({ _id: compartment.compartmentTypeId, });
+              var compartment_type = await CompartmentTypes.findOneAsync({ _id: compartment.compartmentTypeId, });
               if (!compartment_type) {
                 console.error("No CompartmentType ", compartment.compartmentTypeId);
                 return;

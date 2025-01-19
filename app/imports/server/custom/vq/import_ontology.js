@@ -2347,7 +2347,7 @@ Meteor.methods({
   importOntologyNew: async function (list, ontology) {
     var user_id = Meteor.userId();
 
-    let project = Projects.findOne({ _id: list.projectId, });
+    let project = await Projects.findOneAsync({ _id: list.projectId, });
     if (!project) {
       console.error("No Project");
       return;
@@ -2389,7 +2389,7 @@ Meteor.methods({
     let element_map = {};
 
     // Namespaces part 
-    let ns_type = ElementTypes.findOne({ name: "Namespaces", diagramTypeId: diagram_type._id });
+    let ns_type = await ElementTypes.findOneAsync({ name: "Namespaces", diagramTypeId: diagram_type._id });
     if (!ns_type) {
       console.error("No Namespaces type");
       return;
@@ -2688,7 +2688,7 @@ function add_one_compartment_from_list(list, compartmentName, value_list, pref, 
 
 async function add_one_compartment(list, compartmentName, input, value) {
 
-  let compartment_type = CompartmentTypes.findOne({ elementTypeId: list.element_type_id, name: compartmentName });
+  let compartment_type = await CompartmentTypes.findOneAsync({ elementTypeId: list.element_type_id, name: compartmentName });
   if (!compartment_type) {
     console.error("No compartment type", compartmentName);
     return;

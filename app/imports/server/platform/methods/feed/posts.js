@@ -13,10 +13,10 @@ Posts.after.remove(function (user_id, doc) {
 Posts.hookOptions.after.remove = { fetchPrevious: false };
 
 
-Likers.before.insert(function (user_id, doc) {
+Likers.before.insert(async function (user_id, doc) {
 
   //user is not allowed to like one post more than one time
-  var is_liker = Likers.findOne({ userSystemId: user_id, postId: doc["postId"] });
+  var is_liker = await Likers.findOneAsync({ userSystemId: user_id, postId: doc["postId"] });
   if (is_liker)
     return false;
 });

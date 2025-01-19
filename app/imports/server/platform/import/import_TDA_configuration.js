@@ -24,14 +24,13 @@ Meteor.methods({
 
       else if (list.data && list.data.types) {
         await Meteor.callAsync("importAjooConfiguration", list);
-      }
-      else {
+      } else {
         var user_id = Meteor.userId();
         if (is_project_version_admin(user_id, list)) {
           //console.log("Liekam iekšā")
           //console.log(Services.find({toolId: list.toolId }).count())
           //console.log(list.toolId)
-          Services.remove({ toolId: list.toolId });
+          await Services.removeAsync({ toolId: list.toolId });
           //console.log(Services.find({toolId: list.toolId }).count())
           var data = list.data;
           var services = _.extend(data, { toolId: list.toolId });
@@ -1333,7 +1332,7 @@ var ImportTDAConfiguration = {
     collection_menu.push(execute_sparql);
     no_collection_menu.push(execute_sparql);
 
-    DiagramTypes.update({ _id: diagram_type_id, }, { $set: { noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu } });
+    await DiagramTypes.updateAsync({ _id: diagram_type_id, }, { $set: { noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu } });
 
 
     await ElementTypes.find({ diagramTypeId: diagram_type_id, }).forEachAsync(async function (elem_type) {
@@ -1346,26 +1345,26 @@ var ImportTDAConfiguration = {
 
         var menu = elem_type.contextMenu;
         menu = _.union([{ item: "AddLink", procedure: "AddLink", }], menu);
-        ElementTypes.update({ _id: elem_type._id }, { $set: { contextMenu: menu }, });
+        await ElementTypes.updateAsync({ _id: elem_type._id }, { $set: { contextMenu: menu }, });
 
         if (menu_item) {
           menu_item.procedure = "GenerateSPARQL";
-          DiagramTypes.update({ _id: diagram_type_id, }, { $set: { noCollectionContextMenu: no_collection_menu } });
+          await DiagramTypes.updateAsync({ _id: diagram_type_id, }, { $set: { noCollectionContextMenu: no_collection_menu } });
         }
 
 
-        await CompartmentTypes.find({ elementTypeId: class_type_id, }).forEachAsync(function (compart_type) {
+        await CompartmentTypes.find({ elementTypeId: class_type_id, }).forEachAsync(async function (compart_type) {
 
           if (compart_type.name == "ClassType") {
-            CompartmentTypes.update({ _id: compart_type._id }, { $set: { defaultValue: "", } });
+            await CompartmentTypes.updateAsync({ _id: compart_type._id }, { $set: { defaultValue: "", } });
           }
 
           if (compart_type.name == "Distinct") {
-            CompartmentTypes.update({ _id: compart_type._id }, { $set: { defaultValue: "", } });
+            await CompartmentTypes.updateAsync({ _id: compart_type._id }, { $set: { defaultValue: "", } });
           }
 
           if (compart_type.name == "OrderBy") {
-            CompartmentTypes.update({ _id: compart_type._id }, { $set: { defaultValue: "", } });
+            await CompartmentTypes.updateAsync({ _id: compart_type._id }, { $set: { defaultValue: "", } });
           }
 
           if (compart_type.name == "Name") {
@@ -1377,7 +1376,7 @@ var ImportTDAConfiguration = {
 
             if (item) {
               item.procedure = "VQgetClassNames";
-              CompartmentTypes.update({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
+              await CompartmentTypes.updateAsync({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
             }
 
           }
@@ -1416,7 +1415,7 @@ var ImportTDAConfiguration = {
               });
 
 
-              CompartmentTypes.update({ _id: compart_type._id }, { $set: { subCompartmentTypes: sub_compart_types, } });
+              await CompartmentTypes.updateAsync({ _id: compart_type._id }, { $set: { subCompartmentTypes: sub_compart_types, } });
             }
 
           }
@@ -1426,7 +1425,7 @@ var ImportTDAConfiguration = {
 
       if (name == "Link") {
 
-        await CompartmentTypes.find({ elementTypeId: elem_type._id, }).forEachAsync(function (compart_type) {
+        await CompartmentTypes.find({ elementTypeId: elem_type._id, }).forEachAsync(async function (compart_type) {
 
           if (compart_type.name == "Name") {
 
@@ -1437,7 +1436,7 @@ var ImportTDAConfiguration = {
 
             if (item) {
               item.procedure = "VQgetAssociationNames";
-              CompartmentTypes.update({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
+              await CompartmentTypes.updateAsync({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
             }
 
           }
@@ -1452,7 +1451,7 @@ var ImportTDAConfiguration = {
 
             if (item) {
               item.procedure = "VQsetSubQueryInverseLink";
-              CompartmentTypes.update({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
+              await CompartmentTypes.updateAsync({ _id: compart_type._id }, { $set: { extensionPoints: extension_points, } });
             }
 
           }

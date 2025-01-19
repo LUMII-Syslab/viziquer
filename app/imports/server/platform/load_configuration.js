@@ -13,7 +13,7 @@ async function load_configurator(user_id) {
     return;
   }
 
-  Tools.remove({});
+  await Tools.removeAsync({});
 
   //Diagram types
   var diagram_type_id;

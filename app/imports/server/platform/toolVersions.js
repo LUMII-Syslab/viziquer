@@ -16,7 +16,7 @@ ToolVersions.after.insert(async function (user_id, doc) {
   //the creator's current version is updated to the new one
   var user_tool = await UserTools.findOneAsync({ userSystemId: user_id, toolId: doc["toolId"] });
   if (user_tool) {
-    UserTools.update({ userSystemId: user_id, toolId: doc["toolId"] }, { $set: { versionId: _id, } });
+    await UserTools.updateAsync({ userSystemId: user_id, toolId: doc["toolId"] }, { $set: { versionId: _id, } });
   } else {
     if (!user_id) {
       var configurator = await Tools.findOneAsync({ _id: doc["toolId"] });

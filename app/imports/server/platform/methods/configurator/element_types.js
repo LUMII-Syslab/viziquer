@@ -14,8 +14,8 @@ ElementTypes.after.update(async function (user_id, doc, fields, modifier, option
   if (fields && fields.length == 1 && fields[0] == "name") {
 
     var name = doc["name"];
-    Compartments.update({ elementId: doc["elementId"] }, { $set: { value: name, input: name } });
-    PaletteButtons.update({ elementTypeIds: doc["_id"] }, { $set: { name: name } });
+    await Compartments.updateAsync({ elementId: doc["elementId"] }, { $set: { value: name, input: name } });
+    await PaletteButtons.updateAsync({ elementTypeIds: doc["_id"] }, { $set: { name: name } });
   }
 
   if (modifier.$set["isAbstract"] === false) {
@@ -29,10 +29,8 @@ ElementTypes.after.update(async function (user_id, doc, fields, modifier, option
       type: doc["type"],
       index: 1,
     });
-  }
-
-  else if (modifier.$set["isAbstract"] === true) {
-    PaletteButtons.remove({ elementTypeIds: doc["_id"] });
+  } else if (modifier.$set["isAbstract"] === true) {
+    await PaletteButtons.removeAsync({ elementTypeIds: doc["_id"] });
   }
 });
 
@@ -65,13 +63,12 @@ Meteor.methods({
       element_list["data"] = { elementType: "Specialization" };
 
       var elem_id = await Elements.insertAsync(element_list);
-      ElementTypes.update({
+      await ElementTypes.updateAsync({
         _id: list["subTypeId"],
         toolId: list["toolId"], versionId: list["versionId"]
       },
         { $push: { superTypeIds: list["superTypeId"] } });
-    }
-    else
+    } else
       error_msg();
   },
 
@@ -177,7 +174,7 @@ Meteor.methods({
         update["styles." + list["styleIndex"] + "." + "height"] = attr_value;
       }
 
-      ElementTypes.update({ _id: list["id"] }, { $set: update });
+      await ElementTypes.updateAsync({ _id: list["id"] }, { $set: update });
 
       //if changing the styles attribute, then changing compartments as well
       if (list["attrName"] != "name") {
