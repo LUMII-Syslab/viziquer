@@ -64,7 +64,7 @@ import '/imports/libs/custom/mytest'
 // import '/libs/custom/ontologyParams'
 
 
-Meteor.startup(() => {  
+Meteor.startup(async () => {  
     console.log("Loading server");
 
     Meteor.call("importConfiguration");
@@ -80,7 +80,7 @@ Meteor.startup(() => {
     // checking if CompartmentTypes contains attribute label
     const compart_type = CompartmentTypes.findOne({label: { $exists: false }});
     if (compart_type) {
-        CompartmentTypes.find().forEach(function(compart_type) {
+        await CompartmentTypes.find().forEachAsync(function(compart_type) {
             CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
         });
     }
