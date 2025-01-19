@@ -37,20 +37,20 @@ Meteor.methods({
       await Elements.find({ diagramId: diagram._id, diagramTypeId: diagram_type._id }).forEachAsync(async function (elem) {
 
         var elem_type = await ElementTypes.findOneAsync({ _id: elem.elementTypeId, });
-        await CompartmentTypes.find({ elementTypeId: elem_type._id }).forEachAsync(function (compType) {
-          compartments = Compartments.find({ projectId: projectId, elementId: elem._id, compartmentTypeId: compType._id });
+        await CompartmentTypes.find({ elementTypeId: elem_type._id }).forEachAsync(async function (compType) {
+          const compartments = Compartments.find({ projectId: projectId, elementId: elem._id, compartmentTypeId: compType._id });
           if (await compartments.countAsync() === 1) {
             compartments.forEach(async function (c) {
               await Compartments.updateAsync({ _id: c._id, projectId: projectId, }, { $set: { index: compType.index, } });
             })
           }
           if (await compartments.countAsync() > 1) {
-            comp_ind = await compartments.mapAsync(function (c) {
+            const comp_ind = await compartments.mapAsync(function (c) {
               return { _id: c._id, index: c.index, input: c.input };
             });
             comp_ind.sort(function (a, b) { return a.index - b.index; })
             var i = 0;
-            comp_ind.forEach(function (c) {
+            comp_ind.forEach(async function (c) {
               await Compartments.updateAsync({ _id: c._id, projectId: projectId, }, { $set: { index: compType.index + i, } });
               i = i + 1
             })
@@ -86,7 +86,7 @@ async function migrateProjectByTool(target_tool, list) {
 
       var current_elem_type = await ElementTypes.findOneAsync({ _id: elem.elementTypeId, });
       if (!current_elem_type) {
-        console.error("No current element type ", current_element_type);
+        console.error("No current element type ", current_elem_type);
         return;
       }
 

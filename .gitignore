@@ -3,6 +3,9 @@ _doc
 build
 jsconfig.json
 **/_legacy
+*.bak
+*.sh
+**/.vscode/launch.json
 
 # MongoDB data directory
 data/mongo
