@@ -17,8 +17,8 @@ const Utilities = {
 		return false;
 	},
 
-	isEditable: async function() {
-		var user = await Meteor.userAsync();
+	isEditable: function() {
+		var user = Meteor.user();
 		if (user) {
 
 			var role = build_project_version_admin_role(Session.get("activeProject"), Session.get("versionId"));
@@ -39,7 +39,7 @@ const Utilities = {
 		return {noQuery: -1};
 	},
 
-	getProjectGroups: async function() {
+	getProjectGroups: function() {
 
 		var default_groups = [{nr: 1,
 								_id: "Admin",
@@ -47,7 +47,7 @@ const Utilities = {
 								isDefault: true,
 								isEditable: false,
 								isRemovable: false,
-								count: await ProjectsUsers.find({role: "Admin", projectId: Session.get("activeProject")}).countAsync(),
+								count: ProjectsUsers.find({role: "Admin", projectId: Session.get("activeProject")}).count(),
 							},
 							{nr: 2,
 								_id: "Reader",
@@ -55,11 +55,11 @@ const Utilities = {
 								isDefault: true,
 								isEditable: false,
 								isRemovable: false,
-								count: await ProjectsUsers.find({role: "Reader", projectId: Session.get("activeProject")}).countAsync(),
+								count: ProjectsUsers.find({role: "Reader", projectId: Session.get("activeProject")}).count(),
 							},
 						];
 
-		return _.union(default_groups, await ProjectsGroups.find().fetchAsync());
+		return _.union(default_groups, ProjectsGroups.find().fetch());
 	},
 
 	editUserProfile: function(update, operation) {

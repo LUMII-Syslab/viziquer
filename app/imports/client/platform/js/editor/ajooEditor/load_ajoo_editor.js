@@ -192,12 +192,12 @@ function get_event_functions() {
 	        //console.log("keystroke pressed")
 	    },
 
-	    newElementStarted: async function(data) {
+	    newElementStarted: function(data) {
 
 	    	var palette_button = data.paletteButton;
 	    	var elem_type_id = palette_button.data.elementTypeId;
 
-			var comparts_with_defaults = _.filter(await CompartmentTypes.find({elementTypeId: elem_type_id, defaultValue: {$ne: ""}}).fetchAsync(),
+			var comparts_with_defaults = _.filter(CompartmentTypes.find({elementTypeId: elem_type_id, defaultValue: {$ne: ""}}).fetch(),
 												function(compart_type) {
 													return compart_type.defaultValue;
 												});

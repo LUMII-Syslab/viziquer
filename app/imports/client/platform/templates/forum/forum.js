@@ -5,7 +5,7 @@ import './forum.html'
 
 Template.forumPosts.helpers({
 
-	forum_posts: async function() {
+	forum_posts: function() {
 
 		var user_id = Session.get("userSystemId");
 
@@ -14,7 +14,7 @@ Template.forumPosts.helpers({
 		if (proj_id)
 			query["projectId"] = proj_id;
 
-		return await ForumPosts.find(query, {sort: {createdAt: -1}, limit: Session.get("postsPerPage")}).mapAsync(
+		return ForumPosts.find(query, {sort: {createdAt: -1}, limit: Session.get("postsPerPage")}).map(
 			function(post) {
 
 				//TODO: Need more advnaced processing
@@ -109,13 +109,13 @@ Template.addForumPost.events({
 
 Template.forumTags.helpers({
 
-	tags: async function() {
+	tags: function() {
 
 		var tags = [];
 		var selected_proj = Session.get("selectedProject");
 
 		var tag_dictionary = {};
-		await ForumPostTags.find({}, {sort: {name: 1}}).mapAsync(function(tag) {
+		ForumPostTags.find({}, {sort: {name: 1}}).map(function(tag) {
 			var tag_name = tag["name"];
 
 			//checking if the tag was not removed or if it is not already in the list
@@ -231,7 +231,7 @@ Template.forumPagination.events({
 
 Template.forumProjectsSelection.helpers({
 
-	projects: async function() {
+	projects: function() {
 
 		var active_project = Session.get("selectedProject");
 		var item = {name: "--All projects --", isDefault: true};
@@ -243,7 +243,7 @@ Template.forumProjectsSelection.helpers({
 		var projects = [item];
 		
 		//selecting projects
-		await ProjectsUsers.find({status: "Member"}).forEachAsync(function(project) {
+		ProjectsUsers.find({status: "Member"}).forEach(function(project) {
 
 			var proj_id = project["projectId"];
 			if (proj_id == active_project)

@@ -6,18 +6,18 @@ import './feed.html'
 
 Template.postsT.helpers({
 
-	posts: async function() {
+	posts: function() {
 
 		var current_date = get_current_time();
 
-		return await Posts.find({parentId: {$exists: false}}, {sort: {createdAt: -1}}).mapAsync(
-			async function(post) {
+		return Posts.find({parentId: {$exists: false}}, {sort: {createdAt: -1}}).map(
+			function(post) {
 
 				var item = {};
 				make_post(item, post, current_date);
 
 				//collecting the post replies
-				item["replies"] = await Posts.find({parentId: post["_id"]}, {sort: {createdAt: 1}}).mapAsync(
+				item["replies"] = Posts.find({parentId: post["_id"]}, {sort: {createdAt: 1}}).map(
 					function(reply) {
 
 						var reply_item = {};
@@ -171,8 +171,8 @@ function set_edit_delete_post(post) {
 // End of postsT
 
 Template.projectTemplate.helpers({
-	is_posts: async function() {
-		var posts_count = await Posts.find().countAsync();
+	is_posts: function() {
+		var posts_count = Posts.find().count();
 		var total_posts = Counts.findOne({_id: Session.get("activeProject")});
 		if (posts_count > 0 && total_posts && total_posts["count"] > posts_count) {
 			return true;
@@ -211,12 +211,12 @@ Template.projectTemplate.events({
 /* Start of likersFormTemplate */
 
 Template.likersT.helpers({
-	likers: async function() {
+	likers: function() {
 
 		var current_date = get_current_time();
 		var post_id = Session.get("activePost");
 
-		return await Likers.find({postId: post_id}).mapAsync(function(like) {
+		return Likers.find({postId: post_id}).map(function(like) {
 
 			like["time"] = time_interval_from_given_date(like["createdAt"], current_date);
 			var user = Users.findOne({systemId: like["userSystemId"]});

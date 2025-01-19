@@ -36,16 +36,16 @@ Template.diagram_settings.helpers({
 		return Session.get("versionId");
 	},
 
-	boxes: async function() {
-		return await Elements.find({type: "Box"}).countAsync();
+	boxes: function() {
+		return Elements.find({type: "Box"}).count();
 	},
 
-	lines: async function() {
-		return await Elements.find({type: "Line"}).countAsync();
+	lines: function() {
+		return Elements.find({type: "Line"}).count();
 	},
 
-	total: async function() {
-		return await Elements.find().countAsync();
+	total: function() {
+		return Elements.find().count();
 	},
 
 });

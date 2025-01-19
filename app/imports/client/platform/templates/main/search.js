@@ -20,7 +20,7 @@ Template.searchMenu.helpers({
 				return selecting_searches();
 			},
 
-			chats: async function() {
+			chats: function() {
 
 				var search = Session.get("chatsSearch");
 				if(!search)
@@ -29,7 +29,7 @@ Template.searchMenu.helpers({
 				//selects users
 				var query = build_user_search_query(search["text"]);
 				var users = Users.find(query);					
-				var res = await users.mapAsync(function(user, i) {
+				var res = users.map(function(user, i) {
 					var item = {};
 					item["index"] = i;
 					item["phrase"] = true;
@@ -44,11 +44,11 @@ Template.searchMenu.helpers({
 				});
 
 				//if users are less then 10, then adding also some search phrases
-				var users_count = await users.countAsync();
+				var users_count = users.count();
 				if (users_count <= 10) {
 					var limit = 10 - users_count;
 					var searches = Searches.find({}, {$sort: {counter: -1}, limit: limit});
-					await searches.forEachAsync(function(search, i) {
+					searches.forEach(function(search, i) {
 						
 						var item = {};
 						item["id"] = search["_id"];
@@ -88,7 +88,7 @@ Template.searchMenu.helpers({
 	},
 });
 
-async function selecting_searches(query, limit) {
+function selecting_searches(query, limit) {
 
 	if (!query)
 		query = {};
@@ -97,12 +97,12 @@ async function selecting_searches(query, limit) {
 		limit = {$sort: {counter: -1}, limit: 10};
 
 	var searches = Searches.find(query, limit);
-	var res = await searches.mapAsync(function(search, i) {
+	var res = searches.map(function(search, i) {
 		search["index"] = i;
 		return search;
 	});
 
-	var count = await searches.countAsync();
+	var count = searches.count();
 	res["count"] = count;
 	res["style"] = get_display_mode(count);
 

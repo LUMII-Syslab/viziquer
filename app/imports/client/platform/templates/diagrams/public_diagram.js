@@ -50,7 +50,7 @@ Template.publicDiagramTemplate.helpers({
 		}
 	},
 
-	templates: async function() {
+	templates: function() {
 
 		var templates = [];
 
@@ -82,7 +82,7 @@ Template.publicDiagramTemplate.helpers({
 			get_templates(diagram_type.readModeCollectionKeyStrokes);
 			get_templates(diagram_type.readModeNoCollectionKeyStrokes);
 
-			await ElementTypes.find().forEachAsync(function(elem_type) {
+			ElementTypes.find().forEach(function(elem_type) {
 
 				//contextMenu
 				get_templates(elem_type.contextMenu);

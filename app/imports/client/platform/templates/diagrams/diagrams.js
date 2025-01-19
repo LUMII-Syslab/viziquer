@@ -303,7 +303,7 @@ Template.diagramsSortButton.events({
 
 Template.diagramsGroupsButton.helpers({
 
-	items: async function() {
+	items: function() {
 
 		//selecting the active group
 		var prefix = get_panel_type();
@@ -319,7 +319,7 @@ Template.diagramsGroupsButton.helpers({
 		var items = [item];
 
 		//selecting custom groups
-		await ProjectsGroups.find().forEachAsync(function(proj_group) {
+		ProjectsGroups.find().forEach(function(proj_group) {
 
 			if (proj_group["_id"] == group_id) {
 				proj_group["active"] = true;
@@ -353,7 +353,7 @@ Template.diagramsGroupsButton.events({
 //stores all project diagrams
 Template.defaultDiagramsView.helpers({
 
-	diagrams: async function() {
+	diagrams: function() {
 
 		var user_version_settings = UserVersionSettings.findOne({versionId: Session.get("versionId")});
 		if (user_version_settings && user_version_settings["view"] == "Default") {
@@ -369,7 +369,7 @@ Template.defaultDiagramsView.helpers({
 			var sort_by_str = user_version_settings["diagramsSortBy"];
 			var sort_by = get_sort_by_object(sort_by_str);
 
-			return await Diagrams.find(query, {$sort: sort_by}).mapAsync(function(diagram) {
+			return Diagrams.find(query, {$sort: sort_by}).map(function(diagram) {
 				diagram["projectId"] = proj_id;
 				diagram["versionId"] = version_id;
 
@@ -465,7 +465,7 @@ Template.defaultDiagramsView.events({
 
 Template.treeDiagramsView.helpers({
 
-	diagrams: async function() {
+	diagrams: function() {
 
 		var proj_id = Session.get("activeProject");
 		var version_id = Session.get("versionId");
@@ -488,7 +488,7 @@ Template.treeDiagramsView.helpers({
 		sort_by = sort_by || {name: 1};
 
 		//selecting diagrams that have no parents
-		return await Diagrams.find(parent_query, {$sort: sort_by}).mapAsync(
+		return Diagrams.find(parent_query, {$sort: sort_by}).map(
 			function(diagram) {
 				return build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, sort_by);
 		});
@@ -1305,12 +1305,12 @@ function get_sort_by_object(item_type) {
 	return items[item_type];
 }
 
-async function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, sort_by) {
+function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, sort_by) {
 
 	var id = diagram["_id"];
 
 	//selecting child diagrams
-	diagram["children"] = await Diagrams.find({parentDiagrams: id}, {sort: sort_by}).mapAsync(
+	diagram["children"] = Diagrams.find({parentDiagrams: id}, {sort: sort_by}).map(
 		function(child_diagram) {
 			var new_child_diagram = build_diagram_tree(child_diagram, proj_id, version_id, is_edit_mode, query, sort_by);
 			return new_child_diagram;

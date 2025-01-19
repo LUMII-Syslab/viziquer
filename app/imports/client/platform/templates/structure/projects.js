@@ -66,12 +66,12 @@ Template.projectsList.events({
 
 Template.projectsList.helpers({
 
-  projectsCount: async function() {
-      return await ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).countAsync();
+  projectsCount: function() {
+      return ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).count();
   },
 
-  projects: async function() {
-  	return await ProjectsUsers.find({userSystemId: Session.get("userSystemId")}, {limit: 10}).mapAsync(
+  projects: function() {
+  	return ProjectsUsers.find({userSystemId: Session.get("userSystemId")}, {limit: 10}).map(
   		function(proj_user) {
   			
   			//selecting the project name

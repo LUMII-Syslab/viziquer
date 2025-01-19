@@ -139,7 +139,7 @@ const Dialog = {
 		return {input: list["input"], value: list["value"]};
 	},
 
-	buildCompartmentList: async function(compart_type, elem_id, input, value) {
+	buildCompartmentList: function(compart_type, elem_id, input, value) {
 
 		var compart = {
 				projectId: Session.get("activeProject"),
@@ -159,8 +159,8 @@ const Dialog = {
 
 		// if multifield
 		if (compart_type.inputType.type == "custom" && compart_type.inputType.templateName == "multiField") {
-			var ct_comparts_indexes = await Compartments.find({compartmentTypeId: compart_type._id, elementId: compart.elementId }, {sort: {index: 1}})
-														.mapAsync(function(c) {return c.index; });
+			var ct_comparts_indexes = Compartments.find({compartmentTypeId: compart_type._id, elementId: compart.elementId }, {sort: {index: 1}})
+														.map(function(c) {return c.index; });
 			// search for hole in the array of indexes
 		 for (var idx of ct_comparts_indexes) {
 					if (idx > compart.index) { break; };
@@ -308,7 +308,7 @@ const Dialog = {
 		return res.join("");
 	},
 
-	renderDialogFields: async function(compart_type, compartment) {
+	renderDialogFields: function(compart_type, compartment) {
 
 		if (compartment) {
 	 		_.extend(compart_type, {field_value: compartment["input"],
@@ -427,7 +427,7 @@ const Dialog = {
 						};
 
 			var is_disabled = compart_type["disabled"];
-			compart_type["addedFiles"] = await DiagramFiles.find({elementId: Session.get("activeElement")}).mapAsync(
+			compart_type["addedFiles"] = DiagramFiles.find({elementId: Session.get("activeElement")}).map(
 				function(diagram_file) {
 
 					var file = CloudFiles.findOne({_id: diagram_file["fileId"]});
@@ -488,7 +488,7 @@ const Dialog = {
 					return diagram_file;
 				});
 
-			compart_type["filesList"] = await CloudFiles.find({_id: {$nin: added_files_ids}}).mapAsync(
+			compart_type["filesList"] = CloudFiles.find({_id: {$nin: added_files_ids}}).map(
 				function(file) {
 
 					if (file["extension"]) {
@@ -597,9 +597,9 @@ const Dialog = {
 		return is_visible;
 	},
 
-	async buildCopartmentDefaultValue(list) {
+	buildCopartmentDefaultValue(list) {
 		var compartments = [];
-		await CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEachAsync(
+		CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEach(
 			function(compart_type) {
 
 				if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField") {

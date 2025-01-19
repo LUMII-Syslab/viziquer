@@ -127,15 +127,15 @@ function CreatePDF(params) {
 	}
 }
 
-async function generate_elements_content(docDefinition, diagram_id) {
+function generate_elements_content(docDefinition, diagram_id) {
 
 	var elements = Elements.find({diagramId: diagram_id});
-	if ((await elements.countAsync()) == 0)
+	if (elements.count() == 0)
 		return;
 
 	var content = docDefinition.content;
 
-	await elements.forEachAsync(async function(elem) {
+	elements.forEach(function(elem) {
 
 	//element
 		var elem_type = ElementTypes.findOne({_id: elem["elementTypeId"]});
@@ -153,11 +153,11 @@ async function generate_elements_content(docDefinition, diagram_id) {
 		content.push({text: "Attributes", style: 'subheader'});
 
 		var copmartments = Compartments.find({elementId: elem._id}, {sort: {index: 1}});
-		if ((await copmartments.countAsync()) == 0) {
+		if (copmartments.count() == 0) {
 			content.push(element_content("No data"));
 		}
 		else {
-			await copmartments.forEachAsync(function(compart) {
+			copmartments.forEach(function(compart) {
 
 				var compart_type = CompartmentTypes.findOne({_id: compart["compartmentTypeId"]});
 				if (!compart_type)
@@ -172,11 +172,11 @@ async function generate_elements_content(docDefinition, diagram_id) {
 		content.push({text: "Sections", style: 'subheader'});
 
 		var elements_sections = ElementsSections.find({elementId: elem._id});
-		if ((await elements_sections.countAsync()) == 0) {
+		if (elements_sections.count() == 0) {
 			content.push(element_content("No data"));
 		}
 		else {
-			await elements_sections.forEachAsync(function(elem_section) {
+			elements_sections.forEach(function(elem_section) {
 
 				var section = Sections.findOne({_id: elem_section["sectionId"]});
 				if (!section)
@@ -190,12 +190,12 @@ async function generate_elements_content(docDefinition, diagram_id) {
 		content.push({text: "Files", style: 'subheader'});
 
 		var diagram_files = DiagramFiles.find({elementId: elem._id});
-		if ((await diagram_files.countAsync()) == 0) {
+		if (diagram_files.count() == 0) {
 			content.push(element_content("No data"));
 		}
 
 		else {
-			await diagram_files.forEachAsync(function(file) {
+			diagram_files.forEach(function(file) {
 				content.push(element_content(file.name));
 			});
 		}

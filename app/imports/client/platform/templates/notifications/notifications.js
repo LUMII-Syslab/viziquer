@@ -5,8 +5,8 @@ import './notifications.html'
 
 //sets new notification count
 Template.newNotificationsCountT.helpers({
-	newNotificationsCount: async function() {
-	    return await Notifications.find({status: "new", receiver: Session.get("userSystemId")}).countAsync();
+	newNotificationsCount: function() {
+	    return Notifications.find({status: "new", receiver: Session.get("userSystemId")}).count();
 	},
 });	
 
@@ -19,8 +19,8 @@ Template.notificationsDropDownT.onCreated(function() {
 //sets new and seen notification count
 Template.notificationsDropDownT.helpers({
 
-	notificationsCount: async function() {
-	    return await Notifications.find({receiver: Session.get("userSystemId")}).countAsync();
+	notificationsCount: function() {
+	    return Notifications.find({receiver: Session.get("userSystemId")}).count();
 	},
 
 	//notifications
@@ -69,8 +69,8 @@ Template.userNotifications.helpers({
 		return process_notifications(notifications);
 	},
 
-	total_notifications: async function() {
-		return await Notifications.find().countAsync();
+	total_notifications: function() {
+		return Notifications.find().count();
 	},
 
 });

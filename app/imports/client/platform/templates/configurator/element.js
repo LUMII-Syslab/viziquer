@@ -5,7 +5,7 @@ import { ElementTypes } from '/imports/db/platform/collections'
 //functions makes element type
 Interpreter.methods({
 
-	MakeElementType: async function(list) {
+	MakeElementType: function(list) {
 
 		var elem_type = this;
 
@@ -30,7 +30,7 @@ Interpreter.methods({
 
 			list["data"] = {type: "NewLine",
 							editorType: Interpreter.getEditorType(),
-							index: (await ElementTypes.find().countAsync()) + 1,
+							index: ElementTypes.find().count() + 1,
 							data: {	startElementTypeId: start_type_id,
 									endElementTypeId: end_type_id,
 									diagramTypeId: Session.get("targetDiagramType")}};
@@ -39,7 +39,7 @@ Interpreter.methods({
 		else {
 			list["data"] = {type: "NewBox",
 							editorType: Interpreter.getEditorType(),
-							index: (await ElementTypes.find().countAsync()) + 1,
+							index: ElementTypes.find().count() + 1,
 							data: {diagramTypeId: Session.get("targetDiagramType")}};
 		}
 	},

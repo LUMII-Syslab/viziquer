@@ -83,7 +83,7 @@ Template.archiveTemplate.events({
 //rendering project versions
 Template.archiveTemplate.helpers({
 
-	versions: async function() {
+	versions: function() {
 		
 		//selects active user's project info
 		var project_user = ProjectsUsers.findOne({projectId: Session.get("activeProject"),
@@ -91,7 +91,7 @@ Template.archiveTemplate.helpers({
 		
 		//selects version in descending order and iterates through versions and sets the active project
 		//and transforms date format
-		return await Versions.find({},{sort: {createdAt: -1}}).mapAsync(
+		return Versions.find({},{sort: {createdAt: -1}}).map(
 			function(version) {
 		
 				//transforms the published date in different form
@@ -108,7 +108,7 @@ Template.archiveTemplate.helpers({
 	},
 
 	//disables and enables new version, remove and publish buttons
-	buttons_enabled: async function() {
+	buttons_enabled: function() {
 
 		var res = {};
 		var is_admin = Utilities.isAdmin();
@@ -118,7 +118,7 @@ Template.archiveTemplate.helpers({
 			var version = Versions.findOne({status: "New"});
 			if (version) {
 
-				var versions_count = await Versions.find().countAsync();
+				var versions_count = Versions.find().count();
 
 				//if this is the only version, then removing is not allowed
 				if (versions_count == 1) {

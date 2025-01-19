@@ -222,7 +222,7 @@ Interpreter.methods({
 							return elem.type == "Line";
 						});
 
-		_.each(boxes, async function(box, i) {
+		_.each(boxes, function(box, i) {
 			let position = box.getElementPosition();
 
 			let width = position.width;
@@ -233,7 +233,7 @@ Interpreter.methods({
 				let nonEmptyRowCount = 0;
 				let longestRow = {};
 				let secondLongestRow = {};
-				await Compartments.find({elementId: box._id}).forEachAsync(function(compart) {
+				Compartments.find({elementId: box._id}).forEach(function(compart) {
 					//calculate width and height only for visible compartments
 					if(compart.style.visible == true){
 						if (!compart.value) return;
