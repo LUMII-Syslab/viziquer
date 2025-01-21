@@ -39,12 +39,12 @@ Meteor.methods({
         var elem_type = await ElementTypes.findOneAsync({ _id: elem.elementTypeId, });
         await CompartmentTypes.find({ elementTypeId: elem_type._id }).forEachAsync(async function (compType) {
           const compartments = Compartments.find({ projectId: projectId, elementId: elem._id, compartmentTypeId: compType._id });
-          if (await compartments.countAsync() === 1) {
-            compartments.forEach(async function (c) {
+          if ((await compartments.countAsync()) === 1) {
+            await compartments.forEachAsync(async function (c) {
               await Compartments.updateAsync({ _id: c._id, projectId: projectId, }, { $set: { index: compType.index, } });
             })
           }
-          if (await compartments.countAsync() > 1) {
+          if ((await compartments.countAsync()) > 1) {
             const comp_ind = await compartments.mapAsync(function (c) {
               return { _id: c._id, index: c.index, input: c.input };
             });

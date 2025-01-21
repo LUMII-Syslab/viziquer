@@ -171,8 +171,8 @@ ForumPosts.after.insert(function (user_id, doc) {
     return false;
 
   var tags = doc["tags"];
-  _.each(tags, function (tag) {
-    add_forum_post_tag(doc["_id"], doc["projectId"], tag);
+  _.each(tags, async function(tag) {
+    await add_forum_post_tag(doc["_id"], doc["projectId"], tag);
   });
 });
 ForumPosts.hookOptions.after.insert = { fetchPrevious: false };
@@ -193,8 +193,8 @@ ForumPosts.before.update(function (user_id, doc, fields, modifier, options) {
     var proj_id = doc["projectId"];
     var post_id = doc["_id"];
 
-    _.each(new_tags, function (tag) {
-      add_forum_post_tag(post_id, proj_id, tag);
+    _.each(new_tags, async function(tag) {
+      await add_forum_post_tag(post_id, proj_id, tag);
     });
   }
 });

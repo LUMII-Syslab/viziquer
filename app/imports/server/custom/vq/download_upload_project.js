@@ -63,7 +63,7 @@ Meteor.methods({
             elementId: element._id, diagramId: element.diagramId,
             projectId: project_id, versionId: version_id
           })
-            .mapAsync(function (compartment) {
+            .mapAsync(async function (compartment) {
 
               var compartment_type = await CompartmentTypes.findOneAsync({ _id: compartment.compartmentTypeId, });
               if (!compartment_type) {

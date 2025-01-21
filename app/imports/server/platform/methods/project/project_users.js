@@ -42,7 +42,7 @@ ProjectsUsers.after.insert(async function (user_id, doc) {
 
     //sending email
     var subject = "Invitation";
-    var proj_name = get_project_name(doc["projectId"]);
+    var proj_name = await get_project_name(doc["projectId"]);
     var text = "You have a new invitation for the project " + proj_name + ".";
 
     // sending_notification_email(doc["userSystemId"], doc["projectId"], subject, text);
@@ -189,7 +189,7 @@ ProjectsUsers.after.update(async function (user_id, doc, fieldNames, modifier, o
 
     //sending email
     var subject = "Role changed";
-    var proj_name = get_project_name(doc["projectId"]);
+    var proj_name = await get_project_name(doc["projectId"]);
     var text = "Your role in project " + proj_name + " was changed to the " + role + "."
 
     // sending_notification_email(doc["userSystemId"], doc["projectId"], subject, text);
@@ -261,7 +261,7 @@ ProjectsUsers.after.remove(async function (user_id, doc) {
     var receiver_user = await Users.findOneAsync({ systemId: doc["userSystemId"] })
     if (receiver_user) {
 
-      var proj_name = get_project_name(proj_id);
+      var proj_name = await get_project_name(proj_id);
       var email = {
         email: receiver_user["email"],
         subject: "Deletion",
@@ -272,10 +272,10 @@ ProjectsUsers.after.remove(async function (user_id, doc) {
 
     //sending email
     var subject = "Deletion";
-    var proj_name = get_project_name(doc["projectId"]);
+    var proj_name = await get_project_name(doc["projectId"]);
     var text = "You have been removed from the project " + proj_name + ".";
 
-    sending_notification_email(target_user, doc["projectId"], subject, text);
+    await sending_notification_email(target_user, doc["projectId"], subject, text);
   }
 });
 ProjectsUsers.hookOptions.after.remove = { fetchPrevious: false };
@@ -333,7 +333,7 @@ async function sending_notification_email(user_id, proj_id, subject, text) {
 
   var receiver_user = await Users.findOneAsync({ systemId: user_id })
   if (receiver_user) {
-    var proj_name = get_project_name(proj_id);
+    var proj_name = await get_project_name(proj_id);
     var email = {
       email: receiver_user["email"],
       subject: subject,

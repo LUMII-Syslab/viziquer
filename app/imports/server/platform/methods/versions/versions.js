@@ -45,7 +45,7 @@ Versions.after.insert(async function (user_id, doc) {
     return;
 
   //adding admin role in the new version to the project admins
-  add_admin_role(project_id, new_version_id);
+  await add_admin_role(project_id, new_version_id);
 
   var last_version_id = last_version["_id"];
 
@@ -193,7 +193,7 @@ Versions.after.remove(async function (user_id, doc) {
   await UserVersionSettings.removeAsync({ projectId: project_id, versionId: new_version_id });
 
   //removing roles
-  remove_from_admin_role(project_id, new_version_id, true);
+  await remove_from_admin_role(project_id, new_version_id, true);
 });
 Versions.hookOptions.after.remove = { fetchPrevious: false };
 
@@ -242,8 +242,8 @@ Meteor.methods({
   },
 
 
-  addAdminRights: function (list) {
-    add_admin_role(list.projectId, list.versionId);
+  addAdminRights: async function(list) {
+    await add_admin_role(list.projectId, list.versionId);
   },
 
 });
@@ -334,7 +334,7 @@ async function send_notifications(user_id, list) {
 
         await Notifications.insertAsync(notification);
 
-        sending_notification_email(list["notificationType"], receiver_id, proj_name);
+        await sending_notification_email(list["notificationType"], receiver_id, proj_name);
       }
     });
 }

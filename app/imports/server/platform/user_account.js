@@ -12,65 +12,65 @@ import { config } from 'dotenv';
 
 Meteor.methods({
 
-	makeUser: async function(list) {
+  makeUser: async function (list) {
 
-		// var connection = this.connection;
-		//if (list && check_captcha(connection, list["recaptcha-response"])) {
-		if (list) {
+    // var connection = this.connection;
+    //if (list && check_captcha(connection, list["recaptcha-response"])) {
+    if (list) {
 
-			var is_system_admin = false;
-			var is_first_user = false;;
+      var is_system_admin = false;
+      var is_first_user = false;;
 
-			var first_user = await Users.findOneAsync();
+      var first_user = await Users.findOneAsync();
 
-			//if the user is the first, then this is a system admin
-			if (!first_user) {
-				is_system_admin = true;
-				is_first_user = true;
-			}
+      //if the user is the first, then this is a system admin
+      if (!first_user) {
+        is_system_admin = true;
+        is_first_user = true;
+      }
 
-			//inserting user in accounts
-			var user_id = Accounts.createUser({email: list["email"], password: list["password"]});
+      //inserting user in accounts
+      var user_id = Accounts.createUser({ email: list["email"], password: list["password"] });
 
-			//inserting user
-			var user_data = build_user_data(user_id, list);
-			user_data["isSystemAdmin"] = is_system_admin;
+      //inserting user
+      var user_data = build_user_data(user_id, list);
+      user_data["isSystemAdmin"] = is_system_admin;
 
-			var id = await Users.insertAsync(user_data);
+      var id = await Users.insertAsync(user_data);
 
-			// if (!is_test_user(list["email"]))
-				// Accounts.sendVerificationEmail(user_id, list["email"]);
-
-
-			if (is_first_user) {
-				var role = build_power_user_role();
-				
-				Roles.createRole(role, {unlessExists: true});
-				Roles.addUsersToRoles(user_id, [role]);
+      // if (!is_test_user(list["email"]))
+      // Accounts.sendVerificationEmail(user_id, list["email"]);
 
 
-				//loading configurator data
-				load_configurator(user_id);
+      if (is_first_user) {
+        var role = build_power_user_role();
 
-				// var fs = Npm.require('fs');
-				// var current_dir = process.env.PWD;
+        Roles.createRole(role, { unlessExists: true });
+        Roles.addUsersToRoles(user_id, [role]);
+
+
+        //loading configurator data
+        load_configurator(user_id);
+
+        // var fs = Npm.require('fs');
+        // var current_dir = process.env.PWD;
         console.log(`App assets are here: ${Assets.absoluteFilePath("jsons/autoload.json")}`)
 
         let configList;
         try {
           if (Meteor.settings && Meteor.settings.configurationName) {
-            configList = [ { configurationFile: Meteor.settings.configurationName } ];
+            configList = [{ configurationFile: Meteor.settings.configurationName }];
           } else {
             configList = JSON.parse(Assets.getText("jsons/autoload.json"));
           }
         } catch (err) {
           console.error(err);
           console.log(`Neither configurationName nor autoload file not found; will use "VQ_configuration_dss_latest.json" `);
-          configList = [ { configurationFile: "VQ_configuration_dss_latest.json" } ];
+          configList = [{ configurationFile: "VQ_configuration_dss_latest.json" }];
         }
         console.log('configurations to be loaded:', configList);
 
-        if (!Array.isArray(configList)) configList = [ configList ];
+        if (!Array.isArray(configList)) configList = [configList];
 
         for (const cfg of configList) {
           console.log(`🧰 loading initial configuration`, cfg);
@@ -110,9 +110,9 @@ Meteor.methods({
             });
 
             await Meteor.callAsync("importAjooConfiguration", {
-              toolId: tool_id, 
-              versionId: version_id, 
-              data: configData 
+              toolId: tool_id,
+              versionId: version_id,
+              data: configData
             });
 
             if (typeof cfg === 'object' && cfg.services) {
@@ -130,7 +130,7 @@ Meteor.methods({
                 console.error(`Error loading services from ${Assets.absoluteFilePath(`jsons/${cfg.services}`)}; skipping it`);
               }
             }
-    
+
           } catch (err) {
             console.error(`Error loading configuration ${JSON.stringify(cfg)}; skipping it`);
             console.error(err);
@@ -138,57 +138,57 @@ Meteor.methods({
           }
         }
       }
-		}
+    }
 
-		return id;
-	},
+    return id;
+  },
 
-	updateUser: async function(list) {
+  updateUser: async function (list) {
 
-		var user_id = Meteor.userId();
-		if (user_id) {
+    var user_id = Meteor.userId();
+    if (user_id) {
 
-			//users cannot set admin property by themselves
-			if (list["isSystemAdmin"])
-				return;
+      //users cannot set admin property by themselves
+      if (list["isSystemAdmin"])
+        return;
 
-			//updating user's properties
-			else {
-				var operation = "$set";
-				if (list["operation"])
-					operation = list["operation"];
+      //updating user's properties
+      else {
+        var operation = "$set";
+        if (list["operation"])
+          operation = list["operation"];
 
-				var update = {};
-				update[operation] = list["update"];
+        var update = {};
+        update[operation] = list["update"];
 
-				await Users.updateAsync({systemId: user_id}, update);
-			}
-		}
-	},
+        await Users.updateAsync({ systemId: user_id }, update);
+      }
+    }
+  },
 
-	sendResetPasswordLink: async function(list) {
-		if (list) {
-			//var secret_phrase = list["secretPhrase"] || "";
+  sendResetPasswordLink: async function (list) {
+    if (list) {
+      //var secret_phrase = list["secretPhrase"] || "";
 
-			var user = await Users.findOneAsync({email: list["email"]});
-			if (user) {
-				var user_id = user["systemId"];
-				if (!is_test_user(list["email"]))
-					Accounts.sendResetPasswordEmail(user_id);
+      var user = await Users.findOneAsync({ email: list["email"] });
+      if (user) {
+        var user_id = user["systemId"];
+        if (!is_test_user(list["email"]))
+          Accounts.sendResetPasswordEmail(user_id);
 
-				//reseting fails count
-				await Users.updateAsync({systemId: user_id}, {$set: {loginFailsCount: 0}});
-			}
-		}
-	},
+        //reseting fails count
+        await Users.updateAsync({ systemId: user_id }, { $set: { loginFailsCount: 0 } });
+      }
+    }
+  },
 
-	isRegisteredUser: async function(list) {
-		var user = await Users.findOneAsync({email: list["email"]});
+  isRegisteredUser: async function (list) {
+    var user = await Users.findOneAsync({ email: list["email"] });
 
-		//checking if there is a user with a given email
-		if (user)
-			return true;
-	},
+    //checking if there is a user with a given email
+    if (user)
+      return true;
+  },
 
   passwordChanged: async function (list) {
 
@@ -211,93 +211,94 @@ Meteor.methods({
     }
   },
 
-	enrollUser: async function(list) {
+  enrollUser: async function (list) {
 
-		var user_id = Meteor.userId();
-		if (is_project_admin(user_id, list)) {
+    var user_id = Meteor.userId();
+    if (is_project_admin(user_id, list)) {
 
-			if (list["email"]) {
+      if (list["email"]) {
 
-				var new_user_id;
-				var new_user = await Meteor.users.findOneAsync({"emails.address": list["email"]});
+        var new_user_id;
+        var new_user = await Meteor.users.findOneAsync({ "emails.address": list["email"] });
 
-				//if user is not registred in the system, then sending an invitation email
-				if (!new_user) {
+        //if user is not registred in the system, then sending an invitation email
+        if (!new_user) {
 
-					//inserting user in accounts
-					new_user_id = Accounts.createUser({email: list["email"],
-														password: "password"});
+          //inserting user in accounts
+          new_user_id = Accounts.createUser({
+            email: list["email"],
+            password: "password"
+          });
 
-					//inserting user
-					var user_data = build_user_data(new_user_id, list);
-					await Users.insertAsync(user_data);
+          //inserting user
+          var user_data = build_user_data(new_user_id, list);
+          await Users.insertAsync(user_data);
 
-					// Accounts.sendEnrollmentEmail(new_user_id);
-				}
+          // Accounts.sendEnrollmentEmail(new_user_id);
+        } else {
+          new_user_id = new_user["_id"];
+        }
 
-				else {
-					new_user_id = new_user["_id"];
-				}
+        //inviting the user
+        var invitation = {
+          userSystemId: new_user_id,
+          role: list["role"],
+          projectId: list["projectId"],
+        };
 
-				//inviting the user
-				var invitation = {userSystemId: new_user_id,
-									role: list["role"],
-									projectId: list["projectId"],
-								};
+        await Meteor.callAsync("insertProjectsUsers", invitation);
 
-				await Meteor.callAsync("insertProjectsUsers", invitation);
+      }
+    }
+  },
 
-			}
-		}
-	},
+  enrollUserAccepted: async function (list) {
 
-	enrollUserAccepted: async function(list) {
+    if (!list) {
+      return;
+    }
 
-		if (!list) {
-			return;
-		}
+    var user = await Meteor.users.findOneAsync({ "services.password.reset.token": list["token"] });
+    if (user) {
 
-		var user = await Meteor.users.findOneAsync({"services.password.reset.token": list["token"]});
-		if (user) {
+      if (list["name"] || list["surname"])
+        Users.update({ systemId: user["_id"], },
+          { $set: { name: list["name"], surname: list["surname"], } });
 
-			if (list["name"] || list["surname"])
-				Users.update({systemId: user["_id"],},
-							{$set: {name: list["name"], surname: list["surname"],}});
+      Accounts.setPassword(user["_id"], list["password"]);
 
-			Accounts.setPassword(user["_id"], list["password"]);
+      var email = user["emails"][0]["address"];
 
-			var email = user["emails"][0]["address"];
+      await Meteor.users.updateAsync({ _id: user["_id"], "emails.address": email },
+        { $set: { "emails.$.verified": true, } });
+      return email;
+    }
 
-			await Meteor.users.updateAsync({_id: user["_id"], "emails.address": email},
-								{$set: {"emails.$.verified": true,}});
-			return email;
-		}
+  },
 
-	},
+  verifyAccount: async function (list) {
 
-	verifyAccount: async function(list) {
+    if (!list) {
+      return;
+    }
 
-		if (!list) {
-			return;
-		}
+    // console.log("verify ");
 
-		// console.log("verify ");
+    // Email.send({
+    //   to: "arturs.sprogis@gmail.com",
+    //   from: "viziquer@viziquer.lv",
+    //   subject: "Example Email",
+    //   text: "The contents of our email in plain text.",
+    // });
 
-		// Email.send({
-		//   to: "arturs.sprogis@gmail.com",
-		//   from: "viziquer@viziquer.lv",
-		//   subject: "Example Email",
-		//   text: "The contents of our email in plain text.",
-		// });
+    var user = await Meteor.users.findOneAsync({ "services.email.verificationTokens.token": list["token"] });
+    if (user) {
+      var email = user["emails"][0]["address"];
+      await Meteor.users.updateAsync({ _id: user["_id"], "emails.address": email }, { $set: { "emails.$.verified": true, } });
+    }
+  },
 
-		var user = await Meteor.users.findOneAsync({"services.email.verificationTokens.token": list["token"]});
-		if (user) {
-			var email = user["emails"][0]["address"];
-			await Meteor.users.updateAsync({_id: user["_id"], "emails.address": email}, {$set: {"emails.$.verified": true,}});
-		}
-	},
-
-	//for testing
+  //for testing
   generate_users: async function (list) {
 
     var user_id = Meteor.userId();
@@ -351,34 +352,32 @@ Meteor.methods({
 });
 
 
-Accounts.validateLoginAttempt(function(obj) {
+Accounts.validateLoginAttempt(function (obj) {
 
-	if (!obj) {
-		return;
-	}
+  if (!obj) {
+    return;
+  }
 
-	//checking if the user's mail is verified
-	// if (obj && obj["user"] &&  obj["user"]["emails"] && obj["user"]["emails"][0] && obj["user"]["emails"][0]["verified"]) {
+  //checking if the user's mail is verified
+  // if (obj && obj["user"] &&  obj["user"]["emails"] && obj["user"]["emails"][0] && obj["user"]["emails"][0]["verified"]) {
 
-	//This is a tmp solution because the verification is not working as expected
-	if (true) {
+  //This is a tmp solution because the verification is not working as expected
+  if (true) {
 
-		// var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 10}});
+    // var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 10}});
 
-		// if (user) {
-			return true;
-		// }
+    // if (user) {
+    return true;
+    // }
 
-		// else {
-			// throw new Meteor.Error("too-many-fails", "User has made too many login fails.");
-			// return false;
-		// }
-	}
-
-	else {
-		throw new Meteor.Error("not-verified", "User has not verified email.");
-		return false;
-	}
+    // else {
+    // throw new Meteor.Error("too-many-fails", "User has made too many login fails.");
+    // return false;
+    // }
+  } else {
+    throw new Meteor.Error("not-verified", "User has not verified email.");
+    return false;
+  }
 
 });
 
@@ -437,19 +436,18 @@ Accounts.validateLoginAttempt(function(obj) {
 
 // });
 
-Accounts.onLoginFailure(async function(obj) {
+Accounts.onLoginFailure(async function (obj) {
 
-	if (obj && obj["error"] == "too-many-fails")
-		return;
+  if (obj && obj["error"] == "too-many-fails") {
+    return;
+  } else {
+    var item = { ipAddress: obj["connection"]["clientAddress"], time: get_current_time() };
 
-	else {
-		var item = {ipAddress: obj["connection"]["clientAddress"], time: get_current_time()};
-
-		if (obj && obj["user"] && obj["user"]["_id"]) {
-			await Users.updateAsync({systemId: obj["user"]["_id"]},
-					{$push: {loginFails: item}, $inc: {loginFailsCount: 1}});
-		}
-	}
+    if (obj && obj["user"] && obj["user"]["_id"]) {
+      await Users.updateAsync({ systemId: obj["user"]["_id"] },
+        { $push: { loginFails: item }, $inc: { loginFailsCount: 1 } });
+    }
+  }
 });
 
 // Accounts.emailTemplates.siteName = build_site_name();

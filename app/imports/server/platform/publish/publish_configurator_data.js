@@ -26,7 +26,7 @@ Meteor.publish("Structure_Tools", function (list) {
   }
 });
 
-Meteor.publish("Tools", function (list) {
+Meteor.publish("Tools", async function (list) {
   if (!list || list["noQuery"]) {
     return this.stop();
   }
@@ -49,7 +49,7 @@ Meteor.publish("Tools", function (list) {
   }
 });
 
-Meteor.publish("ToolVersions_Diagrams_DiagramTypes", function (list) {
+Meteor.publish("ToolVersions_Diagrams_DiagramTypes", async function (list) {
 
   if (!list || list["noQuery"])
     return this.stop();
@@ -106,7 +106,7 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", function (list) {
 });
 
 
-Meteor.publish("ConfiguratorDiagram", function (list) {
+Meteor.publish("ConfiguratorDiagram", async function (list) {
 
   if (!list || list["noQuery"])
     return this.stop();
@@ -181,7 +181,7 @@ Meteor.publish("ConfiguratorDiagram", function (list) {
   }
 });
 
-Meteor.publish("ConfiguratorDiagramTypes", function (list) {
+Meteor.publish("ConfiguratorDiagramTypes", async function (list) {
 
   if (!list || list["noQuery"])
     return this.stop();
