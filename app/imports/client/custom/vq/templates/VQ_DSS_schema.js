@@ -466,6 +466,7 @@ Template.VQ_DSS_schema.events({
 			Class:{}, 
 			ObjectProperty:{}, 
 			Generalization:{},
+			Intersect:{},
 			uStrings:{u_in_prop:u_in_prop,u_c_prop:u_c_prop}
 		};
 
@@ -525,8 +526,12 @@ Template.VQ_DSS_schema.events({
 
 		for (const k of Object.keys(rezFull.assoc)) {
 			const el = rezFull.assoc[k];
-			if ( el.removed == false  )
+			if ( el.removed == false )
 				table_representation.ObjectProperty[k] = { source: el.from, target: el.to, compartments:{ Name: el.names}};
+		}
+		for (const l of Object.keys(rezFull.lines)) {
+			const el = rezFull.lines[l];
+			table_representation.Intersect[l] = { source: el.from, target: el.to, compartments:{ Information: 'Class instances intersect'}};
 		}
 		table_representation.hasGeneralization = hasGeneralization;
 		table_representation.generalizationCount = generalizationCount;
@@ -1753,7 +1758,7 @@ async function getBasicClasses() {
 			}
 		}
 		
-		const cp_info_p = cp_info.filter(function(cp){ return cp.class_id == cl_info.id && cp.type_id == 2 && cp.cover_set_index > 0;}).map(cp => cp.property_id); 
+		const cp_info_p = cp_info.filter(function(cp){ return cp.class_id == cl_info.id && cp.type_id == 2 && cp.cover_set_index > 0;}).map(cp => cp.property_id); // ??? Kāpēc te ir cp.cover_set_index > 0  
 		for (const p of cp_info_p) {
 			if ( !cl_info.all_atr.includes(p)) {
 				console.log('******** Pieliek papildus propertiju ***********', cl_info.fullNameD, p_list_full[`p_${p}`].p_name)
@@ -2351,7 +2356,7 @@ function makeAssociations() {
 		for (const p of cc_info_type3) {
 			const c1 = findNewClassList({p_name:'',class_list:[p.class_1_id]})[0];
 			const c2 = findNewClassList({p_name:'',class_list:[p.class_2_id]})[0];
-			if ( c1 != c2) {
+			if ( c1 != c2 && c1 < c2 ) {
 				rezFull.lines[`${c1}_${c2}_i`] = {from:c1, to:c2};
 			}
 		}
@@ -2503,10 +2508,10 @@ function makeDiagramData() {
 			}
 		}	
 	}
-	for (const aa of Object.keys(rezFull.lines)) {
-		const lInfo = rezFull.lines[aa];
-		assoc[aa] = {from:lInfo.from, to:lInfo.to, removed:false, string:'', names:[]};
-	}
+	//for (const aa of Object.keys(rezFull.lines)) {
+	//	const lInfo = rezFull.lines[aa];
+	//	assoc[aa] = {from:lInfo.from, to:lInfo.to, removed:false, string:'', names:[]};
+	//}
 	for (const aa of Object.keys(assoc)) {
 		const aInfo = assoc[aa];
 		aInfo.names = aInfo.names.sort((a, b) => { return b.cnt - a.cnt; });
