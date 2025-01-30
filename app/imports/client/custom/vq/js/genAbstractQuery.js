@@ -1342,6 +1342,13 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 							warnings.push("Order by clause '" + orderingss[order]["fulltext"] + "' ignored since it is not placed in the main query node")
 						}					
 					}
+					var havings = elem.getHaving(); 
+					
+					if(typeof havings !== "undefined" && havings !== null && havings.length > 0){
+						for(let having = 0; having < havings.length; having++){
+							warnings.push("Having clause '" + havings[having]["fulltext"] + "' ignored since it is not placed in the main query node")
+						}					
+					}
 				};
 					
                 if (elem.isSubQueryRoot()) {

@@ -407,21 +407,44 @@ Interpreter.customMethods({
   },
   
   ExecuteSPARQL_form_class_DSS: async function() {
-	  let SPARQL_text = await generateSPARQLtextFromSchema();
-	  executeSparqlString(SPARQL_text);
+	  Interpreter.destroyErrorMsg();
+	  let q = await generateSPARQLtextFromSchema();
+	  let SPARQL_text = q.SPARQL_text;
+	  if(typeof q.messages !== "undefined"){
+		  let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
+		  Interpreter.showErrorMsg(messages.join(" // "), -3);  
+	  } else executeSparqlString(SPARQL_text);
   },
   
   GenereteSPARQL_form_class_DSS: async function() {
-    await generateSPARQLtextFromSchema();
+      Interpreter.destroyErrorMsg();
+	  let q = await generateSPARQLtextFromSchema();
+	  let SPARQL_text = q.SPARQL_text;
+	  if(typeof q.messages !== "undefined"){
+		 let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
+		 Interpreter.showErrorMsg(messages.join(" // "), -3);  
+	  }
   },
   
   ExecuteSPARQL_form_object_property_DSS: async function() {
-	  let SPARQL_text = await generateSPARQLtextFromSchemaForObjectProperty();
-	  executeSparqlString(SPARQL_text);
+	  Interpreter.destroyErrorMsg();
+	  let q = await generateSPARQLtextFromSchemaForObjectProperty();
+	  let SPARQL_text = q.SPARQL_text;
+	  
+	  if(typeof q.messages !== "undefined"){
+		  let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
+		  Interpreter.showErrorMsg(messages.join(" // "), -3);  
+	  } else executeSparqlString(SPARQL_text);
   },
   
   GenereteSPARQL_form_object_property_DSS: async function() {
-    await generateSPARQLtextFromSchemaForObjectProperty();
+    Interpreter.destroyErrorMsg();
+	let q = await generateSPARQLtextFromSchemaForObjectProperty();
+	let SPARQL_text = q.SPARQL_text;
+	if(typeof q.messages !== "undefined"){  
+		 let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
+		 Interpreter.showErrorMsg(messages.join(" // "), -3);  
+	}
   },
   
   Collect_prefixes_from_diagram_for_all_queries: async function() {
@@ -454,6 +477,7 @@ Interpreter.customMethods({
 });
 
 async function generateSPARQLtextFromSchemaForObjectProperty(){
+	let messages = [];
 	let prefixTable = [];	
 	let prefixes = await dataShapes.getNamespaces();
 	let usedNames = [];
@@ -484,11 +508,13 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	let classList = startElement.getCompartmentValue("ClassList");
 	
 	if(classList === null){
+		
 		let startSimpleSchemaBox = await simpleSchemaBox(startElement, 1, dirRole, usedNames,true);
 		prefixTable = { ...prefixTable, ...startSimpleSchemaBox.prefixes};
 		usedNames = { ...usedNames, ...startSimpleSchemaBox.usedNames};
 		startElementName = startSimpleSchemaBox.className;
 		startClassSPRAQL = startSimpleSchemaBox.sparql;
+		messages = messages.concat(startSimpleSchemaBox["messages"]);
 	} else {
 		let startGroupSchemaBox =  await groupSchemaBox(startElement, 1, dirRole, classList, usedNames, true);
 		prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
@@ -496,6 +522,7 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 		startElementName = startGroupSchemaBox.className;
 		startClassSPRAQL = startGroupSchemaBox.sparql;
 		prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
+		messages = messages.concat(startGroupSchemaBox["messages"]);
 	}	
 	
 	classList = endElement.getCompartmentValue("ClassList");
@@ -506,12 +533,14 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 		usedNames = { ...usedNames, ...startSimpleSchemaBox.usedNames};
 		endElementName = startSimpleSchemaBox.className;
 		endClassSPRAQL = startSimpleSchemaBox.sparql;
+		messages = messages.concat(startSimpleSchemaBox["messages"]);
 	} else {
 		let startGroupSchemaBox =  await groupSchemaBox(endElement, 1, dirRole, classList, usedNames, true);
 		prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
 		usedNames = { ...usedNames, ...startGroupSchemaBox.usedNames};
 		endElementName = startGroupSchemaBox.className;
 		endClassSPRAQL = startGroupSchemaBox.sparql;
+		messages = messages.concat(startGroupSchemaBox["messages"]);
 	}	
 	
 	const regex = /(?:\b\w+\b)?:\b\w+\b/g;
@@ -523,8 +552,12 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	for(let prop = 0; prop < objectProperties.length; prop++){	
 		let params = {name: objectProperties[prop]};
 		let propertyResolved = await dataShapes.resolvePropertyByName(params);
-		objectPropertiesUnion.push("  ?" + startElementName + " " + propertyResolved.name + " ?"+endElementName+". ");
-		prefixTable[propertyResolved.data[0].prefix] = "";
+		if(propertyResolved.compile === true){
+			objectPropertiesUnion.push("  ?" + startElementName + " " + propertyResolved.name + " ?"+endElementName+". ");
+			prefixTable[propertyResolved.data[0].prefix] = "";
+		} else {
+			messages.push("The property name '"+ objectProperties[prop] +"' could not be resolved within the data schema.");
+		}
 	}
 	
 	let prefixText = "";
@@ -543,15 +576,16 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	let result = objectPropertiesUnion.length > 1 
     ? objectPropertiesUnion.map(str => `{${str}}`).join("\nUNION\n")  // Wrap with "{" and "}" and join with "\nUNION\n"
     : objectPropertiesUnion[0];  // If only one element, leave it as is
+	if(typeof result === "undefined") result = "";
 	
 	result = prefixText + "\nSELECT * WHERE{\n" + result + "\n\n" + startClassSPRAQL + "\n" + endClassSPRAQL + "\n}";
 	setText_In_SPARQL_Editor(result);
 
-	return result;
+	return {SPARQL_text:result, messages:messages};
 }
 
 
-async function generateSPARQLtextFromSchema(){
+async function generateSPARQLtextFromSchema(){ 
 	let n = 7;
 	
 	let editor = Interpreter.editor;
@@ -585,6 +619,7 @@ function getClassListFromString(classList){
 }
 
 async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNames, onlyWhere){
+	messages = [];
 	let classList = getClassListFromString(classListString);
 	let sparqlQueryText = "";
 	if(!onlyWhere) sparqlQueryText = "SELECT * WHERE{\n";
@@ -630,7 +665,9 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 					if(dataProperty.data_cnt > propertyTable[dataProp]) propertyTable[dataProp] = dataProperty.data_cnt;
 				}
 			}
-		}
+		} else {
+			messages.push("The class name '"+ classList[clazz] +"' could not be resolved within the data schema.");
+		} 
 	}
 	sparqlQueryText = sparqlQueryText + classUnionTable.join("  UNION\n");
 	
@@ -672,12 +709,13 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	if(!onlyWhere)sparqlQueryText = prefixText + sparqlQueryText;
 	
 	if(!onlyWhere)setText_In_SPARQL_Editor(sparqlQueryText);
-	if(onlyWhere) return {sparql:sparqlQueryText,  prefixes:prefixTable, className:className};
-	return sparqlQueryText;
+	if(onlyWhere) return {sparql:sparqlQueryText,  prefixes:prefixTable, className:className, messages:messages};
+	return {SPARQL_text: sparqlQueryText, messages:messages};
 }
 
 
 async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
+	let messages = [];
 	let name = selected_elem.getCompartmentValue("Name");
 	if(name.startsWith("(")) name = name.substring(name.indexOf("(")+1);
 	let nameIndex = name.lastIndexOf(" (");
@@ -686,11 +724,14 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 
 	let params = {name: name};
 	let cls = await dataShapes.resolveClassByName(params);
-	
-	params = {main:{propertyKind:'Data',"limit": n}}
-	params.element = {className: name};
-	let props = await dataShapes.getPropertiesFull(params);
-	
+	let props = [];
+	if(cls.complete != true || typeof cls["data"] === "undefined"){
+		messages.push("The class name '"+ name +"' could not be resolved within the data schema.");
+	} else {
+		params = {main:{propertyKind:'Data',"limit": n}}
+		params.element = {className: name};
+		props = await dataShapes.getPropertiesFull(params);
+	}
 	let prefixTable = [];	
 	let prefixes = await dataShapes.getNamespaces();
 	
@@ -751,8 +792,8 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 	if(!onlyWhere) sparqlQueryText = prefixText + sparqlQueryText;
 	
 	if(!onlyWhere) setText_In_SPARQL_Editor(sparqlQueryText);
-	if(onlyWhere) return {sparql:sparqlQueryText, prefixes:prefixTable, className:className, usedNames:usedNames};
-	return sparqlQueryText;
+	if(onlyWhere) return {sparql:sparqlQueryText, prefixes:prefixTable, className:className, usedNames:usedNames, messages:messages};
+	return {SPARQL_text: sparqlQueryText, messages:messages};
 }
 
 
@@ -3159,6 +3200,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 
 				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
 				
+				//HAVING
 				temp["sparqlTable"]["having"] = getHaving(subclazz["having"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
 
 				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
@@ -3782,6 +3824,10 @@ function generateSPARQLWHEREInfoPhase2(sparqlTable, ws, fil, lin, referenceTable
 									 });
 								}
 							}
+							 //HAVING
+							if (sparqlTable["subClasses"][subclass]["having"] != null && sparqlTable["subClasses"][subclass]["having"] != "") {
+								subQuery = subQuery + "\n"+SPARQL_interval+"HAVING(" + sparqlTable["subClasses"][subclass]["having"] + ")";
+							}
 							subQuery = subQuery + "\n"+SPARQL_interval_sub+"}";
 							
 							if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") {
@@ -4378,11 +4424,12 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
 							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) subQuery = subQuery + groupBy;
-
 							if(having!== null && having.exp != "") subQuery = subQuery + "\n"+SPARQL_interval + "HAVING(" + having.exp + ")";
 							//ORDER BY
 							 if (orderBy["orders"] != "") subQuery = subQuery + "\n"+SPARQL_interval+"ORDER BY " + orderBy["orders"];
-
+							
+							
+							
 							 //OFFSET
 							 if (sparqlTable["subClasses"][subclass]["offset"] != null && sparqlTable["subClasses"][subclass]["offset"] != "") {
 								if(!isNaN(sparqlTable["subClasses"][subclass]["offset"])) subQuery = subQuery + "\n"+SPARQL_interval+"OFFSET " + sparqlTable["subClasses"][subclass]["offset"];
@@ -4966,9 +5013,10 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 
 						if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) subQuery = subQuery + groupBy;
 						if(having.exp != "") subQuery = subQuery + SPARQL_interval+"\nHAVING(" + having["exp"] + ")";
-						
+
 						//ORDER BY
 						if (orderBy["orders"] != "") subQuery = subQuery + SPARQL_interval+"\nORDER BY " + orderBy["orders"];
+						
 
 						//OFFSET
 						if (sparqlTable["subClasses"][subclass]["offset"] != null && sparqlTable["subClasses"][subclass]["offset"] != "") {

@@ -162,7 +162,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 					startClass["class"]["conditions"] = [];
 				}
 				startClass["class"]["conditions"].push(abstractTable["filterTable"][fil]["filterString"])
-				//console.log("condition 5", abstractTable["filterTable"][fil]["filterString"])
+				// console.log("condition 5", abstractTable["filterTable"][fil]["filterString"])
 			}
 		}
 
@@ -1687,7 +1687,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 						}
 					  }
 					}
-					
+
 					if(createNewClass === true){
 						classesTable[clazzQ+counter] = classesTable[clazzQ];
 						delete classesTable[clazzQ];
@@ -1823,7 +1823,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 							// }
 							
 							let attributeNameSplit = classesTable[attributeTable[attribute]["class"]]["conditions"][condition].split(/([\w|:]+)/)
-						
+							
 							let replaceIndex = attributeNameSplit.indexOf(attributeInfoTemp["alias"])
 							if(replaceIndex != -1) {
 								// console.log("attributeNameSplit", attributeNameSplit, attributeNameSplit[replaceIndex-1].slice(-1))
@@ -1831,7 +1831,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 								found = true;
 								if(typeof attributeInfoTemp["exp"] !== 'undefined') attributeNameSplit[replaceIndex] = attributeInfoTemp["exp"];
 								else attributeNameSplit[replaceIndex] = attributeInfoTemp["identification"]["short_name"];
-								classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = attributeNameSplit.join("");
+								classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = "*" + attributeNameSplit.join("");
 							}
 						}
 					}
@@ -2860,7 +2860,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 										}
 										classesTable[clazz]["conditions"].push(conditionString);
 										
-										// console.log("condition 7", conditionString, viziQuerExpr["exprString"], classesTable[clazz]["conditions"].indexOf(conditionString))
+										// console.log("condition 7", conditionString, viziQuerExpr, viziQuerExpr["exprString"], classesTable[clazz]["conditions"].indexOf(conditionString), classesTable[clazz]["fields"], attributeTable, attributeTableAdded)
 										
 										filterAdded = true;
 										break;
@@ -6179,6 +6179,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							for(let classParentNode in nodeList[node]["uses"]){
 								if(typeof nodeList[node]["uses"][classParentNode] !== "function"){
 									if(classParentNode !== classNode){
+										
 										let link = {
 											"linkIdentification":{local_name: "==", display_name: "==", short_name: "=="},
 											"object":classParentNode,
@@ -6221,21 +6222,60 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				subSelectMainClass = cl;
 				let parentClass = findByVariableName(classesTable, commonValues[0]);
 				for(let pl in parentClass){
-					let link = {
-						"linkIdentification":{local_name: "==", display_name: "==", short_name: "=="},
-						"object":pl,
-						"subject":subSelectMainClass,
-						"isVisited":false,
-						"linkType":"REQUIRED",
-						"isSubQuery":true,
-						"isGlobalSubQuery":false,
-						"counter":orderCounter
+					let createLink = true;
+					if (
+					  (
+						typeof abstractTable["classesTable"][subSelectMainClass]["fields"] === 'undefined' || 
+						(
+						  abstractTable["classesTable"][subSelectMainClass]["fields"].length == 1 && 
+						  abstractTable["classesTable"][subSelectMainClass]["fields"][0]["exp"] == "(select this)"
+						)
+					  ) &&
+					  typeof abstractTable["classesTable"][subSelectMainClass]["aggregations"] === 'undefined' &&
+					  typeof abstractTable["classesTable"][subSelectMainClass]["conditions"] === 'undefined'
+					) {
+					  let linksCountForSubSelectMainClass = 0;
+					  let linkForSubSelectMainClass = null;
+					  for(let link = 0; link< abstractTable["linkTable"].length; link++){
+						  if(abstractTable["linkTable"][link]["subject"] === subSelectMainClass || abstractTable["linkTable"][link]["object"] === subSelectMainClass){
+							  linksCountForSubSelectMainClass++;
+							  linkForSubSelectMainClass = link;
+						  }
+						  if(linksCountForSubSelectMainClass === 1){
+							  createLink = false;
+							  delete abstractTable["classesTable"][subSelectMainClass];
+							  abstractTable["linkTable"][linkForSubSelectMainClass]["isSubQuery"] = true;
+							  if(abstractTable["linkTable"][linkForSubSelectMainClass]["subject"] === subSelectMainClass) {
+								abstractTable["linkTable"][linkForSubSelectMainClass]["subject"] = pl;
+								subSelectMainClass = abstractTable["linkTable"][linkForSubSelectMainClass]["object"];
+							  }
+							  else {
+								  abstractTable["linkTable"][linkForSubSelectMainClass]["object"] = pl;
+								  subSelectMainClass = abstractTable["linkTable"][linkForSubSelectMainClass]["subject"];
+							  }
+						  }
+						  
+					  }
+					  
 					}
-									
-					abstractTable["linkTable"].push(link);
-					linkTable.push(link);
-					linkTableAdded.push(link);
-					orderCounter++
+					
+					if(createLink === true){
+						let link = {
+							"linkIdentification":{local_name: "==", display_name: "==", short_name: "=="},
+							"object":pl,
+							"subject":subSelectMainClass,
+							"isVisited":false,
+							"linkType":"REQUIRED",
+							"isSubQuery":true,
+							"isGlobalSubQuery":false,
+							"counter":orderCounter
+						}
+										
+						abstractTable["linkTable"].push(link);
+						linkTable.push(link);
+						linkTableAdded.push(link);
+						orderCounter++
+					}
 					break;
 				}
 				break;
@@ -6338,6 +6378,20 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		if(typeof where["patterns"][0]["limit"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["limit"] =  where["patterns"][0]["limit"];
 		if(typeof where["patterns"][0]["offset"] !== 'undefined' && where["patterns"][0]["offset"] != 0) abstractTable["classesTable"][subSelectMainClass]["offset"] =  where["patterns"][0]["offset"];
 		if(typeof where["patterns"][0]["distinct"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["distinct"] =  where["patterns"][0]["distinct"];
+		if(typeof where["patterns"][0]["having"] !== 'undefined'){
+			
+			//having
+			let havingString = "";
+			var having = where["patterns"][0]["having"];
+			for(let key in having){
+				if(typeof having[key] !== "function" && key !== "tableCounter"){	
+					let temp = await parseSPARQLjsStructureWhere(having[key], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, "plain", allClasses, variableList, null, bindTable, null);
+					havingString = temp["viziQuerExpr"]["exprString"];
+				
+				}
+			}
+			abstractTable["classesTable"][subSelectMainClass]["having"] = havingString;
+		}
 		
 		abstractTable["classesTable"][subSelectMainClass]["serviceLabelLang"] = abstractTable["serviceLabelLang"];
 		abstractTable["classesTable"][subSelectMainClass]["fullSPARQL"] = abstractTable["fullSPARQL"];
@@ -8258,6 +8312,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 													classesTable[sclass]["conditions"] = [];
 												}
 												classesTable[sclass]["conditions"].push(expr);
+												// console.log("condition 10", expr);
 												break;
 											}
 										}
@@ -8833,7 +8888,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 										if(typeof clazz["conditions"] === 'undefined') clazz["conditions"] = [];
 										if(typeof variableList[attrAlias] !== "undefined" && variableList[attrAlias] <=1){
 											if(!exp.startsWith("?") && typeof variableList[ attrAlias] !== "undefined" && childerenClass["conditions"][condition].indexOf(attrAlias) != -1 && childerenClass["conditions"][condition].indexOf(" != ") === -1) {
-												childerenClass["conditions"][condition] = childerenClass["conditions"][condition].replace("@"+attrAlias, exp);
+												childerenClass["conditions"][condition] = "*"+ childerenClass["conditions"][condition].replace("@"+attrAlias, exp);
 												createAttribute = false;
 											}
 										}
@@ -9584,8 +9639,10 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 		//add condition to class
 		let conditionName = condition;
 		let allowMul = false;
-		if(conditionName.startsWith("* ")){
+		if(conditionName.startsWith("** ")){
 			allowMul = true;
+			conditionName = conditionName.substring(3);
+		} else if (conditionName.startsWith("* ")){
 			conditionName = conditionName.substring(2);
 		}
 		if(typeof condition !== "undefined" && condition != null && condition != "")classBox.addCondition(conditionName, allowMul);
