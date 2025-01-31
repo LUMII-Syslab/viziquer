@@ -267,20 +267,129 @@ Template.sparqlForm_see_results.helpers(sparql_form_helpers);
 Template.sparqlForm_see_results.events(sparql_form_events);
 
 
+
+function extractTriplePatternsFromQuery(sparqlQuery) {
+	// Locate the `WHERE` clause
+	const whereIndex = sparqlQuery.toUpperCase().indexOf(" WHERE");
+	if (whereIndex === -1) {
+		return [];
+	}
+
+	// Extract the portion of the query starting from the `WHERE` clause
+	const whereClause = sparqlQuery.slice(whereIndex);
+
+	// Regex to match triple patterns
+	const triplePatternRegex =
+		/([^\s;{}]+)\s+([^\s;{}()]+(?:\([^)]*\))?)\s+((["'].*?["'](?:\^\^<[^>]+>|@[a-zA-Z]+)?)|<[^>]+>|[^\s;{}()]+)\s*\.\s*/g;
+
+	const triples = [];
+	let match;
+
+	while ((match = triplePatternRegex.exec(whereClause)) !== null) {
+		const [fullMatch, subject, predicate, object] = match;
+
+		triples.push({
+			subject,
+			predicate,
+			object,
+		});
+	}
+
+	return triples;
+}
+
+// Returns a list of class names that a given token may have based on triples that contain the token
+async function getTokenClassesFromTriples(token, extractedTriples) {
+	let className;
+	let classes;
+	for (const triple of extractedTriples) {
+		// If there is a triple that reveals the exact class of previous token, use that class
+		if (triple.subject == token.string && (triple.predicate == "rdf:type" || triple.predicate == "a")) {
+			className = triple.object;
+			break;
+		}
+		// Otherwise if previous token is a subject or an object in a triple, find possible classes based on the predicate of the triple
+		if (triple.subject == token.string) {
+			let classesOut = await dataShapes.getClassesFull({
+				main: { onlyPropsInSchema: true },
+				element: { pList: { out: [{ name: triple.predicate, type: 'out' }] } }
+			});
+			classesOut = classesOut.data.map(row => row.full_name);
+			if (classes) {
+				// Only keep classes that match all relevant triples
+				classes = classes.filter(c => classesOut.includes(c));
+			}
+			else {
+				classes = classesOut;
+			}
+		}
+		if (triple.object == token.string) {
+			let classesIn = await dataShapes.getClassesFull({
+				main: { onlyPropsInSchema: true },
+				element: { pList: { in: [{ name: triple.predicate, type: 'in' }] }
+				}
+			});
+			classesIn = classesIn.data.map(row => row.full_name);
+			if (classes) {
+				classes = classes.filter(c => classesIn.includes(c));
+			}
+			else {
+				classes = classesIn;
+			}
+		}
+	}
+	if (className) {
+		return [className];
+	}
+	else {
+		return classes;
+	}
+}
+
+// Filters and sorts the list of autocompletion results to best match the current token
+function sortAndFilterResult(result, currToken) {
+	// Only keep results that contain the current token
+	result = result.filter(prop => prop.toLowerCase().includes(currToken.string.toLowerCase()));
+
+	// Sort results so that those starting with the current token come first
+	result.sort((a, b) => {
+		const aStartsWith = a.toLowerCase().startsWith(currToken.string.toLowerCase());	// true if a starts with the current token, otherwise false
+		const bStartsWith = b.toLowerCase().startsWith(currToken.string.toLowerCase());
+		if (aStartsWith && !bStartsWith) return -1;
+		if (!aStartsWith && bStartsWith) return 1;
+		return 0;
+	});
+	return result;
+}
+
 function customClassCompleter(yasqe_doc) {
 	return {
 		isValidCompletionPosition: function(){return YASQE.Autocompleters.classes.isValidCompletionPosition(yasqe_doc)},
 		preProcessToken: function(token) {return token},
 		postProcessToken: function(token, suggestedString)  {return suggestedString},
-		bulk: true,
-		async: false,
+		bulk: false,
+		async: true,
 		autoShow: false,
-		get: function(token, callback) {
-			// TODO te varētu arī no jaunās shēmas informāciju dabūt, ja nav pārāk liela
-			return [];
-		 	//var schema = new VQ_Schema();
-		 	//var list =  _.filter(_.sortBy(schema.getAllClasses(), function(v) {return v.name}).map(function(c) {return ":"+c.name}), function(n) {return n!=": "});
-		 	//return list;
+		get: async (token, callback) => {
+			let result = [];
+			const cur = yasqe_doc.getDoc().getCursor();	// Text cursor position
+			const predicateToken = yasqe_doc.getPreviousNonWsToken(cur.line, token);	// Non-whitespace token before the current token (predicate)
+			const subjectToken = yasqe_doc.getPreviousNonWsToken(cur.line, predicateToken);	// Non-whitespace token before the predicate token (subject)
+
+			if (predicateToken.string == "a" || predicateToken.string == "rdf:type") {
+				let classes = await getTokenClassesFromTriples(subjectToken, extractTriplePatternsFromQuery(yasqe_doc.getValue()));
+				// Suggest all classes if no classes were found using existing triples
+				if (!classes) {
+					classes = await dataShapes.getClassesFull({main:{ onlyPropsInSchema: true}});
+					classes = classes.data.map(row => row.full_name);
+				}
+
+				// Filter and sort the results based on incomplete token
+				result = sortAndFilterResult(classes, token);
+			}
+
+			callback(result);
+			
 		}
 	};
 }
@@ -290,16 +399,34 @@ function customPropertyCompleter(yasqe_doc) {
 		isValidCompletionPosition: function(){return YASQE.Autocompleters.properties.isValidCompletionPosition(yasqe_doc)},
 		preProcessToken: function(token) {return token},
 		postProcessToken: function(token, suggestedString)  {return suggestedString},
-		bulk: true,
-		async: false,
+		bulk: false,
+		async: true,
 		autoShow: false,
-		get: function(token, callback) {
-			// TODO te varētu arī no jaunās shēmas informāciju dabūt, ja nav pārāk liela
-			return [];
-			//var schema = new VQ_Schema();
-			//var list =  _.filter(_.map(schema.Attributes,function(c) {return ":"+c.localName}), function(n) {return n!=": "});
-			//list = _.sortBy(_.union(list,_.filter(_.map(schema.Associations, function(c) {return ":"+c.localName}), function(n) {return n!=": "}) ), function(v) {return v});
-			//return list;
+		get: async(token, callback) => {
+			let result = [];
+			const previousToken = yasqe_doc.getPreviousNonWsToken(yasqe_doc.getDoc().getCursor().line, token);	// Previous non-whitespace token (subject, e.g. variable)
+			const sparqlQuery = yasqe_doc.getValue();
+			const extractedTriples = extractTriplePatternsFromQuery(sparqlQuery);
+			const classes = await getTokenClassesFromTriples(previousToken, extractedTriples);
+			
+			// Get properties of possible classes
+			if (classes) {
+				for (let c of classes) {
+					let properties = await dataShapes.getPropertiesFull({
+						main: { propertyKind: 'All' },
+						element: { className: c }
+					});
+					result = result.concat(properties.data.map(row => row.full_name));
+				}
+				// Remove duplicates
+				result = [...new Set(result)];
+	
+				// Filter and sort the results based on incomplete token
+				result = sortAndFilterResult(result, token);
+			}			
+
+			callback(result);
+
 		}
 	};
 
