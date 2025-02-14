@@ -202,7 +202,8 @@
 												<option value=50 >Size factor: power =  1/50 </option>
 												<option value=100 >Size factor: power =  1/100 </option>
 											</select>
-
+											{{#if pub}}
+											{{else}}
 												<select class="form-control" id="kValue" style="width:300px" >
 													<option selected value=1 > dw(A,B)/(sw(A,B)+ε) &lt; 1 </option>
 													<option value=2 > dw(A,B)/(sw(A,B)+ε) &lt; 2 </option>
@@ -210,7 +211,7 @@
 													<option value=5 > dw(A,B)/(sw(A,B)+ε) &lt; 5 </option>
 													<option value=10 > dw(A,B)/(sw(A,B)+ε) &lt; 10 </option>
 												</select>
-
+											{{/if}}
 										</div>
 										<div class="col-sm-4" style="padding-top:10px;">
 											<div style="padding-bottom:10px;">
