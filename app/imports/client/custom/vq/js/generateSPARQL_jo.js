@@ -506,7 +506,8 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	let endClassSPRAQL = "";
 		
 	let classList = startElement.getCompartmentValue("ClassList");
-	
+	//let classListVV = startElement.getCompartmentValueValue("ClassList");
+
 	if(classList === null){
 		
 		let startSimpleSchemaBox = await simpleSchemaBox(startElement, 1, dirRole, usedNames,true);
@@ -600,6 +601,8 @@ async function generateSPARQLtextFromSchema(){
 		}
 	}
 	let classList = selected_elem.getCompartmentValue("ClassList");
+
+	// selected_elem.setCompartmentValue("ClassList", "iiiii", "vvvvv");
 	
 	if(classList === null){
 		return simpleSchemaBox(selected_elem, n, dirRole, []);
@@ -610,25 +613,30 @@ async function generateSPARQLtextFromSchema(){
 
 function getClassListFromString(classList){
 	// Regular expression to trim the optional beginning and ending parts
-	const regex = /^(?:\(\w+\)\s*)?(.*?)(?:\s*\((\d|\.)+[A-Z]\))?$/gm;
+	// const regex = /^(?:\(\w+\)\s*)?(.*?)(?:\s*\((\d|\.)+[A-Z]\))?$/gm;
 	// Extract only the "prefix:name", ":name", or "name" part
-	const stringValues = classList.match(regex).map(line => line.replace(regex, '$1')).filter(Boolean);
-	// const stringValues = classList.match(/^[^\(]+/gm).map(str => str.trim());
+	// const stringValues = classList.match(regex).map(line => line.replace(regex, '$1')).filter(Boolean);
 	
-	return stringValues;
+		return classList.split("\n")
+         .map(line => line.replace(/^(?:\(\w+\)\s*)?(.*?)(?:\s*\([^()]*\))?\s*$/, '$1')) // Remove optional (type) or (type) and last occurrence of (anything) from end
+         .filter(Boolean); // Remove empty lines
+	
+	// return stringValues;
 }
 
 async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNames, onlyWhere){
 	messages = [];
 	let classList = getClassListFromString(classListString);
+
 	let sparqlQueryText = "";
 	if(!onlyWhere) sparqlQueryText = "SELECT * WHERE{\n";
 	let classUnionTable = [];
 	let propertyTable = [];
 	let className = "exp";
 	// Regular expression to match and remove the optional parts at the beginning and end
-	className = selected_elem.getName().replace(/^(?:\(\w+\)\s*)?(?:\w*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
+	className = selected_elem.getName().replace(/^(?:\(\w+\)\s*)?(?:[\w-]*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
 										.replace(/\s+et al\..*$/, '');               // Remove " et al. string" at the end
+	if(className.indexOf("[") !== -1 && className.indexOf(" ") !== -1) className = className.substring(className.indexOf("[")+1, className.indexOf(" "))
 	if(typeof usedNames !== "undefined" && usedNames !== null && typeof usedNames[className] !== "undefined") {
 		className = className + "_" + usedNames[className];
 		usedNames[className] = usedNames[className]+1;
@@ -638,7 +646,6 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	
 	let prefixTable = [];
 	let prefixes = await dataShapes.getNamespaces();
-	
 	for(let clazz = 0; clazz < classList.length; clazz++){
 		let params = {name: classList[clazz]};
 		let cls = await dataShapes.resolveClassByName(params);
@@ -717,11 +724,14 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 	let messages = [];
 	let name = selected_elem.getCompartmentValue("Name");
-	if(name.startsWith("(")) name = name.substring(name.indexOf("(")+1);
-	let nameIndex = name.lastIndexOf(" (");
-	if(nameIndex === -1) nameIndex = name.length;
-	name = name.substring(0, nameIndex);
-
+	if(name.indexOf("[") !== -1) name = name.substring(0, name.indexOf("]")+1);
+	else {
+		if(name.startsWith("(")) name = name.substring(name.indexOf("(")+1);
+		let nameIndex = name.lastIndexOf(" (");
+		if(nameIndex === -1) nameIndex = name.length;
+		name = name.substring(0, nameIndex);
+	}
+	
 	let params = {name: name};
 	let cls = await dataShapes.resolveClassByName(params);
 	let props = [];
@@ -4170,7 +4180,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 					if(SPARQL_interval.length > 2 && sparqlTable["subClasses"][subclass]["linkType"] === "REQUIRED") SPARQL_interval = SPARQL_interval.substring(2);
 					let temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval, parameterTable, knownPrefixes);
 					var delayedString = "";	
-					console.log("SPARQL_interval",temp);
+
 					delayedTemp = [];
 					delayedTemp = delayedTemp.concat(temp["classes"]);
 					delayedTemp = delayedTemp.concat(temp["grounding"]);
