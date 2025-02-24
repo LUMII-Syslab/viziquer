@@ -10,7 +10,7 @@ import { build_compartment } from '/imports/server/platform/methods/diagrams/com
 Meteor.methods({
 
 	importConfiguration: function(list) {
-
+		console.log("FFFFFFFFFFFFFF", list);
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
 

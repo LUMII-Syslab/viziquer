@@ -2244,7 +2244,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					for(let clazz in classes){
 						if(typeof classes[clazz] !== "function"){
 							classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-							// console.log("12", attributeInfo, attributeTable[attributeTableAdded[attr]])
+							//console.log("12", attributeInfo, attributeTable[attributeTableAdded[attr]])
+							break;
 						}
 					}
 				}
@@ -6777,7 +6778,7 @@ async function collectNodeList(whereAll, propUnderOptional){
 			if(getVariable(triples[triple]["predicate"])["type"] == "varName") selectStarList.push(triples[triple]["predicate"]["value"]);
 
 			//class definitions
-			if((triples[triple]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined")){
+			if((triples[triple]["predicate"]["value"] == directClassMembershipRole || (typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined" && triples[triple]["object"]["termType"] !== "Variable"))){
 				nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
 			} else{
 				//if class without definition
@@ -7066,7 +7067,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 
 		//class definitions
 		
-		if(((triples[triple]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined")) && (typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' || isUnderUnion === true) && triples[triple]["object"]["termType"] !== "BlankNode"
+		if(((triples[triple]["predicate"]["value"] == directClassMembershipRole || (typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined" && triples[triple]["object"]["termType"] !== "Variable"))) && (typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' || isUnderUnion === true) && triples[triple]["object"]["termType"] !== "BlankNode"
 			&& typeof variableList[triples[triple]["object"]["value"]+"Label"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"AltLabel"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"Description"] === "undefined"){
 			let instanceAlias = null;
 			//var classResolvedR = await dataShapes.resolveClassByName({name: triples[triple]["object"]});
@@ -7549,7 +7550,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 			//from object property
 			else {
 				//subjest
-								
+					
 				let subjectNameParsed = getVariable(triples[triple]["subject"]);
 				
 				if(subjectNameParsed["type"] != "number" && subjectNameParsed["type"] != "string" && subjectNameParsed["type"] != "RDFLiteral"){
@@ -7625,9 +7626,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				
 				//object
 				let objectNameParsed = getVariable(triples[triple]["object"]);
-					
-				
-				if(objectNameParsed["type"] != "number" && objectNameParsed["type"] != "string" && objectNameParsed["type"] != "RDFLiteral" && (triples[triple]["predicate"]["value"] != directClassMembershipRole && typeof classifiers[triples[triple]["predicate"]["value"]] === "undefined")){
+
+				if(objectNameParsed["type"] != "number" && objectNameParsed["type"] != "string" && objectNameParsed["type"] != "RDFLiteral" && (triples[triple]["predicate"]["value"] != directClassMembershipRole && (typeof classifiers[triples[triple]["predicate"]["value"]] === "undefined" || (typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined" && triples[triple]["object"]["termType"] === "Variable")))){
 					objectNameParsed = objectNameParsed["value"];
 					if(typeof nodeList[triples[triple]["object"]["value"]] === "undefined" || typeof nodeList[triples[triple]["object"]["value"]] === "function" || (typeof nodeList[triples[triple]["object"]["value"]] !== "function" && Object.keys(nodeList[triples[triple]["object"]["value"]]["uses"]).length == 0) || triples[triple]["subject"]["termType"] == "BlankNode"){
 						if(typeof nodeList[triples[triple]["object"]["value"]] === "undefined" || typeof nodeList[triples[triple]["object"]["value"]] === "function") nodeList[triples[triple]["object"]["value"]] = createNodeListInstance(nodeList, triples[triple]["object"]["value"]);
@@ -7869,13 +7869,14 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								linkTable.push(link);
 								linkTableAdded.push(link);
 								orderCounter++;
-								// console.log("LINK 1", link, selectVariables.indexOf(triples[triple]["predicate"]["value"]));
+								console.log("LINK 1", link, selectVariables.indexOf(triples[triple]["predicate"]["value"]));
 							  }
 							}
 						  }
 						}	
 					} else {
 						// object properties or data properties under optionalLink
+						
 						let linkResolved = attributeResolved.data[0];
 						let params = {name: triples[triple]["predicate"]["value"]};
 						if(schemaName !== dataShapes.schema.schema) params.schema = schemaName;

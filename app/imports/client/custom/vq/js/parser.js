@@ -143,7 +143,12 @@ function parse_class(clazz, symbolTable, parameterTable, idTable, referenceTable
 	var pr = clazz.identification.prefix;
 	if(typeof pr === "undefined" || pr === null) pr = "";
 	var object = pr+":"+clazz.identification.local_name;
-	if(clazz.identification.is_literal == true) object = '"'+ clazz.identification.local_name +'"'
+	if(clazz.identification.is_literal == true) {
+		
+		object = '"'+ clazz.identification.local_name +'"^^xsd:string';
+		prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+		
+	}
 	let triple = exp + " "+ classMembership + " " + object+ ". ";	
 	triples.push(triple);
 	
