@@ -1,13 +1,27 @@
 # A Method and a Library for Visual Data Schemas
 
-We provide the supporting material for a demonstration at ESWC'2024 conference.
+We provide the data set and other supporting material for 
+[a demonstration at ESWC'2024 conference](https://2024.eswc-conferences.org/wp-content/uploads/2024/05/77770246.pdf). 
 
-Consider the `schemas` folder for the data schemas in .SVG format.
+This includes a set of both data schemas and their visual presentations for 44 selected data sets from LOD data cloud and other related resources.
 
-The schemas can be accessed from the ViziQuer tool main page (https://viziquer.lumii.lv), as well.
+Consider the `schemas` folder for the data schemas in .SVG format and `database` folder for the schema database definitions.
 
+The schemas can be accessed also from ViziQuer Playground at (https://viziquer.app) (with the general tool description at 
+(https://viziquer.lumii.lv) and (https://github.com/LUMII-Syslab/viziquer/wiki)), where the schema visualization can be performed either by 
+the original external visualizer (https://github.com/LUMII-Syslab/dss-schema-explorer), or by a newer in-tool visualization module.
+
+The schema database can be loaded into the database of [ViziQuer Tools](https://github.com/LUMII-Syslab/viziquer-tools) environment.
+
+## Acknowledgements
+
+The Method and Library for Visual Data Schemas has been developed at Institute of Mathematics and Computer Science, University of Latvia, https://lumii.lv, 
+with partial support from Latvian Science Council grant lzp-2021/1-0389 "Visual Queries in Distributed Knowledge Graphs".
 
 ## Schema Visualization Pipeline
+
+In what follows, we describe the process of obtaining and using the provided data set. 
+The `Schema Visualization` section explains the possibilities that apply to creating new diagrams for the existing schemata.
 
 ### Schema Extraction
 
@@ -55,9 +69,8 @@ This database can be used for storing further imported data schemas, as well.
 4. New! Create a schema diagram within the visual tool itself (the diagram is created and need to be clicked on to open). Choose 'Layout as Graph' from the context menu, then adjust the visual positioning of items.
 
 5. Alternatively, export the schema diagram and follow the instructions given on https://github.com/LUMII-Syslab/dss-schema-explorer 
-(installation of the Schema Explorer tool, generating the data in ViziQuer and copying them from ViziQuer to the Schema Explorer).
-
-`MS Windows` is currently required for the last step (visualization inside the web-based ViziQuer tool in a new diagram is work in progress).
+(installation of the Schema Explorer tool, generating the data in ViziQuer and copying them from ViziQuer to the Schema Explorer). 
+`MS Windows` is required for this step, if the external visualization is chosen (alternatively, use in-tool visualization, as described in the previous step).
 
 ## Schema Visualization Experiment
 
