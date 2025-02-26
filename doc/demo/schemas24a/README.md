@@ -1,22 +1,27 @@
 # A Method and a Library for Visual Data Schemas
 
 We provide the data set and other supporting material for 
-[a demonstration at ESWC'2024 conference](https://2024.eswc-conferences.org/wp-content/uploads/2024/05/77770246.pdf). 
+[a demonstration at ESWC'2024 conference](https://2024.eswc-conferences.org/wp-content/uploads/2024/05/77770246.pdf), 
+with [official publication at Springer](https://link.springer.com/chapter/10.1007/978-3-031-78952-6_37).
 
 This includes a set of both data schemas and their visual presentations for 44 selected data sets from LOD data cloud and other related resources.
 
 Consider the `schemas` folder for the data schemas in .SVG format and `database` folder for the schema database definitions.
 
-The schemas can be accessed also from ViziQuer Playground at (https://viziquer.app) (with the general tool description at 
-(https://viziquer.lumii.lv) and (https://github.com/LUMII-Syslab/viziquer/wiki)), where the schema visualization can be performed either by 
-the original external visualizer (https://github.com/LUMII-Syslab/dss-schema-explorer), or by a newer in-tool visualization module.
+The schemas can be accessed also from [ViziQuer Playground](https://viziquer.app) (free sign-up required), where the schema visualization can be performed either by 
+the original external visualizer (https://github.com/LUMII-Syslab/dss-schema-explorer), or by a newer in-tool visualization module. The general tool description is at 
+[ViziQuer main page](https://viziquer.lumii.lv) and [its GitHub wiki](https://github.com/LUMII-Syslab/viziquer/wiki), 
 
-The schema database can be loaded into the database of [ViziQuer Tools](https://github.com/LUMII-Syslab/viziquer-tools) environment.
+The schema database can be loaded into the database of [ViziQuer Tools](https://github.com/LUMII-Syslab/viziquer-tools) environment, as well.
 
 ## Acknowledgements
 
 The Method and Library for Visual Data Schemas has been developed at Institute of Mathematics and Computer Science, University of Latvia, https://lumii.lv, 
 with partial support from Latvian Science Council grant lzp-2021/1-0389 "Visual Queries in Distributed Knowledge Graphs".
+
+Please cite the paper as: Lāce, L., Romāne, A., Fedotova, J., Grasmanis, M., Čerāns, K. (2025). 
+A Method and a Library for Visual Data Schemas. In: Meroño Peñuela, A., et al. The Semantic Web: ESWC 2024 Satellite Events. ESWC 2024. 
+Lecture Notes in Computer Science, vol 15344., pp.254-258. Springer, Cham. https://doi.org/10.1007/978-3-031-78952-6_37
 
 ## Schema Visualization Pipeline
 
