@@ -3359,6 +3359,12 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						}
 					}
 					
+					if(typeof symbolTable[rootClass_id] !== 'undefined' && typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
+						for(let attrName = 0; attrName < symbolTable[rootClass_id][orderName].length; attrName++){
+							if(symbolTable[rootClass_id][orderName][attrName]["kind"] == "AGGREGATE_ALIAS") isAgretedAlias = true;
+						}
+					}
+					
 					
 					if(typeof symbolTable[rootClass_id][orderName] !== "undefined"){
 						for(let attrName in symbolTable[rootClass_id][orderName]){
@@ -3466,6 +3472,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	orderTable = orderTable.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
+	
 	
 	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
 }
