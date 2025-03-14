@@ -6,6 +6,7 @@ import { parse_class, parse_attrib, parse_filter, getPathFullGrammar } from './p
 import { VQ_Element } from './VQ_Element';
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 import { setSchemaNamesForQuery } from '/imports/client/custom/vq/js/transformations.js'
+import { ElementTypes, DiagramTypes } from '/imports/db/platform/collections'
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -410,7 +411,7 @@ Interpreter.customMethods({
 	  Interpreter.destroyErrorMsg();
 	  let q = await generateSPARQLtextFromSchema();
 	  let SPARQL_text = q.SPARQL_text;
-	  if(typeof q.messages !== "undefined"){
+	  if(typeof q.messages !== "undefined" && q.messages.length > 0){
 		  let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
 		  Interpreter.showErrorMsg(messages.join(" // "), -3);  
 	  } else executeSparqlString(SPARQL_text);
@@ -420,9 +421,22 @@ Interpreter.customMethods({
       Interpreter.destroyErrorMsg();
 	  let q = await generateSPARQLtextFromSchema();
 	  let SPARQL_text = q.SPARQL_text;
-	  if(typeof q.messages !== "undefined"){
+	  if(typeof q.messages !== "undefined" && q.messages.length > 0){
 		 let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
 		 Interpreter.showErrorMsg(messages.join(" // "), -3);  
+	  }
+  },
+  
+  GenereteSPARQL_Diagram_from_class_DSS: async function() {
+      Interpreter.destroyErrorMsg();
+	  let q = await generateSPARQLtextFromSchema();
+	  let SPARQL_text = q.SPARQL_text;
+	 
+	  if(typeof q.messages !== "undefined" && q.messages.length > 0){
+		 let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
+		 Interpreter.showErrorMsg(messages.join(" // "), -3);  
+	  } else {
+		  generateSPARQLQueryDiagramFromSchema(SPARQL_text);
 	  }
   },
   
@@ -431,7 +445,7 @@ Interpreter.customMethods({
 	  let q = await generateSPARQLtextFromSchemaForObjectProperty();
 	  let SPARQL_text = q.SPARQL_text;
 	  
-	  if(typeof q.messages !== "undefined"){
+	  if(typeof q.messages !== "undefined" && q.messages.length > 0){
 		  let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
 		  Interpreter.showErrorMsg(messages.join(" // "), -3);  
 	  } else executeSparqlString(SPARQL_text);
@@ -441,10 +455,30 @@ Interpreter.customMethods({
     Interpreter.destroyErrorMsg();
 	let q = await generateSPARQLtextFromSchemaForObjectProperty();
 	let SPARQL_text = q.SPARQL_text;
-	if(typeof q.messages !== "undefined"){  
+	if(typeof q.messages !== "undefined" && q.messages.length > 0){  
 		 let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
 		 Interpreter.showErrorMsg(messages.join(" // "), -3);  
 	}
+  },
+  
+  ExecuteSPARQL_form_selection_DSS: async function() {
+	  Interpreter.destroyErrorMsg();
+	  let q = await generateSPARQLtextFromSchemaForSelection();
+	  let SPARQL_text = q.SPARQL_text;
+	  if(typeof q.messages !== "undefined" && q.messages.length > 0){
+		  let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
+		  Interpreter.showErrorMsg(messages.join(" // "), -3);  
+	  } else executeSparqlString(SPARQL_text);
+  },
+  
+  GenereteSPARQL_form_selection_DSS: async function() {
+      Interpreter.destroyErrorMsg();
+	  let q = await generateSPARQLtextFromSchemaForSelection();
+	  let SPARQL_text = q.SPARQL_text;
+	  if(typeof q.messages !== "undefined" && q.messages.length > 0){
+		 let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);  
+		 Interpreter.showErrorMsg(messages.join(" // "), -3);  
+	  }
   },
   
   Collect_prefixes_from_diagram_for_all_queries: async function() {
@@ -475,6 +509,51 @@ Interpreter.customMethods({
       executeSparqlString(text, paging_info);
   },
 });
+
+function generateSPARQLQueryDiagramFromSchema(SPARQLText){
+	// var user_id = Meteor.userId();
+	// let projectId = Session.get("activeProject");
+	// let versionId = Session.get("versionId");
+
+    // let project = Projects.findOne({_id: projectId,});
+    // if (!project) {
+       // console.error("No Project");
+       // return;
+	// }
+
+	// let tool_id = project.toolId;
+
+	// console.log("DDDDDDDDDDDD", tool_id, DiagramTypes.find({}));
+	
+	// DiagramTypes.find().forEach(doc => console.log(doc));
+
+	// let diagram_type = DiagramTypes.findOne({name: "Query"});
+	// console.log("DDDDDDDDDTTTTTTTTT", diagram_type);
+	// if (!diagram_type) {
+		// console.error("No diagram type");
+		// return;
+	// }
+
+	// let diagram_object = {name: "New query diagram",
+								// diagramTypeId: diagram_type._id,
+								// style: diagram_type.style,
+								// createdAt: new Date(),
+								// createdBy: user_id,
+								// editorType: "ajooEditor",
+								// imageUrl: "http://placehold.it/770x347",
+								// parentDiagrams: [],
+								// allowedGroups: [],
+								// editing: {},
+								// seenCount: 0,
+								// projectId: projectId,
+								// versionId: versionId,
+								// isLayoutComputationNeededOnLoad: 1,
+                                // description:"Description"
+							// };
+        
+	// let new_diagram_id = Diagrams.insert(diagram_object);
+	// console.log("new_diagram_id", new_diagram_id);
+}
 
 async function generateSPARQLtextFromSchemaForObjectProperty(){
 	let messages = [];
@@ -553,7 +632,8 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	for(let prop = 0; prop < objectProperties.length; prop++){	
 		let params = {name: objectProperties[prop]};
 		let propertyResolved = await dataShapes.resolvePropertyByName(params);
-		if(propertyResolved.compile === true){
+		
+		if(propertyResolved.complete === true){
 			objectPropertiesUnion.push("  ?" + startElementName + " " + propertyResolved.name + " ?"+endElementName+". ");
 			prefixTable[propertyResolved.data[0].prefix] = "";
 		} else {
@@ -609,6 +689,118 @@ async function generateSPARQLtextFromSchema(){
 	} else {
 		return groupSchemaBox(selected_elem, n, dirRole, classList, []);
 	}	
+}
+
+async function generateSPARQLtextFromSchemaForSelection(){
+	let n = 1;
+	
+	let editor = Interpreter.editor;
+	let elem = _.keys(editor.getSelectedElements());
+	
+	let classAccessTable = [];
+	let lineAccessTable = [];
+	
+	let messages = [];
+	let prefixTable = [];	
+	let prefixes = await dataShapes.getNamespaces();
+	let usedNames = [];
+	
+	 var element_list = _.filter(_.map(elem, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});
+  // determine which elements are root elements
+	const elem_type = ElementTypes.findOne({name: "ObjectProperty"});
+	const elem_type_id = elem_type._id;
+	_.each(element_list, function(e) {
+		  if(e.obj.type == "Box"){
+			  classAccessTable[e.obj._id] = [];
+		  } else if(e.obj.type == "Line" && e.obj.elementTypeId === elem_type_id){
+			   lineAccessTable[e.obj._id] = [];
+		  }
+	 });
+	 let dirRole = "a";
+			
+		let proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			if (proj.directClassMembershipRole) {
+				dirRole = proj.directClassMembershipRole;
+			}
+	 }
+	 let classSPARQL = [];
+	 let classNames = [];
+	for (const [key, value] of Object.entries(classAccessTable)) {
+		let selected_elem = new VQ_Element(key);
+		
+		let classList = selected_elem.getCompartmentValue("ClassList");
+
+		if(classList === null){
+			let startSimpleSchemaBox = await simpleSchemaBox(selected_elem, n, dirRole, [], true);
+			prefixTable = { ...prefixTable, ...startSimpleSchemaBox.prefixes};
+			usedNames = { ...usedNames, ...startSimpleSchemaBox.usedNames};
+			classSPARQL.push(startSimpleSchemaBox.sparql);
+			classNames[key] = startSimpleSchemaBox.className;
+			messages = messages.concat(startSimpleSchemaBox["messages"]);
+		} else {
+			let startGroupSchemaBox = await groupSchemaBox(selected_elem, n, dirRole, classList, [], true);
+			prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
+			usedNames = { ...usedNames, ...startGroupSchemaBox.usedNames};
+			classNames[key] = startGroupSchemaBox.className;
+			classSPARQL.push(startGroupSchemaBox.sparql);
+			prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
+			messages = messages.concat(startGroupSchemaBox["messages"]);
+		}	
+	}
+	let objectPropertiesUnion = [];
+	for (const [key, value] of Object.entries(lineAccessTable)) {
+		let link = new VQ_Element(key);
+		let startElement = link.getStartElement();
+		let endElement = link.getEndElement();
+		
+		let linkName = link.getCompartmentValue("Name");
+		let startElementName = classNames[startElement.obj._id];;
+		let endElementName = classNames[endElement.obj._id];
+		
+
+		if(typeof startElementName !== "undefined" && typeof endElementName !== "undefined"){
+			const regex = /(?:\b\w+\b)?:\b\w+\b/g;
+
+			// Find all matches in the linkName string
+			const objectProperties = linkName.match(regex);
+			let objectPropertiesUnionTemp = [];
+			
+			for(let prop = 0; prop < objectProperties.length; prop++){	
+				let params = {name: objectProperties[prop]};
+				let propertyResolved = await dataShapes.resolvePropertyByName(params);
+				
+				if(propertyResolved.complete === true){
+					objectPropertiesUnionTemp.push("  ?" + startElementName + " " + propertyResolved.name + " ?"+endElementName+". ");
+					prefixTable[propertyResolved.data[0].prefix] = "";
+				} else {
+					messages.push("The property name '"+ objectProperties[prop] +"' could not be resolved within the data schema.");
+				}
+			}
+			
+			// Check if the array length is more than 1
+			let resultT = objectPropertiesUnionTemp.length > 1 
+			? objectPropertiesUnionTemp.map(str => `{${str}}`).join("\nUNION\n")  // Wrap with "{" and "}" and join with "\nUNION\n"
+			: objectPropertiesUnionTemp[0];  // If only one element, leave it as is
+			if(typeof resultT !== "undefined") objectPropertiesUnion.push(resultT)
+		}
+	}
+	
+	let prefixText = "";
+	for(let p = 0; p < prefixes.length; p++){
+		if(typeof prefixTable[prefixes[p]["name"]] !== "undefined"){
+			prefixText = prefixText+"PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">\n";
+		}
+	}
+	let prefixMembership = getPrefixFromClassMembership(dirRole);
+	for(let prefix in prefixMembership) {
+		if(typeof prefixMembership[prefix] !== 'function') prefixText = prefixText+"PREFIX " + prefix + " " + prefixMembership[prefix] + "\n";
+	}
+	
+	let result = prefixText + "\nSELECT * WHERE{\n" + objectPropertiesUnion.join("\n") + "\n\n" + classSPARQL.join("\n") + "\n}";
+	setText_In_SPARQL_Editor(result);
+	return {SPARQL_text:result, messages:messages};
+
 }
 
 function getClassListFromString(classList){

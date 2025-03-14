@@ -5761,9 +5761,26 @@
           {
             "item": "Delete",
             "procedure": "DeleteCollection"
+          },
+		  {
+            "item": "Execute selection",
+            "procedure": "ExecuteSPARQL_form_selection_DSS"
+          },
+          {
+            "item": "Generate SPARQL from selection",
+            "procedure": "GenereteSPARQL_form_selection_DSS"
           }
         ],
-        "readModeCollectionContextMenu": [],
+        "readModeCollectionContextMenu": [
+		  {
+            "item": "Execute selection",
+            "procedure": "ExecuteSPARQL_form_selection_DSS"
+          },
+          {
+            "item": "Generate SPARQL from selection",
+            "procedure": "GenereteSPARQL_form_selection_DSS"
+          }
+		],
         "selectionStyle": {
           "fill": "grey",
           "opacity": 0.4,
