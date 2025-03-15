@@ -1,6 +1,7 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 import './VQ_DSS_schema.html'
+import { fragments } from './fragments';
 
 Template.VQ_DSS_schema.SchemaName = new ReactiveVar('');
 Template.VQ_DSS_schema.Classes = new ReactiveVar([]);
@@ -603,6 +604,14 @@ Template.VQ_DSS_schema.events({
 			Template.VQ_DSS_schema.ManualDisabled.set("disabled");
 			Template.VQ_DSS_schema.FilterDisabled.set("");
 		}
+	},
+	'click #getFragment': async function() {
+		const fragSize = parseInt(document.getElementById("fragment-size").value);
+		const fragmentClasses = await fragments(fragSize);
+		const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){return fragmentClasses.includes(c.full_name)});
+		const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return !fragmentClasses.includes(c.full_name)});
+		setClassListInfo(classes, restClasses);
+		clearData();
 	},
 	'click #removeAll': function() {
 		// TODO Šīs pogas vairs nav
