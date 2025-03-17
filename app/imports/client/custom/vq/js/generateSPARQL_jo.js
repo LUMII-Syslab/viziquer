@@ -634,7 +634,8 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 		let propertyResolved = await dataShapes.resolvePropertyByName(params);
 		
 		if(propertyResolved.complete === true){
-			objectPropertiesUnion.push("  ?" + startElementName + " " + propertyResolved.name + " ?"+endElementName+". ");
+			let preditate = propertyResolved.data[0].prefix + ":" + propertyResolved.data[0].local_name;
+			objectPropertiesUnion.push("  ?" + startElementName + " " + preditate + " ?"+endElementName+". ");
 			prefixTable[propertyResolved.data[0].prefix] = "";
 		} else {
 			messages.push("The property name '"+ objectProperties[prop] +"' could not be resolved within the data schema.");
@@ -732,14 +733,14 @@ async function generateSPARQLtextFromSchemaForSelection(){
 		let classList = selected_elem.getCompartmentValue("ClassList");
 
 		if(classList === null){
-			let startSimpleSchemaBox = await simpleSchemaBox(selected_elem, n, dirRole, [], true);
+			let startSimpleSchemaBox = await simpleSchemaBox(selected_elem, n, dirRole, usedNames, true);
 			prefixTable = { ...prefixTable, ...startSimpleSchemaBox.prefixes};
 			usedNames = { ...usedNames, ...startSimpleSchemaBox.usedNames};
 			classSPARQL.push(startSimpleSchemaBox.sparql);
 			classNames[key] = startSimpleSchemaBox.className;
 			messages = messages.concat(startSimpleSchemaBox["messages"]);
 		} else {
-			let startGroupSchemaBox = await groupSchemaBox(selected_elem, n, dirRole, classList, [], true);
+			let startGroupSchemaBox = await groupSchemaBox(selected_elem, n, dirRole, classList, usedNames, true);
 			prefixTable = { ...prefixTable, ...startGroupSchemaBox.prefixes};
 			usedNames = { ...usedNames, ...startGroupSchemaBox.usedNames};
 			classNames[key] = startGroupSchemaBox.className;
@@ -771,7 +772,8 @@ async function generateSPARQLtextFromSchemaForSelection(){
 				let propertyResolved = await dataShapes.resolvePropertyByName(params);
 				
 				if(propertyResolved.complete === true){
-					objectPropertiesUnionTemp.push("  ?" + startElementName + " " + propertyResolved.name + " ?"+endElementName+". ");
+					let preditate = propertyResolved.data[0].prefix + ":" + propertyResolved.data[0].local_name;
+					objectPropertiesUnionTemp.push("  ?" + startElementName + " " + preditate + " ?"+endElementName+". ");
 					prefixTable[propertyResolved.data[0].prefix] = "";
 				} else {
 					messages.push("The property name '"+ objectProperties[prop] +"' could not be resolved within the data schema.");
