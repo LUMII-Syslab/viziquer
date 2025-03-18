@@ -2,6 +2,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 
 export async function fragments(fragmentClassCount) {
 	const mainClasses = Template.VQ_DSS_schema.Classes.get().map(c => c.full_name);		// Classes around which the fragment should be created
+	const mainClassCount = mainClasses.length;
 
 	const xxClassCPCCounts = await dataShapes.callServerFunction("xx_getClassCPCCounts", {main: {}});
 	const classCPCCounts = new Map(xxClassCPCCounts.data.map(obj => [`${obj.ns_name}:${obj.class_name}`, parseInt(obj.total_cpc_cnt)]));
@@ -52,7 +53,7 @@ export async function fragments(fragmentClassCount) {
 		currClassCount++;
 
 		// If a main class is selected, change its relevance to 1 to ensure adequate relevance for classes linked to this class
-		if (classRelevance[bestCandidate] >= 1000) {classRelevance[bestCandidate] = 1;}	
+		if (classRelevance[bestCandidate] >= 1000) {classRelevance[bestCandidate] = 1/mainClassCount;}	
 		
 		// Update relevance for neighbors of bestCandidate
 		adj[bestCandidate].forEach(cp => {
