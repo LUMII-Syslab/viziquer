@@ -2,12 +2,12 @@ import { Roles } from 'meteor/alanning:roles'
 
 import { is_project_admin, is_project_member, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '/imports/libs/platform/user_rights'
 import { generate_id } from '/imports/libs/platform/lib'
-import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments, Posts, ForumPosts } from '/imports/db/platform/collections'
+import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments, } from '/imports/db/platform/collections'
 import { Schema } from '/imports/db/custom/vq/collections'
 import { get_unknown_public_user_name } from '/imports/server/platform/_helpers'
 
 //creating a new project version and adds the project creator to the project
-Projects.after.insert(async function(user_id, doc) {
+Projects.after.insert(async function (user_id, doc) {
 
   if (!doc) {
     return false;
@@ -87,6 +87,7 @@ Projects.before.remove(function (user_id, doc) {
   //	return false;
 
 });
+
 Projects.hookOptions.before.remove = { fetchPrevious: false };
 
 //TODO: needs some cheking if this ok
@@ -97,9 +98,6 @@ Projects.after.remove(async function (user_id, doc) {
   //a transaction is needed
   await ProjectsUsers.removeAsync({ projectId: proj_id });
   await Versions.removeAsync({ projectId: proj_id });
-
-  await Posts.removeAsync({ projectId: proj_id });
-  await ForumPosts.removeAsync({ projectId: proj_id });
 
   //roles???
 });

@@ -4,12 +4,12 @@ import './dump.html'
 
 Template.dump.helpers({
 
-	json: function() {
+	json: async function() {
 
 		var list = {toolId: Session.get("toolId"),};
-		Utilities.callMeteorMethod("exportToolConfiguration", list, function(resp) {
+		let resp = await Utilities.callMeteorMethodAsync("exportToolConfiguration", list);
 			Session.set("json", resp);
-		});
+	
 
 		return Session.get("json");
 	},

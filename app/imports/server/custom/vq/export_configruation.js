@@ -208,7 +208,7 @@ ExportDiagramConfig.prototype = {
 
 // 	console.log("list ", list)
 
-// 	Utilities.callMeteorMethod("importAjooConfiguration", list);
+// 	await Utilities.callMeteorMethodAsync("importAjooConfiguration", list);
 
 // }
 

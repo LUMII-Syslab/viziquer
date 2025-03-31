@@ -22,9 +22,9 @@ import '/imports/server/platform/methods/diagrams/diagrams_sections'
 import '/imports/server/platform/methods/diagrams/elements_sections'
 
 
-import '/imports/server/platform/methods/chat/chats'
-import '/imports/server/platform/methods/feed/posts'
-import '/imports/server/platform/methods/forum/forum'
+// import '/imports/server/platform/methods/chat/chats'
+// import '/imports/server/platform/methods/feed/posts'
+// import '/imports/server/platform/methods/forum/forum'
 import '/imports/server/platform/methods/notifications/notifications'
 import '/imports/server/platform/methods/search/searches'
 import '/imports/server/platform/methods/users/projects_groups'
@@ -64,95 +64,95 @@ import '/imports/libs/custom/mytest'
 // import '/libs/custom/ontologyParams'
 
 
-Meteor.startup(async () => {  
-    console.log("Loading server");
+Meteor.startup(async () => {
+  console.log("Loading server");
 
-    Meteor.call("importConfiguration");
+  Meteor.call("importConfiguration");
 
-    //adding captcha secret key
-     // reCAPTCHA.config({privatekey: '6Le-uwkTAAAAAIH3amO6eRpcjRYJw50q1uef8phe'});
+  //adding captcha secret key
+  // reCAPTCHA.config({privatekey: '6Le-uwkTAAAAAIH3amO6eRpcjRYJw50q1uef8phe'});
 
-      //mail server settings
-      // process.env.MAIL_URL = 'smtp://postmaster@sandbox3eb2756f94924ab0838893d4c969e4e8.mailgun.org:683dbf555c8b46b4ecfd3508c8f1da39@smtp.mailgun.org:587';
-      // process.env.MAIL_URL = 'smtp://postmaster@viziquer.lumii.lv:46c1183101c042354b083dd2420bfe61@smtp.mailgun.org:587';
-
-
-    // checking if CompartmentTypes contains attribute label
-    const compart_type = CompartmentTypes.findOne({label: { $exists: false }});
-    if (compart_type) {
-        await CompartmentTypes.find().forEachAsync(function(compart_type) {
-            CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
-        });
-    }
-
-    // if (Meteor.isServer) {
-    const path = Npm.require('path');
-    const dotenv = Npm.require('dotenv');
-    const envFile = process.env.ENV_NAME ? `${process.env.ENV_NAME}.env` : '.env';
-
-    let startFolder = process.cwd();
-    let projectFolder = startFolder.slice(0, startFolder.indexOf('.meteor'));
-
-    const envPath = path.resolve(projectFolder, envFile);
-    console.log(`Looking for env in ${envPath}`);
-    const env = dotenv.config({ path: envPath });
-    if (env && env.parsed) {
-        console.log('env loaded:', env.parsed)
-    } else {
-        console.log('no env found');
-    }
-    console.log('Effective environment:', process.env);
-    // }
+  //mail server settings
+  // process.env.MAIL_URL = 'smtp://postmaster@sandbox3eb2756f94924ab0838893d4c969e4e8.mailgun.org:683dbf555c8b46b4ecfd3508c8f1da39@smtp.mailgun.org:587';
+  // process.env.MAIL_URL = 'smtp://postmaster@viziquer.lumii.lv:46c1183101c042354b083dd2420bfe61@smtp.mailgun.org:587';
 
 
-    let Api = new Restivus({
-        // useDefaultAuth: true,
-        prettyJson: true
+  // checking if CompartmentTypes contains attribute label
+  const compart_type = await CompartmentTypes.findOneAsync({ label: { $exists: false } });
+  if (compart_type) {
+    await CompartmentTypes.find().forEachAsync(function (compart_type) {
+      CompartmentTypes.update({ _id: compart_type._id }, { $set: { label: compart_type.name, } });
     });
+  }
+
+  // if (Meteor.isServer) {
+  const path = Npm.require('path');
+  const dotenv = Npm.require('dotenv');
+  const envFile = process.env.ENV_NAME ? `${process.env.ENV_NAME}.env` : '.env';
+
+  let startFolder = process.cwd();
+  let projectFolder = startFolder.slice(0, startFolder.indexOf('.meteor'));
+
+  const envPath = path.resolve(projectFolder, envFile);
+  console.log(`Looking for env in ${envPath}`);
+  const env = dotenv.config({ path: envPath });
+  if (env && env.parsed) {
+    console.log('env loaded:', env.parsed)
+  } else {
+    console.log('no env found');
+  }
+  console.log('Effective environment:', process.env);
+  // }
 
 
-    Api.addRoute('public-diagram', {}, {
+  let Api = new Restivus({
+    // useDefaultAuth: true,
+    prettyJson: true
+  });
 
-        // get: function () {
-        //     let list = {};
-        //     _.extend(list, this.queryParams);
 
-        //     let diagram = Meteor.call("addPublicDiagram", list);
+  Api.addRoute('public-diagram', {}, {
 
-        //     let url = "http://78.84.99.73:5000/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
+    // get: function () {
+    //     let list = {};
+    //     _.extend(list, this.queryParams);
 
-        //     return {
-        //         statusCode: 200,
-        //         headers: {
-        //             'Content-Type': 'text/plain',
-        //             'Location': url
-        //         },
-        //         body: 'Location: ' + url,
-        //     };
-        // },
+    //     let diagram = Meteor.call("addPublicDiagram", list);
 
-        post: {
-            action: function () {
-                let list = {};
-                // _.extend(list, this.queryParams);
-                _.extend(list, this.bodyParams);
+    //     let url = "http://78.84.99.73:5000/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
 
-                let diagram = Meteor.call("addPublicDiagram", list);
+    //     return {
+    //         statusCode: 200,
+    //         headers: {
+    //             'Content-Type': 'text/plain',
+    //             'Location': url
+    //         },
+    //         body: 'Location: ' + url,
+    //     };
+    // },
 
-                let url = "/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
+    post: {
+      action: function () {
+        let list = {};
+        // _.extend(list, this.queryParams);
+        _.extend(list, this.bodyParams);
 
-                return {
-                    statusCode: 200,
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Access-Control-Allow-Origin': '*',
-                    },
-                    // response: {url: url,},
-                    body: { url }
-                };
-            }
-        }
-    });
+        let diagram = Meteor.call("addPublicDiagram", list);
 
-    console.log("End startup");
+        let url = "/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
+
+        return {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          // response: {url: url,},
+          body: { url }
+        };
+      }
+    }
+  });
+
+  console.log("End startup");
 });

@@ -631,35 +631,6 @@ chat-body li.message img.online {
 /* End of main template */
 
 
-/* Chats */
-
-#to {
-	border: none;
-}
-
-.selected-item {
-  cursor:pointer;
-  background:#eee;
-}
-
-
-/* End of chats */
-
-/* Contacts */
-.contacts-remove {
-	margin: 2px;
-}
-
-.contact-users {
-	margin-left: 10px;
-}
-
-.custom-chat-container {
-  max-width: 800px;
-}
-
-/* End of contacts */
-
 /* Start of no-project form */
 .no-project-form {
   margin: 20px;

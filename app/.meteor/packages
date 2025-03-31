@@ -48,7 +48,7 @@ peerlibrary:xml2js
 rzymek:pegjs
 #twbs:bootstrap
 dynamic-import@0.7.3
-fetch@0.1.4
+#fetch@0.1.4
 tap:i18n
 ostrio:flow-router-extra
 kadira:blaze-layout

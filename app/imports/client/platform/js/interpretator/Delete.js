@@ -6,52 +6,53 @@ import { build_element_names_array } from '/imports/client/platform/js/interpret
 
 Interpreter.methods({
 
-	DeleteCollection: function(e) {
-		this.execute("Delete", [e]);
-	},
+  DeleteCollection: function (e) {
+    this.execute("Delete", [e]);
+  },
 
-	//deletes element collection
-	Delete: function(e) {
+  //deletes element collection
+  Delete: function (e) {
 
-		var selection_list;
+    var selection_list;
 
-		var editor_type = Interpreter.getEditorType();
-		if (is_ajoo_editor(editor_type)) {
-			var editor = Interpreter.editor;
-			selection_list = editor.getSelectedElements();
-		}
+    var editor_type = Interpreter.getEditorType();
+    if (is_ajoo_editor(editor_type)) {
+      var editor = Interpreter.editor;
+      selection_list = editor.getSelectedElements();
+    }
 
-		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
-		var res = Interpreter.executeExtensionPoint(diagram_type, "beforeDeleteCollection", selection_list);
-		if (res != false) {
+    var diagram_type = DiagramTypes.findOne({ _id: Session.get("diagramType") });
+    var res = Interpreter.executeExtensionPoint(diagram_type, "beforeDeleteCollection", selection_list);
+    if (res != false) {
 
-			var selected_elem_ids = _.keys(selection_list);
-			
-			//selecting the linked line
-			var linked_elem_ids = Elements.find({$or: [{startElement: {$in: selected_elem_ids}}, {endElement: {$in: selected_elem_ids}}]}).map(
-				function(elem) {
-					return elem["_id"];
-				});
+      var selected_elem_ids = _.keys(selection_list);
 
-			var elements = _.union(selected_elem_ids, linked_elem_ids);
+      //selecting the linked line
+      var linked_elem_ids = Elements.find({ $or: [{ startElement: { $in: selected_elem_ids } }, { endElement: { $in: selected_elem_ids } }] }).map(
+        function (elem) {
+          return elem["_id"];
+        });
 
-			//selecting element names for diagram history logging
-			var list = {elements: elements,
-						elementNames: build_element_names_array(elements),
-						diagramId: Session.get("activeDiagram"),
-					};
+      var elements = _.union(selected_elem_ids, linked_elem_ids);
 
-			Interpreter.executeExtensionPoint(diagram_type, "deleteCollection", list);
-			Interpreter.executeExtensionPoint(diagram_type, "afterDeleteCollection", list);
-		}
-	},
+      //selecting element names for diagram history logging
+      var list = {
+        elements: elements,
+        elementNames: build_element_names_array(elements),
+        diagramId: Session.get("activeDiagram"),
+      };
 
-	DeleteElementsCollection: function(list) {
-		list["projectId"] = Session.get("activeProject");
-		list["versionId"] = Session.get("versionId");
+      Interpreter.executeExtensionPoint(diagram_type, "deleteCollection", list);
+      Interpreter.executeExtensionPoint(diagram_type, "afterDeleteCollection", list);
+    }
+  },
 
-		Utilities.callMeteorMethod("deleteElements", list);
-	},
+  DeleteElementsCollection: async function (list) {
+    list["projectId"] = Session.get("activeProject");
+    list["versionId"] = Session.get("versionId");
+
+    await Utilities.callMeteorMethodAsync("deleteElements", list);
+  },
 
 });
 

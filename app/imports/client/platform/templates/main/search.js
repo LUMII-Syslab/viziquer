@@ -20,51 +20,6 @@ Template.searchMenu.helpers({
 				return selecting_searches();
 			},
 
-			chats: function() {
-
-				var search = Session.get("chatsSearch");
-				if(!search)
-					return;
-
-				//selects users
-				var query = build_user_search_query(search["text"]);
-				var users = Users.find(query);					
-				var res = users.map(function(user, i) {
-					var item = {};
-					item["index"] = i;
-					item["phrase"] = true;
-
-					item["id"] = user["systemId"];
-					item["name"] = user["name"] + " " + user["surname"];
-					item["phrase"] = item["name"];
-					item["profileImage"] = user["profileImage"];
-					item["email"] = user["email"];
-
-					return item;
-				});
-
-				//if users are less then 10, then adding also some search phrases
-				var users_count = users.count();
-				if (users_count <= 10) {
-					var limit = 10 - users_count;
-					var searches = Searches.find({}, {$sort: {counter: -1}, limit: limit});
-					searches.forEach(function(search, i) {
-						
-						var item = {};
-						item["id"] = search["_id"];
-						item["index"] = users_count + i;
-						item["phrase"] = search["phrase"];
-
-						res.push(item);
-					});
-				}
-
-				res["count"] = res.length;
-				res["style"] = get_display_mode(res.length);
-
-				return res;
-			},
-
 			users: function() {
 
 				var query = {};
@@ -78,9 +33,6 @@ Template.searchMenu.helpers({
 				return selecting_searches(query, limit);
 			},
 
-			contacts: function() {
-				return selecting_searches();
-			}
 		};
 
 		if (search_functions[search_type])
@@ -200,58 +152,6 @@ function search_object(e, text) {
 		    save_query(collection_type, text);
 		},
 
-		chats: function() {
-
-			var user_id = $("#searchField").attr("itemid")
-		    var list = {
-		    			userId: user_id,
-						phrase: text,
-					};
-
-			var query = Session.get("userChats");
-			query["page"] = 1;
-			
-			if (text == "")
-				query["userId"] = undefined;
-			else
-				query["userId"] = user_id;
-
-			Session.set("userId", query["userId"]);
-
-			Session.set("phrase", text);
-			query["phrase"] = text;
-
-			//stores the searched user
-			Meteor.call("searchInChats", list, function(err){
-				if (err) {
-					console.log("Error in searchInChats", err);
-				}
-			});
-
-			Session.set("userChats", query);
-
-			var path = build_path_to_chat_page(1);
-
-			FlowRouter.go(path);
-		},
-
-		contacts: function() {
-
-			Session.set("searchContacts", {phrase: text});
-
-		    var list = {
-						phrase: text,
-						type: collection_type,
-					};
-
-			//stores the searched user
-			Meteor.call("searchInContacts", list, function(err){
-				if (err) {
-					console.log("Error in searchInContacts", err);
-				}
-			});
-
-		},
 	};
 
 	if (search_type_func[search_type])
@@ -321,20 +221,6 @@ function search_keyup(e) {
 
 			var search_type = Session.get("search_type");
 			var search_type_func = {
-
-				chats: function() {
-					var filter = {text: text,
-									type: collection_type};
-					
-				    Session.set(query, filter);
-				},
-
-				contacts: function() {
-					var filter = {text: text,
-									type: collection_type};
-					
-				    Session.set(query, filter);
-				},
 
 				users: function() {
 					exec_search_keyup(query, collection_type, text);

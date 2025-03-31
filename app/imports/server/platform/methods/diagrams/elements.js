@@ -802,6 +802,7 @@ async function add_compartment_type_ids(compartments, diagram_id) {
 
 export {
   build_diagram_notification,
+  resize_element,
 }
 
 

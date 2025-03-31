@@ -4,67 +4,67 @@ import { Utilities } from '/imports/client/platform/js/utilities/utils'
 
 Interpreter.methods({
 
-	ResizeConfiguratorElement: function(list) {
-		list["toolId"] = Session.get("toolId");
-		list["versionId"] = Session.get("toolVersionId");
+  ResizeConfiguratorElement: async function (list) {
+    list["toolId"] = Session.get("toolId");
+    list["versionId"] = Session.get("toolVersionId");
 
-		Utilities.callMeteorMethod("resizeElement", list);
-	},
+    await Utilities.callMeteorMethodAsync("resizeElement", list);
+  },
 
-	ChangeConfiguratorCollectionPosition: function(list) {
-		list["toolId"] = Session.get("toolId");
-		list["versionId"] = Session.get("toolVersionId");
+  ChangeConfiguratorCollectionPosition: async function (list) {
+    list["toolId"] = Session.get("toolId");
+    list["versionId"] = Session.get("toolVersionId");
 
-		Utilities.callMeteorMethod("changeCollectionPosition", list);
-	},
+    await Utilities.callMeteorMethodAsync("changeCollectionPosition", list);
+  },
 
-	CopyConfiguratorCollection: function(list) {
-		list["toolId"] = Session.get("toolId");
-		list["versionId"] = Session.get("toolVersionId");
-	},
+  CopyConfiguratorCollection: function (list) {
+    list["toolId"] = Session.get("toolId");
+    list["versionId"] = Session.get("toolVersionId");
+  },
 
-	CutConfiguratorCollection: function(list) {
-		list["toolId"] = Session.get("toolId");
-		list["versionId"] = Session.get("toolVersionId");
-	},
+  CutConfiguratorCollection: function (list) {
+    list["toolId"] = Session.get("toolId");
+    list["versionId"] = Session.get("toolVersionId");
+  },
 
-	PasteConfiguratorCollection: function(list) {
-		list["toolId"] = Session.get("toolId");
-		list["versionId"] = Session.get("toolVersionId");
-	},
+  PasteConfiguratorCollection: function (list) {
+    list["toolId"] = Session.get("toolId");
+    list["versionId"] = Session.get("toolVersionId");
+  },
 
-	UpdateConfiguratorDiagram: function(list) {
-		list["toolId"] = Session.get("toolId");
-		list["versionId"] = Session.get("toolVersionId");
+  UpdateConfiguratorDiagram: function (list) {
+    list["toolId"] = Session.get("toolId");
+    list["versionId"] = Session.get("toolVersionId");
 
-		return {serverMethod: "updateDiagram"};
-	},
+    return { serverMethod: "updateDiagram" };
+  },
 
-	//deleting configurator diagram
-	DeleteConfiguratorDiagram: function(list) {
-		list["toolId"] = Session.get("toolId");
-		list["versionId"] = Session.get("toolVersionId");
+  //deleting configurator diagram
+  DeleteConfiguratorDiagram: async function (list) {
+    list["toolId"] = Session.get("toolId");
+    list["versionId"] = Session.get("toolVersionId");
 
-		Utilities.callMeteorMethod("removeDiagram", list);
+    await Utilities.callMeteorMethodAsync("removeDiagram", list);
 
-		if (Session.get("toolVersionId")) {
-			FlowRouter.go("tool", {_id: Session.get("toolId"), versionId: Session.get("toolVersionId")});
-		}
-		else {
-			FlowRouter.go("tool", {_id: Session.get("toolId")});
-		}
-	},
+    if (Session.get("toolVersionId")) {
+      FlowRouter.go("tool", { _id: Session.get("toolId"), versionId: Session.get("toolVersionId") });
+    }
+    else {
+      FlowRouter.go("tool", { _id: Session.get("toolId") });
+    }
+  },
 
-	//deleting configurator collection
-	DeleteConfiguratorElementsCollection: function(list) {
+  //deleting configurator collection
+  DeleteConfiguratorElementsCollection: async function (list) {
 
-		// list["domain"] = domain_data;
-		list["toolId"] = Session.get("toolId")
-		list["versionId"] = Session.get("toolVersionId");
+    // list["domain"] = domain_data;
+    list["toolId"] = Session.get("toolId")
+    list["versionId"] = Session.get("toolVersionId");
 
-		//deleteConfiguratorCollection
-		Utilities.callMeteorMethod("deleteElements", list);
-	},
+    //deleteConfiguratorCollection
+    await Utilities.callMeteorMethodAsync("deleteElements", list);
+  },
 
 });
 

@@ -1,9 +1,10 @@
 import { is_project_version_admin, is_system_admin } from '/imports/libs/platform/user_rights'
 import { Elements } from '/imports/db/platform/collections'
+import { resize_element } from '/imports/server/platform/methods/diagrams/elements';
 
 Meteor.methods({
 
-	changeColor : function(list) {
+	changeColor : async function(list) {
 		var user_id = Meteor.userId();
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list)) {
@@ -21,7 +22,7 @@ Meteor.methods({
 									{$set: update});
 			}
 		}
-		else if (is_system_admin(user_id, list)) {
+		else if (await is_system_admin(user_id, list)) {
 			var query = {toolId: list["toolId"], versionId: list["versionId"]};
 			resize_element(list, query, user_id);
 		}

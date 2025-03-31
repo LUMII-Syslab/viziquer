@@ -1,18 +1,3 @@
-import { Contacts } from '/imports/db/platform/collections'
-
-async function get_contacts(system_id) {
-	var contacts = Contacts.find({userSystemId: system_id});
-	var user_ids = [];
-	if ((await contacts.countAsync()) > 0) {
-		var contacts_fetch = await contacts.fetchAsync();
-		for (var i=0;i<contacts_fetch.length;i++) {
-			var contact = contacts_fetch[i];
-			if (contact["contactId"])
-				user_ids.push(contact["contactId"]);
-		}
-	}
-	return user_ids;
-}
 
 //checks if variable is empty sting or undefined
 function is_empty(str) {
@@ -113,7 +98,6 @@ async function send_email(list) {
 
 
 export {
-  get_contacts,
   is_empty,
   is_not_empty,
   get_configurator_project_id,

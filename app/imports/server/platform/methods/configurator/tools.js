@@ -25,7 +25,8 @@ Meteor.methods({
       list["archive"] = true;
       list["analytics"] = true;
       list["users"] = true;
-      list["forum"] = true;
+      // list["forum"] = true;
+      list["forum"] = false;
 
       list["tasks"] = false;
       list["training"] = false;
@@ -103,7 +104,7 @@ Meteor.methods({
           }
         });
 
-        await UserTools.updateAsync({ userSystemId: user_id, toolId: list["toolId"] },
+      await UserTools.updateAsync({ userSystemId: user_id, toolId: list["toolId"] },
         { $set: { versionId: list["versionId"] } });
     }
   },

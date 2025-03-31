@@ -94,7 +94,8 @@ Meteor.methods({
               archive: true,
               analytics: true,
               users: true,
-              forum: true,
+              // forum: true,
+              forum: false,
               tasks: true,
               training: true,
             };
@@ -149,11 +150,10 @@ Meteor.methods({
     if (user_id) {
 
       //users cannot set admin property by themselves
-      if (list["isSystemAdmin"])
+      if (list["isSystemAdmin"]) {
         return;
 
-      //updating user's properties
-      else {
+      } else { //updating user's properties
         var operation = "$set";
         if (list["operation"])
           operation = list["operation"];

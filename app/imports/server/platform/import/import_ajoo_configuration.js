@@ -14,6 +14,16 @@ Meteor.methods({
     _import.importDiagramTypes(data.types);
   },
 
+  importAjooConfigurationAsync: async function (list) {
+    var _import = new ImportAjooConfiguration(list.toolId, list.versionId);
+
+    var data = list.data;
+
+    _import.importTool(data.tool);
+    _import.importDiagrams(data.presentations);
+    _import.importDiagramTypes(data.types);
+  },
+
 
   addConfiguratorExportButtonInToolbar: async function () {
 

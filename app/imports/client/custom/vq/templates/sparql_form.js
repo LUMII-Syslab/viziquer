@@ -207,7 +207,7 @@ Template.sparqlForm.onRendered( async function() {
 			}
 		}
 		var list = {projectId: project_id, set: {newPublicProject: false, isVisualizationNeeded: false},};
-		Utilities.callMeteorMethod("updateProject", list);	
+		await Utilities.callMeteorMethodAsync("updateProject", list);	
 	}
 
 	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"

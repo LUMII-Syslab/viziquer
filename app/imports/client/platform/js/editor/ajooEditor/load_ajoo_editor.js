@@ -8,569 +8,573 @@ import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compa
 import { get_context_menu_list } from '/imports/client/platform/js/interpretator/context_menu.js'
 import { compute_new_line_type } from '/imports/client/platform/js/interpretator/NewElement.js'
 
-Interpreter.loadAjooEditor = function(diagram) {
+Interpreter.loadAjooEditor = function (diagram) {
 
-	if (!(diagram && diagram["style"])) {
-		console.error("Error: no diagram");
-		return;
-	}
+  if (!(diagram && diagram["style"])) {
+    console.error("Error: no diagram");
+    return;
+  }
 
-    var diagram_type = DiagramTypes.findOne({_id: diagram["diagramTypeId"]});
-	if (!(diagram_type)) {
-		console.error("Error: no diagram type");
-		return;
-	}
+  var diagram_type = DiagramTypes.findOne({ _id: diagram["diagramTypeId"] });
+  if (!(diagram_type)) {
+    console.error("Error: no diagram type");
+    return;
+  }
 
-	var is_edit_mode = false;
-	if (diagram["editing"] && diagram["editing"]["userId"] == Session.get("userSystemId")) {
-		is_edit_mode = true;
-	}
+  var is_edit_mode = false;
+  if (diagram["editing"] && diagram["editing"]["userId"] == Session.get("userSystemId")) {
+    is_edit_mode = true;
+  }
 
-    var container_name = "Diagram_Editor";
+  var container_name = "Diagram_Editor";
 
-    var container_width = $("#" + container_name).width();
-    var container_height = $(window).height() - $("#" + container_name).offset().top - 200;
-	
-	var layoutSettings = {"layout": "UNIVERSAL", "arrangeMethod": "arrangeFromScratch"};
-	if ( diagram.layoutSettings != undefined )
-		layoutSettings = diagram.layoutSettings;
-	else if ( diagram_type.layoutSettings != undefined)
-		layoutSettings = diagram_type.layoutSettings;
-		
+  var container_width = $("#" + container_name).width();
+  var container_height = $(window).height() - $("#" + container_name).offset().top - 200;
 
-	var settings = {
-			        container: container_name,
-			        width: container_width,
-			        height: container_height * 0.9,
+  var layoutSettings = { "layout": "UNIVERSAL", "arrangeMethod": "arrangeFromScratch" };
+  if (diagram.layoutSettings != undefined)
+    layoutSettings = diagram.layoutSettings;
+  else if (diagram_type.layoutSettings != undefined)
+    layoutSettings = diagram_type.layoutSettings;
 
-	                isEditModeEnabled: is_edit_mode,
-	                data: {boxes: [], lines: []},
 
-	                area: {
-	                    background: diagram["style"],
-	                },
+  var settings = {
+    container: container_name,
+    width: container_width,
+    height: container_height * 0.9,
 
-                    boxSettings: {
-                    	isMaxSizeEnabled: false,
-                    	// isMaxSizeEnabled: true,
-                    	isTextFitEnabled: false,
-                    },
+    isEditModeEnabled: is_edit_mode,
+    data: { boxes: [], lines: [] },
 
-                    lineSettings: {
-                    	compartmentLayout: "owlGrEdLayout",
-                    	// compartmentLayout: "processOrientedFlow",
-                    },
+    area: {
+      background: diagram["style"],
+    },
 
-                    isPanningEnabled: false,
+    boxSettings: {
+      isMaxSizeEnabled: false,
+      // isMaxSizeEnabled: true,
+      isTextFitEnabled: false,
+    },
 
-	              	palette: {},
-	                selectionStyle: diagram_type["selectionStyle"],
+    lineSettings: {
+      compartmentLayout: "owlGrEdLayout",
+      // compartmentLayout: "processOrientedFlow",
+    },
 
-	                events: get_event_functions(),
-	                eventLogging: event_logging(),
-	                isLayoutComputationNeededOnLoad: diagram["isLayoutComputationNeededOnLoad"],
+    isPanningEnabled: false,
 
-	                layoutSettings: layoutSettings
-			    };
+    palette: {},
+    selectionStyle: diagram_type["selectionStyle"],
 
-	return new AjooEditor(settings);
+    events: get_event_functions(),
+    eventLogging: event_logging(),
+    isLayoutComputationNeededOnLoad: diagram["isLayoutComputationNeededOnLoad"],
+
+    layoutSettings: layoutSettings
+  };
+
+  return new AjooEditor(settings);
 };
 
 
 function get_event_functions() {
 
-	return {
-
-	    collectionPositionChanged: function(list) {
-	    	var diagram_id = Session.get("activeDiagram");
-	    	list["diagramId"] = diagram_id;
-
-			var obj_type = get_object_type(diagram_id);
-			Interpreter.executeExtensionPoint(obj_type, "changeCollectionPosition", list);
-	    },
-
-	    elementResized: function(list) {
-	    	list["diagramId"] = Session.get("activeDiagram");
-
-	        var obj_type = get_object_type(list["elementId"]);
-	        Interpreter.executeExtensionPoint(obj_type, "resizeElement", list);
-	    },
+  return {
+
+    collectionPositionChanged: function (list) {
+      var diagram_id = Session.get("activeDiagram");
+      list["diagramId"] = diagram_id;
+
+      var obj_type = get_object_type(diagram_id);
+      Interpreter.executeExtensionPoint(obj_type, "changeCollectionPosition", list);
+    },
+
+    elementResized: function (list) {
+      list["diagramId"] = Session.get("activeDiagram");
+
+      var obj_type = get_object_type(list["elementId"]);
+      Interpreter.executeExtensionPoint(obj_type, "resizeElement", list);
+    },
 
-	  	//Clicks
-	    clickedOnDiagram: function(list) {
-	       	Interpreter.hideContextMenu();
-	       	Interpreter.resetActiveElement();
-	    },
-
-	    clickedOnElement: function(data) {
-	       	Interpreter.hideContextMenu();
+    //Clicks
+    clickedOnDiagram: function (list) {
+      Interpreter.hideContextMenu();
+      Interpreter.resetActiveElement();
+    },
+
+    clickedOnElement: function (data) {
+      Interpreter.hideContextMenu();
 
-	       	var element = data.element;
-			Interpreter.setActiveElement(element._id);
-	    },
+      var element = data.element;
+      Interpreter.setActiveElement(element._id);
+    },
 
-	  	//RClicks
-	    rClickedOnDiagram: function(data) {
+    //RClicks
+    rClickedOnDiagram: function (data) {
 
-	    	var editor = this;
-
-			if (editor.isSelectionEmpty()) {
-				var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
-
-		        //selecting active diagram type object
-		       	if (!diagram_type) {
-		       		console.error("Error: No diagram type");
-		       		return;
-		       	}
+      var editor = this;
+
+      if (editor.isSelectionEmpty()) {
+        var diagram_type = DiagramTypes.findOne({ _id: Session.get("diagramType") });
+
+        //selecting active diagram type object
+        if (!diagram_type) {
+          console.error("Error: No diagram type");
+          return;
+        }
 
-				var menu;
-				if (Session.get("editMode")) {
-					menu = get_context_menu_list(diagram_type, "noCollectionContextMenu", "dynamicNoCollectionContextMenu");
-				}
-				else {
-					menu = get_context_menu_list(diagram_type, "readModeNoCollectionContextMenu", "dynamicReadModeNoCollectionContextMenu");
-				}
+        var menu;
+        if (Session.get("editMode")) {
+          menu = get_context_menu_list(diagram_type, "noCollectionContextMenu", "dynamicNoCollectionContextMenu");
+        }
+        else {
+          menu = get_context_menu_list(diagram_type, "readModeNoCollectionContextMenu", "dynamicReadModeNoCollectionContextMenu");
+        }
+
+        Interpreter.processContextMenu(data.ev, diagram_type[menu.attrName]);
+      }
 
-				Interpreter.processContextMenu(data.ev, diagram_type[menu.attrName]);
-			}
+      Interpreter.resetActiveElement();
+    },
+
+    rClickedOnElement: function (data) {
 
-			Interpreter.resetActiveElement();
-	    },
+      var element = data.element;
+      var elem_id = element._id;
 
-	    rClickedOnElement: function(data) {
+      Interpreter.setActiveElement(elem_id);
 
-	    	var element = data.element;
-	    	var elem_id = element._id;
+      //selecting  active element type object
+      var elem_type = ElementTypes.findOne({ _id: Session.get("activeElementType") });
+      if (!elem_type) {
+        console.error("Error: No element type");
+        return;
+      }
 
-	    	Interpreter.setActiveElement(elem_id);
+      //showing the context menu depending on the edit/read mode
+      var menu;
+      if (Interpreter.editor.isEditMode()) {
+        menu = get_context_menu_list(elem_type, "contextMenu", "dynamicContextMenu");
+      }
+      else {
+        menu = get_context_menu_list(elem_type, "readModeContextMenu", "dynamicReadModeContextMenu");
+      };
 
-	        //selecting  active element type object
-	       	var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType")});
-	       	if (!elem_type) {
-	       		console.error("Error: No element type");
-	       		return;
-	       	}
+      Interpreter.processContextMenu(data.ev, elem_type[menu.attrName]);
+    },
 
-	        //showing the context menu depending on the edit/read mode
-	        var menu;
-	        if (Interpreter.editor.isEditMode()) {
-	        	menu = get_context_menu_list(elem_type, "contextMenu", "dynamicContextMenu");
-	        }
-	        else {
-	        	menu = get_context_menu_list(elem_type, "readModeContextMenu", "dynamicReadModeContextMenu");
-	        };
+    rClickedOnCollection: function (data) {
 
-			Interpreter.processContextMenu(data.ev, elem_type[menu.attrName]);
-	    },
+      var element = data.element;
 
-	    rClickedOnCollection: function(data) {
+      var diagram_type = DiagramTypes.findOne({ _id: Session.get("diagramType") });
+      if (!diagram_type) {
+        console.error("Error: No diagram type");
+        return;
+      }
 
-	    	var element = data.element;
+      //showing the context menu depending on the edit/read mode
+      var menu;
+      if (Interpreter.editor.isEditMode()) {
+        menu = get_context_menu_list(diagram_type, "collectionContextMenu", "dynamicCollectionContextMenu");
+      }
+      else {
+        menu = get_context_menu_list(diagram_type, "readModeCollectionContextMenu", "dynamicReadModeCollectionContextMenu");
+      };
 
-	        var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
-	        if (!diagram_type) {
-	        	console.error("Error: No diagram type");
-	        	return;
-	        }
+      var ev = data.ev;
 
-	        //showing the context menu depending on the edit/read mode
-	        var menu;
-	        if (Interpreter.editor.isEditMode()) {
-	        	menu = get_context_menu_list(diagram_type, "collectionContextMenu", "dynamicCollectionContextMenu");
-	        }
-	        else {
-	        	menu = get_context_menu_list(diagram_type, "readModeCollectionContextMenu", "dynamicReadModeCollectionContextMenu");
-	        };
+      Interpreter.processContextMenu(data.ev, diagram_type[menu.attrName]);
+      Interpreter.resetActiveElement();
+    },
 
-	        var ev = data.ev;
+    keystrokes: function () {
+      //console.log("keystroke pressed")
+    },
 
-	    	Interpreter.processContextMenu(data.ev, diagram_type[menu.attrName]);
-	    	Interpreter.resetActiveElement();
-	    },
+    newElementStarted: function (data) {
 
-	    keystrokes: function() {
-	        //console.log("keystroke pressed")
-	    },
+      var palette_button = data.paletteButton;
+      var elem_type_id = palette_button.data.elementTypeId;
 
-	    newElementStarted: function(data) {
+      var comparts_with_defaults = _.filter(CompartmentTypes.find({ elementTypeId: elem_type_id, defaultValue: { $ne: "" } }).fetch(),
+        function (compart_type) {
+          return compart_type.defaultValue;
+        });
 
-	    	var palette_button = data.paletteButton;
-	    	var elem_type_id = palette_button.data.elementTypeId;
+      data.element.compartments = _.map(comparts_with_defaults, function (compart_type) {
 
-			var comparts_with_defaults = _.filter(CompartmentTypes.find({elementTypeId: elem_type_id, defaultValue: {$ne: ""}}).fetch(),
-												function(compart_type) {
-													return compart_type.defaultValue;
-												});
+        var prefix = compart_type["prefix"] || "";
+        var suffix = compart_type["suffix"] || "";
+        var value = prefix + compart_type["defaultValue"] + suffix;
 
-			data.element.compartments = _.map(comparts_with_defaults, function(compart_type) {
+        return {
+          value: value,
+          style: compart_type["styles"][0]["style"],
+          index: compart_type["index"],
+          objId: $.now(),
+        };
+      });
 
-				var prefix = compart_type["prefix"] || "";
-				var suffix = compart_type["suffix"] || "";
-				var value = prefix + compart_type["defaultValue"] + suffix;
+    },
 
-				return {value: value,
-						style: compart_type["styles"][0]["style"],
-						index: compart_type["index"],
-						objId: $.now(),
-					};
-			});
+    newBoxCreated: function (data) {
 
-	    },
+      if (!(data && data.elementTypeId)) {
+        console.error("Error: no data specified in palette button");
+        return;
+      }
 
-		newBoxCreated: function(data) {
+      var presentation = data.presentation;
+      var location = {
+        x: presentation.x(), y: presentation.y(),
+        width: data.width, height: data.height
+      };
 
-	       	if (!(data && data.elementTypeId)) {
-	       		console.error("Error: no data specified in palette button");
-	       		return;
-	       	}
+      Interpreter.execute("NewBox", [data._id, data.elementTypeId, location]);
 
-	       	var presentation = data.presentation;
-	       	var location = {x: presentation.x(), y: presentation.y(),
-	       					width: data.width, height: data.height};
+      // return true;
+      return false;
+    },
 
-	        Interpreter.execute("NewBox", [data._id, data.elementTypeId, location]);
+    newLineCreated: function (data) {
 
-	        // return true;
-	        return false;
-	    },
+      var elem_type_id = data.elementTypeId;
 
-	    newLineCreated: function(data) {
+      if (!(data && elem_type_id)) {
+        console.error("Error: no data specified in palette button");
+        return;
+      }
 
-	    	var elem_type_id = data.elementTypeId;
+      var new_line_id = data._id;
 
-	       	if (!(data && elem_type_id)) {
-	       		console.error("Error: no data specified in palette button");
-	       		return;
-	       	}
+      var points = data.line.points();
+      var start_elem_id = data.startElementId;
+      var end_elem_id = data.endElementId;
 
-	       	var new_line_id = data._id;
+      Interpreter.execute("NewLine", [new_line_id, elem_type_id, points, start_elem_id, end_elem_id]);
 
-	       	var points = data.line.points();
-	       	var start_elem_id = data.startElementId;
-	       	var end_elem_id = data.endElementId;
+      return true;
+    },
 
-	        Interpreter.execute("NewLine", [new_line_id, elem_type_id, points, start_elem_id, end_elem_id]);
+    //return true if needs canceling the new line
+    checkingNewLineConstraints: function (state) {
 
-	        return true;
-	    },
+      var is_allowed = is_new_line_allowed(state);
+      if (!is_allowed) {
+        return true;
+      }
+    },
 
-		//return true if needs canceling the new line
-		checkingNewLineConstraints: function(state) {
+    selectionFinshed: function (data) {
 
-			var is_allowed = is_new_line_allowed(state);
-			if (!is_allowed) {
-				return true;
-			}
-		},
+      var editor = this;
 
-		selectionFinshed: function(data) {
+      if (editor.selection.isSingleElementSelection()) {
+        var selection = editor.getSelectedElements();
 
-			var editor = this;
+        var ids = _.keys(selection);
+        var elem_id = ids[0];
+      }
 
-			if (editor.selection.isSingleElementSelection()) {
-				var selection = editor.getSelectedElements();
+      else {
+        Interpreter.resetActiveElement();
+      }
+    },
 
-				var ids = _.keys(selection);
-				var elem_id = ids[0];
-			}
+    deleteElements: function (elements) {
 
-			else {
-				Interpreter.resetActiveElement();
-			}
-		},
+      var editor = this;
 
-	    deleteElements: function(elements) {
+      var selection = editor.getSelectedElements();
+      _.each(elements, function (elem_id) {
+        selection[elem_id] = undefined;
+        //delete selection[elem_id];
+      });
 
-	    	var editor = this;
+      //removing elements from the scene and from the editor element list
+      var element_list = editor.getElements();
 
-			var selection = editor.getSelectedElements();
-			_.each(elements, function(elem_id) {
-				selection[elem_id] = undefined;
-				//delete selection[elem_id];
-			});
+      var length = elements.length - 1;
+      for (var i = length; i >= 0; i--) {
 
-			//removing elements from the scene and from the editor element list
-			var element_list = editor.getElements();
+        var elem_id = elements[i];
+        var element = element_list[elem_id];
 
-			var length = elements.length-1;
-			for (var i=length;i>=0;i--) {
+        if (!element) {
+          continue;
+        }
 
-				var elem_id = elements[i];
-				var element = element_list[elem_id];
+        //if element has start and end elements, it is a line
+        var start_elem_id = element["startElement"];
+        var end_elem_id = element["endElement"];
 
-				if (!element) {
-					continue;
-				}
+        //removing line from the inLines and outLines collections
+        if (start_elem_id && end_elem_id) {
+          var start_elem = element_list[start_elem_id];
+          if (start_elem) {
+            start_elem["outLines"][elem_id] = undefined;
+            //delete start_elem["outLines"][elem_id];
+          }
 
-				//if element has start and end elements, it is a line
-				var start_elem_id = element["startElement"];
-				var end_elem_id = element["endElement"];
+          var end_elem = element_list[end_elem_id];
+          if (end_elem) {
+            end_elem["inLines"][elem_id] = undefined;
+            //delete end_elem["inLines"][elem_id];
+          }
+        }
 
-				//removing line from the inLines and outLines collections
-				if (start_elem_id && end_elem_id) {
-					var start_elem = element_list[start_elem_id];
-					if (start_elem) {
-						start_elem["outLines"][elem_id] = undefined;
-						//delete start_elem["outLines"][elem_id];
-					}
+        //destroying the element
+        element.remove();
+      }
 
-					var end_elem = element_list[end_elem_id];
-					if (end_elem) {
-						end_elem["inLines"][elem_id] = undefined;
-						//delete end_elem["inLines"][elem_id];
-					}
-				}
+      _.each(elements, function (elem) {
+        //delete element_list[elem];
+        element_list[elem] = undefined;
+      });
 
-				//destroying the element
-				element.remove();
-			}
+      //refreshing layers
+      var drag_layer = editor.getLayer("DragLayer");
+      drag_layer.batchDraw();
 
-			_.each(elements, function(elem) {
-				//delete element_list[elem];
-				element_list[elem] = undefined;
-			});
+      var shapes_layer = editor.getLayer("ShapesLayer");
+      shapes_layer.batchDraw();
+    },
 
-			//refreshing layers
-			var drag_layer = editor.getLayer("DragLayer");
-			drag_layer.batchDraw();
+    swimlaneEdited: async function (swimlane) {
 
-			var shapes_layer = editor.getLayer("ShapesLayer");
-			shapes_layer.batchDraw();
-	    },
+      var editor = this;
 
-		swimlaneEdited: function(swimlane) {
+      var swimlane_presentation = swimlane.presentation;
 
-			var editor = this;
+      var h_lines_group = find_child(swimlane_presentation, "HorizontalLines");
+      var h_lines = swimlane.select_lines_position(h_lines_group);
 
-			var swimlane_presentation = swimlane.presentation;
+      var v_lines_group = find_child(swimlane_presentation, "VerticalLines");
+      var v_lines = swimlane.select_lines_position(v_lines_group);
 
-			var h_lines_group = find_child(swimlane_presentation, "HorizontalLines");
-			var h_lines = swimlane.select_lines_position(h_lines_group);
+      var size = swimlane.getSize();
+      var max_x = size.x + size.width;
+      var max_y = size.y + size.height;
 
-			var v_lines_group = find_child(swimlane_presentation, "VerticalLines");
-			var v_lines = swimlane.select_lines_position(v_lines_group);
+      editor.size.resizeStage(max_x, max_y);
 
-			var size = swimlane.getSize();
-			var max_x = size.x + size.width;
-			var max_y = size.y + size.height;
+      var list = {
+        diagramId: Session.get("activeDiagram"),
+        elementId: swimlane._id,
+        horizontalLines: h_lines,
+        verticalLines: v_lines,
+      };
 
-			editor.size.resizeStage(max_x, max_y);
+      Utilities.addingProjectOrToolParams(list);
 
-			var list = {diagramId: Session.get("activeDiagram"),
-						elementId: swimlane._id,
-						horizontalLines: h_lines,
-						verticalLines: v_lines,
-					};
+      await Utilities.callMeteorMethodAsync("updateSwimlaneLines", list);
+    },
 
-			Utilities.addingProjectOrToolParams(list);
+    dbClickOnSwimlane: function () {
 
-			Utilities.callMeteorMethod("updateSwimlaneLines", list);
-		},
+      var editor = this;
 
-		dbClickOnSwimlane: function() {
+      var swimlane = editor.getSwimlane();
+      if (!swimlane) {
+        return;
+      }
 
-			var editor = this;
+      var cell_pos = swimlane.compartments.get_cell_key(swimlane);
 
-			var swimlane = editor.getSwimlane();
-			if (!swimlane) {
-				return;
-			}
+      if (cell_pos) {
+        Session.set("swimlaneCell", cell_pos);
+        Interpreter.setActiveElement(swimlane._id);
+      }
 
-			var cell_pos = swimlane.compartments.get_cell_key(swimlane);
+    },
 
-	        if (cell_pos) {
-	            Session.set("swimlaneCell", cell_pos);
-	            Interpreter.setActiveElement(swimlane._id);
-	        }
+    dbClickOnSwimlaneText: function (compartment) {
+      Session.set("swimlaneCell", { row: compartment["row"], column: compartment["column"] });
 
-		},
+      Interpreter.setActiveElement(compartment.compartments.element._id);
+    },
 
-		dbClickOnSwimlaneText: function(compartment) {
-			Session.set("swimlaneCell", {row: compartment["row"], column: compartment["column"]});
-
-			Interpreter.setActiveElement(compartment.compartments.element._id);
-		},
-
-	};
+  };
 }
 
 function is_new_line_allowed(state) {
 
-	if (state["end"]) {
+  if (state["end"]) {
 
-		var elem_type_id = state["data"]["elementTypeId"];
-		var start_elem_id = state.start.element._id;
-		var end_elem_id = state.end._id;
+    var elem_type_id = state["data"]["elementTypeId"];
+    var start_elem_id = state.start.element._id;
+    var end_elem_id = state.end._id;
 
-		var line_type = compute_new_line_type([elem_type_id], start_elem_id, end_elem_id);
+    var line_type = compute_new_line_type([elem_type_id], start_elem_id, end_elem_id);
 
-		if (!line_type) {
-			Interpreter.showErrorMsg("These elements cannot be connected", -1);
-			return false;
-		}
+    if (!line_type) {
+      Interpreter.showErrorMsg("These elements cannot be connected", -1);
+      return false;
+    }
 
-		else {
-			Interpreter.destroyErrorMsg();
-		}
-	}
+    else {
+      Interpreter.destroyErrorMsg();
+    }
+  }
 
-	else {
-		Interpreter.destroyErrorMsg();
-	}
+  else {
+    Interpreter.destroyErrorMsg();
+  }
 
-	return true;
+  return true;
 }
 
 function get_object_type(obj_id) {
 
-	var diagram = Diagrams.findOne({_id: obj_id});
-	if (diagram) {
-		return DiagramTypes.findOne({_id: diagram["diagramTypeId"]});
-	}
+  var diagram = Diagrams.findOne({ _id: obj_id });
+  if (diagram) {
+    return DiagramTypes.findOne({ _id: diagram["diagramTypeId"] });
+  }
 
-	else {
+  else {
 
-		var element = Elements.findOne({_id: obj_id});
-		if (element) {
-			return ElementTypes.findOne({_id: element["elementTypeId"]});
-		}
+    var element = Elements.findOne({ _id: obj_id });
+    if (element) {
+      return ElementTypes.findOne({ _id: element["elementTypeId"] });
+    }
 
-		else {
+    else {
 
-			var compartment = Compartments.findOne({_id: obj_id});
-			if (compartment) {
-				return CompartmentTypes.findOne({_id: compartment["compartmentTypeId"]});
-			}
+      var compartment = Compartments.findOne({ _id: obj_id });
+      if (compartment) {
+        return CompartmentTypes.findOne({ _id: compartment["compartmentTypeId"] });
+      }
 
-			else {
-				console.error("Error: no object with the given id ", obj_id);
-				return;
-			}
-		}
+      else {
+        console.error("Error: no object with the given id ", obj_id);
+        return;
+      }
+    }
 
-	}
+  }
 }
 
 function event_logging() {
 
-	return {
+  return {
 
-		collectionPositionChanged: function(data) {
+    collectionPositionChanged: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "collectionPositionChanged",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "collectionPositionChanged",
+        value: {},
+      });
+    },
 
-		clickedOnDiagram: function(data) {
+    clickedOnDiagram: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "clickedOnDiagram",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "clickedOnDiagram",
+        value: {},
+      });
+    },
 
-		clickedOnElement: function(data) {
+    clickedOnElement: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "clickedOnElement",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "clickedOnElement",
+        value: {},
+      });
+    },
 
-		clickedOnCollection: function(data) {
+    clickedOnCollection: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "clickedOnCollection",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "clickedOnCollection",
+        value: {},
+      });
+    },
 
-		//RClicks
-		rClickedOnDiagram: function(data) {
+    //RClicks
+    rClickedOnDiagram: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "rClickedOnDiagram",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "rClickedOnDiagram",
+        value: {},
+      });
+    },
 
-		rClickedOnElement: function(data) {
+    rClickedOnElement: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "rClickedOnElement",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "rClickedOnElement",
+        value: {},
+      });
+    },
 
-		rClickedOnCollection: function(data) {
+    rClickedOnCollection: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "rClickedOnCollection",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "rClickedOnCollection",
+        value: {},
+      });
+    },
 
-		keystrokes: function() {
-			//console.log("keystroke pressed")
-		},
+    keystrokes: function () {
+      //console.log("keystroke pressed")
+    },
 
-		newBoxCreated: function(data) {
+    newBoxCreated: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "newBoxCreated",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "newBoxCreated",
+        value: {},
+      });
+    },
 
-		newLineCreated: function(data) {
+    newLineCreated: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "newLineCreated",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "newLineCreated",
+        value: {},
+      });
+    },
 
-		creatingNewLine: function(data) {
+    creatingNewLine: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "creatingNewLine",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "creatingNewLine",
+        value: {},
+      });
+    },
 
-		deleteElements: function(data) {
+    deleteElements: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "deleteElements",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "deleteElements",
+        value: {},
+      });
+    },
 
-		elementResized: function(data) {
+    elementResized: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "elementResized",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "elementResized",
+        value: {},
+      });
+    },
 
-		swimlaneEdited: function(data) {
+    swimlaneEdited: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "swimlaneEdited",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "swimlaneEdited",
+        value: {},
+      });
+    },
 
-		dbClickOnSwimlane: function(data) {
+    dbClickOnSwimlane: function (data) {
 
-			analytics.track("ajooEditor", {
-				eventName: "dbClickOnSwimlane",
-				value: {},
-			});
-		},
+      analytics.track("ajooEditor", {
+        eventName: "dbClickOnSwimlane",
+        value: {},
+      });
+    },
 
-	};
+  };
 }
