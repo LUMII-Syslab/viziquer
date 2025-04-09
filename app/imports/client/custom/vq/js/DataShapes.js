@@ -517,6 +517,7 @@ const dataShapes = {
 					if (this.schema.schemaType === 'wikidata')
 						this.schema.simple_prompt = true;
 					this.schema.classCount = await this.getClassCount();
+					this.schema.has_cpc = await this.getCPC_info();
 					const propInfo = await this.getPropInfo();
 					this.schema.propCount = propInfo.count;
 					this.schema.propMax = propInfo.max; 
@@ -525,7 +526,8 @@ const dataShapes = {
 						this.schema.diagram.filteredClassList = await this.getClassListExt();
 						this.schema.diagram.properties = await this.getPropListExt();
 					}
-					this.schema.filling = 3;					
+					this.schema.filling = 3;
+		
 				}
 				else { // Neatrada projekta shēmu DSS serverī
 					await this.getPublicNamespaces();
@@ -1194,6 +1196,10 @@ const dataShapes = {
 	},
 	getClassCount: async function() {
 		let rr = await this.callServerFunction("xx_getClassCount", {main:{}});
+		return rr; 
+	},
+	getCPC_info: async function() {
+		let rr = await this.callServerFunction("xx_getCPC_info", {main:{}});
 		return rr; 
 	},
 	getPropInfo: async function() {

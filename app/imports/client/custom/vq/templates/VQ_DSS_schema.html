@@ -140,11 +140,16 @@
 								</div>
 							</div>
 
-							<div style="padding-top: 10px;">
-								<label for="fragment-size">Fragment size:</label>
-								<input type="number" id="fragment-size" name="fragment-size" value="10">
-								<button id="getFragment" type="button" class="btn btn-primary" >Get fragment</button>
-							</div>
+							{{#if has_cpc}}
+								<div style="padding-top: 10px;">
+									<label for="fragment-size">Fragment size:</label>
+									<input type="number" id="fragment-size" name="fragment-size" value="10">
+									<button id="getFragment" type="button" class="btn btn-primary" >Get fragment</button>
+								</div>
+							{{else}}
+								<label for="fragment-size">Fragments can only be obtained for schemes for which cpc_rels information is available.</label>
+							{{/if}}
+
 
 							<div class="container-fluid">
 								<div class="row">

@@ -34,6 +34,7 @@ Template.VQ_DSS_schema.ClassCountForSlider = new ReactiveVar('');
 Template.VQ_DSS_schema.ClassCountFromSlider = new ReactiveVar('');
 Template.VQ_DSS_schema.IsPublic = new ReactiveVar(false);
 Template.VQ_DSS_schema.HasClasses = new ReactiveVar('');
+Template.VQ_DSS_schema.HasCPC = new ReactiveVar('');
 
 Interpreter.customMethods({
 	VQ_DSS_schema: function(){
@@ -62,6 +63,7 @@ Template.VQ_DSS_schema.rendered = function() {
 	Template.VQ_DSS_schema.SchemaName.set(dataShapes.schema.schemaName);
 	Template.VQ_DSS_schema.ClassCountAll.set(dataShapes.schema.classCount);
 	Template.VQ_DSS_schema.PropCountAll.set(dataShapes.schema.propCount);
+	Template.VQ_DSS_schema.HasCPC.set(dataShapes.schema.has_cpc);
 
 	// TODO cik lielas shēmas vispār piedāvāju vizualizēt
 	if ( dataShapes.schema.classCount < dataShapes.schema.diagram.maxCount) {
@@ -172,6 +174,9 @@ Template.VQ_DSS_schema.helpers({
 	restProperties: function() {
 		return Template.VQ_DSS_schema.RestProperties.get();
 	},	
+	has_cpc: function () {
+		return Template.VQ_DSS_schema.HasCPC.get();
+	}
 	
 });
 
