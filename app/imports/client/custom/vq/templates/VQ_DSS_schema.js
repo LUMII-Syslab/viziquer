@@ -176,7 +176,7 @@ Template.VQ_DSS_schema.helpers({
 });
 
 function getParams() {
-	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:true,
+	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:true, cover:$("#cover").is(":checked"),  
 		pw:$("#pw").val(), k:1, diffG:$("#diffG").val(), diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked")}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 ) 
 		//	par.supPar = 2;
@@ -200,17 +200,22 @@ function getInfo() {
 			$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text()];
 } 
 
-async function getClassesAndProperties() {
+async function getClassesAndProperties(addSupClasses = true) {
+	//addSupClasses Pagaidām ir konstante, bet būs iespēja virsklašu pielikšanu atslēgt 
 	let classList = Template.VQ_DSS_schema.Classes.get();
 	let namespaces = {};
 	let namespacesL = [];
-	let all_s = [];
-	_.each(classList, function(cl) { all_s = [...new Set([...all_s, ...cl.s])]; });	
-	
-	_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
-		if ( all_s.includes(cl.id)) cl.sel = 1;
-		else cl.sel = 0;
-	});
+
+	if (addSupClasses) {
+		let all_s = [];
+		_.each(classList, function(cl) { all_s = [...new Set([...all_s, ...cl.s])]; });	
+		
+		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+			if ( all_s.includes(cl.id)) cl.sel = 1;
+			else cl.sel = 0;
+		});		
+	}
+
 	classList = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 1});
 	_.each(classList, function(cl) { 
 		if ( namespaces[cl.prefix] == undefined )
@@ -316,6 +321,37 @@ function setSubClasses(cId) {
 	Template.VQ_DSS_schema.SubClasses.set(subClasses);
 	setClassProperties(cId);
 }
+
+async function getCPRels(allParams) {
+	const calculateCoverSets = !params.cover; // Vai rēķināt cover_set_index uz vietas 
+	let rr;
+	//const classesAndProperties = await getClassesAndProperties(); // Te var pateikt, lai neliek klāt virsklases
+	//const classList = classesAndProperties[0];
+	//let propList = classesAndProperties[1];
+	//propList = propList.map(v => v.id);
+	//const allParams = {main: { c_list: classList, p_list:propList}};
+	if (calculateCoverSets) {
+		rr = await dataShapes.callServerFunction("xx_getCPInfoNew", allParams);
+	}
+	else {
+		rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams);
+	}
+
+	return rr.data;
+}
+async function getCPCRels(allParams) {
+	const calculateCoverSets = !params.cover; // Vai rēķināt cover_set_index uz vietas 
+	let rr;
+	if (calculateCoverSets) {
+		rr = await dataShapes.callServerFunction("xx_getCPCInfoNew", allParams);
+	}
+	else {
+		rr = await dataShapes.callServerFunction("xx_getCPCInfo", allParams);
+	}
+
+	return rr;
+}
+
 /*
 function calculateCount(value, list, parentCnt) {
 	//console.log('-------calculateCount---------', list, parentCnt)
@@ -354,6 +390,24 @@ function calculateCount(value, list, parentCnt) {
 
 Template.VQ_DSS_schema.events({
 	'click #calck': async function() {
+		const classesAndProperties = await getClassesAndProperties();
+		let classList = classesAndProperties[0];
+		let propList = classesAndProperties[1];
+		//console.log(propList)
+		propList = propList.map(v => v.id);
+		let allParams = {main: { c_list: classList, p_list:propList}};
+		//console.log(allParams, classList, propList )
+
+		const rr1 = await dataShapes.callServerFunction("xx_getCPCInfo", allParams);
+		const rr2 = await dataShapes.callServerFunction("xx_getCPCInfoNew", allParams);
+		console.log(rr1,rr2)
+		const rr1Ids = rr1.data.map(v => v.id);
+		const rr2Ids = rr2.data.map(v => v.id);
+		for (const c of rr2Ids) {
+			if (!rr1Ids.includes(c))
+				console.log(rr2.data.filter(function(i){ return i.id == c}));
+		}
+
 		//let cl; 
 		//cl = await dataShapes.getClasses();
 		//console.log('getClasses', cl.data);
@@ -1476,7 +1530,7 @@ function makeClassGroupsFromSubClasses(GroupTree) {
 		for (const cId of GroupTree[supId]) {
 			c_list_full.push(rezFull.classes[cId]);
 		}
-		const gr_id = makeClassGroup(c_list_full, 'Class and subClasses');
+		const gr_id = makeClassGroup(c_list_full, 'Class and subClasses', false);
 		if ( gr_id != '' ) { // Cīņa ar daudzkāršo mantošanu
 			for (const sub of c_list_full) {
 				if ( sub.id != c_list_full[c_list_full.length-1].id ) {
@@ -1579,7 +1633,7 @@ async function getBasicClasses() {
 	const classesAndProperties = await getClassesAndProperties();
 	rezFull.namespaces = classesAndProperties[2];
 	const c_list = classesAndProperties[0];
-	const p_list = classesAndProperties[1];
+	let p_list = classesAndProperties[1];  
 	params = getParams();
 	let rr;
 	const addIds = params.addIds;
@@ -1611,7 +1665,11 @@ async function getBasicClasses() {
 				atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[] };
 	});
 	
-	rr = await dataShapes.callServerFunction("xx_getCCInfo", allParams); 
+	if ( params.cover) // TODO Jāpadomā, vai šim nevajag atsevišķu pazīmi
+		rr = await dataShapes.callServerFunction("xx_getCCInfo", allParams); 
+	else
+		rr = await dataShapes.callServerFunction("xx_getCCInfoNew", allParams); 
+
 	// DB virsklašu informācijas pielikšana
 	for (const cl of rr.data) {	
 		const id1 = `c_${cl.class_1_id}`;
@@ -1624,7 +1682,10 @@ async function getBasicClasses() {
 		rezFull.classes[id2].hasGen = true;
 	}	
 	
-	rr = await dataShapes.callServerFunction("xx_getCPCInfo", allParams); 
+	//rr = await dataShapes.callServerFunction("xx_getCPCInfo", allParams); 
+	allParams.main.p_list =  p_list.map(v => v.id);
+	rr = await getCPCRels(allParams);
+
 	cpc_info = rr.data;
 	if ( cpc_info.length > 0 ) { 
 		has_cpc = true;
@@ -1635,10 +1696,16 @@ async function getBasicClasses() {
 	rr = await dataShapes.callServerFunction("xx_getCCInfo_Type3", allParams);
 	cc_info_type3 = rr.data; 
 
-	allParams.main.p_list =  p_list.map(v => v.id);
-	rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams); 
-	cp_info = rr.data;
+	//rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams); 
+	//cp_info = rr.data;
+	cp_info = await getCPRels(allParams);
 	
+	// 55555555 Testam (ņemam tikai īpašās propertijas)
+	allParams.main.p_list =  p_list.map(v => v.id);
+	//const tt = await dataShapes.callServerFunction("xx_getCPInfoNew", allParams);
+	//p_list = p_list.filter(function(p){ return tt.diffs.pIds.includes(p.id)});
+	//console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', p_list);
+
 	// Propertiju saraksta sākotnējā apstrāde, savāc galus
 	for (const p of p_list) {	
 		const p_id = `p_${p.id}`;
@@ -1664,7 +1731,7 @@ async function getBasicClasses() {
 		else
 			p_list_full[p_id].range_id = '';
 			
-		if ( c_from.length > 0 && p.domain_class_id == c_from[0].class_id)  
+		if ( c_from.length == 1 && p.domain_class_id == c_from[0].class_id) // Te nezin kāpēc bija  _from.length > 0 
 			p_list_full[p_id].is_domain = 'D';
 		else
 			p_list_full[p_id].is_domain = '';
@@ -1689,7 +1756,7 @@ async function getBasicClasses() {
 					let cl_list = c_to.map( c => c.class_id);
 					//const cpc_i = cpc_info.filter(function(i){ return i.class_id == c_1.class_id && i.property_id == c_1.property_id && i.type_id == c_1.type_id });  // ??? { return i.cp_rel_id == c_1.id });
 					const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id }); 
-				const from_id = `c_${c_1.class_id}`;
+					const from_id = `c_${c_1.class_id}`;
 					if ( has_cpc && cpc_i.length > 0 ) // ( !compView && has_cpc && cpc_i.length > 0 )
 						cl_list = cpc_i.map( c => c.other_class_id);
 					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt), 
@@ -2316,8 +2383,9 @@ function makeAssociations() {
 							hasAssoc = true;
 						}
 						else {
-							const cpc_info_a = cpc_info.filter(function(i){ 
-								return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && rezFull.classes[to_id].c_list_id.includes(i.other_class_id)}); 
+							const cpc_info_a = cpc_info.filter(function(i){
+								return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && rezFull.classes[to_id].c_list_id.includes(i.other_class_id);
+							}); 
 							const aCnt = cpc_info_a.map( v => v.cnt).reduce((a, b) => a + b, 0);
 							if ( aCnt > 0 ) {
 								rezFull.assoc[aId] = {string:`${p_name} (${roundCount(aCnt)}) ${atr.is_domain}${is_range}`,cnt:aCnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };

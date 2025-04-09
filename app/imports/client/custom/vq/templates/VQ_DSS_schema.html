@@ -187,10 +187,15 @@
 												<option value=10 >Strong merging (10)</option>
 												<option value=20 >Strong merging (20)</option>
 											</select>
-											<label class="form-check-label" style="padding-bottom:10px; padding-top:10px;">
+											<label class="form-check-label" style="padding-top:10px;">
 												<input class="form-check-input" name = "abstr" id="abstr" type="checkbox">
 												<span class="custom-checkbox"></span>
 												Make abstract superclasses 
+											</label>
+											<label class="form-check-label">
+												<input class="form-check-input" name = "cover" id="cover" type="checkbox" checked = "checked">
+												<span class="custom-checkbox"></span>
+												Use DB Cover set indexes 
 											</label>
 										</div>
 										<div class="col-sm-4">
@@ -209,7 +214,7 @@
 											</select>
 											{{#if pub}}
 											{{else}}
-												<select class="form-control" id="kValue" style="width:300px" >
+												<select class="form-control" id="kValue" style="width:300px;">
 													<option selected value=1 > dw(A,B)/(sw(A,B)+ε) &lt; 1 </option>
 													<option value=2 > dw(A,B)/(sw(A,B)+ε) &lt; 2 </option>
 													<option value=3 > dw(A,B)/(sw(A,B)+ε) &lt; 3 </option>
@@ -328,7 +333,7 @@
 								<button id="printDiffs" type="button" class="btn btn-primary" data-dismiss="modal">Print diffs</button>
 							</div>
 							<div class="form-group">
-								<button id="calck" type="button" class="btn btn-primary" data-dismiss="modal">Test</button>
+								<button id="calck" type="button" class="btn btn-primary">Test</button>
 							</div>
 							<div class="form-group">
 								<button id="getProperties" type="button" class="btn btn-primary" >Show all properties</button>
