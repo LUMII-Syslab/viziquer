@@ -4,7 +4,7 @@ import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 import './add_merge_form.html'
 import { countCardinality } from '../js/parser';
-import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 
 import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
 
@@ -23,8 +23,8 @@ Template.AddMergeValues.isNotRootClass = new ReactiveVar(false);
 
 Interpreter.customMethods({
 	AddMergeValues: async function (e) {
-		var expressionField = getExpression(e);
-		var requireField = getRequireField(e);//require
+		var expressionField = await getExpression(e);
+		var requireField = await getRequireField(e);//require
 		if(requireField[0].checked) Template.AddMergeValues.require.set("checked");
 		else Template.AddMergeValues.require.set("");
 
@@ -34,10 +34,10 @@ Interpreter.customMethods({
 		var distinct = parsedExpression["distinct"];
 		
 		Template.AddMergeValues.expression.set(expr);
-		var mergeAlias = getAlais(e).val();
+		var mergeAlias = await getAlais(e).val();
 		if(mergeAlias == null || mergeAlias == "") mergeAlias = expr.substring(0,1).toUpperCase();
 		Template.AddMergeValues.mergeAlias.set(mergeAlias);
-		Template.AddMergeValues.aliasField.set(getAlais(e));
+		Template.AddMergeValues.aliasField.set(await getAlais(e));
 		Template.AddMergeValues.attribute.set(e);
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.distinct.set(distinct);
@@ -45,7 +45,7 @@ Interpreter.customMethods({
 		let scName = await getSchemaNameForElement();
 		
 		var card = await countCardinality(expr, Session.get("activeElement"), scName)
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		if (proj){
       		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!=true){
       			card = -1;
@@ -56,20 +56,20 @@ Interpreter.customMethods({
 		
 		
 		var selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){
-			var vq_obj = new VQ_Element(selected_elem_id);
+		if (await Elements.findOneAsync({_id: selected_elem_id})){
+			var vq_obj = await createVQ_Element(selected_elem_id);
 
 			var parentClass;
-			var links = vq_obj.getLinks();
+			var links = await vq_obj.getLinks();
 			for(let key in links) {
 				if(typeof links[key] !== "function"){
 					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
-						parentClass = new VQ_Element(links[key].link.obj.startElement);
-						links[key].link.setNestingType("SUBQUERY");
+						parentClass = await createVQ_Element(links[key].link.obj.startElement);
+						await links[key].link.setNestingType("SUBQUERY");
 					}
 					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
-						parentClass = new VQ_Element(links[key].link.obj.endElement);
-						links[key].link.setNestingType("SUBQUERY");
+						parentClass = await createVQ_Element(links[key].link.obj.endElement);
+						await links[key].link.setNestingType("SUBQUERY");
 					}
 				}
 			}
@@ -113,7 +113,7 @@ async function AddMergeValues2(e) {
 		let scName = await getSchemaNameForElement();
 		
 		var card = await countCardinality(expr, Session.get("activeElement"), scName)
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		if (proj){
       		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!=true){
       			card = -1;
@@ -124,20 +124,20 @@ async function AddMergeValues2(e) {
 		
 		
 		var selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){
-			var vq_obj = new VQ_Element(selected_elem_id);
+		if (await Elements.findOneAsync({_id: selected_elem_id})){
+			var vq_obj = await createVQ_Element(selected_elem_id);
 
 			var parentClass;
-			var links = vq_obj.getLinks();
+			var links = await vq_obj.getLinks();
 			for(let key in links) {
 				if(typeof links[key] !== "function"){
 					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
-						parentClass = new VQ_Element(links[key].link.obj.startElement);
-						links[key].link.setNestingType("SUBQUERY");
+						parentClass = await createVQ_Element(links[key].link.obj.startElement);
+						await links[key].link.setNestingType("SUBQUERY");
 					}
 					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
-						parentClass = new VQ_Element(links[key].link.obj.endElement);
-						links[key].link.setNestingType("SUBQUERY");
+						parentClass = await createVQ_Element(links[key].link.obj.endElement);
+						await links[key].link.setNestingType("SUBQUERY");
 					}
 				}
 			}
@@ -165,16 +165,16 @@ Template.AddMergeValues.helpers({
 		return false;
 	},
 
-	className: function() {
+	className: async function() {
 		var act_elem = Session.get("activeElement");
-		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+		var act_el = await Elements.findOneAsync({_id: act_elem}); //Check if element ID is valid
 		if(typeof act_el !== 'undefined') {
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+			var compart_type = await CompartmentTypes.findOneAsync({name: "Name", elementTypeId: act_el["elementTypeId"]});
 			if (!compart_type) {
 				return;
 			}
 
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+			var compart = await Compartments.findOneAsync({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 			if(typeof compart !== 'undefined') return compart["input"];
 		}
 		return "";
@@ -244,7 +244,7 @@ Template.AddMergeValues.helpers({
 
 Template.AddMergeValues.events({
 
-	"click #ok-merge-values": function(e) {
+	"click #ok-merge-values": async function(e) {
 		var mergeType = $('input[name=type-radio-merge]:checked').val();
 
 		// var alias = Template.AddMergeValues.alias.get();
@@ -261,20 +261,20 @@ Template.AddMergeValues.events({
 		
 		if((typeof mergeType !== 'undefined' && mergeType == "MULTIPLE") || typeof mergeType === 'undefined'){
 			var selected_elem_id = Session.get("activeElement");
-			if (Elements.findOne({_id: selected_elem_id})){
-				var vq_obj = new VQ_Element(selected_elem_id);
+			if (await Elements.findOneAsync({_id: selected_elem_id})){
+				var vq_obj = await createVQ_Element(selected_elem_id);
 
 				var parentClass;
-				var links = vq_obj.getLinks();
+				var links = await vq_obj.getLinks();
 				for(let key in links) {
 					if(typeof links[key] !== "function"){
 						if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
-							parentClass = new VQ_Element(links[key].link.obj.startElement);
-							links[key].link.setNestingType("SUBQUERY");
+							parentClass = await createVQ_Element(links[key].link.obj.startElement);
+							await links[key].link.setNestingType("SUBQUERY");
 						}
 						if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
-							parentClass = new VQ_Element(links[key].link.obj.endElement);
-							links[key].link.setNestingType("SUBQUERY");
+							parentClass = await createVQ_Element(links[key].link.obj.endElement);
+							await links[key].link.setNestingType("SUBQUERY");
 						}
 					}
 				}
@@ -285,9 +285,9 @@ Template.AddMergeValues.events({
 					var minValue = $('input[id=merge-results-least]').val();
 					var maxValue = $('input[id=merge-results-most]').val();
 					
-					if(displayCase) parentClass.addField(mergeAliasName,"",false,false,false);
-					if (minValue != "") parentClass.addCondition(mergeAliasName + ">=" + minValue, false);
-					if (maxValue != "") parentClass.addCondition(mergeAliasName + "<=" + maxValue, false);
+					if(displayCase) await parentClass.addField(mergeAliasName,"",false,false,false);
+					if (minValue != "") await parentClass.addCondition(mergeAliasName + ">=" + minValue, false);
+					if (maxValue != "") await parentClass.addCondition(mergeAliasName + "<=" + maxValue, false);
 					
 					//if(alias != null && alias !="") expr =  aggregation + "(" + alias + ")";
 				}
@@ -296,7 +296,7 @@ Template.AddMergeValues.events({
 				if(typeof requireValues !== "undefined" && requireValues == "on") requireValues = true;
 				else requireValues = false;
 
-				vq_obj.addAggregateField(expr,mergeAliasName,requireValues);
+				await vq_obj.addAggregateField(expr,mergeAliasName,requireValues);
 				//Template.AddMergeValues.hideField.get().prop("checked", true);
 				
 				Template.AddMergeValues.expressionField.get().value = "";
@@ -308,7 +308,7 @@ Template.AddMergeValues.events({
 					versionId: Session.get("versionId"),
 				};
 
-				Utilities.callMeteorMethod("removeCompartment", list);
+				await Utilities.callMeteorMethodAsync("removeCompartment", list);
 				
 				var form = $(Template.AddMergeValues.attribute.get().target).closest(".row-form")
 				form.modal("hide");
@@ -410,26 +410,26 @@ function clearMergeValuesInput(){
 	document.getElementById("extra-options-merge").style.display = "none";
 }
 
-function getExpression(e){
-	return getField(e, "Expression");
+async function getExpression(e){
+	return await getField(e, "Expression");
 }
 
-function getAlais(e){
-	return getField(e, "Field Name");
+async function getAlais(e){
+	return await getField(e, "Field Name");
 	
 }
 
-function getRequireField(e){
-	return getField(e, "Require Values");
+async function getRequireField(e){
+	return await getField(e, "Require Values");
 }
 
-function getField(e, fieldName){
+async function getField(e, fieldName){
 		var parent = $(e.target).closest(".compart-type");
 		
 		
 		
 		var parent_id = parent.attr("id");
-		var compart_type = CompartmentTypes.findOne({_id: parent_id});
+		var compart_type = await CompartmentTypes.findOneAsync({_id: parent_id});
 
 		// more elegant selection for subCompartmentTypes needed
 		var expression_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {

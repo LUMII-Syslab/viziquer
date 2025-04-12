@@ -2,12 +2,12 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Elements } from '/imports/db/platform/collections'
 
 import { autoCompletionCleanup, autoCompletionInstance } from '../js/autoCompletion';
-import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 
 import './add_uri_form.html'
 
 Interpreter.customMethods({
-	AddUriName: function () {
+	AddUriName: async function () {
 
 		autoCompletionCleanup();
 
@@ -15,10 +15,11 @@ Interpreter.customMethods({
 		$('#uri-name-field').val('');
 		
 		var selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
-		  var vq_obj = new VQ_Element(selected_elem_id);
-		  $('#uri-name-field').val(vq_obj.getInstanceAlias());
+		  var vq_obj = await createVQ_Element(selected_elem_id);
+		  const instanceAlias = await vq_obj.getInstanceAlias()
+		  $('#uri-name-field').val(instanceAlias);
 		};
 	}
 })
@@ -31,13 +32,13 @@ Template.AddUri.helpers({
 
 Template.AddUri.events({
 
-	"click #ok-add-uri-name": function(e) {
+	"click #ok-add-uri-name": async function(e) {
 		var selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
-		  var vq_obj = new VQ_Element(selected_elem_id);
+		  var vq_obj = await createVQ_Element(selected_elem_id);
 			var name = $('#uri-name-field').val(); //setInstanceAlias
-			vq_obj.setInstanceAlias(name);
+			await vq_obj.setInstanceAlias(name);
 		};
 		return;
 	},

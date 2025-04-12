@@ -107,7 +107,21 @@ const Utilities = {
 			}
 		});
 	},
-
+	
+	
+	callMeteorMethodAsync: async function (method_name, ...args) {
+		try {
+		  if (args.length > 0 && typeof args[args.length - 1] === 'function') {
+			console.error(method_name, 'callback functions not (yet) supported in async mode');
+			return null;
+		  } else {
+			return await Meteor.callAsync(method_name, ...args);
+		  }
+		} catch (err) {
+		  console.error("Error in method " + method_name + " call: ", err);
+		  return null;
+		}
+	},
 };
 
  

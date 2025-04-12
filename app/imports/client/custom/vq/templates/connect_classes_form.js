@@ -3,7 +3,7 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './connect_classes_form.html'
-import { Create_VQ_Element, VQ_Element, VQ_Schema } from '../js/VQ_Element';
+import { Create_VQ_Element_Async, VQ_Element, VQ_Schema, createVQ_Element } from '../js/VQ_Element';
 import { Elements, Projects } from '/imports/db/platform/collections';
 
 Interpreter.customMethods({
@@ -21,12 +21,13 @@ Interpreter.customMethods({
 				var ids = [];
 
 				//Leave only class-type elements in selection
-				_.each(elem_ids, function(id){
-					elem = new VQ_Element(id);
-					if (elem.isClass()) {					
-						ids.push({text: id});
-					}
-				})
+				for (const id of elem_ids) {
+				  const elem = await createVQ_Element(id);
+				  if (await elem.isClass()) {
+					ids.push({ text: id });
+				  }
+				}
+
 				
 				//Check if there are directly 2 classes to link
 				if (ids.length != 2) {
@@ -37,39 +38,41 @@ Interpreter.customMethods({
 
 				var usedClasses = [];
 				var position = -1;
-				_.each(ids, function(id){
-					elem = new VQ_Element(id.text);
-					if (position == -1) {
-						position = elem.getCoordinates().x + elem.getCoordinates().y;
-						usedClasses.push({id: id.text});
-					} else {
-						if (position > (elem.getCoordinates().x + elem.getCoordinates().y)) {
-							var newUsed = [{id: id.text}];
-							newUsed.push(usedClasses[0]);
-							usedClasses = newUsed;
-						} else {
-							usedClasses.push({id: id.text});
-						}
-					}
-				})
+				for (const id of ids) {
+				  const elem = await createVQ_Element(id.text);
+				  const coord = await elem.getCoordinates();
+				  const pos = coord.x + coord.y;
 
-				var startClass = new VQ_Element(usedClasses[0]["id"]);
-				var endClass = new VQ_Element(usedClasses[1]["id"]);
+				  if (position === -1) {
+					position = pos;
+					usedClasses.push({ id: id.text });
+				  } else {
+					if (position > pos) {
+					  usedClasses = [{ id: id.text }, usedClasses[0]];
+					} else {
+					  usedClasses.push({ id: id.text });
+					}
+				  }
+				}
+
+
+				var startClass = await createVQ_Element(usedClasses[0]["id"]);
+				var endClass = await createVQ_Element(usedClasses[1]["id"]);
 
 				ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
-				usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
+				usedClasses = [{name: await startClass.getName(), id: startClass.obj["_id"]}, {name: await endClass.getName(), id: endClass.obj["_id"]}];
 
-				if (startClass.isUnion() && !startClass.isRoot()) { // [ + ] element, that has link to upper class 
+				if (await startClass.isUnion() && !(await startClass.isRoot())) { // [ + ] element, that has link to upper class 
 					if (startClass.getLinkToRoot()){
 						var element = startClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
 						if (startClass.getLinkToRoot().start) {
-							var newStartClass = new VQ_Element(element.start.obj._id);
+							var newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
-		    				var newStartClass = new VQ_Element(element.end.obj._id);
+		    				var newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
 		    			if (newStartClass.obj["_id"] != endClass.obj["_id"]) {
-			    			usedClasses[0].name = newStartClass.getName();
+			    			usedClasses[0].name = await newStartClass.getName();
 			    		} else {
 			    			console.log("[ + ] connection to root");
 			    			Interpreter.showErrorMsg("It is not allowed to connect [ + ] with its root this way.", -3);
@@ -78,17 +81,17 @@ Interpreter.customMethods({
 					}					
 				}
 
-				if (endClass.isUnion() && !endClass.isRoot()) { // [ + ] element, that has link to upper class 
+				if (await endClass.isUnion() && !(await endClass.isRoot())) { // [ + ] element, that has link to upper class 
 					if (endClass.getLinkToRoot()){
 						var element = endClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
 						if (endClass.getLinkToRoot().start) {
-							var newStartClass = new VQ_Element(element.start.obj._id);
+							var newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
-		    				var newStartClass = new VQ_Element(element.end.obj._id);
+		    				var newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
 		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
-		    				usedClasses[1].name = newStartClass.getName();
+		    				usedClasses[1].name = await newStartClass.getName();
 		    			} else {
 			    			console.log("[ + ] connection to root");
 			    			Interpreter.showErrorMsg("It is not allowed to connect [ + ] with its root this way.", -3);
@@ -128,24 +131,24 @@ Interpreter.customMethods({
 //From Link
 	linkConnectClasses: async function () {
 		Interpreter.destroyErrorMsg();		
-		var link = new VQ_Element(Session.get("activeElement"));
-		if (link && link.isLink()) {
-			var startClass = link.getStartElement();
-			var endClass = link.getEndElement();
+		var link = await createVQ_Element(Session.get("activeElement"));
+		if (link && await link.isLink()) {
+			var startClass = await link.getStartElement();
+			var endClass = await link.getEndElement();
 			if (startClass && endClass) {
 				var ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
-				var usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
-				if (startClass.isUnion() && !startClass.isRoot()) { // [ + ] element, that has link to upper class 
+				var usedClasses = [{name: await startClass.getName(), id: startClass.obj["_id"]}, {name: await endClass.getName(), id: endClass.obj["_id"]}];
+				if (await startClass.isUnion() && !(await startClass.isRoot())) { // [ + ] element, that has link to upper class 
 					if (startClass.getLinkToRoot()){
 						var element = startClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
 						if (startClass.getLinkToRoot().start) {
-							var newStartClass = new VQ_Element(element.start.obj._id);
+							var newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
-		    				var newStartClass = new VQ_Element(element.end.obj._id);
+		    				var newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
 		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
-		    				usedClasses[0].name = newStartClass.getName();
+		    				usedClasses[0].name = await newStartClass.getName();
 		    			} else {
 			    			console.log("[ + ] connection to root");
 			    			Interpreter.showErrorMsg("It is not allowed to connect [ + ] with its root this way.", -3);
@@ -154,17 +157,17 @@ Interpreter.customMethods({
 					}					
 				}
 
-				if (endClass.isUnion() && !endClass.isRoot()) { // [ + ] element, that has link to upper class 
+				if (await endClass.isUnion() && !(await endClass.isRoot())) { // [ + ] element, that has link to upper class 
 					if (endClass.getLinkToRoot()){
 						var element = endClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
 						if (endClass.getLinkToRoot().start) {
-							var newStartClass = new VQ_Element(element.start.obj._id);
+							var newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
-		    				var newStartClass = new VQ_Element(element.end.obj._id);
+		    				var newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
 		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
-		    				usedClasses[1].name = newStartClass.getName();
+		    				usedClasses[1].name = await newStartClass.getName();
 		    			} else {
 			    			console.log("[ + ] connection to root");
 			    			Interpreter.showErrorMsg("It is not allowed to connect [ + ] with its root this way.", -3);
@@ -201,13 +204,13 @@ Interpreter.customMethods({
 
 	test_linkConnectClasses: async function () {
 		Interpreter.destroyErrorMsg();
-		var link = new VQ_Element(Session.get("activeElement"));
-		if (link && link.isLink()) {
-			var startClass = link.getStartElement();
-			var endClass = link.getEndElement();
+		var link = await createVQ_Element(Session.get("activeElement"));
+		if (link && await link.isLink()) {
+			var startClass = await link.getStartElement();
+			var endClass = await link.getEndElement();
 			if (startClass && endClass) {
 				var ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
-				var usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
+				var usedClasses = [{name: await startClass.getName(), id: startClass.obj["_id"]}, {name: await endClass.getName(), id: endClass.obj["_id"]}];
 				var list = await GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 				list.sort(function (x, y) {
 				    var n = x.array.length - y.array.length;
@@ -224,7 +227,7 @@ Interpreter.customMethods({
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
 				Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
-				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
+				Template.ConnectClassesSettings.fromToClass.set({fromName: await startClass.getName(), fromID: startClass.obj["_id"], toName: await endClass.getName(), toID: endClass.obj["_id"]});
 
 				$("#not-show-as-property-path")[0].checked = false;
 				// $("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
@@ -337,7 +340,7 @@ Template.ConnectClasses.events({
 	},
 
 
-	"click #ok-connect": function(){
+	"click #ok-connect": async function(){
 		var firstId = "";
 		var lastElement = "";
 		//test selected chain
@@ -362,7 +365,7 @@ Template.ConnectClasses.events({
 			firstId = Session.get("activeElement");
 			lastElement = {name: chain[chain.length-1].class, id: "no_class_exists"};
 		} 
-		var currentVQElment = new VQ_Element(firstId);		
+		var currentVQElment = await createVQ_Element(firstId);		
 
 	//Property path - 1 link notation
 		if (!noPropertyPath) {
@@ -387,8 +390,8 @@ Template.ConnectClasses.events({
 
 			if (Template.ConnectClasses.addLongLink.get().data){			
 				var d = 30; //distance between boxes
-	            var oldPosition = currentVQElment.getCoordinates(); //Old class coordinates and size
-	            var newPosition = currentVQElment.getNewLocation(d); //New class coordinates and size  
+	            var oldPosition = await currentVQElment.getCoordinates(); //Old class coordinates and size
+	            var newPosition = await currentVQElment.getNewLocation(d); //New class coordinates and size  
 	            var nameLength = 12*class_name.length  + 2*(class_name.match(/[A-Z]/g) || []).length;        
 			    if (nameLength < 75) nameLength = 75; //default minimal width
 	            if (nameLength > 512) nameLength = 512; //default maximal width
@@ -400,50 +403,89 @@ Template.ConnectClasses.events({
 	            var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
 	            var coordY = oldPosition.y + oldPosition.height;
 	            var locLink = [];
-	            
-	            Create_VQ_Element(function(cl){
-	                cl.setName(class_name);
-	                var proj = Projects.findOne({_id: Session.get("activeProject")});
-	                if(typeof class_name !== "undefined" && class_name != null && class_name !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
-	                cl.setClassStyle("condition");	                
-                	locLink = [coordX, coordY, coordX, newPosition.y];                 
-	                Create_VQ_Element(function(lnk) {
-	                    lnk.setName(name);
-	                    lnk.setLinkType("REQUIRED");	                    
-	                    lnk.setNestingType(nesting);						
-						if (proj && proj.autoHideDefaultPropertyName==true) { 
-							lnk.hideDefaultLinkName(true);
-							lnk.setHideDefaultLinkName("true");
-						}
-	                }, locLink, true, currentVQElment, cl);
-	                Template.AggregateWizard.endClassId.set(cl.obj._id);
-	            }, newPosition);
-			} else if (Template.ConnectClasses.linkMenu.get().data) {
-				var lnk = new VQ_Element(Template.ConnectClasses.linkID.get().data);				
-				lnk.setName(name);
-				lnk.setNestingType(nesting);			
-			} else {				
-				var nextVQElement = new VQ_Element(lastElement.id);
 				
-				var oldPosition = currentVQElment.getCoordinates(); //Old class coordinates and size
-	            var newPosition = nextVQElement.getCoordinates(); //New class coordinates and size
+				const cl = await Create_VQ_Element_Async(newPosition);
+				await cl.setName(class_name);
+
+				const proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
+
+				if (typeof class_name !== "undefined" && class_name !== null && class_name !== "") {
+					await cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+				}
+
+				await cl.setClassStyle("condition");
+
+				locLink = [coordX, coordY, coordX, newPosition.y];
+
+				const lnk = await Create_VQ_Element_Async(locLink, true, currentVQElment, cl);
+				await lnk.setName(name);
+				await lnk.setLinkType("REQUIRED");
+				await lnk.setNestingType(nesting);
+
+				if (proj && proj.autoHideDefaultPropertyName === true) {
+					await lnk.hideDefaultLinkName(true);
+					lnk.setHideDefaultLinkName("true");
+				}
+
+				Template.AggregateWizard.endClassId.set(cl.obj._id);
+	            
+	            // Create_VQ_Element(function(cl){
+	                // cl.setName(class_name);
+	                // var proj = Projects.findOne({_id: Session.get("activeProject")});
+	                // if(typeof class_name !== "undefined" && class_name != null && class_name !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
+	                // cl.setClassStyle("condition");	                
+                	// locLink = [coordX, coordY, coordX, newPosition.y];                 
+	                // Create_VQ_Element(function(lnk) {
+	                    // lnk.setName(name);
+	                    // lnk.setLinkType("REQUIRED");	                    
+	                    // lnk.setNestingType(nesting);						
+						// if (proj && proj.autoHideDefaultPropertyName==true) { 
+							// lnk.hideDefaultLinkName(true);
+							// lnk.setHideDefaultLinkName("true");
+						// }
+	                // }, locLink, true, currentVQElment, cl);
+	                // Template.AggregateWizard.endClassId.set(cl.obj._id);
+	            // }, newPosition);
+			} else if (Template.ConnectClasses.linkMenu.get().data) {
+				var lnk = await createVQ_Element(Template.ConnectClasses.linkID.get().data);				
+				await lnk.setName(name);
+				await lnk.setNestingType(nesting);			
+			} else {				
+				var nextVQElement = await createVQ_Element(lastElement.id);
+				
+				var oldPosition = await currentVQElment.getCoordinates(); //Old class coordinates and size
+	            var newPosition = await nextVQElement.getCoordinates(); //New class coordinates and size
 	            //Link Coordinates	            
 	            var locLink = [oldPosition.x + Math.round(oldPosition.width/2), oldPosition.y + oldPosition.height, 
 	            				oldPosition.x + Math.round(oldPosition.width/2), Math.max(oldPosition.y + oldPosition.height, newPosition.y + newPosition.height) + 60,
 	            				newPosition.x + Math.round(newPosition.width/2), Math.max(oldPosition.y + oldPosition.height, newPosition.y + newPosition.height) + 60,
 	            				newPosition.x + Math.round(newPosition.width/2), newPosition.y + newPosition.height]; 
 	            //console.log(oldPosition, newPosition, locLink);
-				console.log("eeeeeeeeeeefffffffffffffffffff", name, Template.ConnectClasses.linkList.curValue)
-				Create_VQ_Element(function(lnk) {
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-                    lnk.setName(name);
-                    lnk.setLinkType("REQUIRED");                   
-                    lnk.setNestingType(nesting);						
-					if (proj && proj.autoHideDefaultPropertyName==true) { 
-						lnk.hideDefaultLinkName(true);
-						lnk.setHideDefaultLinkName("true");
-					}					
-                }, locLink, true, currentVQElment, nextVQElement);
+
+				const lnk = await Create_VQ_Element_Async(locLink, true, currentVQElment, nextVQElement);
+
+				const proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
+
+				await lnk.setName(name);
+				await lnk.setLinkType("REQUIRED");
+				await lnk.setNestingType(nesting);
+
+				if (proj && proj.autoHideDefaultPropertyName === true) {
+					await lnk.hideDefaultLinkName(true);
+					lnk.setHideDefaultLinkName("true");
+				}
+
+
+				// Create_VQ_Element(function(lnk) {
+					// var proj = Projects.findOne({_id: Session.get("activeProject")});
+                    // lnk.setName(name);
+                    // lnk.setLinkType("REQUIRED");                   
+                    // lnk.setNestingType(nesting);						
+					// if (proj && proj.autoHideDefaultPropertyName==true) { 
+						// lnk.hideDefaultLinkName(true);
+						// lnk.setHideDefaultLinkName("true");
+					// }					
+                // }, locLink, true, currentVQElment, nextVQElement);
 			}
 			//Aggregate wizard settings			
 			if (checkedAggregateWizard) { 
@@ -486,7 +528,7 @@ Template.ConnectClasses.events({
 	//draw all classes and links
 			AddNextLink(currentVQElment, chain, lastElement, Template.ConnectClasses.gotoSubquery.get().isChecked, currentVQElment, Template.ConnectClasses.addLongLink.get().data);		
 			if (Template.ConnectClasses.linkMenu.get().data) {
-				var currentLink = new VQ_Element(Template.ConnectClasses.linkID.curValue.data);
+				var currentLink = await createVQ_Element(Template.ConnectClasses.linkID.curValue.data);
 				currentLink.deleteElement();
 			}
 		}	
@@ -733,18 +775,14 @@ async function GetChains(ids, maxLength){
 	var resultStringArray=[]
 	
 	if(ids.length == 2){
-		console.log("IIIIIIIIIII", ids)
-		var elem1 = new VQ_Element(ids[0]["text"]);
-		var elem2 = new VQ_Element(ids[1]["text"]);
+		var elem1 = await createVQ_Element(ids[0]["text"]);
+		var elem2 = await createVQ_Element(ids[1]["text"]);
 		var params = {propertyKind:'Object'};
 		var props = await dataShapes.getProperties(params, elem1, elem2);
 		var props2 = await dataShapes.getProperties(params, elem2, elem1);
 		
-		console.log("DDDDDDDDD",props, props2,Template.ConnectClasses.elements)
-		
 		var i = 0;
 		_.each(props.data, function(e){
-			console.log("EEEEEE", e)
 			
 			var resultChain = [];
 			//prefix:name
@@ -789,8 +827,8 @@ async function GetChains(ids, maxLength){
 	return resultStringArray;
 }
 
-function GetLinks(start_elem_id){
-	if (Elements.findOne({_id: start_elem_id})){ 
+async function GetLinks(start_elem_id){
+	if (await Elements.findOneAsync({_id: start_elem_id})){ 
 		var asc = [];
 		// var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: Elements.findOne({_id: start_elem_id})["elementTypeId"]});
 		// if (!compart_type) {
@@ -802,21 +840,21 @@ function GetLinks(start_elem_id){
 		// 	return [{name: "", class: "", type: "=>"}];
 		// }
 
-		var elem = new VQ_Element(start_elem_id);
+		var elem = await createVQ_Element(start_elem_id);
 		var className = "";
-		if (elem.isUnion() && !elem.isRoot()) { // [ + ] element, that has link to upper class 
+		if (await elem.isUnion() && !(await elem.isRoot())) { // [ + ] element, that has link to upper class 
 			if (elem.getLinkToRoot()){
 				var element = elem.getLinkToRoot().link.getElements();
 				if (elem.getLinkToRoot().start) {
-					var newStartClass = new VQ_Element(element.start.obj._id);						
-    				className = newStartClass.getName();
+					var newStartClass = await createVQ_Element(element.start.obj._id);						
+    				className = await newStartClass.getName();
     			} else {
-    				var newStartClass = new VQ_Element(element.end.obj._id);						
-    				className = newStartClass.getName();
+    				var newStartClass = await createVQ_Element(element.end.obj._id);						
+    				className = await newStartClass.getName();
     			}						
 			}					
 		} else {
-			className = elem.getName();
+			className = await elem.getName();
 		}
 
 		// var className = act_comp["input"];
@@ -835,9 +873,8 @@ function GetLinks(start_elem_id){
 	}
 }
 
-function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryFromElement, longLink){
-	console.log("OOOOOOOOOOO", chain)
-	
+async function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryFromElement, longLink){
+
 	if (chain.length == 0)  {
 		return;
 	}
@@ -853,21 +890,21 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
 	}
 
 	var nesting = "";
-	if (needSubquery && currentElement.getName() == subqueryFromElement.getName()){
+	if (needSubquery && await currentElement.getName() == await subqueryFromElement.getName()){
 		nesting = "SUBQUERY";
 		needSubquery = false;
 	} else {
 		nesting = "PLAIN";
 	}
 	
-    var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
+    var oldPosition = await currentElement.getCoordinates(); //Old class coordinates and size
     var locLink = [];	
 	if (chain[0].class == lastElement.name && !longLink) {
-		var lastVQElement = new VQ_Element(lastElement.id);
-		var proj = Projects.findOne({_id: Session.get("activeProject")});			
-		var newPosition = lastVQElement.getCoordinates(); 
+		var lastVQElement = await createVQ_Element(lastElement.id);
+		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});			
+		var newPosition = await lastVQElement.getCoordinates(); 
 		var coordinates = GetLinkCoordinates(oldPosition, newPosition);
-		lastVQElement.setClassStyle("condition");
+		await lastVQElement.setClassStyle("condition");
 				
 		if (chain[0].direction == "=>") {				
         	if (coordinates.bind) {
@@ -875,34 +912,59 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
         	} else {
         		locLink = [coordinates.x1, coordinates.y1, coordinates.x2, coordinates.y2]; 
         	}  
-            Create_VQ_Element(function(lnk) {
-                lnk.setName(chain[0].link);
-                lnk.setLinkType("REQUIRED");
-                lnk.setNestingType(nesting);
-				if (proj && proj.autoHideDefaultPropertyName==true) { 
-					lnk.hideDefaultLinkName(true);
-					lnk.setHideDefaultLinkName("true");
-				}
-            }, locLink, true, currentElement, lastVQElement);
+			
+			const lnk = await Create_VQ_Element_Async(locLink, true, currentElement, lastVQElement);
+
+			await lnk.setName(chain[0].link);
+			await lnk.setLinkType("REQUIRED");
+			await lnk.setNestingType(nesting);
+
+			if (proj && proj.autoHideDefaultPropertyName === true) {
+				await lnk.hideDefaultLinkName(true);
+				lnk.setHideDefaultLinkName("true");
+			}
+
+			
+            // Create_VQ_Element(function(lnk) {
+                // lnk.setName(chain[0].link);
+                // lnk.setLinkType("REQUIRED");
+                // lnk.setNestingType(nesting);
+				// if (proj && proj.autoHideDefaultPropertyName==true) { 
+					// lnk.hideDefaultLinkName(true);
+					// lnk.setHideDefaultLinkName("true");
+				// }
+            // }, locLink, true, currentElement, lastVQElement);
         } else {        	
         	if (coordinates.bind) {
         		locLink = [coordinates.x2, coordinates.y2, coordinates.x2, coordinates.y1, coordinates.x1, coordinates.y1];
         	} else {
 	        	locLink = [coordinates.x2, coordinates.y2, coordinates.x1, coordinates.y1];  
 	        }
-        	Create_VQ_Element(function(lnk) {
-                lnk.setName(chain[0].link);
-                lnk.setLinkType("REQUIRED");
-                lnk.setNestingType(nesting);
-				if (proj && proj.autoHideDefaultPropertyName==true) {
-					lnk.hideDefaultLinkName(true);
-					lnk.setHideDefaultLinkName("true");
-				}
-            }, locLink, true, lastVQElement, currentElement);
+			
+			const lnk = await Create_VQ_Element_Async(locLink, true, currentElement, lastVQElement);
+			
+			await lnk.setName(chain[0].link);
+			await lnk.setLinkType("REQUIRED");
+			await lnk.setNestingType(nesting);
+
+			if (proj && proj.autoHideDefaultPropertyName === true) {
+				await lnk.hideDefaultLinkName(true);
+				lnk.setHideDefaultLinkName("true");
+			}
+
+        	// Create_VQ_Element(function(lnk) {
+                // lnk.setName(chain[0].link);
+                // lnk.setLinkType("REQUIRED");
+                // lnk.setNestingType(nesting);
+				// if (proj && proj.autoHideDefaultPropertyName==true) {
+					// lnk.hideDefaultLinkName(true);
+					// lnk.setHideDefaultLinkName("true");
+				// }
+            // }, locLink, true, lastVQElement, currentElement);
         }
 	} else { 
 		var d = 30; //distance between boxes
-	    var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
+	    var newPosition = await currentElement.getNewLocation(d); //New class coordinates and size
 	    var nameLength = 12*chain[0].class.length + 2*(chain[0].class.match(/[A-Z]/g) || []).length;	    
 	    if (nameLength < 75) nameLength = 75; //default minimal width
         if (nameLength > 512) nameLength = 512; //default maximal width
@@ -914,37 +976,83 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
 	    var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
 	    var coordY = oldPosition.y + oldPosition.height;		
 		//link_name, class_name, line_direct
-	    Create_VQ_Element(function(cl){
-	        cl.setName(chain[0].class);
-	        var proj = Projects.findOne({_id: Session.get("activeProject")});
-	        if(typeof chain[0] !== "undefined" && chain[0] != null && chain[0] !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
-	        cl.setClassStyle("condition");
-	        if (chain[0].direction == "=>") {
-	        	locLink = [coordX, coordY, coordX, newPosition.y];                 
-	            Create_VQ_Element(function(lnk) {
-	                lnk.setName(chain[0].link);
-	                lnk.setLinkType("REQUIRED");
-	                lnk.setNestingType(nesting);
-					if (proj && proj.autoHideDefaultPropertyName==true) { 
-						lnk.hideDefaultLinkName(true);
-						lnk.setHideDefaultLinkName("true");
-					}
-	            }, locLink, true, currentElement, cl);
-	        } else {
-	        	locLink = [coordX, newPosition.y, coordX, coordY];
-	        	Create_VQ_Element(function(lnk) {
-	                lnk.setName(chain[0].link);
-	                lnk.setLinkType("REQUIRED");
-	                lnk.setNestingType(nesting);
-					if (proj && proj.autoHideDefaultPropertyName==true) {
-						lnk.hideDefaultLinkName(true);
-						lnk.setHideDefaultLinkName("true");
-					}
-	            }, locLink, true, cl, currentElement);
-	        }
-	        var newChain = _.rest(chain); //console.log(cl, lastElement);
-	        AddNextLink(cl, newChain, lastElement, needSubquery, subqueryFromElement, longLink);
-	    }, newPosition);
+		
+		
+		const cl = await Create_VQ_Element_Async(newPosition);
+
+		await cl.setName(chain[0].class);
+
+		const proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
+
+		if (typeof chain[0] !== "undefined" && chain[0] !== null && chain[0] !== "") {
+			await cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+		}
+
+		await cl.setClassStyle("condition");
+
+		if (chain[0].direction === "=>") {
+			locLink = [coordX, coordY, coordX, newPosition.y];
+
+			const lnk = await Create_VQ_Element_Async(locLink, true, currentElement, cl);
+
+			await lnk.setName(chain[0].link);
+			await lnk.setLinkType("REQUIRED");
+			await lnk.setNestingType(nesting);
+
+			if (proj && proj.autoHideDefaultPropertyName === true) {
+				await lnk.hideDefaultLinkName(true);
+				lnk.setHideDefaultLinkName("true");
+			}
+		} else {
+			locLink = [coordX, newPosition.y, coordX, coordY];
+
+			const lnk = await Create_VQ_Element_Async(locLink, true, cl, currentElement);
+
+			await lnk.setName(chain[0].link);
+			await lnk.setLinkType("REQUIRED");
+			await lnk.setNestingType(nesting);
+
+			if (proj && proj.autoHideDefaultPropertyName === true) {
+				await lnk.hideDefaultLinkName(true);
+				lnk.setHideDefaultLinkName("true");
+			}
+		}
+
+		const newChain = _.rest(chain);
+		AddNextLink(cl, newChain, lastElement, needSubquery, subqueryFromElement, longLink);
+
+		
+	    // Create_VQ_Element(function(cl){
+	        // cl.setName(chain[0].class);
+	        // var proj = Projects.findOne({_id: Session.get("activeProject")});
+	        // if(typeof chain[0] !== "undefined" && chain[0] != null && chain[0] !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
+	        // cl.setClassStyle("condition");
+	        // if (chain[0].direction == "=>") {
+	        	// locLink = [coordX, coordY, coordX, newPosition.y];                 
+	            // Create_VQ_Element(function(lnk) {
+	                // lnk.setName(chain[0].link);
+	                // lnk.setLinkType("REQUIRED");
+	                // lnk.setNestingType(nesting);
+					// if (proj && proj.autoHideDefaultPropertyName==true) { 
+						// lnk.hideDefaultLinkName(true);
+						// lnk.setHideDefaultLinkName("true");
+					// }
+	            // }, locLink, true, currentElement, cl);
+	        // } else {
+	        	// locLink = [coordX, newPosition.y, coordX, coordY];
+	        	// Create_VQ_Element(function(lnk) {
+	                // lnk.setName(chain[0].link);
+	                // lnk.setLinkType("REQUIRED");
+	                // lnk.setNestingType(nesting);
+					// if (proj && proj.autoHideDefaultPropertyName==true) {
+						// lnk.hideDefaultLinkName(true);
+						// lnk.setHideDefaultLinkName("true");
+					// }
+	            // }, locLink, true, cl, currentElement);
+	        // }
+	        // var newChain = _.rest(chain); //console.log(cl, lastElement);
+	        // AddNextLink(cl, newChain, lastElement, needSubquery, subqueryFromElement, longLink);
+	    // }, newPosition);
 	}
 }
 

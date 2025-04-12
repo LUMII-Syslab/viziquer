@@ -6,7 +6,7 @@ import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { autoCompletionAddCondition, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
 
 import './add_condition_form.html'
-import { VQ_Element } from '../js/VQ_Element'
+import { VQ_Element, createVQ_Element } from '../js/VQ_Element'
 
 Interpreter.customMethods({
 	AddCondition: function () {
@@ -22,7 +22,7 @@ Interpreter.customMethods({
 
 
 Template.AddCondition.helpers({
-	field_obj: function() {
+	field_obj: async function() {
 		var data_in = Template.currentData();
 		if (!data_in) {
 			return;
@@ -32,11 +32,11 @@ Template.AddCondition.helpers({
 		//var compart_type_id = Session.get("multiRowCompartmentTypeId");
 
 		var compart_type_id = data_in["compartmentTypeId"];
-		var compart = Compartments.findOne({_id: Session.get("multFieldCompartmentId")});
+		var compart = await Compartments.findOneAsync({_id: Session.get("multFieldCompartmentId")});
 
 		var fields = [];
 
-		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+		var compart_type = await CompartmentTypes.findOneAsync({_id: compart_type_id});
 		if (!compart_type) {
 			return {fields: fields};
 		}
@@ -63,25 +63,25 @@ Template.AddCondition.helpers({
 
 Template.AddCondition.events({
 
-	"click #ok-add-condition": function(e) {		
+	"click #ok-add-condition": async function(e) {		
 		var selected_elem_id = Session.get("activeElement");
 		var elem = document.getElementById("add-condition-form");
-		var act_el = Elements.findOne({_id: selected_elem_id}); 
+		var act_el = await Elements.findOneAsync({_id: selected_elem_id}); 
 		if(elem.getAttribute("compartmentId") === null){
-			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			//Read user's choise
-			  var vq_obj = new VQ_Element(selected_elem_id);
+			  var vq_obj = await createVQ_Element(selected_elem_id);
 				let condition = $('#condition-expression').val();
 				if(condition != ""){
 					let allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
 					if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") allowMultiplication = true;
 					else allowMultiplication = false;
-					vq_obj.addCondition(condition, allowMultiplication);
+					await vq_obj.addCondition(condition, allowMultiplication);
 				}
 			};
 		} else {
-			var compart_type = CompartmentTypes.findOne({name: "Conditions", elementTypeId: act_el["elementTypeId"]});
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
+			var compart_type = await CompartmentTypes.findOneAsync({name: "Conditions", elementTypeId: act_el["elementTypeId"]});
+			var compart = await Compartments.findOneAsync({compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
 			if(typeof compart !== "undefined"){
 				let condition = $('#condition-expression').val();
 				if(condition != ""){
@@ -91,6 +91,17 @@ Template.AddCondition.events({
 					
 					if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") {
 						allowMultiplication = "true";
+						// allowMultiplicationInput = "\u269F ";
+						// allowMultiplicationInput = "\u20AD ";
+						// allowMultiplicationInput = "\u2630 ";
+						// allowMultiplicationInput = "\uD83D\uDF57 ";
+						// allowMultiplicationInput = "\u21DA ";
+						// allowMultiplicationInput = "\u26A0 ";
+						// allowMultiplicationInput = "\u272A ";
+						// allowMultiplicationInput = "\u2731 ";
+						// allowMultiplicationInput = "\u274B ";
+						// allowMultiplicationInput = "\u22D4 ";
+						// allowMultiplicationInput = "\uf070 ";
 						allowMultiplicationInput = "* ";
 						fullText = allowMultiplicationInput + fullText;
 					}

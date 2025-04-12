@@ -4,7 +4,7 @@ import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 import { generateSymbolTable, findAttributeInAbstractTable, setSchemaNamesForQuery } from '/imports/client/custom/vq/js/transformations.js'
-import { VQ_Element } from './VQ_Element'
+import { VQ_Element, createVQ_Element } from './VQ_Element'
 
 import * as vq_grammar_completion_parser from '/imports/client/custom/vq/js/vq_grammar_completion_parser.js'
 import * as vq_property_path_grammar_completion_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_completion_parser.js'
@@ -166,7 +166,7 @@ const autoCompletion = async function(e) {
 		}else{
 			elem.addEventListener("keyup", keyUpHandler);
 			elem.addEventListener("click", clickHandler);
-			autocomplete(elem, continuations);
+			await autocomplete(elem, continuations);
 		}
 	}
 }
@@ -212,7 +212,7 @@ async function requestAndProcessContinuations(textBefore, text, cursorPosition, 
 		errorMessage(continuations,  document.activeElement);
 		closeAllLists();
 	}else{
-		autocomplete(document.activeElement, continuations);
+		await autocomplete(document.activeElement, continuations);
 	}
 }
 
@@ -288,7 +288,7 @@ function clickHandler(e){
 	//elem.removeEventListener("keyup", keyUpHandler);
 }
 
-function autocomplete(inp, continuations) {
+async function autocomplete(inp, continuations) {
 
 	const colorForType = (type) => {
 		switch (type) {
@@ -372,11 +372,11 @@ function autocomplete(inp, continuations) {
 			b.innerHTML += `<input type='hidden' value='${continuations.prefix}' name='prefix'>`;
 
 			/*execute a function when someone clicks on the item value (DIV element):*/
-			b.addEventListener("click", function(e) {
+			b.addEventListener("click", async function(e) {
 				/*insert the value for the autocomplete text field:*/
 				// var inputValue = generateInputValue(inp.value, this.getElementsByTagName("input")[0].value, cursorPosition);
 				// inp.value = inputValue;
-				updateInputValue(inp, continuations.prefix, sugg.name);
+				await updateInputValue(inp, continuations.prefix, sugg.name);
 				/*close the list of autocompleted values,(or any other open lists of autocompleted values:*/
 				closeAllLists();
 				inp.focus();
@@ -421,7 +421,7 @@ function closeAllLists(elmnt) {
 	currentFocus = 0;
 }
 
-function updateInputValue(input, prefix, suggestion) {
+async function updateInputValue(input, prefix, suggestion) {
 	let selStart = input.selectionStart;
 	let selEnd = input.selectionEnd;
 	let tail = input.value.slice(selEnd);
@@ -439,19 +439,19 @@ function updateInputValue(input, prefix, suggestion) {
 	input.focus();
 
 	const act_elem = Session.get("activeElement");
-	const act_el = Elements.findOne({_id: act_elem});
+	const act_el = await Elements.findOneAsync({_id: act_elem});
 	if(typeof act_el !== 'undefined'){
 		const compart_type_id = $(input).closest(".parent-compartment").closest(".compart-type").attr("id");
 		// const compart_type_id = $(input).closest(".compart-type").attr("id");
-		const compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+		const compart_type = await CompartmentTypes.findOneAsync({_id: compart_type_id});
 		if (!compart_type) {
 			console.error("No CompartmentType", compart_type_id);
 			return;
 		}
 	
-		const compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
+		const compart = await Compartments.findOneAsync({compartmentTypeId: compart_type_id, elementId: act_elem});
 		if(typeof compart !== "undefined"){
-			let elem = new VQ_Element(act_elem);
+			let elem = await createVQ_Element(act_elem);
       if (elem.isIndirectClassMembership()) {
 				Dialog.updateCompartmentValue(compart_type, act_elem, newValue, ".. "+newValue, compart["_id"]);
 			} else {
@@ -487,10 +487,10 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 			}
 			
 			const selected_elem_id = Session.get("activeElement");			
-			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
-				vq_obj = new VQ_Element(selected_elem_id);
-				var individual =  vq_obj.getInstanceAlias();
+				vq_obj = await createVQ_Element(selected_elem_id);
+				var individual =  await vq_obj.getInstanceAlias();
 				if (individual !== null && individual !== undefined && isURI(individual) != 0) 
 					params.uriIndividual = dataShapes.getIndividualName(individual);
 				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
@@ -529,18 +529,18 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		if (!act_elem) {
 			return [];
 		}
-		const act_comp = Compartments.findOne({elementId: act_elem})
+		const act_comp = await Compartments.findOneAsync({elementId: act_elem})
 		if (!act_comp) {
 			return [];
 		}
 
-		const elem_type = ElementTypes.findOne({name: "Class"});
+		const elem_type = await ElementTypes.findOneAsync({name: "Class"});
 		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
 			return [];
 		}
 		
-		const compart_type = CompartmentTypes.findOne({name: "ClassType", elementTypeId: act_comp["elementTypeId"]});
- 		const compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+		const compart_type = await CompartmentTypes.findOneAsync({name: "ClassType", elementTypeId: act_comp["elementTypeId"]});
+ 		const compart = await Compartments.findOneAsync({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 		
 		
 		if(compart.input == "query"){
@@ -594,12 +594,12 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		if (!act_elem) {
 			return [];
 		}
-		const act_comp = Compartments.findOne({elementId: act_elem})
+		const act_comp = await Compartments.findOneAsync({elementId: act_elem})
 		if (!act_comp) {
 			return [];
 		}
 
-		const elem_type = ElementTypes.findOne({name: "Class"});
+		const elem_type = await ElementTypes.findOneAsync({name: "Class"});
 		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
 			return [];
 		}
@@ -659,15 +659,15 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		
 		const selected_elem_id = Session.get("activeElement");
 		let act_el;
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-			act_el = new VQ_Element(selected_elem_id);
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			act_el = await createVQ_Element(selected_elem_id);
 		}
 		if(typeof schemaNameFromABS !== "undefined" && schemaNameFromABS !== null && schemaNameFromABS !== ""){
 			params.schema = schemaNameFromABS;
 			// dataShapes.schema.schemaType = schemaNameFromABS;
 		}
 		
-		var inst = await dataShapes.getClassIndividuals(params, act_el.getName());
+		var inst = await dataShapes.getClassIndividuals(params, await act_el.getName());
 		//if (dataShapes.schema.schemaType == 'wikidata' && fullText != "")
 		//	inst = await dataShapes.getIndividualsWD(fullText); 
 		//else
@@ -696,20 +696,29 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 				let name_list = [];
 
 				if (act_elem) {
-					var vq_link = new VQ_Element(act_elem);
-					if (vq_link.isLink()) {
+					var vq_link = await createVQ_Element(act_elem);
+					if (await vq_link.isLink()) {
 						// var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
-						let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:schemaNameFromABS, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
-						
+						const context = await vq_link.getStartElement();
+
+						let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {
+							time: time,
+							text: text,
+							schema: schemaNameFromABS,
+							symbol_table: symbolTable,
+							context: context,
+							link: vq_link
+						});
+
 					};
 				};
 			} else if(grammarType == "linkPath"){
 				let name_list = [];
 				//var act_elem = Session.get("activeElement");
 				if (act_elem) {
-					const act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-					const compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-					const compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+					const act_el = await Elements.findOneAsync({_id: act_elem}); //Check if element ID is valid
+					const compart_type = await CompartmentTypes.findOneAsync({name: "Name", elementTypeId: act_el["elementTypeId"]});
+					const compart = await Compartments.findOneAsync({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					let className = compart["input"];
 					let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:schemaNameFromABS, symbol_table:symbolTable, context:act_elem, className:className});
 				};
@@ -723,10 +732,10 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 
 				let className = "";
 
-				const act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+				const act_el = await Elements.findOneAsync({_id: act_elem}); //Check if element ID is valid
 				if(typeof act_el !== 'undefined'){
-					const compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-					const compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+					const compart_type = await CompartmentTypes.findOneAsync({name: "Name", elementTypeId: act_el["elementTypeId"]});
+					const compart = await Compartments.findOneAsync({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					if(typeof compart !== 'undefined') className = compart["input"];
 				}
 

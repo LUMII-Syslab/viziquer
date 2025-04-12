@@ -4,7 +4,7 @@ import { Projects, Elements, ElementTypes } from '/imports/db/platform/collectio
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 import { checkIfIsSimpleVariable, findINExpressionTable } from './parserCommon';
 import { countMaxExpressionCardinality } from './parser.js';
-import { VQ_Element } from './VQ_Element';
+import { VQ_Element, createVQ_Element } from './VQ_Element';
 
 import * as vq_grammar_parser from '/imports/client/custom/vq/js/vq_grammar_parser'
 import * as vq_variable_grammar_parser from '/imports/client/custom/vq/js/vq_variable_grammar_parser'
@@ -40,9 +40,9 @@ Interpreter.customMethods({
   },
 });
 
-function getDeclarations(){
+async function getDeclarations(){
 	const diagramId = Session.get("activeDiagram");
-	const elem_type = ElementTypes.findOne({name: "Declaration"});
+	const elem_type = await ElementTypes.findOneAsync({name: "Declaration"});
 	let declarationPrefixes = [];
 	let declarationSchemas = [];
 	if(typeof elem_type !== "undefined"){
@@ -51,9 +51,9 @@ function getDeclarations(){
 		});
 		
 		for(let d = 0; d < elems_in_diagram_ids.length; d++){
-			let declaration = new VQ_Element(elems_in_diagram_ids[d]);
-			let prefixes = declaration.getPrefixDeclarations();
-			let schemas = declaration.getSchemaDeclarations();
+			let declaration = await createVQ_Element(elems_in_diagram_ids[d]);
+			let prefixes = await declaration.getPrefixDeclarations();
+			let schemas = await declaration.getSchemaDeclarations();
 			for(let p = 0; p < prefixes.length; p++){
 				if(typeof declarationPrefixes[prefixes[p]["prefix"]] === "undefined") {
 					declarationPrefixes[prefixes[p]["prefix"]] = prefixes[p]["namespace"];
@@ -86,7 +86,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	query.prefixes = await dataShapes.getNamespaces();
 	if(typeof query.prefixes.error !== "undefined" && query.prefixes.complete === false) query.prefixes = [];
 	query.classifiers = await dataShapes.getClassifiers();
-	let declarations = getDeclarations();
+	let declarations = await getDeclarations();
 	query.prefixDeclarations = declarations.prefixes;
 	query.schemaDeclarations = declarations.schemas;
   }
@@ -137,6 +137,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
   // function recursively modifies query by adding identification info
   async function resolveClass(obj_class, parents_scope_table) {
 	var schemaName = await dataShapes.schema.schema;
+		
 	if(typeof obj_class.identification.schemaName !== "undefined" && obj_class.identification.schemaName !== "") {
 		schemaName = obj_class.identification.schemaName;
 		// dataShapes.schema.schema = schemaName;
@@ -446,6 +447,9 @@ async function resolveTypesAndBuildSymbolTable(query) {
 
   var empty_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
   let class_schema_name = "";
+  
+  console.log("query.root.graphsService", query.root);
+  
   if(query.root.graphsService.graphInstruction === "SERVICE" && query.root.graphsService.schema !== "")class_schema_name = query.root.graphsService.schema;
   query.root.identification.schemaName = class_schema_name;
   await resolveClass(query.root, empty_scope_table);
@@ -1123,7 +1127,9 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 	var classAccessTable = [];
 	
   // conver id-s to VQ_Elements (filter out incorrect id-s)
-  var element_list = _.filter(_.map(element_id_list, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});
+  var elements_raw = await Promise.all(element_id_list.map(async (id) => await createVQ_Element(id)));
+
+  var element_list = elements_raw.filter(v => v && v.obj);
   // determine which elements are root elements
   _.each(element_list, function(e) {
 	  if(e.obj.type == "Box"){
@@ -1140,10 +1146,20 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 	  }
   }
 
-  var root_elements = _.filter(element_list, function(e) {return e.isRoot();});
+  var root_elements = [];
+
+	for (const e of element_list) {
+	  console.log("SSSSSSSSSSSSSSSS", e)
+	  if (await e.isRoot()) {
+		root_elements.push(e);
+	  }
+	}
+
+
+	console.log("TTTTTTTTTTTTTTTTTTTT", root_elements, element_list, elements_raw)
 
   // map each root element to AST
-  return _.map(root_elements, function(e) {
+  return await Promise.all(_.map(root_elements, async function(e) {
 
     var visited = {};
     var condition_links = [];
@@ -1159,32 +1175,36 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
     // Otherwise if there is a path from target, the link is registered in the condition_links array
     // TODO: Otherwise an error
     // TODO: Optimize!!!
-    var genConditionalLink = function(link) {
-	 if (_.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
+    var genConditionalLink = async function(link) {
+	 const startElement = await link.link.getStartElement();
+	 const endElement = await link.link.getEndElement();
+	 if (_.any(element_list, async function(li) {return li.isEqualTo(link.link)})) {
        if (link.start) {
-          if (visited[link.link.getStartElement()._id()]) {
+          if (visited[startElement._id()]) {
             // if path exists - create link json
-            if (link.link.getEndElement().isTherePathToElement(link.link.getStartElement())) {
-			  if(link.link.isConditional()){
-				  return { identification: { _id: link.link._id(), local_name: link.link.getName() },
+            if (await endElement.isTherePathToElement(startElement)) {
+			  if(await link.link.isConditional()){
+				  const linkName = await link.link.getName();
+				  return { identification: { _id: link.link._id(), local_name: linkName },
 							//If link is inverse, then we got it right
-							isInverse: !link.link.isInverse(),
-							isNot: link.link.getType()=="NOT",
-							target: visited[link.link.getStartElement()._id()]
+							isInverse: !(await link.link.isInverse()),
+							isNot: await link.link.getType()=="NOT",
+							target: visited[startElement._id()]
 				  };
 			  } else {
 				  messages.push("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.")
 			  }
             } else {
               // if reverse path exists - register link json
-              if (link.link.getStartElement().isTherePathToElement(link.link.getEndElement())) {
-				if(link.link.isConditional()){
-					condition_links.push({ from: link.link.getStartElement()._id(),
+              if (await startElement.isTherePathToElement(endElement)) {
+				if(await link.link.isConditional()){
+					const linkName = await link.link.getName();
+					condition_links.push({ from: startElement._id(),
                                        link_info: {
-                                          identification: { _id: link.link._id(), local_name: link.link.getName() },
-                                          isInverse: link.link.isInverse(),
-                                          isNot: link.link.getType()=="NOT",
-                                          target: visited[link.link.getEndElement()._id()] }
+                                          identification: { _id: link.link._id(), local_name: linkName },
+                                          isInverse: await link.link.isInverse(),
+                                          isNot: await link.link.getType()=="NOT",
+                                          target: visited[endElement._id()] }
                                      });
 				} else {
 				    messages.push("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.")
@@ -1195,28 +1215,32 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
             };
           };
        } else {
-          if (visited[link.link.getEndElement()._id()]) {
+          if (visited[endElement._id()]) {
               // if path exists - create link json
-              if (link.link.getStartElement().isTherePathToElement(link.link.getEndElement())) {
-				if(link.link.isConditional()){
-					return { identification: { _id: link.link._id(), local_name: link.link.getName() },
-                          isInverse: link.link.isInverse(),
-                          isNot: link.link.getType()=="NOT",
-                          target: visited[link.link.getEndElement()._id()]
+              if (await startElement.isTherePathToElement(endElement)) {
+				  
+				if(await link.link.isConditional()){
+					const linkName = await link.link.getName();
+					return { identification: { _id: link.link._id(), local_name: linkName },
+                          isInverse: await link.link.isInverse(),
+                          isNot: await link.link.getType()=="NOT",
+                          target: visited[endElement._id()]
 					};
 				}else {
 				   messages.push("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.")
 				}
               } else {
                 // if reverse path exists - register link json
-                if (link.link.getEndElement().isTherePathToElement(link.link.getStartElement())) {
-				  if(link.link.isConditional()){
-					condition_links.push({ from: link.link.getEndElement()._id(),
+                if (await endElement.isTherePathToElement(startElement)) {
+					
+				  if(await link.link.isConditional()){
+					  const linkName = await link.link.getName();
+					condition_links.push({ from: endElement._id(),
                                          link_info: {
-                                            identification: { _id: link.link._id(), local_name: link.link.getName() },
-                                            isInverse: !link.link.isInverse(),
-                                            isNot: link.link.getType()=="NOT",
-                                            target: visited[link.link.getStartElement()._id()] }
+                                            identification: { _id: link.link._id(), local_name: linkName },
+                                            isInverse: !(await link.link.isInverse()),
+                                            isNot: await link.link.getType()=="NOT",
+                                            target: visited[startElement._id()] }
                                        });
 				  } else {
 					    messages.push("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.")
@@ -1233,116 +1257,128 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 
     // VQ_Element --> [JSON for linked class]
     // Recursive. Traverses the query via depth first search
-    function genLinkedElements(current_elem) {
+    async function genLinkedElements(current_elem) {
 		
       // {link:VQ_Element, start:bool} --> JSON for linked class
-      var genLinkedElement = function(link) {
+      var genLinkedElement = async function(link) {
           var elem = null;
 		  var parentElem = null;
           var linkedElem_obj = {};
           if (link.start) {
-            elem = link.link.getStartElement();
-            parentElem = link.link.getEndElement();
-            linkedElem_obj["isInverse"] = !link.link.isInverse();
+            elem = await link.link.getStartElement();
+            parentElem = await link.link.getEndElement();
+            linkedElem_obj["isInverse"] = !(await link.link.isInverse());
           } else {
-            elem = link.link.getEndElement();
-            parentElem = link.link.getStartElement();
-            linkedElem_obj["isInverse"] = link.link.isInverse();
+            elem = await link.link.getEndElement();
+            parentElem = await link.link.getStartElement();
+            linkedElem_obj["isInverse"] = await link.link.isInverse();
           };
 		  
 		  
 		  
           // generate if the element on the other end is not visited AND the link is not conditional
           // AND it is within element_list AND the link is within element_list
-          if (!visited[elem._id()] && !link.link.isConditional()
+          if (!visited[elem._id()] && !(await link.link.isConditional())
               && _.any(element_list, function(el) {return el.isEqualTo(elem)})
               && _.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
 				  var isUnionUP = false;
-				  if(parentElem.getName() == "[ + ]"){
+				  if( await parentElem.getName() == "[ + ]"){
 					  isUnionUP = true;
 				  } 
 				  var isUnionDOWN = false;
-				  if(elem.getName() == "[ + ]"){
+				  if( await elem.getName() == "[ + ]"){
 					  isUnionDOWN = true;
 				  }
 				  
 				  classAccessTable[elem._id()][parentElem._id()] = [];
 				  classAccessTable[elem._id()][parentElem._id()].push({
-					  linkType:link.link.getType(), 
-					  isSubQuery: link.link.isSubQuery(),
-					  isGlobalSubQuery: link.link.isGlobalSubQuery(),
-                      isGraphToContents: link.link.isGraphToContents(),
+					  linkType:await link.link.getType(), 
+					  isSubQuery: await link.link.isSubQuery(),
+					  isGlobalSubQuery: await link.link.isGlobalSubQuery(),
+                      isGraphToContents: await link.link.isGraphToContents(),
 					  direction:"up",
-					  name:parentElem.getName(),
-					  alias:parentElem.getInstanceAlias(),
+					  name: await parentElem.getName(),
+					  alias:await parentElem.getInstanceAlias(),
 					  isUnion:isUnionUP,
 				  })
 				  
 				  classAccessTable[parentElem._id()][elem._id()] = [];
 				  classAccessTable[parentElem._id()][elem._id()].push({
-					  linkType:link.link.getType(), 
-					  isSubQuery: link.link.isSubQuery(),
-					  isGlobalSubQuery: link.link.isGlobalSubQuery(),
-                      isGraphToContents: link.link.isGraphToContents(),
+					  linkType:await link.link.getType(), 
+					  isSubQuery: await link.link.isSubQuery(),
+					  isGlobalSubQuery: await link.link.isGlobalSubQuery(),
+                      isGraphToContents: await link.link.isGraphToContents(),
 					  direction:"down",
-					  name:elem.getName(),
-					  alias:elem.getInstanceAlias(),
+					  name: await elem.getName(),
+					  alias:await elem.getInstanceAlias(),
 					  isUnion:isUnionDOWN,
 				  })  
 				  
               visited[elem._id()]=elem._id();
+			  
+			  const graphsService = await getSchemaNameFromGraphService(await elem.getGraphsServices());
+			  const graphsServiceLink = await getSchemaNameFromGraphService(await link.link.getGraphsServices());
+			  const links = await elem.getLinks();
+			  const allLinks = await elem.getLinks();
+			  const filteredLinks = allLinks.filter(l => !l.link.isEqualTo(link.link));
+			  const conditionLinks = (await Promise.all(filteredLinks.map(genConditionalLink))).filter(l => l);
+			  const children = (await Promise.all(links.map(async (link) => {
+				  return await genLinkedElement(link); // or just genLinkedElement(link) if it already returns a promise
+				}))).filter(child => child); // remove null/undefined children
+			  
               _.extend(linkedElem_obj,
                 {
-                    linkIdentification:{_id: link.link._id(),local_name: link.link.getName()},
-                    linkType: link.link.getType(),
-                    isSubQuery: link.link.isSubQuery(),
-                    isGlobalSubQuery: link.link.isGlobalSubQuery(),
-                    isGraphToContents: link.link.isGraphToContents(),
-					graph: link.link.getGraph(),
-					graphInstruction: link.link.getGraphInstruction(),
-					graphsService: getSchemaNameFromGraphService(elem.getGraphsServices()),
-					graphsServiceLink: getSchemaNameFromGraphService(link.link.getGraphsServices()),
-                    identification: { _id: elem._id(), local_name: elem.getName()},
-                    instanceAlias: replaceSymbols(elem.getInstanceAlias()),
-					instanceIsConstant: checkIfInstanceIsConstantOrVariable(elem.getInstanceAlias(), "="),
-					instanceIsVariable: checkIfInstanceIsConstantOrVariable(elem.getInstanceAlias(), "?"),
-                    isVariable:elem.isVariable(),
-                    isBlankNode:elem.isBlankNode(),
-                    isUnion:elem.isUnion(),
-                    isUnit:elem.isUnit(),
-					selectAll:elem.isSelectAll(),
-                    variableName:elem.getVariableName(),
-                    groupByThis:elem.isGroupByThis(),
-                    indirectClassMembership: elem.isIndirectClassMembership(),
-					labelServiceLanguages: elem.isLabelServiceLanguages(),				
+                    linkIdentification:{_id: link.link._id(),local_name:  await link.link.getName()},
+                    linkType: await link.link.getType(),
+                    isSubQuery: await link.link.isSubQuery(),
+                    isGlobalSubQuery: await link.link.isGlobalSubQuery(),
+                    isGraphToContents: await link.link.isGraphToContents(),
+					graph: await link.link.getGraph(),
+					graphInstruction: await link.link.getGraphInstruction(),
+					graphsService: await getSchemaNameFromGraphService(await elem.getGraphsServices()),
+					graphsServiceLink: await getSchemaNameFromGraphService(await link.link.getGraphsServices()),
+                    identification: { _id: elem._id(), local_name: await  elem.getName()},
+                    instanceAlias: replaceSymbols(await elem.getInstanceAlias()),
+					instanceIsConstant: checkIfInstanceIsConstantOrVariable(await elem.getInstanceAlias(), "="),
+					instanceIsVariable: checkIfInstanceIsConstantOrVariable(await elem.getInstanceAlias(), "?"),
+                    isVariable:await elem.isVariable(),
+                    isBlankNode:await elem.isBlankNode(),
+                    isUnion:await elem.isUnion(),
+                    isUnit:await elem.isUnit(),
+					selectAll:await elem.isSelectAll(),
+                    variableName:await elem.getVariableName(),
+                    groupByThis:await elem.isGroupByThis(),
+                    indirectClassMembership: await elem.isIndirectClassMembership(),
+					labelServiceLanguages: await elem.isLabelServiceLanguages(),				
                     // should not add the link which was used to get to the elem
-                    conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
-                    fields: elem.getFields(),
-                    aggregations: elem.getAggregateFields(),
-					isDelayedLink: link.link.isDelayedLink(),
-                    conditions: elem.getConditions(),
-                    fullSPARQL: elem.getFullSPARQL(),
-					comment: elem.getComment(),
-                    children: _.filter(_.map(elem.getLinks(), genLinkedElement), function(l) {return l})
+                    conditionLinks:conditionLinks,
+                    fields: await elem.getFields(),
+                    aggregations: await elem.getAggregateFields(),
+					isDelayedLink: await link.link.isDelayedLink(),
+                    conditions: await elem.getConditions(),
+                    fullSPARQL: await elem.getFullSPARQL(),
+					comment: await elem.getComment(),
+                    children: children
                   });
-                if (elem.isGlobalSubQueryRoot()) {
-                  _.extend(linkedElem_obj,{  orderings: elem.getOrderings(),
-                                             groupings: elem.getGroupings(),
-                                             having: elem.getHaving(),
-                                             distinct:elem.isDistinct(),
-                                             limit:elem.getLimit(),
-                                             offset:elem.getOffset() });
-					if(link.link.getName() == "++" || link.link.getName() == "=="){
-						 _.extend(linkedElem_obj,{ graphs: elem.getGraphs() });
+                if (await elem.isGlobalSubQueryRoot()) {
+                  _.extend(linkedElem_obj,{  orderings: await elem.getOrderings(),
+                                             groupings: await elem.getGroupings(),
+                                             having: await elem.getHaving(),
+                                             distinct:await elem.isDistinct(),
+                                             limit: await elem.getLimit(),
+                                             offset: await elem.getOffset() });
+					const linkName =  await link.link.getName();
+					if( linkName== "++" || linkName == "=="){
+						 _.extend(linkedElem_obj,{ graphs: await elem.getGraphs() });
 					}
                 } else {
-					var orderingss = elem.getOrderings()
+					var orderingss = await elem.getOrderings()
 					if(orderingss.length > 0){
 						for(let order = 0; order < orderingss.length; order++){
 							warnings.push("Order by clause '" + orderingss[order]["fulltext"] + "' ignored since it is not placed in the main query node")
 						}					
 					}
-					var havings = elem.getHaving(); 
+					var havings = await elem.getHaving(); 
 					
 					if(typeof havings !== "undefined" && havings !== null && havings.length > 0){
 						for(let having = 0; having < havings.length; having++){
@@ -1351,10 +1387,11 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 					}
 				};
 					
-                if (elem.isSubQueryRoot()) {
-                  _.extend(linkedElem_obj,{ distinct:elem.isDistinct(), groupings: elem.getGroupings(), having: elem.getHaving(),});
-				  if(link.link.getName() == "++" || link.link.getName() == "=="){
-						 _.extend(linkedElem_obj,{ graphs: elem.getGraphs() });
+                if (await elem.isSubQueryRoot()) {
+                  _.extend(linkedElem_obj,{ distinct:await elem.isDistinct(), groupings: await elem.getGroupings(), having: await elem.getHaving(),});
+				  const linkName =  await link.link.getName();
+				  if(linkName == "++" || linkName == "=="){
+						 _.extend(linkedElem_obj,{ graphs: await elem.getGraphs() });
 					}
                 };
                 return linkedElem_obj;
@@ -1362,11 +1399,11 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 
       };
 
-      return _.filter(_.map(current_elem.getLinks(), genLinkedElement), function(l) {return l})
+      return (await Promise.all((await current_elem.getLinks()).map(genLinkedElement))).filter(Boolean);
   };
 
-    function getProjectParams() {
-     var proj = Projects.findOne({_id: Session.get("activeProject")});
+    async function getProjectParams() {
+     var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
    	 if (proj) {
           var proj_params = {
             useStringLiteralConversion: proj.useStringLiteralConversion,
@@ -1415,39 +1452,45 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
           return proj_params;
      }
    };
-   
+    const graphsServiceValue = await getSchemaNameFromGraphService(await e.getGraphsServices());
+	console.log("graphsService2", graphsServiceValue);
+	const links = await e.getLinks();
+	const conditionLinks = (await Promise.all(
+	  links.map(async (l) => await genConditionalLink(l))
+	)).filter(l => l);
     var query_in_abstract_syntax = { root: {
-      identification: { _id: e._id(), local_name: e.getName()},
-      instanceAlias:replaceSymbols(e.getInstanceAlias()),
-	  instanceIsConstant: checkIfInstanceIsConstantOrVariable(e.getInstanceAlias(), "="),
-	  instanceIsVariable: checkIfInstanceIsConstantOrVariable(e.getInstanceAlias(), "?"),
-      isVariable:e.isVariable(),
-      isBlankNode:e.isBlankNode(),
-      isUnion:e.isUnion(),
-      isUnit:e.isUnit(),
-      variableName:e.getVariableName(),
-      conditionLinks:_.filter(_.map(e.getLinks(), genConditionalLink), function(l) {return l}),
-      fields: e.getFields(),
-      aggregations: e.getAggregateFields(),
-	  graphs: e.getGraphs(),
-	  graphsService: getSchemaNameFromGraphService(e.getGraphsServices()),
-	  namedGraphs: e.getNamedGraphs(),
-      conditions: e.getConditions(),
-      orderings: e.getOrderings(),
-      groupings: e.getGroupings(),
-      indirectClassMembership: e.isIndirectClassMembership(),
-      labelServiceLanguages: e.isLabelServiceLanguages(),
-      distinct:e.isDistinct(),
-      selectAll:e.isSelectAll(),
-      groupByThis:e.isGroupByThis(),
-	  having: e.getHaving(),
-      limit:e.getLimit(),
-      offset:e.getOffset(),
-      fullSPARQL:e.getFullSPARQL(),
-      children: genLinkedElements(e),
-	  comment: e.getComment() 
+      identification: { _id: e._id(), local_name:  await e.getName()},
+      instanceAlias:replaceSymbols(await e.getInstanceAlias()),
+	  instanceIsConstant: checkIfInstanceIsConstantOrVariable(await e.getInstanceAlias(), "="),
+	  instanceIsVariable: checkIfInstanceIsConstantOrVariable(await e.getInstanceAlias(), "?"),
+      isVariable:await e.isVariable(),
+      isBlankNode:await e.isBlankNode(),
+      isUnion:await e.isUnion(),
+      isUnit:await e.isUnit(),
+      variableName:await e.getVariableName(),
+      conditionLinks:conditionLinks,
+      fields:await e.getFields(),
+      aggregations: await e.getAggregateFields(),
+	  graphs: await e.getGraphs(),
+	  graphsService: graphsServiceValue,
+	  namedGraphs: await e.getNamedGraphs(),
+      conditions: await e.getConditions(),
+      orderings: await e.getOrderings(),
+      groupings: await e.getGroupings(),
+      indirectClassMembership: await e.isIndirectClassMembership(),
+      labelServiceLanguages: await e.isLabelServiceLanguages(),
+      distinct:await e.isDistinct(),
+      selectAll:await e.isSelectAll(),
+      groupByThis:await e.isGroupByThis(),
+	  having:await  e.getHaving(),
+      limit:await e.getLimit(),
+      offset:await e.getOffset(),
+      fullSPARQL:await e.getFullSPARQL(),
+      children: await genLinkedElements(e),
+	  comment: await e.getComment() 
     },
-     params: getProjectParams() };
+     params: await getProjectParams() };
+	 
     //console.log(condition_links);
     // push all registered condition links to json
     function addConditionLinks(v) {
@@ -1469,21 +1512,23 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 	// getConnectedClasses(classAccessTable);
 	// query_in_abstract_syntax["classAccessTable"] = classAccessTable;
 	// printClassAccessTable(classAccessTable, "");
+	 console.log("IIIIIIIIIIIIIIIII", query_in_abstract_syntax)
     return query_in_abstract_syntax;
-  });
+ }));
 };
 
-function printClassAccessTable(classT, interval){
+async function printClassAccessTable(classT, interval){
 	for(let clazz in classT){
 		if(typeof classT[clazz] !== "function"){
-			let c = new VQ_Element(clazz);
-			var cName = c.getName();
-			if(cName == null) cName = c.getInstanceAlias();
+			// let c = new VQ_Element(clazz);
+			let c = await createVQ_Element(clazz);
+			var cName =  await c.getName();
+			if(cName == null) cName = await c.getInstanceAlias();
 			console.log(interval+ cName);
 			let intervalA = "  ";
 			for(let clazzA in classT[clazz]){
 				if(typeof classT[clazz][clazzA] !== "function"){
-					let c = new VQ_Element(clazzA);	
+					let c = await createVQ_Element(clazzA);	
 					var path = "";
 					for(let p in classT[clazz][clazzA]){
 						if(typeof classT[clazz][clazzA][p] !== "function"){
@@ -2045,9 +2090,9 @@ function chechIfSimplePath(expressionTable, isSimple, isPath){
 	return {isSimple:isSimple, isPath:isPath}
 }
 
-function getSchemaNameFromGraphService(getGraphsServices){
+async function getSchemaNameFromGraphService(getGraphsServices){
 	let ontologies = dataShapes.getOntologiesSync();
-	let declarations = getDeclarations();
+	let declarations = await getDeclarations();
 	if(typeof declarations.schemas[getGraphsServices.graph] !== "undefined") getGraphsServices.graph = declarations.schemas[getGraphsServices.graph];
 	if(typeof ontologies !== "undefined"){
 		for(let o = 0; o < ontologies.length; o++){	

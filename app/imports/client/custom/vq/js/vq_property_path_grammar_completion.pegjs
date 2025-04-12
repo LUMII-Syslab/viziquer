@@ -49,7 +49,7 @@
 			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
       		var props= await dataShapes.getPropertiesFull(p)
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 			var schemaName = null;
 			if (proj) {
 				if (proj.schema) {
@@ -99,9 +99,11 @@
       		} else {
 
       			if(typeof options.link !== "undefined"){
-					var elFrom=options.link.getStartElement().getName();
-					var elTo=options.link.getEndElement().getName();
-									
+					const startElement = await options.link.getStartElement();
+					const endElement = await options.link.getEndElement();
+					const elFrom = await startElement.getName();
+					const elTo = await endElement.getName();
+
 					if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
 					if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")   { params.elementOE = {className: elTo};  params.main.propertyKind = 'Connect'; }
 				} else if (typeof options.className !== 'undefined') params.element = {className: options.className};
@@ -112,7 +114,7 @@
       		}
           	var props = await dataShapes.getPropertiesFull(params);
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 			var schemaName = null;
 			if (proj) {
 				if (proj.schema) {
@@ -149,8 +151,10 @@
       			 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
       		} else {
       			if(typeof options.link !== "undefined"){
-					var elFrom=options.link.getStartElement().getName();
-					var elTo=options.link.getEndElement().getName();
+					const startElement = await options.link.getStartElement();
+					const endElement = await options.link.getEndElement();
+					const elFrom = await startElement.getName();
+					const elTo = await endElement.getName();
 									
 					if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
 					if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  { params.elementOE = {className: elTo};  params.main.propertyKind = 'Connect'; }
@@ -159,7 +163,7 @@
 
           	var props = await dataShapes.getPropertiesFull(params);
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 			var schemaName = null;
 			if (proj) {
 				if (proj.schema) {
@@ -194,8 +198,10 @@
 					var selected_elem_id = Session.get("activeElement");	
 					var props;
 					if(typeof options.link !== "undefined"){
-						var elFrom=options.link.getStartElement();
-						var elTo=options.link.getEndElement();
+						const startElement = await options.link.getStartElement();
+						const endElement = await options.link.getEndElement();
+						const elFrom = await startElement.getName();
+						const elTo = await endElement.getName();
 
 						props = await dataShapes.getProperties(params, elFrom, elTo);
 					} else {
@@ -205,7 +211,7 @@
 					}
 					props = props["data"];
 					
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 					var schemaName = null;
 					if (proj) {
 						if (proj.schema) {

@@ -4,7 +4,7 @@ import { Projects } from '/imports/db/platform/collections'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './add_link_form.html'
-import { Create_VQ_Element, VQ_Element } from '../js/VQ_Element';
+import { Create_VQ_Element_Async, VQ_Element, createVQ_Element } from '../js/VQ_Element';
 import { autoCompletionCleanup, autoCompletionAddLink } from '../js/autoCompletion';
 
 import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
@@ -21,14 +21,14 @@ Interpreter.customMethods({
 		
 		
 		var start_elem_id = Session.get("activeElement");			
-		var currentElement = new VQ_Element(start_elem_id);
+		var currentElement = await createVQ_Element(start_elem_id);
 		var joinLinkDesc = "join information from the host node and the linked node";
 		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about its links";
-		
-		if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") 
+		const elemName = await currentElement.getName();
+		if(currentElement !== null && elemName != null && elemName != "") 
 		{
-			joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
-			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about its links";
+			joinLinkDesc = "join information from "+elemName+" and the linked node";
+			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+elemName+" about its links";
 		}
 		
 		Template.AddLink.JoinLinkText.set(joinLinkDesc);	
@@ -71,14 +71,14 @@ Interpreter.customMethods({
 		Template.AddLink.testAddLink.set({data: false});
 		
 		var start_elem_id = Session.get("activeElement");			
-		var currentElement = new VQ_Element(start_elem_id);
+		var currentElement = await createVQ_Element(start_elem_id);
 		var joinLinkDesc = "join information from the host node and the linked node";
 		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
-		
-		if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") 
+		const elemName = await currentElement.getName();
+		if(currentElement !== null && elemName != null && elemName != "") 
 		{
-			joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
-			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about links";
+			joinLinkDesc = "join information from "+elemName+" and the linked node";
+			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+elemName+" about links";
 		}
 		
 		Template.AddLink.JoinLinkText.set(joinLinkDesc);	
@@ -111,14 +111,14 @@ Interpreter.customMethods({
 		Template.AddLink.testAddLink.set({data: false});
 		
 		var start_elem_id = Session.get("activeElement");			
-		var currentElement = new VQ_Element(start_elem_id);
+		var currentElement = await createVQ_Element(start_elem_id);
 		var joinLinkDesc = "join information from the host node and the linked node";
 		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
-		
-		if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") 
+		const elemName = await currentElement.getName();
+		if(currentElement !== null && elemName != null && elemName != "") 
 		{
-			joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
-			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about links";
+			joinLinkDesc = "join information from "+elemName+" and the linked node";
+			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+elemName+" about links";
 		}
 		
 		Template.AddLink.JoinLinkText.set(joinLinkDesc);	
@@ -140,16 +140,16 @@ Interpreter.customMethods({
 		Template.AddLink.fullList.set(asc);
 	},
 
-	AddUnion: function () {
+	AddUnion: async function () {
 		//console.log("AddUnion");
-		var currentVQElment = new VQ_Element(Session.get("activeElement"));
-		if (!currentVQElment.isClass()){
+		var currentVQElment = await createVQ_Element(Session.get("activeElement"));
+		if (!(await currentVQElment.isClass())){
 			console.log("Selected element is not a class");
 			return;
 		}
 		var d = 30; //distance between boxes
-        var oldPosition = currentVQElment.getCoordinates(); //Old class coordinates and size
-        var newPosition = currentVQElment.getNewLocation(d); //New class coordinates and size {x: x, y: y1, width: w, height: h}
+        var oldPosition = await currentVQElment.getCoordinates(); //Old class coordinates and size
+        var newPosition = await currentVQElment.getNewLocation(d); //New class coordinates and size {x: x, y: y1, width: w, height: h}
         newPosition.width = 75;
         newPosition.height = 50;
         //Link Coordinates
@@ -157,23 +157,43 @@ Interpreter.customMethods({
         var coordY = oldPosition.y + oldPosition.height;
         var locLink = [];
         
-        Create_VQ_Element(function(cl){
-            cl.setName("[ + ]");
-            var proj = Projects.findOne({_id: Session.get("activeProject")});
-            // cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
-            cl.setClassStyle("condition");	                
-        	locLink = [coordX, coordY, coordX, newPosition.y];                 
-            Create_VQ_Element(function(lnk) {
-                lnk.setName("++");
-                lnk.setLinkType("REQUIRED");	                    
-                lnk.setNestingType("PLAIN");						
-				if (proj && proj.autoHideDefaultPropertyName==true) { 
-					lnk.hideDefaultLinkName(true);
-					lnk.setHideDefaultLinkName("true");
-				}
-            }, locLink, true, currentVQElment, cl);
-            Template.AggregateWizard.endClassId.set(cl.obj._id);
-        }, newPosition);
+		
+		const cl = await Create_VQ_Element_Async(newPosition);
+		await cl.setName("[ + ]");
+
+		const proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
+		await cl.setClassStyle("condition");
+
+		locLink = [coordX, coordY, coordX, newPosition.y];
+
+		const lnk = await Create_VQ_Element_Async(locLink, true, currentVQElment, cl);
+		await lnk.setName("++");
+		await lnk.setLinkType("REQUIRED");
+		await lnk.setNestingType("PLAIN");
+
+		if (proj && proj.autoHideDefaultPropertyName === true) {
+			await lnk.hideDefaultLinkName(true); // assuming it's async now
+			lnk.setHideDefaultLinkName("true");
+		}
+
+		Template.AggregateWizard.endClassId.set(cl.obj._id);
+		
+        // Create_VQ_Element(function(cl){
+            // cl.setName("[ + ]");
+            // var proj = Projects.findOne({_id: Session.get("activeProject")});
+            // cl.setClassStyle("condition");	                
+        	// locLink = [coordX, coordY, coordX, newPosition.y];                 
+            // Create_VQ_Element(function(lnk) {
+                // lnk.setName("++");
+                // lnk.setLinkType("REQUIRED");	                    
+                // lnk.setNestingType("PLAIN");						
+				// if (proj && proj.autoHideDefaultPropertyName==true) { 
+					// lnk.hideDefaultLinkName(true);
+					// lnk.setHideDefaultLinkName("true");
+				// }
+            // }, locLink, true, currentVQElment, cl);
+            // Template.AggregateWizard.endClassId.set(cl.obj._id);
+        // }, newPosition);
 	},
 
 })
@@ -237,9 +257,9 @@ Template.SelectTargetClass.events({
 		
 		var params = {};
 		var start_elem_id = Session.get("activeElement");
-		var startElement = new VQ_Element(start_elem_id);
-		var startElementName = startElement.getName();
-		var startElementAlias = startElement.getInstanceAlias();
+		var startElement = await createVQ_Element(start_elem_id);
+		var startElementName = await startElement.getName();
+		var startElementAlias = await startElement.getInstanceAlias();
 
 		if(schemaName.toLowerCase() == "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") == -1)) startElementName = "wd:"+startElementName;
 		if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
@@ -356,15 +376,15 @@ Template.AddLink.events({
 			Template.AggregateWizard.startClassId.set(start_elem_id);
 			// var elem_start = Elements.findOne({_id: start_elem_id});
 
-			var currentElement = new VQ_Element(start_elem_id);
+			var currentElement = await createVQ_Element(start_elem_id);
 			if (currentElement == null) {
 				console.log("Unknown error - active element does not exist.");
 				return;
 			}
 
             var d = 30; //distance between boxes
-            var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
-            var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
+            var oldPosition = await currentElement.getCoordinates(); //Old class coordinates and size
+            var newPosition = await currentElement.getNewLocation(d); //New class coordinates and size
             var nameLength = 12*class_name.length + 2*(class_name.match(/[A-Z]/g) || []).length;
             if (nameLength < 75) nameLength = 75; //default minimal width
             if (nameLength > 512) nameLength = 512; //default maximal width
@@ -376,49 +396,105 @@ Template.AddLink.events({
             var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
             var coordY = oldPosition.y + oldPosition.height;            
             var locLink = [];
-            
-            Create_VQ_Element(function(cl){
-                cl.setName(class_name);
-                var proj = Projects.findOne({_id: Session.get("activeProject")});
-				
-				
-				
-                if(typeof class_name !== "undefined" && class_name != null && class_name !== "" && class_name !== " "){				
-					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
-				}
-                cl.setClassStyle("condition");
-                if (line_direct == "=>") {
-                	locLink = [coordX, coordY, coordX, newPosition.y];                 
-	                Create_VQ_Element(function(lnk) {
-	                    lnk.setName(name);
-						if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
-						else lnk.setLinkType("REQUIRED");
+			
+			const cl = await Create_VQ_Element_Async(newPosition);
+			await cl.setName(class_name);
 
-	                    if (linkType == "JOIN") lnk.setNestingType("PLAIN");
-						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
-						if (proj && proj.autoHideDefaultPropertyName==true) { 
-							lnk.hideDefaultLinkName(true);
-							lnk.setHideDefaultLinkName("true");
-						}
-	                }, locLink, true, currentElement, cl);
-	            } else {
-	            	locLink = [coordX, newPosition.y, coordX, coordY];
-	            	Create_VQ_Element(function(lnk) {
-	                    lnk.setName(name);
-	                    if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
-						else lnk.setLinkType("REQUIRED");
+			const proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
+
+			if (typeof class_name !== "undefined" && class_name != null && class_name.trim() !== "") {
+				await cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+			}
+
+			await cl.setClassStyle("condition");
+
+			if (line_direct === "=>") {
+				locLink = [coordX, coordY, coordX, newPosition.y];
+				const lnk = await Create_VQ_Element_Async(locLink, true, currentElement, cl);
+				
+				await lnk.setName(name);
+				if (document.getElementById("linked-instance-exists").checked === true)
+					await lnk.setLinkType("FILTER_EXISTS");
+				else
+					await lnk.setLinkType("REQUIRED");
+
+				if (linkType === "JOIN")
+					await lnk.setNestingType("PLAIN");
+				else if (linkType === "NESTED")
+					await lnk.setNestingType("SUBQUERY");
+
+				if (proj && proj.autoHideDefaultPropertyName === true) {
+					await lnk.hideDefaultLinkName(true);
+					lnk.setHideDefaultLinkName("true");
+				}
+
+			} else {
+				locLink = [coordX, newPosition.y, coordX, coordY];
+				const lnk = await Create_VQ_Element_Async(locLink, true, cl, currentElement);
+				
+				await lnk.setName(name);
+				if (document.getElementById("linked-instance-exists").checked === true)
+					await lnk.setLinkType("FILTER_EXISTS");
+				else
+					await lnk.setLinkType("REQUIRED");
+
+				if (linkType === "JOIN")
+					await lnk.setNestingType("PLAIN");
+				else if (linkType === "NESTED")
+					await lnk.setNestingType("SUBQUERY");
+
+				if (proj && proj.autoHideDefaultPropertyName === true) {
+					await lnk.hideDefaultLinkName(true);
+					lnk.setHideDefaultLinkName("true");
+				}
+			}
+
+			Template.AggregateWizard.endClassId.set(cl.obj._id);
+			Session.set("activeElement", cl.obj._id);
+			
+
+            // Create_VQ_Element(function(cl){
+                // cl.setName(class_name);
+                // var proj = Projects.findOne({_id: Session.get("activeProject")});
+				
+				
+				
+                // if(typeof class_name !== "undefined" && class_name != null && class_name !== "" && class_name !== " "){				
+					// cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+				// }
+                // cl.setClassStyle("condition");
+                // if (line_direct == "=>") {
+                	// locLink = [coordX, coordY, coordX, newPosition.y];                 
+	                // Create_VQ_Element(function(lnk) {
+	                    // lnk.setName(name);
+						// if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
+						// else lnk.setLinkType("REQUIRED");
+
+	                    // if (linkType == "JOIN") lnk.setNestingType("PLAIN");
+						// else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
+						// if (proj && proj.autoHideDefaultPropertyName==true) { 
+							// lnk.hideDefaultLinkName(true);
+							// lnk.setHideDefaultLinkName("true");
+						// }
+	                // }, locLink, true, currentElement, cl);
+	            // } else {
+	            	// locLink = [coordX, newPosition.y, coordX, coordY];
+	            	// Create_VQ_Element(function(lnk) {
+	                    // lnk.setName(name);
+	                    // if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
+						// else lnk.setLinkType("REQUIRED");
 						
-						if (linkType == "JOIN") lnk.setNestingType("PLAIN");
-						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
-						if (proj && proj.autoHideDefaultPropertyName==true) {
-							lnk.hideDefaultLinkName(true);
-							lnk.setHideDefaultLinkName("true");
-						}
-	                }, locLink, true, cl, currentElement);
-	            }
-                Template.AggregateWizard.endClassId.set(cl.obj._id);
-				Session.set("activeElement", cl.obj._id);
-            }, newPosition);
+						// if (linkType == "JOIN") lnk.setNestingType("PLAIN");
+						// else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
+						// if (proj && proj.autoHideDefaultPropertyName==true) {
+							// lnk.hideDefaultLinkName(true);
+							// lnk.setHideDefaultLinkName("true");
+						// }
+	                // }, locLink, true, cl, currentElement);
+	            // }
+                // Template.AggregateWizard.endClassId.set(cl.obj._id);
+				// Session.set("activeElement", cl.obj._id);
+            // }, newPosition);
 
 			if (document.getElementById("goto-wizard").checked == true ){
 
@@ -502,9 +578,9 @@ Template.AddLink.events({
 		else {
 			var params = {};
 			var start_elem_id = Session.get("activeElement");
-			var startElement = new VQ_Element(start_elem_id);
-			var startElementName = startElement.getName();
-			var startElementAlias = startElement.getInstanceAlias();
+			var startElement = await createVQ_Element(start_elem_id);
+			var startElementName = await startElement.getName();
+			var startElementAlias = await startElement.getInstanceAlias();
 
 			if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
 			if(schemaName.toLowerCase() == "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") == -1)) startElementName = "wd:"+startElementName;
@@ -539,7 +615,7 @@ Template.AddLink.events({
 			
 		}
 		classes = classes.data;
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 
 		_.each(classes, function(e){
 			var prefix;
@@ -568,7 +644,7 @@ Template.AddLink.events({
 		var data = [];
 		var count = 0;
 		var activeClass = new VQ_Element(Session.get("activeElement"));
-		if (activeClass.isUnion() && !activeClass.isRoot()) { console.log(239);// [ + ] element, that has link to upper class 
+		if ( activeClass.isUnion() && !(activeClass.isRoot())) { console.log(239);// [ + ] element, that has link to upper class 
 			if (activeClass.getLinkToRoot()){
 				var element = activeClass.getLinkToRoot().link.getElements();
 				let newStartClass = "";
@@ -617,7 +693,7 @@ Template.AddLink.events({
 	},
 
 //Menu listeners
-	"click #add-link-type-choice": function() {
+	"click #add-link-type-choice": async function() {
 		var checkedName = $('input[name=type-radio]').filter(':checked').val(); // console.log(checkedName);
         if (checkedName === 'JOIN') {
             $('#goto-wizard:checked').prop('checked', false);
@@ -627,7 +703,7 @@ Template.AddLink.events({
         } else {
         	var cardValue = $('input[name=link-list-radio]:checked').attr("card"); //console.log("changed", cardValue);
         	if (cardValue == "") {
-        		confirmSubquery();
+        		await confirmSubquery();
         	} else {
         		$('#goto-wizard').removeAttr("disabled");
         		$('#linked-instance-exists').removeAttr("disabled");
@@ -644,19 +720,20 @@ Template.AddLink.events({
 		if(document.getElementById("linked-instance-exists").checked == true) $('#goto-wizard').prop('checked', false);
 	},
 
-	"click #link-list-form": function() {
+	"click #link-list-form": async function() {
 		
 		var checkedName = $('input[name=link-list-radio]:checked');
 		var start_elem_id = Session.get("activeElement");			
-		var currentElement = new VQ_Element(start_elem_id);
+		var currentElement = await createVQ_Element(start_elem_id);
 		var joinLinkDesc = "";
 		var subqueryLinkDesc = "";
 		if(checkedName.attr("value") == "++" || checkedName.attr("value") == "=="){
 			joinLinkDesc = "join information from the host node and the linked node";
 			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
-			if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") {
-				joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
-				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about its links";
+			const elemName = await currentElement.getName();
+			if(currentElement !== null && elemName != null && elemName != "") {
+				joinLinkDesc = "join information from "+elemName+" and the linked node";
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+elemName+" about its links";
 			}
 		} else {
 			
@@ -667,22 +744,23 @@ Template.AddLink.events({
 			var className = obj.attr("className");
 			
 			
-	
+			const elemName = await currentElement.getName();
 			var line_direct = obj.attr("line_direct");
 			if(line_direct == "=>"){
 				if(className != null && className != "") {
 					targetClassText = " (that is a " + className + ")";
 					targetClassTextS = " to" + className;
 				}
-				joinLinkDesc = "join information from "+currentElement.getName()+" and its linked " + checkedName.attr("value") + targetClassText;
-				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about its " + checkedName.attr("value") +" links " + targetClassTextS;
+				
+				joinLinkDesc = "join information from "+elemName+" and its linked " + checkedName.attr("value") + targetClassText;
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+elemName+" about its " + checkedName.attr("value") +" links " + targetClassTextS;
 			} else {
 				if(className != null && className != "") {
 					targetClassText = " (from " + className + ")";
 					targetClassTextS = " from" + className;
 				}
-				joinLinkDesc = "join information from "+currentElement.getName()+" and its incoming link by " + checkedName.attr("value") + targetClassText;
-				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about its incoming " + checkedName.attr("value")+" links" +targetClassTextS;
+				joinLinkDesc = "join information from "+elemName+" and its incoming link by " + checkedName.attr("value") + targetClassText;
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+elemName+" about its incoming " + checkedName.attr("value")+" links" +targetClassTextS;
 			}
 		}
 		Template.AddLink.JoinLinkText.set(joinLinkDesc);
@@ -780,10 +858,10 @@ function clearAddLinkInput(){
 	$("div[id=errorField]").remove();
 }
 
-function confirmSubquery(){
+async function confirmSubquery(){
 	
 	// var txt;
-	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 	if (proj.showCardinalities==true && confirm("You are using subquery link type for link with cardinality equal to 1. Would You like to change link type to Join?\n\nCancel will accept Your settings as is.")) {
 		// txt = "You pressed OK!";
 		$('[name=type-radio]').removeAttr('checked');
@@ -807,30 +885,30 @@ function confirmSubquery(){
 async function getAllAssociations(){
 	//start_elem
 		var start_elem_id = Session.get("activeElement");
-		var startElement = new VQ_Element(start_elem_id);
-		if (!_.isEmpty(startElement) && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
+		var startElement = await createVQ_Element(start_elem_id);
+		if (!_.isEmpty(startElement) && await startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
 			//Associations
 			var asc = [];
 			var ascReverse = [];
 			
-			var className = startElement.getName();
+			var className = await startElement.getName();
 				
 			if(typeof className === "undefined" || className === null) className= "";
 				
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
-			if((startElement.isUnit() != true && startElement.isUnion() != true) || !startElement.isRoot()) {
+			var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
+			if((await startElement.isUnit() != true && await startElement.isUnion() != true) || !(await startElement.isRoot())) {
 				var newStartElement = startElement;
 				
-				if ((startElement.isUnion() || startElement.isUnit()) && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
+				if ((await startElement.isUnion() || await startElement.isUnit()) && !(await startElement.isRoot())) { // [ + ] element, that has link to upper class 
 					if (startElement.getLinkToRoot()){
 						var element = startElement.getLinkToRoot().link.getElements();
 						if (startElement.getLinkToRoot().start) {
-							newStartElement = new VQ_Element(element.start.obj._id);
+							newStartElement = await createVQ_Element(element.start.obj._id);
 							
-							className = newStartElement.getName();
+							className = await newStartElement.getName();
 						} else {
-							newStartElement = new VQ_Element(element.end.obj._id);						
-							className = newStartElement.getName();
+							newStartElement = await createVQ_Element(element.end.obj._id);						
+							className = await newStartElement.getName();
 						}						
 					}					
 				} 
@@ -970,11 +1048,11 @@ async function getAllAssociations(){
 							return;
 						}
 
-						var previousVQelement = new VQ_Element(previousClassId);
-						selfName = previousVQelement.getName();
+						var previousVQelement = await createVQ_Element(previousClassId);
+						selfName = await previousVQelement.getName();
 					}
 				}
-				if((startElement.isUnit() != true && startElement.isUnion() != true) || !startElement.isRoot()) {
+				if((await startElement.isUnit() != true && await startElement.isUnion() != true) || !(await startElement.isRoot())) {
 					if (proj.showCardinalities==true)
 						asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""}); 
 					else {

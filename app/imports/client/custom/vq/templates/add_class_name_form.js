@@ -2,12 +2,12 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Elements } from '/imports/db/platform/collections'
 
 import { autoCompletionClass, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
-import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 
 import './add_class_name_form.html'
 
 Interpreter.customMethods({
-	AddClassName: function () {
+	AddClassName: async function () {
 		
 		autoCompletionCleanup()
 
@@ -15,10 +15,11 @@ Interpreter.customMethods({
 		$('#class-name-field').val('');
 		
 		var selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
-		  var vq_obj = new VQ_Element(selected_elem_id);
-			$('#class-name-field').val(vq_obj.getName());
+		  var vq_obj = await createVQ_Element(selected_elem_id);
+		  const className = await vq_obj.getName()
+			$('#class-name-field').val(className);
 		};
 	}
 })
@@ -31,13 +32,13 @@ Template.AddClassName.helpers({
 
 Template.AddClassName.events({
 
-	"click #ok-add-class-name": function(e) {
+	"click #ok-add-class-name": async function(e) {
 		var selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
-		  var vq_obj = new VQ_Element(selected_elem_id);
+		  var vq_obj = await createVQ_Element(selected_elem_id);
 			var name = $('#class-name-field').val();
-			vq_obj.setName(name);
+			await vq_obj.setName(name);
 		};
 		return;
 	},

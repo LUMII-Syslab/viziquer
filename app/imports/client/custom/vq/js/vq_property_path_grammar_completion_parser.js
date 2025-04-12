@@ -3728,8 +3728,10 @@ var p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, eleme
       		} else {
 
       			if(typeof options.link !== "undefined"){
-					var elFrom=options.link.getStartElement().getName();
-					var elTo=options.link.getEndElement().getName();
+					const startElement = await options.link.getStartElement();
+					const endElement = await options.link.getEndElement();
+					const elFrom = await startElement.getName();
+					const elTo = await endElement.getName();
 									
 					if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
 					if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  { params.elementOE = {className: elTo};  params.main.propertyKind = 'Connect'; }
@@ -3781,8 +3783,10 @@ var p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, eleme
       			 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
       		} else {
       			if(typeof options.link !== "undefined"){
-					var elFrom=options.link.getStartElement().getName();
-					var elTo=options.link.getEndElement().getName();
+					const startElement = await options.link.getStartElement();
+					const endElement = await options.link.getEndElement();
+					const elFrom = await startElement.getName();
+					const elTo = await endElement.getName();
 									
 					if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
 					if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  { params.elementOE = {className: elTo};  params.main.propertyKind = 'Connect'; }
@@ -3839,8 +3843,10 @@ var p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, eleme
 					var selected_elem_id = Session.get("activeElement");	
 					var props;
 					if(typeof options.link !== "undefined"){
-						var elFrom=options.link.getStartElement();
-						var elTo=options.link.getEndElement();
+						const startElement = await options.link.getStartElement();
+						const endElement = await options.link.getEndElement();
+						const elFrom = await startElement.getName();
+						const elTo = await endElement.getName();
 
 						props = await dataShapes.getProperties(params, elFrom, elTo);
 					} else {

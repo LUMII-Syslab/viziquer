@@ -13,7 +13,7 @@ import { Projects, Compartments, Elements, ElementTypes, Diagrams} from '/import
 import {OrthogonalCollectionRerouting} from '/imports/client/platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { Create_VQ_Element, VQ_Element, Create_VQ_Element_Declaration } from './VQ_Element.js';
+import { Create_VQ_Element_Async, VQ_Element, Create_VQ_Element_Declaration } from './VQ_Element.js';
 import { getDeclarations } from './genAbstractQuery.js';
 
 import { isURI } from '/imports/client/custom/vq/js/transformations.js'
@@ -47,9 +47,9 @@ var usedPrefixes = [];
 var allPrefixes = [];
 var starInSelect = false;
 
-const async_Create_VQ_Element = async (location, isLink, target, source) => new Promise(resolve => {
-    Create_VQ_Element(newElem => { resolve(newElem) }, location, isLink, target, source);
-});
+// const async_Create_VQ_Element = async (location, isLink, target, source) => new Promise(resolve => {
+    // Create_VQ_Element(newElem => { resolve(newElem) }, location, isLink, target, source);
+// });
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -72,7 +72,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 	  directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	  indirectClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 		allPrefixes = parsedQuery.prefixes;
-		let proj = Projects.findOne({_id: Session.get("activeProject")});
+		let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		 if (proj) {
 			  
 			  if (proj.directClassMembershipRole) {
@@ -93,7 +93,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		 
 		let prefixes = await dataShapes.getNamespaces();
 		if(prefixes.complete === false) prefixes = [];
-		prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+		prefixes = await combineKnownPrefixesWithDefinedPrefixes(prefixes);
 
 		if(typeof prefixes["complete"] === "undefined"){
 			prefixesText = [];
@@ -118,7 +118,8 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		text = prefixesText.join("\n") + text;
 		text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
-	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
+	  let parsedQuery = await Utilities.callMeteorMethodAsync("parseSPARQLText", text);
+	  // Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		// x = xx;
 		y = yy;
 		counter = 0;
@@ -310,11 +311,11 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 			const linkName = condLink.identification.display_name ?? condLink.identification.short_name;
 			const linkType = condLink.isNot ? "NOT" : "REQUIRED";
 			const isInverse = condLink["isInverse"];
-			const target = new VQ_Element(VQ_Elements[condLink.target]);
-			const source = new VQ_Element(VQ_Elements[condLink.source]);
+			const target = await createVQ_Element(VQ_Elements[condLink.target]);
+			const source = await createVQ_Element(VQ_Elements[condLink.source]);
 			 
-			 var tCoordinates = target.getCoordinates();
-			 var sCoordinates = source.getCoordinates();
+			 var tCoordinates = await target.getCoordinates();
+			 var sCoordinates = await source.getCoordinates();
 			 
 			var coordX = tCoordinates.x + tCoordinates.width - 20;
 			let sourceAboveTarget = sCoordinates.y < tCoordinates.y;
@@ -325,15 +326,15 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 			if (condLink.isInverse) {
 			// locLink = [coordX, tCoordinates.y, coordX, coordY];
 				const locLink = [coordX, coordY1, coordX, coordY2];
-				linkLine = await async_Create_VQ_Element(locLink, true, source, target);
+				linkLine = await Create_VQ_Element_Async(locLink, true, source, target);
 			} else {
 			// locLink = [coordX, coordY, coordX, tCoordinates.y];
 				const locLink = [coordX, coordY2, coordX, coordY1];
-				linkLine = await async_Create_VQ_Element(locLink, true, target, source);
+				linkLine = await Create_VQ_Element_Async(locLink, true, target, source);
 			}
-			linkLine.setName(linkName);
-			linkLine.setLinkType(linkType);
-			linkLine.setNestingType("CONDITION");
+			await linkLine.setName(linkName);
+			await linkLine.setLinkType(linkType);
+			await linkLine.setNestingType("CONDITION");
 			
 		}
 
@@ -358,7 +359,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		await delay(500);
 		Interpreter.execute("ComputeLayout", [x, yy, boxes, lines]);
 
-	  });
+	  // });
 	  
 		await delay(5000);
 		var idNumb = parseInt(queries[query]["id"], 10);
@@ -389,7 +390,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	let prefixes = [];
 	if(typeof dataShapes.schema.schema !== "undefined") prefixes = await dataShapes.getNamespaces();
 	if(prefixes.complete === false) prefixes = [];
-	prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+	prefixes = await combineKnownPrefixesWithDefinedPrefixes(prefixes);
 	
 
 	var classif = await dataShapes.getClassifiers();
@@ -416,7 +417,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	
 	text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
-	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
+	   let parsedQuery = await Utilities.callMeteorMethodAsync("parseSPARQLText", text);
+	  // Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		Interpreter.destroyErrorMsg();
 		// console.log("parsedQuery", parsedQuery);
 		if(parsedQuery.status === "ERROR")  {
@@ -456,7 +458,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 		indirectClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 		
-		let proj = Projects.findOne({_id: Session.get("activeProject")});
+		let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		 if (proj) {
 			  
 			  if (proj.directClassMembershipRole) {
@@ -685,11 +687,11 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			const linkName = condLink.identification.display_name ?? condLink.identification.short_name;
 			const linkType = condLink.isNot ? "NOT" : "REQUIRED";
 			const isInverse = condLink["isInverse"];
-			const target = new VQ_Element(VQ_Elements[condLink.target]);
-			const source = new VQ_Element(VQ_Elements[condLink.source]);
+			const target = await createVQ_Element(VQ_Elements[condLink.target]);
+			const source = await createVQ_Element(VQ_Elements[condLink.source]);
 			 
-			 var tCoordinates = target.getCoordinates();
-			 var sCoordinates = source.getCoordinates();
+			 var tCoordinates = await target.getCoordinates();
+			 var sCoordinates = await source.getCoordinates();
 			 
 			var coordX = tCoordinates.x + tCoordinates.width - 20;
 			let sourceAboveTarget = sCoordinates.y < tCoordinates.y;
@@ -700,15 +702,15 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			if (condLink.isInverse) {
 			// locLink = [coordX, tCoordinates.y, coordX, coordY];
 				const locLink = [coordX, coordY1, coordX, coordY2];
-				linkLine = await async_Create_VQ_Element(locLink, true, source, target);
+				linkLine = await Create_VQ_Element_Async(locLink, true, source, target);
 			} else {
 			// locLink = [coordX, coordY, coordX, tCoordinates.y];
 				const locLink = [coordX, coordY2, coordX, coordY1];
-				linkLine = await async_Create_VQ_Element(locLink, true, target, source);
+				linkLine = await Create_VQ_Element_Async(locLink, true, target, source);
 			}
-			linkLine.setName(linkName);
-			linkLine.setLinkType(linkType);
-			linkLine.setNestingType("CONDITION");
+			await linkLine.setName(linkName);
+			await linkLine.setLinkType(linkType);
+			await linkLine.setNestingType("CONDITION");
 			
 		}
 		
@@ -787,7 +789,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		Interpreter.execute("ComputeLayout", [xx, yy, boxes, lines]);
 //
 	  }
-	  });
+	  // });
   },
 });
 
@@ -899,9 +901,10 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 							serviceLabelLang = where[key]["patterns"][pattern]["triples"][triple]["object"]["value"].replace(/"/g, "");
 						}
 					} else {
-						 Utilities.callMeteorMethod("parseService", where[key], async function(parsedQuery) {
+						 let parsedQueryService = await Utilities.callMeteorMethodAsync("parseService", where[key]);
+						 // Utilities.callMeteorMethod("parseService", where[key], async function(parsedQuery) {
 							 fullSPARQL = fullSPARQL + parsedQuery
-						 })
+						 // })
 					}
 					await delay(20)
 					console.log("fullSPARQL", fullSPARQL)
@@ -1038,7 +1041,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	
 	
 	for(let key = 0; key < variables.length; key++){
-		let proj = Projects.findOne({_id: Session.get("activeProject")});
+		let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		 if (proj) {
 			  
 			  if (proj.directClassMembershipRole) {
@@ -3102,7 +3105,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 								let prefixes = await dataShapes.getNamespaces();
 								if(prefixes.complete === false) prefixes = [];
 
-								prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+								prefixes = await combineKnownPrefixesWithDefinedPrefixes(prefixes);
 	
 								for(let key = 0; key < prefixes.length; key++){
 									if(prefixes[key]["value"] == splittedUri.namespace) {
@@ -9430,9 +9433,9 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 	if(usedPrefixesinQuery && Object.keys(usedPrefixesinQuery).length > 0){
 		
 		 var diagramId = Session.get("activeDiagram");
-		 var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
+		 var active_diagram_type_id = await Diagrams.findOneAsync({_id:Session.get("activeDiagram")})["diagramTypeId"];
 	 
-		let elem_type = ElementTypes.findOne({name:"Declaration", diagramTypeId:active_diagram_type_id});
+		let elem_type = await ElementTypes.findOneAsync({name:"Declaration", diagramTypeId:active_diagram_type_id});
 		var elems_in_diagram_ids = Elements.find({diagramId:diagramId, type:"Box", elementTypeId:elem_type._id })
 		
 		.map(function(e) {
@@ -9440,8 +9443,8 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 		});
 			
 		 if(elems_in_diagram_ids.length > 0){
-			  let cl = new VQ_Element(elems_in_diagram_ids[0]);
-			  let prefixDeclarations = cl.getPrefixDeclarations();
+			  let cl = await createVQ_Element(elems_in_diagram_ids[0]);
+			  let prefixDeclarations = await cl.getPrefixDeclarations();
 			  for(let p in usedPrefixesinQuery){
 				  if(typeof usedPrefixesinQuery[p] !== "function"){	  
 					let addPrefix = false;
@@ -9456,26 +9459,31 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 						  break;
 					  }
 					}
-					if(createPrefix === false) cl.addPrefixDeclarations(prefixName, pDeclaration);
+					if(createPrefix === false) await cl.addPrefixDeclarations(prefixName, pDeclaration);
 				  }
 			  }
 		 } else {
 			let xTemp = x+300;
-			let newPosition = { xTemp, y, width, height };
-			Create_VQ_Element_Declaration(function(cl){
-				for(let p in usedPrefixesinQuery){
-				  if(typeof usedPrefixesinQuery[p] !== "function"){
+			let newPositionD = { xTemp, y, width, height };
+			let cl = await Create_VQ_Element_Declaration(newPositionD);
+			console.log("DDDDDDDDDDDD", cl, newPositionD);
+			for (let p in usedPrefixesinQuery) {
+				if (typeof usedPrefixesinQuery[p] !== "function") {
 					let addPrefix = false;
 					let pDeclaration = usedPrefixesinQuery[p];
 					let prefixName = p;
-					if(prefixName.endsWith(":")) prefixName = prefixName.substring(0, prefixName.length - 1)
-					if(pDeclaration.startsWith("<") && pDeclaration.endsWith(">")) pDeclaration = pDeclaration.substring(1,  pDeclaration.length - 1);
-					cl.addPrefixDeclarations(prefixName, pDeclaration);
-					
-				  }
-			  }
-				VQ_Elements[cl.obj._id] = cl.obj._id;
-		   }, newPosition);
+
+					if (prefixName.endsWith(":")) {
+						prefixName = prefixName.slice(0, -1);
+					}
+					if (pDeclaration.startsWith("<") && pDeclaration.endsWith(">")) {
+						pDeclaration = pDeclaration.slice(1, -1);
+					}
+
+					await cl.addPrefixDeclarations(prefixName, pDeclaration);
+				}
+			}
+			VQ_Elements[cl.obj._id] = cl.obj._id;
 		 }
 	}
 	
@@ -9488,7 +9496,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 	
 	if(instanceAlias != null && instanceAlias.startsWith("g_")) instanceAlias = null;	
 	if(instanceAlias != null && instanceAlias.trim() != ""){	
-		let proj = Projects.findOne({_id: Session.get("activeProject")});
+		let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		if (proj) {
 			//uri
 			if(isURI(instanceAlias) == 3 || isURI(instanceAlias) == 4) {
@@ -9534,28 +9542,24 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 	var newPosition = { x, y, width, height };
 	if(parentClass){
 		var d = 30; //distance between boxes
-		var oldPosition = parentClass.getCoordinates(); //Old class coordinates and size
+		var oldPosition = await parentClass.getCoordinates(); //Old class coordinates and size
 																				  
 	}
 	
-	const classBox = await async_Create_VQ_Element(newPosition);
+	const classBox = await Create_VQ_Element_Async(newPosition);
 
 	var indirectClassMembership = false;
 	if(typeof clazz["indirectClassMembership"] !== "undefined" && clazz["indirectClassMembership"] == true) indirectClassMembership = true;
 		
-	if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
-	classBox.setClassStyle(nodeType);
+	if(className != null && className != "")await classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
+	await classBox.setClassStyle(nodeType);
 		
-	// if(typeof clazz["groupByThis"] !== 'undefined' && typeof clazz.aggregations !== "undefined"){
-		// if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
-		// else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
-	// } else
 
 	if(instanceAlias != null ) {
 		// console.log("parentClass", parentClass, variableListAlias);
 		// if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true && className != "") {}
 		// else 
-			classBox.setInstanceAlias(instanceAlias);
+			await classBox.setInstanceAlias(instanceAlias);
 	}
 
 	// setIndirectClassMembership
@@ -9566,17 +9570,17 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 		// let comment = "Class not in the data schema;\n";
 		if(queryId != null && queryId != "") comment = comment + "ID = " + queryId;
 		if(queryQuestion != null && queryQuestion != "") comment = comment + ",\nQuestion = " + queryQuestion;
-		classBox.setComment(comment);
+		await classBox.setComment(comment);
 		} //else classBox.setComment("Class not in the data schema");
 	} else if((queryId != null && queryId != "") || (queryQuestion != null && queryQuestion != "")){
 		let comment = "";
 		if(queryId != null && queryId != "") comment = "ID = " + queryId;
 		if(queryQuestion != null && queryQuestion != "") comment = comment + ",\nQuestion = " + queryQuestion;
-		classBox.setComment(comment);
+		await classBox.setComment(comment);
 	}
 	
 	if(clazz.having && clazz.having !== null && clazz.having !== ""){
-		classBox.setHaving(clazz.having);
+		await classBox.setHaving(clazz.having);
 	}
 
 	//attributes	
@@ -9584,30 +9588,30 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
       clazz.fields = clazz.fields.sort((a, b) =>  a.orderCounter - b.orderCounter);
  
       for (const field of clazz.fields) {
-        let alias = field["alias"];		
-		let proj = Projects.findOne({_id: Session.get("activeProject")});
-	
-		if(((proj && proj.keepVariableNames == false) || typeof proj.keepVariableNames === "undefined") 
-				&& typeof alias !== "undefined" 
-				&& typeof variableList[field["alias"]] !== "undefined" 
-				&& variableList[field["alias"]] <=1 
-				&& typeof variableList[field["alias"]+"Label"] === "undefined" 
-				&& typeof variableList[field["alias"]+"AltLabel"] === "undefined" 
-				&& typeof variableList[field["alias"]+"Description"] === "undefined" 
-				&& !field["exp"].startsWith("?")
-		){
-			alias = "";
-		}
-		if(alias == field["exp"]){
-			alias = "";
-		}
-
-		let { exp, requireValues, isInternal, groupValues, addLabel, addAltLabel, addDescription, graph, graphInstruction } = field;
-		let condition = field.attributeConditionSelection;
-		let attributeCondition = field.attributeCondition;
+			let alias = field["alias"];		
+			let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		
-		if(starInSelectQuery === true) isInternal = false;
-        classBox.addField(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,null, null,condition,attributeCondition);
+			if(((proj && proj.keepVariableNames == false) || typeof proj.keepVariableNames === "undefined") 
+					&& typeof alias !== "undefined" 
+					&& typeof variableList[field["alias"]] !== "undefined" 
+					&& variableList[field["alias"]] <=1 
+					&& typeof variableList[field["alias"]+"Label"] === "undefined" 
+					&& typeof variableList[field["alias"]+"AltLabel"] === "undefined" 
+					&& typeof variableList[field["alias"]+"Description"] === "undefined" 
+					&& !field["exp"].startsWith("?")
+			){
+				alias = "";
+			}
+			if(alias == field["exp"]){
+				alias = "";
+			}
+
+			let { exp, requireValues, isInternal, groupValues, addLabel, addAltLabel, addDescription, graph, graphInstruction } = field;
+			let condition = field.attributeConditionSelection;
+			let attributeCondition = field.attributeCondition;
+			
+			if(starInSelectQuery === true) isInternal = false;
+			await classBox.addField(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,null, null,condition,attributeCondition);
       }
     }
 
@@ -9628,7 +9632,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 			let requireValues = false;
 			if(typeof field["requireValues"] !== "undefined")requireValues = field["requireValues"] 
 			//add aggregation to class
-			classBox.addAggregateField(expression, alias, requireValues);
+			await classBox.addAggregateField(expression, alias, requireValues);
       }
     }
 
@@ -9646,7 +9650,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 		} else if (conditionName.startsWith("* ")){
 			conditionName = conditionName.substring(2);
 		}
-		if(typeof condition !== "undefined" && condition != null && condition != "")classBox.addCondition(conditionName, allowMul);
+		if(typeof condition !== "undefined" && condition != null && condition != "") await classBox.addCondition(conditionName, allowMul);
       }
     }
 	
@@ -9655,7 +9659,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
       for (const order of clazz.orderings) {	
 		const { exp, isDescending } = order;
 		//add order to class
-		classBox.addOrdering(exp, isDescending);
+		await classBox.addOrdering(exp, isDescending);
       }
     }
 		
@@ -9663,53 +9667,53 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 	if (clazz.graphs) {
       for (const gr of clazz.graphs) {	
 		const { graph, graphInstruction } = gr;
-		classBox.addGraphsServices(graph, graphInstruction);
+		await classBox.addGraphsServices(graph, graphInstruction);
       }
     }
 	//graphs
 	if (clazz.graph && clazz.graphInstruction) {
-		classBox.addGraphsServices(clazz.graph, clazz.graphInstruction, clazz.serviceSchemaName);
+		await classBox.addGraphsServices(clazz.graph, clazz.graphInstruction, clazz.serviceSchemaName);
     }
 	
 		
-	// if(typeof clazz["groupByThis"] !== 'undefined') classBox.setGroupByThis(clazz["groupByThis"]);
+	// if(typeof clazz["groupByThis"] !== 'undefined') await classBox.setGroupByThis(clazz["groupByThis"]);
 		
 	//groupBy	
 	if(typeof clazz.groupings !== "undefined"){
 		for (const group of clazz.groupings) {	
 			const expression = group["exp"];
 			//add group to class
-			classBox.addGrouping(group);
+			await classBox.addGrouping(group);
 		}
 	}
 	//distinct
 	let distinct = clazz["distinct"];
 
-	if(typeof distinct !== "undefined" && (typeof clazz["aggregations"] === "undefined" || clazz["aggregations"] == null || clazz["aggregations"].length == 0))classBox.setDistinct(distinct);
+	if(typeof distinct !== "undefined" && (typeof clazz["aggregations"] === "undefined" || clazz["aggregations"] == null || clazz["aggregations"].length == 0))await classBox.setDistinct(distinct);
 	
 	//serviceLabelLang
 	var serviceLabelLang = clazz["serviceLabelLang"];
 	if(typeof serviceLabelLang !== "undefined" && serviceLabelLang !== ""){
-		if(serviceLabelLang != "[AUTO_LANGUAGE],en")classBox.setLabelServiceLanguages(serviceLabelLang);
+		if(serviceLabelLang != "[AUTO_LANGUAGE],en")await classBox.setLabelServiceLanguages(serviceLabelLang);
 	}
 	
 	//selectAll
 	var selectAll = clazz["selectAll"];
 	if(typeof selectAll === "undefined") selectAll = false;
-	classBox.setSelectAll(selectAll);
+	await classBox.setSelectAll(selectAll);
 
 	//limit
 	var limit = clazz["limit"];
-	classBox.setLimit(limit);
+	await classBox.setLimit(limit);
 
 	//offset
 	var offset = clazz["offset"];
-	if(offset != 0) classBox.setOffset(offset);
+	if(offset != 0) await classBox.setOffset(offset);
 
 	//full SPARQL
 	var fullSPARQL = clazz["fullSPARQL"];
 
-	classBox.setFullSPARQL(fullSPARQL);
+	await classBox.setFullSPARQL(fullSPARQL);
 		
 	//link
 	if(parentClass){
@@ -9739,17 +9743,17 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 
 		if (!isInverse){
 			locLink = [coordX, coordY, coordX, newPosition.y]; 
-			let linkLine = await async_Create_VQ_Element(locLink, true, parentClass, classBox);
-			linkLine.setName(linkName);
-			linkLine.setLinkType(linkType);
-			linkLine.setNestingType(linkQueryType);
+			let linkLine = await Create_VQ_Element_Async(locLink, true, parentClass, classBox);
+			await linkLine.setName(linkName);
+			await linkLine.setLinkType(linkType);
+			await linkLine.setNestingType(linkQueryType);
 			if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
 				// linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
 				// linkLine.setGraphInstruction(graphInstruction);
-				linkLine.addGraphsServices(graph, graphInstruction, serviceSchemaName);
+				await linkLine.addGraphsServices(graph, graphInstruction, serviceSchemaName);
 			}
 			if((isSubQuery === true || isGlobalSubQuery === true || linkType === "OPTIONAL" || linkType === "NOT" || typeof graph !== "undefined") && parentClassOrderCounter<clazz.linkIdentification.orderCounter){
-				linkLine.setIsDelayedLink(true);
+				await linkLine.setIsDelayedLink(true);
 			} else if(linkQueryType === "PLAIN" && linkType === "REQUIRED" && typeof graph === "undefined" && parentClassOrderCounter<clazz.orderCounterDelayed) clazz.orderCounterDelayed = parentClassOrderCounter;
 			
 
@@ -9757,17 +9761,17 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 			VQ_Links[linkLine.obj._id] = linkLine.obj._id;
 		} else {
 			locLink = [coordX, newPosition.y, coordX, coordY];
-			let linkLine = await async_Create_VQ_Element(locLink, true, classBox, parentClass);
-			linkLine.setName(linkName);
-			linkLine.setLinkType(linkType);
-			linkLine.setNestingType(linkQueryType);
+			let linkLine = await Create_VQ_Element_Async(locLink, true, classBox, parentClass);
+			await linkLine.setName(linkName);
+			await linkLine.setLinkType(linkType);
+			await linkLine.setNestingType(linkQueryType);
 			if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
 				// linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
 				// linkLine.setGraphInstruction(graphInstruction);
-				linkLine.addGraphsServices(graph, graphInstruction, serviceSchemaName);
+				await linkLine.addGraphsServices(graph, graphInstruction, serviceSchemaName);
 			}
 			if((isSubQuery === true || isGlobalSubQuery === true || linkType === "OPTIONAL" || linkType === "NOT" || typeof graph !== "undefined") && parentClassOrderCounter<clazz.linkIdentification.orderCounter){
-				linkLine.setIsDelayedLink(true);
+				await linkLine.setIsDelayedLink(true);
 			} else if(linkQueryType === "PLAIN" && linkType === "REQUIRED" && typeof graph === "undefined" && parentClassOrderCounter<clazz.orderCounterDelayed) clazz.orderCounterDelayed = parentClassOrderCounter;
 			
 			link_count = link_count + 1;
@@ -9814,7 +9818,7 @@ async function generateInstanceAlias(uri, resolve){
 			let prefixes = await dataShapes.getNamespaces();
 			if(prefixes.complete === false) prefixes = [];
 
-			prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+			prefixes = await combineKnownPrefixesWithDefinedPrefixes(prefixes);
 	
 			for(let key = 0; key < prefixes.length; key++){
 				if(prefixes[key]["value"] == splittedUri.namespace) {
@@ -9840,7 +9844,7 @@ async function generateInstanceAlias(uri, resolve){
 		let prefixes = await dataShapes.getNamespaces();
 		if(prefixes.complete === false) prefixes = [];
 
-		prefixes = combineKnownPrefixesWithDefinedPrefixes(prefixes);
+		prefixes = await combineKnownPrefixesWithDefinedPrefixes(prefixes);
 
 		for(let key = 0; key < prefixes.length; key++){
 			if(prefixes[key]["value"] == splittedUri.namespace) {
@@ -10184,8 +10188,8 @@ function getVariable(variable){
 }
 
 
-function combineKnownPrefixesWithDefinedPrefixes(knownPrefixes){
-	let declaredPrefixes = getDeclarations();
+async function combineKnownPrefixesWithDefinedPrefixes(knownPrefixes){
+	let declaredPrefixes = await getDeclarations();
 	let prefixDeclarations = declaredPrefixes.prefixes;
 	for(let pr in prefixDeclarations){
 		if(typeof prefixDeclarations[pr] !== "function"){

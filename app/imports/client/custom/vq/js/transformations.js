@@ -4,14 +4,14 @@ import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } fro
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
 import { getPathFullGrammarChangeDirection } from './parser.js';
-import { Create_VQ_Element, VQ_Element, VQ_Schema } from './VQ_Element';
+import { Create_VQ_Element, Create_VQ_Element_Async, VQ_Element, VQ_Schema, createVQ_Element } from './VQ_Element';
 import * as vq_property_path_grammar_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_parser.js'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 
 Interpreter.customMethods({
 	
 	linkChangeDirection: async function(){
-		let elem = new VQ_Element(Session.get("activeElement"));
+		let elem = await createVQ_Element(Session.get("activeElement"));
 		
 		let linkElements =  elem.getElements();
 		let startClass = linkElements.start;
@@ -22,7 +22,7 @@ Interpreter.customMethods({
 		let locLinkTempX2 = locLink[2];
 		let locLinkTempY2 = locLink[3];
 		
-		let name = elem.getName();
+		let name = await elem.getName();
 		let parsed_exp = await vq_property_path_grammar_parser.parse(name, {schema:null, schemaName:"", symbol_table:[], context:Session.get("activeElement")});
 		
 		let res = getPathFullGrammarChangeDirection(parsed_exp).path;
@@ -56,9 +56,9 @@ Interpreter.customMethods({
 		if(typeof NestingTypeMap[elem.getNestingType()] !== "undefined") nestingType = NestingTypeMap[elem.getNestingType()];
 
 		let lintType = "REQUIRED";
-		if(elem.isOptional())lintType = "OPTIONAL";
-		else if(elem.isNegation())lintType = "NOT";
-		else if(elem.isFilterExists())lintType = "FILTER_EXISTS";
+		if(await elem.isOptional())lintType = "OPTIONAL";
+		else if(await elem.isNegation())lintType = "NOT";
+		else if(await elem.isFilterExists())lintType = "FILTER_EXISTS";
 		let newLoc = [locLinkTempX2, locLinkTempY2, locLinkTempX1, locLinkTempY1];
 		Create_VQ_Element(function(lnk) {
 	       lnk.setName(name);
@@ -94,16 +94,16 @@ Interpreter.customMethods({
 	},
 	
 
-	UpdateInstanceCompartment: function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
+	UpdateInstanceCompartment: async function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
 		let compart_type = this;
 
 		let value = input;
 
-		let elem = new VQ_Element(Session.get("activeElement"));
+		let elem = await createVQ_Element(Session.get("activeElement"));
 		let group_by_value = elem.getCompartmentValue("Group by this");
 
 		if (input != "" && input != null) {
-			let proj = Projects.findOne({_id: Session.get("activeProject")});
+			let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 			if (proj) {
 				let comp_val_inst = value;
 				Interpreter.destroyErrorMsg();
@@ -136,12 +136,12 @@ Interpreter.customMethods({
 				value = make_group_by_instance_value(input);
 			}
 
-			elem.setCompartmentValue("Group by this", group_by_value, "", false);
+			await elem.setCompartmentValue("Group by this", group_by_value, "", false);
 		}
 
 		else {
 			if (group_by_value == "true") {
-				elem.setCompartmentValue("Group by this", group_by_value, group_by_value, false);
+				await elem.setCompartmentValue("Group by this", group_by_value, group_by_value, false);
 			}
 		}
 
@@ -150,11 +150,11 @@ Interpreter.customMethods({
 	},
 
 
-	UpdateGroupByCompartment: function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
+	UpdateGroupByCompartment: async function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
 		let compart_type = this;
 		let value = input;
 
-		let elem = new VQ_Element(elem_id);
+		let elem = await createVQ_Element(elem_id);
 		let instance_input = elem.getCompartmentValue("Instance") || "";
 
 		// if (instance_input == "") {
@@ -167,10 +167,10 @@ Interpreter.customMethods({
 			value = "";
 			if (input == "true") {
 				let instance_new_value = make_group_by_instance_value(instance_input);
-				elem.setCompartmentValue("Instance", instance_input, instance_new_value, false);
+				await elem.setCompartmentValue("Instance", instance_input, instance_new_value, false);
 			}
 			else {
-				elem.setCompartmentValue("Instance", instance_input, instance_input, false);
+				await elem.setCompartmentValue("Instance", instance_input, instance_input, false);
 			}
 		// }
 	
@@ -244,15 +244,15 @@ Interpreter.customMethods({
 	// 	 }
  	},
 	
-	VQsetDistinct: function(params) {
+	VQsetDistinct: async function(params) {
 		 var act_elem = Session.get("activeElement");
-		 var elem = new VQ_Element(act_elem);
+		 var elem = await createVQ_Element(act_elem);
 		 // var comp_val_distinct = elem.getCompartmentValue("Distinct");
 		 var comp_val_distinct = params["input"];
 
 		 // elem.setCompartmentValue("Distinct", params["input"], params["value"]);
  		 if (comp_val_distinct != "true") {
-		   elem.setCompartmentValue("Distinct", "", "");
+		   await elem.setCompartmentValue("Distinct", "", "");
 		 }
  	},
 
@@ -319,7 +319,7 @@ Interpreter.customMethods({
   },
   
 	VQgetAggregateNames: function() {
-
+		
 		 var act_elem = Session.get("activeElement");
 		 if (!act_elem) {
  			return [];
@@ -424,63 +424,63 @@ Interpreter.customMethods({
 
 	},
 	
-	VQsetIsCondition: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+	VQsetIsCondition: async function(params) {
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var lt ="PLAIN";
 			 if (input=="true") { lt="CONDITION"};
-			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setNestingType(lt);
+			 var elem = await createVQ_Element(c["elementId"]);
+			 await elem.setNestingType(lt);
 		}
 	},
 
-	VQsetIsSubquery: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+	VQsetIsSubquery: async function(params) {
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var lt = "PLAIN";
 			 if (input=="true") { lt="SUBQUERY"};
-			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setNestingType(lt);
+			 var elem = await createVQ_Element(c["elementId"]);
+			 await elem.setNestingType(lt);
 		}
 	},
 
-	VQsetIsGlobalSubquery: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+	VQsetIsGlobalSubquery: async function(params) {
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var lt = "PLAIN";
 			 if (input=="true") { lt="GLOBAL_SUBQUERY"};
-			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setNestingType(lt);
+			 var elem = await createVQ_Element(c["elementId"]);
+			 await elem.setNestingType(lt);
 		}
 	},
 	
-	VQsetIsGraphToContents: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+	VQsetIsGraphToContents: async function(params) {
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var lt = "PLAIN";
 			 if (input=="true") { lt="GRAPH"};
-			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setNestingType(lt);
+			 var elem = await createVQ_Element(c["elementId"]);
+			 await elem.setNestingType(lt);
 		}
 	},
 
-	VQsetIsOptional: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+	VQsetIsOptional: async function(params) {
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var lt = "REQUIRED";
 			 if (input=="true") { lt="OPTIONAL"};
-			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setLinkType(lt);
+			 var elem = await createVQ_Element(c["elementId"]);
+			 await elem.setLinkType(lt);
 		}
 	},
 
-	VQsetIsNegation: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+	VQsetIsNegation: async function(params) {
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var lt = "REQUIRED";
@@ -488,20 +488,20 @@ Interpreter.customMethods({
 			 	lt="NOT"
 			 }
 
-			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setLinkType(lt);
+			 var elem = await createVQ_Element(c["elementId"]);
+			 await elem.setLinkType(lt);
 		}
 	},
 	
-	VQsetIsFilterExists: function(params) {
+	VQsetIsFilterExists: async function(params) {
 
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var lt = "REQUIRED";
 			 if (input=="true") { lt="FILTER_EXISTS"};
-			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setLinkType(lt);
+			 var elem = await createVQ_Element(c["elementId"]);
+			 await elem.setLinkType(lt);
 		}
 	},
 
@@ -509,34 +509,45 @@ Interpreter.customMethods({
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var nestingType = params["value"];
-			 var elem = new VQ_Element(c["elementId"]);
+			 var elem =  new VQ_Element(c["elementId"]);
 			 elem.setNestingType(nestingType);
 		}
 	},
+	VQsetNestingTypeAsync: async function(params) {
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
+		if (c) {
+			 var nestingType = params["value"];
+			 var elem = await createVQ_Element(c["elementId"]);
+			 await elem.setNestingType(nestingType);
+		}
+	},
 
-	VQSetHideDefaultLinkName: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+	VQSetHideDefaultLinkName: async function(params) {
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var hide = (input == "true");
-			 var elem = new VQ_Element(c["elementId"]);
+			 var elem = await createVQ_Element(c["elementId"]);
 			 elem.hideDefaultLinkName(hide);
 		}
 	},
 
-	VQbeforeCreateLink: function(params) {
+	VQbeforeCreateLink: async function(params) {
 		// console.log(params);
 		Interpreter.destroyErrorMsg();
-		var startLink = new VQ_Element(params["startElement"]);
-		var endLink = new VQ_Element(params["endElement"]);	 
+		var startLink = await createVQ_Element(params["startElement"]);
+		var endLink = await createVQ_Element(params["endElement"]);	 
 
-		if (startLink.getRootId() == endLink.getRootId()) {
+		const startRootId = await startLink.getRootId();
+		const endRootId = await endLink.getRootId();
+
+		if (startRootId === endRootId) {
 			// console.log("inside one query");
 			return true;
-		} else if (!startLink.isRoot() && !endLink.isRoot() &&
+		} else if (!(await startLink.isRoot()) && !(await endLink.isRoot()) &&
 			 !(startLink.getLinkToRoot() === undefined) && !(endLink.getLinkToRoot() === undefined)) {
 			//If both condition classes are connected to different query classes
-			if (startLink.getRootId() != endLink.getRootId()){
+			if (startRootId != endRootId){
 				Interpreter.showErrorMsg("Condition (violet) classes of two queries can not be linked (to avoid two main classes in a query).", -3); 
 				// To merge two queries, use a query class (orange) at least at one link end.", -3);
 				return false;
@@ -551,41 +562,43 @@ Interpreter.customMethods({
 		return true;
 	},
 
-	VQafterCreateLink: function(params) {
-		var linkName = VQsetAssociationName(params["startElement"], params["endElement"])
+	VQafterCreateLink: async function(params) {
+		var linkName = await VQsetAssociationName(params["startElement"], params["endElement"])
 		//console.log(params);
 		Interpreter.destroyErrorMsg();
-		var link = new VQ_Element(params["_id"]);
+		var link = await createVQ_Element(params["_id"]);
 		
-		link.setName(linkName);
+		await link.setName(linkName);
 		
-		link.setLinkType("REQUIRED");		 
-		if (link.getStartElement().isRoot() && link.getEndElement().isRoot()){
+		await link.setLinkType("REQUIRED");
+		const startElement = await link.getStartElement();
+		const endElement = await link.getEndElement();
+		if (await startElement.isRoot() && await endElement.isRoot()){
 	
-			let elem = link.getStartElement();
-			let namedGraphsFromQuery = findNamedGraphsInQuery(elem, [elem.obj._id]);
+			let elem = startElement;
+			let namedGraphsFromQuery = await findNamedGraphsInQuery(elem, [elem.obj._id]);
 			for(let e = 0; e < namedGraphsFromQuery.length; e++){
-				elem.addNamedGraph(namedGraphsFromQuery[e]["graph"], namedGraphsFromQuery[e]["graphInstruction"])
+				await elem.addNamedGraph(namedGraphsFromQuery[e]["graph"], namedGraphsFromQuery[e]["graphInstruction"])
 			}
-		 	link.getEndElement().setClassStyle("condition");
+		 	await endElement.setClassStyle("condition");
 			
-		} else if (!link.getStartElement().isRoot() && link.getEndElement().isRoot()) {
-			if (link.getStartElement().getLinkToRoot().start == false){
+		} else if (!(await startLink.isRoot()) && await endElement.isRoot()) {
+			if (startElement.getLinkToRoot().start == false){
 				console.log("condition class has no connected query class")
 			} else {
-				link.getEndElement().setClassStyle("condition");
+				await endElement.setClassStyle("condition");
 			}
 		}
 	},
 	
-	VQmoveNamedGraphs: function(params) {
+	VQmoveNamedGraphs: async function(params) {
 		if(params.input === "query"){
-			let c = Compartments.findOne({_id:params["compartmentId"]});
+			let c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 			if (c) {
-				let elem = new VQ_Element(c["elementId"]);
-				let namedGraphsFromQuery = findNamedGraphsInQuery(elem, [c["elementId"]]);
+				let elem = await createVQ_Element(c["elementId"]);
+				let namedGraphsFromQuery = await findNamedGraphsInQuery(elem, [c["elementId"]]);
 				for(let e = 0; e < namedGraphsFromQuery.length; e++){
-					elem.addNamedGraph(namedGraphsFromQuery[e]["graph"], namedGraphsFromQuery[e]["graphInstruction"])
+					await elem.addNamedGraph(namedGraphsFromQuery[e]["graph"], namedGraphsFromQuery[e]["graphInstruction"])
 				}
 			}
 		}
@@ -638,44 +651,48 @@ Interpreter.customMethods({
 		}
 	},
 
-	VQsetClassName: function(params) {
+	VQsetClassName: async function(params) {
 		let elem_name = params["input"];
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
-			var elem = new VQ_Element(c["elementId"]);
+			var elem = await createVQ_Element(c["elementId"]);
 
 			// if (elem.isIndirectClassMembership() && elem.getName() !== null && elem.getName() !== "") {
-			if (elem.isIndirectClassMembership() && elem_name !== null && elem_name !== "") {
+			if (await elem.isIndirectClassMembership() && elem_name !== null && elem_name !== "") {
 				let elem_name_pref = ".. " + elem_name;
-				elem.setNameValue(elem_name_pref, elem_name);
+				await elem.setNameValue(elem_name_pref, elem_name);
 				// elem.setNameValue(".. "+elem.getName());
 			}
 			else {
 				if (elem_name !== null) {
-					elem.setNameValue(elem_name, elem_name);
+					await elem.setNameValue(elem_name, elem_name);
 					// elem.setNameValue(elem.getName());
 				}
 			}
 
-       		_.each(elem.getLinks().map(function(l) {return l.link}), function(link) {
-				link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
-			});
+       		const links = await elem.getLinks(); // links = [{link: VQ_Element, start: bool}, ...]
+
+			for (const l of links) {
+			  const link = l.link;
+			  const shouldHide = link.shouldHideDefaultLinkName();
+			  await link.hideDefaultLinkName(shouldHide);
+			}
 		}
 	},
 
-	VQsetClassNameValue: function(params) {
+	VQsetClassNameValue: async function(params) {
 		let indirectClassMembership = params["input"];
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
-			var elem = new VQ_Element(c["elementId"]);
-			let elem_name = elem.getName();
+			var elem = await createVQ_Element(c["elementId"]);
+			let elem_name = await elem.getName();
 			if (indirectClassMembership == "true" && elem_name !== null && elem_name !== "") {
 				var elem_name_pref = ".. " + elem_name;
-				elem.setNameValue(elem_name_pref, elem_name);	
+				await elem.setNameValue(elem_name_pref, elem_name);	
 			}
 			else {
 				if (elem_name !== null) {
-					elem.setNameValue(elem_name, elem_name);
+					await elem.setNameValue(elem_name, elem_name);
 				}
 			};
 		};
@@ -708,26 +725,26 @@ Interpreter.customMethods({
 		return [val.value];
 	},
 	
-	VQsetGraphPrefix: function(val) {
-		var act_elem = Session.get("activeElement");
-		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
- 		var compart_type = CompartmentTypes.findOne({name: "Graph instruction", elementTypeId: act_el["elementTypeId"]});
-		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});	
-		if (compart) return "{"+compart.value+": ";
-		return "{";
-	},
+	// VQsetGraphPrefix: function(val) {
+		// var act_elem = Session.get("activeElement");
+		// var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+ 		// var compart_type = CompartmentTypes.findOne({name: "Graph instruction", elementTypeId: act_el["elementTypeId"]});
+		// var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});	
+		// if (compart) return "{"+compart.value+": ";
+		// return "{";
+	// },
 	
-	VQsetGraphPrefixFromInstructions: function(params) {
+	// VQsetGraphPrefixFromInstructions: function(params) {
 
-			var act_elem = Session.get("activeElement");
-			var elem = new VQ_Element(act_elem);
+			// var act_elem = Session.get("activeElement");
+			// var elem = new VQ_Element(act_elem);
 
-            if (typeof elem.getGraph() !== "undefined" && elem.getGraph() !== null && elem.getGraph() !== "") {
-				var instrunction = params.value;
-				if(instrunction!= null && instrunction != "") instrunction = instrunction+": ";
-				elem.setGraph(elem.getGraph(), "{" + instrunction + elem.getGraph() + "}");
-			} 
-	},
+            // if (typeof elem.getGraph() !== "undefined" && elem.getGraph() !== null && elem.getGraph() !== "") {
+				// var instrunction = params.value;
+				// if(instrunction!= null && instrunction != "") instrunction = instrunction+": ";
+				// elem.setGraph(elem.getGraph(), "{" + instrunction + elem.getGraph() + "}");
+			// } 
+	// },
 	
 	VQsetPrefixNamespace: async function(params, prefixValue) {
 		// console.log(params)
@@ -859,10 +876,10 @@ Interpreter.customMethods({
 		return true;
 	},
 
-	AggregateWizard: function(e) {
+	AggregateWizard: async function(e) {
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
-		var compart_type = CompartmentTypes.findOne({_id: parent_id});
+		var compart_type = await CompartmentTypes.findOneAsync({_id: parent_id});
 
 		// more elegant selection for subCompartmentTypes needed
 		var expression_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
@@ -871,9 +888,9 @@ Interpreter.customMethods({
 		var exression_id = expression_compart_type._id;
 		var expression_value = parent.find("." + exression_id).val();
 		
-		 Template.AggregateWizard.expressionField.set(getAggregatedField(e, "Expression"))
-		 Template.AggregateWizard.aliasField.set(getAggregatedField(e, "Field Name"))
-		 Template.AggregateWizard.requireField.set(getAggregatedField(e, "Require Values"))
+		 Template.AggregateWizard.expressionField.set(await getAggregatedField(e, "Expression"))
+		 Template.AggregateWizard.aliasField.set(await getAggregatedField(e, "Field Name"))
+		 Template.AggregateWizard.requireField.set(await getAggregatedField(e, "Require Values"))
 
 		var require_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
 											return sub_compart_type.name == "Require Values";
@@ -917,10 +934,10 @@ Interpreter.customMethods({
         var schema = new VQ_Schema();
 
         if (classId) {
-            var classObj = new VQ_Element(classId);
-            if (classObj && classObj.isClass()) {
+            var classObj = await createVQ_Element(classId);
+            if (classObj && await classObj.isClass()) {
             	//Display/at least/at most visibility
-            	if(classObj.isRoot()) {
+            	if(await classObj.isRoot()) {
             		Template.AggregateWizard.showDisplay.set("none");
             		Template.AggregateWizard.startClassId.set(classId);
             	}else {
@@ -937,7 +954,7 @@ Interpreter.customMethods({
             	}
 
                 //Attribute generation
-                var class_name = classObj.getName();
+                var class_name = await classObj.getName();
                 if (schema.classExist(class_name)) {
                     var klass = schema.findClassByName(class_name);
 
@@ -999,7 +1016,7 @@ Interpreter.customMethods({
 		
     },
 	
-	AddAggregate: function(e) {
+	AddAggregate: async function(e) {
 
 		 Template.AggregateWizard.expressionField.set("")
 		 Template.AggregateWizard.aliasField.set("")
@@ -1018,10 +1035,10 @@ Interpreter.customMethods({
         var schema = new VQ_Schema();
 
         if (classId) {
-            var classObj = new VQ_Element(classId);
-            if (classObj && classObj.isClass()) {
+            var classObj = await createVQ_Element(classId);
+            if (classObj && await classObj.isClass()) {
             	//Display/at least/at most visibility
-            	if(classObj.isRoot()) {
+            	if(await classObj.isRoot()) {
             		Template.AggregateWizard.showDisplay.set("none");
             		Template.AggregateWizard.startClassId.set(classId);
             	}else {
@@ -1033,17 +1050,17 @@ Interpreter.customMethods({
             		//Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
 					let isSubQuery = false;
 					while(isSubQuery === false){
-						let linkO = new VQ_Element(classUp.link.obj._id);
+						let linkO = await createVQ_Element(classUp.link.obj._id);
 						let parClass;
 						if (classUp.start) {	
-							console.log("linkO", linkO, linkO.isSubQuery());
-							parClass = new VQ_Element(classUp.link.getElements().start.obj._id);
+
+							parClass = await createVQ_Element(classUp.link.getElements().start.obj._id);
 							Template.AggregateWizard.startClassId.set(classUp.link.getElements().start.obj._id);
 						} else {
 							Template.AggregateWizard.startClassId.set(classUp.link.getElements().end.obj._id);
-							parClass = new VQ_Element(classUp.link.getElements().end.obj._id);
+							parClass = await createVQ_Element(classUp.link.getElements().end.obj._id);
 						}   
-						if(linkO.isSubQuery() === true || linkO.isGlobalSubQuery() === true) isSubQuery = true;
+						if(await linkO.isSubQuery() === true || await linkO.isGlobalSubQuery() === true) isSubQuery = true;
 						else {
 							classUp = parClass.getLinkToRoot();
 						}
@@ -1052,7 +1069,7 @@ Interpreter.customMethods({
             	}
 
                 //Attribute generation
-                var class_name = classObj.getName();
+                var class_name = await classObj.getName();
                 if (schema.classExist(class_name)) {
                     var klass = schema.findClassByName(class_name);
 
@@ -1118,8 +1135,8 @@ Interpreter.customMethods({
 		return true;
 	},
 
-	setIsVisibleForIndirectClassMembership: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
+	setIsVisibleForIndirectClassMembership: async function() {
+		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		if (proj) {
 			  var directClassMembershipRole;
 			  var indirectClassMembershipRole;
@@ -1134,8 +1151,8 @@ Interpreter.customMethods({
 		return false;
 	},
 		
-	setIsVisibleForLabelService: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});		
+	setIsVisibleForLabelService: async function() {
+		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});		
 		if (proj) {
 			if (proj.enableWikibaseLabelServices == true) return true;
 		}
@@ -1151,12 +1168,27 @@ Interpreter.customMethods({
 		return true;
 	},
 	
+	setIsVisibleForNamedGraphsAsync: async function() {
+		let selected_elem_id = Session.get("activeElement");
+		const element = await Elements.findOneAsync({ _id: selected_elem_id });
+
+		if (element) { //Because in case of deleted element ID is still "activeElement"
+
+			let vq_obj = await createVQ_Element(selected_elem_id);
+			let type = await vq_obj.getType();
+			if(type === "query") return true;
+		}
+		return false;
+	},
+	
 	setIsVisibleForNamedGraphs: function() {
 		// let proj = Projects.findOne({_id: Session.get("activeProject")});	
 		// if (proj) {	
 			// if (proj.showGraphServiceCompartments == true) {
 				let selected_elem_id = Session.get("activeElement");
-				if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+				const element = Elements.findOne({ _id: selected_elem_id });
+
+				if (element) { //Because in case of deleted element ID is still "activeElement"
 
 					 let vq_obj = new VQ_Element(selected_elem_id);
 					 let type = vq_obj.getType();
@@ -1167,32 +1199,32 @@ Interpreter.customMethods({
 		return false;
 	},
 	
-	AddSelectThis: function(){
+	AddSelectThis: async function(){
 		
 		var selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
-		 var vq_obj = new VQ_Element(selected_elem_id);
-		 var fields = vq_obj.getFields();
+		 var vq_obj = await createVQ_Element(selected_elem_id);
+		 var fields = await vq_obj.getFields();
 		 // Šis cikls joprojām strādā pareizi
 		 for(let field in fields){
 			 if(typeof fields[field] !== "function" && fields[field]["exp"] == "(select this)") return; 
 		 }
-		 vq_obj.addField("(select this)",null,false,false,false);
+		 await vq_obj.addField("(select this)",null,false,false,false);
 		};
 
 		return;
 	},
 	
 	//Adds outer query as [ ] class with ++ link
-	addOuterQuery: function(){
+	addOuterQuery: async function(){
 		var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			Interpreter.destroyErrorMsg();
 
 			var currentElement = new VQ_Element(selected_elem_id);
 			if (currentElement.isClass() && currentElement.isRoot()) {
-				currentElement.setClassStyle("condition");
+				await currentElement.setClassStyle("condition");
 				//coordinates to place new Box and create link
 				var d = 60; //distance between boxes
 				var locClass = currentElement.getNewLocation(d); 
@@ -1223,95 +1255,101 @@ Interpreter.customMethods({
 		}
 	},
 
-	setAsMainClass: function(){
+	setAsMainClass: async function(){
 		Interpreter.destroyErrorMsg();
 		//Based on "generate SPARQL from component" realisation
         var newMainElementID = Session.get("activeElement");        
-        var selected_elem = new VQ_Element(newMainElementID);
+        var selected_elem = await createVQ_Element(newMainElementID);
         //Check if any action is needed
-        if(!selected_elem.isClass()){
+        if(!(await selected_elem.isClass())){
             console.log("Selected element is not class");
             return;
         }
-        if (selected_elem.isRoot()){
+        if (await selected_elem.isRoot()){
         	return;
         }
-        if(InsideNested(newMainElementID)){
+        if(await InsideNested(newMainElementID)){
         	Interpreter.showErrorMsg("Can't set class as Main inside Nested query.", -3);
         	return;
         }         
                        
         //Get ID of all elements in query
         var visited_elems = {};
-        GetComponentIds(selected_elem);       
+        await GetComponentIds(selected_elem);       
         var elem_ids = _.keys(visited_elems);
         var class_ids = [];
 
         //Get ID from selection of classes, that are query and set them as condition
-        _.each(elem_ids, function(e){
-            var VQElem = new VQ_Element(e);         
-            if (VQElem.isClass() && VQElem.isRoot()){
-            	VQElem.setClassStyle("condition");
-            }
-        })
+        for (const e of elem_ids) {
+			const VQElem = await createVQ_Element(e);
+			if (await VQElem.isClass() && await VQElem.isRoot()) {
+				await VQElem.setClassStyle("condition");
+			}
+		}
 
-        selected_elem.setClassStyle("query");
 
-	    function InsideNested(id){
-        	var vq_elem = new VQ_Element(id);
-        	if (vq_elem.isRoot()){
+        await selected_elem.setClassStyle("query");
+
+	    async function InsideNested(id){
+        	var vq_elem = await createVQ_Element(id);
+        	if (await vq_elem.isRoot()){
         		return false;
         	} else {
         		if (vq_elem.getLinkToRoot()){
-        			if (vq_elem.getLinkToRoot().link.isSubQuery()) {
-        				return true;
-        			}
+        			const linkToRoot = vq_elem.getLinkToRoot();
+					if (linkToRoot && await linkToRoot.link.isSubQuery()) {
+						return true;
+					}
 
         			var elements = vq_elem.getLinkToRoot().link.getElements();
         			if (vq_elem.getLinkToRoot().start) {
-        				return InsideNested(elements.start.obj._id);
+        				return await InsideNested(elements.start.obj._id);
         			} else {
-        				return InsideNested(elements.end.obj._id);
+        				return await InsideNested(elements.end.obj._id);
         			}
         		}
         	}
         }
 
-        function GetComponentIds(vq_elem) {
-            visited_elems[vq_elem._id()] = true;
-            _.each(vq_elem.getLinks(),function(link) {
-                if (!visited_elems[link.link._id()]) {
-                    visited_elems[link.link._id()]=true;
-                    var next_el = null;
-                	if (link.start) {
-                    	next_el=link.link.getStartElement(); 
-                    } else {
-                        next_el=link.link.getEndElement();
-                    };
+        async function GetComponentIds(vq_elem) {
+			visited_elems[vq_elem._id()] = true;
 
-                    if (!visited_elems[next_el._id()]) {
-                        GetComponentIds(next_el);
-                    };
-                };
-            });
-        };
+			const links = await vq_elem.getLinks();
+			for (const link of links) {
+				if (!visited_elems[link.link._id()]) {
+					visited_elems[link.link._id()] = true;
+
+					let next_el;
+					if (link.start) {
+						next_el = await link.link.getStartElement();
+					} else {
+						next_el = await link.link.getEndElement();
+					}
+
+					if (!visited_elems[next_el._id()]) {
+						await GetComponentIds(next_el);
+					}
+				}
+			}
+		}
+
 	},
 	
 });
 
-function VQsetAssociationName(start, end) {
-		var start_element = new VQ_Element(start);
-		var end_element = new VQ_Element(end);
+async function VQsetAssociationName(start, end) {
+		var start_element = await createVQ_Element(start);
+		var end_element = await createVQ_Element(end);
 		
 		var name_list = [];
 		
-		let start_class = Elements.findOne({_id: start});
-		let end_class = Elements.findOne({_id: end});
+		let start_class = await Elements.findOneAsync({_id: start});
+		let end_class = await Elements.findOneAsync({_id: end});
 
-		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
-		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start});
-		var compart_type_end = CompartmentTypes.findOne({name: "Name", elementTypeId: end_class["elementTypeId"]});
-		var compart_end = Compartments.findOne({compartmentTypeId: compart_type_end["_id"], elementId: end});
+		var compart_type = await CompartmentTypes.findOneAsync({name: "Name", elementTypeId: start_class["elementTypeId"]});
+		var compart = await Compartments.findOneAsync({compartmentTypeId: compart_type["_id"], elementId: start});
+		var compart_type_end = await CompartmentTypes.findOneAsync({name: "Name", elementTypeId: end_class["elementTypeId"]});
+		var compart_end = await Compartments.findOneAsync({compartmentTypeId: compart_type_end["_id"], elementId: end});
 		var schema = new VQ_Schema();
 
 		if (typeof compart !== "undefined" && typeof compart_end !== "undefined" && schema.classExist(compart["input"]) && schema.classExist(compart_end["input"])) {
@@ -1352,10 +1390,10 @@ function VQsetAssociationName(start, end) {
 }
 
 
-function getAggregatedField(e, fieldName){
+async function getAggregatedField(e, fieldName){
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
-		var compart_type = CompartmentTypes.findOne({_id: parent_id});
+		var compart_type = await CompartmentTypes.findOneAsync({_id: parent_id});
 
 		// more elegant selection for subCompartmentTypes needed
 		var expression_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
@@ -1398,29 +1436,34 @@ async function generateSymbolTable(notResolveTable) {
 	//console.log("    generateSymbolTable", elem)
     // now we should find the connected classes ...
     if (elem) {
-       var selected_elem = new VQ_Element(elem[0]);
-	   if(selected_elem.obj.type === "Line") selected_elem = selected_elem.getStartElement();
+       var selected_elem = await createVQ_Element(elem[0]);
+	   if(selected_elem.obj.type === "Line") selected_elem = await selected_elem.getStartElement();
        var visited_elems = {};
 		//console.log("  1  generateSymbolTable", elem, selected_elem.obj.type, selected_elem.getStartElement())
-       function GetComponentIds(vq_elem) {
-           visited_elems[vq_elem._id()]=true;
-           _.each(vq_elem.getLinks(),function(link) {
-               if (!visited_elems[link.link._id()]) {
-                 visited_elems[link.link._id()]=true;
-                 var next_el = null;
-                 if (link.start) {
-                   next_el=link.link.getStartElement();
-                 } else {
-                   next_el=link.link.getEndElement();
-                 };
-                 if (!visited_elems[next_el._id()]) {
-                    GetComponentIds(next_el);
-                 };
-               };
-           });
-       };
+       async function GetComponentIds(vq_elem) {
+			visited_elems[vq_elem._id()] = true;
 
-       GetComponentIds(selected_elem);
+			const links = await vq_elem.getLinks();
+			for (const link of links) {
+				if (!visited_elems[link.link._id()]) {
+					visited_elems[link.link._id()] = true;
+
+					let next_el;
+					if (link.start) {
+						next_el = await link.link.getStartElement();
+					} else {
+						next_el = await link.link.getEndElement();
+					}
+
+					if (!visited_elems[next_el._id()]) {
+						await GetComponentIds(next_el);
+					}
+				}
+			}
+	  }
+
+
+       await GetComponentIds(selected_elem);
 
        var elem_ids = _.keys(visited_elems);  
        var queries = await genAbstractQueryForElementList(elem_ids, null); 
@@ -1458,9 +1501,9 @@ function make_group_by_instance_value(input) {
 	return "{group} " + input;
 }
 
-function findNamedGraphsInQuery(elem, visitedClasses){
+async function findNamedGraphsInQuery(elem, visitedClasses){
 	let namedGraphs = [];
-	let elemLinks = elem.getLinks();
+	let elemLinks = await elem.getLinks();
 	for(let e = 0; e < elemLinks.length; e++){
 		let clazzId;
 		if(elemLinks[e]["start"] === false){
@@ -1468,19 +1511,19 @@ function findNamedGraphsInQuery(elem, visitedClasses){
 		} else {
 			clazzId = elemLinks[e]["link"]["obj"]["startElement"];
 		}
-		clazz = new VQ_Element(clazzId);
+		clazz = await createVQ_Element(clazzId);
 		if(visitedClasses.indexOf(clazzId) === -1) {
 			visitedClasses.push(clazzId);
-			let nGraphs = clazz.getNamedGraphs();
+			let nGraphs = await clazz.getNamedGraphs();
 			for(let ng = 0; ng < nGraphs.length; ng++){
 				namedGraphs.push({graph:nGraphs[ng].graph, graphInstruction: nGraphs[ng].graphInstruction})
 				var list = {compartmentId: nGraphs[ng]["_id"],
 					projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 				};
-				Utilities.callMeteorMethod("removeCompartment", list);
+				await Utilities.callMeteorMethodAsync("removeCompartment", list);
 			}
-			namedGraphs = namedGraphs.concat(findNamedGraphsInQuery(clazz, visitedClasses))
+			namedGraphs = namedGraphs.concat(await findNamedGraphsInQuery(clazz, visitedClasses))
 		}
 	}
 	

@@ -30,14 +30,14 @@
 				if (options.text.split(/[.\/]/).length <= 1 && options.text.indexOf("^") ==-1){
 					var selected_elem_id = Session.get("activeElement");
 					var act_el;
-					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+					if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 						act_el = new VQ_Element(selected_elem_id)
 						}
 							
 					var prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
 					prop = prop["data"];
 					
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 					var schemaName = null;
 					if (proj) {
 						if (proj.schema) {
@@ -75,14 +75,14 @@
         	async function getAssociations(place, priority){
     			var selected_elem_id = Session.get("activeElement");
     			var act_el;
-    			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+    			if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
     				act_el = new VQ_Element(selected_elem_id)
     			}
     					
     			var prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, act_el);
     			prop = prop["data"];
 				
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 				var schemaName = null;
 				if (proj) {
 					if (proj.schema) {
@@ -265,7 +265,7 @@
 				var props = await dataShapes.getPropertiesFull(params);
             	props = props["data"];
 				
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 				var schemaName = null;
 				if (proj) {
 					if (proj.schema) {
@@ -302,7 +302,7 @@
 				var p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
         		var props= await dataShapes.getPropertiesFull(p);
 				
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 				var schemaName = null;
 				if (proj) {
 					if (proj.schema) {
@@ -362,7 +362,7 @@
 				var varibleName = makeVar(o);
 				var selected_elem_id = Session.get("activeElement");
     			var act_el;
-    			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+    			if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
     				act_el = new VQ_Element(selected_elem_id)
     			}
 				var loc = await location();
@@ -399,7 +399,7 @@
 				var props = await dataShapes.getPropertiesFull(params);
 				props = props["data"];
 					
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 				var schemaName = null;
 				if (proj) {
 					if (proj.schema) {
@@ -464,7 +464,7 @@
             		var props = await dataShapes.getPropertiesFull(params);
             		props = props["data"];
 					
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 					var schemaName = null;
 					if (proj) {
 						if (proj.schema) {
@@ -505,7 +505,7 @@
 				} else {
 					var selected_elem_id = Session.get("activeElement");
 					var act_el;
-					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+					if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 						act_el = new VQ_Element(selected_elem_id)
 					}
 					var loc = await location();
@@ -528,7 +528,7 @@
 							
 					prop = prop["data"];
 					
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 					var schemaName = null;
 					if (proj) {
 						if (proj.schema) {

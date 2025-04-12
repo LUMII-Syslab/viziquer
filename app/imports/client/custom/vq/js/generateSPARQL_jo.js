@@ -3,7 +3,7 @@ import { Projects, Elements } from '/imports/db/platform/collections'
 import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
 import { parse_class, parse_attrib, parse_filter, getPathFullGrammar } from './parser';
-import { VQ_Element } from './VQ_Element';
+import { VQ_Element, createVQ_Element } from './VQ_Element';
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 import { setSchemaNamesForQuery } from '/imports/client/custom/vq/js/transformations.js'
 import { ElementTypes, DiagramTypes } from '/imports/db/platform/collections'
@@ -26,7 +26,7 @@ Interpreter.customMethods({
 	
     // ErrorHandling - just one query at a moment allowed
     if (queries.length==0) {
-       Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
+       Interpreter.showErrorMsg("1 The query has to contain a main query class (orange box).", -3);
        return;
     } else if (queries.length>1) {
        Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
@@ -73,7 +73,7 @@ Interpreter.customMethods({
 
     // ErrorHandling - just one query at a moment allowed
     if (queries.length==0) {
-       Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
+       Interpreter.showErrorMsg("2 The query has to contain a main query class (orange box).", -3);
        return;
     } else if (queries.length>1) {
        Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
@@ -119,35 +119,38 @@ Interpreter.customMethods({
 
     //TODO: Code optimization needed - this block copied ...
     if (elem) {
-       var selected_elem = new VQ_Element(elem[0]);
+       var selected_elem = await createVQ_Element(elem[0]);
        var visited_elems = {};
 
-       function GetComponentIds(vq_elem) {
-           visited_elems[vq_elem._id()]=true;
-           _.each(vq_elem.getLinks(),function(link) {
-               if (!visited_elems[link.link._id()]) {
-                 visited_elems[link.link._id()]=true;
-                 var next_el = null;
-                 if (link.start) {
-                   next_el=link.link.getStartElement();
-                 } else {
-                   next_el=link.link.getEndElement();
-                 };
-                 if (!visited_elems[next_el._id()]) {
-                    GetComponentIds(next_el);
-                 };
-               };
-           });
-       };
+       async function GetComponentIds(vq_elem) {
+		  visited_elems[vq_elem._id()] = true;
 
-       GetComponentIds(selected_elem);
+		  const links = await vq_elem.getLinks(); // await async method
+
+		  for (const link of links) {
+			if (!visited_elems[link.link._id()]) {
+			  visited_elems[link.link._id()] = true;
+
+			  let next_el = link.start
+				? await link.link.getStartElement()
+				: await link.link.getEndElement();
+
+			  if (!visited_elems[next_el._id()]) {
+				await GetComponentIds(next_el); // recursive call
+			  }
+			}
+		  }
+		}
+
+
+       await GetComponentIds(selected_elem);
 
        var elem_ids = _.keys(visited_elems);
 
        var queries =  await genAbstractQueryForElementList(elem_ids);
        // ErrorHandling - just one query at a moment allowed
        if (queries.length==0) {
-          Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
+          Interpreter.showErrorMsg("3 The query has to contain a main query class (orange box).", -3);
           return;
        } else if (queries.length>1) {
           Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
@@ -198,46 +201,53 @@ Interpreter.customMethods({
        var root_elements_ids = [ elem[0] ];
        var query_elements_ids = [];
 
-       var selected_elem = new VQ_Element(elem[0]);
+       var selected_elem = await createVQ_Element(elem[0]);
 
-       _.each(selected_elem.getLinks(),function(link) {
-           if (!link.link.isConditional()) {
-             var UP_direction = link.link.getRootDirection();
-             if ((link.start &&  UP_direction == "start") || (!link.start &&  UP_direction == "end")) {
-               visited_elems[link.link._id()] = true;
-             };
-           };
-       });
+       const links = await selected_elem.getLinks(); // await the async method
 
-       function GetComponentIds(vq_elem) {
-           visited_elems[vq_elem._id()]=true;
-           query_elements_ids.push(vq_elem._id());
-           _.each(vq_elem.getLinks(),function(link) {
-               if (!visited_elems[link.link._id()]) {
-                 visited_elems[link.link._id()]=true;
-                 query_elements_ids.push(link.link._id());
-                 // If link is conditional we register it, but dont follow ...
-                 if (!link.link.isConditional()) {
-                   var next_el = null;
-                   if (link.start) {
-                     next_el=link.link.getStartElement();
-                   } else {
-                     next_el=link.link.getEndElement();
-                   };
-                   if (!visited_elems[next_el._id()]) {
-                      GetComponentIds(next_el);
-                   };
-                 };
-               };
-           });
-       };
+		for (const link of links) {
+		  if (!(await link.link.isConditional())) {
+			const UP_direction = link.link.getRootDirection(); // assuming this is sync
+			if ((link.start && UP_direction === "start") || (!link.start && UP_direction === "end")) {
+			  visited_elems[link.link._id()] = true;
+			}
+		  }
+		}
 
-       GetComponentIds(selected_elem);
+       async function GetComponentIds(vq_elem) {
+		  visited_elems[vq_elem._id()] = true;
+		  query_elements_ids.push(vq_elem._id());
+
+		  const links = await vq_elem.getLinks();
+
+		  for (const link of links) {
+			if (!visited_elems[link.link._id()]) {
+			  visited_elems[link.link._id()] = true;
+			  query_elements_ids.push(link.link._id());
+
+			  // If link is conditional, we register it but don't follow it
+			  if (!(await link.link.isConditional())) {
+				let next_el = null;
+				if (link.start) {
+				  next_el = await link.link.getStartElement();
+				} else {
+				  next_el = await link.link.getEndElement();
+				}
+
+				if (!visited_elems[next_el._id()]) {
+				  await GetComponentIds(next_el);
+				}
+			  }
+			}
+		  }
+		}
+
+       await GetComponentIds(selected_elem);
 
        var queries =  await genAbstractQueryForElementList(query_elements_ids, root_elements_ids);
        // ErrorHandling - just one query at a moment allowed
        if (queries.length==0) {
-          Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
+          Interpreter.showErrorMsg("4 The query has to contain a main query class (orange box).", -3);
           return;
        } else if (queries.length>1) {
           Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
@@ -298,28 +308,30 @@ Interpreter.customMethods({
 
     // now we should find the connected classes ...
     if (elem) {
-       var selected_elem = new VQ_Element(elem[0]);
+       var selected_elem = await createVQ_Element(elem[0]);
        var visited_elems = {};
 
-       function GetComponentIds(vq_elem) {
-           visited_elems[vq_elem._id()]=true;
-           _.each(vq_elem.getLinks(),function(link) {
-               if (!visited_elems[link.link._id()]) {
-                 visited_elems[link.link._id()]=true;
-                 var next_el = null;
-                 if (link.start) {
-                   next_el=link.link.getStartElement();
-                 } else {
-                   next_el=link.link.getEndElement();
-                 };
-                 if (!visited_elems[next_el._id()]) {
-                    GetComponentIds(next_el);
-                 };
-               };
-           });
-       };
+	   async function GetComponentIds(vq_elem) {
+		  visited_elems[vq_elem._id()] = true;
 
-       GetComponentIds(selected_elem);
+		  const links = await vq_elem.getLinks(); // await async method
+
+		  for (const link of links) {
+			if (!visited_elems[link.link._id()]) {
+			  visited_elems[link.link._id()] = true;
+
+			  let next_el = link.start
+				? await link.link.getStartElement()
+				: await link.link.getEndElement();
+
+			  if (!visited_elems[next_el._id()]) {
+				await GetComponentIds(next_el); // recursive call
+			  }
+			}
+		  }
+	   }
+
+       await GetComponentIds(selected_elem);
 
        var elem_ids = _.keys(visited_elems);
        await GenerateSPARQL_for_ids(elem_ids);
@@ -339,41 +351,48 @@ Interpreter.customMethods({
        var root_elements_ids = [ elem[0] ];
        var query_elements_ids = [];
 
-       var selected_elem = new VQ_Element(elem[0]);
+       var selected_elem = await createVQ_Element(elem[0]);
+	   
+	   const links = await selected_elem.getLinks(); // await the async method
 
-       _.each(selected_elem.getLinks(),function(link) {
-           if (!link.link.isConditional()) {
-             var UP_direction = link.link.getRootDirection();
-             if ((link.start &&  UP_direction == "start") || (!link.start &&  UP_direction == "end")) {
-               visited_elems[link.link._id()] = true;
-             };
-           };
-       });
+		for (const link of links) {
+		  if (!(await link.link.isConditional())) {
+			const UP_direction = link.link.getRootDirection(); // assuming this is sync
+			if ((link.start && UP_direction === "start") || (!link.start && UP_direction === "end")) {
+			  visited_elems[link.link._id()] = true;
+			}
+		  }
+		}
 
-       function GetComponentIds(vq_elem) {
-           visited_elems[vq_elem._id()]=true;
-           query_elements_ids.push(vq_elem._id());
-           _.each(vq_elem.getLinks(),function(link) {
-               if (!visited_elems[link.link._id()]) {
-                 visited_elems[link.link._id()]=true;
-                 query_elements_ids.push(link.link._id());
-                 // If link is conditional we register it, but dont follow ...
-                 if (!link.link.isConditional()) {
-                   var next_el = null;
-                   if (link.start) {
-                     next_el=link.link.getStartElement();
-                   } else {
-                     next_el=link.link.getEndElement();
-                   };
-                   if (!visited_elems[next_el._id()]) {
-                      GetComponentIds(next_el);
-                   };
-                 };
-               };
-           });
-       };
+       async function GetComponentIds(vq_elem) {
+		  visited_elems[vq_elem._id()] = true;
+		  query_elements_ids.push(vq_elem._id());
 
-       GetComponentIds(selected_elem);
+		  const links = await vq_elem.getLinks();
+
+		  for (const link of links) {
+			if (!visited_elems[link.link._id()]) {
+			  visited_elems[link.link._id()] = true;
+			  query_elements_ids.push(link.link._id());
+
+			  // If link is conditional, we register it but don't follow it
+			  if (!(await link.link.isConditional())) {
+				let next_el = null;
+				if (link.start) {
+				  next_el = await link.link.getStartElement();
+				} else {
+				  next_el = await link.link.getEndElement();
+				}
+
+				if (!visited_elems[next_el._id()]) {
+				  await GetComponentIds(next_el);
+				}
+			  }
+			}
+		  }
+		}
+
+       await GetComponentIds(selected_elem);
 
         await GenerateSPARQL_for_ids(query_elements_ids, root_elements_ids)
      } else {
@@ -566,16 +585,16 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	
 	let dirRole = "a";
 		
-	let proj = Projects.findOne({_id: Session.get("activeProject")});
+	let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 	if (proj) {
 		if (proj.directClassMembershipRole) {
 			dirRole = proj.directClassMembershipRole;
 		}
 	}
 	
-	let link = new VQ_Element(elem[0]);
-	let startElement = link.getStartElement();
-	let endElement = link.getEndElement();
+	let link = await createVQ_Element(elem[0]);
+	let startElement = await link.getStartElement();
+	let endElement = await link.getEndElement();
 	
 	let linkName = link.getCompartmentValue("Name");
 	let startElementName = startElement.getCompartmentValue("Name");
@@ -585,7 +604,6 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	let endClassSPRAQL = "";
 		
 	let classList = startElement.getCompartmentValue("ClassList");
-	//let classListVV = startElement.getCompartmentValueValue("ClassList");
 
 	if(classList === null){
 		
@@ -672,10 +690,10 @@ async function generateSPARQLtextFromSchema(){
 	
 	let editor = Interpreter.editor;
 	let elem = _.keys(editor.getSelectedElements());
-	let selected_elem = new VQ_Element(elem[0]);
+	let selected_elem = await createVQ_Element(elem[0]);
 	let dirRole = "a";
 		
-	let proj = Projects.findOne({_id: Session.get("activeProject")});
+	let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 	if (proj) {
 		if (proj.directClassMembershipRole) {
 			dirRole = proj.directClassMembershipRole;
@@ -683,8 +701,6 @@ async function generateSPARQLtextFromSchema(){
 	}
 	let classList = selected_elem.getCompartmentValue("ClassList");
 
-	// selected_elem.setCompartmentValue("ClassList", "iiiii", "vvvvv");
-	
 	if(classList === null){
 		return simpleSchemaBox(selected_elem, n, dirRole, []);
 	} else {
@@ -706,9 +722,11 @@ async function generateSPARQLtextFromSchemaForSelection(){
 	let prefixes = await dataShapes.getNamespaces();
 	let usedNames = [];
 	
-	 var element_list = _.filter(_.map(elem, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});
+	let elements_raw = await Promise.all(elem.map(async (id) => await createVQ_Element(id)));
+	let element_list = elements_raw.filter(v => v && v.obj);
+
   // determine which elements are root elements
-	const elem_type = ElementTypes.findOne({name: "ObjectProperty"});
+	const elem_type = await ElementTypes.findOneAsync({name: "ObjectProperty"});
 	const elem_type_id = elem_type._id;
 	_.each(element_list, function(e) {
 		  if(e.obj.type == "Box"){
@@ -719,7 +737,7 @@ async function generateSPARQLtextFromSchemaForSelection(){
 	 });
 	 let dirRole = "a";
 			
-		let proj = Projects.findOne({_id: Session.get("activeProject")});
+		let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		if (proj) {
 			if (proj.directClassMembershipRole) {
 				dirRole = proj.directClassMembershipRole;
@@ -728,7 +746,7 @@ async function generateSPARQLtextFromSchemaForSelection(){
 	 let classSPARQL = [];
 	 let classNames = [];
 	for (const [key, value] of Object.entries(classAccessTable)) {
-		let selected_elem = new VQ_Element(key);
+		let selected_elem = await createVQ_Element(key);
 		
 		let classList = selected_elem.getCompartmentValue("ClassList");
 
@@ -751,9 +769,9 @@ async function generateSPARQLtextFromSchemaForSelection(){
 	}
 	let objectPropertiesUnion = [];
 	for (const [key, value] of Object.entries(lineAccessTable)) {
-		let link = new VQ_Element(key);
-		let startElement = link.getStartElement();
-		let endElement = link.getEndElement();
+		let link = await createVQ_Element(key);
+		let startElement = await link.getStartElement();
+		let endElement = await link.getEndElement();
 		
 		let linkName = link.getCompartmentValue("Name");
 		let startElementName = classNames[startElement.obj._id];;
@@ -828,7 +846,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	let propertyTable = [];
 	let className = "exp";
 	// Regular expression to match and remove the optional parts at the beginning and end
-	className = selected_elem.getName().replace(/^(?:\(\w+\)\s*)?(?:[\w-]*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
+	className = await selected_elem.getName().replace(/^(?:\(\w+\)\s*)?(?:[\w-]*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
 										.replace(/\s+et al\..*$/, '');               // Remove " et al. string" at the end
 	if(className.indexOf("[") !== -1 && className.indexOf(" ") !== -1) className = className.substring(className.indexOf("[")+1, className.indexOf(" "))
 	if(typeof usedNames !== "undefined" && usedNames !== null && typeof usedNames[className] !== "undefined") {
@@ -1007,10 +1025,10 @@ async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
  
   
   var queries = await genAbstractQueryForElementList(list_of_ids, root_elements_ids);
-    
+    console.log("QQQQQQQQQQQQQQQQQ", queries)
   // ErrorHandling - just one query at a moment allowed
   if (queries.length==0) {
-     Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
+     Interpreter.showErrorMsg("5 The query has to contain a main query class (orange box).", -3);
      return;
   } else if (queries.length>1) {
      Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
@@ -1049,7 +1067,7 @@ async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 
 // string, {limit: , offset:, total_rows:} -->
 // Executes the given Sparql end shows result in the GUI
-function executeSparqlString(sparql, paging_info) {
+async function executeSparqlString(sparql, paging_info) {
 	var sparqlWithoutComments = sparql.split("\n")
 	 sparqlWithoutComments = sparqlWithoutComments.filter(function (el) {
 		return !el.trim().startsWith("#");
@@ -1061,7 +1079,7 @@ function executeSparqlString(sparql, paging_info) {
   var graph_iri = "";
   var endpoint = "http://185.23.162.167:8833/sparql";
 
-  var proj = Projects.findOne({_id: Session.get("activeProject")});
+  var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 
   if (proj && proj.endpoint) {
   //if (proj && proj.uri && proj.endpoint) {
@@ -1089,84 +1107,87 @@ function executeSparqlString(sparql, paging_info) {
                         paging_info: paging_info
               },
            };
-		   
+	try {
+		const res = await Utilities.callMeteorMethodAsync("executeSparql", list);
+		
+		console.log("RRRRRRRRRRRRRRRR", res);
+		
+		if (res.status == 200) {
 
-  Utilities.callMeteorMethod("executeSparql", list, function(res) {
-    
-	if (res.status == 200) {
+		  if (!paging_info || (paging_info && !paging_info.download)) {
+			Session.set("executedSparql", res.result);
+			Interpreter.destroyErrorMsg();
+			$('#vq-tab a[href="#executed"]').tab('show');
+		  } else {
 
-      if (!paging_info || (paging_info && !paging_info.download)) {
-        Session.set("executedSparql", res.result);
-        Interpreter.destroyErrorMsg();
-        $('#vq-tab a[href="#executed"]').tab('show');
-      } else {
+			if (paging_info && paging_info.download && res.result.sparql) {
+			  // here - parse res.result
+			  var fields = _.map(res.result.sparql.head[0].variable, function(v) {
+				return v["$"].name;
+			  });
 
-        if (paging_info && paging_info.download && res.result.sparql) {
-          // here - parse res.result
-          var fields = _.map(res.result.sparql.head[0].variable, function(v) {
-            return v["$"].name;
-          });
+			  var csv_table = _.map(res.result.sparql.results[0].result, function(result_item) {
+				 var csv_row = {};
+				 _.forEach(fields, function(field) {
+				   var result_item_attr = _.find(result_item.binding, function(attr) {return attr["$"].name==field});
+				   var obj = {};
+				   if (result_item_attr) {
+					 if (result_item_attr.literal) {
+					   if (result_item_attr.literal[0]._) {
+						  obj[field] = result_item_attr.literal[0]._;
+					   } else {
+						  obj[field] = result_item_attr.literal[0];
+					   };
+					   // data_item.literal[0]._
 
-          var csv_table = _.map(res.result.sparql.results[0].result, function(result_item) {
-             var csv_row = {};
-             _.forEach(fields, function(field) {
-               var result_item_attr = _.find(result_item.binding, function(attr) {return attr["$"].name==field});
-               var obj = {};
-               if (result_item_attr) {
-                 if (result_item_attr.literal) {
-                   if (result_item_attr.literal[0]._) {
-                      obj[field] = result_item_attr.literal[0]._;
-                   } else {
-                      obj[field] = result_item_attr.literal[0];
-                   };
-                   // data_item.literal[0]._
-
-                 } else {
-                   if (result_item_attr.uri) {
-                     obj[field] = result_item_attr.uri[0];
-                   } else {
-                     obj[field] = null;
-                   };
-                 };
-               } else {
-                 obj[field] = undefined;
-               };
-               _.extend(csv_row,obj);
-             });
-            return csv_row;
-          });
-          var list = {fields:fields, json:csv_table};
-          Utilities.callMeteorMethod("json2csv", list, function(csv) {
-            var csv_data = "text/csv;charset=utf-8," + encodeURIComponent(csv);
-            var link = $('<a href="data:' + csv_data + '" download="result.csv">download Results</a>');
-            link.appendTo('#download-hack');
-            link[0].click();
-          });
-
-        }
-      }
+					 } else {
+					   if (result_item_attr.uri) {
+						 obj[field] = result_item_attr.uri[0];
+					   } else {
+						 obj[field] = null;
+					   };
+					 };
+				   } else {
+					 obj[field] = undefined;
+				   };
+				   _.extend(csv_row,obj);
+				 });
+				return csv_row;
+			  });
+			  var list = {fields:fields, json:csv_table};
+			  const csv = await Utilities.callMeteorMethodAsync("json2csv", list);
+			  const csv_data = "text/csv;charset=utf-8," + encodeURIComponent(csv);
+			  const link = $('<a href="data:' + csv_data + '" download="result.csv">download Results</a>');
+			  link.appendTo('#download-hack');
+			  link[0].click();
+			}
+		  }
 
 
-    } else {
-      Session.set("executedSparql", {limit_set:false, number_of_rows:0});
-      // console.error(res);
-      if (res.status==503) {
-          Interpreter.showErrorMsg("SPARQL execution failed: most probably the endpoint is not reachable.",-3)
-      } else if (res.status==504) {
-          var errorMessage = "";
-		  if(typeof errorMessage === "string") errorMessage =  res.error;
-		  Interpreter.showErrorMsg("SPARQL execution results unreadable. " + errorMessage,-3)
-      } else {
-          var msg = ".";
-          if (res.error && res.error.response) {
-             msg = ": "+res.error.response.content;
-          };
+		} else {
+		  Session.set("executedSparql", {limit_set:false, number_of_rows:0});
+		  // console.error(res);
+		  if (res.status==503) {
+			  Interpreter.showErrorMsg("SPARQL execution failed: most probably the endpoint is not reachable.",-3)
+		  } else if (res.status==504) {
+			  var errorMessage = "";
+			  if(typeof errorMessage === "string") errorMessage =  res.error;
+			  Interpreter.showErrorMsg("SPARQL execution results unreadable. " + errorMessage,-3)
+		  } else {
+			  var msg = ".";
+			  if (res.error && res.error.response) {
+				 msg = ": "+res.error.response.content;
+			  };
 
-          Interpreter.showErrorMsg("SPARQL execution failed" + msg.substring(0, 1000),-3);
-      };
+			  Interpreter.showErrorMsg("SPARQL execution failed" + msg.substring(0, 1000),-3);
+		  };
 
-    }
-  })
+		}
+	} catch (err) {
+		console.error("Error during SPARQL execution", err);
+		Interpreter.showErrorMsg("Unexpected error during SPARQL execution.", -3);
+	}
+
 }
 
 // generate SPARQL for all queries
@@ -1207,7 +1228,7 @@ async function GenerateSPARQL_for_all_queries(list_of_ids) {
 
 async function Collect_prefixes_for_all_queries(list_of_ids) {
   Interpreter.destroyErrorMsg();
-  let el = new VQ_Element(Session.get("activeElement"));
+  let el = await createVQ_Element(Session.get("activeElement"));
   let queries =  await genAbstractQueryForElementList(list_of_ids);
   let prefixTable = [];
   // goes through all queries found within the list of VQ element ids
@@ -1253,7 +1274,7 @@ async function Collect_prefixes_for_all_queries(list_of_ids) {
 	  }
   }
   let showMessages = [];
-  let declaredPrefixes = el.getPrefixDeclarations();
+  let declaredPrefixes = await el.getPrefixDeclarations();
   for(let p in prefixTable){
 	  if(typeof prefixTable[p] !== "function"){
 		let addPrefix = false;
@@ -1272,9 +1293,9 @@ async function Collect_prefixes_for_all_queries(list_of_ids) {
 		if(addPrefix === false){
 			if(prefixTable[p] === null) {
 				showMessages.push("Unknown prefix: "+ p.substring(0, p.length - 1));
-				el.addPrefixDeclarations(p.substring(0, p.length - 1), "");
+				await el.addPrefixDeclarations(p.substring(0, p.length - 1), "");
 			}
-			else el.addPrefixDeclarations(p.substring(0, p.length - 1), pDeclaration);
+			else await el.addPrefixDeclarations(p.substring(0, p.length - 1), pDeclaration);
 		}
 	  }
   }
@@ -1287,10 +1308,10 @@ async function Collect_schemas_for_all_queries(list_of_ids) {
   Interpreter.destroyErrorMsg();
   let showMessages = [];
   let schemaTable = [];
-  let el = new VQ_Element(Session.get("activeElement"));
+  let el = await createVQ_Element(Session.get("activeElement"));
   let queries =  await genAbstractQueryForElementList(list_of_ids);
   let ontologies = await dataShapes.getOntologies();
-  let declaredSchemas = el.getSchemaDeclarations();
+  let declaredSchemas = await el.getSchemaDeclarations();
   	
   for(let q = 0; q < queries.length; q++){
 	   let tempSymbolTable = queries[q];
@@ -1327,9 +1348,9 @@ async function Collect_schemas_for_all_queries(list_of_ids) {
 		if(addSchema === false){
 			if(schemaTable[s] === "") {
 				showMessages.push("Unknown schema: "+ s);
-				el.addSchemaDeclarations(s, "");
+				await el.addSchemaDeclarations(s, "");
 			}
-			else el.addSchemaDeclarations(s, schemaTable[s]);
+			else await el.addSchemaDeclarations(s, schemaTable[s]);
 		}
 	  }
   }

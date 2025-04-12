@@ -4656,7 +4656,7 @@ async function countCardinality(str_expr, context, scName){
 	try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  
-		  var proj = Projects.findOne({_id: Session.get("activeProject")});
+		  var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		  var schemaName = dataShapes.schema.schema; 
 		  if(typeof scName !== "undefined" && scName !== null && scName !== "") {
 			schemaName = scName;

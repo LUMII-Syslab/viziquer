@@ -4,7 +4,7 @@ import {
  } from '/imports/client/custom/vq/js/transformations.js'
 
 import { autoCompletionAddAttribute } from '/imports/client/custom/vq/js/autoCompletion.js'
-import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 import './aggregate_wizard_form.html'
 
 
@@ -114,7 +114,7 @@ Template.AggregateWizard.events({
 		return;
 	},
 	
-	"click #ok-aggregate-wizard": function() {	
+	"click #ok-aggregate-wizard": async function() {	
 		
 		var alias = $('input[id=alias-name]').val();
 		
@@ -140,40 +140,37 @@ Template.AggregateWizard.events({
 			
 		if(Template.AggregateWizard.fromAddLink.get() == true){
 		
-			var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+			var vq_end_obj = await createVQ_Element(Template.AggregateWizard.endClassId.curValue);
 			var displayCase = document.getElementById("display-results").checked;
 			var minValue = $('input[id=results_least]').val();
 			var maxValue = $('input[id=results-most]').val();
 			
 			if ((displayCase || (minValue != "") || (maxValue != "")) && (alias == null || alias == "")) {
-				let cName = vq_end_obj.getName();
+				let cName = await vq_end_obj.getName();
 				let newFunction = $('input[name=aggregate-list-radio]:checked').val()
 				alias = cName.charAt(0) + "_" + newFunction;
 			}
 			//console.log(alias + " " + expr);
-			vq_end_obj.addAggregateField(expr,alias,required);
+			await vq_end_obj.addAggregateField(expr,alias,required);
 
 			if (Template.AggregateWizard.linkId.curValue != "No link") {
-				var vq_link_obj = new VQ_Element(Template.AggregateWizard.linkId.curValue);
-				// if (vq_link_obj.isLink()) {
-					// vq_link_obj.setNestingType("SUBQUERY");
-				// }
+				var vq_link_obj = await createVQ_Element(Template.AggregateWizard.linkId.curValue);
 			}
 
 			// console.log(displayCase, minValue, maxValue);
 			if (displayCase || (minValue != "") || (maxValue != "")) {
 				// console.log("display or min/max");
-				var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
+				var vq_start_obj = await createVQ_Element(Template.AggregateWizard.startClassId.curValue);
 				if (alias == null || alias == "") {
-					let cName = vq_start_obj.getName();
+					let cName = await vq_start_obj.getName();
 					// var newFunction = $('option[name=function-name]:selected').val();
 					let newFunction = $('input[name=aggregate-list-radio]:checked').val()
 					alias = cName.charAt(0) + "_" + newFunction;
 				}
 				//addField: function(exp,alias,requireValues,groupValues,isInternal)
-				if (displayCase) vq_start_obj.addField(alias,);
-				if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue, false);
-				if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue, false);
+				if (displayCase) await vq_start_obj.addField(alias,);
+				if (minValue != "") await vq_start_obj.addCondition(alias + ">=" + minValue, false);
+				if (maxValue != "") await vq_start_obj.addCondition(alias + "<=" + maxValue, false);
 			} else {
 				//console.log("no display or min/max");
 			}
@@ -192,57 +189,57 @@ Template.AggregateWizard.events({
 	},
 
 	// "change #aggregate-wizard-function-list": function() {
-	"change #aggregate-count": function() {
+	"change #aggregate-count": async function() {
 		document.getElementById("distinct-aggr").style.display = "inline-block";
-		onAggregationChange();
+		await onAggregationChange();
 		return;
 	},
-	"change #aggregate-count_distinct": function() {
+	"change #aggregate-count_distinct": async function() {
 		document.getElementById("distinct-aggr").style.display = "none";
-		onAggregationChange();
+		await onAggregationChange();
 		return;
 	},
-	"change #aggregate-sum": function() {
+	"change #aggregate-sum": async function() {
 		document.getElementById("distinct-aggr").style.display = "inline-block";
-		onAggregationChange();
+		await onAggregationChange();
 		return;
 	},
-	"change #aggregate-avg": function() {
+	"change #aggregate-avg": async function() {
 		document.getElementById("distinct-aggr").style.display = "inline-block";
-		onAggregationChange();
+		await onAggregationChange();
 		return;
 	},
-	"change #aggregate-max": function() {
+	"change #aggregate-max": async function() {
 		document.getElementById("distinct-aggr").style.display = "inline-block";
-		onAggregationChange();
+		await onAggregationChange();
 		return;
 	},
-	"change #aggregate-min": function() {
+	"change #aggregate-min": async function() {
 		document.getElementById("distinct-aggr").style.display = "inline-block";
-		onAggregationChange();
+		await onAggregationChange();
 		return;
 	},
-	"change #aggregate-sample": function() {
+	"change #aggregate-sample": async function() {
 		document.getElementById("distinct-aggr").style.display = "inline-block";
-		onAggregationChange();
+		await onAggregationChange();
 		return;
 	},
-	"change #aggregate-group_concat": function() {
+	"change #aggregate-group_concat": async function() {
 		document.getElementById("distinct-aggr").style.display = "inline-block";
-		onAggregationChange();
+		await onAggregationChange();
 		return;
 	},
 
-	"change #field-list": function() {
+	"change #field-list": async function() {
 		// console.log("changed field");
-		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
-		var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
+		var vq_obj = await createVQ_Element(Template.AggregateWizard.endClassId.curValue);
+		var vq_start_obj = await createVQ_Element(Template.AggregateWizard.startClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		// var newFunction = $('option[name=function-name]:selected').val();
 		var newFunction = $('input[name=aggregate-list-radio]:checked').val()
 		// var fieldName = $('option[name=field-name]:selected').val();
 		var fieldName = document.getElementById('field-list').value;
-		var cName = vq_start_obj.getName();
+		var cName = await vq_start_obj.getName();
 		if(cName == null) cName = "";
 		//console.log(cName.charAt(0), fieldName.length);
 		var functionArray = Template.AggregateWizard.attList.curValue;
@@ -314,14 +311,14 @@ function defaultFieldList(){
 	});
 }
 
-function onAggregationChange(){
-	var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+async function onAggregationChange(){
+	var vq_obj = await createVQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		// var newFunction = $('option[name=function-name]:selected').val();
 		var newFunction = $('input[name=aggregate-list-radio]:checked').val()
 		// var fieldName = $('option[name=field-name]:selected').val();
 		var fieldName = document.getElementById('field-list').value;
-		var cName = vq_obj.getName();
+		var cName = await vq_obj.getName();
 		//console.log(cName.charAt(0), fieldName.length);
 
 		//Select suitable atributes for Field form

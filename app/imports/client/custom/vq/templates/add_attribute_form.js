@@ -8,7 +8,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 import { generateSymbolTable, getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
 import { autoCompletionAddAttribute, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
 
-import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 
 import './add_attribute_form.html'
 import { AddMergeValues2 } from './add_merge_form'
@@ -51,7 +51,7 @@ Interpreter.customMethods({
 		Template.AddAttribute.CountAssoc.set(startCount);
 		
 		
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		 if (proj) {
 			  if (proj.enableWikibaseLabelServices==true && dataShapes.schema.schema === 'wikidata') {
 				Template.AddNewAttribute.showLabel.set(true)
@@ -66,7 +66,7 @@ Interpreter.customMethods({
 			 
 		 }
 
-		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		Template.AddAttribute.existingAttributeList.set(await getExistingAttributes());
 		let attributes = await getAttributes(null, true);
 		Template.AddAttribute.attrList.set(attributes);
 		
@@ -100,8 +100,8 @@ Template.AddAttribute.helpers({
 	existingAttributes: function() {
 		return Template.AddAttribute.existingAttributeList.get();
 	},
-	showLabels: function() {
-		if(getExistingAttributes().length > 0) return true;
+	showLabels: async function() {
+		if(await getExistingAttributes().length > 0) return true;
 		return false;
 	},
 });
@@ -112,9 +112,9 @@ Template.AddAttribute.events({
 	"click #ok-add-attribute": async function(e) {
 
 		let selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
-		  let vq_obj = new VQ_Element(selected_elem_id);
+		  let vq_obj = await createVQ_Element(selected_elem_id);
 			
 			
 			
@@ -149,10 +149,10 @@ Template.AddAttribute.events({
 					}
 					
 					
-					vq_obj.addField(name,alias,required,false,false)
+					await vq_obj.addField(name,alias,required,false,false)
 					
 				} else {
-					vq_obj.addField(name,null,required,false,false);
+					await vq_obj.addField(name,null,required,false,false);
 				}
 	
 				$(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].className = "button button-required";
@@ -166,9 +166,9 @@ Template.AddAttribute.events({
 	"click #save-add-attribute": async function(e) {
 
 		let selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
-		  let vq_obj = new VQ_Element(selected_elem_id);
+		  let vq_obj = await createVQ_Element(selected_elem_id);
 		  var buttonn = $('button[name=required-attribute-to-add]').closest(".attribute");
 		  buttonn.each(async function () {
 		    
@@ -201,10 +201,10 @@ Template.AddAttribute.events({
 					}
 					
 					
-					vq_obj.addField(name,alias,required,false,false);
+					await vq_obj.addField(name,alias,required,false,false);
 					
 				} else {
-					vq_obj.addField(name,null,required,false,false);
+					await vq_obj.addField(name,null,required,false,false);
 				}
 			}
 		  });
@@ -214,7 +214,7 @@ Template.AddAttribute.events({
 		var associations = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attributes);
 		Template.AddAttribute.linkList.set(associations);
-		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		Template.AddAttribute.existingAttributeList.set(await getExistingAttributes());
 		
 		return;
 	},
@@ -274,9 +274,9 @@ Template.AddAttribute.events({
 	"click #required-existing-attribute": async function(e) {
 		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") != "(select this)"){
 			var act_elem = Session.get("activeElement");
-			let act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			let act_el = await Elements.findOneAsync({_id: act_elem}); //Check if element ID is valid
 			if(typeof act_el !== 'undefined'){
-				var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+				var compart = await Compartments.findOneAsync({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
 				var attributeInformation = $(e.target).closest(".attribute")[0].childNodes[1];
 			
 				var prefixesValue = "";
@@ -303,7 +303,7 @@ Template.AddAttribute.events({
 				
 				prefixesValue = graphText + prefixesValue;
 				
-				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+				var compart_type = await CompartmentTypes.findOneAsync({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 				
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
 					var prefixes_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
@@ -327,7 +327,7 @@ Template.AddAttribute.events({
 			var associations = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attributes);
 			Template.AddAttribute.linkList.set(associations);
-			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+			Template.AddAttribute.existingAttributeList.set(await getExistingAttributes());
 		}
 		return;
 	},
@@ -335,9 +335,9 @@ Template.AddAttribute.events({
 	"click #attribute-helper-button": async function(e) {
 		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") != "(select this)"){
 			var act_elem = Session.get("activeElement");
-			let act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			let act_el = await Elements.findOneAsync({_id: act_elem}); //Check if element ID is valid
 			if(typeof act_el !== 'undefined'){
-				var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+				var compart = await Compartments.findOneAsync({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
 				var attributeInformation = $(e.target).closest(".attribute")[0].childNodes[1];
 			
 				var prefixesValue = "";
@@ -366,7 +366,7 @@ Template.AddAttribute.events({
 				
 				prefixesValue = graphText + prefixesValue;
 				
-				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+				var compart_type = await CompartmentTypes.findOneAsync({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 				
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
 					var prefixes_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
@@ -391,17 +391,17 @@ Template.AddAttribute.events({
 			var associations = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attributes);
 			Template.AddAttribute.linkList.set(associations);
-			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+			Template.AddAttribute.existingAttributeList.set(await getExistingAttributes());
 		}
 		return;
 	},
 	
 	
 	
-	"click #attribute-move-button": function(e) {
-		var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
+	"click #attribute-move-button": async function(e) {
+		var compart_type_id = await CompartmentTypes.findOneAsync({name: "Attributes", elementTypeId: await Elements.findOneAsync({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
 
-		var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
+		var compartments = await Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetchAsync();
 		var compart_id = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name");
 
 		var index = -1;
@@ -424,10 +424,10 @@ Template.AddAttribute.events({
 						prevCompartment: {id: prev_compart._id, index: prev_compart.index,},
 						currentCompartment: {id: current_compart._id, index: current_compart.index,},
 					};
-			Utilities.callMeteorMethod("swapCompartments", list);
+			await Utilities.callMeteorMethodAsync("swapCompartments", list);
 		}
 		
-		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		Template.AddAttribute.existingAttributeList.set(await getExistingAttributes());
 		return;
 	},
 	
@@ -439,13 +439,13 @@ Template.AddAttribute.events({
 					versionId: Session.get("versionId"),
 				};
 
-		Utilities.callMeteorMethod("removeCompartment", list);
+		await Utilities.callMeteorMethodAsync("removeCompartment", list);
 		let value = $("#mySearch-attribute").val().toLowerCase();
 		var attr_list = await getAttributes(value);
 		var link_list = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attr_list);
 		Template.AddAttribute.linkList.set(link_list);
-		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		Template.AddAttribute.existingAttributeList.set(await getExistingAttributes());
 		
 		return;
 	},
@@ -613,7 +613,7 @@ Template.AddNewAttribute.helpers({
 		return Template.AddNewAttribute.attributeConditionSelectionn.get();
 	},
 	
-	field_obj: function() {
+	field_obj: async function() {
 		var data_in = Template.currentData();
 		if (!data_in) {
 			return;
@@ -626,11 +626,11 @@ Template.AddNewAttribute.helpers({
 		var compart_type_id = data_in["_id"];
 		let compart_id = Session.get("multFieldCompartmentId");
 		if(compart_id === null || typeof compart_id === "undefined") compart_id = Template.AddNewAttribute.attributeidEdit.get();
-		var compart = Compartments.findOne({_id: compart_id});
+		var compart = await Compartments.findOneAsync({_id: compart_id});
 
 		var fields = [];
 
-		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+		var compart_type = await CompartmentTypes.findOneAsync({_id: compart_type_id});
 		if (!compart_type) {
 			return {fields: fields};
 		}
@@ -698,11 +698,11 @@ Template.AddNewAttribute.events({
 	"click #ok-add-new-attribute": async function(e, t) {
 		let elem = document.getElementById("add-new-attribute-form");
 		let selected_elem_id = Session.get("activeElement");
-		let act_el = Elements.findOne({_id: selected_elem_id}); 
+		let act_el = await Elements.findOneAsync({_id: selected_elem_id}); 
 		if(elem.getAttribute("compartmentId") === null){
-			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			//Read user's choise
-			  let vq_obj = new VQ_Element(selected_elem_id);
+			  let vq_obj = await createVQ_Element(selected_elem_id);
 			
 			};
 		}
@@ -737,6 +737,7 @@ Template.AddNewAttribute.events({
 		
 		var prefixesValue = "";
 		if(helper == true) prefixesValue = "h";
+		// if(helper == true) prefixesValue = "\uf070 ";
 		if(requireValues == true) prefixesValue = prefixesValue + "+";
 		if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
 		
@@ -778,11 +779,11 @@ Template.AddNewAttribute.events({
 		//console.log("UUUUUUUUUUUUUUUU", typeof elem.getAttribute("compartmentId"), document.getElementById("add-new-attribute-id").getAttribute("attributeid"))
 	
 		if((elem.getAttribute("compartmentId") === null || elem.getAttribute("compartmentId") === "") && document.getElementById("add-new-attribute-id").getAttribute("attributeid") === "newAttribute"){
-			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-				let vq_obj = new VQ_Element(selected_elem_id);
-				vq_obj.addField(expression,alias,requireValues,false,helper,addLabel,addAltLabel,addDescription,graph,graphInstruction,selectionCondition,addAttributeCondition,addNodeLevelCondition);
+			if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+				let vq_obj = await createVQ_Element(selected_elem_id);
+				await vq_obj.addField(expression,alias,requireValues,false,helper,addLabel,addAltLabel,addDescription,graph,graphInstruction,selectionCondition,addAttributeCondition,addNodeLevelCondition);
 			};
-			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+			Template.AddAttribute.existingAttributeList.set(await getExistingAttributes());
 		} else {
 			
 			var attribute = document.getElementsByName(document.getElementById("add-new-attribute-id").getAttribute("attributeid"))[0];
@@ -805,11 +806,11 @@ Template.AddNewAttribute.events({
 			// attribute.textContent = fullText;
 
 			var act_elem = Session.get("activeElement");
-			let act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			let act_el = await Elements.findOneAsync({_id: act_elem}); //Check if element ID is valid
 			if(typeof act_el !== 'undefined'){
-				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+				var compart_type = await CompartmentTypes.findOneAsync({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 				let value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
-				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+				var compart = await Compartments.findOneAsync({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 				
 				compart.subCompartments["Attributes"]["Attributes"]["Expression"]["value"] = expression;
 				compart.subCompartments["Attributes"]["Attributes"]["Expression"]["input"] = expression;
@@ -846,7 +847,7 @@ Template.AddNewAttribute.events({
 			var associations = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attributes);
 			Template.AddAttribute.linkList.set(associations);
-			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+			Template.AddAttribute.existingAttributeList.set(await getExistingAttributes());
 		}
 		
 		Template.AddNewAttribute.alias.set("");
@@ -969,18 +970,18 @@ function formParams(vq_obj, propertyKind, filter, limit) {
 
 async function getAttributes(filter, waiting){
 	let selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			
 			var attr_list = [];
 			
-			let vq_obj = new VQ_Element(selected_elem_id);
+			let vq_obj = await createVQ_Element(selected_elem_id);
 
-			if(vq_obj.isUnit() != true && vq_obj.isUnion() != true) attr_list.push({name:"(select this)"});
+			if(await vq_obj.isUnit() != true && await vq_obj.isUnion() != true) attr_list.push({name:"(select this)"}); 
 			
 			var abstractS = await generateSymbolTable();
 			var symbolTable = abstractS["symbolTable"];
 			
-			if(vq_obj.isUnit() != true && vq_obj.isUnion() != true) attr_list.push({name:"(all properties)"});
+			if(await vq_obj.isUnit() != true && await vq_obj.isUnion() != true) attr_list.push({name:"(all properties)"});
 			
 			attr_list.push({separator:"line"});
 			if(waiting == null){
@@ -994,20 +995,20 @@ async function getAttributes(filter, waiting){
 					}	
 				}
 				
-				if((vq_obj.isUnit() != true && vq_obj.isUnion() != true) || !vq_obj.isRoot()) {
+				if((await vq_obj.isUnit() != true && await vq_obj.isUnion() != true) || !(await vq_obj.isRoot())) {
 				
 					attr_list.push({separator:"line"});
 
 					var param = formParams(vq_obj, 'Data', filter,Template.AddAttribute.Count.get());
 					
 					var newStartElement = vq_obj;
-					if ((vq_obj.isUnion() || vq_obj.isUnit()) && !vq_obj.isRoot()) { // [ + ] element, that has link to upper class 
+					if ((await vq_obj.isUnion() || await vq_obj.isUnit()) && !(await vq_obj.isRoot())) { // [ + ] element, that has link to upper class 
 						if (vq_obj.getLinkToRoot()){
 							var element = vq_obj.getLinkToRoot().link.getElements();
 							if (vq_obj.getLinkToRoot().start) {
-								newStartElement = new VQ_Element(element.start.obj._id);
+								newStartElement = await createVQ_Element(element.start.obj._id);
 							} else {
-								newStartElement = new VQ_Element(element.end.obj._id);						
+								newStartElement = await createVQ_Element(element.end.obj._id);						
 							}						
 						}					
 					} 
@@ -1020,6 +1021,7 @@ async function getAttributes(filter, waiting){
 						param.schema = schemaName;
 					}
 					// console.log("schemaName", scName, dataShapes.schema.schema);
+					console.log("AAAAAAAAAAAAAAA", param, newStartElement)
 					var prop = await dataShapes.getProperties(param, newStartElement);
 
 					if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
@@ -1055,7 +1057,7 @@ async function getAttributes(filter, waiting){
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
 			});
 			
-			var field_list = vq_obj.getFields();
+			var field_list = await vq_obj.getFields();
 			attr_list = attr_list.map(function(attr) {
 				var disabled = false;
 				var buttonClassName = "button button-required";
@@ -1088,23 +1090,23 @@ async function getAttributes(filter, waiting){
 
 async function getAssociations(filter){
 	let selected_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
 			var attr_list = [];
 			
-			let vq_obj = new VQ_Element(selected_elem_id);
+			let vq_obj = await createVQ_Element(selected_elem_id);
 			
 				
 			var param = formParams(vq_obj, 'Object', filter, Template.AddAttribute.CountAssoc.get());
 			
 			var newStartElement = vq_obj;
-			if ((vq_obj.isUnion() || vq_obj.isUnit()) && !vq_obj.isRoot()) { // [ + ] element, that has link to upper class 
+			if ((await vq_obj.isUnion() || await vq_obj.isUnit()) && !(await vq_obj.isRoot())) { // [ + ] element, that has link to upper class 
 				if (vq_obj.getLinkToRoot()){
 					var element = vq_obj.getLinkToRoot().link.getElements();
 					if (vq_obj.getLinkToRoot().start) {
-						newStartElement = new VQ_Element(element.start.obj._id);
+						newStartElement = await createVQ_Element(element.start.obj._id);
         			} else {
-        				newStartElement = new VQ_Element(element.end.obj._id);						
+        				newStartElement = await createVQ_Element(element.end.obj._id);						
         			}						
 				}					
 			} 
@@ -1147,7 +1149,7 @@ async function getAssociations(filter){
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
 			});
 			
-			var field_list = vq_obj.getFields();
+			var field_list = await vq_obj.getFields();
 			attr_list = attr_list.map(function(attr) {
 				var disabled = false;
 				var buttonClassName = "button button-required";
@@ -1171,59 +1173,55 @@ async function getAssociations(filter){
 	return [];
 }
 
-function getExistingAttributes(){
+async function getExistingAttributes() {
 	let selected_elem_id = Session.get("activeElement");
-	if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-		let vq_obj = new VQ_Element(selected_elem_id);
-		
-		// var field_list = field_list.map(function(f) {
-		var field_list = vq_obj.getFields().map(function(f) {
-			
-			var al = f.alias;
-			if(al==null) al="";
-			var r = "";
-			if(f.requireValues == true) {
-				r = "checked";
-			}
-			var fulltext = f.Prefixes;
-			if(typeof fulltext == "undefined") fulltext = "";
-			// var fulltext = f.fulltext;
-			var hide = "false";
-			if(typeof f.alias !== 'undefined' && f.alias != "") fulltext = fulltext + f.alias + "<-";
-			fulltext = fulltext + f.exp;
-			if(f.isInternal == true) {
-				hide = "checked";
-			}
-			
-			var addLabel = "false";
-			if(f.addLabel == true) {
-				addLabel = "checked";
-				fulltext = fulltext + " {+label}";
-			}
-			var addAltLabel = "false";
-			if(f.addAltLabel == true) {
-				addAltLabel = "checked";
-				fulltext = fulltext + " {+altLabel}";
-			}
-			var addDescription = "false";
-			if(f.addDescription == true) {
-				addDescription = "checked";
-				fulltext = fulltext + " {+description}";
-			}
-			if(typeof f.attributeConditionSelection !== "undefined" && f.attributeConditionSelection != "") {
-				fulltext = fulltext + " {" + f.attributeConditionSelection + "}";
-			}
-			
-			// if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != "") {
-				// fulltext = fulltext + " !{" + f.attributeCondition + "}";
-			// }
-			
-			
-			var disabled = "";
-			if(f.exp == "(select this)") disabled = "disabled";
 
-			return {name:f.exp, requireValues: r, fulltext:fulltext, al:al, hel:hide, id:f._id, disabled:disabled, addLabel:addLabel, addAltLabel:addAltLabel, addDescription:addDescription, attributeCondition:f.attributeCondition, attributeConditionSelection:f.attributeConditionSelection, graph:f.graph, graphInstruction:f.graphInstruction}});
+	if (await Elements.findOneAsync({ _id: selected_elem_id })) { 
+		let vq_obj = await createVQ_Element(selected_elem_id);
+		let fields = await vq_obj.getFields();
+
+		let field_list = fields.map(function(f) {
+			var al = f.alias ?? "";
+			var r = f.requireValues ? "checked" : "";
+			var fulltext = f.Prefixes ?? "";
+
+			if (f.alias) fulltext += f.alias + "<-";
+			fulltext += f.exp;
+
+			let hide = f.isInternal ? "checked" : "false";
+			let addLabel = f.addLabel ? "checked" : "false";
+			let addAltLabel = f.addAltLabel ? "checked" : "false";
+			let addDescription = f.addDescription ? "checked" : "false";
+
+			if (f.addLabel) fulltext += " {+label}";
+			if (f.addAltLabel) fulltext += " {+altLabel}";
+			if (f.addDescription) fulltext += " {+description}";
+
+			if (f.attributeConditionSelection) {
+				fulltext += " {" + f.attributeConditionSelection + "}";
+			}
+
+			let disabled = f.exp === "(select this)" ? "disabled" : "";
+
+			return {
+				name: f.exp,
+				requireValues: r,
+				fulltext: fulltext,
+				al: al,
+				hel: hide,
+				id: f._id,
+				disabled: disabled,
+				addLabel: addLabel,
+				addAltLabel: addAltLabel,
+				addDescription: addDescription,
+				attributeCondition: f.attributeCondition,
+				attributeConditionSelection: f.attributeConditionSelection,
+				graph: f.graph,
+				graphInstruction: f.graphInstruction
+			};
+		});
 		return field_list;
 	}
 	return [];
 }
+
