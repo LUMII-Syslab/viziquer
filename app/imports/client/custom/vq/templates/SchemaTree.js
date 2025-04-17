@@ -4,7 +4,7 @@ import { Projects } from '/imports/db/platform/collections'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './SchemaTree.html'
-import { Create_VQ_Element } from '../js/VQ_Element';
+import { Create_VQ_Element_Async } from '../js/VQ_Element';
 
 Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaFilter.F2 = new ReactiveVar("");
@@ -560,6 +560,7 @@ Template.schemaTree.events({
 		await useFilter ();
 	},
 	"dblclick .class-body": async function(e) {
+		console.log('********Taisam klasi no koka***************')
 		const class_name = $(e.target).closest(".class-body").attr("value");
 
 		if ( class_name !== "" && class_name !== "..." && class_name !== ".." && class_name !== "." && class_name !== "wait")
@@ -584,10 +585,13 @@ Template.schemaTree.events({
 							width: DEFAULT_BOX_WIDTH,
 							height: DEFAULT_BOX_HEIGHT};
 
-			Create_VQ_Element(function(boo) {
-					const proj = Projects.findOne({_id: Session.get("activeProject")});
-					boo.setNameAndIndirectClassMembership(class_name,proj && proj.indirectClassMembershipRole);
-				}, loc);
+			//Create_VQ_Element(function(boo) {
+			//		const proj = Projects.findOne({_id: Session.get("activeProject")});
+			//		boo.setNameAndIndirectClassMembership(class_name,proj && proj.indirectClassMembershipRole);
+			//	}, loc);
+			const newClass = await Create_VQ_Element_Async(loc);
+			const proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
+			await newClass.setNameAndIndirectClassMembership(class_name,proj && proj.indirectClassMembershipRole);
 			
 		}
 		if ( class_name === "...") {
@@ -668,13 +672,13 @@ Template.schemaTree.events({
 Template.schemaTree.rendered = async function() {
 	//console.log("-----rendered schemaTree----")
 	Template.schemaTree.Waiting.set(true);
-	const proj = Projects.findOne(Session.get("activeProject"));
+	//const proj = Projects.findOne(Session.get("activeProject")); // Nez kā šis strādāja?
+	const proj = await Projects.findOneAsync({_id:Session.get("activeProject")});
 	if ( (proj !== undefined && dataShapes.schema.projectId != proj._id) || (dataShapes.schema.filling === 0 && proj !== undefined)) {
 		await dataShapes.changeActiveProjectFull(proj);
 	}
 	Template.schemaTree.Waiting.set(false);
 	//console.log(dataShapes.schema)
-	//console.log(Projects.findOne(Session.get("activeProject")));
 	//Template.schemaTree.Count.set(startCount);
 	if (dataShapes.schema.filling === 0) {
 		Template.schemaTree.NeedReload.set(true);
@@ -761,6 +765,7 @@ Template.schemaFilter.helpers({
 Template.schemaFilter.events({
 	"dblclick .class-body": async function(e) {
 		const prop_name = $(e.target).closest(".class-body").attr("value");
+		const proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		if ( prop_name === "...") {
 			let count = dataShapes.schema.tree.countP;
 			count = count + dataShapes.schema.tree.plus;
@@ -816,6 +821,7 @@ Template.schemaFilter.events({
 								width: DEFAULT_BOX_WIDTH,
 								height: DEFAULT_BOX_HEIGHT};
 
+				/*
 				Create_VQ_Element(function(boo) {
 					const proj = Projects.findOne({_id: Session.get("activeProject")});
 					boo.setNameAndIndirectClassMembership(domainName,proj && proj.indirectClassMembershipRole);
@@ -837,18 +843,33 @@ Template.schemaFilter.events({
 						}, locLink, true, boo, cl); }
 					, loc);}
 				,loc2);
-				
+				*/
+				const newClassSub = await Create_VQ_Element_Async(loc2);
+				await newClassSub.setNameAndIndirectClassMembership(domainName,proj && proj.indirectClassMembershipRole);
+				const newClassObj= await Create_VQ_Element_Async(loc);
+				await newClassObj.setNameAndIndirectClassMembership(rangeName,proj && proj.indirectClassMembershipRole);
+				await newClassObj.setClassStyle("condition");	
+				const locLink = [loc.x+DEFAULT_BOX_WIDTH/2, loc2.y+DEFAULT_BOX_HEIGHT, loc.x+DEFAULT_BOX_WIDTH/2, loc.y]; 
+				const newLink = await Create_VQ_Element_Async(locLink, true, newClassSub, newClassObj);
+				await newLink.setName(prop_name);
+				await newLink.setLinkType("REQUIRED");	                    
+				await newLink.setNestingType("PLAIN");						
+				if (proj && proj.autoHideDefaultPropertyName=="true") { 
+					await newLink.hideDefaultLinkName(true);
+					await newLink.setHideDefaultLinkName("true");
+				}
 			}
 			else {
-				Create_VQ_Element(function(boo) {
-						const proj = Projects.findOne({_id: Session.get("activeProject")});
-						boo.setNameAndIndirectClassMembership(domainName,proj && proj.indirectClassMembershipRole);
-						boo.addField(prop_name,null,true,false,false);
-					}, loc);				
-
+				//Create_VQ_Element(function(boo) {
+				//		const proj = Projects.findOne({_id: Session.get("activeProject")});
+				//		boo.setNameAndIndirectClassMembership(domainName,proj && proj.indirectClassMembershipRole);
+				//		boo.addField(prop_name,null,true,false,false);
+				//	}, loc);	
+					
+				const newClass = await Create_VQ_Element_Async(loc);
+				await newClass.setNameAndIndirectClassMembership(domainName,proj && proj.indirectClassMembershipRole);
+				await newClass.addField(prop_name,null,true,false,false);
 			}
-
-			
 		}		
 	},
 	'click #filter2': async function() {
@@ -949,15 +970,23 @@ Template.schemaInstances.events({
 				width: DEFAULT_BOX_WIDTH,
 				height: DEFAULT_BOX_HEIGHT};
 
-			Create_VQ_Element(function(boo) {
+			/*
+				Create_VQ_Element(function(boo) {
 					let name = '';
 					if (!className.includes('All classes')) 
 						name = className;
 					const proj = Projects.findOne({_id: Session.get("activeProject")});
 					boo.setNameAndIndirectClassMembership(name, proj && proj.indirectClassMembershipRole);
 					boo.setInstanceAlias(i_name);
-				}, loc);				
-			
+				}, loc);
+			*/
+			const newClass = await Create_VQ_Element_Async(loc);
+			const proj = await Projects.findOneAsync({_id: Session.get("activeProject")});	
+			let name = '';
+			if (!className.includes('All classes')) 
+				name = className;			
+			await newClass.setNameAndIndirectClassMembership(name, proj && proj.indirectClassMembershipRole);
+			await newClass.setInstanceAlias(i_name);
 		}		
 	},
 	'click #filter3': async function() {

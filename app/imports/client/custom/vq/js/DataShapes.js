@@ -1,7 +1,7 @@
 import { Projects, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 import { Services } from '/imports/db/custom/vq/collections.js'
 import { faas } from '/imports/client/custom/vq/js/faas.js'
-import { VQ_Element } from './VQ_Element'
+import { VQ_Element, createVQ_Element } from './VQ_Element';
 import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
 
 // ***********************************************************************************
@@ -121,7 +121,7 @@ function isIndividual(individual) {
 
 const getPListI = async (vq_obj) => {
 	let pListI = {};
-	const link_list =  vq_obj.getLinks();
+	const link_list =  await vq_obj.getLinks();
 	const link_list_filtered = link_list.map( function(l) { const type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
 	_.each(link_list_filtered, function(link) {
 		link.typeO = link.type;
@@ -138,7 +138,8 @@ const getPListI = async (vq_obj) => {
 	for (const link of link_list_filtered) {
 		const l_schema = await getSchemaNameForElement(link.element);
 		if (link.typeO === 'out' && link.name !== null && link.name !== undefined && link.name !== '++' && el_schema == l_schema ) {
-			const eE = new VQ_Element(link.eE);
+			// 555 Jāpaskatās, kas notiks ciklā
+			const eE = await createVQ_Element(link.eE); // const eE = new VQ_Element(link.eE);
 			const individual =  eE.getInstanceAlias();
 			if (isIndividual(individual)) {
 				pListI.type = link.type;
@@ -147,7 +148,7 @@ const getPListI = async (vq_obj) => {
 			}
 		}
 		if (link.typeO === 'in' && link.name !== null && link.name !== undefined && link.name !== '++' && el_schema == l_schema ) {
-			const sE = new VQ_Element(link.sE);
+			const sE = await createVQ_Element(link.sE); // const sE = new VQ_Element(link.sE); 
 			const individual =  sE.getInstanceAlias();
 			if (isIndividual(individual)) {
 				pListI.type = link.type;
@@ -162,14 +163,15 @@ const getPListI = async (vq_obj) => {
 
 const getPList = async (vq_obj) => {
 	let pList = {in: [], out: []};
-	const field_list = vq_obj.getFields().filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
+	const field_list_full = await vq_obj.getFields();
+	const field_list = field_list_full.filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
 	_.each(field_list, function(link) {
 		if (link.name !== null && link.name !== undefined && link.name.indexOf('@') != -1)
 			link.name = link.name.substring(0,link.name.indexOf('@'));		
 	})
 	if (field_list.length > 0) pList.out = field_list;
 
-	const link_list =  vq_obj.getLinks();
+	const link_list =  await vq_obj.getLinks();
 
 	let link_list_filtered = link_list.map( function(l) { const type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
 	_.each(link_list_filtered, function(link) {
@@ -186,8 +188,8 @@ const getPList = async (vq_obj) => {
 			link.element = link.eE
 	})
 	const el_schema = await getSchemaNameForElement(vq_obj._id());
+	const isRoot = await vq_obj.isRoot();
 
-	//_.each(link_list_filtered, function(link) {
 	for (const link of link_list_filtered) {
 		const l_schema = await getSchemaNameForElement(link.element);
 		if (link.type === 'in' && link.name !== null && link.name !== undefined  && link.name !== '++' && el_schema == l_schema ) { // Šeit nebija tas ++
@@ -195,8 +197,8 @@ const getPList = async (vq_obj) => {
 				pList.in.push(link);
 			}
 			else {
-				if (!vq_obj.isRoot()) {
-					const sE = new VQ_Element(link.sE);
+				if (!isRoot) {
+					const sE = await createVQ_Element(link.sE); // const sE = new VQ_Element(link.sE); 
 					if (sE.isRoot())
 						pList.in.push(link);
 				}
@@ -208,44 +210,63 @@ const getPList = async (vq_obj) => {
 				pList.out.push(link);
 			}
 			else {
-				if (!vq_obj.isRoot()) {
-					const eE = new VQ_Element(link.eE);
+				if (!isRoot) {
+					const eE = await createVQ_Element(link.eE); // const eE = new VQ_Element(link.eE);
 					if (eE.isRoot())
 						pList.out.push(link);
 				}
 			}
 		}
 		
-		_.each(pList.in, function(link) {
-			const el = new VQ_Element(link.element);
+		for (const l of pList.in) {
+			const el = await createVQ_Element(l.element); // const el = new VQ_Element(link.element);
 			const class_name = el.getName();
 			const individual =  el.getInstanceAlias();
 			if (class_name !== null && class_name !== undefined)
-				link.className = class_name;			
+				l.className = class_name;			
 			if (isIndividual(individual)) 
-				link.uriIndividual = dataShapes.getIndividualName(individual);
-		})
+				l.uriIndividual = dataShapes.getIndividualName(individual);
+		}
+		//_.each(pList.in, function(link) {
+		//	const el = new VQ_Element(link.element);
+		//	const class_name = el.getName();
+		//	const individual =  el.getInstanceAlias();
+		//	if (class_name !== null && class_name !== undefined)
+		//		link.className = class_name;			
+		//	if (isIndividual(individual)) 
+		//		link.uriIndividual = dataShapes.getIndividualName(individual);
+		//})
 		
-		_.each(pList.out, function(link) {
-			if (link.element !== undefined ) {
-				const el = new VQ_Element(link.element);
+		for (const l of pList.out) {
+			if (l.element !== undefined ) {
+				const el = await createVQ_Element(l.element); // const el = new VQ_Element(l.element);
 				const class_name = el.getName();
 				const individual =  el.getInstanceAlias();
 				if (class_name !== null && class_name !== undefined)
-					link.className = class_name;			
+					l.className = class_name;			
 				if (isIndividual(individual)) 
-					link.uriIndividual = dataShapes.getIndividualName(individual);
-			}
-		})
+					l.uriIndividual = dataShapes.getIndividualName(individual);
+			}		
+		}
+		//_.each(pList.out, function(link) {
+		//	if (link.element !== undefined ) {
+		//		const el = new VQ_Element(link.element);
+		//		const class_name = el.getName();
+		//		const individual =  el.getInstanceAlias();
+		//		if (class_name !== null && class_name !== undefined)
+		//			link.className = class_name;			
+		//		if (isIndividual(individual)) 
+		//			link.uriIndividual = dataShapes.getIndividualName(individual);
+		//	}
+		//})
 	}
-	//});
 
 	return pList;
 }
 
 const findElementDataForClass = async (vq_obj) => {
 	let params = {}
-	const individual =  vq_obj.getInstanceAlias();
+	const individual =  await vq_obj.getInstanceAlias();
 	if (isIndividual(individual)) 
 		params.uriIndividual = dataShapes.getIndividualName(individual);
 
@@ -256,8 +277,8 @@ const findElementDataForClass = async (vq_obj) => {
 
 const findElementDataForProperty = async (vq_obj) => {
 	let params = {};
-	const individual =  vq_obj.getInstanceAlias();
-	const class_name = vq_obj.getName();
+	const individual =  await vq_obj.getInstanceAlias();
+	const class_name = await vq_obj.getName();
 	if (isIndividual(individual))
 		params.uriIndividual = dataShapes.getIndividualName(individual);
 	if (class_name !== null && class_name !== undefined)
@@ -277,11 +298,12 @@ const findElementDataForProperty = async (vq_obj) => {
 
 const findElementDataForIndividual = async (vq_obj) => {
 	let params = {};
-	const class_name = vq_obj.getName();
+	const class_name = await vq_obj.getName();
 	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
 
-	if (vq_obj.isIndirectClassMembership())
+	const isIndirectClassMembership = await vq_obj.isIndirectClassMembership();
+	if (isIndirectClassMembership)
 		params.isIndirectClassMembership = true;
 
 	const pList = await getPList(vq_obj);
@@ -434,7 +456,8 @@ const dataShapes = {
 	},
 	changeActiveProject : async function(proj_id) {
 		//console.log('------changeActiveProject-------')
-		const proj = Projects.findOne({_id: proj_id});
+		//const proj = Projects.findOne({_id: proj_id});
+		const proj = await Projects.findOneAsync({_id: proj_id});
 		//this.schema = getEmptySchema();
 		if (proj !== undefined) {
 			await this.changeActiveProjectFull(proj);
@@ -565,7 +588,6 @@ const dataShapes = {
 			console.log("---------callServerFunction--------------" + funcName)
 			console.log(params)
 		}
-		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		const startTime = Date.now();
 		let s = this.schema.schema;
 		let new_schema;
@@ -787,7 +809,7 @@ const dataShapes = {
 		return rr;
 	},
 	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {
-		// *** console.log("------------GetProperties------------------")
+		// *** console.log("*** ---------GetProperties---------------***", vq_obj)
 		//dataShapes.getProperties({schema:'europeana', propertyKind:'Data'})
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
 		//dataShapes.getProperties({propertyKind:'Object'})
@@ -1113,8 +1135,9 @@ const dataShapes = {
 			link.click();
 		}
 	},
-	tt : function (all = 1) {
-		const el = new VQ_Element(Session.get("activeElement"));
+	tt : async function (all = 1) {
+		// Šī ir funkcija testam
+		const el = await createVQ_Element(Session.get("activeElement"));// const el = new VQ_Element(Session.get("activeElement"));
 		//const comparts = Compartments.find({elementId: el._id()}, {sort: {index: 1}}).fetch();
 		//console.log(comparts)
 		Compartments.find({elementId: el._id()}, {sort: {index: 1}}).forEach(function (cc) {
@@ -1127,15 +1150,6 @@ const dataShapes = {
 		//console.log(el)
 		//el.getCompartmentValue("Name")
 
-	},
-	tt2 : function () {
-		const el = new VQ_Element(Session.get("activeElement"));
-		console.log(el.getCoordinates());
-	},
-	tt3 : async function () {
-	console.log("***************************")
-
-	
 	},
 	test : async function () {
 		//await this.callServerFunction("xxx_test", {main: {}});
