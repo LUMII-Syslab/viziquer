@@ -144,6 +144,11 @@
 								<div style="padding-top: 10px;">
 									<label for="fragment-size">Fragment size:</label>
 									<input type="number" id="fragment-size" name="fragment-size" value="10">
+									<label for="fragment-algorithm">Fragment selection algorithm:</label>
+									<select name="fragment-algorithm" id="fragment-algorithm">
+									  <option value="heuristic">Heuristic</option>
+									  <option value="ppr">Personalized PageRank</option>
+									</select>
 									<button id="getFragment" type="button" class="btn btn-primary" >Get fragment</button>
 								</div>
 							{{else}}

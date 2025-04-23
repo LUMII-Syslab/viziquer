@@ -1,7 +1,7 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 import './VQ_DSS_schema.html'
-import { fragments } from './fragments';
+import { fragmentsHeuristic, fragmentsPPR } from './fragments';
 
 Template.VQ_DSS_schema.SchemaName = new ReactiveVar('');
 Template.VQ_DSS_schema.Classes = new ReactiveVar([]);
@@ -666,7 +666,15 @@ Template.VQ_DSS_schema.events({
 	},
 	'click #getFragment': async function() {
 		const fragSize = parseInt(document.getElementById("fragment-size").value);
-		const fragmentClasses = await fragments(fragSize);
+		const fragAlgorithm = document.getElementById("fragment-algorithm").value;
+		let fragmentClasses;
+		switch (fragAlgorithm) {
+			case "heuristic":
+				fragmentClasses = await fragmentsHeuristic(fragSize);
+				break;
+			case "ppr":
+				fragmentClasses = await fragmentsPPR(fragSize, 0.85, 1e-5);
+		}
 		const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){return fragmentClasses.includes(c.full_name)});
 		const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return !fragmentClasses.includes(c.full_name)});
 		setClassListInfo(classes, restClasses);
