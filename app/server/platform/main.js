@@ -21,10 +21,6 @@ import '/imports/server/platform/methods/diagrams/compartments'
 import '/imports/server/platform/methods/diagrams/diagrams_sections'
 import '/imports/server/platform/methods/diagrams/elements_sections'
 
-
-import '/imports/server/platform/methods/chat/chats'
-import '/imports/server/platform/methods/feed/posts'
-import '/imports/server/platform/methods/forum/forum'
 import '/imports/server/platform/methods/notifications/notifications'
 import '/imports/server/platform/methods/search/searches'
 import '/imports/server/platform/methods/users/projects_groups'

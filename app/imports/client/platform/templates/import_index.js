@@ -60,10 +60,6 @@ import '/imports/client/platform/templates/diagrams/diagrams.js'
 import '/imports/client/platform/templates/diagrams/public_diagram.js'
 import '/imports/client/platform/templates/diagrams/toolbar.js'
 
-// feed
-
-// forum
-
 // home
 import '/imports/client/platform/templates/home/home.html'
 

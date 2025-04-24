@@ -25,7 +25,7 @@ function load_configurator(user_id) {
 								users: true,
 								analytics: false,
 								isConfigurator: true,
-                				forum: false,
+                				// forum: false,
 							});
 
 	var version_id = ToolVersions.insert({toolId: tool_id,

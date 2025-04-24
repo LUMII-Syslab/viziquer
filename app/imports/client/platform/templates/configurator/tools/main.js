@@ -75,11 +75,12 @@ Template.loadModelForm.events({
 Template.settings.helpers({
 	panel_settings: function() {
 
-		return [{options: get_tool_setting("feed"), id: "feed", name: "Feed"},
+		return [
+        // {options: get_tool_setting("feed"), id: "feed", name: "Feed"},
 				{options: get_tool_setting("documents"), id: "documents", name: "Documents"},
 				{options: get_tool_setting("archive"), id: "archive", name: "Archive"},
 				{options: get_tool_setting("users"), id: "users", name: "Users"},
-				{options: get_tool_setting("forum"), id: "forum", name: "Forum"},
+				// {options: get_tool_setting("forum"), id: "forum", name: "Forum"},
 				{options: get_tool_setting("analytics"), id: "analytics", name: "Analytics"},
 
 				{options: get_tool_setting("tasks"), id: "tasks", name: "Tasks"},

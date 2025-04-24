@@ -2,7 +2,6 @@
 	"diagrams": "Diagrams",
 	"documents": "Documents",
 	"users": "Users",
-	"chats": "Chats",
 	"analytics": "Monitoring",
 	"archive": "Archive",
 	"dataAnalytics": "Analytics",
@@ -54,7 +53,6 @@
 	"document_count": "Count",
 	"document_elements": "Elements",
 
-	"feed": "Feed",
 	"what_are_you_thinking": "What are you thinking?",
 	"post_post": "Post",
 	"edit_post": "Edit",
@@ -125,25 +123,9 @@
 	"user_joined": "Joined",
 	"user_remove": "Remove",
 
-	"chats_conversations_1": "__count__ conversation",
-	"chats_conversations": "__count__ conversations",
-
-	"chats_page": "Page %s of %s",
-	"chats_new_chat": "New chat",
-	"chats_delete_chat": "Delete",
-	"chats_to": "To",
-
-	"chats_time_minutesam": "__hour__:__minutes__ am",
-	"chats_time_minutespm": "__hour__ : __minutes__ pm",	
-	"chats_time_month": "__month__ __date__",
-	"chats_time_year": "__month__/__date__/__year__",
-
 	"contacts": "Contacts",
 	"contacts_add": "Add",
 	"type_your_msg_here": "Type your message here",
-	"chat_send": "Send",
-	"chat_error_msg": "The chat has been deleted or you have been removed from the chat.",
-	"new_chat_title": "New Chat",
 	"view_all_messages": "View all messages",
 
 	"forgot_password": "Forgot your password?",
@@ -213,9 +195,6 @@
 	"you_have_projects_count_1": "You have __count__ project",
 	"you_have_projects_count": "You have __count__ projects",
 	
-	"you_have_unread_chats_count_1": "You have __count__ new chat",
-	"you_have_unread_chats_count": "You have __count__ new chats",
-
 	"you_have_new_notifications_count_1": "You have __count__ notification",
 	"you_have_new_notifications_count": "You have __count__ notifications",	
 
@@ -282,41 +261,6 @@
 	"delete_confirm_msg_ConfirmDeleteDiagram": "Are you sure you want to delete the diagram?",
 	"delete_confirm_msg_ConfirmDeleteDiagramType": "Are you sure you want to delete the tool and all its projects?",
 	"delete_confirm_msg_ConfirmDeleteDocument": "Are you sure you want to delete the document?",
-
-	"forum": "Forum",
-	"forum_prev": "Previous",
-	"forum_next": "Next",
-	"forum_all_projects": "--All projects--",
-	"forum_search_by_tag": "Search by tag...",
-	"forum_tag_cloud": "TAG CLOUD",
-	"forum_add_topic": "Add Topic",	
-	"forum_new_post": "New post",
-	"forum_title": "Title",
-	"forum_msg": "Message",
-
-	"forum_views": "__count__ views",
-	"forum_views_1": "1 view",
-
-	"forum_author": "By",
-
-	"forum_comments": "__count__ comment",
-	"forum_comments_1": "1 comment",
-
-	"forum_comments": "comments",
-	"forum_edit_post": "Edit post",
-
-	"forum_post_comment": "Post Comment",
-	"forum_new_comment": "New comment",
-	"forum_edit_comment": "Edit comment",
-	"forum_form_comment": "Comment",
-
-	"forum_tags": "TAGS",
-	"forum_post_comments": "Comments",
-
-	"forum_post_reply": "Reply",
-
-	"forum_edit_comment": "Edit",
-	"forum_delete_comment": "Delete",
 
 	"structure": "Projects",
 	"add_project": "Create project",

@@ -94,7 +94,7 @@ Meteor.methods({
               archive: true,
               analytics: true,
               users: true,
-              forum: true,
+              // forum: true,
               tasks: true,
               training: true,
             };

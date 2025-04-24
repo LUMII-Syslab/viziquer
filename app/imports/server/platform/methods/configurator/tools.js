@@ -27,7 +27,7 @@ Meteor.methods({
 			list["archive"] = true;
 			list["analytics"] = true;
 			list["users"] = true;
-			list["forum"] = true;	
+			// list["forum"] = true;	
 
 			list["tasks"] = false;
 			list["training"] = false;
