@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import { Views, ViewFilter, ViewUser, FileUploads, DataMetaData, DataLinks, DataNodes} from '/imports/db/platform/collections'
-import { is_project_member } from '/imports/libs/platform/user_rights'
+
+import { Views, ViewFilter, ViewUser, FileUploads, DataMetaData, DataLinks, DataNodes} from '../../../db/platform/collections'
+import { is_project_member } from '../../../libs/platform/user_rights'
 
 Meteor.publish("Views", function(list) {
 
