@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 
-// import { Diagrams } from '/imports/db/platform/collections';
 import { is_project_member } from '../../../libs/platform/user_rights';
 import { is_public_diagram } from '../../platform/_helpers'
 

@@ -1,5 +1,5 @@
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
-import { CompartmentTypes, ElementTypes } from '/imports/db/platform/collections'
+import { Utilities } from '../../../js/utilities/utils'
+import { CompartmentTypes, ElementTypes } from '../../../../../db/platform/collections'
 
 import './reorder.html'
 

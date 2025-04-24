@@ -1,10 +1,10 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
-import { UserVersionSettings, Projects, ProjectsGroups, Tools, DiagramTypes, Diagrams, FoundDiagrams } from '/imports/db/platform/collections'
-import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
-import { Services } from '/imports/db/custom/vq/collections.js'
+import { Interpreter } from '../../../lib/interpreter'
+import { Utilities } from '../../js/utilities/utils'
+import { UserVersionSettings, Projects, ProjectsGroups, Tools, DiagramTypes, Diagrams, FoundDiagrams } from '../../../../db/platform/collections'
+import { Dialog } from '../../js/interpretator/Dialog'
+import { Services } from '../../../../db/custom/vq/collections.js'
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes'
 
 import './diagrams.html'
 import { joined_date } from '../../js/utilities/time_utilities'

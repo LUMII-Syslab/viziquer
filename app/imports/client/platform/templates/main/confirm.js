@@ -1,5 +1,5 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { reset_variable } from '/imports/client/platform/js/utilities/utils'
+import { Interpreter } from '../../../lib/interpreter'
+import { reset_variable } from '../../js/utilities/utils'
 
 import './confirm.html'
 

@@ -1,4 +1,4 @@
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { dataShapes } from './DataShapes'
 
 // ***********************************************************************************
 // const FAAS_SERVER_URL = 'http://localhost:59286/api';

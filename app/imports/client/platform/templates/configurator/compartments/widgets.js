@@ -1,7 +1,7 @@
-import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '/imports/db/platform/collections'
-import { reset_variable } from '/imports/client/platform/js/utilities/utils'
-import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
+import { Configurator } from '../../../templates/configurator/config_utils'
+import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '../../../../../db/platform/collections'
+import { reset_variable } from '../../../js/utilities/utils'
+import { Utilities } from '../../../js/utilities/utils.js'
 
 import './widgets.html'
 

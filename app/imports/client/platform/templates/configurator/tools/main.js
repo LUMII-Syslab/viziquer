@@ -1,5 +1,5 @@
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
-import { Tools, Projects } from '/imports/db/platform/collections'
+import { Utilities } from '../../../js/utilities/utils'
+import { Tools, Projects } from '../../../../../db/platform/collections'
 
 import './main.html'
 

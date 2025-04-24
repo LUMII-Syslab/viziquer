@@ -1,6 +1,6 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { ElementTypes, Elements } from '/imports/db/platform/collections'
+import { Interpreter } from '../../../../../client/lib/interpreter'
+import { Configurator } from '../../../templates/configurator/config_utils'
+import { ElementTypes, Elements } from '../../../../../db/platform/collections'
 
 import './box_styles.html'
 import { Dialog } from '../../../js/interpretator/Dialog';

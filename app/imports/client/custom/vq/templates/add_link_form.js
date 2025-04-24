@@ -1,13 +1,13 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Projects } from '/imports/db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter'
+import { Projects } from '../../../../db/platform/collections'
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes'
 
 import './add_link_form.html'
 import { Create_VQ_Element_Async, VQ_Element, createVQ_Element } from '../js/VQ_Element';
 import { autoCompletionCleanup, autoCompletionAddLink } from '../js/autoCompletion';
 
-import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
+import { getSchemaNameForElement } from '../../../custom/vq/js/transformations.js'
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const delayTime = 500;

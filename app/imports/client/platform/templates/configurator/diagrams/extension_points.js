@@ -1,5 +1,5 @@
-import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { DiagramTypes } from '/imports/db/platform/collections'
+import { Configurator } from '../../../templates/configurator/config_utils'
+import { DiagramTypes } from '../../../../../db/platform/collections'
 
 import './extension_points.html'
 

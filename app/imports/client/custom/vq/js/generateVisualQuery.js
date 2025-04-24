@@ -6,19 +6,19 @@
 
 // The module has been developed with partial support from Latvian Science Council project lzp-2021/1-0389 "Visual Queries in Distributed Knowledge Graphs" (since 2022).
 
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
+import { Interpreter } from '../../../lib/interpreter'
+import { Utilities } from '../../../platform/js/utilities/utils'
 
-import { Projects, Compartments, Elements, ElementTypes, Diagrams} from '/imports/db/platform/collections'
-import {OrthogonalCollectionRerouting} from '/imports/client/platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
+import { Projects, Compartments, Elements, ElementTypes, Diagrams} from '../../../../db/platform/collections'
+import {OrthogonalCollectionRerouting} from '../../../platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { dataShapes } from './DataShapes'
 import { Create_VQ_Element_Async, VQ_Element, Create_VQ_Element_Declaration } from './VQ_Element.js';
 import { getDeclarations } from './genAbstractQuery.js';
 
-import { isURI } from '/imports/client/custom/vq/js/transformations.js'
+import { isURI } from './transformations.js'
 
-import * as vq_visual_grammar_parser from '/imports/client/custom/vq/js/vq_visual_grammar_parser.js'
+import * as vq_visual_grammar_parser from './vq_visual_grammar_parser.js'
 
 
 // meteor npm install sparqljs

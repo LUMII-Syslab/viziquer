@@ -1,10 +1,11 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
-import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
-import { Elements, ElementTypes } from '/imports/db/platform/collections'
-import { generate_id, is_ajoo_editor } from '/imports/libs/platform/lib'
+import { Interpreter } from '../../../lib/interpreter'
+import { Utilities } from '../utilities/utils'
+import { Dialog } from './Dialog'
+
+import { Elements, ElementTypes } from '../../../../db/platform/collections'
+import { generate_id, is_ajoo_editor } from '../../../../libs/platform/lib'
 
 Interpreter.methods({
 

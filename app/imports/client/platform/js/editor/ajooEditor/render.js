@@ -1,6 +1,6 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { DiagramTypes, ElementTypes, PaletteButtons, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
-import { is_ajoo_editor } from '/imports/libs/platform/lib'
+import { Interpreter } from '../../../../lib/interpreter'
+import { DiagramTypes, ElementTypes, PaletteButtons, Diagrams, Elements, Compartments } from '../../../../../db/platform/collections'
+import { is_ajoo_editor } from '../../../../../libs/platform/lib'
 
 
 //render_ajoo_editor_diagram

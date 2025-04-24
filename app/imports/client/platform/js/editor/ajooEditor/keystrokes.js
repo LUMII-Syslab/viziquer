@@ -1,5 +1,5 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { DiagramTypes, ElementTypes } from '/imports/db/platform/collections'
+import { Interpreter } from '../../../../lib/interpreter'
+import { DiagramTypes, ElementTypes } from '../../../../../db/platform/collections'
 
  _.extend(Interpreter, {
 

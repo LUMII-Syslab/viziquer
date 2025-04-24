@@ -1,4 +1,4 @@
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
+import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 export async function fragments(fragmentClassCount) {
 	const mainClasses = Template.VQ_DSS_schema.Classes.get().map(c => c.full_name);		// Classes around which the fragment should be created

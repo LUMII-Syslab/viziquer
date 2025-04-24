@@ -1,7 +1,8 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
-import { Compartments, Elements, Diagrams, DiagramTypes, ElementTypes } from '/imports/db/platform/collections'
+
+import { Interpreter } from '../../../lib/interpreter'
+import { Utilities } from '../utilities/utils'
+import { Compartments, Elements, Diagrams, DiagramTypes, ElementTypes } from '../../../../db/platform/collections'
 
 
 Interpreter.methods({

@@ -1,5 +1,5 @@
 import { makeString } from './parserCommon';
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';																 
+import { dataShapes } from './DataShapes';																 
   "use strict";
 
   /*

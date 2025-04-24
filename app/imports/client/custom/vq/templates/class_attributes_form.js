@@ -1,5 +1,5 @@
 // import { Interpreter } from '/client/lib/interpreter'
-import { get_multi_fields_obj } from '/imports/client/platform/templates/diagrams/dialog/subCompartments'
+import { get_multi_fields_obj } from '../../../platform/templates/diagrams/dialog/subCompartments'
 
 import './class_attributes_form.html'
 

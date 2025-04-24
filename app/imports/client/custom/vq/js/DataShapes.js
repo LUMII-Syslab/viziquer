@@ -1,8 +1,8 @@
-import { Projects, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
-import { Services } from '/imports/db/custom/vq/collections.js'
-import { faas } from '/imports/client/custom/vq/js/faas.js'
+import { Projects, Compartments, CompartmentTypes } from '../../../../db/platform/collections'
+import { Services } from '../../../../db/custom/vq/collections.js'
+import { faas } from './faas.js'
 import { VQ_Element, createVQ_Element } from './VQ_Element';
-import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
+import { getSchemaNameForElement } from './transformations.js'
 
 // ***********************************************************************************
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';

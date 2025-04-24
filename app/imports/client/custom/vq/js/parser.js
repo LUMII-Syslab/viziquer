@@ -1,9 +1,9 @@
-import { Projects } from '/imports/db/platform/collections'
+import { Projects } from '../../../../db/platform/collections'
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { dataShapes } from './DataShapes'
 import { checkIfIsSimpleVariable, checkIfIsSimpleVariableForNameDef, findINExpressionTable, isFunctionExpr, transformSubstring, isDateVar, isValidForConvertation } from './parserCommon';
 import { getResolveInformation } from './genAbstractQuery';
-import * as vq_grammar_parser from '/imports/client/custom/vq/js/vq_grammar_parser.js'
+import * as vq_grammar_parser from './vq_grammar_parser.js'
 
 var tripleTable = [];
 var filetrAsTripleTable = [];

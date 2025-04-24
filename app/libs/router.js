@@ -1,13 +1,14 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Users, DiagramTypes } from '/imports/db/platform/collections'
-import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
-import '/imports/client/platform/templates/publicLayout.html'
-import '/imports/client/custom/vq/templates/loginBranding.html'
-import '/imports/client/platform/templates/structure/projects.js'
-import '/imports/client/platform/templates/structure/structure.js'
-import '/imports/client/platform/templates/notifications/notifications.js'
-import '/imports/client/platform/templates/panel/panel.js'
+import { Users, DiagramTypes } from '../imports/db/platform/collections'
+import { reset_variable } from '../imports/client/platform/js/utilities/utils'
+
+import '../imports/client/platform/templates/publicLayout.html'
+import '../imports/client/custom/vq/templates/loginBranding.html'
+import '../imports/client/platform/templates/structure/projects.js'
+import '../imports/client/platform/templates/structure/structure.js'
+import '../imports/client/platform/templates/notifications/notifications.js'
+import '../imports/client/platform/templates/panel/panel.js'
 
 // DISABLE QUERY STRING COMPATIBILITY
 // WITH OLDER FlowRouter AND Meteor RELEASES

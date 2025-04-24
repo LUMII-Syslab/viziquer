@@ -1,7 +1,7 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Projects } from '/imports/db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter'
+import { Projects } from '../../../../db/platform/collections'
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes'
 
 import './SchemaTree.html'
 import { Create_VQ_Element_Async } from '../js/VQ_Element';

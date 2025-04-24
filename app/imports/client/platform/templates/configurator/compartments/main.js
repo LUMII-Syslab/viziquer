@@ -1,7 +1,7 @@
-import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { ElementTypes, CompartmentTypes, DialogTabs } from '/imports/db/platform/collections'
-import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
+import { Configurator } from '../config_utils'
+import { Interpreter } from '../../../../lib/interpreter'
+import { ElementTypes, CompartmentTypes, DialogTabs } from '../../../../../db/platform/collections'
+import { Utilities, reset_variable } from '../../../js/utilities/utils'
 
 import './main.html'
 

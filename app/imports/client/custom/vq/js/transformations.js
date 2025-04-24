@@ -1,12 +1,12 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
-import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '/imports/db/platform/collections'
-import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+import { Interpreter } from '../../../lib/interpreter'
+import { Utilities } from '../../../platform/js/utilities/utils.js'
+import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '../../../../db/platform/collections'
+import { Dialog } from '../../../platform/js/interpretator/Dialog'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
 import { getPathFullGrammarChangeDirection } from './parser.js';
 import { Create_VQ_Element, Create_VQ_Element_Async, VQ_Element, VQ_Schema, createVQ_Element } from './VQ_Element';
-import * as vq_property_path_grammar_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_parser.js'
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
+import * as vq_property_path_grammar_parser from './vq_property_path_grammar_parser.js'
+import { dataShapes } from './DataShapes.js'
 
 Interpreter.customMethods({
 	

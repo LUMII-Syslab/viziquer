@@ -1,8 +1,8 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Elements } from '/imports/db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter'
+import { Elements } from '../../../../db/platform/collections'
 
 import { autoCompletionCleanup, autoCompletionInstance } from '../js/autoCompletion';
-import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 
 import './add_uri_form.html'
 

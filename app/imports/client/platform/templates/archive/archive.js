@@ -1,5 +1,5 @@
-import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
-import { Versions, ProjectsUsers } from '/imports/db/platform/collections.js'
+import { Utilities } from '../../js/utilities/utils.js'
+import { Versions, ProjectsUsers } from '../../../../db/platform/collections.js'
 
 import './archive.html'
 import { joined_date } from '../../js/utilities/time_utilities';

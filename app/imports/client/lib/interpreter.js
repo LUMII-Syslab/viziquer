@@ -1,5 +1,5 @@
-import { Elements } from '/imports/db/platform/collections'
-import { reset_variable } from '/imports/client/platform/js/utilities/utils'
+import { Elements } from '../../db/platform/collections'
+import { reset_variable } from '../platform/js/utilities/utils'
 
 $(document).on('keypress', function (e) {
 

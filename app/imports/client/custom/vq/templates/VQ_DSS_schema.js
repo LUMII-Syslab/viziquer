@@ -1,5 +1,5 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
+import { Interpreter } from '../../../lib/interpreter'
+import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 import './VQ_DSS_schema.html'
 import { fragments } from './fragments';
 

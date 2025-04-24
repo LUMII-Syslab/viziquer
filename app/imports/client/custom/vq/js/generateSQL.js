@@ -1,6 +1,6 @@
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Elements } from '/imports/db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter'
+import { Elements } from '../../../../db/platform/collections'
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu

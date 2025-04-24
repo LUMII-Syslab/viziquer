@@ -1,8 +1,8 @@
-import { Elements } from '/imports/db/platform/collections';
+import { Elements } from '../../../../db/platform/collections';
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
+import { dataShapes } from './DataShapes.js'
 import { makeString } from './parserCommon';
-import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from './VQ_Element.js';
 
   "use strict";
 

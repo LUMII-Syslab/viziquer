@@ -1,5 +1,5 @@
-import { Users, ProjectsUsers, ProjectsGroups } from '/imports/db/platform/collections'
-import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
+import { Users, ProjectsUsers, ProjectsGroups } from '../../../../db/platform/collections'
+import { Utilities, reset_variable } from '../../js/utilities/utils'
 
 import './users.html'
 import { joined_date } from '../../js/utilities/time_utilities';

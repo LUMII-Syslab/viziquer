@@ -1,12 +1,12 @@
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { analytics } from '/imports/client/lib/global_variables'
-import AjooEditor from '/imports/client/platform/js/editor/ajooEditor/ajoo/AjooEditor'
+import { Utilities } from '../../utilities/utils'
+import { Interpreter } from '../../../../lib/interpreter'
+import { analytics } from '../../../../lib/global_variables'
+import AjooEditor from './ajoo/AjooEditor'
 
-import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '../../../../../db/platform/collections'
 
-import { get_context_menu_list } from '/imports/client/platform/js/interpretator/context_menu.js'
-import { compute_new_line_type } from '/imports/client/platform/js/interpretator/NewElement.js'
+import { get_context_menu_list } from '../../interpretator/context_menu.js'
+import { compute_new_line_type } from '../../interpretator/NewElement.js'
 
 Interpreter.loadAjooEditor = function(diagram) {
 

@@ -1,8 +1,8 @@
-import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { DiagramTypes } from '/imports/db/platform/collections'
-import { is_ajoo_editor } from '/imports/libs/platform/lib'
+import { Configurator } from '../../../templates/configurator/config_utils'
+import { Utilities } from '../../../js/utilities/utils'
+import { Interpreter } from '../../../../lib/interpreter'
+import { DiagramTypes } from '../../../../../db/platform/collections'
+import { is_ajoo_editor } from '../../../../../libs/platform/lib'
 
 import './settings.html'
 

@@ -1,6 +1,6 @@
 import { FlowRouter, Router } from 'meteor/ostrio:flow-router-extra'
-import { Utilities } from '/imports/client/platform/js/utilities/utils'
-import { ToolVersions, UserTools } from '/imports/db/platform/collections'
+import { Utilities } from '../../../js/utilities/utils'
+import { ToolVersions, UserTools } from '../../../../../db/platform/collections'
 
 import './timeline.html'
 import { joined_date } from '../../../js/utilities/time_utilities';

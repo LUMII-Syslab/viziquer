@@ -1,15 +1,15 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Projects, Elements, ElementTypes } from '/imports/db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter'
+import { Projects, Elements, ElementTypes } from '../../../../db/platform/collections'
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { dataShapes } from './DataShapes'
 import { checkIfIsSimpleVariable, findINExpressionTable } from './parserCommon';
 import { countMaxExpressionCardinality } from './parser.js';
 import { VQ_Element, createVQ_Element } from './VQ_Element';
 
-import * as vq_grammar_parser from '/imports/client/custom/vq/js/vq_grammar_parser'
-import * as vq_variable_grammar_parser from '/imports/client/custom/vq/js/vq_variable_grammar_parser'
-import * as vq_property_path_grammar_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_parser'
-import * as vq_attribute_condition_grammar_parser from '/imports/client/custom/vq/js/vq_attribute_condition_grammar_parser'
+import * as vq_grammar_parser from './vq_grammar_parser'
+import * as vq_variable_grammar_parser from './vq_variable_grammar_parser'
+import * as vq_property_path_grammar_parser from './vq_property_path_grammar_parser'
+import * as vq_attribute_condition_grammar_parser from './vq_attribute_condition_grammar_parser'
 
 var count = 0;
 

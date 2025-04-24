@@ -1,8 +1,8 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Elements } from '/imports/db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter'
+import { Elements } from '../../../../db/platform/collections'
 
-import { autoCompletionClass, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
-import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { autoCompletionClass, autoCompletionCleanup } from '../../../custom/vq/js/autoCompletion.js'
+import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 
 import './add_class_name_form.html'
 

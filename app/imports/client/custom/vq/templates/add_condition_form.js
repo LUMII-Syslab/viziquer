@@ -1,9 +1,9 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Elements, Compartments, CompartmentTypes} from '/imports/db/platform/collections'
-import { process_sub_compart_types } from '/imports/client/platform/templates/diagrams/dialog/subCompartments'
-import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+import { Interpreter } from '../../../lib/interpreter'
+import { Elements, Compartments, CompartmentTypes} from '../../../../db/platform/collections'
+import { process_sub_compart_types } from '../../../platform/templates/diagrams/dialog/subCompartments'
+import { Dialog } from '../../../platform/js/interpretator/Dialog'
 
-import { autoCompletionAddCondition, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
+import { autoCompletionAddCondition, autoCompletionCleanup } from '../../../custom/vq/js/autoCompletion.js'
 
 import './add_condition_form.html'
 import { VQ_Element, createVQ_Element } from '../js/VQ_Element'

@@ -1,8 +1,8 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { ClientStorage } from 'ClientStorage';
-import { Users } from '/imports/db/platform/collections'
-import { reset_variable } from '/imports/client/platform/js/utilities/utils'
-import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
+import { Users } from '../../../../db/platform/collections'
+import { reset_variable } from '../../js/utilities/utils'
+import { Utilities } from '../../js/utilities/utils.js'
 
 import './index.html'
 

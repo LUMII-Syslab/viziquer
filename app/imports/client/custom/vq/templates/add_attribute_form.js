@@ -1,14 +1,14 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Projects, Elements, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
-import { process_sub_compart_types } from '/imports/client/platform/templates/diagrams/dialog/subCompartments'
-import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
-import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
+import { Interpreter } from '../../../lib/interpreter'
+import { Projects, Elements, Compartments, CompartmentTypes } from '../../../../db/platform/collections'
+import { process_sub_compart_types } from '../../../platform/templates/diagrams/dialog/subCompartments'
+import { Dialog } from '../../../platform/js/interpretator/Dialog'
+import { Utilities } from '../../../platform/js/utilities/utils.js'
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { generateSymbolTable, getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
-import { autoCompletionAddAttribute, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
+import { dataShapes } from '../../../custom/vq/js/DataShapes'
+import { generateSymbolTable, getSchemaNameForElement } from '../../../custom/vq/js/transformations.js'
+import { autoCompletionAddAttribute, autoCompletionCleanup } from '../../../custom/vq/js/autoCompletion.js'
 
-import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 
 import './add_attribute_form.html'
 import { AddMergeValues2 } from './add_merge_form'

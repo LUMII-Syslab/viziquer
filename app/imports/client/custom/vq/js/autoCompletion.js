@@ -1,14 +1,14 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Elements, ElementTypes, CompartmentTypes, Compartments } from '/imports/db/platform/collections'
-import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+import { Interpreter } from '../../../lib/interpreter'
+import { Elements, ElementTypes, CompartmentTypes, Compartments } from '../../../../db/platform/collections'
+import { Dialog } from '../../../platform/js/interpretator/Dialog'
 
-import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { generateSymbolTable, findAttributeInAbstractTable, setSchemaNamesForQuery } from '/imports/client/custom/vq/js/transformations.js'
+import { dataShapes } from './DataShapes'
+import { generateSymbolTable, findAttributeInAbstractTable, setSchemaNamesForQuery } from './transformations.js'
 import { VQ_Element, createVQ_Element } from './VQ_Element'
 
-import * as vq_grammar_completion_parser from '/imports/client/custom/vq/js/vq_grammar_completion_parser.js'
-import * as vq_property_path_grammar_completion_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_completion_parser.js'
-import * as vq_language_grammar_completion_parser from '/imports/client/custom/vq/js/vq_language_grammar_completion_parser.js'
+import * as vq_grammar_completion_parser from './vq_grammar_completion_parser.js'
+import * as vq_property_path_grammar_completion_parser from './vq_property_path_grammar_completion_parser.js'
+import * as vq_language_grammar_completion_parser from './vq_language_grammar_completion_parser.js'
 
 var symbolTable = {};
 var grammarType = "class";

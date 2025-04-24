@@ -1,12 +1,12 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Elements, Compartments, CompartmentTypes, Projects } from '/imports/db/platform/collections'
-import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
+import { Interpreter } from '../../../lib/interpreter'
+import { Elements, Compartments, CompartmentTypes, Projects } from '../../../../db/platform/collections'
+import { Utilities } from '../../../platform/js/utilities/utils.js'
 
 import './add_merge_form.html'
 import { countCardinality } from '../js/parser';
-import { VQ_Element, createVQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 
-import { getSchemaNameForElement } from '/imports/client/custom/vq/js/transformations.js'
+import { getSchemaNameForElement } from '../../../custom/vq/js/transformations.js'
 
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");
