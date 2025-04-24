@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 
 // import { Diagrams } from '/imports/db/platform/collections';
-import { is_project_member } from '/imports/libs/platform/user_rights';
-import { is_public_diagram } from '/imports/server/platform/_helpers'
+import { is_project_member } from '../../../libs/platform/user_rights';
+import { is_public_diagram } from '../../platform/_helpers'
 
-import { VQ_sparql_logs } from '/imports/db/custom/vq/collections';
+import { VQ_sparql_logs } from '../../../db/custom/vq/collections';
 
 // import fetch from 'node-fetch';
 

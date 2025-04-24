@@ -1,8 +1,9 @@
 import { Roles } from 'meteor/alanning:roles'
-import { is_project_admin, is_project_version_admin, build_project_version_admin_role, build_project_admin_role, build_project_version_reader_role } from '/imports/libs/platform/user_rights'
-import { Versions, ProjectsUsers, Projects, Diagrams, Elements, Compartments, UserVersionSettings, Notifications } from '/imports/db/platform/collections'
-import { send_email } from '/imports/libs/platform/lib';
-import { Users } from '/imports/db/platform/collections.js';
+
+import { is_project_admin, is_project_version_admin, build_project_version_admin_role, build_project_admin_role, build_project_version_reader_role } from '../../../../libs/platform/user_rights'
+import { Versions, ProjectsUsers, Projects, Diagrams, Elements, Compartments, UserVersionSettings, Notifications } from '../../../../db/platform/collections'
+import { send_email } from '../../../../libs/platform/lib';
+import { Users } from '../../../../db/platform/collections.js';
 
 
 Versions.before.insert(function (user_id, doc) {

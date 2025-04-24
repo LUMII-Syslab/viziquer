@@ -1,4 +1,4 @@
-import { ProjectsUsers, Versions, ToolVersions, Projects } from '/imports/db/platform/collections'
+import { ProjectsUsers, Versions, ToolVersions, Projects } from '../../db/platform/collections'
 
 //checks whether user is allowed to access the project
 function get_user_rights_to_access_project(list, user_system_id) {

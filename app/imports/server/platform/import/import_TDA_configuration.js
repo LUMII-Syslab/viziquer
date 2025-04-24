@@ -1,11 +1,11 @@
-import { is_system_admin, is_project_version_admin } from '/imports/libs/platform/user_rights'
-import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, PaletteButtons, DialogTabs, Elements, Compartments } from '/imports/db/platform/collections'
-import { Services } from '/imports/db/custom/vq/collections'
-import { build_initial_diagram_type, diagram_default_style } from '/imports/server/platform/methods/configurator/initialTypes/diagram_types'
-import { build_initial_element_type, build_initial_line_style, build_initial_box_style } from '/imports/server/platform/methods/configurator/initialTypes/element_types'
-import { build_initial_compartment_type, get_default_compartment_style } from '/imports/server/platform/methods/configurator/initialTypes/compartment_types'
-import { generate_id } from '/imports/libs/platform/lib'
-import { build_compartment } from '/imports/server/platform/methods/diagrams/compartments'
+import { is_system_admin, is_project_version_admin } from '../../../libs/platform/user_rights'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, PaletteButtons, DialogTabs, Elements, Compartments } from '../../../db/platform/collections'
+import { Services } from '../../../db/custom/vq/collections'
+import { build_initial_diagram_type, diagram_default_style } from '../methods/configurator/initialTypes/diagram_types'
+import { build_initial_element_type, build_initial_line_style, build_initial_box_style } from '../methods/configurator/initialTypes/element_types'
+import { build_initial_compartment_type, get_default_compartment_style } from '../methods/configurator/initialTypes/compartment_types'
+import { generate_id } from '../../../libs/platform/lib'
+import { build_compartment } from '../methods/diagrams/compartments'
 
 Meteor.methods({
 

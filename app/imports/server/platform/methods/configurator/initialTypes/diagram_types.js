@@ -1,4 +1,4 @@
-import { generate_id } from '/imports/libs/platform/lib'
+import { generate_id } from '../../../../../libs/platform/lib'
 
 function build_initial_diagram_type(list, editor_type) {
 

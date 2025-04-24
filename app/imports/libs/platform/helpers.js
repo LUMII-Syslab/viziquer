@@ -1,4 +1,4 @@
-import { Tools } from '/imports/db/platform/collections'
+import { Tools } from '../../db/platform/collections'
 
 function fill_priorities() {
 	return [

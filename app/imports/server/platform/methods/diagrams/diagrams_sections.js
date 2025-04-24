@@ -1,5 +1,5 @@
-import { is_project_version_admin } from '/imports/libs/platform/user_rights'
-import { DiagramFiles } from '/imports/db/platform/collections'
+import { is_project_version_admin } from '../../../../libs/platform/user_rights'
+import { DiagramFiles } from '../../../../db/platform/collections'
 
 Meteor.methods({
 
