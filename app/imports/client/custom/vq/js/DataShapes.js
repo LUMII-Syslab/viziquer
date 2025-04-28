@@ -173,7 +173,7 @@ const getPList = async (vq_obj) => {
 
 	const link_list =  await vq_obj.getLinks();
 
-	let link_list_filtered = link_list.map( function(l) { const type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
+	let link_list_filtered = link_list.map(async function(l) { const type = (l.start ? 'in': 'out'); return {name: await l.link.getName(), t:await l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
 	_.each(link_list_filtered, function(link) {
 		if (link.name !== null && link.name !== undefined && link.name.substring(0,1) === '^') {
 			link.name = link.name.substring(1,link.name.length);

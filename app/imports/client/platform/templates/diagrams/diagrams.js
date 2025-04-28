@@ -739,7 +739,7 @@ Template.ontologySettings.events({
 					decorateInstancePositionVariable: $("#decorate-instance-position-variable").is(":checked"),
 					decorateInstancePositionConstants: $("#decorate-instance-position-constants").is(":checked"),
 					simpleConditionImplementation: $("#simple-condition-implementation").is(":checked"),
-					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
+					// autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
 					showPrefixesForAllNames: $("#show-prefixes-for-all-names").is(":checked"),
 					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
 					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
@@ -766,13 +766,6 @@ Template.ontologySettings.events({
 
 	},
 	'click #auto-hide-default-property-name' : function() {
-		// var parent_query = {"parentDiagrams.0": {$exists: false}};
-
-		// Diagrams.find(parent_query, {$sort: 1}).map(
-			// function(diagram) {
-				// console.log("rrrrrrr", diagram);
-				// autoHideDefaultPropertyNameForDiagrams(diagram, 1);
-		// });
 
 	},
 
@@ -793,7 +786,7 @@ Template.ontologySettings.events({
 			$("#decorate-instance-position-variable").prop("checked", proj.decorateInstancePositionVariable=="true");
 			$("#decorate-instance-position-constants").prop("checked", proj.decorateInstancePositionConstants=="true");
 			$("#simple-condition-implementation").prop("checked", proj.simpleConditionImplementation=="true");
-			$("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
+			// $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
 			$("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="true");
 			$("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="true");
 			$("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="true");
@@ -1348,16 +1341,6 @@ function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, s
 
 	return diagram;
 }
-
-//function autoHideDefaultPropertyNameForDiagrams(diagram, sort_by){
-//	var id = diagram["_id"];
-//
-	//selecting child diagrams
-//	Diagrams.find({parentDiagrams: id}, {sort: sort_by}).map(
-//		function(child_diagram) {
-//			autoHideDefaultPropertyNameForDiagrams(child_diagram, sort_by);
-//	});
-//}
 
 Template.migrateForm.helpers({
 

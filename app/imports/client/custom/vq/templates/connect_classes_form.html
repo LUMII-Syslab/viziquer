@@ -66,18 +66,18 @@
                     {{/if}}
                 </div>
                 <div class="modal-body" style="overflow-y: auto; overflow-x: hidden;">
-                    {{#if addLongLink.data}}
-                        <p> <span style="color:darkorange;">{{IDS.name}}</span> => <input type="text" class="form-control dialog-combobox input-sm" list="allClassList2" id="classList2" placeholder="Choose class to connect to.." style="width: 50%; display:inline-block;"><button id="choose-second-class-button" style="margin-left: 10px; display:inline-block; ">Ok</button> <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options</button> </p>                        
-                        <datalist id="allClassList2">
-                            {{#each elements}}
-                                <option name="classListV" value="{{name}}"></option>
-                            {{/each}}
-                        </datalist>
-                    {{else}}                        
+                    <!-- {{#if addLongLink.data}} -->
+                        <!-- <p> <span style="color:darkorange;">{{IDS.name}}</span> => <input type="text" class="form-control dialog-combobox input-sm" list="allClassList2" id="classList2" placeholder="Choose class to connect to.." style="width: 50%; display:inline-block;"><button id="choose-second-class-button" style="margin-left: 10px; display:inline-block; ">Ok</button> <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options</button> </p>                         -->
+                        <!-- <datalist id="allClassList2"> -->
+                            <!-- {{#each elements}} -->
+                                <!-- <option name="classListV" value="{{name}}"></option> -->
+                            <!-- {{/each}} -->
+                        <!-- </datalist> -->
+                    <!-- {{else}}                         -->
                         <p><span style="color:darkorange;">{{elements.[0].name}}</span> => <span style="color:darkorange;">{{elements.[1].name}}</span> 
 						<!-- <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options</button>  -->
 						</p>
-                    {{/if}}                    
+                    <!-- {{/if}}                     -->
                     <hr>
                     <!-- <div class="searchBox">                        -->
                         <!-- <input class="form-control" id="searchList" type="text" placeholder="Search.." style="width:90%;display: inline-block;"> -->

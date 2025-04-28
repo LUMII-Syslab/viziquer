@@ -854,10 +854,10 @@ Template.schemaFilter.events({
 				await newLink.setName(prop_name);
 				await newLink.setLinkType("REQUIRED");	                    
 				await newLink.setNestingType("PLAIN");						
-				if (proj && proj.autoHideDefaultPropertyName=="true") { 
-					await newLink.hideDefaultLinkName(true);
-					await newLink.setHideDefaultLinkName("true");
-				}
+				// if (proj && proj.autoHideDefaultPropertyName=="true") { 
+					// await newLink.hideDefaultLinkName(true);
+					// await newLink.setHideDefaultLinkName("true");
+				// }
 			}
 			else {
 				//Create_VQ_Element(function(boo) {

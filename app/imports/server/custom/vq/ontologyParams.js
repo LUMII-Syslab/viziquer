@@ -19,7 +19,7 @@ Meteor.methods({
 															 showCardinalities: list.showCardinalities,
 															 decorateInstancePositionVariable: list.decorateInstancePositionVariable,
 															 decorateInstancePositionConstants: list.decorateInstancePositionConstants,
-															 autoHideDefaultPropertyName: list.autoHideDefaultPropertyName,
+															 // autoHideDefaultPropertyName: list.autoHideDefaultPropertyName,
 															 showPrefixesForAllNames: list.showPrefixesForAllNames,
 															 showPrefixesForAllNonLocalNames: list.showPrefixesForAllNonLocalNames,
 															 completeRDFBoxesInDatetimeFunctions: list.completeRDFBoxesInDatetimeFunctions,

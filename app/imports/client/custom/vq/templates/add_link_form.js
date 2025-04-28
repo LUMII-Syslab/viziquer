@@ -171,10 +171,10 @@ Interpreter.customMethods({
 		await lnk.setLinkType("REQUIRED");
 		await lnk.setNestingType("PLAIN");
 
-		if (proj && proj.autoHideDefaultPropertyName === true) {
-			await lnk.hideDefaultLinkName(true); // assuming it's async now
-			lnk.setHideDefaultLinkName("true");
-		}
+		// if (proj && proj.autoHideDefaultPropertyName === true) {
+			// await lnk.hideDefaultLinkName(true); // assuming it's async now
+			// lnk.setHideDefaultLinkName("true");
+		// }
 
 		Template.AggregateWizard.endClassId.set(cl.obj._id);
 		
@@ -423,10 +423,10 @@ Template.AddLink.events({
 				else if (linkType === "NESTED")
 					await lnk.setNestingType("SUBQUERY");
 
-				if (proj && proj.autoHideDefaultPropertyName === true) {
-					await lnk.hideDefaultLinkName(true);
-					lnk.setHideDefaultLinkName("true");
-				}
+				// if (proj && proj.autoHideDefaultPropertyName === true) {
+					// await lnk.hideDefaultLinkName(true);
+					// lnk.setHideDefaultLinkName("true");
+				// }
 
 			} else {
 				locLink = [coordX, newPosition.y, coordX, coordY];
@@ -443,10 +443,10 @@ Template.AddLink.events({
 				else if (linkType === "NESTED")
 					await lnk.setNestingType("SUBQUERY");
 
-				if (proj && proj.autoHideDefaultPropertyName === true) {
-					await lnk.hideDefaultLinkName(true);
-					lnk.setHideDefaultLinkName("true");
-				}
+				// if (proj && proj.autoHideDefaultPropertyName === true) {
+					// await lnk.hideDefaultLinkName(true);
+					// lnk.setHideDefaultLinkName("true");
+				// }
 			}
 
 			Template.AggregateWizard.endClassId.set(cl.obj._id);
@@ -640,7 +640,7 @@ Template.AddLink.events({
 	},
 
 	"click #add-long-link": function() {
-		//Generate data for Connect Classes
+		/*//Generate data for Connect Classes
 		var data = [];
 		var count = 0;
 		var activeClass = new VQ_Element(Session.get("activeElement"));
@@ -682,7 +682,7 @@ Template.AddLink.events({
 		// console.log("Connect classes activated");
 		//Hide Add Link 
 		clearAddLinkInput();
-		$("#add-link-form").modal("hide");
+		$("#add-link-form").modal("hide");*/
 	},
 	
 	

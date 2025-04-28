@@ -996,10 +996,10 @@ VQ_Element.prototype = {
   },
   // --> bool
 	// returns true if "Hide default link name" checkbox is checked
-  shouldHideDefaultLinkName: function() {
-  	let val = this.getCompartmentValue("Hide default link name");
-		return val == "true" || val == true;
-	},
+  // shouldHideDefaultLinkName: function() {
+  	// let val = this.getCompartmentValue("Hide default link name");
+		// return val == "true" || val == true;
+	// },
 	// --> string
 	// Determines which end of the link is towards the root
 	// returns "start","end" or "none"
@@ -1035,17 +1035,17 @@ VQ_Element.prototype = {
 	},
 	// bool -->
 	// hides or shows link name if it is default; true - hide, false - show
-	hideDefaultLinkName: function(hide, input, value) {
-		if (hide) {
-			if (this.isDefaultLink()) {
-				this.setLinkNameVisibility(false, input, value);
-			} else {
-				this.setLinkNameVisibility(true, input, value);
-			}
-		} else {
-			this.setLinkNameVisibility(true, input, value);
-		}
-	},
+	// hideDefaultLinkName: function(hide, input, value) {
+		// if (hide) {
+			// if (this.isDefaultLink()) {
+				// this.setLinkNameVisibility(false, input, value);
+			// } else {
+				// this.setLinkNameVisibility(true, input, value);
+			// }
+		// } else {
+			// this.setLinkNameVisibility(true, input, value);
+		// }
+	// },
 	// function which in fact should be in the schema
 	// --> bool
 	// Determines whether the link is the only possible option between two classes
@@ -1122,35 +1122,35 @@ VQ_Element.prototype = {
   },
 	// bool -->
 	// sets the link name compartment's visibility
-	setLinkNameVisibility: function(visible, input, value) {
-		if (this.isLink()) {
-			var elem_type_id = this.obj["elementTypeId"];
-	    var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: elem_type_id});
-	    if (comp_type) {
-	      var comp_type_id = comp_type["_id"];
-	      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
-	      if (comp) {
-					  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
+	// setLinkNameVisibility: function(visible, input, value) {
+		// if (this.isLink()) {
+			// var elem_type_id = this.obj["elementTypeId"];
+	    // var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: elem_type_id});
+	    // if (comp_type) {
+	      // var comp_type_id = comp_type["_id"];
+	      // var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
+	      // if (comp) {
+					  // var a = { "compartmentStyleUpdate": {"style.visible":visible}};
 
-					  if (_.isUndefined(input)) {
-					  	input = comp["input"];
-					  }
+					  // if (_.isUndefined(input)) {
+					  	// input = comp["input"];
+					  // }
 
-					  if (_.isUndefined(value)) {
-					  	value = comp["value"];
-					  }
+					  // if (_.isUndefined(value)) {
+					  	// value = comp["value"];
+					  // }
 
-            a["input"] = input;
-						a["value"] = value;
-						a["id"] = comp["_id"];
-						a["projectId"] = Session.get("activeProject");
-			 			a["versionId"] = Session.get("versionId");
+            // a["input"] = input;
+						// a["value"] = value;
+						// a["id"] = comp["_id"];
+						// a["projectId"] = Session.get("activeProject");
+			 			// a["versionId"] = Session.get("versionId");
 
-			 			Utilities.callMeteorMethod("updateCompartment", a);
-	      };
-		};
-	};
-	},
+			 			// Utilities.callMeteorMethod("updateCompartment", a);
+	      // };
+		// };
+	// };
+	// },
   // string, bool -->
 	// sets comartments visibility
 	setCompartmentVisibility: function(compartmentName,visible, input, value) {
@@ -1498,9 +1498,9 @@ VQ_Element.prototype = {
 		 // this.setCompartmentValue("Inverse Link",value,"");
 	// },
 
-	setHideDefaultLinkName: function(value) {
-		 this.setCompartmentValue("Hide default link name",value,value);
-	},
+	// setHideDefaultLinkName: function(value) {
+		 // this.setCompartmentValue("Hide default link name",value,value);
+	// },
 	//sets compartment value (input and value)
 	// string, string, string, bool? -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
   // If insert mode is true then new compartment is inserted regardless of existence
@@ -2538,10 +2538,10 @@ class VQ_Element_Async{
   }
   // --> bool
 	// returns true if "Hide default link name" checkbox is checked
-  shouldHideDefaultLinkName() {
-  	let val = this.getCompartmentValue("Hide default link name");
-		return val == "true" || val == true;
-	}
+  // shouldHideDefaultLinkName() {
+  	// let val = this.getCompartmentValue("Hide default link name");
+		// return val == "true" || val == true;
+	// }
 	// --> string
 	// Determines which end of the link is towards the root
 	// returns "start","end" or "none"
@@ -2578,17 +2578,17 @@ class VQ_Element_Async{
 
 	// bool -->
 	// hides or shows link name if it is default; true - hide, false - show
-	async hideDefaultLinkName(hide, input, value) {
-		if (hide) {
-			if (await this.isDefaultLink()) {
-				await this.setLinkNameVisibility(false, input, value);
-			} else {
-				await this.setLinkNameVisibility(true, input, value);
-			}
-		} else {
-			await this.setLinkNameVisibility(true, input, value);
-		}
-	}
+	// async hideDefaultLinkName(hide, input, value) {
+		// if (hide) {
+			// if (await this.isDefaultLink()) {
+				// await this.setLinkNameVisibility(false, input, value);
+			// } else {
+				// await this.setLinkNameVisibility(true, input, value);
+			// }
+		// } else {
+			// await this.setLinkNameVisibility(true, input, value);
+		// }
+	// }
 	// function which in fact should be in the schema
 	// --> bool
 	// Determines whether the link is the only possible option between two classes
@@ -2665,35 +2665,35 @@ class VQ_Element_Async{
   }
 	// bool -->
 	// sets the link name compartment's visibility
-	async setLinkNameVisibility(visible, input, value) {
-		if (this.isLink()) {
-			var elem_type_id = this.obj["elementTypeId"];
-	    var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: elem_type_id});
-	    if (comp_type) {
-	      var comp_type_id = comp_type["_id"];
-	      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
-	      if (comp) {
-					  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
+	// async setLinkNameVisibility(visible, input, value) {
+		// if (this.isLink()) {
+			// var elem_type_id = this.obj["elementTypeId"];
+	    // var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: elem_type_id});
+	    // if (comp_type) {
+	      // var comp_type_id = comp_type["_id"];
+	      // var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
+	      // if (comp) {
+					  // var a = { "compartmentStyleUpdate": {"style.visible":visible}};
 
-					  if (_.isUndefined(input)) {
-					  	input = comp["input"];
-					  }
+					  // if (_.isUndefined(input)) {
+					  	// input = comp["input"];
+					  // }
 
-					  if (_.isUndefined(value)) {
-					  	value = comp["value"];
-					  }
+					  // if (_.isUndefined(value)) {
+					  	// value = comp["value"];
+					  // }
 
-            a["input"] = input;
-						a["value"] = value;
-						a["id"] = comp["_id"];
-						a["projectId"] = Session.get("activeProject");
-			 			a["versionId"] = Session.get("versionId");
+            // a["input"] = input;
+						// a["value"] = value;
+						// a["id"] = comp["_id"];
+						// a["projectId"] = Session.get("activeProject");
+			 			// a["versionId"] = Session.get("versionId");
 
-			 			await Utilities.callMeteorMethodAsync("updateCompartment", a);
-	      };
-		};
-	};
-	}
+			 			// await Utilities.callMeteorMethodAsync("updateCompartment", a);
+	      // };
+		// };
+	// };
+	// }
   // string, bool -->
 	// sets comartments visibility
 	async setCompartmentVisibility(compartmentName,visible, input, value) {
@@ -2883,7 +2883,7 @@ class VQ_Element_Async{
 				var setGSub = "false";
 				var setCond = "false";
 				var setGraph = "false";
-        var root_dir =this.getRootDirection();
+        var root_dir =await this.getRootDirection();
 				if (value=="SUBQUERY") {
 					  setSub = "true";
 						setGSub = "false";
@@ -3041,9 +3041,9 @@ class VQ_Element_Async{
 		 // this.setCompartmentValue("Inverse Link",value,"");
 	// },
 
-	setHideDefaultLinkName(value) {
-		 this.setCompartmentValue("Hide default link name",value,value);
-	}
+	// setHideDefaultLinkName(value) {
+		 // this.setCompartmentValue("Hide default link name",value,value);
+	// }
 	//sets compartment value (input and value)
 	// string, string, string, bool? -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
   // If insert mode is true then new compartment is inserted regardless of existence

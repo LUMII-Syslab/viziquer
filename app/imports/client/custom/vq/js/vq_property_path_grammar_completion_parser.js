@@ -3847,8 +3847,7 @@ var p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, eleme
 						const endElement = await options.link.getEndElement();
 						const elFrom = await startElement.getName();
 						const elTo = await endElement.getName();
-
-						props = await dataShapes.getProperties(params, elFrom, elTo);
+						props = await dataShapes.getProperties(params, startElement, endElement);
 					} else {
 						let params = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}};
 						if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {

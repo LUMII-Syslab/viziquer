@@ -13,7 +13,7 @@ Interpreter.customMethods({
 	linkChangeDirection: async function(){
 		let elem = await createVQ_Element(Session.get("activeElement"));
 		
-		let linkElements =  elem.getElements();
+		let linkElements =  await elem.getElements();
 		let startClass = linkElements.start;
 		let endClass = linkElements.end;
 		let locLink = elem.obj.points;
@@ -27,48 +27,22 @@ Interpreter.customMethods({
 		
 		let res = getPathFullGrammarChangeDirection(parsed_exp).path;
 		name = res.split("!!!!!").reverse().join(".");
-		// elem.setName(name);
-		
-		// let editor = Interpreter.editor;
-		// let element_list = editor.getElements();
-		
-		// let linkElement2 = Elements.findOne({_id: Session.get("activeElement")});
-		// let linkElement = element_list[Session.get("activeElement")];
-		// let vq_link_obj = new VQ_Element(Session.get("activeElement"));
-		
-		// linkElement.startElementId = endClass.obj._id;
-		// linkElement.endElementId = startClass.obj._id;
-		// let tempStartElement = linkElement.startElement;
-		// let tempEndElement = linkElement.endElement;
-		// linkElement.startElement = tempEndElement;
-		// linkElement.endElement = tempStartElement;
-		
-		// linkElement2.points = [locLinkTempX2, locLinkTempY2, locLinkTempX1, locLinkTempY1];
-		
-		// linkElement["elementId"] = Session.get("activeElement")
-		// linkElement["projectId"] = Session.get("activeProject");
-		// linkElement["versionId"] = Session.get("versionId");
 
-		// Utilities.callMeteorMethod("updateElementStyle", linkElement);
-		
 		var NestingTypeMap = {"Join":"PLAIN", "Subquery":"SUBQUERY","Subquery + Global":"GLOBAL_SUBQUERY", "Graph to contents":"GRAPH", "Reference":"CONDITION"};
-		var nestingType = elem.getNestingType();
-		if(typeof NestingTypeMap[elem.getNestingType()] !== "undefined") nestingType = NestingTypeMap[elem.getNestingType()];
+		var nestingType = await elem.getNestingType();
+		if(typeof NestingTypeMap[await elem.getNestingType()] !== "undefined") nestingType = NestingTypeMap[await elem.getNestingType()];
 
 		let lintType = "REQUIRED";
 		if(await elem.isOptional())lintType = "OPTIONAL";
 		else if(await elem.isNegation())lintType = "NOT";
 		else if(await elem.isFilterExists())lintType = "FILTER_EXISTS";
 		let newLoc = [locLinkTempX2, locLinkTempY2, locLinkTempX1, locLinkTempY1];
-		Create_VQ_Element(function(lnk) {
-	       lnk.setName(name);
-	       lnk.setLinkType(lintType);	                    
-	       // lnk.setNestingType(NestingTypeMap[elem.getNestingType()]);						
-	       lnk.setNestingType(nestingType);						
-			
-	   }, newLoc, true, endClass,startClass);
-	   
-	   
+		let linkLine = await Create_VQ_Element_Async(newLoc, true, endClass,startClass);
+	
+		await linkLine.setName(name);
+		await linkLine.setLinkType(lintType);
+		await linkLine.setNestingType(nestingType);
+
 	    let list = {
 			elements: [ Session.get("activeElement") ],
 			elementNames: [ Session.get("activeElement")+'(Link)' ],
@@ -320,7 +294,7 @@ Interpreter.customMethods({
   
 	VQgetAggregateNames: function() {
 		
-		 var act_elem = Session.get("activeElement");
+		/* var act_elem = Session.get("activeElement");
 		 if (!act_elem) {
  			return [];
  		}
@@ -332,11 +306,11 @@ Interpreter.customMethods({
  		var elem_type = ElementTypes.findOne({name: "Class"});
  		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
  			return [];
- 		}
+ 		}*/
 
  		//Active element is given as Class type element
  		var atr_names = [];
-
+/*
  		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 
  		if (act_el) {
@@ -413,12 +387,12 @@ Interpreter.customMethods({
 
  	 	// return atr_names;
  		atr_names = _.sortBy(atr_names, "input");
-
+*/
 		atr_names = _.union([{input:"count(.)",value:"count(.)"},{input:"count_distinct(.)",value:"count_distinct(.)"}], atr_names);
 
- 	 	atr_names = _.uniq(atr_names, false, function(item) {
- 	 		return item["input"];
- 	 	});
+ 	 	// atr_names = _.uniq(atr_names, false, function(item) {
+ 	 		// return item["input"];
+ 	 	// });
 
  		return atr_names;
 
@@ -434,7 +408,7 @@ Interpreter.customMethods({
 			 await elem.setNestingType(lt);
 		}
 	},
-
+	
 	VQsetIsSubquery: async function(params) {
 		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
@@ -505,15 +479,8 @@ Interpreter.customMethods({
 		}
 	},
 
-	VQsetNestingType: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
-		if (c) {
-			 var nestingType = params["value"];
-			 var elem =  new VQ_Element(c["elementId"]);
-			 elem.setNestingType(nestingType);
-		}
-	},
-	VQsetNestingTypeAsync: async function(params) {
+
+	VQsetNestingType: async function(params) {
 		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
 		if (c) {
 			 var nestingType = params["value"];
@@ -523,13 +490,13 @@ Interpreter.customMethods({
 	},
 
 	VQSetHideDefaultLinkName: async function(params) {
-		var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
-		if (c) {
-			 var input = params["input"];
-			 var hide = (input == "true");
-			 var elem = await createVQ_Element(c["elementId"]);
-			 elem.hideDefaultLinkName(hide);
-		}
+		// var c = await Compartments.findOneAsync({_id:params["compartmentId"]});
+		// if (c) {
+			 // var input = params["input"];
+			 // var hide = (input == "true");
+			 // var elem = await createVQ_Element(c["elementId"]);
+			 // elem.hideDefaultLinkName(hide);
+		// }
 	},
 
 	VQbeforeCreateLink: async function(params) {
@@ -612,8 +579,7 @@ Interpreter.customMethods({
 	VQsetSubQueryInverseLink: function() {
 		//arrow ->compartments->Inverse Link->extensions->after Update
 		//params: (compartType, compartId)
-		// console.log("SSSAAASSS");
-		var ct = CompartmentTypes.findOne({name: "Inverse Link"});
+		/*var ct = CompartmentTypes.findOne({name: "Inverse Link"});
 		var ctn = CompartmentTypes.findOne({name: "Name", elementTypeId: Session.get("activeElementType")});
 		var act_elem = Session.get("activeElement");
 
@@ -638,17 +604,17 @@ Interpreter.customMethods({
 					Dialog.updateCompartmentValue(ctn, act_elem, name, name, cn["_id"]);
 				}
 			}
-		}
+		}*/
 	},
 
 	VQsetLinkName: function(params) {
-		var c = Compartments.findOne({_id:params["compartmentId"]});
+		/*var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var link = new VQ_Element(c["elementId"]);
 			 link.hideDefaultLinkName(link.shouldHideDefaultLinkName(), params["input"], params["value"]);
 
 			 // link.setIsInverseLink(c["value"].substring(0,4)=="inv(");
-		}
+		}*/
 	},
 
 	VQsetClassName: async function(params) {
@@ -672,11 +638,11 @@ Interpreter.customMethods({
 
        		const links = await elem.getLinks(); // links = [{link: VQ_Element, start: bool}, ...]
 
-			for (const l of links) {
-			  const link = l.link;
-			  const shouldHide = link.shouldHideDefaultLinkName();
-			  await link.hideDefaultLinkName(shouldHide);
-			}
+			// for (const l of links) {
+			  // const link = l.link;
+			  // const shouldHide = link.shouldHideDefaultLinkName();
+			  // await link.hideDefaultLinkName(shouldHide);
+			// }
 		}
 	},
 
@@ -699,12 +665,12 @@ Interpreter.customMethods({
 	},
 
 	VQSetHideDefaultLinkValue: function(a,b,c){
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj && proj.autoHideDefaultPropertyName == true) {
-			 return "true";
-		} else {
-			 return "false";
-		};
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		// if (proj && proj.autoHideDefaultPropertyName == true) {
+			 // return "true";
+		// } else {
+			 // return "false";
+		// };
 	},
 		
 	VQsetSubQueryNameSuffix: function(val) {
@@ -1135,9 +1101,29 @@ Interpreter.customMethods({
 		return true;
 	},
 
-	setIsVisibleForIndirectClassMembership: async function() {
+	setIsVisibleForIndirectClassMembership: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			if(proj.indirectClassMembershipRole === null) return false;
+			  var directClassMembershipRole;
+			  var indirectClassMembershipRole;
+			  if (proj.directClassMembershipRole) directClassMembershipRole = proj.directClassMembershipRole;
+			  else directClassMembershipRole = "";
+			  if (proj.indirectClassMembershipRole)indirectClassMembershipRole =  proj.indirectClassMembershipRole;
+			  else indirectClassMembershipRole = "";
+				
+				console.log("directClassMembershipRole", directClassMembershipRole, indirectClassMembershipRole)
+				
+			  if(directClassMembershipRole == indirectClassMembershipRole) return false;
+			  return true;
+		}
+		return false;
+	},
+	
+	setIsVisibleForIndirectClassMembershipAsync: async function() {
 		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		if (proj) {
+			  if(proj.indirectClassMembershipRole === null) return false;
 			  var directClassMembershipRole;
 			  var indirectClassMembershipRole;
 			  if (proj.directClassMembershipRole) directClassMembershipRole = proj.directClassMembershipRole;
@@ -1151,7 +1137,15 @@ Interpreter.customMethods({
 		return false;
 	},
 		
-	setIsVisibleForLabelService: async function() {
+	setIsVisibleForLabelService: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});		
+		if (proj) {
+			if (proj.enableWikibaseLabelServices == true) return true;
+		}
+		return false;
+	},
+	
+	setIsVisibleForLabelServiceAsync: async function() {
 		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});		
 		if (proj) {
 			if (proj.enableWikibaseLabelServices == true) return true;
@@ -1222,30 +1216,26 @@ Interpreter.customMethods({
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			Interpreter.destroyErrorMsg();
 
-			var currentElement = new VQ_Element(selected_elem_id);
-			if (currentElement.isClass() && currentElement.isRoot()) {
+			var currentElement = await createVQ_Element(selected_elem_id);
+			if (await currentElement.isClass() && await currentElement.isRoot()) {
 				await currentElement.setClassStyle("condition");
 				//coordinates to place new Box and create link
 				var d = 60; //distance between boxes
-				var locClass = currentElement.getNewLocation(d); 
+				var locClass = await currentElement.getNewLocation(d); 
 				var coordX = locClass.x + Math.round(locClass.width/2);
 				var coordY = locClass["y"] - d; 
 				var locLink = [coordX, locClass.y, coordX, coordY];
 				
-				Create_VQ_Element(function(cl){
-					cl.setName("[ ]");
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);					
-					Create_VQ_Element(function(lnk) {
-						lnk.setName("++");
-						lnk.setLinkType("REQUIRED");
-						lnk.setNestingType("SUBQUERY");
-						// var proj = Projects.findOne({_id: Session.get("activeProject")});
-						// lnk.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
-				 	}, locLink, true, cl, currentElement);
-
-					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
-				}, locClass);											
+				let cl = await Create_VQ_Element_Async(locClass);
+				await cl.setName("[ ]");
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				await cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);	
+				
+				let lnk = await Create_VQ_Element_Async(locLink, true, cl, currentElement);
+				await lnk.setName("++");
+				await lnk.setLinkType("REQUIRED");
+				await lnk.setNestingType("SUBQUERY");
+															
 			} else {
 				Interpreter.showErrorMsg("Outer class can be added only to main query class (orange box).", -3);
 			}

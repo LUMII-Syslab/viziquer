@@ -194,7 +194,7 @@ Interpreter.customMethods({
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: usedClasses[0].name, fromID: usedClasses[0].id, toName: usedClasses[1].name, toID: usedClasses[1].id});
 
-				$("#not-show-as-property-path")[0].checked = false;
+				// $("#not-show-as-property-path")[0].checked = false;
 				// $("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
 				$("#connect-classes-form").modal("show");
 				console.log("link with classes");
@@ -422,10 +422,10 @@ Template.ConnectClasses.events({
 				await lnk.setLinkType("REQUIRED");
 				await lnk.setNestingType(nesting);
 
-				if (proj && proj.autoHideDefaultPropertyName === true) {
-					await lnk.hideDefaultLinkName(true);
-					lnk.setHideDefaultLinkName("true");
-				}
+				// if (proj && proj.autoHideDefaultPropertyName === true) {
+					// await lnk.hideDefaultLinkName(true);
+					// lnk.setHideDefaultLinkName("true");
+				// }
 
 				Template.AggregateWizard.endClassId.set(cl.obj._id);
 	            
@@ -470,10 +470,10 @@ Template.ConnectClasses.events({
 				await lnk.setLinkType("REQUIRED");
 				await lnk.setNestingType(nesting);
 
-				if (proj && proj.autoHideDefaultPropertyName === true) {
-					await lnk.hideDefaultLinkName(true);
-					lnk.setHideDefaultLinkName("true");
-				}
+				// if (proj && proj.autoHideDefaultPropertyName === true) {
+					// await lnk.hideDefaultLinkName(true);
+					// lnk.setHideDefaultLinkName("true");
+				// }
 
 
 				// Create_VQ_Element(function(lnk) {
@@ -919,10 +919,10 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 			await lnk.setLinkType("REQUIRED");
 			await lnk.setNestingType(nesting);
 
-			if (proj && proj.autoHideDefaultPropertyName === true) {
-				await lnk.hideDefaultLinkName(true);
-				lnk.setHideDefaultLinkName("true");
-			}
+			// if (proj && proj.autoHideDefaultPropertyName === true) {
+				// await lnk.hideDefaultLinkName(true);
+				// lnk.setHideDefaultLinkName("true");
+			// }
 
 			
             // Create_VQ_Element(function(lnk) {
@@ -947,10 +947,10 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 			await lnk.setLinkType("REQUIRED");
 			await lnk.setNestingType(nesting);
 
-			if (proj && proj.autoHideDefaultPropertyName === true) {
-				await lnk.hideDefaultLinkName(true);
-				lnk.setHideDefaultLinkName("true");
-			}
+			// if (proj && proj.autoHideDefaultPropertyName === true) {
+				// await lnk.hideDefaultLinkName(true);
+				// lnk.setHideDefaultLinkName("true");
+			// }
 
         	// Create_VQ_Element(function(lnk) {
                 // lnk.setName(chain[0].link);
@@ -999,10 +999,10 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 			await lnk.setLinkType("REQUIRED");
 			await lnk.setNestingType(nesting);
 
-			if (proj && proj.autoHideDefaultPropertyName === true) {
-				await lnk.hideDefaultLinkName(true);
-				lnk.setHideDefaultLinkName("true");
-			}
+			// if (proj && proj.autoHideDefaultPropertyName === true) {
+				// await lnk.hideDefaultLinkName(true);
+				// lnk.setHideDefaultLinkName("true");
+			// }
 		} else {
 			locLink = [coordX, newPosition.y, coordX, coordY];
 
@@ -1012,10 +1012,10 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 			await lnk.setLinkType("REQUIRED");
 			await lnk.setNestingType(nesting);
 
-			if (proj && proj.autoHideDefaultPropertyName === true) {
-				await lnk.hideDefaultLinkName(true);
-				lnk.setHideDefaultLinkName("true");
-			}
+			// if (proj && proj.autoHideDefaultPropertyName === true) {
+				// await lnk.hideDefaultLinkName(true);
+				// lnk.setHideDefaultLinkName("true");
+			// }
 		}
 
 		const newChain = _.rest(chain);
