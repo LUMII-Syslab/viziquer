@@ -5,7 +5,7 @@ import { generate_id } from '../../../../libs/platform/lib'
 import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments, 
   // Posts, ForumPosts,
 } from '../../../../db/platform/collections'
-import { Schema } from '../../../../db/custom/vq/collections'
+// import { Schema } from '../../../../db/custom/vq/collections'
 import { get_unknown_public_user_name } from '../../_helpers'
 
 //creating a new project version and adds the project creator to the project
