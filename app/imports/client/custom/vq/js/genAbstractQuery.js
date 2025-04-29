@@ -1149,14 +1149,10 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
   var root_elements = [];
 
 	for (const e of element_list) {
-	  console.log("SSSSSSSSSSSSSSSS", e)
 	  if (await e.isRoot()) {
 		root_elements.push(e);
 	  }
 	}
-
-
-	console.log("TTTTTTTTTTTTTTTTTTTT", root_elements, element_list, elements_raw)
 
   // map each root element to AST
   return await Promise.all(_.map(root_elements, async function(e) {
@@ -1453,7 +1449,6 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
      }
    };
     const graphsServiceValue = await getSchemaNameFromGraphService(await e.getGraphsServices());
-	console.log("graphsService2", graphsServiceValue);
 	const links = await e.getLinks();
 	const conditionLinks = (await Promise.all(
 	  links.map(async (l) => await genConditionalLink(l))
@@ -1512,7 +1507,6 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 	// getConnectedClasses(classAccessTable);
 	// query_in_abstract_syntax["classAccessTable"] = classAccessTable;
 	// printClassAccessTable(classAccessTable, "");
-	 console.log("IIIIIIIIIIIIIIIII", query_in_abstract_syntax)
     return query_in_abstract_syntax;
  }));
 };

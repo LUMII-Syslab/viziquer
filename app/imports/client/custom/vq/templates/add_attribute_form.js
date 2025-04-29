@@ -1003,9 +1003,9 @@ async function getAttributes(filter, waiting){
 					
 					var newStartElement = vq_obj;
 					if ((await vq_obj.isUnion() || await vq_obj.isUnit()) && !(await vq_obj.isRoot())) { // [ + ] element, that has link to upper class 
-						if (vq_obj.getLinkToRoot()){
-							var element = vq_obj.getLinkToRoot().link.getElements();
-							if (vq_obj.getLinkToRoot().start) {
+						if (await vq_obj.getLinkToRoot()){
+							var element = await vq_obj.getLinkToRoot().link.getElements();
+							if (await vq_obj.getLinkToRoot().start) {
 								newStartElement = await createVQ_Element(element.start.obj._id);
 							} else {
 								newStartElement = await createVQ_Element(element.end.obj._id);						
@@ -1021,7 +1021,7 @@ async function getAttributes(filter, waiting){
 						param.schema = schemaName;
 					}
 					// console.log("schemaName", scName, dataShapes.schema.schema);
-					console.log("AAAAAAAAAAAAAAA", param, newStartElement)
+					
 					var prop = await dataShapes.getProperties(param, newStartElement);
 
 					if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
@@ -1101,9 +1101,9 @@ async function getAssociations(filter){
 			
 			var newStartElement = vq_obj;
 			if ((await vq_obj.isUnion() || await vq_obj.isUnit()) && !(await vq_obj.isRoot())) { // [ + ] element, that has link to upper class 
-				if (vq_obj.getLinkToRoot()){
-					var element = vq_obj.getLinkToRoot().link.getElements();
-					if (vq_obj.getLinkToRoot().start) {
+				if (await vq_obj.getLinkToRoot()){
+					var element = await vq_obj.getLinkToRoot().link.getElements();
+					if (await vq_obj.getLinkToRoot().start) {
 						newStartElement = await createVQ_Element(element.start.obj._id);
         			} else {
         				newStartElement = await createVQ_Element(element.end.obj._id);						

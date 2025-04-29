@@ -21194,9 +21194,9 @@ options = arguments[1];
 						
 						var newStartElement = act_el;
 						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class 
-							if (act_el.getLinkToRoot()){
-								var element = act_el.getLinkToRoot().link.getElements();
-								if (act_el.getLinkToRoot().start) {
+							if (await act_el.getLinkToRoot()){
+								var element = await act_el.getLinkToRoot().link.getElements();
+								if (await act_el.getLinkToRoot().start) {
 									newStartElement = await createVQ_Element(element.start.obj._id);
 								} else {
 									newStartElement = await createVQ_Element(element.end.obj._id);						
@@ -21256,9 +21256,9 @@ options = arguments[1];
     			if((await act_el.isUnit() != true && await act_el.isUnion() != true) || !(await act_el.isRoot())) {	
 					var newStartElement = act_el;
 						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class 
-							if (act_el.getLinkToRoot()){
-								var element = act_el.getLinkToRoot().link.getElements();
-								if (act_el.getLinkToRoot().start) {
+							if (await act_el.getLinkToRoot()){
+								var element = await act_el.getLinkToRoot().link.getElements();
+								if (await act_el.getLinkToRoot().start) {
 									newStartElement = await createVQ_Element(element.start.obj._id);
 								} else {
 									newStartElement = await createVQ_Element(element.end.obj._id);						
@@ -21589,9 +21589,9 @@ options = arguments[1];
 					var newStartElement = act_el;
 					var className = options.className;
 					if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class 
-						if (act_el.getLinkToRoot()){
-							var element = act_el.getLinkToRoot().link.getElements();
-							if (act_el.getLinkToRoot().start) {
+						if (await act_el.getLinkToRoot()){
+							var element = await act_el.getLinkToRoot().link.getElements();
+							if (await act_el.getLinkToRoot().start) {
 								newStartElement = await createVQ_Element(element.start.obj._id);
 								className = await newStartElement.getName();
 							} else {
@@ -21775,9 +21775,9 @@ options = arguments[1];
 						var newStartElement = act_el;
 						var className = options.className;
 						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class 
-							if (act_el.getLinkToRoot()){
-								var element = act_el.getLinkToRoot().link.getElements();
-								if (act_el.getLinkToRoot().start) {
+							if (await act_el.getLinkToRoot()){
+								var element = await act_el.getLinkToRoot().link.getElements();
+								if (await act_el.getLinkToRoot().start) {
 									newStartElement = await createVQ_Element(element.start.obj._id);
 									className = await newStartElement.getName();
 								} else {

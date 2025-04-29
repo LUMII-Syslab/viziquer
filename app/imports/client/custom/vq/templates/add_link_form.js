@@ -900,9 +900,9 @@ async function getAllAssociations(){
 				var newStartElement = startElement;
 				
 				if ((await startElement.isUnion() || await startElement.isUnit()) && !(await startElement.isRoot())) { // [ + ] element, that has link to upper class 
-					if (startElement.getLinkToRoot()){
-						var element = startElement.getLinkToRoot().link.getElements();
-						if (startElement.getLinkToRoot().start) {
+					if (await startElement.getLinkToRoot()){
+						var element = await startElement.getLinkToRoot().link.getElements();
+						if (await startElement.getLinkToRoot().start) {
 							newStartElement = await createVQ_Element(element.start.obj._id);
 							
 							className = await newStartElement.getName();
@@ -1033,7 +1033,7 @@ async function getAllAssociations(){
       			if (className != null && className.indexOf("[") == -1) {      				
       				selfName = className;
       			} else {
-					var linkUp = startElement.getLinkToRoot(); 
+					var linkUp = await startElement.getLinkToRoot(); 
 					if (!linkUp || linkUp == undefined) {
 						selfName = "";
 					} else {

@@ -2515,12 +2515,17 @@ class VQ_Element_Async{
 
   // --> {link:VQ_Element, start:bool}
   // returns a link leading to the root (UP direction) or undefined if not exist
-  getLinkToRoot() {
-    return _.find(this.getLinks(), function(l) {
-      var root_direction = l.link.getRootDirection();
-      return (root_direction == "start" && l.start || root_direction == "end" && !l.start)
-    });
+  async getLinkToRoot() {
+	  let links = await this.getLinks();
+	  for (const l of links) {
+		const root_direction = await l.link.getRootDirection();
+		if ((root_direction == "start" && l.start) || (root_direction == "end" && !l.start)) {
+		  return l;
+		}
+	  }
+	  return null; // if no matching link found
   }
+
   // --> {start:VQ_Element, end:VQ_element}
   // Returns link's start and end VQ_Elements
   async getElements() {
@@ -3359,9 +3364,9 @@ class VQ_Element_Async{
     	if (await classObj.isRoot()){
     		return classObj.obj._id;
     	} else {
-    		if (classObj.getLinkToRoot()){
+    		if (await classObj.getLinkToRoot()){
     			var elements = await classObj.getLinkToRoot().link.getElements();
-    			if (classObj.getLinkToRoot().start) {
+    			if (await classObj.getLinkToRoot().start) {
     				return await elements.start.getRootId();
     			} else {
     				return await elements.end.getRootId();

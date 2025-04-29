@@ -512,7 +512,7 @@ Interpreter.customMethods({
 			// console.log("inside one query");
 			return true;
 		} else if (!(await startLink.isRoot()) && !(await endLink.isRoot()) &&
-			 !(startLink.getLinkToRoot() === undefined) && !(endLink.getLinkToRoot() === undefined)) {
+			 !(await startLink.getLinkToRoot() === undefined) && !(await endLink.getLinkToRoot() === undefined)) {
 			//If both condition classes are connected to different query classes
 			if (startRootId != endRootId){
 				Interpreter.showErrorMsg("Condition (violet) classes of two queries can not be linked (to avoid two main classes in a query).", -3); 
@@ -551,7 +551,7 @@ Interpreter.customMethods({
 		 	await endElement.setClassStyle("condition");
 			
 		} else if (!(await startElement.isRoot()) && await endElement.isRoot()) {
-			if (startElement.getLinkToRoot().start == false){
+			if (await startElement.getLinkToRoot().start == false){
 				console.log("condition class has no connected query class")
 			} else {
 				await endElement.setClassStyle("condition");
@@ -844,7 +844,7 @@ Interpreter.customMethods({
 	},
 
 	AggregateWizard: async function(e) {
-
+		console.log("AAAAAAAAAAAAAAAAAAAAAAAAA")
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
 		var compart_type = await CompartmentTypes.findOneAsync({_id: parent_id});
@@ -909,15 +909,15 @@ Interpreter.customMethods({
             		Template.AggregateWizard.showDisplay.set("none");
             		Template.AggregateWizard.startClassId.set(classId);
             	}else {
-            		var classUp = classObj.getLinkToRoot();
+            		var classUp = await classObj.getLinkToRoot();
             		Template.AggregateWizard.showDisplay.set("none");
             		Template.AggregateWizard.linkId.set(classUp.link.obj._id);
             		//console.log("root id = ", getRootId(classObj.obj._id));
             		//Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
             		if (classUp.start) {
-        				Template.AggregateWizard.startClassId.set(classUp.link.getElements().start.obj._id);
+        				Template.AggregateWizard.startClassId.set((await classUp.link.getElements()).start.obj._id);
         			} else {
-        				Template.AggregateWizard.startClassId.set(classUp.link.getElements().end.obj._id);
+        				Template.AggregateWizard.startClassId.set((await classUp.link.getElements()).end.obj._id);
         			}            		
             	}
 
@@ -1014,7 +1014,7 @@ Interpreter.customMethods({
             		Template.AggregateWizard.showDisplay.set("none");
             		Template.AggregateWizard.startClassId.set(classId);
             	}else {
-            		var classUp = classObj.getLinkToRoot();
+            		var classUp = await classObj.getLinkToRoot();
 					
             		Template.AggregateWizard.showDisplay.set("block");
             		Template.AggregateWizard.linkId.set(classUp.link.obj._id);
@@ -1026,15 +1026,15 @@ Interpreter.customMethods({
 						let parClass;
 						if (classUp.start) {	
 
-							parClass = await createVQ_Element(classUp.link.getElements().start.obj._id);
-							Template.AggregateWizard.startClassId.set(classUp.link.getElements().start.obj._id);
+							parClass = await createVQ_Element((await classUp.link.getElements()).start.obj._id);
+							Template.AggregateWizard.startClassId.set((await classUp.link.getElements()).start.obj._id);
 						} else {
-							Template.AggregateWizard.startClassId.set(classUp.link.getElements().end.obj._id);
-							parClass = await createVQ_Element(classUp.link.getElements().end.obj._id);
+							Template.AggregateWizard.startClassId.set((await classUp.link.getElements()).end.obj._id);
+							parClass = await createVQ_Element((await classUp.link.getElements()).end.obj._id);
 						}   
 						if(await linkO.isSubQuery() === true || await linkO.isGlobalSubQuery() === true) isSubQuery = true;
 						else {
-							classUp = parClass.getLinkToRoot();
+							classUp = await parClass.getLinkToRoot();
 						}
 					}					
 					
@@ -1296,14 +1296,14 @@ Interpreter.customMethods({
         	if (await vq_elem.isRoot()){
         		return false;
         	} else {
-        		if (vq_elem.getLinkToRoot()){
-        			const linkToRoot = vq_elem.getLinkToRoot();
+        		if (await vq_elem.getLinkToRoot()){
+        			const linkToRoot = await vq_elem.getLinkToRoot();
 					if (linkToRoot && await linkToRoot.link.isSubQuery()) {
 						return true;
 					}
 
-        			var elements = vq_elem.getLinkToRoot().link.getElements();
-        			if (vq_elem.getLinkToRoot().start) {
+        			var elements = await vq_elem.getLinkToRoot().link.getElements();
+        			if (await vq_elem.getLinkToRoot().start) {
         				return await InsideNested(elements.start.obj._id);
         			} else {
         				return await InsideNested(elements.end.obj._id);

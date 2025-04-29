@@ -63,10 +63,10 @@ Interpreter.customMethods({
 				usedClasses = [{name: await startClass.getName(), id: startClass.obj["_id"]}, {name: await endClass.getName(), id: endClass.obj["_id"]}];
 
 				if (await startClass.isUnion() && !(await startClass.isRoot())) { // [ + ] element, that has link to upper class 
-					if (startClass.getLinkToRoot()){
-						var element = startClass.getLinkToRoot().link.getElements();
+					if (await startClass.getLinkToRoot()){
+						var element = await startClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
-						if (startClass.getLinkToRoot().start) {
+						if (await startClass.getLinkToRoot().start) {
 							var newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
 		    				var newStartClass = await createVQ_Element(element.end.obj._id);
@@ -82,10 +82,10 @@ Interpreter.customMethods({
 				}
 
 				if (await endClass.isUnion() && !(await endClass.isRoot())) { // [ + ] element, that has link to upper class 
-					if (endClass.getLinkToRoot()){
-						var element = endClass.getLinkToRoot().link.getElements();
+					if (await endClass.getLinkToRoot()){
+						var element = await endClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
-						if (endClass.getLinkToRoot().start) {
+						if (await endClass.getLinkToRoot().start) {
 							var newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
 		    				var newStartClass = await createVQ_Element(element.end.obj._id);
@@ -139,10 +139,10 @@ Interpreter.customMethods({
 				var ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
 				var usedClasses = [{name: await startClass.getName(), id: startClass.obj["_id"]}, {name: await endClass.getName(), id: endClass.obj["_id"]}];
 				if (await startClass.isUnion() && !(await startClass.isRoot())) { // [ + ] element, that has link to upper class 
-					if (startClass.getLinkToRoot()){
-						var element = startClass.getLinkToRoot().link.getElements();
+					if (await startClass.getLinkToRoot()){
+						var element = await startClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
-						if (startClass.getLinkToRoot().start) {
+						if (await startClass.getLinkToRoot().start) {
 							var newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
 		    				var newStartClass = await createVQ_Element(element.end.obj._id);
@@ -158,10 +158,10 @@ Interpreter.customMethods({
 				}
 
 				if (await endClass.isUnion() && !(await endClass.isRoot())) { // [ + ] element, that has link to upper class 
-					if (endClass.getLinkToRoot()){
-						var element = endClass.getLinkToRoot().link.getElements();
+					if (await endClass.getLinkToRoot()){
+						var element = await endClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
-						if (endClass.getLinkToRoot().start) {
+						if (await endClass.getLinkToRoot().start) {
 							var newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
 		    				var newStartClass = await createVQ_Element(element.end.obj._id);
