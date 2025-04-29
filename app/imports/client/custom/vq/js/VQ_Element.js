@@ -1863,7 +1863,7 @@ class VQ_Element_Async{
     }
     var elem_type_id = this.obj["elementTypeId"];
     var comp_type = await CompartmentTypes.findOneAsync({name: compartment_name, elementTypeId: elem_type_id});
-	console.log("compartment_name", compartment_name,comp_type)
+	//console.log("compartment_name", compartment_name,comp_type)
     if (comp_type) {
       var comp_type_id = comp_type["_id"];
       var comp = await Compartments.findOneAsync({elementId: this._id(), compartmentTypeId: comp_type_id});
@@ -2592,41 +2592,38 @@ class VQ_Element_Async{
 	// function which in fact should be in the schema
 	// --> bool
 	// Determines whether the link is the only possible option between two classes
-	async isDefaultLink() {
-		 if (await this.isLink()) {
-			 var schema = new VQ_Schema({});
-			 var assoc = schema.findAssociationByName(this.getName());
-			 //console.log(assoc);
-			 if (assoc) {
-				 var start_class = schema.findClassByName(this.getStartElement().getName());
-				 var end_class = schema.findClassByName(this.getEndElement().getName());
-	       if (start_class && end_class) {
-					 var all_assoc_from_start = start_class.getAllAssociations();
-					 //console.log(all_assoc_from_start);
-					 var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
-					 //console.log(all_sub_super_of_end);
-					 var possible_assoc = _.filter(all_assoc_from_start, function(a) {
-							return _.find(all_sub_super_of_end, function(c) {
-									return c.localName == a.class
-							})
-					});
-          //console.log(possible_assoc);
-					//console.log(_.size(possible_assoc));
-
-					 if (_.size(possible_assoc)==1 && possible_assoc[0].name == assoc.localName) {
-						 //console.log(possible_assoc[0].name);
-	 					 //console.log(assoc.localName);
-						 return true
-					 } else {
-						 return false;
-					 }
-				 }
-
-			 }
-
-			 }
-
-	}
+	// Šo izskatās vairs neizsauc, paslēpu, lai nav VQ_Schema
+	//async isDefaultLink() {
+	//	 if (await this.isLink()) {
+	//		 var schema = new VQ_Schema({});
+	//		 var assoc = schema.findAssociationByName(this.getName());
+	//		 //console.log(assoc);
+	//		 if (assoc) {
+	//			 var start_class = schema.findClassByName(this.getStartElement().getName());
+	//			 var end_class = schema.findClassByName(this.getEndElement().getName());
+	//       if (start_class && end_class) {
+	//				 var all_assoc_from_start = start_class.getAllAssociations();
+	//				 //console.log(all_assoc_from_start);
+	//				 var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+	//				 //console.log(all_sub_super_of_end);
+	//				 var possible_assoc = _.filter(all_assoc_from_start, function(a) {
+	//						return _.find(all_sub_super_of_end, function(c) {
+	//								return c.localName == a.class
+	//						})
+	//				});
+    //    //console.log(possible_assoc);
+	//				//console.log(_.size(possible_assoc));
+	//				 if (_.size(possible_assoc)==1 && possible_assoc[0].name == assoc.localName) {
+	//					 //console.log(possible_assoc[0].name);
+	// 					 //console.log(assoc.localName);
+	//					 return true
+	//				 } else {
+	//					 return false;
+	//				 }
+	//			 }
+	//		 }
+	//		 }
+	//}
   // VQ_Element --> bool
   // Returns true if there is a path in the spanning tree
   // from this to toElement

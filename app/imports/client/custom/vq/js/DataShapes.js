@@ -122,7 +122,16 @@ function isIndividual(individual) {
 const getPListI = async (vq_obj) => {
 	let pListI = {};
 	const link_list =  await vq_obj.getLinks();
-	const link_list_filtered = link_list.map( function(l) { const type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
+	//let link_list_filtered = link_list.map(async function(l) { const type = (l.start ? 'in': 'out'); return {name: await l.link.getName(), t:await l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
+	let link_list_filtered = [];
+
+	for (const l of link_list) {
+		const type = (l.start ? 'in': 'out');
+		const lName = await l.link.getName();
+		const lType = await l.link.getType();
+		link_list_filtered.push({name:lName, t:lType, type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement});
+	}
+
 	_.each(link_list_filtered, function(link) {
 		link.typeO = link.type;
 		if (link.name !== null && link.name !== undefined && link.name.substring(0,1) === '^') {
@@ -140,7 +149,7 @@ const getPListI = async (vq_obj) => {
 		if (link.typeO === 'out' && link.name !== null && link.name !== undefined && link.name !== '++' && el_schema == l_schema ) {
 			// 555 Jāpaskatās, kas notiks ciklā
 			const eE = await createVQ_Element(link.eE); // const eE = new VQ_Element(link.eE);
-			const individual =  eE.getInstanceAlias();
+			const individual =  await eE.getInstanceAlias();
 			if (isIndividual(individual)) {
 				pListI.type = link.type;
 				pListI.name = link.name;
@@ -149,7 +158,7 @@ const getPListI = async (vq_obj) => {
 		}
 		if (link.typeO === 'in' && link.name !== null && link.name !== undefined && link.name !== '++' && el_schema == l_schema ) {
 			const sE = await createVQ_Element(link.sE); // const sE = new VQ_Element(link.sE); 
-			const individual =  sE.getInstanceAlias();
+			const individual =  await sE.getInstanceAlias();
 			if (isIndividual(individual)) {
 				pListI.type = link.type;
 				pListI.name = link.name;
@@ -173,7 +182,15 @@ const getPList = async (vq_obj) => {
 
 	const link_list =  await vq_obj.getLinks();
 
-	let link_list_filtered = link_list.map(async function(l) { const type = (l.start ? 'in': 'out'); return {name: await l.link.getName(), t:await l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
+	//let link_list_filtered = link_list.map(async function(l) { const type = (l.start ? 'in': 'out'); return {name: await l.link.getName(), t:await l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
+	let link_list_filtered = [];
+	for (const l of link_list) {
+		const type = (l.start ? 'in': 'out');
+		const lName = await l.link.getName();
+		const lType = await l.link.getType();
+		link_list_filtered.push({name:lName, t:lType, type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement});
+	}
+
 	_.each(link_list_filtered, function(link) {
 		if (link.name !== null && link.name !== undefined && link.name.substring(0,1) === '^') {
 			link.name = link.name.substring(1,link.name.length);
@@ -199,7 +216,7 @@ const getPList = async (vq_obj) => {
 			else {
 				if (!isRoot) {
 					const sE = await createVQ_Element(link.sE); // const sE = new VQ_Element(link.sE); 
-					if (sE.isRoot())
+					if (await sE.isRoot())
 						pList.in.push(link);
 				}
 			}
@@ -212,7 +229,7 @@ const getPList = async (vq_obj) => {
 			else {
 				if (!isRoot) {
 					const eE = await createVQ_Element(link.eE); // const eE = new VQ_Element(link.eE);
-					if (eE.isRoot())
+					if (await eE.isRoot())
 						pList.out.push(link);
 				}
 			}
@@ -220,8 +237,8 @@ const getPList = async (vq_obj) => {
 		
 		for (const l of pList.in) {
 			const el = await createVQ_Element(l.element); // const el = new VQ_Element(link.element);
-			const class_name = el.getName();
-			const individual =  el.getInstanceAlias();
+			const class_name = await el.getName();
+			const individual =  await el.getInstanceAlias();
 			if (class_name !== null && class_name !== undefined)
 				l.className = class_name;			
 			if (isIndividual(individual)) 
@@ -240,8 +257,8 @@ const getPList = async (vq_obj) => {
 		for (const l of pList.out) {
 			if (l.element !== undefined ) {
 				const el = await createVQ_Element(l.element); // const el = new VQ_Element(l.element);
-				const class_name = el.getName();
-				const individual =  el.getInstanceAlias();
+				const class_name = await el.getName();
+				const individual =  await el.getInstanceAlias();
 				if (class_name !== null && class_name !== undefined)
 					l.className = class_name;			
 				if (isIndividual(individual)) 
