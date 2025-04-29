@@ -346,7 +346,8 @@ Template.ConnectClasses.events({
 		//test selected chain
 		var number = $('input[name=stack-radio]:checked').val();
 		var noPropertyPath = $("#not-show-as-property-path").is(':checked'); //console.log(noPropertyPath);
-		var checkedAggregateWizard = $("#connect-classes-goto-aggregate-wizard").is(':checked');
+		// Šīs iespēja vairs netiek piedāvāta
+		//var checkedAggregateWizard = $("#connect-classes-goto-aggregate-wizard").is(':checked');
 		if (number < 0 || !number) {
 			$('#chain_text')[0].style.color = "red";
 			$("#connect-classes-form").modal("show");
@@ -487,46 +488,44 @@ Template.ConnectClasses.events({
 					// }					
                 // }, locLink, true, currentVQElment, nextVQElement);
 			}
+
 			//Aggregate wizard settings			
-			if (checkedAggregateWizard) { 
-				//console.log(342, lastElement);
-				//
-				Template.AggregateWizard.startClassId.set(firstId);
-				if (Template.AggregateWizard.endClassId.get().indexOf("No end") > -1) {
-					Template.AggregateWizard.endClassId.set(lastElement.id);
-				}
-				//Fields
-				var attr_list = [{attribute: ""}];
-				var schema = new VQ_Schema();
-
-				if (schema.classExist(class_name)) {
-					var klass = schema.findClassByName(lastElement.name);
-
-					_.each(klass.getAllAttributes(), function(att){
-						attr_list.push({attribute: att["name"]});
-					})
-					attr_list = _.sortBy(attr_list, "attribute");
-				}
-				attr_list = attr_list.filter(function(obj, index, self) { 
-					return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
-				});
-				//console.log(attr_list);
-				Template.AggregateWizard.attList.set(attr_list);
-
-				//Alias name
-				if (class_name) {
-					Interpreter.destroyErrorMsg();
-					Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
-					Template.AggregateWizard.showDisplay.set("block");
-					$("#aggregate-wizard-form").modal("show");
-				} else {
-					//alert("No class selected - wizard may work unproperly");
-					Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);
-				}
-			}
+			//if (checkedAggregateWizard) { // Vairs nav šādas iespējas
+			//	//console.log(342, lastElement);
+			//	//
+			//	Template.AggregateWizard.startClassId.set(firstId);
+			//	if (Template.AggregateWizard.endClassId.get().indexOf("No end") > -1) {
+			//		Template.AggregateWizard.endClassId.set(lastElement.id);
+			//	}
+			//	//Fields
+			//	var attr_list = [{attribute: ""}];
+			//	var schema = new VQ_Schema();
+			//	if (schema.classExist(class_name)) {
+			//		var klass = schema.findClassByName(lastElement.name);
+			//		_.each(klass.getAllAttributes(), function(att){
+			//			attr_list.push({attribute: att["name"]});
+			//		})
+			//		attr_list = _.sortBy(attr_list, "attribute");
+			//	}
+			//	attr_list = attr_list.filter(function(obj, index, self) { 
+			//		return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
+			//	});
+			//	//console.log(attr_list);
+			//	Template.AggregateWizard.attList.set(attr_list);
+			//	//Alias name
+			//	if (class_name) {
+			//		Interpreter.destroyErrorMsg();
+			//		Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+			//		Template.AggregateWizard.showDisplay.set("block");
+			//		$("#aggregate-wizard-form").modal("show");
+			//	} else {
+			//		//alert("No class selected - wizard may work unproperly");
+			//		Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);
+			//	}
+			//} 
 		} else { 
-	//draw all classes and links
-			AddNextLink(currentVQElment, chain, lastElement, Template.ConnectClasses.gotoSubquery.get().isChecked, currentVQElment, Template.ConnectClasses.addLongLink.get().data);		
+			//draw all classes and links
+			await AddNextLink(currentVQElment, chain, lastElement, Template.ConnectClasses.gotoSubquery.get().isChecked, currentVQElment, Template.ConnectClasses.addLongLink.get().data);		
 			if (Template.ConnectClasses.linkMenu.get().data) {
 				var currentLink = await createVQ_Element(Template.ConnectClasses.linkID.curValue.data);
 				currentLink.deleteElement();
@@ -827,52 +826,6 @@ async function GetChains(ids, maxLength){
 	return resultStringArray;
 }
 
-async function GetLinks(start_elem_id){
-	if (await Elements.findOneAsync({_id: start_elem_id})){ 
-		var asc = [];
-		// var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: Elements.findOne({_id: start_elem_id})["elementTypeId"]});
-		// if (!compart_type) {
-		// 	return [{name: "", class: "", type: "=>"}];
-		// }
-
-		// var act_comp = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start_elem_id});
-		// if (!act_comp) {
-		// 	return [{name: "", class: "", type: "=>"}];
-		// }
-
-		var elem = await createVQ_Element(start_elem_id);
-		var className = "";
-		if (await elem.isUnion() && !(await elem.isRoot())) { // [ + ] element, that has link to upper class 
-			if (elem.getLinkToRoot()){
-				var element = elem.getLinkToRoot().link.getElements();
-				if (elem.getLinkToRoot().start) {
-					var newStartClass = await createVQ_Element(element.start.obj._id);						
-    				className = await newStartClass.getName();
-    			} else {
-    				var newStartClass = await createVQ_Element(element.end.obj._id);						
-    				className = await newStartClass.getName();
-    			}						
-			}					
-		} else {
-			className = await elem.getName();
-		}
-
-		// var className = act_comp["input"];
-		var schema = new VQ_Schema();
-		if (className == null || !schema.classExist(className)) {
-			return [{name: "", class: "", type: "=>"}];
-		}
-
-		asc = schema.findClassByName(className).getAllAssociations(); //console.log("712 ", className, asc);
-
-		asc = asc.filter(function(obj, index, self) { 
-			return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
-		});	//console.log("716 ", className, asc);
-
-		return asc;			
-	}
-}
-
 async function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryFromElement, longLink){
 
 	if (chain.length == 0)  {
@@ -1019,7 +972,7 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 		}
 
 		const newChain = _.rest(chain);
-		AddNextLink(cl, newChain, lastElement, needSubquery, subqueryFromElement, longLink);
+		await AddNextLink(cl, newChain, lastElement, needSubquery, subqueryFromElement, longLink);
 
 		
 	    // Create_VQ_Element(function(cl){

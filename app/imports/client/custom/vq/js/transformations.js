@@ -530,6 +530,8 @@ Interpreter.customMethods({
 	},
 
 	VQafterCreateLink: async function(params) {
+	
+		// TODO Salaboju, bet sanāk aizture, kamēr meklē propertijas
 		var linkName = await VQsetAssociationName(params["startElement"], params["endElement"])
 		//console.log(params);
 		Interpreter.destroyErrorMsg();
@@ -541,7 +543,6 @@ Interpreter.customMethods({
 		const startElement = await link.getStartElement();
 		const endElement = await link.getEndElement();
 		if (await startElement.isRoot() && await endElement.isRoot()){
-	
 			let elem = startElement;
 			let namedGraphsFromQuery = await findNamedGraphsInQuery(elem, [elem.obj._id]);
 			for(let e = 0; e < namedGraphsFromQuery.length; e++){
@@ -549,7 +550,7 @@ Interpreter.customMethods({
 			}
 		 	await endElement.setClassStyle("condition");
 			
-		} else if (!(await startLink.isRoot()) && await endElement.isRoot()) {
+		} else if (!(await startElement.isRoot()) && await endElement.isRoot()) {
 			if (startElement.getLinkToRoot().start == false){
 				console.log("condition class has no connected query class")
 			} else {
@@ -843,6 +844,7 @@ Interpreter.customMethods({
 	},
 
 	AggregateWizard: async function(e) {
+
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
 		var compart_type = await CompartmentTypes.findOneAsync({_id: parent_id});
@@ -897,7 +899,7 @@ Interpreter.customMethods({
 		
 		Interpreter.destroyErrorMsg();
 		var attr_list = [{attribute: ""}];
-        var schema = new VQ_Schema();
+        //var schema = new VQ_Schema();
 
         if (classId) {
             var classObj = await createVQ_Element(classId);
@@ -921,12 +923,17 @@ Interpreter.customMethods({
 
                 //Attribute generation
                 var class_name = await classObj.getName();
-                if (schema.classExist(class_name)) {
-                    var klass = schema.findClassByName(class_name);
-
-                    _.each(klass.getAllAttributes(), function(att){
-						attr_list.push({attribute: att["name"]});
-                    })
+				const classInfo = await dataShapes.resolveClassByName({name: class_name});
+                //if (schema.classExist(class_name)) {
+				if ( classInfo["complete"] ) {
+                    //var klass = schema.findClassByName(class_name);
+                    //_.each(klass.getAllAttributes(), function(att){
+					//	attr_list.push({attribute: att["name"]});
+                    //})
+					const prop = await dataShapes.getProperties({propertyKind:'Data'},classObj );
+					for (const p of prop.data) {
+						attr_list.push({attribute: p.full_name});
+					}
 					
 					var selected_elem_id = Session.get("activeElement");
 		
@@ -983,7 +990,6 @@ Interpreter.customMethods({
     },
 	
 	AddAggregate: async function(e) {
-
 		 Template.AggregateWizard.expressionField.set("")
 		 Template.AggregateWizard.aliasField.set("")
 		 Template.AggregateWizard.requireField.set("")
@@ -998,7 +1004,7 @@ Interpreter.customMethods({
 		
 		Interpreter.destroyErrorMsg();
 		var attr_list = [{attribute: ""}];
-        var schema = new VQ_Schema();
+        // var schema = new VQ_Schema();
 
         if (classId) {
             var classObj = await createVQ_Element(classId);
@@ -1036,12 +1042,17 @@ Interpreter.customMethods({
 
                 //Attribute generation
                 var class_name = await classObj.getName();
-                if (schema.classExist(class_name)) {
-                    var klass = schema.findClassByName(class_name);
-
-                    _.each(klass.getAllAttributes(), function(att){
-						attr_list.push({attribute: att["name"]});
-                    })
+				const classInfo = await dataShapes.resolveClassByName({name: class_name});
+                //if (schema.classExist(class_name)) {
+				if ( classInfo["complete"] ) {
+                    //var klass = schema.findClassByName(class_name);
+                    //_.each(klass.getAllAttributes(), function(att){
+					//	attr_list.push({attribute: att["name"]});
+                    //})
+					const prop = await dataShapes.getProperties({propertyKind:'Data'},classObj );
+					for (const p of prop.data) {
+						attr_list.push({attribute: p.full_name});
+					}
 					
 					var selected_elem_id = Session.get("activeElement");
 		
@@ -1065,7 +1076,7 @@ Interpreter.customMethods({
 					
                     attr_list = _.sortBy(attr_list, "attribute");
                 }
-                // console.log(attr_list);
+
                 Template.AggregateWizard.attList.set(attr_list);
 
                 //Alias name
@@ -1328,8 +1339,22 @@ Interpreter.customMethods({
 });
 
 async function VQsetAssociationName(start, end) {
-		var start_element = await createVQ_Element(start);
-		var end_element = await createVQ_Element(end);
+	const start_element = await createVQ_Element(start);
+	const end_element = await createVQ_Element(end);
+	const prop = await dataShapes.getProperties({propertyKind:'Connect'}, start_element, end_element);
+    
+	if ( prop.data.length == 1 ) {
+		let name = prop.data[0].full_name; // TODO vispār te būtu jāskatās arī uz lokāla ns radīšanu/nerādīšanu
+		if ( prop.data[0].mark == 'in' ) {
+			name = `^${name}`;
+		}	
+		return name;
+	}
+	else {
+		return "";
+	}
+
+		/*
 		
 		var name_list = [];
 		
@@ -1377,6 +1402,7 @@ async function VQsetAssociationName(start, end) {
 		}
 		
 		return ""
+		*/
 }
 
 
