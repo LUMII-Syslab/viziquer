@@ -597,7 +597,10 @@ Template.VQ_DSS_schema.events({
 		table_representation.generalizationCount = generalizationCount;
 		table_representation.params = getParams();
 		console.log(table_representation)
-		Meteor.call("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+		
+		//await Utilities.callMeteorMethodAsync("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+		await Meteor.callAsync("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+		//Meteor.call("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
 
 	},
 	'click #getProperties': async function() {

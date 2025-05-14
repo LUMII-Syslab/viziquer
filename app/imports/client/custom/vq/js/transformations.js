@@ -4,7 +4,7 @@ import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } fro
 import { Dialog } from '../../../platform/js/interpretator/Dialog'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
 import { getPathFullGrammarChangeDirection } from './parser.js';
-import { Create_VQ_Element, Create_VQ_Element_Async, VQ_Element, VQ_Schema, createVQ_Element } from './VQ_Element';
+import { Create_VQ_Element, Create_VQ_Element_Async, VQ_Element, createVQ_Element } from './VQ_Element';
 import * as vq_property_path_grammar_parser from './vq_property_path_grammar_parser.js'
 import { dataShapes } from './DataShapes.js'
 

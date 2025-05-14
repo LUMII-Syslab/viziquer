@@ -4,7 +4,7 @@ import { Utilities } from '../../../platform/js/utilities/utils.js'
 import { Dialog } from '../../../platform/js/interpretator/Dialog';
 
 //-----------------------------------------------------------------------------
-
+/*
 function VQ_Schema ( ) {
 	console.log("***************** VQ_Schema **********************")
 };
@@ -37,7 +37,7 @@ VQ_Schema.prototype = {
 	return null;
   }
  }
-
+*/
 
 // VQ_Element class describes the main objects within ViziQuer diagram - Classes and links
 // It is used to traverse objects and retrieve information about them. Also modify!
@@ -3394,5 +3394,4 @@ export {
   Create_VQ_Element_Async,
   // async_Create_VQ_Element,
   Create_VQ_Element_Declaration,
-  VQ_Schema,
 }
