@@ -1,6 +1,6 @@
-import { is_project_member } from '../../../../libs/platform/user_rights'
+import { is_project_member } from '../../../../libs/platform/user_rights.js'
 import { DiagramLogs, Diagrams, Elements, Compartments, CompartmentTypes  } from '../../../../db/platform/collections'
-import { is_public_diagram, get_unknown_public_user_name } from '../../_helpers'
+import { is_public_diagram, get_unknown_public_user_name } from '../../_helpers.js'
 import { build_diagram_notification } from './elements.js'
 
 Compartments.after.update(function (user_id, doc, fields, modifier, options) {

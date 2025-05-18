@@ -1,5 +1,5 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { ElementTypes } from '../../../../db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { ElementTypes } from '../../../../db/platform/collections.js'
 
 
 //functions makes element type

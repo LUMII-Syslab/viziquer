@@ -1,8 +1,7 @@
-// import { _ } from 'vue-underscore';
-import Box from './_render_boxes';
-import Resizers from '../add_remove_resizers'
+import Box from './_render_boxes.js'
+import Resizers from '../add_remove_resizers.js'
 import {ARectangle} from './shapes1';
-import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions'
+import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions.js'
 
 //SVGShape(abstract class)
 var SVGShape = function(editor) {

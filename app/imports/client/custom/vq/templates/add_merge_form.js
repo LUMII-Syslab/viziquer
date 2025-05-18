@@ -1,9 +1,9 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Elements, Compartments, CompartmentTypes, Projects } from '../../../../db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Elements, Compartments, CompartmentTypes, Projects } from '../../../../db/platform/collections.js'
 import { Utilities } from '../../../platform/js/utilities/utils.js'
 
 import './add_merge_form.html'
-import { countCardinality } from '../js/parser';
+import { countCardinality } from '../js/parser.js'
 import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 
 import { getSchemaNameForElement } from '../../../custom/vq/js/transformations.js'

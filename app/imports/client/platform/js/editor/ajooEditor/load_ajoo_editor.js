@@ -1,9 +1,9 @@
-import { Utilities } from '../../utilities/utils'
-import { Interpreter } from '../../../../lib/interpreter'
-import { analytics } from '../../../../lib/global_variables'
-import AjooEditor from './ajoo/AjooEditor'
+import { Utilities } from '../../utilities/utils.js'
+import { Interpreter } from '../../../../lib/interpreter.js'
+import { analytics } from '../../../../lib/global_variables.js'
+import AjooEditor from './ajoo/AjooEditor.js'
 
-import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '../../../../../db/platform/collections'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '../../../../../db/platform/collections.js'
 
 import { get_context_menu_list } from '../../interpretator/context_menu.js'
 import { compute_new_line_type } from '../../interpretator/NewElement.js'

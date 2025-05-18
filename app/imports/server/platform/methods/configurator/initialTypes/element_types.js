@@ -1,4 +1,4 @@
-import { generate_id, is_ajoo_editor } from '../../../../../libs/platform/lib'
+import { generate_id, is_ajoo_editor } from '../../../../../libs/platform/lib.js'
 
 function build_initial_element_type(list, editor_type) {
 		

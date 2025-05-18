@@ -1,7 +1,7 @@
-import { Elements } from '../../../../db/platform/collections';
+import { Elements } from '../../../../db/platform/collections.js'
 
 import { dataShapes } from './DataShapes.js'
-import { makeString } from './parserCommon';
+import { makeString } from './parserCommon.js'
 import { VQ_Element, createVQ_Element } from './VQ_Element.js';
 
   "use strict";

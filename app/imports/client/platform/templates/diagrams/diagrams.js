@@ -1,13 +1,13 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Utilities } from '../../js/utilities/utils'
-import { UserVersionSettings, Projects, ProjectsGroups, Tools, DiagramTypes, Diagrams, FoundDiagrams } from '../../../../db/platform/collections'
-import { Dialog } from '../../js/interpretator/Dialog'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Utilities } from '../../js/utilities/utils.js'
+import { UserVersionSettings, Projects, ProjectsGroups, Tools, DiagramTypes, Diagrams, FoundDiagrams } from '../../../../db/platform/collections.js'
+import { Dialog } from '../../js/interpretator/Dialog.js'
 import { Services } from '../../../../db/custom/vq/collections.js'
 
-import { dataShapes } from '../../../custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 import './diagrams.html'
-import { joined_date } from '../../js/utilities/time_utilities'
+import { joined_date } from '../../js/utilities/time_utilities.js'
 
 // Start of diagramsTemplate template
 

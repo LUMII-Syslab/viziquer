@@ -1,6 +1,6 @@
 import './swimlane.html'
 
-import { Dialog } from '../../../js/interpretator/Dialog'
+import { Dialog } from '../../../js/interpretator/Dialog.js'
 
 import {
   CompartmentTypes,

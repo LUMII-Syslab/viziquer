@@ -1,7 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { ClientStorage } from 'ClientStorage';
 
-import { Users } from '../../imports/db/platform/collections'
+import { Users } from '../../imports/db/platform/collections.js'
 
 
 Template.nav.helpers({

@@ -1,4 +1,4 @@
-import { makeString } from './parserCommon';
+import { makeString } from './parserCommon.js'
   "use strict";
 
   /*

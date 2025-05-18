@@ -1,6 +1,6 @@
 // import { _ } from 'vue-underscore';
 
-import {getPairOfValue, getValueOfPair, cloneObject, cloneArray, rectOverlapRect, rectInsideRect, listPrintString, reconvertArray, convertArray, reconvert, convert, koef,} from './line_routing_other'
+import {getPairOfValue, getValueOfPair, cloneObject, cloneArray, rectOverlapRect, rectInsideRect, listPrintString, reconvertArray, convertArray, reconvert, convert, koef,} from './line_routing_other.js'
 
 
 

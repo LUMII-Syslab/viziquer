@@ -1,12 +1,12 @@
 import { Roles } from 'meteor/alanning:roles'
 
-import { get_current_time } from './_helpers';
-import { build_power_user_role, is_project_admin, is_system_admin } from '../../libs/platform/user_rights';
-import { load_configurator } from './load_configuration';
-import { Users, Tools, ToolVersions } from '../../db/platform/collections';
-import { Services } from '../../db/custom/vq/collections'
-import { is_test_user } from './_global_functions';
-import { send_email } from '../../libs/platform/lib';
+import { get_current_time } from './_helpers.js'
+import { build_power_user_role, is_project_admin, is_system_admin } from '../../libs/platform/user_rights.js'
+import { load_configurator } from './load_configuration.js'
+import { Users, Tools, ToolVersions } from '../../db/platform/collections.js'
+import { Services } from '../../db/custom/vq/collections.js'
+import { is_test_user } from './_global_functions.js'
+import { send_email } from '../../libs/platform/lib.js'
 import { config } from 'dotenv';
 
 

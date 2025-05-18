@@ -1,5 +1,4 @@
-// import { _ } from 'vue-underscore';
-import Event from '../Editor/events';
+import Event from '../Editor/events.js'
 
 var SelectionRect = function(editor) {
 

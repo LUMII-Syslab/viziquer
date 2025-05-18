@@ -1,5 +1,5 @@
-import { is_project_admin } from '../../../../libs/platform/user_rights'
-import { ProjectsGroups, ProjectsUsers, Diagrams, Documents } from '../../../../db/platform/collections'
+import { is_project_admin } from '../../../../libs/platform/user_rights.js'
+import { ProjectsGroups, ProjectsUsers, Diagrams, Documents } from '../../../../db/platform/collections.js'
 
 ProjectsGroups.after.remove(function (user_id, doc) {
 

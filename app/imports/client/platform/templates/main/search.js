@@ -1,6 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Users, Searches } from '../../../../db/platform/collections'
-import { reset_variable } from '../../js/utilities/utils'
+
+import { Users, Searches } from '../../../../db/platform/collections.js'
+import { reset_variable } from '../../js/utilities/utils.js'
 
 import './search.html'
 

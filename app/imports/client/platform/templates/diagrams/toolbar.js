@@ -1,5 +1,5 @@
-import { Utilities } from '../../js/utilities/utils'
-import { Tools, Projects, DiagramTypes, Diagrams, Elements } from '../../../../db/platform/collections'
+import { Utilities } from '../../js/utilities/utils.js'
+import { Tools, Projects, DiagramTypes, Diagrams, Elements } from '../../../../db/platform/collections.js'
 
 import './toolbar.html'
 

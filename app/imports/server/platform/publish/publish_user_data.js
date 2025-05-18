@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor'
 
-import { Users, Notifications, Chats, Searches, Tools, Projects, ProjectsUsers, UserChatsAuthors } from '../../../db/platform/collections'
-import { not_loggedin_msg } from '../_helpers'
+import { Users, Notifications, Searches, Tools, Projects, ProjectsUsers } from '../../../db/platform/collections.js'
+import { not_loggedin_msg } from '../_helpers.js'
 
-import { error_msg, get_maximal_user_query_limit, get_user_query_limit, build_user_search_query } from '../_global_functions'
+import { error_msg, get_maximal_user_query_limit, get_user_query_limit, build_user_search_query } from '../_global_functions.js'
 
 //This is for roles package
 Meteor.publish(null, function (){ 

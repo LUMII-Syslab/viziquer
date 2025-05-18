@@ -1,7 +1,6 @@
-// import { _ } from 'vue-underscore';
-import Event from '../../Editor/events';
-import SelectionDragging from '../../Selection/selection_dragging';
-import {OrthogonalCollectionRerouting} from '../Lines/routing/orthogonal_rerouting';
+import Event from '../../Editor/events.js'
+import SelectionDragging from '../../Selection/selection_dragging.js'
+import {OrthogonalCollectionRerouting} from '../Lines/routing/orthogonal_rerouting.js'
 
 var ResizingShape = function(editor) {
 

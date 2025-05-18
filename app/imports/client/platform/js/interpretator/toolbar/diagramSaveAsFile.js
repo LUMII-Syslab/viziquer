@@ -1,7 +1,7 @@
-import { Interpreter } from '../../../../lib/interpreter'
-import { Dialog } from '../Dialog'
+import { Interpreter } from '../../../../lib/interpreter.js'
+import { Dialog } from '../Dialog.js'
 
-import { Diagrams, Elements, Compartments, ElementTypes, CompartmentTypes, ElementsSections, DiagramFiles } from '../../../../../db/platform/collections'
+import { Diagrams, Elements, Compartments, ElementTypes, CompartmentTypes, ElementsSections, DiagramFiles } from '../../../../../db/platform/collections.js'
 
 
 Template.downloadAsFile.helpers({

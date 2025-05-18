@@ -1,9 +1,10 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Interpreter } from '../../../lib/interpreter'
-import { Utilities } from '../../js/utilities/utils'
-import { is_system_admin } from '../../../../libs/platform/user_rights'
-import { Diagrams, Elements, ElementsSections, DiagramTypes, ElementTypes, Sections, Documents } from '../../../../db/platform/collections'
-import { Dialog } from '../../js/interpretator/Dialog'
+
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Utilities } from '../../js/utilities/utils.js'
+import { is_system_admin } from '../../../../libs/platform/user_rights.js'
+import { Diagrams, Elements, ElementsSections, DiagramTypes, ElementTypes, Sections, Documents } from '../../../../db/platform/collections.js'
+import { Dialog } from '../../js/interpretator/Dialog.js'
 
 import './public_diagram.html'
 

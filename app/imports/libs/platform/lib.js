@@ -1,4 +1,4 @@
-import { Contacts } from '../../db/platform/collections'
+import { Contacts } from '../../db/platform/collections.js'
 
 function get_contacts(system_id) {
 	var contacts = Contacts.find({userSystemId: system_id});

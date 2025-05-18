@@ -1,5 +1,4 @@
-// import { _ } from 'vue-underscore';
-import {BoxCompartments, Compartment} from '../Boxes/box_compartments'
+import {BoxCompartments, Compartment} from '../Boxes/box_compartments.js'
 
 
 var LinkCompartments = function(element, comparts_in) {

@@ -1,5 +1,5 @@
-import { is_system_admin } from '../../../../libs/platform/user_rights'
-import { DialogTabs } from '../../../../db/platform/collections'
+import { is_system_admin } from '../../../../libs/platform/user_rights.js'
+import { DialogTabs } from '../../../../db/platform/collections.js'
 
 Meteor.methods({
 

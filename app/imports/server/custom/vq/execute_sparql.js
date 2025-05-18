@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 
-import { is_project_member } from '../../../libs/platform/user_rights';
-import { is_public_diagram } from '../../platform/_helpers'
+import { is_project_member } from '../../../libs/platform/user_rights.js'
+import { is_public_diagram } from '../../platform/_helpers.js'
 
-import { VQ_sparql_logs } from '../../../db/custom/vq/collections';
+import { VQ_sparql_logs } from '../../../db/custom/vq/collections.js'
 
 // import fetch from 'node-fetch';
 

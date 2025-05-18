@@ -1,8 +1,8 @@
-import { Projects } from '../../../../db/platform/collections'
+import { Projects } from '../../../../db/platform/collections.js'
 
-import { dataShapes } from './DataShapes'
-import { checkIfIsSimpleVariable, checkIfIsSimpleVariableForNameDef, findINExpressionTable, isFunctionExpr, transformSubstring, isDateVar, isValidForConvertation } from './parserCommon';
-import { getResolveInformation } from './genAbstractQuery';
+import { dataShapes } from './DataShapes.js'
+import { checkIfIsSimpleVariable, checkIfIsSimpleVariableForNameDef, findINExpressionTable, isFunctionExpr, transformSubstring, isDateVar, isValidForConvertation } from './parserCommon.js'
+import { getResolveInformation } from './genAbstractQuery.js'
 import * as vq_grammar_parser from './vq_grammar_parser.js'
 
 var tripleTable = [];

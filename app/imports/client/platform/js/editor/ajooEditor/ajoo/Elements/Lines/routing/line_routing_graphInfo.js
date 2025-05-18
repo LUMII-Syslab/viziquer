@@ -1,6 +1,5 @@
-// import { _ } from 'vue-underscore';
-import BoxInfo from './line_routing_boxInfo'
-import PathInfo from './line_routing_pathInfo'
+import BoxInfo from './line_routing_boxInfo.js'
+import PathInfo from './line_routing_pathInfo.js'
 
 //******************************************************************************
 // GraphInfo 

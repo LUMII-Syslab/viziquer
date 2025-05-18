@@ -1,6 +1,5 @@
-// import { _ } from 'vue-underscore';
-import GraphInfo from './line_routing_graphInfo';
-import LineRerouting from './line_dragging';
+import GraphInfo from './line_routing_graphInfo.js'
+import LineRerouting from './line_dragging.js'
 
 var OrthogonalRerouting = {
 

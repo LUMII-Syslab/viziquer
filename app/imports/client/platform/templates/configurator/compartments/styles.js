@@ -1,9 +1,9 @@
-import { Interpreter } from '../../../../lib/interpreter'
-import { Configurator } from '../config_utils'
-import { CompartmentTypes, ElementTypes } from '../../../../../db/platform/collections'
-import { Utilities, reset_variable } from '../../../js/utilities/utils'
-import { is_ajoo_editor, is_zoom_chart_editor } from '../../../../../libs/platform/lib'
-import { Dialog } from '../../../js/interpretator/Dialog'
+import { Interpreter } from '../../../../lib/interpreter.js'
+import { Configurator } from '../config_utils.js'
+import { CompartmentTypes, ElementTypes } from '../../../../../db/platform/collections.js'
+import { Utilities, reset_variable } from '../../../js/utilities/utils.js'
+import { is_ajoo_editor, is_zoom_chart_editor } from '../../../../../libs/platform/lib.js'
+import { Dialog } from '../../../js/interpretator/Dialog.js'
 
 import './styles.html'
 

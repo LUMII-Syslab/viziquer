@@ -1,6 +1,5 @@
-// import { _ } from 'vue-underscore';
-import ConnArea from './line_routing_connArea';
-import PointInfo from './line_routing_pointInfo';
+import ConnArea from './line_routing_connArea.js'
+import PointInfo from './line_routing_pointInfo.js'
 
 //******************************************************************************
 // BoxInfo 

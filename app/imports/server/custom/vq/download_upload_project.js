@@ -1,6 +1,6 @@
-import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '../../../db/platform/collections'
-import { is_project_member } from '../../../libs/platform/user_rights'
-import { is_public_diagram } from '../../platform/_helpers'
+import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '../../../db/platform/collections.js'
+import { is_project_member } from '../../../libs/platform/user_rights.js'
+import { is_public_diagram } from '../../platform/_helpers.js'
 
 Meteor.methods({	
 

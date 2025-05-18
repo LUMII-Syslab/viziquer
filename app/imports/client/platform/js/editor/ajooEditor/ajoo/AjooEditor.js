@@ -1,22 +1,22 @@
-import Mode from './Editor/mode'
-import Palette from './Editor/palette'
-import SelectionStyle from './Editor/selectionStyle'
-import Layers from './Editor/layers'
-import Actions from './Editor/actions'
-import ConnectionPoints from './Editor/connectionPoints'
-import MouseState from './Editor/mouseState'
-import Zoom from './Editor/zooming'
-import Grid from './Editor/grid'
-import Size from './Editor/size'
-import {Panning} from './Editor/panning'
+import Mode from './Editor/mode.js'
+import Palette from './Editor/palette.js'
+import SelectionStyle from './Editor/selectionStyle.js'
+import Layers from './Editor/layers.js'
+import Actions from './Editor/actions.js'
+import ConnectionPoints from './Editor/connectionPoints.js'
+import MouseState from './Editor/mouseState.js'
+import Zoom from './Editor/zooming.js'
+import Grid from './Editor/grid.js'
+import Size from './Editor/size.js'
+import {Panning} from './Editor/panning.js'
 
 
-import AElements from './Elements/elements'
+import AElements from './Elements/elements.js'
 
-import Selection from './Selection/select'
-import UnSelection from './Selection/unselect'
+import Selection from './Selection/select.js'
+import UnSelection from './Selection/unselect.js'
 
-import { IMCSDiagramLayout } from './layoutEngine' //FIXME: saskaņot eksportu un importu
+import { IMCSDiagramLayout } from './layoutEngine.js' //FIXME: saskaņot eksportu un importu
 
 
 var AjooEditor = function(settings) {

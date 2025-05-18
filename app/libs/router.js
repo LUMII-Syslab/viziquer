@@ -1,7 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 
-import { Users, DiagramTypes } from '../imports/db/platform/collections'
-import { reset_variable } from '../imports/client/platform/js/utilities/utils'
+import { Users, DiagramTypes } from '../imports/db/platform/collections.js'
+import { reset_variable } from '../imports/client/platform/js/utilities/utils.js'
 
 import '../imports/client/platform/templates/publicLayout.html'
 import '../imports/client/custom/vq/templates/loginBranding.html'

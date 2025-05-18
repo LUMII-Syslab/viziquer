@@ -1,6 +1,6 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Utilities } from '../utilities/utils'
-import { DiagramTypes } from '../../../../db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Utilities } from '../utilities/utils.js'
+import { DiagramTypes } from '../../../../db/platform/collections.js'
 import { build_element_names_array } from './toolbar/Toolbar.js'
 
 Interpreter.methods({

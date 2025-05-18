@@ -1,7 +1,7 @@
-import { Utilities } from '../../js/utilities/utils'
-import { Users, Projects, ProjectsUsers } from '../../../../db/platform/collections'
+import { Utilities } from '../../js/utilities/utils.js'
+import { Users, Projects, ProjectsUsers } from '../../../../db/platform/collections.js'
 
-import { dataShapes } from '../../../custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 import './projects.html'
 

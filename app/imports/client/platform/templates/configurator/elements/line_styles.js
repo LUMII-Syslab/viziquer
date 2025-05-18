@@ -1,13 +1,13 @@
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { Interpreter } from '../../../../lib/interpreter'
-import { Utilities } from '../../../js/utilities/utils'
-import { ElementTypes, Elements } from '../../../../../db/platform/collections'
-import { generate_id, is_ajoo_editor } from '../../../../../libs/platform/lib'
-import { Dialog } from '../../../js/interpretator/Dialog'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { Interpreter } from '../../../../lib/interpreter.js'
+import { Utilities } from '../../../js/utilities/utils.js'
+import { ElementTypes, Elements } from '../../../../../db/platform/collections.js'
+import { generate_id, is_ajoo_editor } from '../../../../../libs/platform/lib.js'
+import { Dialog } from '../../../js/interpretator/Dialog.js'
 
 import './line_styles.html'
 
-import { fill_priorities } from '../../../../../libs/platform/helpers'
+import { fill_priorities } from '../../../../../libs/platform/helpers.js'
 
 Template.lineStyle.helpers({
 

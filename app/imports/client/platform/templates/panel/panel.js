@@ -1,4 +1,4 @@
-import { Tools, Projects, Users } from '../../../../db/platform/collections'
+import { Tools, Projects, Users } from '../../../../db/platform/collections.js'
 
 import './panel.html'
 

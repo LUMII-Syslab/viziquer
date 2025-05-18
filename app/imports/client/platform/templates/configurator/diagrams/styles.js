@@ -1,6 +1,6 @@
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { Utilities } from '../../../js/utilities/utils'
-import { DiagramTypes, Diagrams } from '../../../../../db/platform/collections'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { Utilities } from '../../../js/utilities/utils.js'
+import { DiagramTypes, Diagrams } from '../../../../../db/platform/collections.js'
 
 import './styles.html'
 

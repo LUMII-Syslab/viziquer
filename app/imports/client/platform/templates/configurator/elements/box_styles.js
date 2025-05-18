@@ -1,9 +1,9 @@
-import { Interpreter } from '../../../../../client/lib/interpreter'
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { ElementTypes, Elements } from '../../../../../db/platform/collections'
+import { Interpreter } from '../../../../../client/lib/interpreter.js'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { ElementTypes, Elements } from '../../../../../db/platform/collections.js'
 
 import './box_styles.html'
-import { Dialog } from '../../../js/interpretator/Dialog';
+import { Dialog } from '../../../js/interpretator/Dialog.js'
 
 //Box style properties
 

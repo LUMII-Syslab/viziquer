@@ -1,4 +1,4 @@
-import { is_project_admin , is_project_version_admin } from '../../libs/platform/user_rights'
+import { is_project_admin , is_project_version_admin } from '../../libs/platform/user_rights.js'
 
 Meteor.methods({
 

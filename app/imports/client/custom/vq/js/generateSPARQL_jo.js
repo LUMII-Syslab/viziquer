@@ -1,12 +1,12 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Projects, Elements } from '../../../../db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Projects, Elements } from '../../../../db/platform/collections.js'
 import { Utilities } from '../../../platform/js/utilities/utils.js'
-import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
-import { parse_class, parse_attrib, parse_filter, getPathFullGrammar } from './parser';
-import { VQ_Element, createVQ_Element } from './VQ_Element';
+import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery.js'
+import { parse_class, parse_attrib, parse_filter, getPathFullGrammar } from './parser.js'
+import { VQ_Element, createVQ_Element } from './VQ_Element.js'
 import { dataShapes } from './DataShapes.js'
 import { setSchemaNamesForQuery } from './transformations.js'
-import { ElementTypes, DiagramTypes } from '../../../../db/platform/collections'
+import { ElementTypes, DiagramTypes } from '../../../../db/platform/collections.js'
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu

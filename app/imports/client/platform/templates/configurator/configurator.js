@@ -1,11 +1,11 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 
-import { Tools, UserTools } from '../../../../db/platform/collections'
-import { Interpreter } from '../../../lib/interpreter'
-import { Dialog } from '../../js/interpretator/Dialog'
+import { Tools, UserTools } from '../../../../db/platform/collections.js'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Dialog } from '../../js/interpretator/Dialog.js'
 
 import './configurator.html'
-import { joined_date } from '../../js/utilities/time_utilities'
+import { joined_date } from '../../js/utilities/time_utilities.js'
 
 Interpreter.methods({
 

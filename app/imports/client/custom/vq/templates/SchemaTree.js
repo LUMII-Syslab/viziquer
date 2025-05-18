@@ -1,10 +1,10 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Projects } from '../../../../db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Projects } from '../../../../db/platform/collections.js'
 
-import { dataShapes } from '../../../custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 import './SchemaTree.html'
-import { Create_VQ_Element_Async } from '../js/VQ_Element';
+import { Create_VQ_Element_Async } from '../js/VQ_Element.js'
 
 Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaFilter.F2 = new ReactiveVar("");

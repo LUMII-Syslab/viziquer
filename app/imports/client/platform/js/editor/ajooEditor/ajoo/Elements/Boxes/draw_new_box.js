@@ -1,5 +1,5 @@
-import Event from '../../Editor/events';
-import ElementHandlers from '../element_handlers'
+import Event from '../../Editor/events.js'
+import ElementHandlers from '../element_handlers.js'
 
 var ANewBox = function(editor) {
 

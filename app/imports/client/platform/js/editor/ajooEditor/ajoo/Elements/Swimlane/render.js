@@ -1,6 +1,6 @@
-import Box from './../Boxes/DrawingShapes/_render_boxes';
+import Box from './../Boxes/DrawingShapes/_render_boxes.js'
 
-import { SwimlaneCompartments } from './add_compartment'
+import { SwimlaneCompartments } from './add_compartment.js'
 const Swimlane = function(editor) {
 
 	var swimlane = this;

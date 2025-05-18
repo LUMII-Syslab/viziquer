@@ -1,5 +1,5 @@
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { DiagramTypes } from '../../../../../db/platform/collections'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { DiagramTypes } from '../../../../../db/platform/collections.js'
 
 import './context_menus.html'
 

@@ -1,17 +1,17 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Projects, Elements, Compartments, CompartmentTypes } from '../../../../db/platform/collections'
-import { process_sub_compart_types } from '../../../platform/templates/diagrams/dialog/subCompartments'
-import { Dialog } from '../../../platform/js/interpretator/Dialog'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Projects, Elements, Compartments, CompartmentTypes } from '../../../../db/platform/collections.js'
+import { process_sub_compart_types } from '../../../platform/templates/diagrams/dialog/subCompartments.js'
+import { Dialog } from '../../../platform/js/interpretator/Dialog.js'
 import { Utilities } from '../../../platform/js/utilities/utils.js'
 
-import { dataShapes } from '../../../custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 import { generateSymbolTable, getSchemaNameForElement } from '../../../custom/vq/js/transformations.js'
 import { autoCompletionAddAttribute, autoCompletionCleanup } from '../../../custom/vq/js/autoCompletion.js'
 
 import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 
 import './add_attribute_form.html'
-import { AddMergeValues2 } from './add_merge_form'
+import { AddMergeValues2 } from './add_merge_form.js'
 
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);

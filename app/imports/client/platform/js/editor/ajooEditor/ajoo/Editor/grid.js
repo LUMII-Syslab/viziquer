@@ -1,6 +1,5 @@
-// import { _ } from 'vue-underscore';
-import SelectionDragging from '../Selection/selection_dragging'
-import {OrthogonalRerouting} from '../Elements/Lines/routing/orthogonal_rerouting'
+import SelectionDragging from '../Selection/selection_dragging.js'
+import {OrthogonalRerouting} from '../Elements/Lines/routing/orthogonal_rerouting.js'
 
 var Grid = function(editor) {
 

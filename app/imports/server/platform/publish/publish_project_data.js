@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 
-import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Projects, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, DialogTabs, ForumPostTags, DiagramLogs } from '../../../db/platform/collections'
-import { get_configurator_tool_id } from '../../../libs/platform/helpers'
-import { is_project_version_reader, is_project_member, is_project_admin, is_system_admin } from '../../../libs/platform/user_rights'
-import { error_msg, get_maximal_user_query_limit, get_user_query_limit, build_user_search_query } from '../_global_functions'
-import { empty_query, get_unknown_public_user_name, is_public_diagram } from '../_helpers'
+import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Projects, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, DialogTabs, ForumPostTags, DiagramLogs } from '../../../db/platform/collections.js'
+import { get_configurator_tool_id } from '../../../libs/platform/helpers.js'
+import { is_project_version_reader, is_project_member, is_project_admin, is_system_admin } from '../../../libs/platform/user_rights.js'
+import { error_msg, get_maximal_user_query_limit, get_user_query_limit, build_user_search_query } from '../_global_functions.js'
+import { empty_query, get_unknown_public_user_name, is_public_diagram } from '../_helpers.js'
 
 
 Meteor.publish("Diagrams", function(list) {

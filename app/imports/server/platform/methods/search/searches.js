@@ -1,6 +1,6 @@
-import { is_project_member } from '../../../../libs/platform/user_rights'
-import { Searches } from '../../../../db/platform/collections'
-import { error_msg } from '../../_global_functions';
+import { is_project_member } from '../../../../libs/platform/user_rights.js'
+import { Searches } from '../../../../db/platform/collections.js'
+import { error_msg } from '../../_global_functions.js'
 
 
 Meteor.methods({

@@ -1,5 +1,5 @@
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { ElementTypes, Diagrams } from '../../../../../db/platform/collections'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { ElementTypes, Diagrams } from '../../../../../db/platform/collections.js'
 
 import './main.html'
 

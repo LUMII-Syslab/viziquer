@@ -1,7 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { ElementTypes } from '../../../../../db/platform/collections'
-import { is_ajoo_editor } from '../../../../../libs/platform/lib'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { ElementTypes } from '../../../../../db/platform/collections.js'
+import { is_ajoo_editor } from '../../../../../libs/platform/lib.js'
 
 import './main.html'
 

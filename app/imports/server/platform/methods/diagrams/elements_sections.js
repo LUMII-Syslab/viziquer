@@ -1,5 +1,5 @@
-import { is_project_version_admin } from '../../../../libs/platform/user_rights'
-import { ElementsSections } from '../../../../db/platform/collections'
+import { is_project_version_admin } from '../../../../libs/platform/user_rights.js'
+import { ElementsSections } from '../../../../db/platform/collections.js'
 
 
 Meteor.methods({

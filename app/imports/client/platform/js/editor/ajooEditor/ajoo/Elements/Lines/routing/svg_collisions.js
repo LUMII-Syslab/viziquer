@@ -1,4 +1,3 @@
-// import { _ } from 'vue-underscore';
 import compute_intersection from './IntersectionUtilities'
 
 

@@ -1,7 +1,7 @@
-import { is_system_admin, is_project_admin, is_project_version_admin, is_project_version_reader } from '../../../../libs/platform/user_rights'
-import { is_public_diagram, get_unknown_public_user_name } from '../../_helpers'
-import { Tools, DiagramTypes, Projects, Versions, Diagrams, Elements, Compartments } from '../../../../db/platform/collections'
-import { generate_id } from '../../../../libs/platform/lib'
+import { is_system_admin, is_project_admin, is_project_version_admin, is_project_version_reader } from '../../../../libs/platform/user_rights.js'
+import { is_public_diagram, get_unknown_public_user_name } from '../../_helpers.js'
+import { Tools, DiagramTypes, Projects, Versions, Diagrams, Elements, Compartments } from '../../../../db/platform/collections.js'
+import { generate_id } from '../../../../libs/platform/lib.js'
 
 Diagrams.after.remove(function (user_id, doc) {
 	if (!doc)

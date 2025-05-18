@@ -1,7 +1,7 @@
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { DiagramTypes } from '../../../../../db/platform/collections'
-import { generate_id } from '../../../../../libs/platform/lib'
-import { Utilities, reset_variable } from '../../../js/utilities/utils'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { DiagramTypes } from '../../../../../db/platform/collections.js'
+import { generate_id } from '../../../../../libs/platform/lib.js'
+import { Utilities, reset_variable } from '../../../js/utilities/utils.js'
 
 import './toolbar.html'
 

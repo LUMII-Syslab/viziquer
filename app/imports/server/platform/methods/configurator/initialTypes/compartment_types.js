@@ -1,4 +1,4 @@
-import { generate_id, is_ajoo_editor } from '../../../../../libs/platform/lib'
+import { generate_id, is_ajoo_editor } from '../../../../../libs/platform/lib.js'
 
 function get_default_compartment_style(type, editor_type) {
 	if (type == "Box") {

@@ -6,13 +6,13 @@
 
 // The module has been developed with partial support from Latvian Science Council project lzp-2021/1-0389 "Visual Queries in Distributed Knowledge Graphs" (since 2022).
 
-import { Interpreter } from '../../../lib/interpreter'
-import { Utilities } from '../../../platform/js/utilities/utils'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Utilities } from '../../../platform/js/utilities/utils.js'
 
-import { Projects, Compartments, Elements, ElementTypes, Diagrams} from '../../../../db/platform/collections'
-import {OrthogonalCollectionRerouting} from '../../../platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
+import { Projects, Compartments, Elements, ElementTypes, Diagrams} from '../../../../db/platform/collections.js'
+// import {OrthogonalCollectionRerouting} from '../../../platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting.js'
 
-import { dataShapes } from './DataShapes'
+import { dataShapes } from './DataShapes.js'
 import { Create_VQ_Element_Async, VQ_Element, Create_VQ_Element_Declaration } from './VQ_Element.js';
 import { getDeclarations } from './genAbstractQuery.js';
 

@@ -1,4 +1,4 @@
-import { dataShapes } from './DataShapes'
+import { dataShapes } from './DataShapes.js'
 
 // ***********************************************************************************
 // const FAAS_SERVER_URL = 'http://localhost:59286/api';

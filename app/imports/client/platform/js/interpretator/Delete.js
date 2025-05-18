@@ -1,7 +1,7 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Utilities } from '../utilities/utils'
-import { DiagramTypes, Elements } from '../../../../db/platform/collections'
-import { is_ajoo_editor } from '../../../../libs/platform/lib'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Utilities } from '../utilities/utils.js'
+import { DiagramTypes, Elements } from '../../../../db/platform/collections.js'
+import { is_ajoo_editor } from '../../../../libs/platform/lib.js'
 import { build_element_names_array } from './toolbar/Toolbar.js'
 
 Interpreter.methods({

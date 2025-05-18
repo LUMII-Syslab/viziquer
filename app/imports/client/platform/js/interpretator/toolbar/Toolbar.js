@@ -1,13 +1,13 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 
-import { Interpreter } from '../../../../lib/interpreter'
-import { Dialog } from '../Dialog'
+import { Interpreter } from '../../../../lib/interpreter.js'
+import { Dialog } from '../Dialog.js'
 import { Utilities } from '../../utilities/utils.js'
 
-import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets, Users } from '../../../../../db/platform/collections'
-import { generate_id } from '../../../../../libs/platform/lib'
-import { reset_variable } from '../../utilities/utils'
-import { joined_date } from '../../utilities/time_utilities'
+import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets, Users } from '../../../../../db/platform/collections.js'
+import { generate_id } from '../../../../../libs/platform/lib.js'
+import { reset_variable } from '../../utilities/utils.js'
+import { joined_date } from '../../utilities/time_utilities.js'
 
 //Start of diagram ribbon
 Interpreter.methods({

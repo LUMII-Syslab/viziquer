@@ -1,10 +1,10 @@
 // import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Interpreter } from '../../../lib/interpreter'
-import { Utilities, reset_variable } from '../../../platform/js/utilities/utils'
-import { is_system_admin } from '../../../../libs/platform/user_rights'
-import { Projects, Diagrams } from '../../../../db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Utilities, reset_variable } from '../../../platform/js/utilities/utils.js'
+import { is_system_admin } from '../../../../libs/platform/user_rights.js'
+import { Projects, Diagrams } from '../../../../db/platform/collections.js'
 
-import { dataShapes } from '../../../custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 import './sparql_form.html'
 

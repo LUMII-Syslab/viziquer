@@ -1,7 +1,7 @@
-import { is_project_admin, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '../../../../libs/platform/user_rights'
-import { ProjectsUsers, Notifications, Versions, UserVersionSettings, Users, Projects } from '../../../../db/platform/collections'
-import { get_unknown_public_user_name } from '../../_helpers'
-import { send_email } from '../../../../libs/platform/lib';
+import { is_project_admin, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '../../../../libs/platform/user_rights.js'
+import { ProjectsUsers, Notifications, Versions, UserVersionSettings, Users, Projects } from '../../../../db/platform/collections.js'
+import { get_unknown_public_user_name } from '../../_helpers.js'
+import { send_email } from '../../../../libs/platform/lib.js'
 
 ProjectsUsers.before.insert(function (user_id, doc) {
 

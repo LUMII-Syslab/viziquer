@@ -1,12 +1,11 @@
-// import { _ } from 'vue-underscore';
-import Event from './events';
-import {Panning, PanningDrag} from './panning';
-import SelectionDragging from '../Selection/selection_dragging';
-import SelectionRect from '../Selection/selection_rect';
-import ResizingShape from '../Elements/Boxes/resizing';
+import Event from './events.js'
+import {Panning, PanningDrag} from './panning.js'
+import SelectionDragging from '../Selection/selection_dragging.js'
+import SelectionRect from '../Selection/selection_rect.js'
+import ResizingShape from '../Elements/Boxes/resizing.js'
 import LineRerouting  from '../Elements/Lines/routing/line_dragging';
-import ANewBox from '../Elements/Boxes/draw_new_box';
-import {ANewLine} from '../Elements/Lines/draw_new_line';
+import ANewBox from '../Elements/Boxes/draw_new_box.js'
+import {ANewLine} from '../Elements/Lines/draw_new_line.js'
 
 
 var Actions = function(editor, action_name) {

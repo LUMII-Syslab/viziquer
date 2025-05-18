@@ -1,8 +1,8 @@
-import { ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Elements, Compartments } from '../../../../db/platform/collections';
-import { is_system_admin } from '../../../../libs/platform/user_rights'
-import { build_initial_box_style, build_initial_line_style } from '../configurator/initialTypes/element_types'
-import { error_msg, is_version_not_published } from '../../_global_functions'
-import { generate_id, is_ajoo_editor, is_zoom_chart_editor } from '../../../../libs/platform/lib'
+import { ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Elements, Compartments } from '../../../../db/platform/collections.js'
+import { is_system_admin } from '../../../../libs/platform/user_rights.js'
+import { build_initial_box_style, build_initial_line_style } from '../configurator/initialTypes/element_types.js'
+import { error_msg, is_version_not_published } from '../../_global_functions.js'
+import { generate_id, is_ajoo_editor, is_zoom_chart_editor } from '../../../../libs/platform/lib.js'
 import { build_initial_element_type } from './initialTypes/element_types.js'
 
 ElementTypes.after.update(function (user_id, doc, fields, modifier, options) {

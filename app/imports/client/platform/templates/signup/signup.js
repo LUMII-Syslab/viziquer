@@ -1,5 +1,6 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Utilities, reset_variable } from '../../js/utilities/utils'
+
+import { Utilities, reset_variable } from '../../js/utilities/utils.js'
 
 import './signup.html'
 

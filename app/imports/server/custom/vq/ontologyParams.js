@@ -1,6 +1,6 @@
-import { is_project_version_admin } from '../../../libs/platform/user_rights'
-import { Projects } from '../../../db/platform/collections'
-import { is_public_diagram } from '../../platform/_helpers'
+import { is_project_version_admin } from '../../../libs/platform/user_rights.js'
+import { Projects } from '../../../db/platform/collections.js'
+import { is_public_diagram } from '../../platform/_helpers.js'
 
 Meteor.methods({
 

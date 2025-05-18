@@ -1,6 +1,6 @@
-import { build_project_version_reader_role, build_project_role, build_project_admin_role, build_project_version_admin_role } from '../../../../libs/platform/user_rights'
-import { Notifications, ProjectsUsers, Users, UserVersionSettings, Versions } from '../../../../db/platform/collections'
-import { user_not_logged_in } from '../../_helpers';
+import { build_project_version_reader_role, build_project_role, build_project_admin_role, build_project_version_admin_role } from '../../../../libs/platform/user_rights.js'
+import { Notifications, ProjectsUsers, Users, UserVersionSettings, Versions } from '../../../../db/platform/collections.js'
+import { user_not_logged_in } from '../../_helpers.js'
 
 
 Notifications.after.update(function (user_id, doc, fieldNames, modifier, options) {

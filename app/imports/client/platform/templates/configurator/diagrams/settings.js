@@ -1,12 +1,12 @@
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { Utilities } from '../../../js/utilities/utils'
-import { Interpreter } from '../../../../lib/interpreter'
-import { DiagramTypes } from '../../../../../db/platform/collections'
-import { is_ajoo_editor } from '../../../../../libs/platform/lib'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { Utilities } from '../../../js/utilities/utils.js'
+import { Interpreter } from '../../../../lib/interpreter.js'
+import { DiagramTypes } from '../../../../../db/platform/collections.js'
+import { is_ajoo_editor } from '../../../../../libs/platform/lib.js'
 
 import './settings.html'
 
-import { Dialog } from '../../../js/interpretator/Dialog'
+import { Dialog } from '../../../js/interpretator/Dialog.js'
 
 Template.diagramAdanced.helpers({
 

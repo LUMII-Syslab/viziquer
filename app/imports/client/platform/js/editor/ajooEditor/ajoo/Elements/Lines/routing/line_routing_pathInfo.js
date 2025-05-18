@@ -1,9 +1,8 @@
-// import { _ } from 'vue-underscore';
-import SegmInfo from './line_routing_segInfo'
-import PointInfo from './line_routing_pointInfo'
+import SegmInfo from './line_routing_segInfo.js'
+import PointInfo from './line_routing_pointInfo.js'
 
-import {getPairOfValue, getValueOfPair, cloneObject, cloneArray, rectOverlapRect, rectInsideRect, listPrintString, reconvertArray, convertArray, reconvert, convert, koef} from './line_routing_other'
-import {SVGObject, LineSVGObject} from './svg_collisions'
+import {getPairOfValue, getValueOfPair, cloneObject, cloneArray, rectOverlapRect, rectInsideRect, listPrintString, reconvertArray, convertArray, reconvert, convert, koef} from './line_routing_other.js'
+import {SVGObject, LineSVGObject} from './svg_collisions.js'
 
 ////******************************************************************************
 // PathInfo 

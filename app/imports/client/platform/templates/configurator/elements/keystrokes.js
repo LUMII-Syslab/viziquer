@@ -1,4 +1,4 @@
-import { Configurator } from '../../../templates/configurator/config_utils'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
 
 import './keystrokes.html'
 

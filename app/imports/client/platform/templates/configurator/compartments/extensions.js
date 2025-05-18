@@ -1,6 +1,6 @@
-import { Configurator } from '../config_utils'
-import { Utilities } from '../../../js/utilities/utils'
-import { CompartmentTypes } from '../../../../../db/platform/collections'
+import { Configurator } from '../config_utils.js'
+import { Utilities } from '../../../js/utilities/utils.js'
+import { CompartmentTypes } from '../../../../../db/platform/collections.js'
 
 import './extensions.html'
 

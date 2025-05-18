@@ -1,7 +1,7 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Projects, Diagrams, Elements, ElementTypes, Compartments, CompartmentTypes } from '../../../../db/platform/collections'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Projects, Diagrams, Elements, ElementTypes, Compartments, CompartmentTypes } from '../../../../db/platform/collections.js'
 import { Utilities } from '../../../platform/js/utilities/utils.js'
-import { Dialog } from '../../../platform/js/interpretator/Dialog';
+import { Dialog } from '../../../platform/js/interpretator/Dialog.js'
 
 //-----------------------------------------------------------------------------
 /*

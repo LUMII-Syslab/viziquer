@@ -1,8 +1,8 @@
-import { Users, ProjectsUsers, ProjectsGroups } from '../../../../db/platform/collections'
-import { Utilities, reset_variable } from '../../js/utilities/utils'
+import { Users, ProjectsUsers, ProjectsGroups } from '../../../../db/platform/collections.js'
+import { Utilities, reset_variable } from '../../js/utilities/utils.js'
 
 import './users.html'
-import { joined_date } from '../../js/utilities/time_utilities';
+import { joined_date } from '../../js/utilities/time_utilities.js'
 
 // Start of members tab
 Template.membersTab.helpers({

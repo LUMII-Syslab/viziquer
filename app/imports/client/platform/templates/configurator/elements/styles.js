@@ -1,9 +1,9 @@
-import { Configurator } from '../../../templates/configurator/config_utils'
-import { ElementTypes, Elements } from '../../../../../db/platform/collections'
-import { reset_variable } from '../../../js/utilities/utils'
-import { Dialog } from '../../../js/interpretator/Dialog'
+import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { ElementTypes, Elements } from '../../../../../db/platform/collections.js'
+import { reset_variable } from '../../../js/utilities/utils.js'
+import { Dialog } from '../../../js/interpretator/Dialog.js'
 import { Utilities } from '../../../js/utilities/utils.js'
-import { Interpreter } from '../../../../../client/lib/interpreter'
+import { Interpreter } from '../../../../../client/lib/interpreter.js'
 
 import './styles.html'
 

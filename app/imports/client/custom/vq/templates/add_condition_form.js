@@ -1,12 +1,12 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Elements, Compartments, CompartmentTypes} from '../../../../db/platform/collections'
-import { process_sub_compart_types } from '../../../platform/templates/diagrams/dialog/subCompartments'
-import { Dialog } from '../../../platform/js/interpretator/Dialog'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Elements, Compartments, CompartmentTypes} from '../../../../db/platform/collections.js'
+import { process_sub_compart_types } from '../../../platform/templates/diagrams/dialog/subCompartments.js'
+import { Dialog } from '../../../platform/js/interpretator/Dialog.js'
 
 import { autoCompletionAddCondition, autoCompletionCleanup } from '../../../custom/vq/js/autoCompletion.js'
 
 import './add_condition_form.html'
-import { VQ_Element, createVQ_Element } from '../js/VQ_Element'
+import { VQ_Element, createVQ_Element } from '../js/VQ_Element.js'
 
 Interpreter.customMethods({
 	AddCondition: function () {

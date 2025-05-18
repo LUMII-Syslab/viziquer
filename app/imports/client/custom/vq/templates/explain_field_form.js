@@ -1,4 +1,4 @@
-import { Interpreter } from '../../../lib/interpreter'
+import { Interpreter } from '../../../lib/interpreter.js'
 
 import './explain_field_form.html'
 

@@ -1,7 +1,7 @@
-import { Tools, ToolVersions, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons } from '../../db/platform/collections';
-import { generate_id } from '../../libs/platform/lib'
-import { get_current_time } from './_helpers'
-import { build_initial_box_style, build_initial_line_style } from './methods/configurator/initialTypes/element_types'
+import { Tools, ToolVersions, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons } from '../../db/platform/collections.js'
+import { generate_id } from '../../libs/platform/lib.js'
+import { get_current_time } from './_helpers.js'
+import { build_initial_box_style, build_initial_line_style } from './methods/configurator/initialTypes/element_types.js'
 import { 
   build_initial_compartment_type, get_default_compartment_style, build_box_compartment_style, build_line_compartment_style 
 } from './methods/configurator/initialTypes/compartment_types'

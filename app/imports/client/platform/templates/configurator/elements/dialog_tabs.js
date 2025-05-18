@@ -1,5 +1,5 @@
-import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '../../../../../db/platform/collections'
-import { Utilities, reset_variable } from '../../../js/utilities/utils'
+import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '../../../../../db/platform/collections.js'
+import { Utilities, reset_variable } from '../../../js/utilities/utils.js'
 
 import './dialog_tabs.html'
 

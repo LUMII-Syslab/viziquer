@@ -1,6 +1,6 @@
 import { Roles } from 'meteor/alanning:roles'
 
-import { Tools, Users, ProjectsUsers} from '../../db/platform/collections'
+import { Tools, Users, ProjectsUsers } from '../../db/platform/collections.js'
 
 function is_power_user(user_id) {
 	var role_name = build_power_user_role();

@@ -1,11 +1,10 @@
-// import { _ } from 'vue-underscore';
-import Box from './_render_boxes';
-import {BoxCompartments} from '../box_compartments';
-import Resizers from '../add_remove_resizers'
+import Box from './_render_boxes.js'
+import {BoxCompartments} from '../box_compartments.js'
+import Resizers from '../add_remove_resizers.js'
 import {ACircle, ADiamond } from './shapes1';
-import { reset_variable } from '../../../../../../utilities/utils'
+import { reset_variable } from '../../../../../../utilities/utils.js'
 
-import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions'
+import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions.js'
 
 //BPMNShape(abstract class)
 var BPMNShape = function(editor) {

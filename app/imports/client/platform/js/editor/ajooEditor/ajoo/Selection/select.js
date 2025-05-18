@@ -1,6 +1,5 @@
-// import { _ } from 'vue-underscore';
-import { OrthogonalCollectionRerouting } from '../Elements/Lines/routing/orthogonal_rerouting';
-import UnSelection from './unselect'
+import { OrthogonalCollectionRerouting } from '../Elements/Lines/routing/orthogonal_rerouting.js'
+import UnSelection from './unselect.js'
 
 var Selection = function(editor) {
 

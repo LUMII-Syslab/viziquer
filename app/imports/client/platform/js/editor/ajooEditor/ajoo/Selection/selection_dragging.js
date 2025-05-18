@@ -1,7 +1,6 @@
-// import { _ } from 'vue-underscore';
-import Event from '../Editor/events';
-import {OrthogonalCollectionRerouting} from '../Elements/Lines/routing/orthogonal_rerouting';
-import { LineSVGObject } from '../Elements/Lines/routing/svg_collisions';
+import Event from '../Editor/events.js'
+import {OrthogonalCollectionRerouting} from '../Elements/Lines/routing/orthogonal_rerouting.js'
+import { LineSVGObject } from '../Elements/Lines/routing/svg_collisions.js'
 
 var SelectionDragging = function(editor) {
 	var selection_dragging = this;

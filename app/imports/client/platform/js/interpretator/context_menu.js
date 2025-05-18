@@ -1,10 +1,10 @@
-import { Interpreter } from '../../../lib/interpreter'
-import { Dialog } from './Dialog'
-import { ElementTypes, DiagramTypes } from '../../../../db/platform/collections'
-import { _contextMenu } from '../../../lib/global_variables'
-import { reset_variable } from '../utilities/utils'
+import { Interpreter } from '../../../lib/interpreter.js'
+import { Dialog } from './Dialog.js'
+import { ElementTypes, DiagramTypes } from '../../../../db/platform/collections.js'
+import { _contextMenu } from '../../../lib/global_variables.js'
+import { reset_variable } from '../utilities/utils.js'
 
-import { dataShapes } from '../../../custom/vq/js/DataShapes'
+import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 
 _.extend(Interpreter, {

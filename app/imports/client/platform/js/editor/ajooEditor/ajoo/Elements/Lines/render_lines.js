@@ -1,7 +1,6 @@
-// import { _ } from 'vue-underscore';
-import LineEndShape from './lineEndShape';
-import LinkCompartments from './line_compartments';
-import ElementHandlers from '../element_handlers';
+import LineEndShape from './lineEndShape.js'
+import LinkCompartments from './line_compartments.js'
+import ElementHandlers from '../element_handlers.js'
 import {OrthogonalRerouting} from "./routing/orthogonal_rerouting"
 
 var Link = function(editor) {

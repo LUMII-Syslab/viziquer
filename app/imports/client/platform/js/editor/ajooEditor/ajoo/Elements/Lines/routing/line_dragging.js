@@ -1,4 +1,4 @@
-import Event from '../../../Editor/events';
+import Event from '../../../Editor/events.js'
 
 var LineRerouting = function(link) {
 	var rerouting = this;

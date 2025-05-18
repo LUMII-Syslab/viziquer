@@ -1,5 +1,4 @@
-// import { _ } from 'vue-underscore';
-import Link from '../Elements/Lines/render_lines';
+import Link from '../Elements/Lines/render_lines.js'
 
 
 var Palette = function(editor, palette_obj) {

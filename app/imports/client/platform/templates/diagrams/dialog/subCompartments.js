@@ -1,8 +1,8 @@
-import { Interpreter } from '../../../../lib/interpreter'
-import { Compartments, CompartmentTypes } from '../../../../../db/platform/collections'
-import { Utilities, reset_variable } from '../../../js/utilities/utils'
-import { Dialog } from '../../../js/interpretator/Dialog';
-import { autoCompletionCleanup } from '../../../../custom/vq/js/autoCompletion';
+import { Interpreter } from '../../../../lib/interpreter.js'
+import { Compartments, CompartmentTypes } from '../../../../../db/platform/collections.js'
+import { Utilities, reset_variable } from '../../../js/utilities/utils.js'
+import { Dialog } from '../../../js/interpretator/Dialog.js'
+import { autoCompletionCleanup } from '../../../../custom/vq/js/autoCompletion.js'
 
 import './multiField.html'
 import './value_from_subcompartments.html'

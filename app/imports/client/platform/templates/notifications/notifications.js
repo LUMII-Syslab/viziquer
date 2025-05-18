@@ -1,5 +1,5 @@
-import { Utilities } from '../../js/utilities/utils'
-import { Notifications, Users, Projects, ProjectsUsers } from '../../../../db/platform/collections'
+import { Utilities } from '../../js/utilities/utils.js'
+import { Notifications, Users, Projects, ProjectsUsers } from '../../../../db/platform/collections.js'
 
 import './notifications.html'
 

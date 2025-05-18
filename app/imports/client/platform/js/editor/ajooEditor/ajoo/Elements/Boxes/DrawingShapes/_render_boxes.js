@@ -1,9 +1,8 @@
-// import { _ } from 'vue-underscore';
-import {BoxCompartments} from '../box_compartments'
-import ElementHandlers from '../../element_handlers'
-import Resizers from '../add_remove_resizers'
-import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions'
-import { Elements } from '../../../../../../../../../db/platform/collections'
+import {BoxCompartments} from '../box_compartments.js'
+import ElementHandlers from '../../element_handlers.js'
+import Resizers from '../add_remove_resizers.js'
+import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions.js'
+import { Elements } from '../../../../../../../../../db/platform/collections.js'
 
 var Box = function(editor) {
 

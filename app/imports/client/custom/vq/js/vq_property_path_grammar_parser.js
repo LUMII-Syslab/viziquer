@@ -1,5 +1,5 @@
-import { makeString } from './parserCommon';
-import { dataShapes } from './DataShapes';																 
+import { makeString } from './parserCommon.js'
+import { dataShapes } from './DataShapes.js'																 
   "use strict";
 
   /*

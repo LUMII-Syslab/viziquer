@@ -1,7 +1,7 @@
-import { Interpreter } from '../../../lib/interpreter'
+import { Interpreter } from '../../../lib/interpreter.js'
 import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 import './VQ_DSS_schema.html'
-import { fragments } from './fragments';
+import { fragments } from './fragments.js'
 
 Template.VQ_DSS_schema.SchemaName = new ReactiveVar('');
 Template.VQ_DSS_schema.Classes = new ReactiveVar([]);

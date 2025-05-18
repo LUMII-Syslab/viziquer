@@ -1,4 +1,3 @@
-// import { _ } from 'vue-underscore';
 import {ATriangle, ADiamond, ACircle, Arrow,} from '../Boxes/DrawingShapes/shapes1';
 
 var LineEndShape = function(link, direction, style) {

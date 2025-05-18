@@ -1,5 +1,5 @@
-import { Dialog } from '../../../js/interpretator/Dialog'
-import { Tools, ToolVersions } from '../../../../../db/platform/collections'
+import { Dialog } from '../../../js/interpretator/Dialog.js'
+import { Tools, ToolVersions } from '../../../../../db/platform/collections.js'
 
 import './ribbon.html'
 

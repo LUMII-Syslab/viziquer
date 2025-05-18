@@ -1,7 +1,7 @@
-import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Diagrams, ImportedTranslets } from '../../../../db/platform/collections';
-import { is_system_admin } from '../../../../libs/platform/user_rights'
-import { diagram_default_style, build_initial_diagram_type } from './initialTypes/diagram_types'
-import { error_msg } from '../../_global_functions';
+import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Diagrams, ImportedTranslets } from '../../../../db/platform/collections.js'
+import { is_system_admin } from '../../../../libs/platform/user_rights.js'
+import { diagram_default_style, build_initial_diagram_type } from './initialTypes/diagram_types.js'
+import { error_msg } from '../../_global_functions.js'
 
 
 DiagramTypes.after.update(function (user_id, doc, fields, modifier, options) {

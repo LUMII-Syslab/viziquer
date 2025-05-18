@@ -3,9 +3,9 @@ import { Meteor } from 'meteor/meteor'
 import { 
   Tools, ToolVersions, UserTools, DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs, ImportedTranslets, Diagrams, Elements, Compartments, PaletteButtons 
 } from '../../../db/platform/collections'
-import { get_configurator_tool_id } from '../../../libs/platform/helpers'
-import { is_system_admin } from '../../../libs/platform/user_rights'
-import { error_msg } from '../_global_functions'
+import { get_configurator_tool_id } from '../../../libs/platform/helpers.js'
+import { is_system_admin } from '../../../libs/platform/user_rights.js'
+import { error_msg } from '../_global_functions.js'
 
 
 Meteor.publish("Structure_Tools", function(list) {

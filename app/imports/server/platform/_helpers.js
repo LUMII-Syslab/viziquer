@@ -1,5 +1,5 @@
-import { Diagrams } from '../../db/platform/collections'
-import { is_not_empty } from '../../libs/platform/lib'
+import { Diagrams } from '../../db/platform/collections.js'
+import { is_not_empty } from '../../libs/platform/lib.js'
 
 function convert_dictionary_to_array(list) {
 	var element_list = [];
