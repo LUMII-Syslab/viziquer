@@ -49,7 +49,7 @@ Meteor.methods({
 			return;
 		}
 
-		const schema_server = Meteor.call("getEnvVariable", "SCHEMA_SERVER_URL");
+		const schema_server = await Meteor.callAsync("getEnvVariable", "SCHEMA_SERVER_URL");
 		const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
 
 		let schema;

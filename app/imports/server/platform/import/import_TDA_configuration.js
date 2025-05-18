@@ -23,7 +23,7 @@ Meteor.methods({
 			}
 
 			else if (list.data && list.data.types) {
-				Meteor.call("importAjooConfiguration", list);
+				await Meteor.callAsync("importAjooConfiguration", list);
 			}
 			else { 
                 var user_id = Meteor.userId();

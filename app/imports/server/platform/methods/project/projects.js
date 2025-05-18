@@ -139,7 +139,7 @@ Meteor.methods({
 							 versionId: versionId, 	
 							 url: project_link,
 							};
-				Meteor.call("uploadProjectDataByUrl", list);
+				await Meteor.callAsync("uploadProjectDataByUrl", list);
 			}
 			return project._id;
 		}

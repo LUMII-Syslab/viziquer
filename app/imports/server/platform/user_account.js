@@ -109,7 +109,7 @@ Meteor.methods({
               toolId: tool_id,
             });
 
-            Meteor.call("importAjooConfiguration", {
+            await Meteor.callAsync("importAjooConfiguration", {
               toolId: tool_id, 
               versionId: version_id, 
               data: configData 
@@ -249,7 +249,7 @@ Meteor.methods({
 									projectId: list["projectId"],
 								};
 
-				Meteor.call("insertProjectsUsers", invitation);
+				await Meteor.callAsync("insertProjectsUsers", invitation);
 
 			}
 		}
