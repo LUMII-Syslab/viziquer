@@ -198,7 +198,7 @@ Meteor.publish("Diagram_Palette_ElementType", async function(list) {
 	}
 
 
-	if (is_project_version_reader(user_id, list, role) || is_public_diagrams(diagrams)) {
+	if (is_project_version_reader(user_id, list, role) || (await is_public_diagrams(diagrams))) {
 		var version = await Versions.findOneAsync({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
 			var tool_id = version["toolId"];
@@ -321,7 +321,7 @@ Meteor.publish("Diagram_Types", async function(list) {
 		role = proj_user["role"];
 	}
 
-	if (is_project_version_reader(user_id, list, role) || is_public_diagrams(diagram)) {
+	if (is_project_version_reader(user_id, list, role) || (await is_public_diagrams(diagram))) {
 
 		var version = await Versions.findOneAsync({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
@@ -359,14 +359,14 @@ Meteor.publish("Diagram_Types", async function(list) {
 	}
 });
 
-Meteor.publish("Diagram_Locker", function(list) {
+Meteor.publish("Diagram_Locker", async function(list) {
 
 	var diagram = Diagrams.find({_id: list["diagramId"],
 								projectId: list["projectId"],
 								versionId: list["versionId"],
 							});
 
-	if (is_project_version_reader(this.userId, list) || is_public_diagrams(diagram)) {
+	if (is_project_version_reader(this.userId, list) || (await is_public_diagrams(diagram))) {
 
 		var self = this;
 
@@ -718,14 +718,14 @@ Meteor.publish("UserSearches", function(list) {
 });
 
 
-Meteor.publish("Forum_Posts", function(list) {
+Meteor.publish("Forum_Posts", async function(list) {
 
 	//gets user's id
 	var user_id = this.userId;
 	if (!user_id || !list || list["noQuery"])
 		return this.stop();
 
-	var filter = select_project_users(user_id, list);
+	var filter = await select_project_users(user_id, list);
 
 	if (list["postId"]) {
 		filter["_id"] = list["postId"];
@@ -763,12 +763,12 @@ Meteor.publish("Forum_Posts", function(list) {
 });
 
 // server: publish the current size of a collection
-Meteor.publish("forumPostsCount", function (list) {
+Meteor.publish("forumPostsCount", async function(list) {
 	var user_id = this.userId;
 	if (!user_id || !list || list["noQuery"])
 		return this.stop();
 
-	var filter = select_project_users(user_id, list);
+	var filter = await select_project_users(user_id, list);
 
 	var self = this;
 	var count = 0;

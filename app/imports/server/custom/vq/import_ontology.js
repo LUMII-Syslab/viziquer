@@ -75,7 +75,7 @@ Meteor.methods({
         //add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, '', nsProc, new_diagram_id, diagram_type._id, ns_element, ns_type._id, false)
         list.element_id = ns_element;
         list.element_type_id = ns_type._id;
-        add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, '', {cut:false}, false)
+        await add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, '', {cut:false}, false)
 
         // Class part 
 		let class_type = await ElementTypes.findOneAsync({name: "Class", diagramTypeId: diagram_type._id});
@@ -115,7 +115,7 @@ Meteor.methods({
 			element_map[key] = new_box_id;
             list.element_id = new_box_id;
 
-			add_class_compartments(list, item);
+			await add_class_compartments(list, item);
 		});
 
 		// Gen part
@@ -195,7 +195,7 @@ Meteor.methods({
             const lineCompCount = 5;
             cut_info.cut = item.compartments.Name.length > lineCompCount;
             cut_info.max = lineCompCount; 
-            add_one_compartment_from_list(list, "Name", item.compartments.Name, '', cut_info);
+            await add_one_compartment_from_list(list, "Name", item.compartments.Name, '', cut_info);
 		});
         
         // Intersect Lines part
@@ -232,7 +232,7 @@ Meteor.methods({
 			let new_line_id = await Elements.insertAsync(object);
             list.element_id = new_line_id;
             element_map[key] = new_line_id;
-            add_one_compartment(list, "Information", item.compartments.Information, '');
+            await add_one_compartment(list, "Information", item.compartments.Information, '');
 		})
 	},
 });
@@ -290,10 +290,10 @@ async function add_compartment(list, item, diagram_id, diagram_type_id, element_
 	await Compartments.insertAsync(compart_obj);
 }
 
-function add_class_compartments(list, item ) {
+async function add_class_compartments(list, item) {
 	let compartments = item.compartments;
     // Class Name
-    add_one_compartment(list, "Name", compartments.Name, compartments.Name)
+    await add_one_compartment(list, "Name", compartments.Name, compartments.Name)
   
     const outCount = 7;
     const inCount = 5;
@@ -307,29 +307,29 @@ function add_class_compartments(list, item ) {
     if ( compartments.AttributesT.out.length > 0 ) {
         cut_info.cut = compartments.AttributesT.out.length > outCount;
         cut_info.max = outCount; 
-        add_one_compartment_from_list(list, "PropOut", compartments.AttributesT.out, '', cut_info)
+        await add_one_compartment_from_list(list, "PropOut", compartments.AttributesT.out, '', cut_info)
     }
     if ( compartments.AttributesT.in.length > 0 ) {
         cut_info.cut = compartments.AttributesT.in.length > inCount;
         cut_info.max = inCount; 
-        add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, `${list.uStrings.u_in_prop} `, cut_info)
+        await add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, `${list.uStrings.u_in_prop} `, cut_info)
     }
     if ( compartments.AttributesT.c.length > 0 ) {
         cut_info.cut = compartments.AttributesT.c.length > inCount;
         cut_info.max = inCount; 
-        add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, `${list.uStrings.u_c_prop} `, cut_info)
+        await add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, `${list.uStrings.u_c_prop} `, cut_info)
     }
 
     //SubClasses
     if ( compartments.ClassList.length > 0 ) {
         cut_info.cut = compartments.ClassList.length > classCount;
         cut_info.max = classCount; 
-        add_one_compartment_from_list(list, "ClassList", compartments.ClassList, '', cut_info);
+        await add_one_compartment_from_list(list, "ClassList", compartments.ClassList, '', cut_info);
     }
 
 }
 
-function add_one_compartment_from_list(list, compartmentName, value_list, pref, cut_info, sort = true) {
+async function add_one_compartment_from_list(list, compartmentName, value_list, pref, cut_info, sort = true) {
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const length = value_list.length;  
     let max_count = value_list.length; 
@@ -358,7 +358,7 @@ function add_one_compartment_from_list(list, compartmentName, value_list, pref, 
     let value = ( sort ) ? replace_newline(value_list.map(a => `${pref}${a.name}`).sort().join('\n')) : replace_newline(value_list.map(a => `${pref}${a.name}`).join('\n'));
     if ( max_count < length )  value = `${value}\n...(${length-max_count})...`; 
 
-    add_one_compartment(list, compartmentName, input, value);
+    await add_one_compartment(list, compartmentName, input, value);
 }
 
 /*

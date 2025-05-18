@@ -83,19 +83,19 @@ Meteor.methods({
 		}
 	},
 
-    uploadProjectDataByUrl: function(list) {
+    uploadProjectDataByUrl: async function(list) {
 
 		//console.log("in uploadProjectDataByUrl", list)
         var result = HTTP.call('GET', list.url);
 		//console.log("result", result.data)
 		list.data = result.data;
 		
-		uploadProject(list);
+		await uploadProject(list);
     },
 	
-	uploadProjectData: function(list) {
+	uploadProjectData: async function(list) {
 
-		uploadProject(list)
+		await uploadProject(list)
 	},
 
 });

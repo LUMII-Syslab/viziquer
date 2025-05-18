@@ -46,13 +46,13 @@ async function load_configurator(user_id) {
 	//Element types
 	var elem_type_list = {};
 	if ((await ElementTypes.find({toolId: tool_id}).countAsync()) === 0) {
-		var super_box_id = build_super_box(tool_id, version_id, diagram_type_id);
+		var super_box_id = await build_super_box(tool_id, version_id, diagram_type_id);
 		
-		build_box_type(tool_id, version_id, diagram_type_id, super_box_id);
-		build_line_type(tool_id, version_id, diagram_type_id, super_box_id);
-		build_specialization(tool_id, version_id, diagram_type_id, super_box_id);
+		await build_box_type(tool_id, version_id, diagram_type_id, super_box_id);
+		await build_line_type(tool_id, version_id, diagram_type_id, super_box_id);
+		await build_specialization(tool_id, version_id, diagram_type_id, super_box_id);
 
-		build_swimlane(tool_id, version_id, diagram_type_id, super_box_id);
+		await build_swimlane(tool_id, version_id, diagram_type_id, super_box_id);
 	}
 
 }

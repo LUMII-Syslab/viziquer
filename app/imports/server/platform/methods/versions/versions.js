@@ -133,7 +133,7 @@ Versions.after.insert(async function(user_id, doc) {
 						versionId: new_version_id
 					};
 
-	send_notifications(user_id, notification);
+	await send_notifications(user_id, notification);
 });
 Versions.hookOptions.after.insert = {fetchPrevious: false};
 
@@ -183,7 +183,7 @@ Versions.after.remove(async function(user_id, doc) {
 		await ProjectsUsers.updateAsync({projectId: project_id, versionId: new_version_id}, 
 							{$set: {versionId: last_version_id}});
 
-	send_notifications(user_id, notification);
+	await send_notifications(user_id, notification);
 
 	//deleting diagrams, elements, compartments, ...
 	await Diagrams.removeAsync({projectId: project_id, versionId: new_version_id});
@@ -330,7 +330,7 @@ async function send_notifications(user_id, list) {
 
 				await Notifications.insertAsync(notification);
 
-				sending_notification_email(list["notificationType"], receiver_id, proj_name); 
+				await sending_notification_email(list["notificationType"], receiver_id, proj_name); 
 			}
 	});
 }

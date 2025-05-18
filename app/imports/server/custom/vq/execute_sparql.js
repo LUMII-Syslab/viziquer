@@ -403,7 +403,7 @@ function selectHttpRequestProfile(options) {
 
 Meteor.methods({
 
-  executeSparql(list) {
+  async executeSparql(list) {
     const user_id = Meteor.userId();
 
     if (!is_project_member(user_id, list) && !is_public_diagram(list.diagramId)) {
@@ -498,7 +498,7 @@ Meteor.methods({
     }
 
     sparql_log_entry.number_of_rows = number_of_rows;
-    add_sparql_log(sparql_log_entry);
+    await add_sparql_log(sparql_log_entry);
 
     const Future = Npm.require('fibers/future');
     const future = new Future();

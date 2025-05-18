@@ -9,13 +9,13 @@ import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, U
 import { get_unknown_public_user_name } from '../../_helpers.js'
 
 //creating a new project version and adds the project creator to the project
-Projects.after.insert(function (user_id, doc) {
+Projects.after.insert(async function(user_id, doc) {
 
 	if (!doc) {
 		return false;
 	}
 
-	afterInsert(user_id, doc);
+	await afterInsert(user_id, doc);
 
 	// var proj_id = doc["_id"];
 	// var tool_id = doc["toolId"];
@@ -184,10 +184,10 @@ Meteor.methods({
 			list.newProjectId = new_project_id;
 
 			project._id = new_project_id;
-			var new_version_id = afterInsert(user_id, project);
+			var new_version_id = await afterInsert(user_id, project);
 
-			await Diagrams.find({projectId: project_id}).forEachAsync(function(diagram) {
-				duplicateDiagram(diagram, new_project_id, new_version_id);
+			await Diagrams.find({projectId: project_id}).forEachAsync(async function(diagram) {
+				await duplicateDiagram(diagram, new_project_id, new_version_id);
 			});
 			
 		}

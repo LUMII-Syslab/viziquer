@@ -10,7 +10,7 @@ Meteor.methods({
 			return;
 		}
 
-		migrateProjectByTool(target_tool, list);
+		await migrateProjectByTool(target_tool, list);
 	},	
 
 	migrateProject: async function(list) {
@@ -22,8 +22,8 @@ Meteor.methods({
 				return;
 			}
 
-			await Projects.find({toolId: list.toolId}).forEachAsync(function(project) {
-				migrateProjectByTool(target_tool, {projectId: project._id,});
+			await Projects.find({toolId: list.toolId}).forEachAsync(async function(project) {
+				await migrateProjectByTool(target_tool, {projectId: project._id,});
 			});
 		}
 	},

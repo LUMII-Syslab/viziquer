@@ -162,7 +162,7 @@ Meteor.methods({
 		}
 	},
 
-	resizeElement: function(list) {
+	resizeElement: async function(list) {
 
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
@@ -172,7 +172,7 @@ Meteor.methods({
 							diagramId: list["diagramId"],
 						};
 
-				resize_element(list, query, user_id);
+				await resize_element(list, query, user_id);
 			}
 		}
 		else if (is_system_admin(user_id, list)) {
@@ -181,7 +181,7 @@ Meteor.methods({
 						diagramId: list["diagramId"],
 					};
 
-			resize_element(list, query, user_id);
+			await resize_element(list, query, user_id);
 		}
 	},
 
@@ -401,7 +401,7 @@ Meteor.methods({
 								diagramId: list["diagramId"],
 							};
 
-				change_position(list, query, user_id);
+				await change_position(list, query, user_id);
 
 				if (list.isLayoutComputationNeededOnLoad != undefined) {
 					await Diagrams.updateAsync({_id: list.diagramId, projectId: list["projectId"],},
@@ -416,19 +416,19 @@ Meteor.methods({
 						diagramId: list["diagramId"],
 					};
 
-			change_position(list, query, user_id);
+			await change_position(list, query, user_id);
 		}
 	},
 
-	deleteElements: function(list) {
+	deleteElements: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
-				delete_elements(user_id, list);
+				await delete_elements(user_id, list);
 			}
 		}
 		else if (is_system_admin(user_id, list)) {
-			delete_elements(user_id, list);
+			await delete_elements(user_id, list);
 		}
 	},
 
