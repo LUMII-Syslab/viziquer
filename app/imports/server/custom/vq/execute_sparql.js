@@ -500,7 +500,7 @@ Meteor.methods({
     sparql_log_entry.number_of_rows = number_of_rows;
     await add_sparql_log(sparql_log_entry);
 
-    const Future = Npm.require('fibers/future');
+    // const Future = Npm.require('fibers/future'); // FIXME
     const future = new Future();
 
     try {
@@ -615,7 +615,7 @@ Meteor.methods({
 
     const HTTP_REQUEST_FN = selectHttpRequestProfile(options);
 
-    const Future = Npm.require('fibers/future');
+    // const Future = Npm.require('fibers/future'); // FIXME
     const future = new Future();
 
     let httpOptions = {};
@@ -664,7 +664,7 @@ Meteor.methods({
 
     const HTTP_REQUEST_FN = selectHttpRequestProfile(options);
 
-    const Future = Npm.require('fibers/future');
+    // const Future = Npm.require('fibers/future'); // FIXME
     const future = new Future();
 
     const httpOptions = {};
