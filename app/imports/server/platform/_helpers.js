@@ -116,8 +116,8 @@ function empty_query() {
 }
 
 
-function is_public_diagram(diagram_id) {
-	let diagram = Diagrams.findOne({_id: diagram_id});
+async function is_public_diagram(diagram_id) {
+	let diagram = await Diagrams.findOneAsync({_id: diagram_id});
 	if (diagram) {
 		return diagram.isPublic;
 	}

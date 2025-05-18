@@ -2,14 +2,14 @@ import { is_project_admin , is_project_version_admin } from '../../libs/platform
 
 Meteor.methods({
 
-    upsertProfileImage: function(list) {
+    upsertProfileImage: async function(list) {
         var user_id = Meteor.userId();
         if (user_id) {
-            var image_id = Images.insert(list.file);
+            var image_id = await Images.insertAsync(list.file);
         }
     },
 
-    insertFile: function(list) {
+    insertFile: async function(list) {
 
         var user_id = Meteor.userId();
         if (is_project_admin(user_id, list)) {
@@ -35,18 +35,18 @@ Meteor.methods({
             list["fullName"] = list.fullName;
             list["initialName"] = list.fullName;
 
-            var file_id = CloudFiles.insert(list);
+            var file_id = await CloudFiles.insertAsync(list);
 
             return file_id;
         }
     },
 
-    removeFile: function(list) {
+    removeFile: async function(list) {
 
         var user_id = Meteor.userId();
         if (is_project_version_admin(user_id, list)) {
 
-            var cloud_file = CloudFiles.findOne({projectId: list["projectId"],
+            var cloud_file = await CloudFiles.findOneAsync({projectId: list["projectId"],
                                                   versionId: list["versionId"],
                                                   _id: list["fileId"],
                                                 });
@@ -54,12 +54,12 @@ Meteor.methods({
             if (cloud_file) {
                 var file_obj_id = cloud_file.fileId;
 
-                CloudFiles.remove({projectId: list["projectId"],
+                await CloudFiles.removeAsync({projectId: list["projectId"],
                                   versionId: list["versionId"],
                                   _id: list["fileId"],
                                 });
 
-                FileObjects.remove({projectId: list["projectId"],
+                await FileObjects.removeAsync({projectId: list["projectId"],
                                     versionId: list["versionId"],
                                     _id: file_obj_id,
                                   });
@@ -68,12 +68,12 @@ Meteor.methods({
         }
     },
 
-    renameFile: function(list) {
+    renameFile: async function(list) {
 
         var user_id = Meteor.userId();
         if (is_project_admin(user_id, list)) {
 
-            CloudFiles.update({_id: list["fileId"], projectId: list["projectId"], versionId: list["versionId"]},
+            await CloudFiles.updateAsync({_id: list["fileId"], projectId: list["projectId"], versionId: list["versionId"]},
                                 {$set: {name: list["name"], fullName: list["fullName"]}});
         }
     },

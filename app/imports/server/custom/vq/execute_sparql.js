@@ -90,8 +90,8 @@ function buildEnhancedQuery(originalQuery, fragmentToFind, fragmentToInsert, fra
   throw new Error('No SELECT in the query');
 }
 
-function add_sparql_log(log) {
-  VQ_sparql_logs.insert(log);
+async function add_sparql_log(log) {
+  await VQ_sparql_logs.insertAsync(log);
 }
 
 function hasAuthInfo(params) {

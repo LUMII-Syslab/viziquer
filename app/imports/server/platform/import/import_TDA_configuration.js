@@ -9,7 +9,7 @@ import { build_compartment } from '../methods/diagrams/compartments.js'
 
 Meteor.methods({
 
-	importConfiguration: function(list) {
+	importConfiguration: async function(list) {
 		console.log("FFFFFFFFFFFFFF", list);
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
@@ -31,7 +31,7 @@ Meteor.methods({
 				    //console.log("Liekam iekšā")
 					//console.log(Services.find({toolId: list.toolId }).count())
 					//console.log(list.toolId)
-					Services.remove({toolId: list.toolId});
+					await Services.removeAsync({toolId: list.toolId});
 					//console.log(Services.find({toolId: list.toolId }).count())
 					var data = list.data;
 					var services = _.extend(data, {toolId: list.toolId});
@@ -49,7 +49,7 @@ Meteor.methods({
 
 var ImportTDAConfiguration = {
 
-	init: function(list, user_id) {
+	init: async function(list, user_id) {
 
 		var self = this;
 
@@ -64,7 +64,7 @@ var ImportTDAConfiguration = {
 
 
 		//selecting configurator diagram type
-		var config_dgr_type = DiagramTypes.findOne({name: "_ConfiguratorDiagramType"});
+		var config_dgr_type = await DiagramTypes.findOneAsync({name: "_ConfiguratorDiagramType"});
 		if (!config_dgr_type) {
 			return;
 		}
@@ -73,8 +73,8 @@ var ImportTDAConfiguration = {
 		var config_dgr_type_id = config_dgr_type._id;
 
 		//configurator types
-		var line_type = ElementTypes.findOne({diagramTypeId: config_dgr_type_id, name: "Line"});	
-		var box_type = ElementTypes.findOne({diagramTypeId: config_dgr_type_id, name: "Box"});
+		var line_type = await ElementTypes.findOneAsync({diagramTypeId: config_dgr_type_id, name: "Line"});	
+		var box_type = await ElementTypes.findOneAsync({diagramTypeId: config_dgr_type_id, name: "Box"});
 
 		if (!box_type || !line_type) {
 			return;
@@ -83,7 +83,7 @@ var ImportTDAConfiguration = {
 		self.configuratorLineType = line_type;
 		self.configuratorBoxType = box_type;
 
-		var box_compart_type_name = CompartmentTypes.findOne({name: "Name", elementTypeId: box_type._id});
+		var box_compart_type_name = await CompartmentTypes.findOneAsync({name: "Name", elementTypeId: box_type._id});
 		self.configuratorBoxCompartmetmentType = box_compart_type_name;
 	},
 
@@ -98,7 +98,7 @@ var ImportTDAConfiguration = {
 					});
 	},
 
-	buildDiagramPresentation: function(diagram_type_in) {
+	buildDiagramPresentation: async function(diagram_type_in) {
 
 		var self = this;
 
@@ -127,12 +127,12 @@ var ImportTDAConfiguration = {
 
 		_.extend(target_diagram, self.toolData);
 
-		self.newDiagramId = Diagrams.insert(target_diagram);
+		self.newDiagramId = await Diagrams.insertAsync(target_diagram);
 
 		return target_diagram;
 	},
 
-	buildDiagramType: function(diagram_type_in, target_diagram) {
+	buildDiagramType: async function(diagram_type_in, target_diagram) {
 
 		var self = this;
 
@@ -167,7 +167,7 @@ var ImportTDAConfiguration = {
 		var translet_collection = [];
 		self.addTranslets(diagram_type_in, target_diagram_type, translet_collection);
 
-		self.newDiagramTypeId = DiagramTypes.insert(target_diagram_type);
+		self.newDiagramTypeId = await DiagramTypes.insertAsync(target_diagram_type);
 		
 		self.insertTranslets(translet_collection, target_diagram_type, self.newDiagramTypeId);
 
@@ -221,7 +221,7 @@ var ImportTDAConfiguration = {
 		var refs = {};
 		var target_refs = {};
 
-		_.each(elem_types_in, function(elem_type_in, i) {
+		_.each(elem_types_in, async function(elem_type_in, i) {
 
 			var target_element = self.buildingElementPresentation(elem_type_in);
 			var target_type = self.buildingElementType(elem_type_in, target_element);
@@ -243,7 +243,7 @@ var ImportTDAConfiguration = {
 
 				_.extend(palette_button, self.toolData);
 
-				PaletteButtons.insert(palette_button);
+				await PaletteButtons.insertAsync(palette_button);
 			}
 
 			//compartment types			
@@ -278,7 +278,7 @@ var ImportTDAConfiguration = {
 		return target_element;
 	},
 
-	buildingElementType: function(elem_type_in, target_element) {
+	buildingElementType: async function(elem_type_in, target_element) {
 
 		var self = this;
 
@@ -329,7 +329,7 @@ var ImportTDAConfiguration = {
 		self.addTranslets(elem_type_in, target_type, translet_collection);
 
 		//adding element type
-		var new_elem_type_id = ElementTypes.insert(target_type);
+		var new_elem_type_id = await ElementTypes.insertAsync(target_type);
 
 		self.insertTranslets(translet_collection, target_type, new_elem_type_id);
 
@@ -339,11 +339,18 @@ var ImportTDAConfiguration = {
 		return target_type;
 	},
 
-	addSpecializations: function(specializations, element_type_mapping, element_mappings, diagram_id, diagram_type_id, config_dgr_type_id) {
+	addSpecializations: async function(
+        specializations,
+        element_type_mapping,
+        element_mappings,
+        diagram_id,
+        diagram_type_id,
+        config_dgr_type_id
+    ) {
 
 		var self = this;
 
-		var elem_type = ElementTypes.findOne({diagramTypeId: config_dgr_type_id, name: "Specialization"});
+		var elem_type = await ElementTypes.findOneAsync({diagramTypeId: config_dgr_type_id, name: "Specialization"});
 		if (!elem_type) {
 			return;
 		}
@@ -377,8 +384,8 @@ var ImportTDAConfiguration = {
 		  	self.loadEdge(edge);
 		});
 
-		_.each(list, function(item, key) {
-			ElementTypes.update({_id: key}, {$set: {superTypeIds: item}});
+		_.each(list, async function(item, key) {
+			await ElementTypes.updateAsync({_id: key}, {$set: {superTypeIds: item}});
 		});
 	},	
 
@@ -401,7 +408,7 @@ var ImportTDAConfiguration = {
 		}
 
 		var i = 0;
-		_.each(tabs, function(tab) {
+		_.each(tabs, async function(tab) {
 
 			//setting tab properties
 		 	var dialog_tab = {
@@ -415,7 +422,7 @@ var ImportTDAConfiguration = {
 		 	_.extend(dialog_tab, self.toolData);
 
 		 	//inserting the tab
-		 	var tab_id = DialogTabs.insert(dialog_tab);
+		 	var tab_id = await DialogTabs.insertAsync(dialog_tab);
 
 		 	//mapping the old tab id to the new one
 		 	self.mappings[tab.repId] = tab_id;
@@ -511,7 +518,7 @@ var ImportTDAConfiguration = {
 			is_edge = true;
 		}
 
-		_.each(elem_type_in["compartmentTypes"], function(compart_type_in, i) {
+		_.each(elem_type_in["compartmentTypes"], async function(compart_type_in, i) {
 
 			//selecting the compartment type properties
 			var translets_collection = [];
@@ -637,7 +644,7 @@ var ImportTDAConfiguration = {
 			else {
 				if (old_row_id) {
 
-					var tab = DialogTabs.findOne({toolId: target_compart_type["toolId"],
+					var tab = await DialogTabs.findOneAsync({toolId: target_compart_type["toolId"],
 												elementTypeId: target_compart_type["elementTypeId"]},
 												{sort: {index: -1}});
 
@@ -651,7 +658,7 @@ var ImportTDAConfiguration = {
 			self.addTranslets(compart_type_in, target_compart_type, translet_collection);
 
 			//adding the compart type
-			var new_compart_type_id = CompartmentTypes.insert(target_compart_type, {removeEmptyStrings: false});
+			var new_compart_type_id = await CompartmentTypes.insertAsync(target_compart_type, {removeEmptyStrings: false});
 
 			//compartment transelets
 			self.insertTranslets(translet_collection, target_compart_type, new_compart_type_id);
@@ -751,7 +758,7 @@ var ImportTDAConfiguration = {
 		});
 	},
 
-	loadNode: function(presentation) {
+	loadNode: async function(presentation) {
 
 		var self = this;
 		var elem_type = self.configuratorBoxType;
@@ -774,7 +781,7 @@ var ImportTDAConfiguration = {
 
 		_.extend(target_element, self.toolData);
 					
-		var id = Elements.insert(target_element);
+		var id = await Elements.insertAsync(target_element);
 
 		self.mappings[presentation["id"]] = id;
 		self.newElementId = id;
@@ -782,7 +789,7 @@ var ImportTDAConfiguration = {
 		return target_element;
 	},
 
-	addBoxCompartment: function(elem_type_in, target_element) {
+	addBoxCompartment: async function(elem_type_in, target_element) {
 
 		var self = this;
 
@@ -798,11 +805,11 @@ var ImportTDAConfiguration = {
 
 		_.extend(compart, overriding);
 
-		Compartments.insert(compart);
+		await Compartments.insertAsync(compart);
 	},
 
 
-	loadEdge: function(edge) {
+	loadEdge: async function(edge) {
 
 		var self = this;
 		var elem_type = self.configuratorLineType;
@@ -850,7 +857,7 @@ var ImportTDAConfiguration = {
 
 		_.extend(target_element, self.toolData);
 					
-		var id = Elements.insert(target_element);
+		var id = await Elements.insertAsync(target_element);
 
 		self.mappings[edge["id"]] = id;
 		self.newElementId = id;
@@ -1197,7 +1204,7 @@ var ImportTDAConfiguration = {
 		var self = this;
 		var elem_type_id = self.newElementTypeId;
 
-		return _.map(compart_type_in["choiceItems"], function(item_obj) {
+		return _.map(compart_type_in["choiceItems"], async function(item_obj) {
 
 			var compart_style = "NoStyle";
 			if (item_obj["compartmentStyle"]) {
@@ -1210,7 +1217,7 @@ var ImportTDAConfiguration = {
 			if (item_obj["elementStyle"]) {
 				var elem_style_name = item_obj["elementStyle"];
 
-				var tmp_elem_type = ElementTypes.findOne({_id: elem_type_id});
+				var tmp_elem_type = await ElementTypes.findOneAsync({_id: elem_type_id});
 				if (tmp_elem_type) {
 					var elem_styles = tmp_elem_type["styles"];
 
@@ -1280,10 +1287,10 @@ var ImportTDAConfiguration = {
 			};
 	},
 
-	addVQProperties: function(ids) {
+	addVQProperties: async function(ids) {
 
 		var id = ids[0];
-		var diagram_type = DiagramTypes.findOne({_id: id,});
+		var diagram_type = await DiagramTypes.findOneAsync({_id: id,});
 		if (!diagram_type) {
 			console.error("No diagram type inserted");
 			return;
@@ -1314,10 +1321,10 @@ var ImportTDAConfiguration = {
 		collection_menu.push(execute_sparql);
 		no_collection_menu.push(execute_sparql);
 
-		DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu}});
+		await DiagramTypes.updateAsync({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu}});
 
 
-		ElementTypes.find({diagramTypeId: diagram_type_id, }).forEach(function(elem_type) {
+		await ElementTypes.find({diagramTypeId: diagram_type_id, }).forEachAsync(async function(elem_type) {
 
 			var name = elem_type.name;
 
@@ -1327,26 +1334,26 @@ var ImportTDAConfiguration = {
 
 				var menu = elem_type.contextMenu;
 				menu = _.union([{item: "AddLink", procedure: "AddLink", }], menu);
-				ElementTypes.update({_id: elem_type._id}, {$set: {contextMenu: menu},});
+				await ElementTypes.updateAsync({_id: elem_type._id}, {$set: {contextMenu: menu},});
 
 				if (menu_item) {
 					menu_item.procedure = "GenerateSPARQL";
-					DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu}});
+					await DiagramTypes.updateAsync({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu}});
 				}
 
 
-				CompartmentTypes.find({elementTypeId: class_type_id,}).forEach(function(compart_type) {
+				await CompartmentTypes.find({elementTypeId: class_type_id,}).forEachAsync(async function(compart_type) {
 
 					if (compart_type.name == "ClassType") {
-						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
+						await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {defaultValue: "",}});
 					}
 
 					if (compart_type.name == "Distinct") {
-						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
+						await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {defaultValue: "",}});
 					}
 
 					if (compart_type.name == "OrderBy") {
-						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
+						await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {defaultValue: "",}});
 					}
 
 					if (compart_type.name == "Name") {
@@ -1358,7 +1365,7 @@ var ImportTDAConfiguration = {
 
 						if (item) {
 							item.procedure = "VQgetClassNames";
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
+							await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
 						}
 
 					}
@@ -1397,7 +1404,7 @@ var ImportTDAConfiguration = {
 							});	
 
 
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {subCompartmentTypes: sub_compart_types,}});
+							await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {subCompartmentTypes: sub_compart_types,}});
 						}
 
 					}
@@ -1407,7 +1414,7 @@ var ImportTDAConfiguration = {
 
 			if (name == "Link") {
 
-				CompartmentTypes.find({elementTypeId: elem_type._id,}).forEach(function(compart_type) {
+				await CompartmentTypes.find({elementTypeId: elem_type._id,}).forEachAsync(async function(compart_type) {
 
 					if (compart_type.name == "Name") {
 
@@ -1418,7 +1425,7 @@ var ImportTDAConfiguration = {
 
 						if (item) {
 							item.procedure = "VQgetAssociationNames";
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
+							await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
 						}
 
 					}
@@ -1433,7 +1440,7 @@ var ImportTDAConfiguration = {
 
 						if (item) {
 							item.procedure = "VQsetSubQueryInverseLink";
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
+							await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
 						}
 
 					}

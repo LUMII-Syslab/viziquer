@@ -3,13 +3,13 @@ import { ProjectsUsers, Notifications, Versions, UserVersionSettings, Users, Pro
 import { get_unknown_public_user_name } from '../../_helpers.js'
 import { send_email } from '../../../../libs/platform/lib.js'
 
-ProjectsUsers.before.insert(function (user_id, doc) {
+ProjectsUsers.before.insert(async function(user_id, doc) {
 
 	if (!doc)
 		return false;
 
 	//cheking if the user is already attached to the project
-	var proj_user = ProjectsUsers.findOne({userSystemId: doc["userSystemId"], projectId: doc["projectId"]});
+	var proj_user = await ProjectsUsers.findOneAsync({userSystemId: doc["userSystemId"], projectId: doc["projectId"]});
 	if (proj_user) {
 		console.log("ProjectsUsers error: The user is already attached to the project");
 		return false;
@@ -17,7 +17,7 @@ ProjectsUsers.before.insert(function (user_id, doc) {
 });
 ProjectsUsers.hookOptions.before.insert = {fetchPrevious: false};
 
-ProjectsUsers.after.insert(function (user_id, doc) {
+ProjectsUsers.after.insert(async function(user_id, doc) {
 
 	if (!doc)
 		return false;
@@ -26,7 +26,7 @@ ProjectsUsers.after.insert(function (user_id, doc) {
 	if (doc["userSystemId"] != user_id) {
 
 		//adding notification to the user that was invited
-		Notifications.insert({
+		await Notifications.insertAsync({
 						createdBy: user_id,
 						receiver: doc["userSystemId"],
 						createdAt: new Date(),
@@ -74,7 +74,7 @@ ProjectsUsers.hookOptions.after.insert = {fetchPrevious: false};
 // 		modifier.$set.modifiedAt = new Date();
 // });
 
-ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options) {
+ProjectsUsers.after.update(async function(user_id, doc, fieldNames, modifier, options) {
 
 	//if not changing the role, then no notifications are sent
 	if (!doc || !modifier.$set)
@@ -104,7 +104,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 			var old_roles = [build_project_admin_role(proj_id)];
 
 			//removing admins rights from any project version
-			proj_versions.forEach(function(version) {
+			await proj_versions.forEachAsync(function(version) {
 				old_roles.push(build_project_version_admin_role(proj_id, version["_id"]));
 				old_roles.push(build_project_version_reader_role(proj_id, version["_id"], prev_role));
 			});
@@ -118,13 +118,13 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 		if (role == "Admin") {
 			var roles = [build_project_admin_role(proj_id)];
 
-			var last_new_version = Versions.findOne({projectId: proj_id, status: "New"});
+			var last_new_version = await Versions.findOneAsync({projectId: proj_id, status: "New"});
 			if (last_new_version)
 				roles.push(build_project_version_admin_role(proj_id, version_id));
 		}
 
 		//adding reading rights
-		proj_versions.forEach(function(version) {
+		await proj_versions.forEachAsync(function(version) {
 			roles.push(build_project_version_reader_role(proj_id, version["_id"], role)); 
 		});
 
@@ -133,10 +133,10 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 
 	if (modifier.$set.versionId) {
 		var version_id = modifier.$set.versionId;
-		var settings_id = UserVersionSettings.findOne({userSystemId: user_id, projectId: proj_id,
+		var settings_id = await UserVersionSettings.findOneAsync({userSystemId: user_id, projectId: proj_id,
 														versionId: version_id});
 		if (!settings_id) {
-			settings_id = UserVersionSettings.insert({
+			settings_id = await UserVersionSettings.insertAsync({
 										userSystemId: user_id,
 										versionId: version_id,
 										projectId: proj_id,
@@ -150,7 +150,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 									});
 		}
 
-		Users.update({systemId: user_id, activeProject: proj_id}, {$set: {activeVersion: version_id}});
+		await Users.updateAsync({systemId: user_id, activeProject: proj_id}, {$set: {activeVersion: version_id}});
 
 	}
 
@@ -162,7 +162,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 	var role = doc["role"];
 	var date = new Date();
 
-	var notification = Notifications.findOne({receiver: doc["userSystemId"],
+	var notification = await Notifications.findOneAsync({receiver: doc["userSystemId"],
 												projectId: doc["projectId"],
 												type: "Invitation",
 												});
@@ -170,7 +170,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 	//if there is an invitation that is confirmed or there is no notification, then creates one
 	if (!notification || (notification && notification["status"] == "confirmed")) {
 
-		Notifications.insert({createdBy: user_id,
+		await Notifications.insertAsync({createdBy: user_id,
 							receiver: doc["userSystemId"],
 							createdAt: date,
 							type: "ChangeRole",
@@ -192,7 +192,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 	//if there is an invitation that is new or seen, then updates it
 	else if (notification["status"] == "seen" || notification["status"] == "new") {
 
-		Notifications.update({receiver: doc["userSystemId"],
+		await Notifications.updateAsync({receiver: doc["userSystemId"],
 							projectId: doc["projectId"],
 							type: "Invitation"}, 
 							{$set: {"data.role": role,
@@ -203,7 +203,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 });
 //ProjectsUsers.hookOptions.after.update = {fetchPrevious: false};
 
-ProjectsUsers.after.remove(function (user_id, doc) {
+ProjectsUsers.after.remove(async function(user_id, doc) {
 
 	if (!doc)
 		return false;
@@ -214,14 +214,14 @@ ProjectsUsers.after.remove(function (user_id, doc) {
 	var role = doc["role"];
 
 	//removing all the project related notifications
-	Notifications.remove({receiver: target_user, projectId: doc["projectId"], status: {$ne: "rejected"}});
+	await Notifications.removeAsync({receiver: target_user, projectId: doc["projectId"], status: {$ne: "rejected"}});
 
 	//remove any user rights from the project
 	var proj_id = doc["projectId"];
 	var roles = [build_project_admin_role(proj_id), build_project_role(proj_id)];
 
 	//removing admin and reader rights from any project version
-	Versions.find({projectId: proj_id}).forEach(function(version) {
+	await Versions.find({projectId: proj_id}).forEachAsync(function(version) {
 		roles.push(build_project_version_admin_role(proj_id, version["_id"]));
 		roles.push(build_project_version_reader_role(proj_id, version["_id"], role)); 		
 	});
@@ -229,15 +229,15 @@ ProjectsUsers.after.remove(function (user_id, doc) {
 	Roles.removeUsersFromRoles(target_user, roles);
 
 	//removing user's project settings
-	UserVersionSettings.remove({projectId: proj_id, userSystemId: target_user});
+	await UserVersionSettings.removeAsync({projectId: proj_id, userSystemId: target_user});
 
 	//removing the active project
-	Users.update({systemId: target_user, activeProject: proj_id}, {$set: {activeProject: "no-project"}});
+	await Users.updateAsync({systemId: target_user, activeProject: proj_id}, {$set: {activeProject: "no-project"}});
 
 	if (target_user != user_id) {
 
 		//creates the new messages to inform that user is removed
-		Notifications.insert({createdBy: user_id,
+		await Notifications.insertAsync({createdBy: user_id,
 							receiver: target_user,
 							createdAt: new Date(),
 							type: "Removed",
@@ -246,7 +246,7 @@ ProjectsUsers.after.remove(function (user_id, doc) {
 							data: {}
 						});
 
-		var receiver_user = Users.findOne({systemId: doc["userSystemId"]})
+		var receiver_user = await Users.findOneAsync({systemId: doc["userSystemId"]})
 		if (receiver_user) {
 
 			var proj_name = get_project_name(proj_id);
@@ -269,7 +269,7 @@ ProjectsUsers.hookOptions.after.remove = {fetchPrevious: false};
 
 Meteor.methods({
 
-	insertProjectsUsers: function(list) {
+	insertProjectsUsers: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_admin(user_id, list)) {
@@ -282,33 +282,33 @@ Meteor.methods({
 			list["createdAt"] = date;
 			list["modifiedAt"] = date;
 
-			ProjectsUsers.insert(list);
+			await ProjectsUsers.insertAsync(list);
 
 		}
 	},
 
-	updateProjectsUsers: function(list) {
+	updateProjectsUsers: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_admin(user_id, list) || list["userSystemId"] == user_id) {
-			ProjectsUsers.update({projectId: list["projectId"], userSystemId: list["userSystemId"]},
+			await ProjectsUsers.updateAsync({projectId: list["projectId"], userSystemId: list["userSystemId"]},
 									list["update"]);
 		}
 	},
 
-	removeProjectsUsers: function(list) {
+	removeProjectsUsers: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_project_admin(user_id, list) || list["userSystemId"] == user_id) {
 
-			ProjectsUsers.remove(list);
+			await ProjectsUsers.removeAsync(list);
 		}
 	},	
 
 });
 
-function get_project_name(proj_id) {
+async function get_project_name(proj_id) {
 
-	var project = Projects.findOne({_id: proj_id});
+	var project = await Projects.findOneAsync({_id: proj_id});
 	var proj_name = "";
 	if (project)
 		proj_name = project["name"];
@@ -316,9 +316,9 @@ function get_project_name(proj_id) {
 	return proj_name;
 }
 
-function sending_notification_email(user_id, proj_id, subject, text) {
+async function sending_notification_email(user_id, proj_id, subject, text) {
 
-	var receiver_user = Users.findOne({systemId: user_id})
+	var receiver_user = await Users.findOneAsync({systemId: user_id})
 	if (receiver_user) {
 		var proj_name = get_project_name(proj_id);
 		var email = {email: receiver_user["email"],

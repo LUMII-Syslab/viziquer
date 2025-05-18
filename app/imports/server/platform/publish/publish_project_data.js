@@ -7,7 +7,7 @@ import { error_msg, get_maximal_user_query_limit, get_user_query_limit, build_us
 import { empty_query, get_unknown_public_user_name, is_public_diagram } from '../_helpers.js'
 
 
-Meteor.publish("Diagrams", function(list) {
+Meteor.publish("Diagrams", async function(list) {
 
 	var user_id = this.userId;
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
@@ -15,7 +15,7 @@ Meteor.publish("Diagrams", function(list) {
 	}
 
 	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
+	var proj_user = await ProjectsUsers.findOneAsync({projectId: proj_id, userSystemId: user_id});
 	if (!proj_user) {
 		return;
 	}
@@ -48,14 +48,14 @@ Meteor.publish("Diagrams", function(list) {
 	}
 });
 
-Meteor.publish("FoundDiagrams", function(list) {
+Meteor.publish("FoundDiagrams", async function(list) {
 
 	var user_id = this.userId;
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
 		return this.stop();
 
 	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
+	var proj_user = await ProjectsUsers.findOneAsync({projectId: proj_id, userSystemId: user_id});
 	if (!proj_user)
 		return;
 
@@ -72,7 +72,7 @@ Meteor.publish("FoundDiagrams", function(list) {
 			//THIS IS NOT REACTIVE
 			var comparts = Compartments.find({projectId: proj_id, versionId: version_id,
 											valueLC: {$regex: make_regex_subsring(list["text"])}});
-			var diagram_ids = comparts.map(function(compart){return compart["diagramId"]});
+			var diagram_ids = await comparts.mapAsync(function(compart){return compart["diagramId"]});
 
 			var diagram_regex = {"$regex": make_regex_subsring(list["text"]), $options: 'i'};
 			
@@ -133,7 +133,7 @@ Meteor.publish("FoundDiagrams", function(list) {
 });
 
 
-Meteor.publish("DiagramTypes_UserVersionSettings", function(list) {
+Meteor.publish("DiagramTypes_UserVersionSettings", async function(list) {
 
 	if (!list || list["noQuery"])
 		return this.stop();
@@ -142,7 +142,7 @@ Meteor.publish("DiagramTypes_UserVersionSettings", function(list) {
 	if (is_project_version_reader(user_id, list)) {
 
 		//selecting the version that stores the tool and tool version info
-		var version = Versions.findOne({_id: list["versionId"], projectId: list["projectId"]});
+		var version = await Versions.findOneAsync({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
 
 			//adding some limits on the fields
@@ -172,7 +172,7 @@ Meteor.publish("DiagramTypes_UserVersionSettings", function(list) {
 });
 
 					
-Meteor.publish("Diagram_Palette_ElementType", function(list) {
+Meteor.publish("Diagram_Palette_ElementType", async function(list) {
 	var user_id = this.userId || get_unknown_public_user_name();
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
 		return this.stop();
@@ -192,14 +192,14 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 
 	var role;
 	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
+	var proj_user = await ProjectsUsers.findOneAsync({projectId: proj_id, userSystemId: user_id});
 	if (proj_user) {
 		role = proj_user["role"];
 	}
 
 
 	if (is_project_version_reader(user_id, list, role) || is_public_diagrams(diagrams)) {
-		var version = Versions.findOne({_id: list["versionId"], projectId: list["projectId"]});
+		var version = await Versions.findOneAsync({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
 			var tool_id = version["toolId"];
 			var tool_version_id = version["toolVersionId"];				
@@ -242,7 +242,7 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 			}
 
 			// var diagrams = Diagrams.find(diagram_query, diagram_limit);
-			if (diagrams.count() == 0) {
+			if ((await diagrams.countAsync()) == 0) {
 				error_msg();
 				return this.stop();				
 			}
@@ -265,14 +265,14 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 	}
 });
 
-Meteor.publish("DiagramLogs", function(list) {
+Meteor.publish("DiagramLogs", async function(list) {
 
 	var user_id = this.userId;
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
 		return this.stop();
 
 	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
+	var proj_user = await ProjectsUsers.findOneAsync({projectId: proj_id, userSystemId: user_id});
 	if (!proj_user)
 		return;
 
@@ -305,7 +305,7 @@ Meteor.publish("DiagramLogs", function(list) {
 	}
 });
 
-Meteor.publish("Diagram_Types", function(list) {
+Meteor.publish("Diagram_Types", async function(list) {
 
 	var user_id = this.userId || get_unknown_public_user_name();
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
@@ -316,14 +316,14 @@ Meteor.publish("Diagram_Types", function(list) {
 
 	var role;
 	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
+	var proj_user = await ProjectsUsers.findOneAsync({projectId: proj_id, userSystemId: user_id});
 	if (proj_user) {
 		role = proj_user["role"];
 	}
 
 	if (is_project_version_reader(user_id, list, role) || is_public_diagrams(diagram)) {
 
-		var version = Versions.findOne({_id: list["versionId"], projectId: list["projectId"]});
+		var version = await Versions.findOneAsync({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
 
 			var tool_id = version["toolId"];
@@ -373,15 +373,15 @@ Meteor.publish("Diagram_Locker", function(list) {
 		//TODO: This is not reactive when user's name changes (need improvement)
 		var handle = diagram.observe({
 			
-			added: function (doc) {
-				var user = Users.findOne({systemId: doc["editingUserId"]});
+			added: async function(doc) {
+				var user = await Users.findOneAsync({systemId: doc["editingUserId"]});
 				if (user && doc["editingUserId"]) {
 					self.added("Users", doc["editingUserId"], user);
 				}
 			},
 
-			changed: function(new_doc, old_doc) {
-				var user = Users.findOne({systemId: new_doc["editingUserId"]});
+			changed: async function(new_doc, old_doc) {
+				var user = await Users.findOneAsync({systemId: new_doc["editingUserId"]});
 
 				// if (old_doc["editingUserId"]) {
 				// 	self.removed('Users', old_doc["editingUserId"]);
@@ -849,7 +849,7 @@ Meteor.publish("Forum_PostComments", function(list) {
 
 
 //Forum_Tags
-Meteor.publish("Forum_Tags", function(list) {
+Meteor.publish("Forum_Tags", async function(list) {
 
 	var user_id = this.userId;
 	if (!user_id || !list || list["noQuery"]) {
@@ -862,7 +862,7 @@ Meteor.publish("Forum_Tags", function(list) {
 		filter = {projectId: list["projectId"]};
 
 	else {
-		var project_ids = ProjectsUsers.find({userSystemId: user_id}).map(
+		var project_ids = await ProjectsUsers.find({userSystemId: user_id}).mapAsync(
 			function(proj_user) {
 				return proj_user["projectId"];
 			});
@@ -893,7 +893,7 @@ function build_forum_project_users_query(list) {
 	return {projectId: list["projectId"]};
 }
 
-function select_project_users(user_id, list) {
+async function select_project_users(user_id, list) {
 
 	var query_out = {}
 
@@ -913,7 +913,7 @@ function select_project_users(user_id, list) {
 		query["projectId"] = list["projectId"];
 
 
-	var proj_ids = ProjectsUsers.find(query).map(
+	var proj_ids = await ProjectsUsers.find(query).mapAsync(
 		function(proj_user) {
 			return proj_user["projectId"];
 		});
@@ -927,10 +927,10 @@ function select_project_users(user_id, list) {
 }
 
 
-function is_public_diagrams(diagrams) {
+async function is_public_diagrams(diagrams) {
 	let resp = true;
 
-	_.each(diagrams.fetch(), function(diagram) {
+	_.each(await diagrams.fetchAsync(), function(diagram) {
 		if (!is_public_diagram(diagram._id)) {
 			resp = false;
 		}	

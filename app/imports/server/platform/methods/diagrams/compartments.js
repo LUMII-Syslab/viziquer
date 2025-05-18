@@ -3,7 +3,7 @@ import { DiagramLogs, Diagrams, Elements, Compartments, CompartmentTypes  } from
 import { is_public_diagram, get_unknown_public_user_name } from '../../_helpers.js'
 import { build_diagram_notification } from './elements.js'
 
-Compartments.after.update(function (user_id, doc, fields, modifier, options) {
+Compartments.after.update(async function(user_id, doc, fields, modifier, options) {
 
 	if (!doc)
 		return;
@@ -23,7 +23,7 @@ Compartments.after.update(function (user_id, doc, fields, modifier, options) {
 
 		var action = build_diagram_notification(user_id, doc, edit);
 
-		DiagramLogs.insert(action);
+		await DiagramLogs.insertAsync(action);
 	}
 
 });
@@ -39,25 +39,25 @@ Compartments.after.insert(function (user_id, doc) {
 
 Meteor.methods({
 
-	insertCompartment: function(list) {
+	insertCompartment: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		var compart_in = list.compartment;
 		if (is_project_member(user_id, compart_in) || is_public_diagram(compart_in["diagramId"])) {
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
 
-				Compartments.insert(compart_in);
+				await Compartments.insertAsync(compart_in);
 				// Compartments.insert(compart_in, {trimStrings: false});
 
 				if (list["elementStyleUpdate"]) {
-					Elements.update({_id: compart_in.elementId, projectId: compart_in.projectId, versionId: compart_in.versionId},
+					await Elements.updateAsync({_id: compart_in.elementId, projectId: compart_in.projectId, versionId: compart_in.versionId},
 									{$set: list["elementStyleUpdate"]});
 				}
 			}
 		}
 	},
 
-	updateCompartment: function(list) {
+	updateCompartment: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 			if (list["value"] || list["value"] == "") {
@@ -75,31 +75,31 @@ Meteor.methods({
 				update["valueLC"] = list["value"].toLowerCase();
 
 				if (list["value"] == "" && list["input"] == "") {
-					Compartments.remove({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]});
+					await Compartments.removeAsync({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]});
 				}
 				else {
-					Compartments.update({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]},
+					await Compartments.updateAsync({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]},
 										{$set: update});
 									// {$set: update}, {trimStrings: false, removeEmptyStrings: false,});
 				}
 
 				if (list["elementStyleUpdate"]) {
 					var elem_update = list["elementStyleUpdate"]
-					Elements.update({_id: list["elementId"]}, {$set: elem_update});
+					await Elements.updateAsync({_id: list["elementId"]}, {$set: elem_update});
 				}
 			}
 		}
 
 	},
 
-	removeCompartment: function(list) {
+	removeCompartment: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 			if (!list["compartmentId"])
 				return;
 
-			Compartments.remove({_id: list["compartmentId"],
+			await Compartments.removeAsync({_id: list["compartmentId"],
 								projectId: list["projectId"],
 								versionId: list["versionId"],
 							});
@@ -107,36 +107,36 @@ Meteor.methods({
 		}
 	},
 
-	swapCompartments: function(list) {
+	swapCompartments: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 			var prev_compart = list.prevCompartment;
 			var current_compart = list.currentCompartment;
 
-			Compartments.update({_id: prev_compart.id}, {$set: {index: current_compart.index}});
-			Compartments.update({_id: current_compart.id}, {$set: {index: prev_compart.index}});
+			await Compartments.updateAsync({_id: prev_compart.id}, {$set: {index: current_compart.index}});
+			await Compartments.updateAsync({_id: current_compart.id}, {$set: {index: prev_compart.index}});
 		}
 	},
 
 });
 
-function update_compartment(user_id, doc) {
+async function update_compartment(user_id, doc) {
 	var update = {};
 
 	if (!doc["elementId"] && doc["isObjectRepresentation"]) {
 		update["name"] = doc["value"];
 
-		Diagrams.update({_id: doc["diagramId"]}, {$set: update});
+		await Diagrams.updateAsync({_id: doc["diagramId"]}, {$set: update});
 	}
 }
 
-function add_compartments_by_values(list, compartments) {
+async function add_compartments_by_values(list, compartments) {
 
 	var compart_ids = _.map(compartments, function(item) {
 							return item.compartmentTypeId;
 						});
 		
-	CompartmentTypes.find({_id: {$in: compart_ids,}}, {$sort: {index: 1}}).forEach(function(compart_type, i) {
+	await CompartmentTypes.find({_id: {$in: compart_ids,}}, {$sort: {index: 1}}).forEachAsync(function(compart_type, i) {
 		add_compartment(compart_type, list,  _.find(compartments, function(c) { return c.compartmentTypeId == compart_type._id }));
 	});
 
@@ -144,9 +144,9 @@ function add_compartments_by_values(list, compartments) {
 
 
 //adding compartments in the DB
-function add_compartments(list) {
+async function add_compartments(list) {
 
-	CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEach(
+	await CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEachAsync(
 		function(compart_type) {
 			if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField") {
 				return;
@@ -157,9 +157,9 @@ function add_compartments(list) {
 		});
 }
 
-function add_compartment(compart_type, list, compart_in) {
+async function add_compartment(compart_type, list, compart_in) {
 	var compart = build_compartment(compart_type, list, compart_in);
-	Compartments.insert(compart);
+	await Compartments.insertAsync(compart);
 }
 
 function build_compartment(compart_type, list, compart_in) {

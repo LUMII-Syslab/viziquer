@@ -5,7 +5,7 @@ import { error_msg, is_version_not_published } from '../../_global_functions.js'
 import { generate_id, is_ajoo_editor, is_zoom_chart_editor } from '../../../../libs/platform/lib.js'
 import { build_initial_element_type } from './initialTypes/element_types.js'
 
-ElementTypes.after.update(function (user_id, doc, fields, modifier, options) {
+ElementTypes.after.update(async function(user_id, doc, fields, modifier, options) {
 
 	if (!doc || !modifier || !modifier.$set) {
 		return false;	
@@ -14,12 +14,12 @@ ElementTypes.after.update(function (user_id, doc, fields, modifier, options) {
 	if (fields && fields.length == 1 && fields[0] == "name") {
 
 		var name = doc["name"];
-		Compartments.update({elementId: doc["elementId"]}, {$set: {value: name, input: name}});
-		PaletteButtons.update({elementTypeIds: doc["_id"]}, {$set: {name: name}});
+		await Compartments.updateAsync({elementId: doc["elementId"]}, {$set: {value: name, input: name}});
+		await PaletteButtons.updateAsync({elementTypeIds: doc["_id"]}, {$set: {name: name}});
 	}
 
 	if (modifier.$set["isAbstract"] === false) {
-		PaletteButtons.insert({toolId: doc["toolId"],
+		await PaletteButtons.insertAsync({toolId: doc["toolId"],
 							versionId: doc["versionId"],
 							diagramTypeId: doc["diagramTypeId"],
 							diagramId: doc["diagramId"],
@@ -31,30 +31,30 @@ ElementTypes.after.update(function (user_id, doc, fields, modifier, options) {
 	}
 	
 	else if (modifier.$set["isAbstract"] === true) {
-		PaletteButtons.remove({elementTypeIds: doc["_id"]});
+		await PaletteButtons.removeAsync({elementTypeIds: doc["_id"]});
 	}
 });
 
 
-ElementTypes.after.remove(function (user_id, doc) {
+ElementTypes.after.remove(async function(user_id, doc) {
 	if (!doc)
 		return false;
 
-	CompartmentTypes.remove({elementTypeId: doc["_id"]});
-	PaletteButtons.remove({elementTypeIds: doc["_id"]});
-	DialogTabs.remove({elementTypeId: doc["_id"]});
+	await CompartmentTypes.removeAsync({elementTypeId: doc["_id"]});
+	await PaletteButtons.removeAsync({elementTypeIds: doc["_id"]});
+	await DialogTabs.removeAsync({elementTypeId: doc["_id"]});
 
-	ElementTypes.update({superTypeIds: doc["_id"]},
+	await ElementTypes.updateAsync({superTypeIds: doc["_id"]},
 						{$pull: {superTypeIds: doc["_id"]}},
 						{multi: true});
 
-	Elements.remove({elementTypeId: doc["_id"]});
+	await Elements.removeAsync({elementTypeId: doc["_id"]});
 });
 
 
 Meteor.methods({
 
-	makeSpecialization: function(list) {
+	makeSpecialization: async function(list) {
 		var system_id = Meteor.userId();
 
 		if (is_system_admin(system_id) && is_version_not_published(list)) {
@@ -62,8 +62,8 @@ Meteor.methods({
 			var element_list = get_element_list(list);
 			element_list["data"] = {elementType: "Specialization"};
 
-			var elem_id = Elements.insert(element_list);
-			ElementTypes.update({_id: list["subTypeId"],
+			var elem_id = await Elements.insertAsync(element_list);
+			await ElementTypes.updateAsync({_id: list["subTypeId"],
 								toolId: list["toolId"], versionId: list["versionId"]},
 								{$push: {superTypeIds: list["superTypeId"]}});
 		}
@@ -71,32 +71,32 @@ Meteor.methods({
 			error_msg();
 	},
 
-    addKeystrokeOrItem: function(list) {
+    addKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id, list)) {
-			ElementTypes.update({_id: list["id"]}, {$push: list["push"]});
+			await ElementTypes.updateAsync({_id: list["id"]}, {$push: list["push"]});
     	}
     },
 
-    deleteKeystrokeOrItem: function(list) {
+    deleteKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id, list)) {
 
 			var update = {};
 			update[list.array] = list.data;
 
-			ElementTypes.update({_id: list["id"]}, {$set: update});
+			await ElementTypes.updateAsync({_id: list["id"]}, {$set: update});
     	}
     },
 			
-    updateKeystrokeOrItem: function(list) {
+    updateKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id, list)) {
-			ElementTypes.update({_id: list["id"]}, {$set: list["field"]});
+			await ElementTypes.updateAsync({_id: list["id"]}, {$set: list["field"]});
     	}
     },
 
-	addElementTypeStyle: function(list) {
+	addElementTypeStyle: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id, list)) { 
 
@@ -131,11 +131,11 @@ Meteor.methods({
 				}
 			}
 
-			ElementTypes.update({_id: list["id"]}, {$push: {styles: styles}});
+			await ElementTypes.updateAsync({_id: list["id"]}, {$push: {styles: styles}});
 		}
 	},
 
-	updateElementType: function(list) {
+	updateElementType: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id, list)) { 
 
@@ -147,11 +147,11 @@ Meteor.methods({
 				return;
 			}
 
-			ElementTypes.update({_id: list["id"], toolId: list["toolId"]}, {$set: update});
+			await ElementTypes.updateAsync({_id: list["id"], toolId: list["toolId"]}, {$set: update});
 		}
 	},
 
-	updateElementTypeStyle: function(list) {
+	updateElementTypeStyle: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id, list)) { 
@@ -173,7 +173,7 @@ Meteor.methods({
 				update["styles." + list["styleIndex"] +"." + "height"] = attr_value;
 			}
 
-			ElementTypes.update({_id: list["id"]}, {$set: update});
+			await ElementTypes.updateAsync({_id: list["id"]}, {$set: update});
 
 			//if changing the styles attribute, then changing compartments as well
 			if (list["attrName"] != "name") {
@@ -185,18 +185,18 @@ Meteor.methods({
 									{_id: list["elementId"]}]};
 				
 				//updating only elements with styleId or configurator element
-				Elements.update(query, {$set: style_update}, {multi: true});
+				await Elements.updateAsync(query, {$set: style_update}, {multi: true});
 			}
 		}
 	},
 
-	addNodeWithLink: function(list) {
+	addNodeWithLink: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id, list)) { 
 
 			//box
 			var box = list["box"];
-			var node_id = Elements.insert(box);
+			var node_id = await Elements.insertAsync(box);
 
 			box["id"] = node_id;
 			add_compartments(box);
@@ -205,7 +205,7 @@ Meteor.methods({
 			var edge = list["line"];
 			edge["endElement"] = node_id;
 
-			var edge_id = Elements.insert(edge);
+			var edge_id = await Elements.insertAsync(edge);
 
 			// //box type
 			// var node_type_list = list["boxType"];
@@ -230,7 +230,7 @@ Meteor.methods({
 			edge_type["endElementTypeId"] = box["elementTypeId"];
 			edge_type["elementId"] = edge_id;		
 
-			var edge_type_id = ElementTypes.insert(edge_type);
+			var edge_type_id = await ElementTypes.insertAsync(edge_type);
 		}
 	},
 

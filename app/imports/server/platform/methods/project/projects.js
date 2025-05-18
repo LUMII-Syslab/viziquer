@@ -92,13 +92,13 @@ Projects.before.remove(function (user_id, doc) {
 Projects.hookOptions.before.remove = {fetchPrevious: false};
 
 //TODO: needs some cheking if this ok
-Projects.after.remove(function (user_id, doc) {
+Projects.after.remove(async function(user_id, doc) {
 
 	var proj_id = doc["_id"]
 
 	//a transaction is needed
-	ProjectsUsers.remove({projectId: proj_id});
-	Versions.remove({projectId: proj_id});
+	await ProjectsUsers.removeAsync({projectId: proj_id});
+	await Versions.removeAsync({projectId: proj_id});
 
 	// Posts.remove({projectId: proj_id});
 	// ForumPosts.remove({projectId: proj_id});
@@ -109,7 +109,7 @@ Projects.hookOptions.after.remove = {fetchPrevious: false};
 
 Meteor.methods({
 
-	insertProject: function(list) {
+	insertProject: async function(list) {
 		var project_link = null;
 		var versionId = null;
 		var user_id = Meteor.userId();
@@ -123,10 +123,10 @@ Meteor.methods({
 				delete 	list.project_link;
 			}
 			
-		    Projects.insert(list);
+		    await Projects.insertAsync(list);
 			
-			var project = Projects.findOne({createdAt: list["createdAt"], createdBy:user_id, name:list["name"] });
-			var projectsUsers = ProjectsUsers.findOne({projectId: project._id})
+			var project = await Projects.findOneAsync({createdAt: list["createdAt"], createdBy:user_id, name:list["name"] });
+			var projectsUsers = await ProjectsUsers.findOneAsync({projectId: project._id})
 			if ( projectsUsers )
 				versionId = projectsUsers.versionId;
 			
@@ -145,35 +145,35 @@ Meteor.methods({
 		}
 	},
 
-	updateProject: function(list) {
+	updateProject: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_project_admin(user_id, list)) {
-			Projects.update({_id: list["projectId"]}, {$set: list["set"]});
+			await Projects.updateAsync({_id: list["projectId"]}, {$set: list["set"]});
 		}
 	},
 
-	removeProject: function(list) {
+	removeProject: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_project_admin(user_id, list)) {
-			Projects.remove({_id: list["projectId"]})
+			await Projects.removeAsync({_id: list["projectId"]})
 		}
 	},
 
-	updateUserVersionSettings: function(list) {
+	updateUserVersionSettings: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (user_id) {
-			UserVersionSettings.update({userSystemId: user_id, versionId: list["versionId"]}, list["update"]);
+			await UserVersionSettings.updateAsync({userSystemId: user_id, versionId: list["versionId"]}, list["update"]);
 		}
 	},
 
 
-	duplicateProject: function(list) {
+	duplicateProject: async function(list) {
 		var user_id = Meteor.userId();
 		var versionId = null;
 		if (is_project_member(user_id, list)) {
 			var project_id = list.projectId;
-			var project = Projects.findOne({_id: project_id});
+			var project = await Projects.findOneAsync({_id: project_id});
 			if (!project) {
 				console.error("No project object");
 				return;
@@ -186,7 +186,7 @@ Meteor.methods({
 			project._id = new_project_id;
 			var new_version_id = afterInsert(user_id, project);
 
-			Diagrams.find({projectId: project_id}).forEach(function(diagram) {
+			await Diagrams.find({projectId: project_id}).forEachAsync(function(diagram) {
 				duplicateDiagram(diagram, new_project_id, new_version_id);
 			});
 			
@@ -194,11 +194,11 @@ Meteor.methods({
 
 	},
 
-	leaveProject: function(list) {
+	leaveProject: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_member(user_id, list)) {
-			ProjectsUsers.remove({userSystemId: user_id, projectId: list.projectId,});
+			await ProjectsUsers.removeAsync({userSystemId: user_id, projectId: list.projectId,});
 		}
 
 	},
@@ -207,7 +207,7 @@ Meteor.methods({
 
 
 
-function duplicateDiagram(diagram, new_project_id, new_version_id) {
+async function duplicateDiagram(diagram, new_project_id, new_version_id) {
 
 	var diagram_id = diagram._id;
 	var project_id = diagram.projectId;
@@ -215,21 +215,21 @@ function duplicateDiagram(diagram, new_project_id, new_version_id) {
 	diagram._id = undefined;
 
 	_.extend(diagram, {_id: undefined, projectId: new_project_id, versionId: new_version_id,});
-	var new_diagram_id = Diagrams.insert(diagram);
+	var new_diagram_id = await Diagrams.insertAsync(diagram);
 
 
 	var elems_map = {};
-	Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEach(function(box) {
+	await Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEachAsync(async function(box) {
 
 		var old_box_id = box._id;
 		_.extend(box, {_id: undefined, diagramId: new_diagram_id, projectId: new_project_id, versionId: new_version_id,});
 
-		var new_box_id = Elements.insert(box);
+		var new_box_id = await Elements.insertAsync(box);
 		elems_map[old_box_id] = new_box_id;
 	});
 
 
-	Elements.find({diagramId: diagram_id, projectId: project_id, type: "Line"}).forEach(function(line) {
+	await Elements.find({diagramId: diagram_id, projectId: project_id, type: "Line"}).forEachAsync(async function(line) {
 
 		var old_line_id = line._id;
 
@@ -237,21 +237,21 @@ function duplicateDiagram(diagram, new_project_id, new_version_id) {
 		_.extend(line, {_id: undefined, diagramId: new_diagram_id, projectId: new_project_id, versionId: new_version_id,
 						startElement: elems_map[line.startElement], endElement: elems_map[line.endElement],});
 
-		var new_line_id = Elements.insert(line);
+		var new_line_id = await Elements.insertAsync(line);
 		elems_map[old_line_id] = new_line_id;
 	});
 
 
-	Compartments.find({diagramId: diagram_id, projectId: project_id}).forEach(function(compart) {
+	await Compartments.find({diagramId: diagram_id, projectId: project_id}).forEachAsync(async function(compart) {
 
 		_.extend(compart, {_id: undefined, elementId: elems_map[compart.elementId], diagramId: new_diagram_id, projectId: new_project_id, versionId: new_version_id, });
 
-		Compartments.insert(compart);
+		await Compartments.insertAsync(compart);
 	});
 }
 
 
-function afterInsert(user_id_in, doc) {
+async function afterInsert(user_id_in, doc) {
 
 	var user_id = doc["createdBy"];
 	if (!user_id) {
@@ -263,14 +263,14 @@ function afterInsert(user_id_in, doc) {
 	var date = new Date();
 
 	//selects the last tool version
-	var tool_version = ToolVersions.findOne({toolId: tool_id}, {$sort: {createdAt: -1}});
+	var tool_version = await ToolVersions.findOneAsync({toolId: tool_id}, {$sort: {createdAt: -1}});
 	if (!tool_version) {
 		// console.error("There is no tool version for tool: ", tool_id);
 		return;
 	}
 
 	//adding the project new version
-	var version_id = Versions.insert({projectId: proj_id,
+	var version_id = await Versions.insertAsync({projectId: proj_id,
 									createdAt: date,
 									createdBy: user_id,
 									status: "New",
@@ -279,7 +279,7 @@ function afterInsert(user_id_in, doc) {
 								});
 
 	//inserting the user in the project
-	ProjectsUsers.insert({
+	await ProjectsUsers.insertAsync({
 						projectId: proj_id,
 						role: "Admin",
 						status: "Member",
@@ -291,7 +291,7 @@ function afterInsert(user_id_in, doc) {
 					});
 
 	//adding the doc that stores some user stuff
-	UserVersionSettings.insert({
+	await UserVersionSettings.insertAsync({
 						userSystemId: user_id,
 						versionId: version_id,
 						projectId: proj_id,
@@ -304,7 +304,7 @@ function afterInsert(user_id_in, doc) {
 						documentsSelectedGroup: "none",
 					});
 
-	Users.update({systemId: user_id}, {$set: {activeProject: proj_id, activeVersion: version_id}});
+	await Users.updateAsync({systemId: user_id}, {$set: {activeProject: proj_id, activeVersion: version_id}});
 
 	//managing roles/permissons
 	var project_role = build_project_role(proj_id);	

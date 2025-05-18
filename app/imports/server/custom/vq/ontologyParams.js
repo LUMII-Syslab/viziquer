@@ -4,12 +4,12 @@ import { is_public_diagram } from '../../platform/_helpers.js'
 
 Meteor.methods({
 
-	updateProjectOntology: function(list) {
+	updateProjectOntology: async function(list) {
 		var user_id = Meteor.userId();
 
 		if (list["projectId"] && is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
-			Projects.update({_id: list.projectId}, {$set: {uri: list.uri, endpoint: list.endpoint, schema: list.schema,
+			await Projects.updateAsync({_id: list.projectId}, {$set: {uri: list.uri, endpoint: list.endpoint, schema: list.schema,
 				                                             useStringLiteralConversion: list.useStringLiteralConversion,
 	                                                     	 queryEngineType: list.queryEngineType,
 															 useDefaultGroupingSeparator: list.useDefaultGroupingSeparator,

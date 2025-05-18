@@ -6,17 +6,17 @@ import { send_email } from '../../../../libs/platform/lib.js'
 import { Users } from '../../../../db/platform/collections.js';
 
 
-Versions.before.insert(function (user_id, doc) {
+Versions.before.insert(async function(user_id, doc) {
 
 	if (!doc)
 		return false;
 
 	//if this is not the first version, then perform some checking
-	var version = Versions.findOne({projectId: doc["projectId"]});
+	var version = await Versions.findOneAsync({projectId: doc["projectId"]});
 	if (version) {
 
 		//prevents from adding multiple versions with the status New
-		var new_version = Versions.findOne({projectId: doc["projectId"], status: "New"});
+		var new_version = await Versions.findOneAsync({projectId: doc["projectId"], status: "New"});
 		if (new_version)
 			return false;
 	}
@@ -25,7 +25,7 @@ Versions.before.insert(function (user_id, doc) {
 Versions.hookOptions.before.insert = {fetchPrevious: false};
 
 
-Versions.after.insert(function (user_id, doc) {
+Versions.after.insert(async function(user_id, doc) {
 
 	if (!doc)
 		return false;
@@ -34,11 +34,11 @@ Versions.after.insert(function (user_id, doc) {
 	var new_version_id = doc["_id"];
 
 	//the creator's current version is updated to the new one
-	ProjectsUsers.update({userSystemId: user_id, projectId: project_id}, 
+	await ProjectsUsers.updateAsync({userSystemId: user_id, projectId: project_id}, 
 						{$set: {versionId: new_version_id}});
 
 	//the last published project version
-	var last_version = Versions.findOne({projectId: project_id, status: "Published"},
+	var last_version = await Versions.findOneAsync({projectId: project_id, status: "Published"},
 										{sort: {publishedAt: -1}});
 	
 	//if the inserted version is the first version, then nothing to do
@@ -59,7 +59,7 @@ Versions.after.insert(function (user_id, doc) {
 
 	//diagram things
 	var diagram_list = {};
-	_.each(diagrams.fetch(), function(diagram) {
+	_.each(await diagrams.fetchAsync(), async function(diagram) {
 		diagram["versionId"] = new_version_id;
 
 		var old_id = diagram["_id"];
@@ -68,11 +68,11 @@ Versions.after.insert(function (user_id, doc) {
 		if (!diagram["seenCount"])
 			diagram["seenCount"] = 0;
 
-		var new_id = Diagrams.insert(diagram, {removeEmptyStrings: false});
+		var new_id = await Diagrams.insertAsync(diagram, {removeEmptyStrings: false});
 		diagram_list[old_id] = new_id;
 	});
 
-	_.each(users_settings.fetch(), function(user_settings) {
+	_.each(await users_settings.fetchAsync(), async function(user_settings) {
 		user_settings["versionId"] = new_version_id;
 		user_settings["diagramId"] = diagram_list[user_settings["diagramId"]];
 
@@ -91,11 +91,11 @@ Versions.after.insert(function (user_id, doc) {
 		if (!user_settings["documentsSelectedGroup"])
 			user_settings["documentsSelectedGroup"] = "none";
 
-		var new_user_diagram_id = UserVersionSettings.insert(user_settings);
+		var new_user_diagram_id = await UserVersionSettings.insertAsync(user_settings);
 	});
 
 	var element_list = {};
-	_.each(elements.fetch(), function(element) {
+	_.each(await elements.fetchAsync(), async function(element) {
 		element["versionId"] = new_version_id;
 		element["diagramId"] = diagram_list[element["diagramId"]];
 
@@ -108,12 +108,12 @@ Versions.after.insert(function (user_id, doc) {
 		if (element["endElement"])
 			element["endElement"] = element_list[element["endElement"]];
 
-		var new_elem_id = Elements.insert(element);
+		var new_elem_id = await Elements.insertAsync(element);
 		element_list[old_elem_id] = new_elem_id;
 	});
 
 
-	_.each(compartments.fetch(), function(compartment) {
+	_.each(await compartments.fetchAsync(), async function(compartment) {
 		compartment["versionId"] = new_version_id;
 
 		compartment["diagramId"] = diagram_list[compartment["diagramId"]];
@@ -122,7 +122,7 @@ Versions.after.insert(function (user_id, doc) {
 		compartment["elementId"] = element_list[compartment["elementId"]];
 
 		delete compartment["_id"];	
-		Compartments.insert(compartment, {removeEmptyStrings: false});
+		await Compartments.insertAsync(compartment, {removeEmptyStrings: false});
 	});
 
 		
@@ -159,7 +159,7 @@ Versions.hookOptions.after.insert = {fetchPrevious: false};
 // });
 // Versions.hookOptions.after.update = {fetchPrevious: false};
 
-Versions.after.remove(function(user_id, doc) {
+Versions.after.remove(async function(user_id, doc) {
 
 	var new_version_id = doc["_id"];
 	var project_id = doc["projectId"];
@@ -172,7 +172,7 @@ Versions.after.remove(function(user_id, doc) {
 						versionId: new_version_id};
 
 	//selects the last published version to assign it to the users who had the removed version
-	var last_version = Versions.findOne({projectId: project_id, status: "Published"},
+	var last_version = await Versions.findOneAsync({projectId: project_id, status: "Published"},
 										{sort: {publishedAt: -1}});
 	var last_version_id;
 	if (last_version)
@@ -180,15 +180,15 @@ Versions.after.remove(function(user_id, doc) {
 
 	//a transaction needed
 	if (last_version_id)
-		ProjectsUsers.update({projectId: project_id, versionId: new_version_id}, 
+		await ProjectsUsers.updateAsync({projectId: project_id, versionId: new_version_id}, 
 							{$set: {versionId: last_version_id}});
 
 	send_notifications(user_id, notification);
 
 	//deleting diagrams, elements, compartments, ...
-	Diagrams.remove({projectId: project_id, versionId: new_version_id});
+	await Diagrams.removeAsync({projectId: project_id, versionId: new_version_id});
 
-	UserVersionSettings.remove({projectId: project_id, versionId: new_version_id});
+	await UserVersionSettings.removeAsync({projectId: project_id, versionId: new_version_id});
 
 	//removing roles
 	remove_from_admin_role(project_id, new_version_id, true);
@@ -197,22 +197,22 @@ Versions.hookOptions.after.remove = {fetchPrevious: false};
 
 Meteor.methods({
 
-	insertVersion: function(list) {
+	insertVersion: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_project_admin(user_id, list)) {
 			list["createdAt"] = new Date();
 			list["createdBy"] = user_id;
 			list["status"] = "New";
 
-			Versions.insert(list);
+			await Versions.insertAsync(list);
 		}
 	},
 
-	publishVersion: function(list) {
+	publishVersion: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
 
-			Versions.update({_id: list["versionId"], projectId: list["projectId"], status: "New"},
+			await Versions.updateAsync({_id: list["versionId"], projectId: list["projectId"], status: "New"},
 							{$set: {
 									publishedAt: new Date(),
 									publishedBy: user_id,
@@ -223,14 +223,14 @@ Meteor.methods({
 		}
 	},
 
-	removeVersion: function(list) {
+	removeVersion: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
 
             if (!list["versionId"])
                 return;
 
-			Versions.remove({_id: list["versionId"],
+			await Versions.removeAsync({_id: list["versionId"],
 							projectId: list["projectId"],
 							status: "New",
 						});
@@ -257,12 +257,12 @@ function add_admin_role(proj_id, version_id) {
 	Roles.addUsersToRoles(admins, admin_role);
 }
 
-function add_read_role(proj_id, version_id) {
+async function add_read_role(proj_id, version_id) {
 
 	var users_by_roles = {};
 
 	//selecting project users and classifying them by their roles
-	ProjectsUsers.find({projectId: proj_id}).forEach(
+	await ProjectsUsers.find({projectId: proj_id}).forEachAsync(
 		function(proj_user) {
 
 			var role = proj_user["role"];
@@ -297,7 +297,7 @@ function remove_from_admin_role(proj_id, version_id, is_remove_role) {
 		Roles.deleteRole(admin_role);
 }
 
-function send_notifications(user_id, list) {
+async function send_notifications(user_id, list) {
 
 	var proj_id = list["projectId"];
 	var query = {projectId: proj_id, status: "Member"};
@@ -308,12 +308,12 @@ function send_notifications(user_id, list) {
 	var date = new Date();
 
 	var proj_name = "";
-	var project = Projects.findOne({_id: proj_id});
+	var project = await Projects.findOneAsync({_id: proj_id});
 	if (project)
 		proj_name = project["name"];
 
-	ProjectsUsers.find(query).forEach(
-		function(project_user) {
+	await ProjectsUsers.find(query).forEachAsync(
+		async function(project_user) {
 
 			var receiver_id = project_user["userSystemId"];
 			if (receiver_id != user_id) {
@@ -328,16 +328,16 @@ function send_notifications(user_id, list) {
 									data: {versionId: list["versionId"]},
 								};
 
-				Notifications.insert(notification);
+				await Notifications.insertAsync(notification);
 
 				sending_notification_email(list["notificationType"], receiver_id, proj_name); 
 			}
 	});
 }
 
-function sending_notification_email(notification_type, user_id, proj_name) {
+async function sending_notification_email(notification_type, user_id, proj_name) {
 
-	var receiver_user = Users.findOne({systemId: user_id})
+	var receiver_user = await Users.findOneAsync({systemId: user_id})
 	if (receiver_user) {
 
 		var subject = "";

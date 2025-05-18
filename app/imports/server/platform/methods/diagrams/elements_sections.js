@@ -4,16 +4,16 @@ import { ElementsSections } from '../../../../db/platform/collections.js'
 
 Meteor.methods({
 
-	addSectionToElement: function(list) {
+	addSectionToElement: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
 			list["createdAt"] = new Date();
-			ElementsSections.insert(list);
+			await ElementsSections.insertAsync(list);
 		}
 	},
 
-	removeSectionToElement: function(list) {
+	removeSectionToElement: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
@@ -21,12 +21,12 @@ Meteor.methods({
 			if (!list["id"])
 				return;
 
-			ElementsSections.remove({_id: list["id"], projectId: list["projectId"],
+			await ElementsSections.removeAsync({_id: list["id"], projectId: list["projectId"],
 										versionId: list["versionId"]});
 		}
 	},
 
-	reoredrSectionToElement: function(list) {
+	reoredrSectionToElement: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
 
@@ -43,12 +43,12 @@ Meteor.methods({
 					};
 
         	if (prev_index < current_index) {
-	       		ElementsSections.update({$and: [{index: {$gt: prev_index}},
+	       		await ElementsSections.updateAsync({$and: [{index: {$gt: prev_index}},
         										{_id: {$ne: elem_sec_id}}, query]},
         								{$inc: {index: current_index}}, {multi: true});
         	}
         	else {
-        		ElementsSections.update({$and: [query,
+        		await ElementsSections.updateAsync({$and: [query,
         										{$or: [{index: {$gt: prev_index}},
         												{_id: elem_sec_id}]}
         										]},

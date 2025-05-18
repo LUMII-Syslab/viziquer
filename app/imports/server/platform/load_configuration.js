@@ -7,18 +7,18 @@ import {
 } from './methods/configurator/initialTypes/compartment_types'
 
 
-function load_configurator(user_id) {
+async function load_configurator(user_id) {
 	
 	if (!user_id) {
 		return;
 	}
 
-	Tools.remove({});
+	await Tools.removeAsync({});
 
 	//Diagram types
 	var diagram_type_id;
 
-	var tool_id = Tools.insert({name: "_Configurator",
+	var tool_id = await Tools.insertAsync({name: "_Configurator",
 								createdAt: get_current_time(),
 								createdBy: user_id,
 								archive: false,
@@ -28,24 +28,24 @@ function load_configurator(user_id) {
                 				// forum: false,
 							});
 
-	var version_id = ToolVersions.insert({toolId: tool_id,
+	var version_id = await ToolVersions.insertAsync({toolId: tool_id,
 											status: "New",
 											createdAt: get_current_time(),
 											createdBy: user_id,
 										});
 
-	var tool_version = ToolVersions.findOne({_id: version_id});
+	var tool_version = await ToolVersions.findOneAsync({_id: version_id});
 	if (!tool_version) {
 		console.error("Error in load configurator, no tool version");
 		return;
 	}
 
 	var diagram_type_obj = build_ajoo_configurator_diagram_type(user_id, tool_id, version_id);
-	var diagram_type_id = DiagramTypes.insert(diagram_type_obj);
+	var diagram_type_id = await DiagramTypes.insertAsync(diagram_type_obj);
 
 	//Element types
 	var elem_type_list = {};
-	if (ElementTypes.find({toolId: tool_id}).count() === 0) {
+	if ((await ElementTypes.find({toolId: tool_id}).countAsync()) === 0) {
 		var super_box_id = build_super_box(tool_id, version_id, diagram_type_id);
 		
 		build_box_type(tool_id, version_id, diagram_type_id, super_box_id);
@@ -220,15 +220,15 @@ function build_ajoo_configurator_diagram_type(user_id, tool_id, version_id) {
 		};
 }
 
-function build_box_type(tool_id, version_id, diagram_type_id, super_box_id) {
+async function build_box_type(tool_id, version_id, diagram_type_id, super_box_id) {
 	
 	//Box specification
 	var box_type_obj = build_box_type_obj(tool_id, version_id, diagram_type_id, super_box_id, "ajooEditor");
-	var box_id = ElementTypes.insert(box_type_obj);
+	var box_id = await ElementTypes.insertAsync(box_type_obj);
 
 	var box_name = box_type_obj["name"];
 
-	PaletteButtons.insert({
+	await PaletteButtons.insertAsync({
 						toolId: tool_id,
 						versionId: version_id,
 						diagramTypeId: diagram_type_id,
@@ -240,7 +240,7 @@ function build_box_type(tool_id, version_id, diagram_type_id, super_box_id) {
 
 	var compart_type_obj = build_box_compart_type_obj(tool_id, version_id, diagram_type_id, box_id, "ajooEditor");
 	// CompartmentTypes.insert(compart_type_obj, {removeEmptyStrings: false});
-	CompartmentTypes.insert(compart_type_obj);
+	await CompartmentTypes.insertAsync(compart_type_obj);
 }
 
 function build_box_compart_type_obj(tool_id, version_id, diagram_type_id, elem_type_id, editor_type) {
@@ -274,15 +274,15 @@ function build_box_compart_type_obj(tool_id, version_id, diagram_type_id, elem_t
 		};
 }
 
-function build_line_type(tool_id, version_id, diagram_type_id, super_box_id) {
+async function build_line_type(tool_id, version_id, diagram_type_id, super_box_id) {
 
 	//Line specification
 	var edge_type_obj = build_line_type_obj(tool_id, version_id, diagram_type_id, super_box_id, "ajooEditor");
-	var edge_id = ElementTypes.insert(edge_type_obj);
+	var edge_id = await ElementTypes.insertAsync(edge_type_obj);
 
 	var edge_name = edge_type_obj["name"];
 
-	PaletteButtons.insert({
+	await PaletteButtons.insertAsync({
 						toolId: tool_id,
 						versionId: version_id,
 						diagramTypeId: diagram_type_id,
@@ -293,11 +293,11 @@ function build_line_type(tool_id, version_id, diagram_type_id, super_box_id) {
 					});
 }
 
-function build_specialization(tool_id, version_id, diagram_type_id, super_box_id) {
+async function build_specialization(tool_id, version_id, diagram_type_id, super_box_id) {
 
 	//Specialization specification
 	var specification_name = "Specialization";
-	var specialization_id = ElementTypes.insert({
+	var specialization_id = await ElementTypes.insertAsync({
 										toolId: tool_id,
 										versionId: version_id,
 										name: specification_name,
@@ -406,7 +406,7 @@ function build_specialization(tool_id, version_id, diagram_type_id, super_box_id
 										superTypeIds: [super_box_id],
 									});
 
-	PaletteButtons.insert({
+	await PaletteButtons.insertAsync({
 				toolId: tool_id,
 				versionId: version_id,
 				diagramTypeId: diagram_type_id,
@@ -417,11 +417,11 @@ function build_specialization(tool_id, version_id, diagram_type_id, super_box_id
 			});
 }
 
-function build_super_box(tool_id, version_id, diagram_type_id) {
+async function build_super_box(tool_id, version_id, diagram_type_id) {
 
 	//SuperBox specification
 	var super_box_name = "SuperBox";
-	var super_box_id = ElementTypes.insert({
+	var super_box_id = await ElementTypes.insertAsync({
 									toolId: tool_id,
 									versionId: version_id,
 									name: super_box_name, 
@@ -442,7 +442,7 @@ function build_super_box(tool_id, version_id, diagram_type_id) {
 	return super_box_id;
 }
 
-function build_swimlane(tool_id, version_id, diagram_type_id) {
+async function build_swimlane(tool_id, version_id, diagram_type_id) {
 	
 	var box_type_obj = {
 					name: "Swimlane",
@@ -504,23 +504,23 @@ function build_swimlane(tool_id, version_id, diagram_type_id) {
 				};
 
 
-	var box_id = ElementTypes.insert(box_type_obj);
+	var box_id = await ElementTypes.insertAsync(box_type_obj);
 
 	//top row copartment
 	var compart_type_obj1 = build_swimlane_compart_type_obj("TopLine", tool_id, version_id, diagram_type_id, box_id);
-	CompartmentTypes.insert(compart_type_obj1);
+	await CompartmentTypes.insertAsync(compart_type_obj1);
 	// CompartmentTypes.insert(compart_type_obj1, {removeEmptyStrings: false});
 
 	//left column compartment
 	var compart_type_obj2 = build_swimlane_compart_type_obj("LeftLine", tool_id, version_id, diagram_type_id, box_id);
 	compart_type_obj2["styles"][0]["style"]["rotation"] = 270;
 
-	CompartmentTypes.insert(compart_type_obj2);
+	await CompartmentTypes.insertAsync(compart_type_obj2);
 	// CompartmentTypes.insert(compart_type_obj2, {removeEmptyStrings: false});
 
 	//middle compartment
 	var compart_type_obj3 = build_swimlane_compart_type_obj("Middle", tool_id, version_id, diagram_type_id, box_id);
-	CompartmentTypes.insert(compart_type_obj3);
+	await CompartmentTypes.insertAsync(compart_type_obj3);
 	// CompartmentTypes.insert(compart_type_obj3, {removeEmptyStrings: false});
 }
 

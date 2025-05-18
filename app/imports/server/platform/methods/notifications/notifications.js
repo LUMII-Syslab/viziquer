@@ -3,7 +3,7 @@ import { Notifications, ProjectsUsers, Users, UserVersionSettings, Versions } fr
 import { user_not_logged_in } from '../../_helpers.js'
 
 
-Notifications.after.update(function (user_id, doc, fieldNames, modifier, options) {
+Notifications.after.update(async function(user_id, doc, fieldNames, modifier, options) {
 
 	if (!doc || !modifier || !modifier.$set)
 		return false;
@@ -33,7 +33,7 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 			tmp_role = "Reader";
 
 		//generating project reader roles for all the versions
-		var roles = versions.map(function(version) {
+		var roles = await versions.mapAsync(function(version) {
 
 			//generating role names for all the project versions
 			return build_project_version_reader_role(proj_id, version["_id"], tmp_role);
@@ -46,7 +46,7 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 		if (role == "Admin") {
 			roles.push(build_project_admin_role(proj_id));
 
-			var version_fetch = versions.fetch();
+			var version_fetch = await versions.fetchAsync();
 			if (versions && version_fetch) {
 				var last_version = version_fetch[0];
 				if (last_version && last_version["status"] == "New")
@@ -56,20 +56,20 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 		}
 
 		//selecting the first version's id
-		if (versions && versions.count() > 0) {
+		if (versions && (await versions.countAsync()) > 0) {
 
-			var active_version = versions.fetch()[0]["_id"];
+			var active_version = (await versions.fetchAsync())[0]["_id"];
 
 			//adding the user to the project
-			ProjectsUsers.update({projectId: proj_id, userSystemId: user_id},
+			await ProjectsUsers.updateAsync({projectId: proj_id, userSystemId: user_id},
 							{$set: {status: "Member", versionId: active_version}});
 
 			//setting the new project and its version as active for the user
-			Users.update({systemId: user_id},
+			await Users.updateAsync({systemId: user_id},
 						{$set: {activeProject: proj_id, activeVersion: active_version}});
 
 			//adding the doc that stores some user stuff
-			UserVersionSettings.insert({
+			await UserVersionSettings.insertAsync({
 								userSystemId: user_id,
 								versionId: active_version,
 								projectId: proj_id,
@@ -87,11 +87,11 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 		else {
 
 			//adding the user to the project
-			ProjectsUsers.update({projectId: proj_id, userSystemId: user_id},
+			await ProjectsUsers.updateAsync({projectId: proj_id, userSystemId: user_id},
 									{$set: {status: "Member"}});
 
 			//setting the new project and its version as active for the user
-			Users.update({systemId: user_id}, {$set: {activeProject: proj_id}});			
+			await Users.updateAsync({systemId: user_id}, {$set: {activeProject: proj_id}});			
 		}
 
 
@@ -100,17 +100,17 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 	}
 
 	else if (modifier.$set.status == "rejected") {
-		ProjectsUsers.remove({projectId: doc["projectId"], userSystemId: user_id});
+		await ProjectsUsers.removeAsync({projectId: doc["projectId"], userSystemId: user_id});
 	}
 });
 //Notifications.hookOptions.after.update = {fetchPrevious: false};
 
 Meteor.methods({
 
-	setNotifcationsSeen: function(list) {
+	setNotifcationsSeen: async function(list) {
 		var user_id = Meteor.userId();
 		if (user_id) {
-			Notifications.update({receiver: user_id, status: "new"},
+			await Notifications.updateAsync({receiver: user_id, status: "new"},
 								{$set: {status: "seen"}}, {multi: true});
 		}
 		else {
@@ -118,14 +118,14 @@ Meteor.methods({
 		}	
 	},
 
-	updateNotification: function(list) {
+	updateNotification: async function(list) {
 		var user_id = Meteor.userId();
 		if (user_id) {
-			Notifications.update({_id: list["id"], receiver: user_id}, list["update"]);
+			await Notifications.updateAsync({_id: list["id"], receiver: user_id}, list["update"]);
 		}
 	},
 
-	removeNotification: function(list) {
+	removeNotification: async function(list) {
 		var user_id = Meteor.userId();
 		if (user_id) {
 
@@ -133,7 +133,7 @@ Meteor.methods({
                 return;
             }
 
-			Notifications.remove({_id: list["id"], receiver: user_id});
+			await Notifications.removeAsync({_id: list["id"], receiver: user_id});
 		}
 	},
 

@@ -3,10 +3,10 @@ import { DocumentTypes } from '../../../../db/platform/collections.js'
 
 Meteor.methods({
 
-	addDocumentType: function(list) {
+	addDocumentType: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
-			DocumentTypes.insert({
+			await DocumentTypes.insertAsync({
 								createdAt: new Date(),
 								createdBy: user_id,
 								name: list["name"],
@@ -17,17 +17,17 @@ Meteor.methods({
 		}
 	},
 
-	updateDocumentType: function(list) {
+	updateDocumentType: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
-			DocumentTypes.update({_id: list["id"],
+			await DocumentTypes.updateAsync({_id: list["id"],
 									toolId: list["toolId"],
 									versionId: list["versionId"],
 								},{$set: {name: list["name"]}});
 		}
 	},
 
-	updateDocumentTypeIndex: function(list) {
+	updateDocumentTypeIndex: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
 
@@ -37,12 +37,12 @@ Meteor.methods({
 			var query = {toolId: list["toolId"], versionId: list["versionId"]};
 
         	if (prev_index < current_index) {
-	       		DocumentTypes.update({$and: [{index: {$gt: prev_index}},
+	       		await DocumentTypes.updateAsync({$and: [{index: {$gt: prev_index}},
     										{_id: {$ne: doc_type_id}}, query]},
     								{$inc: {index: current_index}}, {multi: true});
         	}
         	else {
-        		DocumentTypes.update({$and: [query,
+        		await DocumentTypes.updateAsync({$and: [query,
     										{$or: [{index: {$gt: prev_index}},
     												{_id: doc_type_id}]}
     										]},
@@ -52,14 +52,14 @@ Meteor.methods({
 	},
 
 
-	removeDocumentType: function(list) {
+	removeDocumentType: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
 
 			if (!list["id"])
 				return;
 
-			DocumentTypes.remove({_id: list["id"],
+			await DocumentTypes.removeAsync({_id: list["id"],
 								toolId: list["toolId"], versionId: list["versionId"]});
 		}
 	},

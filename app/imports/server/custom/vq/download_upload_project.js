@@ -4,7 +4,7 @@ import { is_public_diagram } from '../../platform/_helpers.js'
 
 Meteor.methods({	
 
-	getProjectJson: function(list) {
+	getProjectJson: async function(list) {
 
 		console.log("zzz")
 		console.log("getProjectJson", list)
@@ -23,13 +23,13 @@ Meteor.methods({
 			var project_id = list.projectId;
 			var version_id = list.versionId;
 
-			var project = Projects.findOne({_id: project_id,});
+			var project = await Projects.findOneAsync({_id: project_id,});
 			if (!project) {
 				console.error("No project ", project_id);
 				return;
 			}
 
-			var tool = Tools.findOne({_id: project.toolId,});
+			var tool = await Tools.findOneAsync({_id: project.toolId,});
 			if (!tool) {
 				console.error("No tool", project.toolId);
 				return;
@@ -37,9 +37,9 @@ Meteor.methods({
 
 			var tool_name = tool.name;
 
-			var diagrams = Diagrams.find({projectId: project_id, versionId: version_id}).map(function(diagram) {  
+			var diagrams = await Diagrams.find({projectId: project_id, versionId: version_id}).mapAsync(async function(diagram) {  
 
-				var diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
+				var diagram_type = await DiagramTypes.findOneAsync({_id: diagram.diagramTypeId,});
 				if (!diagram_type) {
 					console.error("No DiagramType ", diagram.diagramTypeId);
 					return;
@@ -49,9 +49,9 @@ Meteor.methods({
 
 				var elems_map = {};
 
-				diagram.elements = Elements.find({diagramId: diagram._id, projectId: project_id, versionId: version_id}).map(function(element) {
+				diagram.elements = await Elements.find({diagramId: diagram._id, projectId: project_id, versionId: version_id}).mapAsync(async function(element) {
 
-					var element_type = ElementTypes.findOne({_id: element.elementTypeId,});
+					var element_type = await ElementTypes.findOneAsync({_id: element.elementTypeId,});
 					if (!element_type) {
 						console.error("No ElementType ", element.elementTypeId);
 						return;
@@ -59,11 +59,11 @@ Meteor.methods({
 
 					_.extend(element, {elementTypeName: element_type.name, toolName: tool_name,});
 
-					element.compartments = Compartments.find({elementId: element._id, diagramId: element.diagramId,
+					element.compartments = await Compartments.find({elementId: element._id, diagramId: element.diagramId,
 															projectId: project_id, versionId: version_id})
-														.map(function(compartment) {
+														.mapAsync(async function(compartment) {
 
-															var compartment_type = CompartmentTypes.findOne({_id: compartment.compartmentTypeId,});
+															var compartment_type = await CompartmentTypes.findOneAsync({_id: compartment.compartmentTypeId,});
 															if (!compartment_type) {
 																console.error("No CompartmentType ", compartment.compartmentTypeId);
 																return;
@@ -100,7 +100,7 @@ Meteor.methods({
 
 });
 
-function uploadProject(list) {
+async function uploadProject(list) {
 		var user_id = this.userId;
 		if (is_project_member(user_id, list)) {
 
@@ -113,7 +113,7 @@ function uploadProject(list) {
 				return;
 			}
 
-			var project = Projects.findOne({_id: project_id,});
+			var project = await Projects.findOneAsync({_id: project_id,});
 			if (!project) {
 				console.error("No project ", project_id);
 				return;
@@ -147,7 +147,7 @@ function uploadProject(list) {
 
 			_.extend(project_data, data.project);
 
-			Projects.update({_id: project_id,}, {$set: {endpoint: project_data.endpoint,
+			await Projects.updateAsync({_id: project_id,}, {$set: {endpoint: project_data.endpoint,
 														uri: project_data.uri,
 														useDefaultGroupingSeparator: project_data.useDefaultGroupingSeparator,
 														useStringLiteralConversion: project_data.useStringLiteralConversion,
@@ -173,12 +173,12 @@ function uploadProject(list) {
 														schema: project_data.schema,
 													}});
 
-			_.each(data.diagrams, function(diagram) {
+			_.each(data.diagrams, async function(diagram) {
 
-				var tool = Tools.findOne({_id: project.toolId,});
+				var tool = await Tools.findOneAsync({_id: project.toolId,});
 				if (!tool) {
 
-					tool = Tools.findOne({name: project.toolName,})
+					tool = await Tools.findOneAsync({name: project.toolName,})
 					if (!tool) {
 						console.error("No Tool", project.toolId);
 						return;
@@ -193,12 +193,12 @@ function uploadProject(list) {
 
 				var diagram_type_id = diagram.diagramTypeId;
 
-				var diagram_type = DiagramTypes.findOne({_id: diagram_type_id, toolId: tool_id,});
+				var diagram_type = await DiagramTypes.findOneAsync({_id: diagram_type_id, toolId: tool_id,});
 				if (!diagram_type) {
 					//diagram_type = DiagramTypes.findOne({_id: diagram_type_id,});
 					if (!diagram_type) {
 						var diagram_type_name = diagram.diagramTypeName;
-						diagram_type = DiagramTypes.findOne({name: diagram_type_name, toolId: tool_id,});
+						diagram_type = await DiagramTypes.findOneAsync({name: diagram_type_name, toolId: tool_id,});
 						if (!diagram_type) {
 							console.error("No DiagramType", diagram_type_id);
 							return;							
@@ -212,11 +212,11 @@ function uploadProject(list) {
 									toolId: tool_id,
 								});
 
-				var diagram_id = Diagrams.insert(diagram);
+				var diagram_id = await Diagrams.insertAsync(diagram);
 
 				var elem_map = {};
 
-				_.each(elements, function(element) {
+				_.each(elements, async function(element) {
 
 					var old_elem_id = element._id;
 
@@ -226,14 +226,14 @@ function uploadProject(list) {
 
 					var elem_type_id = element.elementTypeId;
 
-					var element_type = ElementTypes.findOne({_id: elem_type_id, toolId: tool_id,});
+					var element_type = await ElementTypes.findOneAsync({_id: elem_type_id, toolId: tool_id,});
 					if (!element_type) {
 
 						//element_type = ElementTypes.findOne({_id: elem_type_id,});
 						if (!element_type) {
 
 							var element_type_name = element.elementTypeName;
-							element_type = ElementTypes.findOne({name: element_type_name,
+							element_type = await ElementTypes.findOneAsync({name: element_type_name,
 																	toolId: tool_id,
 																	diagramTypeId: diagram_type._id,
 																});
@@ -259,23 +259,23 @@ function uploadProject(list) {
 										});
 					}
 
-					var element_id = Elements.insert(element);
+					var element_id = await Elements.insertAsync(element);
 					
 					elem_map[old_elem_id] = element_id;
 
-					_.each(compartments, function(compartment) {
+					_.each(compartments, async function(compartment) {
 						delete compartment._id;
 
 						var compart_type_id = compartment.compartmentTypeId;
 
-						var compart_type = CompartmentTypes.findOne({_id: compart_type_id, toolId: tool_id,});
+						var compart_type = await CompartmentTypes.findOneAsync({_id: compart_type_id, toolId: tool_id,});
 						if (!compart_type) {
 
 							//compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
 							if (!compart_type) {
 
 								var compart_type_name = compartment.compartmentTypeName;
-								compart_type = CompartmentTypes.findOne({name: compart_type_name,
+								compart_type = await CompartmentTypes.findOneAsync({name: compart_type_name,
 																			toolId: tool_id,
 																			diagramTypeId: diagram_type._id,
 																			elementTypeId: element_type._id,
@@ -299,7 +299,7 @@ function uploadProject(list) {
 												toolId: tool_id,
 											});
 
-						Compartments.insert(compartment);
+						await Compartments.insertAsync(compartment);
 					});
 				
 				});

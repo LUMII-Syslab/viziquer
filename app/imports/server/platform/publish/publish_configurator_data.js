@@ -48,7 +48,7 @@ Meteor.publish("Tools", function(list) {
 	}
 });
 
-Meteor.publish("ToolVersions_Diagrams_DiagramTypes", function(list) {
+Meteor.publish("ToolVersions_Diagrams_DiagramTypes", async function(list) {
 
 	if (!list || list["noQuery"])
 		return this.stop();
@@ -61,7 +61,7 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", function(list) {
 
 		//if no version is specified, then selects the last version
 		if (!version_id) {
-			var version = ToolVersions.findOne({toolId: list["toolId"]},
+			var version = await ToolVersions.findOneAsync({toolId: list["toolId"]},
 												{sort: {startDate: -1}});
 			if (version)
 				version_id = version["_id"];

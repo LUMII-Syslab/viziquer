@@ -3,29 +3,29 @@ import { DialogTabs } from '../../../../db/platform/collections.js'
 
 Meteor.methods({
 
-	insertTab: function(list) {
+	insertTab: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
-			DialogTabs.insert(list);
+			await DialogTabs.insertAsync(list);
 		}
 	},
 
-	updateTab: function(list) {
+	updateTab: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
-			DialogTabs.update({_id: list["tabId"], toolId: list["toolId"]},
+			await DialogTabs.updateAsync({_id: list["tabId"], toolId: list["toolId"]},
 								{$set: {name: list["name"]}});
 		}
 	},
 
-	removeTab: function(list) {
+	removeTab: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
 
 			if (!list["id"])
 				return;
 
-			DialogTabs.remove({_id: list["id"], toolId: list["toolId"]});
+			await DialogTabs.removeAsync({_id: list["id"], toolId: list["toolId"]});
 		}
 	},
 	

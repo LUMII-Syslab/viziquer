@@ -3,20 +3,20 @@ import { DiagramFiles } from '../../../../db/platform/collections.js'
 
 Meteor.methods({
 
-	attachFileToElement: function(list) {
+	attachFileToElement: async function(list) {
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
 			list["createdAt"] = new Date();
-			DiagramFiles.insert(list);
+			await DiagramFiles.insertAsync(list);
 		}
 	},
 
-	detachFileFromElement: function(list) {
+	detachFileFromElement: async function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
 
-			DiagramFiles.remove({_id: list["diagramFileId"], projectId: list["projectId"],
+			await DiagramFiles.removeAsync({_id: list["diagramFileId"], projectId: list["projectId"],
 										versionId: list["versionId"]});
 		}
 	},
