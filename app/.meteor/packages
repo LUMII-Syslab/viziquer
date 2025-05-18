@@ -42,7 +42,7 @@ spacebars-compiler
 email@2.2.6
 nilsdannemann:pdfmake
 session@1.2.1
-nimble:restivus
+###nimble:restivus
 mikowals:batch-insert
 peerlibrary:xml2js
 rzymek:pegjs
@@ -51,6 +51,6 @@ dynamic-import@0.7.3
 fetch@0.1.4
 tap:i18n
 ostrio:flow-router-extra
-kadira:blaze-layout
+###kadira:blaze-layout
 matb33:collection-hooks
 risul:bootstrap-colorpicker
