@@ -21,7 +21,10 @@ FlowRouter.route('/', {
     return import('/imports/client/platform/templates/index/index.js');
   },
   action() {
-    BlazeLayout.render('publicLayout', {main: 'index'});
+    this.render('publicLayout', {main: 'index'});
+    // BlazeLayout.render('publicLayout', {main: 'index'});
+
+    // for BlazeLayout see also https://dev.to/smart_egg/meteorjs-flowrouter-packages-update-4d1d
   }
 });
 
@@ -32,7 +35,8 @@ FlowRouter.route('/signup', {
     return import('/imports/client/platform/templates/signup/signup.js');
   },
   action() {
-    BlazeLayout.render('publicLayout', {main: 'signup'});
+    this.render('publicLayout', {main: 'signup'});
+    // BlazeLayout.render('publicLayout', {main: 'signup'});
   }
 });
 
@@ -40,7 +44,8 @@ FlowRouter.route('/signup', {
 FlowRouter.route('/reset-password/:token', {
   name: 'resetPassword',
   action() {
-    BlazeLayout.render('publicLayout', {main: 'resetPasswordTemplate'});
+    this.render('publicLayout', {main: 'resetPasswordTemplate'});
+    // BlazeLayout.render('publicLayout', {main: 'resetPasswordTemplate'});
   }
 });
 
@@ -48,7 +53,8 @@ FlowRouter.route('/reset-password/:token', {
 FlowRouter.route('/go-to-your-email', {
   name: 'goToEmail',
   action() {
-    BlazeLayout.render('publicLayout', {main: 'goToEmailTemplate'});
+    this.render('publicLayout', {main: 'goToEmailTemplate'});
+    // BlazeLayout.render('publicLayout', {main: 'goToEmailTemplate'});
   }
 });
 
@@ -56,7 +62,8 @@ FlowRouter.route('/go-to-your-email', {
 FlowRouter.route('/enroll-account/:token', {
   name: 'enrollAccount',
   action() {
-    BlazeLayout.render('publicLayout', {main: 'enrollAccountTemplate'});
+    this.render('publicLayout', {main: 'enrollAccountTemplate'});
+    // BlazeLayout.render('publicLayout', {main: 'enrollAccountTemplate'});
   }
 });
 
@@ -73,7 +80,8 @@ FlowRouter.route('/structure', {
 
   action() {
     Session.set("activePanelItem", "structure");
-    BlazeLayout.render('mainLayout', {main: 'structureTemplate', ribbon: 'structureRibbon'});
+    this.render('mainLayout', {main: 'structureTemplate', ribbon: 'structureRibbon'});
+    // BlazeLayout.render('mainLayout', {main: 'structureTemplate', ribbon: 'structureRibbon'});
   },
 });
 
@@ -104,7 +112,8 @@ FlowRouter.route('/project/:projectId/version/:versionId/diagrams/:phrase?', {
     var diagrams_query = build_diagrams_query(params);
     Session.set("diagrams", diagrams_query);
 
-    BlazeLayout.render('mainLayout', {main: 'diagramsTemplate', ribbon: 'diagramsRibbon'});
+    this.render('mainLayout', {main: 'diagramsTemplate', ribbon: 'diagramsRibbon'});
+    // BlazeLayout.render('mainLayout', {main: 'diagramsTemplate', ribbon: 'diagramsRibbon'});
   },
 });
 
@@ -177,7 +186,8 @@ FlowRouter.route('/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:
   //sets version id
     Session.set("versionId", version_id);
 
-    BlazeLayout.render('mainLayout', {main: 'diagramTemplate', ribbon: 'diagramRibbon'});
+    this.render('mainLayout', {main: 'diagramTemplate', ribbon: 'diagramRibbon'});
+    // BlazeLayout.render('mainLayout', {main: 'diagramTemplate', ribbon: 'diagramRibbon'});
   },
 });
 
@@ -236,7 +246,8 @@ FlowRouter.route('/public/project/:projectId/diagram/:_id/type/:diagramTypeId/ve
   //sets version id
     Session.set("versionId", version_id);
 
-    BlazeLayout.render('publicDiagramLayout', {main: 'publicDiagramTemplate'});
+    this.render('publicDiagramLayout', {main: 'publicDiagramTemplate'});
+    // BlazeLayout.render('publicDiagramLayout', {main: 'publicDiagramTemplate'});
   },
 });
 
@@ -276,7 +287,8 @@ FlowRouter.route('/project/:projectId/users', {
 
   action() {
     Session.set("activePanelItem", "users");
-    BlazeLayout.render('mainLayout', {main: 'usersTemplate', ribbon: 'usersRibbon'});
+    this.render('mainLayout', {main: 'usersTemplate', ribbon: 'usersRibbon'});
+    // BlazeLayout.render('mainLayout', {main: 'usersTemplate', ribbon: 'usersRibbon'});
   },
 });
 
@@ -332,7 +344,8 @@ FlowRouter.route('/configurator', {
 
   action() {
     Session.set("activePanelItem", "configurator");
-    BlazeLayout.render('mainLayout', {main: 'configuratorTemplate', ribbon: 'configuratorRibbon'});
+    this.render('mainLayout', {main: 'configuratorTemplate', ribbon: 'configuratorRibbon'});
+    // BlazeLayout.render('mainLayout', {main: 'configuratorTemplate', ribbon: 'configuratorRibbon'});
   },
 });
 
@@ -390,7 +403,8 @@ FlowRouter.route('/tool/:toolId/version/:versionId/diagram/:_id/diagramType/:dia
     Session.set("toolVersionId", version_id);
     Session.set("diagramType", diagram_type_id);
 
-    BlazeLayout.render('mainLayout', {main: 'configuratorDiagramTemplate', ribbon: 'diagramRibbon'});
+    this.render('mainLayout', {main: 'configuratorDiagramTemplate', ribbon: 'diagramRibbon'});
+    // BlazeLayout.render('mainLayout', {main: 'configuratorDiagramTemplate', ribbon: 'diagramRibbon'});
   },
 });
 
@@ -417,7 +431,8 @@ FlowRouter.route('/tool/:_id/:versionId?', {
     else
       Session.set("toolVersionId", reset_variable());
 
-    BlazeLayout.render('mainLayout', {main: 'toolTemplate', ribbon: 'toolRibbon'});
+    this.render('mainLayout', {main: 'toolTemplate', ribbon: 'toolRibbon'});
+    // BlazeLayout.render('mainLayout', {main: 'toolTemplate', ribbon: 'toolRibbon'});
   },
 });
 
@@ -434,7 +449,8 @@ FlowRouter.route('/profile', {
 
   action(params, queryParams) {
     Session.set("activePanelItem", reset_variable());
-    BlazeLayout.render('mainLayoutWithHeader', {main: 'profile', ribbon: 'profileRibbon', header: 'profileHeader'});
+    this.render('mainLayoutWithHeader', {main: 'profile', ribbon: 'profileRibbon', header: 'profileHeader'});
+    // BlazeLayout.render('mainLayoutWithHeader', {main: 'profile', ribbon: 'profileRibbon', header: 'profileHeader'});
   },
 });
 
@@ -449,7 +465,8 @@ FlowRouter.route('/dump/tool/:tool_id', {
     var tool_id = params.tool_id;
     Session.set("toolId", tool_id);
 
-    BlazeLayout.render('dump');
+    this.render('dump');
+    // BlazeLayout.render('dump');
   },
 });
 
