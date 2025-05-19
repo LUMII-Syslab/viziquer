@@ -1,4 +1,5 @@
 .vscode
+__local__
 
 # package-lock.json
 _doc

@@ -27,9 +27,11 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
     "@types/jquery": "^3.5.32",
     "@types/meteor": "^2.9.8",
-    "@types/node": "^22.15.18",
-    "@types/node-fetch": "^2.6.12"
+    "@types/node": "^22.15.19",
+    "@types/node-fetch": "^2.6.12",
+    "globals": "^16.1.0"
   }
 }
