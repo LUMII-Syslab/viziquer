@@ -61,7 +61,8 @@ import '/imports/libs/custom/mytest'
 // import '/libs/custom/ontologyParams'
 
 
-Meteor.startup(() => {  
+// FIXME: uz brīdi padarīju startup par async, kas diez vai ir labi 
+Meteor.startup(async () => {  
     console.log("Loading server");
 
     Meteor.call("importConfiguration");
@@ -75,7 +76,7 @@ Meteor.startup(() => {
 
 
     // checking if CompartmentTypes contains attribute label
-    const compart_type = CompartmentTypes.findOne({label: { $exists: false }});
+    const compart_type = await CompartmentTypes.findOneAsync({label: { $exists: false }});
     if (compart_type) {
         CompartmentTypes.find().forEach(function(compart_type) {
             CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
@@ -101,7 +102,8 @@ Meteor.startup(() => {
     console.log('Effective environment:', process.env);
     // }
 
-
+    //FIXME: pagaidām aizkomentēju Restivus, kurš pirmajā brīdī izskatās nesaderīgs ar meteor 3
+/*
     let Api = new Restivus({
         // useDefaultAuth: true,
         prettyJson: true
@@ -150,6 +152,6 @@ Meteor.startup(() => {
             }
         }
     });
-
+*/
     console.log("End startup");
 });

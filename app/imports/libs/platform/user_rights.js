@@ -8,7 +8,7 @@ function is_power_user(user_id) {
 	return Roles.userIsInRole(user_id, [role_name]);
 }
 
-function is_project_version_reader(user_id, doc, role) {
+async function is_project_version_reader(user_id, doc, role) {
 
 	if (!doc) {
 		return false;
@@ -27,7 +27,7 @@ function is_project_version_reader(user_id, doc, role) {
 
 		//selecting the user role in the project
 		if (!role) {
-			var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
+			var proj_user = await ProjectsUsers.findOneAsync({projectId: proj_id, userSystemId: user_id});
 			if (proj_user) {
 				role = proj_user["role"];
 			}
@@ -117,9 +117,9 @@ function is_project_admin(user_id, doc) {
 }
 
 //checks if the user is system admin
-function is_system_admin(system_id) {
+async function is_system_admin(system_id) {
 	
-	var user = Users.findOne({systemId: system_id});
+	var user = await Users.findOneAsync({systemId: system_id});
 	if (user && user["isSystemAdmin"] === true) {
 		return true;
 	}
