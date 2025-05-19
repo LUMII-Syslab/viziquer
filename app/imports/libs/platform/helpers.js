@@ -222,8 +222,8 @@ function circle(res, new_radius) {
 	return item;
 }
 
-function get_configurator_tool_id() {
-	var configurator = Tools.findOne({isConfigurator: true});
+async function get_configurator_tool_id() {
+	var configurator = await Tools.findOneAsync({isConfigurator: true});
 	if (configurator)
 		return configurator["_id"];
 }

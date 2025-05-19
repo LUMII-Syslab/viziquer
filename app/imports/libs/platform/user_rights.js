@@ -14,7 +14,7 @@ async function is_project_version_reader(user_id, doc, role) {
 		return false;
 	}
 
-	if (is_system_admin(user_id)) {
+	if (await is_system_admin(user_id)) {
 		return true;
 	}
 
@@ -50,13 +50,13 @@ async function is_project_version_reader(user_id, doc, role) {
 	}
 }
 
-function is_project_version_admin(user_id, doc) {
+async function is_project_version_admin(user_id, doc) {
 
 	if (!doc) {
 		return false;
 	}
 
-	if (is_system_admin(user_id)) {
+	if (await is_system_admin(user_id)) {
 		return true;
 	}
 
@@ -67,23 +67,23 @@ function is_project_version_admin(user_id, doc) {
 }
 
 //This is to add versionId field in case the doc is from Versions collection
-function is_project_version_admin_for_version(user_id, doc) {
+async function is_project_version_admin_for_version(user_id, doc) {
 
 	if (!doc) {
 		return false;
 	}
 
 	doc["versionId"] = doc["_id"];
-	return is_project_version_admin(user_id, doc); 
+	return await is_project_version_admin(user_id, doc); 
 }	
 
-function is_project_member(user_id, doc) {
+async function is_project_member(user_id, doc) {
 
 	if (!doc) {
 		return false;
 	}
 
-	if (is_system_admin(user_id)) {
+	if (await is_system_admin(user_id)) {
 		return true;
 	}
 

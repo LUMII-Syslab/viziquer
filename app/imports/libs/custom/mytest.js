@@ -3,7 +3,7 @@ import { Elements } from '../../db/platform/collections.js'
 
 Meteor.methods({
 
-	changeColor : function(list) {
+	changeColor : async function(list) {
 		var user_id = Meteor.userId();
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list)) {
@@ -17,7 +17,7 @@ Meteor.methods({
 				
 				console.log("update color ", update)
 				
-				Elements.update({_id: list["elementId"], projectId: list["projectId"]},
+				await Elements.updateAsync({_id: list["elementId"], projectId: list["projectId"]},
 									{$set: update});
 			}
 		}

@@ -1,10 +1,10 @@
 import { Contacts } from '../../db/platform/collections.js'
 
-function get_contacts(system_id) {
+async function get_contacts(system_id) {
 	var contacts = Contacts.find({userSystemId: system_id});
 	var user_ids = [];
-	if (contacts.count() > 0) {
-		var contacts_fetch = contacts.fetch();
+	if ((await contacts.countAsync()) > 0) {
+		var contacts_fetch = await contacts.fetchAsync();
 		for (var i=0;i<contacts_fetch.length;i++) {
 			var contact = contacts_fetch[i];
 			if (contact["contactId"])
@@ -84,7 +84,7 @@ function is_test_user(email) {
   if (email && email.endsWith(test_email)) return true;
 }
 
-function send_email(list) {
+async function send_email(list) {
 
 	if (Meteor.isServer) {
 
@@ -101,7 +101,7 @@ function send_email(list) {
 					    	text: list["text"],
 					    };
 
-		    Email.send(mail_data, function(err, obj) {
+		    await Email.sendAsync(mail_data, function(err, obj) {
 		    	if (err)
 		    		console.log("Error in sending mail", err);
 		    });
