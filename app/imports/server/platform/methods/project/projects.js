@@ -1,4 +1,5 @@
-import { Roles } from 'meteor/alanning:roles'
+// import { Roles } from 'meteor/alanning:roles'
+import { Roles } from "meteor/roles"
 
 import { is_project_admin, is_project_member, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '../../../../libs/platform/user_rights.js'
 import { generate_id } from '../../../../libs/platform/lib.js'
