@@ -30,3 +30,5 @@ accounts-password
 ostrio:flow-router-extra
 underscore
 zodern:types
+universe:i18n
+session

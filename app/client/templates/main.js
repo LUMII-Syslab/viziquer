@@ -2,6 +2,17 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { ClientStorage } from 'ClientStorage';
 
 import { Users } from '../../imports/db/platform/collections.js'
+import { i18n } from 'meteor/universe:i18n';
+
+import { Template } from 'meteor/templating';
+
+
+Template.registerHelper('_', function (key, ...args) {
+  return i18n.getTranslation(key, ...args);
+});
+
+
+i18n.setLocale('en');
 
 
 Template.nav.helpers({

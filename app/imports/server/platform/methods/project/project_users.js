@@ -3,6 +3,9 @@ import { ProjectsUsers, Notifications, Versions, UserVersionSettings, Users, Pro
 import { get_unknown_public_user_name } from '../../_helpers.js'
 import { send_email } from '../../../../libs/platform/lib.js'
 
+import { Roles } from "meteor/roles"
+
+
 ProjectsUsers.before.insert(async function(user_id, doc) {
 
 	if (!doc)
@@ -109,7 +112,7 @@ ProjectsUsers.after.update(async function(user_id, doc, fieldNames, modifier, op
 				old_roles.push(build_project_version_reader_role(proj_id, version["_id"], prev_role));
 			});
 
-			Roles.removeUsersFromRoles(target_user, old_roles);
+			Roles.removeUsersFromRolesAsync(target_user, old_roles);
 		}
 
 		var roles = [];
@@ -128,7 +131,7 @@ ProjectsUsers.after.update(async function(user_id, doc, fieldNames, modifier, op
 			roles.push(build_project_version_reader_role(proj_id, version["_id"], role)); 
 		});
 
-		Roles.addUsersToRoles(target_user, roles);
+		Roles.addUsersToRolesAsync(target_user, roles);
 	}
 
 	if (modifier.$set.versionId) {
@@ -226,7 +229,7 @@ ProjectsUsers.after.remove(async function(user_id, doc) {
 		roles.push(build_project_version_reader_role(proj_id, version["_id"], role)); 		
 	});
 
-	Roles.removeUsersFromRoles(target_user, roles);
+	Roles.removeUsersFromRolesAsync(target_user, roles);
 
 	//removing user's project settings
 	await UserVersionSettings.removeAsync({projectId: proj_id, userSystemId: target_user});

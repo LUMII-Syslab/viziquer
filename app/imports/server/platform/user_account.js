@@ -31,7 +31,7 @@ Meteor.methods({
 			}
 
 			//inserting user in accounts
-			var user_id = Accounts.createUser({email: list["email"], password: list["password"]});
+			var user_id = await Accounts.createUser({email: list["email"], password: list["password"]});
 
 			//inserting user
 			var user_data = build_user_data(user_id, list);
@@ -46,8 +46,8 @@ Meteor.methods({
 			if (is_first_user) {
 				var role = build_power_user_role();
 				
-				Roles.createRole(role, {unlessExists: true});
-				Roles.addUsersToRoles(user_id, [role]);
+				Roles.createRoleAsync(role, {unlessExists: true});
+				Roles.addUsersToRolesAsync(user_id, [role]);
 
 
 				//loading configurator data

@@ -313,16 +313,16 @@ async function afterInsert(user_id_in, doc) {
 	var project_admin_role = build_project_admin_role(proj_id);
 	var project_version_admin_role = build_project_version_admin_role(proj_id, version_id);
 
-	Roles.createRole(project_role, {unlessExists: true});
-	Roles.createRole(project_version_reader_role, {unlessExists: true});
-	Roles.createRole(project_admin_role, {unlessExists: true});
-	Roles.createRole(project_version_admin_role, {unlessExists: true});
+	Roles.createRoleAsync(project_role, {unlessExists: true});
+	Roles.createRoleAsync(project_version_reader_role, {unlessExists: true});
+	Roles.createRoleAsync(project_admin_role, {unlessExists: true});
+	Roles.createRoleAsync(project_version_admin_role, {unlessExists: true});
 
 
 	console.log("user_id dadfadfdf", user_id)
 
 
-	Roles.addUsersToRoles(user_id, [project_role, project_version_reader_role, project_admin_role, project_version_admin_role]);
+	Roles.addUsersToRolesAsync(user_id, [project_role, project_version_reader_role, project_admin_role, project_version_admin_role]);
 
 	return version_id;
 }

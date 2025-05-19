@@ -2,6 +2,7 @@ import { build_project_version_reader_role, build_project_role, build_project_ad
 import { Notifications, ProjectsUsers, Users, UserVersionSettings, Versions } from '../../../../db/platform/collections.js'
 import { user_not_logged_in } from '../../_helpers.js'
 
+import { Roles } from "meteor/roles"
 
 Notifications.after.update(async function(user_id, doc, fieldNames, modifier, options) {
 
@@ -96,7 +97,7 @@ Notifications.after.update(async function(user_id, doc, fieldNames, modifier, op
 
 
 		//roles
-		Roles.addUsersToRoles(user_id, roles);
+		Roles.addUsersToRolesAsync(user_id, roles);
 	}
 
 	else if (modifier.$set.status == "rejected") {

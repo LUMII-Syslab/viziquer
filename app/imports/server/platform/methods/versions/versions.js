@@ -252,10 +252,10 @@ function add_admin_role(proj_id, version_id) {
 
 	//selecting project admins
 	var project_admin_role = build_project_admin_role(proj_id);
-	var admins = Roles.getUsersInRole(project_admin_role).fetch();
+	var admins = Roles.getUsersInRoleAsync(project_admin_role).fetch();
 
 	//adding admin and read roles in the new version to the admins
-	Roles.addUsersToRoles(admins, admin_role);
+	Roles.addUsersToRolesAsync(admins, admin_role);
 }
 
 async function add_read_role(proj_id, version_id) {
@@ -280,7 +280,7 @@ async function add_read_role(proj_id, version_id) {
 		var users = users_by_roles[role];
 		var reader_role = build_project_version_reader_role(proj_id, version_id, role);
 
-		Roles.addUsersToRoles(users, reader_role);	
+		Roles.addUsersToRolesAsync(users, reader_role);	
 	}
 }
 
@@ -288,14 +288,14 @@ function remove_from_admin_role(proj_id, version_id, is_remove_role) {
 
 	//selecting admins
 	var admin_role = build_project_version_admin_role(proj_id, version_id);
-	var users = Roles.getUsersInRole(admin_role).fetch();
+	var users = Roles.getUsersInRoleAsync(admin_role).fetch();
 
 	//removing users from the roles
-	Roles.removeUsersFromRoles(users, admin_role);
+	Roles.removeUsersFromRolesAsync(users, admin_role);
 
 	//if the version is remove, then all the roles are deleted
 	if (is_remove_role)
-		Roles.deleteRole(admin_role);
+		Roles.deleteRoleAsync(admin_role);
 }
 
 async function send_notifications(user_id, list) {
