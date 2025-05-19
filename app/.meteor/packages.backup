@@ -24,6 +24,33 @@ shell-server@0.6.1            # Server-side component of the `meteor shell` comm
 hot-module-replacement@0.5.4  # Update code in development without reloading the page
 blaze-hot               # Update files using Blaze's API with HMR
 
-roles
+
+#aldeed:collection2@3.5.0
+#iron:router
+underscore@1.6.1
+alanning:roles
+mrt:jquery-ui-sortable
+tmeasday:publish-with-relations
+accounts-password@3.1.0
+#ajduke:bootstrap-tagsinput
+natestrauser:font-awesome
+less@4.0.0
+http@1.0.8
+#tap:i18n-db
+spacebars-compiler
+#natestrauser:bootstrap-colorpicker
+email@3.1.2
+nilsdannemann:pdfmake
+session@1.2.2
+###nimble:restivus
+mikowals:batch-insert
+peerlibrary:xml2js
+rzymek:pegjs
+#twbs:bootstrap
+dynamic-import@0.7.4
+fetch@0.1.6
+###tap:i18n
+ostrio:flow-router-extra
+###kadira:blaze-layout
 matb33:collection-hooks
-accounts-password
+risul:bootstrap-colorpicker
