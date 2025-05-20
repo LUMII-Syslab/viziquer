@@ -1,7 +1,7 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 import './VQ_DSS_schema.html'
-import { fragmentsHeuristic, fragmentsPPR } from './fragments';
+import { runFragmentAlgorithm, compareFragmentAlgorithmsIntersection, compareFragmentAlgorithmsSizeIncrease, compareFragmentAlgorithmsRank } from './fragments';
 
 Template.VQ_DSS_schema.SchemaName = new ReactiveVar('');
 Template.VQ_DSS_schema.Classes = new ReactiveVar([]);
@@ -665,18 +665,22 @@ Template.VQ_DSS_schema.events({
 		}
 	},
 	'click #getFragment': async function() {
+		// Get parameters
+		const mainClasses = Template.VQ_DSS_schema.Classes.get().map(c => c.id);		// Classes around which the fragment should be created
 		const fragSize = parseInt(document.getElementById("fragment-size").value);
 		const fragAlgorithm = document.getElementById("fragment-algorithm").value;
-		let fragmentClasses;
-		switch (fragAlgorithm) {
-			case "heuristic":
-				fragmentClasses = await fragmentsHeuristic(fragSize);
-				break;
-			case "ppr":
-				fragmentClasses = await fragmentsPPR(fragSize, 0.85, 1e-5);
-		}
-		const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){return fragmentClasses.includes(c.full_name)});
-		const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return !fragmentClasses.includes(c.full_name)});
+
+		// Uncomment to console log fragment similarity comparison for different algorithms
+		// compareFragmentAlgorithmsIntersection();
+		// compareFragmentAlgorithmsSizeIncrease();
+		// compareFragmentAlgorithmsRank();
+
+		// Calculate fragment
+		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, mainClasses, fragSize, true);
+		
+		// Update list of chosen classes
+		const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){return fragmentClasses.includes(c.id)});
+		const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return !fragmentClasses.includes(c.id)});		
 		setClassListInfo(classes, restClasses);
 		clearData();
 	},
