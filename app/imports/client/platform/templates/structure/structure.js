@@ -354,7 +354,7 @@ Template.createProjectModal.events({
 
 function getSchemas(tag) {
 	let schemas = [];
-	const allSchemas = Template.createProjectModal.allSchemas.get();
+	const allSchemas = Template.createProjectModal.allSchemas.get() || [];
 
 	for ( const sc of allSchemas ) {
 		if ( tag != 'All' && sc.tags.includes(tag))
@@ -369,16 +369,22 @@ function getSchemas(tag) {
 
 Template.createProjectModal.rendered = async function() {
 	// var rr = await dataShapes.getOntologies();
-	var rr = await dataShapes.getOntologiesAndTags();
+	// var rr = await dataShapes.getOntologiesAndTags();
+	var rr = {};
 	var tags = rr.tags;
-	tags.unshift({name:"All", display_name: "All schemas"});
-	Template.createProjectModal.schemaTags.set(tags);
+
+	if (_.size(tags) > 0) {
+		tags.unshift({name:"All", display_name: "All schemas"});
+		Template.createProjectModal.schemaTags.set(tags);
+	}
 	Template.createProjectModal.loading.set(false);
 	
 	var schemas = rr.schemas;
-	Template.createProjectModal.allSchemas.set(schemas);
+	if (_.size(schemas) > 0) {
+		Template.createProjectModal.allSchemas.set(schemas);
+	}
 	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
-	
+
 	//var services_all = await dataShapes.getServices();
 	//console.log('Pārbaude createProjectModal, kas ir services kolekcijā ', services_all)
 
