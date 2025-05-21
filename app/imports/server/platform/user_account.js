@@ -46,8 +46,8 @@ Meteor.methods({
 			if (is_first_user) {
 				var role = build_power_user_role();
 
-				Roles.createRoleAsync(role, {unlessExists: true});
-				Roles.addUsersToRolesAsync(user_id, [role]);
+				await Roles.createRoleAsync(role, {unlessExists: true});
+				await Roles.addUsersToRolesAsync(user_id, [role]);
 
 
 				//loading configurator data
@@ -119,7 +119,7 @@ Meteor.methods({
             if (typeof cfg === 'object' && cfg.services) {
               try {
                 // Services.remove({ toolId: tool_id });
-                const servicesData = JSON.parse(Assets.getText(`jsons/${cfg.services}`));
+                const servicesData = JSON.parse(await Assets.getTextAsync(`jsons/${cfg.services}`));
                 console.log('servicesData is', servicesData)
                 servicesData.toolId = tool_id;
 
