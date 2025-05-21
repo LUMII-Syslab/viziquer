@@ -9,23 +9,23 @@ Template.panel.helpers({
         return Session.get("activePanelItem") === "structure";
     },
 
-    panel: function() {
+    panel: async function() {
         var project = Projects.findOne({_id: Session.get("activeProject")});
         if (project) {
 
           var tool = Tools.findOne({_id: project["toolId"]});
           if (tool) {
 
-              var is_admin = is_system_admin(Session.get("userSystemId"));
-              var panel = [ 
+              var is_admin = await is_system_admin(Session.get("userSystemId"));
+              var panel = [
                             // {icon: "pencil", id: "feed", route: "project", isVisible: true},
                             {icon: "picture-o", id: "diagrams", route: "diagrams", isVisible: true},
                             // {icon: "archive", id: "archive", route: "archive"},
-                            {icon: "group", id: "users", route: "users"},            
-                            // {icon: "forumbee", id: "forum", route: "forum"},     
-                              
-                            // {icon: "desktop", id: "analytics", route: "analytics"},        
-                            {icon: "wrench", id: "configurator", route: "configurator", isVisible: is_admin},     
+                            {icon: "group", id: "users", route: "users"},
+                            // {icon: "forumbee", id: "forum", route: "forum"},
+
+                            // {icon: "desktop", id: "analytics", route: "analytics"},
+                            {icon: "wrench", id: "configurator", route: "configurator", isVisible: is_admin},
 
                         ];
 
@@ -64,19 +64,19 @@ Template.panel.helpers({
       if (user)
           return {name: user["name"],
                 surname: user["surname"],
-                profileImage: user["profileImage"]}; 
+                profileImage: user["profileImage"]};
     },
-    
+
     skin: function() {
       return 6;
     },
 
 });
 
-function no_project_panel() {
-  
+async function no_project_panel() {
+
     var panel = [
-                  {icon: "wrench", id: "configurator", route: "configurator", isVisible: is_system_admin(Session.get("userSystemId"))},                      
+                  {icon: "wrench", id: "configurator", route: "configurator", isVisible: await is_system_admin(Session.get("userSystemId"))},
               ];
 
     _.each(panel, function(item) {
@@ -90,9 +90,9 @@ function no_project_panel() {
     return panel;
 }
 
-function is_system_admin(system_id) {
-  
-  var user = Users.findOne({systemId: system_id});
+async function is_system_admin(system_id) {
+
+  var user = await Users.findOneAsync({systemId: system_id});
   if (user && user["isSystemAdmin"] === true) {
       return true;
   }

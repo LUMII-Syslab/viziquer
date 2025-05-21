@@ -20,7 +20,7 @@ Meteor.methods({
 	addGroup: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_admin(user_id, list)) {
+		if (await is_project_admin(user_id, list)) {
 
 			var date = new Date();
 			var group_id = await ProjectsGroups.insertAsync({	name: list["name"],
@@ -29,7 +29,7 @@ Meteor.methods({
 									createdAt: date,
 									modifiedAt: date,
 								});
-			
+
 			if (group_id) {
 
 				//diagrams
@@ -60,7 +60,7 @@ Meteor.methods({
 
 	editGroup: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_project_admin(user_id, list)) {
+		if (await is_project_admin(user_id, list)) {
 			await ProjectsGroups.updateAsync({_id: list["id"], projectId: list["projectId"]},
 									{$set: {name: list["name"]}});
 		}
@@ -69,7 +69,7 @@ Meteor.methods({
 	removeGroup: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_admin(user_id, list)) {
+		if (await is_project_admin(user_id, list)) {
 
 			//if there is atleast one project member with the specified group, then no remove
 			var proj_users = await ProjectsUsers.findOneAsync({role: list["id"], projectId: list["projectId"]});

@@ -61,8 +61,8 @@ import '/imports/libs/custom/mytest'
 // import '/libs/custom/ontologyParams'
 
 
-// FIXME: uz brīdi padarīju startup par async, kas diez vai ir labi 
-Meteor.startup(async () => {  
+// FIXME: uz brīdi padarīju startup par async, kas diez vai ir labi
+Meteor.startup(async () => {
     console.log("Loading server");
 
     Meteor.call("importConfiguration");
@@ -78,8 +78,8 @@ Meteor.startup(async () => {
     // checking if CompartmentTypes contains attribute label
     const compart_type = await CompartmentTypes.findOneAsync({label: { $exists: false }});
     if (compart_type) {
-        CompartmentTypes.find().forEach(function(compart_type) {
-            CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
+        CompartmentTypes.find().forEachAsync(async function(compart_type) {
+            await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {label: compart_type.name,}});
         });
     }
 

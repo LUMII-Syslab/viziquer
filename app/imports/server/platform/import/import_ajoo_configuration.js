@@ -8,7 +8,7 @@ Meteor.methods({
 		console.log("IIIIIIIIIIIII", list);
 		var _import = new ImportAjooConfiguration(list.toolId, list.versionId);
     await _import.init();
-    
+
 		var data = list.data;
 
 		_import.importTool(data.tool);
@@ -20,7 +20,7 @@ Meteor.methods({
 	addConfiguratorExportButtonInToolbar: async function() {
 
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id)) {
+		if (await is_system_admin(user_id)) {
 
 			var diagram_type = await DiagramTypes.findOneAsync({name: "_ConfiguratorDiagramType"});
 			if (!diagram_type) {
@@ -51,7 +51,7 @@ function addConfiguratorExportButtonInToolbar() {
 	console.log("addConfiguratorExportButtonInToolbar")
 
 	// var user_id = Meteor.userId();
-	// if (is_system_admin(user_id)) {
+	// if (await is_system_admin(user_id)) {
 
 	// 	var diagram_type = DiagramTypes.findOne({name: "_ConfiguratorDiagramType"});
 	// 	if (!diagram_type) {
@@ -235,7 +235,7 @@ ImportAjooConfiguration.prototype = {
 
 	importDiagramTypeCompartmentTypes: function(compart_types) {
 		var self = this;
-		
+
 		_.each(compart_types, async function(compart_type) {
 
 			var object = compart_type.object;
@@ -274,12 +274,12 @@ ImportAjooConfiguration.prototype = {
 						sub_compart_type.subCompartmentTypes = self.recomputeSubCompartmentTypeLabels(sub_compart_type.subCompartmentTypes);
 					}
 
-					return sub_compart_type; 
+					return sub_compart_type;
 				});
 
 	},
 
-	
+
 	importPaletteButtons: function(palette_buttons) {
 
 		var self = this;

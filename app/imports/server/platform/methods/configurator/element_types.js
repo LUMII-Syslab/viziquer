@@ -8,7 +8,7 @@ import { build_initial_element_type } from './initialTypes/element_types.js'
 ElementTypes.after.update(async function(user_id, doc, fields, modifier, options) {
 
 	if (!doc || !modifier || !modifier.$set) {
-		return false;	
+		return false;
 	}
 
 	if (fields && fields.length == 1 && fields[0] == "name") {
@@ -29,7 +29,7 @@ ElementTypes.after.update(async function(user_id, doc, fields, modifier, options
 							index: 1,
 						});
 	}
-	
+
 	else if (modifier.$set["isAbstract"] === true) {
 		await PaletteButtons.removeAsync({elementTypeIds: doc["_id"]});
 	}
@@ -57,7 +57,7 @@ Meteor.methods({
 	makeSpecialization: async function(list) {
 		var system_id = Meteor.userId();
 
-		if (is_system_admin(system_id) && is_version_not_published(list)) {
+		if (await is_system_admin(system_id) && is_version_not_published(list)) {
 
 			var element_list = get_element_list(list);
 			element_list["data"] = {elementType: "Specialization"};
@@ -73,14 +73,14 @@ Meteor.methods({
 
     addKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 			await ElementTypes.updateAsync({_id: list["id"]}, {$push: list["push"]});
     	}
     },
 
     deleteKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var update = {};
 			update[list.array] = list.data;
@@ -88,17 +88,17 @@ Meteor.methods({
 			await ElementTypes.updateAsync({_id: list["id"]}, {$set: update});
     	}
     },
-			
+
     updateKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 			await ElementTypes.updateAsync({_id: list["id"]}, {$set: list["field"]});
     	}
     },
 
 	addElementTypeStyle: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) { 
+		if (await is_system_admin(user_id, list)) {
 
 			var styles;
 			if (list["type"] == "Box") {
@@ -137,7 +137,7 @@ Meteor.methods({
 
 	updateElementType: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) { 
+		if (await is_system_admin(user_id, list)) {
 
 			var update = {};
 			update[list["attrName"]] = list["attrValue"];
@@ -154,7 +154,7 @@ Meteor.methods({
 	updateElementTypeStyle: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) { 
+		if (await is_system_admin(user_id, list)) {
 
 			var attr_value = list["attrValue"];
 			if (attr_value == "true") {
@@ -183,7 +183,7 @@ Meteor.methods({
 
 				var query = {$or: [{elementTypeId: list["id"], styleId: list["styleId"]},
 									{_id: list["elementId"]}]};
-				
+
 				//updating only elements with styleId or configurator element
 				await Elements.updateAsync(query, {$set: style_update}, {multi: true});
 			}
@@ -192,7 +192,7 @@ Meteor.methods({
 
 	addNodeWithLink: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) { 
+		if (await is_system_admin(user_id, list)) {
 
 			//box
 			var box = list["box"];
@@ -228,7 +228,7 @@ Meteor.methods({
 			var edge_type = build_initial_element_type(edge_type_list, "ZoomChart");
 
 			edge_type["endElementTypeId"] = box["elementTypeId"];
-			edge_type["elementId"] = edge_id;		
+			edge_type["elementId"] = edge_id;
 
 			var edge_type_id = await ElementTypes.insertAsync(edge_type);
 		}

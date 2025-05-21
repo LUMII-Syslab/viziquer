@@ -5,14 +5,14 @@ Meteor.methods({
 
 	insertTab: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id) && list) {
+		if (await is_system_admin(user_id) && list) {
 			await DialogTabs.insertAsync(list);
 		}
 	},
 
 	updateTab: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id) && list) {
+		if (await is_system_admin(user_id) && list) {
 			await DialogTabs.updateAsync({_id: list["tabId"], toolId: list["toolId"]},
 								{$set: {name: list["name"]}});
 		}
@@ -20,7 +20,7 @@ Meteor.methods({
 
 	removeTab: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id) && list) {
+		if (await is_system_admin(user_id) && list) {
 
 			if (!list["id"])
 				return;
@@ -28,6 +28,6 @@ Meteor.methods({
 			await DialogTabs.removeAsync({_id: list["id"], toolId: list["toolId"]});
 		}
 	},
-	
+
 });
 

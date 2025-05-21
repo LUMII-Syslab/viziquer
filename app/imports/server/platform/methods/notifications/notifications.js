@@ -11,18 +11,17 @@ Notifications.after.update(async function(user_id, doc, fieldNames, modifier, op
 
 	var proj_id = doc["projectId"];
 
-	if (modifier.$set.status == "confirmed") {
+	if (modifier.$set.status === "confirmed") {
 
-		var proj_id = doc["projectId"];
 		var role = doc.data.role;
 
 		//selecting the versions that are allowed for the user
 		// var versions;
-		// if (role == "Admin")
+		// if (role === "Admin")
 		// 	versions = Versions.find({projectId: proj_id}, {sort: {createdAt: -1}});
 		// 	//versions = Versions.find({projectId: proj_id}, {sort: {publishedAt: -1}});
 
-		// else //if (doc.data.role == "Reader")
+		// else //if (doc.data.role === "Reader")
 		// 	versions = Versions.find({projectId: proj_id, status: "Published"},
 		// 								{sort: {publishedAt: -1}});
 
@@ -30,7 +29,7 @@ Notifications.after.update(async function(user_id, doc, fieldNames, modifier, op
 
 		//building reader roles for admin
 		var tmp_role = role;
-		if (role == "Admin")
+		if (role === "Admin")
 			tmp_role = "Reader";
 
 		//generating project reader roles for all the versions
@@ -44,13 +43,13 @@ Notifications.after.update(async function(user_id, doc, fieldNames, modifier, op
 		roles.push(build_project_role(proj_id));
 
 		//adding the project admin role, if admin
-		if (role == "Admin") {
+		if (role === "Admin") {
 			roles.push(build_project_admin_role(proj_id));
 
 			var version_fetch = await versions.fetchAsync();
 			if (versions && version_fetch) {
 				var last_version = version_fetch[0];
-				if (last_version && last_version["status"] == "New")
+				if (last_version && last_version["status"] === "New")
 					roles.push(build_project_version_admin_role(proj_id, last_version["_id"]));
 			}
 
@@ -92,15 +91,15 @@ Notifications.after.update(async function(user_id, doc, fieldNames, modifier, op
 									{$set: {status: "Member"}});
 
 			//setting the new project and its version as active for the user
-			await Users.updateAsync({systemId: user_id}, {$set: {activeProject: proj_id}});			
+			await Users.updateAsync({systemId: user_id}, {$set: {activeProject: proj_id}});
 		}
 
 
 		//roles
-		Roles.addUsersToRolesAsync(user_id, roles);
+		await Roles.addUsersToRolesAsync(user_id, roles);
 	}
 
-	else if (modifier.$set.status == "rejected") {
+	else if (modifier.$set.status === "rejected") {
 		await ProjectsUsers.removeAsync({projectId: doc["projectId"], userSystemId: user_id});
 	}
 });
@@ -116,7 +115,7 @@ Meteor.methods({
 		}
 		else {
 			user_not_logged_in();
-		}	
+		}
 	},
 
 	updateNotification: async function(list) {

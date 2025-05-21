@@ -7,7 +7,7 @@ Meteor.methods({
 	addSectionToElement: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		if (await is_project_version_admin(user_id, list)) {
 			list["createdAt"] = new Date();
 			await ElementsSections.insertAsync(list);
 		}
@@ -16,7 +16,7 @@ Meteor.methods({
 	removeSectionToElement: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		if (await is_project_version_admin(user_id, list)) {
 
 			if (!list["id"])
 				return;
@@ -28,7 +28,7 @@ Meteor.methods({
 
 	reoredrSectionToElement: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		if (await is_project_version_admin(user_id, list)) {
 
 			console.log("in reorder sectiont o elmeen ", list)
 

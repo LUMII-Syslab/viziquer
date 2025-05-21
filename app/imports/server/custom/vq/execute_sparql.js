@@ -406,7 +406,7 @@ Meteor.methods({
   async executeSparql(list) {
     const user_id = Meteor.userId();
 
-    if (!is_project_member(user_id, list) && !is_public_diagram(list.diagramId)) {
+    if (!await is_project_member(user_id, list) && !is_public_diagram(list.diagramId)) {
       return null;
     }
 
@@ -601,9 +601,9 @@ Meteor.methods({
     return future.wait();
   },
 
-  testProjectEndPointOld(options) {
+  async testProjectEndPointOld(options) {
     const user_id = Meteor.userId();
-    if (!is_project_member(user_id, options)) return;
+    if (!(await is_project_member(user_id, options))) return;
 
     console.log('in test endpoint');
     // console.log("options:", options);
@@ -643,14 +643,14 @@ Meteor.methods({
     }
 
     console.log(testResults);
-    return { 
+    return {
       status: 200,
     };
   },
 
-  testProjectEndPoint(options) {
+  async testProjectEndPoint(options) {
     const user_id = Meteor.userId();
-    if (!is_project_member(user_id, options)) return null;
+    if (!(await is_project_member(user_id, options))) return null;
 
     console.log('in test endpoint');
     console.log('options:', options);

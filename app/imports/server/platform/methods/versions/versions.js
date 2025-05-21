@@ -35,19 +35,19 @@ Versions.after.insert(async function(user_id, doc) {
 	var new_version_id = doc["_id"];
 
 	//the creator's current version is updated to the new one
-	await ProjectsUsers.updateAsync({userSystemId: user_id, projectId: project_id}, 
+	await ProjectsUsers.updateAsync({userSystemId: user_id, projectId: project_id},
 						{$set: {versionId: new_version_id}});
 
 	//the last published project version
 	var last_version = await Versions.findOneAsync({projectId: project_id, status: "Published"},
 										{sort: {publishedAt: -1}});
-	
+
 	//if the inserted version is the first version, then nothing to do
 	if (!last_version)
 		return;
 
 	//adding admin role in the new version to the project admins
-	add_admin_role(project_id, new_version_id);
+	await add_admin_role(project_id, new_version_id);
 
 	var last_version_id = last_version["_id"];
 
@@ -101,7 +101,7 @@ Versions.after.insert(async function(user_id, doc) {
 		element["diagramId"] = diagram_list[element["diagramId"]];
 
 		var old_elem_id = element["_id"];
-		delete element["_id"];	
+		delete element["_id"];
 
 		if (element["startElement"])
 			element["startElement"] = element_list[element["startElement"]];
@@ -122,11 +122,11 @@ Versions.after.insert(async function(user_id, doc) {
 		//if (compartment["elementId"])
 		compartment["elementId"] = element_list[compartment["elementId"]];
 
-		delete compartment["_id"];	
+		delete compartment["_id"];
 		await Compartments.insertAsync(compartment, {removeEmptyStrings: false});
 	});
 
-		
+
 	var notification = {projectId: project_id,
 						isAdminsOnly: true,
 						notificationType: "NewVersion",
@@ -140,7 +140,7 @@ Versions.hookOptions.after.insert = {fetchPrevious: false};
 
 // Versions.after.update(function (user_id, doc) {
 
-// 	var version_id = doc["_id"];	
+// 	var version_id = doc["_id"];
 // 	var project_id = doc["projectId"];
 
 // 	//sending the notification to the project members that a new version is published
@@ -181,7 +181,7 @@ Versions.after.remove(async function(user_id, doc) {
 
 	//a transaction needed
 	if (last_version_id)
-		await ProjectsUsers.updateAsync({projectId: project_id, versionId: new_version_id}, 
+		await ProjectsUsers.updateAsync({projectId: project_id, versionId: new_version_id},
 							{$set: {versionId: last_version_id}});
 
 	await send_notifications(user_id, notification);
@@ -192,7 +192,7 @@ Versions.after.remove(async function(user_id, doc) {
 	await UserVersionSettings.removeAsync({projectId: project_id, versionId: new_version_id});
 
 	//removing roles
-	remove_from_admin_role(project_id, new_version_id, true);
+	await remove_from_admin_role(project_id, new_version_id, true);
 });
 Versions.hookOptions.after.remove = {fetchPrevious: false};
 
@@ -200,7 +200,7 @@ Meteor.methods({
 
 	insertVersion: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_project_admin(user_id, list)) {
+		if (await is_project_admin(user_id, list)) {
 			list["createdAt"] = new Date();
 			list["createdBy"] = user_id;
 			list["status"] = "New";
@@ -211,7 +211,7 @@ Meteor.methods({
 
 	publishVersion: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		if (await is_project_version_admin(user_id, list)) {
 
 			await Versions.updateAsync({_id: list["versionId"], projectId: list["projectId"], status: "New"},
 							{$set: {
@@ -226,7 +226,7 @@ Meteor.methods({
 
 	removeVersion: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		if (await is_project_version_admin(user_id, list)) {
 
             if (!list["versionId"])
                 return;
@@ -239,23 +239,23 @@ Meteor.methods({
 	},
 
 
-	addAdminRights: function(list) {
-		add_admin_role(list.projectId, list.versionId);
+	addAdminRights: async function(list) {
+		await add_admin_role(list.projectId, list.versionId);
 	},
 
 });
 
-function add_admin_role(proj_id, version_id) {
-	
+async function add_admin_role(proj_id, version_id) {
+
 	//building role name
 	var admin_role = build_project_version_admin_role(proj_id, version_id);
 
 	//selecting project admins
 	var project_admin_role = build_project_admin_role(proj_id);
-	var admins = Roles.getUsersInRoleAsync(project_admin_role).fetch();
+	var admins = await Roles.getUsersInRoleAsync(project_admin_role).fetch();
 
 	//adding admin and read roles in the new version to the admins
-	Roles.addUsersToRolesAsync(admins, admin_role);
+	await Roles.addUsersToRolesAsync(admins, admin_role);
 }
 
 async function add_read_role(proj_id, version_id) {
@@ -280,22 +280,22 @@ async function add_read_role(proj_id, version_id) {
 		var users = users_by_roles[role];
 		var reader_role = build_project_version_reader_role(proj_id, version_id, role);
 
-		Roles.addUsersToRolesAsync(users, reader_role);	
+		await Roles.addUsersToRolesAsync(users, reader_role);
 	}
 }
 
-function remove_from_admin_role(proj_id, version_id, is_remove_role) {
+async function remove_from_admin_role(proj_id, version_id, is_remove_role) {
 
 	//selecting admins
 	var admin_role = build_project_version_admin_role(proj_id, version_id);
-	var users = Roles.getUsersInRoleAsync(admin_role).fetch();
+	var users = await (await Roles.getUsersInRoleAsync(admin_role)).fetchAsync();
 
 	//removing users from the roles
-	Roles.removeUsersFromRolesAsync(users, admin_role);
+	await Roles.removeUsersFromRolesAsync(users, admin_role);
 
 	//if the version is remove, then all the roles are deleted
 	if (is_remove_role)
-		Roles.deleteRoleAsync(admin_role);
+		await Roles.deleteRoleAsync(admin_role);
 }
 
 async function send_notifications(user_id, list) {
@@ -331,7 +331,7 @@ async function send_notifications(user_id, list) {
 
 				await Notifications.insertAsync(notification);
 
-				await sending_notification_email(list["notificationType"], receiver_id, proj_name); 
+				await sending_notification_email(list["notificationType"], receiver_id, proj_name);
 			}
 	});
 }

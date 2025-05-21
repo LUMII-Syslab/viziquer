@@ -12,7 +12,7 @@ Meteor.methods({
 	importConfiguration: async function(list) {
 		console.log("FFFFFFFFFFFFFF", list);
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id) && list) {
+		if (await is_system_admin(user_id) && list) {
 
 			if (list.data && list.data.diagramTypes) {
 
@@ -25,9 +25,9 @@ Meteor.methods({
 			else if (list.data && list.data.types) {
 				await Meteor.callAsync("importAjooConfiguration", list);
 			}
-			else { 
+			else {
                 var user_id = Meteor.userId();
-                if (is_project_version_admin(user_id, list)) {
+                if (await is_project_version_admin(user_id, list)) {
 				    //console.log("Liekam iekšā")
 					//console.log(Services.find({toolId: list.toolId }).count())
 					//console.log(list.toolId)
@@ -35,10 +35,10 @@ Meteor.methods({
 					//console.log(Services.find({toolId: list.toolId }).count())
 					var data = list.data;
 					var services = _.extend(data, {toolId: list.toolId});
-					Services.batchInsert([services]); 
+					Services.batchInsert([services]);
 					//console.log(Services.find({toolId: list.toolId }).count())
 				}
-				
+
 			}
 
 		}
@@ -73,7 +73,7 @@ var ImportTDAConfiguration = {
 		var config_dgr_type_id = config_dgr_type._id;
 
 		//configurator types
-		var line_type = await ElementTypes.findOneAsync({diagramTypeId: config_dgr_type_id, name: "Line"});	
+		var line_type = await ElementTypes.findOneAsync({diagramTypeId: config_dgr_type_id, name: "Line"});
 		var box_type = await ElementTypes.findOneAsync({diagramTypeId: config_dgr_type_id, name: "Box"});
 
 		if (!box_type || !line_type) {
@@ -103,7 +103,7 @@ var ImportTDAConfiguration = {
 		var self = this;
 
 		//building diagram style
-		var target_diagram_style = self.buildDiagramDefaultStyle();	
+		var target_diagram_style = self.buildDiagramDefaultStyle();
 		var style_overriding = {fill: diagram_type_in["style"]["bkgColor"]};
 
 		_.extend(target_diagram_style, style_overriding);
@@ -168,7 +168,7 @@ var ImportTDAConfiguration = {
 		self.addTranslets(diagram_type_in, target_diagram_type, translet_collection);
 
 		self.newDiagramTypeId = await DiagramTypes.insertAsync(target_diagram_type);
-		
+
 		self.insertTranslets(translet_collection, target_diagram_type, self.newDiagramTypeId);
 
 		//adding elements and element types
@@ -246,7 +246,7 @@ var ImportTDAConfiguration = {
 				await PaletteButtons.insertAsync(palette_button);
 			}
 
-			//compartment types			
+			//compartment types
 			self.addCompartmentTypes(target_type, elem_type_in);
 
 		});
@@ -260,7 +260,7 @@ var ImportTDAConfiguration = {
 
 		var target_element = {};
 
-		if (elem_type_in["className"] == "NodeType" || elem_type_in["className"] == "FreeBoxType") {			
+		if (elem_type_in["className"] == "NodeType" || elem_type_in["className"] == "FreeBoxType") {
 			target_element = self.loadNode(elem_type_in.presentation);
 			self.addBoxCompartment(elem_type_in, target_element);
 		}
@@ -269,10 +269,10 @@ var ImportTDAConfiguration = {
 		 	//load_edge(elem, elem_type_id, element_mappings, element_list, config_dgr_type_id, refs, target_refs);
 		 	target_element = self.loadEdge(elem_type_in.presentation);
 		}
-		
+
 		else {
 			console.error("Not supported className: ", elem_type_in["className"]);
-			return;	
+			return;
 		}
 
 		return target_element;
@@ -387,7 +387,7 @@ var ImportTDAConfiguration = {
 		_.each(list, async function(item, key) {
 			await ElementTypes.updateAsync({_id: key}, {$set: {superTypeIds: item}});
 		});
-	},	
+	},
 
 	addDialog: function(target_type, elem_type_in) {
 
@@ -476,7 +476,7 @@ var ImportTDAConfiguration = {
 
 			key_strokes_list.push({keyStroke: key_stroke["key"],
 									procedure: new_proc_name});
-			
+
 		});
 
 		target_type[name] = key_strokes_list;
@@ -622,7 +622,7 @@ var ImportTDAConfiguration = {
 				target_compart_type["inputType"]["templateName"] = "value_from_subcompartments";
 
 				target_compart_type["data"] = {subCompartmentTypes: compart_type_in["subCompartments"]};
-				
+
 				dialog_tab_id = self.addSubCompartmentTypes(target_compart_type, compart_type_in, translets_collection);
 			}
 
@@ -737,7 +737,7 @@ var ImportTDAConfiguration = {
 			//creating a new style obj
 			else {
 
-				var style_name = style_in["id"];		
+				var style_name = style_in["id"];
 
 				var new_style_obj = {id: generate_id(), name: style_name, style: {}};
 
@@ -780,7 +780,7 @@ var ImportTDAConfiguration = {
 						};
 
 		_.extend(target_element, self.toolData);
-					
+
 		var id = await Elements.insertAsync(target_element);
 
 		self.mappings[presentation["id"]] = id;
@@ -856,7 +856,7 @@ var ImportTDAConfiguration = {
 					};
 
 		_.extend(target_element, self.toolData);
-					
+
 		var id = await Elements.insertAsync(target_element);
 
 		self.mappings[edge["id"]] = id;
@@ -889,7 +889,7 @@ var ImportTDAConfiguration = {
 							procGenerateInputValue: "dynamicDefaultValue",
 						};
 
-		var transformed_proc_names = {	
+		var transformed_proc_names = {
 									"OWL_specific.annotation_types": "annotation_types",
 									"OWL_specific.language_values": "language_values",
 									"OWL_specific.get_object_ns": "get_object_ns",
@@ -912,12 +912,12 @@ var ImportTDAConfiguration = {
 									"transformations.getClassNames": "",
 									"transformations.setInstance": "",
 									"transformations.setShowInstanceName": "",
-									"transformations.attributeGrammar": "",									
+									"transformations.attributeGrammar": "",
 
 									"transformations.setIsNegationAttribute": "",
-									"transformations.setIsOptionalAttribute": "",			
+									"transformations.setIsOptionalAttribute": "",
 									"transformations.getAttributeNames": "",
-								
+
 
 									//setIsGroup
 									//setIsCondition
@@ -1067,11 +1067,11 @@ var ImportTDAConfiguration = {
 
 			var tmp_tab_id = self.addSubCompartmentTypes(sub_compart_type, sub_compart_in, translets_collection);
 			dialog_tab_id = tmp_tab_id || dialog_tab_id;
-	
+
 			return sub_compart_type;
 		});
 
-		return dialog_tab_id; 
+		return dialog_tab_id;
 	},
 
 	transformCompartmentStyle: function(style, style_out, is_edge) {
@@ -1102,14 +1102,14 @@ var ImportTDAConfiguration = {
 
 		style_out["fontStyle"] = font_styles[style["alignment"]] || "normal";
 
-		//	 lc_Start = 1, 
-		//   lc_End = 2, 
+		//	 lc_Start = 1,
+		//   lc_End = 2,
 
-		//   lc_Left = 4, 
-		//   lc_Right = 8, 
+		//   lc_Left = 4,
+		//   lc_Right = 8,
 
 		//   lc_Middle = 16,
-		//   lc_Inside = 32 
+		//   lc_Inside = 32
 		//   lc_Any =
 
 		if (is_edge) {
@@ -1123,9 +1123,9 @@ var ImportTDAConfiguration = {
 							"24": "middle-right",
 						};
 
-			style_out["placement"] = placements[style["adjustment"]] || "start-left";			
+			style_out["placement"] = placements[style["adjustment"]] || "start-left";
 		}
-		
+
 		style_out["strokeWidth"] = style["lineWidth"] || style_out["strokeWidth"];
 
 		return style_out;
@@ -1156,7 +1156,7 @@ var ImportTDAConfiguration = {
 					tmp["subCompartmentTypeId"] = sub_compart_type_id;
 				}
 
-				_.extend(item, tmp);	
+				_.extend(item, tmp);
 			}
 
 			//if element type
@@ -1181,7 +1181,7 @@ var ImportTDAConfiguration = {
 			//ImportedTranslets.batchInsert(translets_out);
 		}
 	},
-	
+
 	findCompartmentStyleByName: function(styles, style_name) {
 
 		var style = _.find(styles, function(style_obj) {
@@ -1193,7 +1193,7 @@ var ImportTDAConfiguration = {
 		}
 	},
 
-	findElementStyleByName: function(styles, style_name) {		
+	findElementStyleByName: function(styles, style_name) {
 		return _.find(styles, function(style_obj) {
 			return style_obj.repId === style_name;
 		});
@@ -1267,7 +1267,7 @@ var ImportTDAConfiguration = {
 		var self = this;
 
 		_.each(rows, function(row) {
-		
+
 			self.mappings[row.repId] = row;
 
 			var prop_dgr = row["propertyDiagram"];
@@ -1388,7 +1388,7 @@ var ImportTDAConfiguration = {
 							var extension_points = attr_sub_compart_type.extensionPoints;
 							var item = _.find(extension_points, function(extension_point) {
 								return extension_point.extensionPoint == "dynamicDropDown";
-							});	
+							});
 
 
 							if (item) {
@@ -1401,7 +1401,7 @@ var ImportTDAConfiguration = {
 
 							var item = _.find(extension_points, function(extension_point) {
 								return extension_point.extensionPoint == "dynamicDropDown";
-							});	
+							});
 
 
 							await CompartmentTypes.updateAsync({_id: compart_type._id}, {$set: {subCompartmentTypes: sub_compart_types,}});

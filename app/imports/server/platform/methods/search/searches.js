@@ -9,7 +9,7 @@ Meteor.methods({
 	searchInProject: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_member(user_id, list)) {
+		if (await is_project_member(user_id, list)) {
 
 			if (list["phrase"] && list["phrase"] != "") {
 
@@ -28,7 +28,7 @@ Meteor.methods({
 			}
 		}
 		else
-			error_msg();	
+			error_msg();
 	},
 
 	searchInContacts: async function(list) {

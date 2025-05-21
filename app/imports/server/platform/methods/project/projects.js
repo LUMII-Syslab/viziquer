@@ -3,7 +3,7 @@ import { Roles } from "meteor/roles"
 
 import { is_project_admin, is_project_member, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '../../../../libs/platform/user_rights.js'
 import { generate_id } from '../../../../libs/platform/lib.js'
-import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments, 
+import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments,
   // Posts, ForumPosts,
 } from '../../../../db/platform/collections'
 // import { Schema } from '../../../../db/custom/vq/collections'
@@ -117,30 +117,37 @@ Meteor.methods({
 		if (user_id) {
 			list["createdAt"] = new Date();
 			list["createdBy"] = user_id;
-            
-			if (list.project_link)
-			{
+
+			if (list.project_link) {
 				project_link = list.project_link;
 				delete 	list.project_link;
 			}
-			
-		    await Projects.insertAsync(list);
-			
-			var project = await Projects.findOneAsync({createdAt: list["createdAt"], createdBy:user_id, name:list["name"] });
-			var projectsUsers = await ProjectsUsers.findOneAsync({projectId: project._id})
-			if ( projectsUsers )
+
+      await Projects.insertAsync(list);
+
+			var project = await Projects.findOneAsync({
+        createdAt: list["createdAt"],
+        createdBy: user_id,
+        name: list["name"],
+      });
+			var projectsUsers = await ProjectsUsers.findOneAsync({
+        projectId: project._id,
+      })
+			if (projectsUsers) {
 				versionId = projectsUsers.versionId;
-			
+      }
+
 			//console.log(project)
 			//console.log(projectsUsers)
-			
+
 			if (project_link) {
 				//console.log("Ir projekta links")
-				var list = { projectId: project._id,
-							 versionId: versionId, 	
-							 url: project_link,
-							};
-				await Meteor.callAsync("uploadProjectDataByUrl", list);
+				const list2 = {
+          projectId: project._id,
+          versionId: versionId,
+          url: project_link,
+        };
+				await Meteor.callAsync("uploadProjectDataByUrl", list2);
 			}
 			return project._id;
 		}
@@ -148,14 +155,14 @@ Meteor.methods({
 
 	updateProject: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_project_admin(user_id, list)) {
+		if (await is_project_admin(user_id, list)) {
 			await Projects.updateAsync({_id: list["projectId"]}, {$set: list["set"]});
 		}
 	},
 
 	removeProject: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_project_admin(user_id, list)) {
+		if (await is_project_admin(user_id, list)) {
 			await Projects.removeAsync({_id: list["projectId"]})
 		}
 	},
@@ -172,7 +179,7 @@ Meteor.methods({
 	duplicateProject: async function(list) {
 		var user_id = Meteor.userId();
 		var versionId = null;
-		if (is_project_member(user_id, list)) {
+		if (await is_project_member(user_id, list)) {
 			var project_id = list.projectId;
 			var project = await Projects.findOneAsync({_id: project_id});
 			if (!project) {
@@ -190,7 +197,7 @@ Meteor.methods({
 			await Diagrams.find({projectId: project_id}).forEachAsync(async function(diagram) {
 				await duplicateDiagram(diagram, new_project_id, new_version_id);
 			});
-			
+
 		}
 
 	},
@@ -198,7 +205,7 @@ Meteor.methods({
 	leaveProject: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_member(user_id, list)) {
+		if (await is_project_member(user_id, list)) {
 			await ProjectsUsers.removeAsync({userSystemId: user_id, projectId: list.projectId,});
 		}
 
@@ -308,21 +315,21 @@ async function afterInsert(user_id_in, doc) {
 	await Users.updateAsync({systemId: user_id}, {$set: {activeProject: proj_id, activeVersion: version_id}});
 
 	//managing roles/permissons
-	var project_role = build_project_role(proj_id);	
+	var project_role = build_project_role(proj_id);
 	var project_version_reader_role = build_project_version_reader_role(proj_id, version_id, "Reader");
 	var project_admin_role = build_project_admin_role(proj_id);
 	var project_version_admin_role = build_project_version_admin_role(proj_id, version_id);
 
-	Roles.createRoleAsync(project_role, {unlessExists: true});
-	Roles.createRoleAsync(project_version_reader_role, {unlessExists: true});
-	Roles.createRoleAsync(project_admin_role, {unlessExists: true});
-	Roles.createRoleAsync(project_version_admin_role, {unlessExists: true});
+	await Roles.createRoleAsync(project_role, {unlessExists: true});
+	await Roles.createRoleAsync(project_version_reader_role, {unlessExists: true});
+	await Roles.createRoleAsync(project_admin_role, {unlessExists: true});
+	await Roles.createRoleAsync(project_version_admin_role, {unlessExists: true});
 
 
 	console.log("user_id dadfadfdf", user_id)
 
 
-	Roles.addUsersToRolesAsync(user_id, [project_role, project_version_reader_role, project_admin_role, project_version_admin_role]);
+	await Roles.addUsersToRolesAsync(user_id, [project_role, project_version_reader_role, project_admin_role, project_version_admin_role]);
 
 	return version_id;
 }

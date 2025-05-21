@@ -42,7 +42,7 @@ Meteor.methods({
 	insertCompartment: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		var compart_in = list.compartment;
-		if (is_project_member(user_id, compart_in) || is_public_diagram(compart_in["diagramId"])) {
+		if (await is_project_member(user_id, compart_in) || is_public_diagram(compart_in["diagramId"])) {
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
 
@@ -59,7 +59,7 @@ Meteor.methods({
 
 	updateCompartment: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
-		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
+		if (await is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 			if (list["value"] || list["value"] == "") {
 				var update = {};
 				if (list["compartmentStyleUpdate"]) {
@@ -94,7 +94,7 @@ Meteor.methods({
 
 	removeCompartment: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
-		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
+		if (await is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 			if (!list["compartmentId"])
 				return;
@@ -109,7 +109,7 @@ Meteor.methods({
 
 	swapCompartments: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
-		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
+		if (await is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 			var prev_compart = list.prevCompartment;
 			var current_compart = list.currentCompartment;
 
@@ -135,7 +135,7 @@ async function add_compartments_by_values(list, compartments) {
 	var compart_ids = _.map(compartments, function(item) {
 							return item.compartmentTypeId;
 						});
-		
+
 	await CompartmentTypes.find({_id: {$in: compart_ids,}}, {$sort: {index: 1}}).forEachAsync(async function(compart_type, i) {
 		await add_compartment(compart_type, list,  _.find(compartments, function(c) { return c.compartmentTypeId == compart_type._id }));
 	});

@@ -11,11 +11,11 @@ Meteor.methods({
 		}
 
 		await migrateProjectByTool(target_tool, list);
-	},	
+	},
 
 	migrateProject: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id)) {
+		if (await is_system_admin(user_id)) {
 			var target_tool = await Tools.findOneAsync({_id: list.targetToolId});
 			if (!target_tool) {
 				console.error("No target tool", list.targetToolId);
@@ -27,7 +27,7 @@ Meteor.methods({
 			});
 		}
 	},
-	
+
 	migrateIndexes: async function(projectId) {
 
 		await Diagrams.find({projectId: projectId}).forEachAsync(async function(diagram) {
@@ -42,27 +42,27 @@ Meteor.methods({
 					if (compartments.count() == 1 ){
 					    compartments.forEach(async function(c) {
 							await Compartments.updateAsync({_id: c._id, projectId:projectId,},{$set: { index: compType.index,}});
-						})  
+						})
 					}
 					if (compartments.count() > 1 ){
 						comp_ind = compartments.map(function (c) {
 							return {_id:c._id, index:c.index, input:c.input};
 						});
 						comp_ind.sort(function(a, b) { return a.index - b.index; })
-						var i = 0; 
+						var i = 0;
 						comp_ind.forEach(async function(c) {
-							await Compartments.updateAsync({_id: c._id, projectId: projectId,},{$set: { index: compType.index+i,}});					   
+							await Compartments.updateAsync({_id: c._id, projectId: projectId,},{$set: { index: compType.index+i,}});
 							i = i + 1
-						})		   
+						})
 					}
 				});
-				
-						
+
+
 
 			});
 		});
 		console.log("Done");
-	}, 
+	},
 });
 
 

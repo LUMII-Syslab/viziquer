@@ -231,9 +231,9 @@ Template.diagramTemplate.events({
 
 Template.editingMessage.helpers({
 
-	editing: function() {
+	editing: async function() {
 		var user_id = Session.get("userSystemId");
-		if (Utilities.isEditable() || is_system_admin(user_id)) {
+		if (Utilities.isEditable() || (await is_system_admin(user_id))) {
 			var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
 
 			//diagram is being edited

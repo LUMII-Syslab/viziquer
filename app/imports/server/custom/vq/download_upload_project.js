@@ -2,7 +2,7 @@ import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams
 import { is_project_member } from '../../../libs/platform/user_rights.js'
 import { is_public_diagram } from '../../platform/_helpers.js'
 
-Meteor.methods({	
+Meteor.methods({
 
 	getProjectJson: async function(list) {
 
@@ -15,7 +15,7 @@ Meteor.methods({
 
 
 		var user_id = this.userId;
-		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
+		if (await is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 			console.log("adsfasf1")
 
@@ -37,7 +37,7 @@ Meteor.methods({
 
 			var tool_name = tool.name;
 
-			var diagrams = await Diagrams.find({projectId: project_id, versionId: version_id}).mapAsync(async function(diagram) {  
+			var diagrams = await Diagrams.find({projectId: project_id, versionId: version_id}).mapAsync(async function(diagram) {
 
 				var diagram_type = await DiagramTypes.findOneAsync({_id: diagram.diagramTypeId,});
 				if (!diagram_type) {
@@ -89,10 +89,10 @@ Meteor.methods({
         var result = HTTP.call('GET', list.url);
 		//console.log("result", result.data)
 		list.data = result.data;
-		
+
 		await uploadProject(list);
     },
-	
+
 	uploadProjectData: async function(list) {
 
 		await uploadProject(list)
@@ -102,7 +102,7 @@ Meteor.methods({
 
 async function uploadProject(list) {
 		var user_id = this.userId;
-		if (is_project_member(user_id, list)) {
+		if (await is_project_member(user_id, list)) {
 
 			var project_id = list.projectId;
 			var version_id = list.versionId;
@@ -201,7 +201,7 @@ async function uploadProject(list) {
 						diagram_type = await DiagramTypes.findOneAsync({name: diagram_type_name, toolId: tool_id,});
 						if (!diagram_type) {
 							console.error("No DiagramType", diagram_type_id);
-							return;							
+							return;
 						}
 					}
 				}
@@ -252,7 +252,7 @@ async function uploadProject(list) {
 										diagramTypeId: diagram_type._id,
 										toolId: tool_id,
 									});
-					
+
 					if (element.type == "Line") {
 						_.extend(element, {startElement: elem_map[element.startElement],
 											endElement: elem_map[element.endElement],
@@ -260,7 +260,7 @@ async function uploadProject(list) {
 					}
 
 					var element_id = await Elements.insertAsync(element);
-					
+
 					elem_map[old_elem_id] = element_id;
 
 					_.each(compartments, async function(compartment) {
@@ -301,10 +301,10 @@ async function uploadProject(list) {
 
 						await Compartments.insertAsync(compartment);
 					});
-				
+
 				});
 			});
-			
+
 		}
 }
 

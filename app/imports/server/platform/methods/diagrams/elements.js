@@ -55,7 +55,7 @@ Meteor.methods({
 
 	insertElement: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
-		if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+		if (await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 			var compartments = list.initialCompartments;
 
 			var id = await Elements.insertAsync(list);
@@ -166,7 +166,7 @@ Meteor.methods({
 
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+			if (await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 				var query = {projectId: list["projectId"],
 							versionId: list["versionId"],
 							diagramId: list["diagramId"],
@@ -175,7 +175,7 @@ Meteor.methods({
 				await resize_element(list, query, user_id);
 			}
 		}
-		else if (is_system_admin(user_id, list)) {
+		else if (await is_system_admin(user_id, list)) {
 			var query = {toolId: list["toolId"],
 						versionId: list["versionId"],
 						diagramId: list["diagramId"],
@@ -188,7 +188,7 @@ Meteor.methods({
 	updateElementStyle: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 
-		if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+		if (await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 			//update for element
 			var update_element = {};
@@ -214,7 +214,7 @@ Meteor.methods({
 
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+			if (await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 				if (list["elements"]) {
 					await Clipboard.updateAsync({userId: user_id,
@@ -235,7 +235,7 @@ Meteor.methods({
 				}
 			}
 		}
-		else if (is_system_admin(system_id) && is_version_not_published(list)) {
+		else if (await is_system_admin(system_id) && is_version_not_published(list)) {
 			console.log("copying configurator elmeents")
 		}
 	},
@@ -243,13 +243,13 @@ Meteor.methods({
 	pasteElements: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+			if (await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 				var clipboard = await Clipboard.findOneAsync({userId: user_id,
 													// toolId: list.toolId,
 													// diagramTypeId: list.diagramTypeId,
 												});
-				
+
 				if (clipboard) {
 
 					var new_ids = {
@@ -386,7 +386,7 @@ Meteor.methods({
 				}
 			}
 		}
-		else if (is_system_admin(user_id) && is_version_not_published(list)) {
+		else if (await is_system_admin(user_id) && is_version_not_published(list)) {
 			console.log("pasting configurator elmeents")
 
 		}
@@ -395,7 +395,7 @@ Meteor.methods({
 	changeCollectionPosition: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+			if (await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 				var query = {projectId: list["projectId"],
 								versionId: list["versionId"],
 								diagramId: list["diagramId"],
@@ -410,7 +410,7 @@ Meteor.methods({
 
 			}
 		}
-		else if (is_system_admin(user_id, list)) {
+		else if (await is_system_admin(user_id, list)) {
 			var query = {toolId: list["toolId"],
 						versionId: list["versionId"],
 						diagramId: list["diagramId"],
@@ -423,11 +423,11 @@ Meteor.methods({
 	deleteElements: async function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+			if (await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 				await delete_elements(user_id, list);
 			}
 		}
-		else if (is_system_admin(user_id, list)) {
+		else if (await is_system_admin(user_id, list)) {
 			await delete_elements(user_id, list);
 		}
 	},
@@ -436,7 +436,7 @@ Meteor.methods({
 
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+			if (await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 
 				var query = {_id: list["elementId"], projectId: list["projectId"],
@@ -485,7 +485,7 @@ Meteor.methods({
 			}
 		}
 
-		else if (is_system_admin(user_id, list)) {
+		else if (await is_system_admin(user_id, list)) {
 
 			var update = {$set: {"swimlane.horizontalLines": list["horizontalLines"],
 								"swimlane.verticalLines": list["verticalLines"],}
@@ -712,7 +712,7 @@ async function add_element_type_ids(elements, diagram_id) {
 	let elem_types_names_map = {};
 	await ElementTypes.find({diagramTypeId: diagram.diagramTypeId}).forEachAsync(function(elem_type) {
 		elem_types_ids_map[elem_type._id] = 1;
-		elem_types_names_map[elem_type.name] = elem_type._id; 
+		elem_types_names_map[elem_type.name] = elem_type._id;
 	});
 
 	_.each(elements, function(elem) {
@@ -739,7 +739,7 @@ async function add_compartment_type_ids(compartments, diagram_id) {
 	let compart_types_names_map = {};
 	await CompartmentTypes.find({diagramTypeId: diagram.diagramTypeId}).forEachAsync(function(compart_type) {
 		compart_types_ids_map[compart_type._id] = 1;
-		compart_types_names_map[compart_type.name] = compart_type._id; 
+		compart_types_names_map[compart_type.name] = compart_type._id;
 	});
 
 	_.each(compartments, function(compart) {

@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { Views, ViewFilter, ViewUser, FileUploads, DataMetaData, DataLinks, DataNodes } from '../../../db/platform/collections.js'
 import { is_project_member } from '../../../libs/platform/user_rights.js'
 
-Meteor.publish("Views", function(list) {
+Meteor.publish("Views", async function(list) {
 
 	if (!list || list["noQuery"]) {
 		return this.stop();
@@ -11,10 +11,10 @@ Meteor.publish("Views", function(list) {
 
 	//gets user's id
 	var user_id = this.userId;
-	if (is_project_member(user_id, list)) {
+	if (await is_project_member(user_id, list)) {
 		return [Views.find({projectId: list.projectId, versionId: list.versionId}, {sort: {createdAt: -1}}),
 				FileUploads.find({projectId: list.projectId}, {sort: {createdAt: -1}}),
-				DataMetaData.find({projectId: list.projectId, versionId: list.versionId}),				
+				DataMetaData.find({projectId: list.projectId, versionId: list.versionId}),
 			];
 	}
 	else {
@@ -23,10 +23,10 @@ Meteor.publish("Views", function(list) {
 });
 
 
-Meteor.publish("View", function(list) {
+Meteor.publish("View", async function(list) {
 
 	var user_id = this.userId;
-	if (is_project_member(user_id, list)) {
+	if (await is_project_member(user_id, list)) {
 
 		return [
 
@@ -48,7 +48,7 @@ Meteor.publish("View", function(list) {
 Meteor.publish("ViewData", async function(list) {
 
 	var user_id = this.userId;
-	if (is_project_member(user_id, list)) {
+	if (await is_project_member(user_id, list)) {
 
 		var self = this;
 		var initializing = true;
@@ -86,7 +86,7 @@ Meteor.publish("ViewData", async function(list) {
 
 	    		if (data.transactionsTable) {
 	    			self.changed("DataTableData", list.viewId, data.transactionsTable);
-	    		} 
+	    		}
 
 			},
 		});
@@ -146,7 +146,7 @@ async function collect_data(id, fields, list, view_filter, change) {
 	}
 
 	var end_time1 = new Date();
-	console.log("Select Netchart data: ", end_time1 - start_time1, "(ms)"); 
+	console.log("Select Netchart data: ", end_time1 - start_time1, "(ms)");
 
 	//data filter by time
 	var time_filter = build_time_chart_query(fields);
@@ -176,7 +176,7 @@ async function collect_data(id, fields, list, view_filter, change) {
 	});
 
 	var end_time2 = new Date();
-	console.log("Select netchart data2 in1: ", end_time2 - start_time2, "(ms)"); 
+	console.log("Select netchart data2 in1: ", end_time2 - start_time2, "(ms)");
 
 	var history = view_filter.history;
 	var history_item = history[view_filter.currentFilter];
@@ -280,7 +280,7 @@ async function collect_time_chart_data(data_links, actual_key_index) {
 	var values = _.pairs(countMap);
 
 	var end_time1 = new Date();
-	console.log("Collect TimeChartData: ", end_time1 - start_time1, "(ms)");      
+	console.log("Collect TimeChartData: ", end_time1 - start_time1, "(ms)");
 
 	var data_nodes = DataNodes.find({_id: {$in: link_ids}});
 
@@ -303,7 +303,7 @@ async function collect_pie_chart_data(data_links) {
 	await data_links.forEachAsync(function(data_elem, i) {
 		_.each(data_elem.data, function(d) {
 			if (keySet[d.key]) {
-				valKey[keySet[d.key]] = d.value;	
+				valKey[keySet[d.key]] = d.value;
 			}
 		});
 
@@ -312,15 +312,15 @@ async function collect_pie_chart_data(data_links) {
         	accountIds[valKey[3]] = 0;
 		}
 		accountIds[valKey[3]] += v
-        
+
         if (accountIds[valKey[5]] === undefined) {
-        	accountIds[valKey[5]] = 0; 
+        	accountIds[valKey[5]] = 0;
         }
 
 		accountIds[valKey[5]] += v
 	});
 	// console.log("accountIds ", accountIds)
-	
+
 	var pieData = {"subvalues": []};
     pieData.subvalues = _.map(accountIds, function(s, name) {
     	return {"value": s, "name": name};
@@ -330,8 +330,8 @@ async function collect_pie_chart_data(data_links) {
 	// console.log("get pie data ", pieData);
 
 	var end_time1 = new Date();
-	console.log("Collect PieChartData: ", end_time1 - start_time1, "(ms)");      
-	console.log("###############################\n ");      
+	console.log("Collect PieChartData: ", end_time1 - start_time1, "(ms)");
+	console.log("###############################\n ");
 
 	return pieData;;
 }
@@ -367,11 +367,11 @@ function build_box_query(fields, node_ids, list) {
 			var net_chart_nodes = net_chart_filter.nodes;
 	    	if (net_chart_nodes.nin.length > 0) {
 				nin_query = {_id: {$nin: net_chart_nodes.nin}};
-	    	}      
+	    	}
 
 	    	if (net_chart_nodes.in.length > 0) {
-	    		node_ids = _.union(node_ids, net_chart_nodes.in); 
-	    	} 
+	    		node_ids = _.union(node_ids, net_chart_nodes.in);
+	    	}
 		}
 	}
 
@@ -397,9 +397,9 @@ async function collect_transactions_table(list, fields) {
 	var query = {projectId: list.projectId, versionId: list.versionId};
 
 	if (fields.filter && fields.filter.transactionsFilter && fields.filter.transactionsFilter.transactions && fields.filter.transactionsFilter.transactions.value) {
-		query["data.value"] = {$regex: fields.filter.transactionsFilter.transactions.value, $options: 'i'};		
+		query["data.value"] = {$regex: fields.filter.transactionsFilter.transactions.value, $options: 'i'};
 	}
-	
+
 	if (fields.filter && fields.filter.timeChartFilter) {
 		var time_filter = build_time_chart_query({filter: {timeChartFilter: fields.filter.timeChartFilter}});
 		_.extend(query, time_filter);
@@ -411,7 +411,7 @@ async function collect_transactions_table(list, fields) {
 	if (fields.filter && fields.filter.transactionsFilter && fields.filter.transactionsFilter.transactions && fields.filter.transactionsFilter.transactions.page) {
 		links_page = fields.filter.transactionsFilter.transactions.page;
 	}
-	
+
 	var skip = (links_page - 1) * step;
 
 	//data links
@@ -423,14 +423,14 @@ async function collect_transactions_table(list, fields) {
 	// 	link_ids.push(data_link.from);
 	// });
 
-	
+
 	// var links_page = fields.filter.transactionsFilter.transactions.page || 1;
 	// var res_links = _.last(_.first(data_links, step * links_page), step);
 
 	// //data nodes
 	// var box_query = {projectId: list.projectId, versionId: list.versionId, _id: {$in: link_ids}};
 	// if (fields.filter && fields.filter.transactionsFilter && fields.filter.transactionsFilter.objects && fields.filter.transactionsFilter.objects.value) {
-	// 	box_query["data.value"] = {$regex: fields.filter.transactionsFilter.objects.value, $options: 'i'};		
+	// 	box_query["data.value"] = {$regex: fields.filter.transactionsFilter.objects.value, $options: 'i'};
 	// }
 
 	// var objects_page = fields.filter.transactionsFilter.objects.page || 1;
@@ -442,12 +442,12 @@ async function collect_transactions_table(list, fields) {
 			//objects: objects.fetch(), objectsCount: objects.count(),
 		};
 }
-	
+
 async function collect_objects_table(list) {
 
 	var query = {projectId: list.projectId, versionId: list.versionId};
 	if (list.phrase) {
-		query["data.value"] = {$regex: list.phrase, $options: 'i'};		
+		query["data.value"] = {$regex: list.phrase, $options: 'i'};
 	}
 
 	var data = await DataNodes.find(query).fetchAsync();
@@ -466,7 +466,7 @@ function build_edge_query(fields, list) {
 	var net_chart_query = build_netchart_nin_query(fields);
 	var net_chart_in_query = build_netchart_in_query(fields);
   	var net_chart_nin_query = build_netchart_query(fields);
-  	
+
 	var edge_intersection_list = [];
 
 	//building intersection
@@ -533,7 +533,7 @@ function build_pie_chart_query(fields) {
 								var item = {};
 
 								var val = item_in.value;
-								
+
 								item["data.key"] = item_in.key;
 								if (item_in.ne) {
 									item["data.value"] = {$ne: val};
@@ -594,7 +594,7 @@ function build_search_query(fields) {
 
 					values.push(search_item.value);
 				}
-				
+
 			});
 
 			if (sub_queries.length > 0) {
@@ -634,7 +634,7 @@ function build_netchart_nin_query(fields) {
 			if (net_chart_filter && net_chart_filter.edges) {
 		    	if (net_chart_filter.edges.nin.length > 0) {
 					return {_id: {$nin: net_chart_filter.edges.nin}};
-		    	}      
+		    	}
 			}
 		}
 	}
@@ -660,7 +660,7 @@ function build_netchart_query(fields) {
     	if (net_chart_nodes.nin.length > 0) {
     		var nin = {$nin: net_chart_nodes.nin};
 			return {to: nin, from: nin};
-    	}      
+    	}
 	}
 
 }

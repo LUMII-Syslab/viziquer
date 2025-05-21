@@ -8,7 +8,7 @@ DiagramTypes.after.update(async function(user_id, doc, fields, modifier, options
 
 	if (!modifier || !modifier.$set)
 		return false;
-	
+
 	//if updated the configurator diagram type's name, then updating the diagram's name as well
 	if (fields && fields.length == 1 && fields[0] == "name")
 		await Diagrams.updateAsync({_id: doc["diagramId"]}, modifier);
@@ -30,7 +30,7 @@ Meteor.methods({
 	insertDiagramType: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id) && list) {
+		if (await is_system_admin(user_id) && list) {
 
 			var time = new Date();
 			var style = diagram_default_style();
@@ -40,7 +40,7 @@ Meteor.methods({
 			dgr_list["diagramTypeId"] = list["diagramTypeId"];
 			dgr_list["toolId"] = list["toolId"];
 			dgr_list["versionId"] = list["versionId"];
-			dgr_list["style"] = style;		
+			dgr_list["style"] = style;
 
 			dgr_list["createdAt"] = time;
 			dgr_list["createdBy"] = user_id;
@@ -86,7 +86,7 @@ Meteor.methods({
 	updateConfiguratorExtension: async function(list) {
 
 		var system_id = Meteor.userId();
-		if (is_system_admin(system_id, list) && list && list["update"]) {
+		if (await is_system_admin(system_id, list) && list && list["update"]) {
 
 			//attribute pair storing attribute name and its value
 			var attr_name = list["update"]["_attr"];
@@ -95,7 +95,7 @@ Meteor.methods({
 			//query for object
 			var query = {};
 			query["toolId"] = list["toolId"];
-			query["extensionPoints.extensionPoint"] = attr_name;			
+			query["extensionPoints.extensionPoint"] = attr_name;
 
 			//update for extension point
 			var update = {};
@@ -112,13 +112,13 @@ Meteor.methods({
 
 					else if (res == 0) {
 
-						var query2 = {toolId: list["toolId"], _id: list["compartmentTypeId"]};						
+						var query2 = {toolId: list["toolId"], _id: list["compartmentTypeId"]};
 						var extension_point = {extensionPoint: attr_name, procedure: attr_value};
 
 						await CompartmentTypes.updateAsync(query2, {$push: {extensionPoints: extension_point}});
 					}
 
-				});	
+				});
 			}
 			else if (list["elementId"]) {
 				query["elementId"] = list["elementId"];
@@ -130,7 +130,7 @@ Meteor.methods({
 
 					else if (res == 0) {
 
-						var query2 = {toolId: list["toolId"], elementId: list["elementId"]};						
+						var query2 = {toolId: list["toolId"], elementId: list["elementId"]};
 						var extension_point = {extensionPoint: attr_name, procedure: attr_value};
 
 						await ElementTypes.updateAsync(query2, {$push: {extensionPoints: extension_point}});
@@ -149,13 +149,13 @@ Meteor.methods({
 
 					else if (res == 0) {
 
-						var query2 = {toolId: list["toolId"], diagramId: list["diagramId"]};						
+						var query2 = {toolId: list["toolId"], diagramId: list["diagramId"]};
 						var extension_point = {extensionPoint: attr_name, procedure: attr_value};
 
 						await DiagramTypes.updateAsync(query2, {$push: {extensionPoints: extension_point}});
 					}
 
-				});					
+				});
 			}
 		}
 		else
@@ -164,7 +164,7 @@ Meteor.methods({
 
 	reorderTabIndexes: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var prev_index = list["prevIndex"];
 			var current_index = list["currentIndex"];
@@ -195,7 +195,7 @@ Meteor.methods({
 	reorderPaletteButtonIndexes: async function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var prev_index = list["prevIndex"];
 			var current_index = list["currentIndex"];
@@ -222,14 +222,14 @@ Meteor.methods({
 
     addDiagramTypeKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 			await DiagramTypes.updateAsync({_id: list["id"]}, {$push: list["push"]});
     	}
     },
 
     deleteDiagramTypeKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var update = {};
 			update[list.array] = list.data;
@@ -237,17 +237,17 @@ Meteor.methods({
 			await DiagramTypes.updateAsync({_id: list["id"]}, {$set: update});
     	}
     },
-			
+
     updateDiagramTypeKeystrokeOrItem: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 			await DiagramTypes.updateAsync({_id: list["id"]}, {$set: list["field"]});
     	}
     },
 
     updateDiagramSize: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var dialog_size, diagram_size;
 			if (list["attrName"] == "size.dialogSize") {
@@ -271,7 +271,7 @@ Meteor.methods({
     updateDiagramType: async function(list) {
 		var user_id = Meteor.userId();
 
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var update = {};
 			update[list["attrName"]] = list["attrValue"];
@@ -282,7 +282,7 @@ Meteor.methods({
 
     updateDiagramTypeStyle: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var update = {};
 			update['style.' + list["attrName"]] = list["attrValue"];
@@ -296,7 +296,7 @@ Meteor.methods({
 
     addToolbarItem: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var update = {};
 			update[list["attrName"]] = list["push"];
@@ -307,7 +307,7 @@ Meteor.methods({
 
     removeToolbarItem: async function(list) {
 		var user_id = Meteor.userId();
-		if (is_system_admin(user_id, list)) {
+		if (await is_system_admin(user_id, list)) {
 
 			var update = {};
 			update[list["attrName"]] = list["pull"];

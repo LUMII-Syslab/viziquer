@@ -12,7 +12,7 @@ Meteor.methods({
     insertFile: async function(list) {
 
         var user_id = Meteor.userId();
-        if (is_project_admin(user_id, list)) {
+        if (await is_project_admin(user_id, list)) {
 
             list["createdAt"] = new Date();
             list["authorId"] = user_id;
@@ -44,7 +44,7 @@ Meteor.methods({
     removeFile: async function(list) {
 
         var user_id = Meteor.userId();
-        if (is_project_version_admin(user_id, list)) {
+        if (await is_project_version_admin(user_id, list)) {
 
             var cloud_file = await CloudFiles.findOneAsync({projectId: list["projectId"],
                                                   versionId: list["versionId"],
@@ -64,14 +64,14 @@ Meteor.methods({
                                     _id: file_obj_id,
                                   });
             }
-            
+
         }
     },
 
     renameFile: async function(list) {
 
         var user_id = Meteor.userId();
-        if (is_project_admin(user_id, list)) {
+        if (await is_project_admin(user_id, list)) {
 
             await CloudFiles.updateAsync({_id: list["fileId"], projectId: list["projectId"], versionId: list["versionId"]},
                                 {$set: {name: list["name"], fullName: list["fullName"]}});

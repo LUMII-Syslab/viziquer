@@ -7,7 +7,7 @@ Meteor.methods({
 	updateProjectOntology: async function(list) {
 		var user_id = Meteor.userId();
 
-		if (list["projectId"] && is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
+		if (list["projectId"] && await is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 			await Projects.updateAsync({_id: list.projectId}, {$set: {uri: list.uri, endpoint: list.endpoint, schema: list.schema,
 				                                             useStringLiteralConversion: list.useStringLiteralConversion,
