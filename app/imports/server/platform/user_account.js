@@ -45,13 +45,13 @@ Meteor.methods({
 
 			if (is_first_user) {
 				var role = build_power_user_role();
-				
+
 				Roles.createRoleAsync(role, {unlessExists: true});
 				Roles.addUsersToRolesAsync(user_id, [role]);
 
 
 				//loading configurator data
-				load_configurator(user_id);
+				await load_configurator(user_id);
 
 				// var fs = Npm.require('fs');
 				// var current_dir = process.env.PWD;
@@ -62,7 +62,7 @@ Meteor.methods({
           if (Meteor.settings && Meteor.settings.configurationName) {
             configList = [ { configurationFile: Meteor.settings.configurationName } ];
           } else {
-            configList = JSON.parse(Assets.getText("jsons/autoload.json"));
+            configList = JSON.parse(await Assets.getTextAsync("jsons/autoload.json"));
           }
         } catch (err) {
           console.error(err);
@@ -79,7 +79,7 @@ Meteor.methods({
           let configurationFile = (typeof cfg === 'string') ? cfg : cfg.configurationFile;
           try {
             console.log('Trying to load configuration from', `jsons/${configurationFile}`)
-            const configData = JSON.parse(Assets.getText(`jsons/${configurationFile}`));
+            const configData = JSON.parse(await Assets.getTextAsync(`jsons/${configurationFile}`));
             let toolName = configData?.tool?.name;
             if (typeof cfg === 'object' && cfg.toolName) {
               toolName = cfg.toolName
@@ -111,9 +111,9 @@ Meteor.methods({
             });
 
             await Meteor.callAsync("importAjooConfiguration", {
-              toolId: tool_id, 
-              versionId: version_id, 
-              data: configData 
+              toolId: tool_id,
+              versionId: version_id,
+              data: configData
             });
 
             if (typeof cfg === 'object' && cfg.services) {
@@ -131,7 +131,7 @@ Meteor.methods({
                 console.error(`Error loading services from ${Assets.absoluteFilePath(`jsons/${cfg.services}`)}; skipping it`);
               }
             }
-    
+
           } catch (err) {
             console.error(`Error loading configuration ${JSON.stringify(cfg)}; skipping it`);
             console.error(err);
