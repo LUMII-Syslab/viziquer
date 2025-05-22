@@ -230,7 +230,7 @@ Meteor.methods({
 				if (!new_user) {
 
 					//inserting user in accounts
-					new_user_id = Accounts.createUser({email: list["email"],
+					new_user_id = await Accounts.createUser({email: list["email"],
 														password: "password"});
 
 					//inserting user
@@ -269,7 +269,7 @@ Meteor.methods({
 				await Users.updateAsync({systemId: user["_id"],},
 							{$set: {name: list["name"], surname: list["surname"],}});
 
-			Accounts.setPassword(user["_id"], list["password"]);
+			await Accounts.setPasswordAsync(user["_id"], list["password"]);
 
 			var email = user["emails"][0]["address"];
 
@@ -325,7 +325,7 @@ Meteor.methods({
 				var password = surname + surname;
 
 				//inserting user in accounts
-				var user_id = Accounts.createUser({email: mail, password: password});
+				var user_id = await Accounts.createUser({email: mail, password: password});
 
 				var date = get_current_time();
 

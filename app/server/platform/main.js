@@ -65,7 +65,7 @@ import '/imports/libs/custom/mytest'
 Meteor.startup(async () => {
     console.log("Loading server");
 
-    Meteor.call("importConfiguration");
+    await Meteor.callAsync("importConfiguration");
 
     //adding captcha secret key
      // reCAPTCHA.config({privatekey: '6Le-uwkTAAAAAIH3amO6eRpcjRYJw50q1uef8phe'});
@@ -99,7 +99,7 @@ Meteor.startup(async () => {
     } else {
         console.log('no env found');
     }
-    console.log('Effective environment:', process.env);
+    // console.log('Effective environment:', process.env);
     // }
 
     //FIXME: pagaidām aizkomentēju Restivus, kurš pirmajā brīdī izskatās nesaderīgs ar meteor 3

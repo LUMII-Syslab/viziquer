@@ -35,7 +35,8 @@ Meteor.methods({
 					//console.log(Services.find({toolId: list.toolId }).count())
 					var data = list.data;
 					var services = _.extend(data, {toolId: list.toolId});
-					Services.batchInsert([services]);
+					// Services.batchInsert([services]);
+          await Services.insertAsync(services);
 					//console.log(Services.find({toolId: list.toolId }).count())
 				}
 
