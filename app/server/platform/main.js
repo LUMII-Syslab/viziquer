@@ -1,5 +1,8 @@
 import { Meteor } from 'meteor/meteor'
 
+import path from 'path'
+import dotenv from 'dotenv'
+
 import { CompartmentTypes } from '/imports/db/platform/collections'
 
 
@@ -60,8 +63,6 @@ import '/imports/db/custom/vq/collections'
 import '/imports/libs/custom/mytest'
 // import '/libs/custom/ontologyParams'
 
-
-// FIXME: uz brīdi padarīju startup par async, kas diez vai ir labi
 Meteor.startup(async () => {
     console.log("Loading server");
 
@@ -84,8 +85,8 @@ Meteor.startup(async () => {
     }
 
     // if (Meteor.isServer) {
-    const path = Npm.require('path');
-    const dotenv = Npm.require('dotenv');
+    // const path = Npm.require('path');
+    // const dotenv = Npm.require('dotenv');
     const envFile = process.env.ENV_NAME ? `${process.env.ENV_NAME}.env` : '.env';
 
     let startFolder = process.cwd();

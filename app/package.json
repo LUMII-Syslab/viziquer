@@ -21,6 +21,7 @@
     "json2csv": "^5.0.7",
     "meteor-node-stubs": "^1.2.17",
     "node-fetch": "^2.7.0",
+    "sparql-http-client": "^3.0.1",
     "sparqljs": "^3.7.3",
     "xml2js": "^0.6.2"
   },
@@ -40,6 +41,7 @@
     "@types/meteor-roles": "^1.2.41",
     "@types/node": "^22.15.21",
     "@types/node-fetch": "^2.6.12",
+    "@types/sparql-http-client": "^3.0.5",
     "eslint": "^9.27.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-meteor": "^7.3.0",
