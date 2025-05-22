@@ -9,7 +9,7 @@
 
 <!--     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5GFYKKTQSP"></script>
     <script>
-      window.dataLayer = window.dataLayer || []; 
+      window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-5GFYKKTQSP');
@@ -43,7 +43,12 @@
 
     <link href='//cdn.jsdelivr.net/g/yasqe@2.2(yasqe.min.css),yasr@2.4(yasr.min.css)' rel='stylesheet' type='text/css'/>
 
+<<<<<<< HEAD
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+=======
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+>>>>>>> 87545a716e20dec772e9456bdc9562ae576107c1
 
 </head>
 
@@ -142,7 +147,7 @@
         </button>
 
         <ul class="nav-notification clearfix">
-            
+
             {{> projectsT}}
 
             {{> notificationsT}}
@@ -162,7 +167,7 @@
             {{/if}}
         </a>
         <ul id="nav-messages" class="dropdown-menu message dropdown-1">
-            <li><a>You have 4 new unread messages</a></li>                    
+            <li><a>You have 4 new unread messages</a></li>
             <li>
                 <a class="clearfix" href="#">
                     <img src="/img/user.jpg" alt="User Avatar">
@@ -173,9 +178,9 @@
                         </p>
                         <small class="text-muted"><i class="fa fa-check text-success"></i> 27m ago</small>
                     </div>
-                </a>    
+                </a>
             </li>
-            <li><a href="#">View all messages</a></li>                    
+            <li><a href="#">View all messages</a></li>
         </ul>
     </li>
 </template>
@@ -209,7 +214,7 @@
 
 <template name="logout">
     <a href="" id="scroll-to-top" class="hidden-print"><i class="fa fa-chevron-up"></i></a>
-    
+
     <!-- Logout confirmation -->
     <div class="custom-popup width-100" id="logoutConfirm">
         <div class="padding-md">
@@ -228,7 +233,7 @@
         <div class="padding-md" style="margin-top:50px;">
             <div class="row">
                 <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 text-center">
-                    <div class="h5">You are not logged in.</div> 
+                    <div class="h5">You are not logged in.</div>
                     <a class="btn btn-success m-bottom-sm" href="{{pathFor 'index'}}"><i class="fa fa-lock"></i> Login</a>
 
                 </div><!-- /.col -->
