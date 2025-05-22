@@ -49,6 +49,7 @@ var AjooEditor = function(settings) {
     //mode
     editor.mode = new Mode(editor);
 
+
     //palette
     editor.palette = new Palette(editor, settings.palette);
 

@@ -625,8 +625,10 @@ function build_palette_button(id, palette_button) {
 	palette_button["_id"] = id;
 
 	var elem_type = ElementTypes.findOne({_id: {$in: palette_button["elementTypeIds"]}});
-	if (!elem_type)
+	if (!elem_type) {
+		console.log("in no elem type")
 		return;
+	}
 
 	var complex_style;
 	if (elem_type["styles"] && elem_type["styles"][0]) {
@@ -665,7 +667,6 @@ function compute_palette() {
 
 	var palette = PaletteButtons.find({diagramTypeId: Session.get("diagramType")}).map(
 		function(palette_button) {
-
 			build_palette_button(palette_button["_id"], palette_button);
 
 			return palette_button;

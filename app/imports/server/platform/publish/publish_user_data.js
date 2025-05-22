@@ -192,127 +192,248 @@ publishComposite('Notifications', function (list) {
 });
 
 
-Meteor.publish("Chats_Authors", function(list) {
 
-	if (!list || list["noQuery"])
-		return this.stop();
+publishComposite('Chats_Authors', function (list) {
+  if (!list || list.noQuery) {
+    return [];
+  }
 
-	//gets user's id
-	var system_id = this.userId;
-	if (system_id) {
+  const system_id = this.userId;
+  if (!system_id) {
+    not_loggedin_msg();
+    return [];
+  }
 
-			return	Meteor.publishWithRelations({
-						handle: this,
-						collection: UserChatsAuthors,
-						filter: {userSystemId: system_id},
-						mappings: [
-							{
-				        	key: "userSystemId",
-				        	collection: Meteor.users,
-				        	mappings: [
-								{
-					        	reverse: true,
-					        	key: 'systemId',
-					        	collection: Users,
-					        	options: get_user_query_limit(),
-					        	},
-				        	]
-					        },
-						]
-			    	});
-	}
-	else {
-		not_loggedin_msg();
-		return this.stop();
-	}	
+  return {
+    find() {
+      return UserChatsAuthors.find({ userSystemId: system_id });
+    },
+    children: [
+      {
+        find(authorDoc) {
+          return Meteor.users.find({ _id: authorDoc.userSystemId });
+        },
+        children: [
+          {
+            find(meteorUserDoc) {
+              return Users.find(
+                { systemId: meteorUserDoc._id },
+                get_user_query_limit()
+              );
+            }
+          }
+        ]
+      }
+    ]
+  };
 });
 
 
-Meteor.publish("Chats", async function(list) {
 
-	if (!list || list["noQuery"])
-		return this.stop();
+// Meteor.publish("Chats_Authors", function(list) {
 
-	var system_id = this.userId;
-	if (system_id) {
+// 	if (!list || list["noQuery"])
+// 		return this.stop();
 
-		//selects chats that have more then one message
-		var query = {};
+// 	//gets user's id
+// 	var system_id = this.userId;
+// 	if (system_id) {
 
-		var msg_count = 0;
+// 			return	Meteor.publishWithRelations({
+// 						handle: this,
+// 						collection: UserChatsAuthors,
+// 						filter: {userSystemId: system_id},
+// 						mappings: [
+// 							{
+// 				        	key: "userSystemId",
+// 				        	collection: Meteor.users,
+// 				        	mappings: [
+// 								{
+// 					        	reverse: true,
+// 					        	key: 'systemId',
+// 					        	collection: Users,
+// 					        	options: get_user_query_limit(),
+// 					        	},
+// 				        	]
+// 					        },
+// 						]
+// 			    	});
+// 	}
+// 	else {
+// 		not_loggedin_msg();
+// 		return this.stop();
+// 	}	
+// });
 
-		//if the query is for unseen mesages in the navbar
-		if (list["unseen"])
-			query["seen"] = {$ne: system_id};
 
-		//if the specific user's chats are searched
-		if (list["userId"]) {
-			query["$and"] = [{users: system_id}, {users: list["userId"]}];
-		}
-		//if no specific user is specified, selects the user's chats
-		else {
-			query["users"] = system_id;
-		}
+// Meteor.publish("Chats", async function(list) {
 
-		await build_chats_query_by_phrase(query, list)
+// 	if (!list || list["noQuery"])
+// 		return this.stop();
 
-		//removes unnecessary chat fields
-		var limit = {};
-		limit["fields"] = {authorId: 0, createdAt: 0, messageCount: 0, messagesLC: 0};
+// 	var system_id = this.userId;
+// 	if (system_id) {
 
-		//returns the last message of the chat
-		var msg_options = {
-						sort: {date: -1},
-						limit: 1,
-					};
+// 		//selects chats that have more then one message
+// 		var query = {};
 
-		//if the chat id is specified, then selects the specified chat and all its messages	
-		if (list["chatId"]) {
-			query["_id"] = list["chatId"];
-			msg_options = {sort: {date: -1}};
-			msg_count = -1;
-			limit["fields"]["lastMessage"] = 0;	
-		}
+// 		var msg_count = 0;
 
-		//if there is not specified one chat, then selects chats for the specified chats page
-		if (list["page"] && list["step"]) {
-			var step = Number(list["step"]);
-			var page = Number(list["page"]);
+// 		//if the query is for unseen mesages in the navbar
+// 		if (list["unseen"])
+// 			query["seen"] = {$ne: system_id};
+
+// 		//if the specific user's chats are searched
+// 		if (list["userId"]) {
+// 			query["$and"] = [{users: system_id}, {users: list["userId"]}];
+// 		}
+// 		//if no specific user is specified, selects the user's chats
+// 		else {
+// 			query["users"] = system_id;
+// 		}
+
+// 		await build_chats_query_by_phrase(query, list)
+
+// 		//removes unnecessary chat fields
+// 		var limit = {};
+// 		limit["fields"] = {authorId: 0, createdAt: 0, messageCount: 0, messagesLC: 0};
+
+// 		//returns the last message of the chat
+// 		var msg_options = {
+// 						sort: {date: -1},
+// 						limit: 1,
+// 					};
+
+// 		//if the chat id is specified, then selects the specified chat and all its messages	
+// 		if (list["chatId"]) {
+// 			query["_id"] = list["chatId"];
+// 			msg_options = {sort: {date: -1}};
+// 			msg_count = -1;
+// 			limit["fields"]["lastMessage"] = 0;	
+// 		}
+
+// 		//if there is not specified one chat, then selects chats for the specified chats page
+// 		if (list["page"] && list["step"]) {
+// 			var step = Number(list["step"]);
+// 			var page = Number(list["page"]);
 			
-			limit["sort"] = {lastModified: -1};
-			limit["skip"] = (page - 1) * step;
-			limit["limit"] = step;
-			limit["fields"]["messages"] = 0;
-		}
+// 			limit["sort"] = {lastModified: -1};
+// 			limit["skip"] = (page - 1) * step;
+// 			limit["limit"] = step;
+// 			limit["fields"]["messages"] = 0;
+// 		}
 
-		//sets the minimum message count
-		query["messageCount"] = {$gt: msg_count};
+// 		//sets the minimum message count
+// 		query["messageCount"] = {$gt: msg_count};
 
-		return 	Meteor.publishWithRelations({
-					handle: this,
-					collection: Chats,
-					filter: query,
-					options: limit,
-					mappings: [
-						{collection: Meteor.users,
-						key: "users",
+// 		return 	Meteor.publishWithRelations({
+// 					handle: this,
+// 					collection: Chats,
+// 					filter: query,
+// 					options: limit,
+// 					mappings: [
+// 						{collection: Meteor.users,
+// 						key: "users",
 
-			        	mappings: [{
-			        		reverse: true,
-				        	key: 'systemId',
-				        	collection: Users,
-				        	options: get_maximal_user_query_limit(),
-				        	},
-				       	],
-				       	},
-					],
-		    	});
+// 			        	mappings: [{
+// 			        		reverse: true,
+// 				        	key: 'systemId',
+// 				        	collection: Users,
+// 				        	options: get_maximal_user_query_limit(),
+// 				        	},
+// 				       	],
+// 				       	},
+// 					],
+// 		    	});
+// 	}
+// 	else {
+// 		not_loggedin_msg();
+// 		return this.stop();
+// 	}
+// });
+
+publishComposite('Chats', function (list) {
+	if (!list || list["noQuery"]) {
+		return [];
 	}
-	else {
+
+	const system_id = this.userId;
+	if (!system_id) {
 		not_loggedin_msg();
-		return this.stop();
+		return [];
 	}
+
+	let query = {};
+	let msg_count = 0;
+	let limit = {};
+	limit.fields = { authorId: 0, createdAt: 0, messageCount: 0, messagesLC: 0 };
+
+	if (list["unseen"]) {
+		query["seen"] = { $ne: system_id };
+	}
+
+	if (list["userId"]) {
+		query["$and"] = [{ users: system_id }, { users: list["userId"] }];
+	} else {
+		query["users"] = system_id;
+	}
+
+	build_chats_query_by_phrase(query, list); // assumed to be synchronous or preprocessed beforehand
+
+	let msg_options = {
+		sort: { date: -1 },
+		limit: 1,
+	};
+
+	if (list["chatId"]) {
+		query["_id"] = list["chatId"];
+		msg_options = { sort: { date: -1 } };
+		msg_count = -1;
+		delete limit.fields["lastMessage"];
+	}
+
+	if (list["page"] && list["step"]) {
+		const step = Number(list["step"]);
+		const page = Number(list["page"]);
+		limit.sort = { lastModified: -1 };
+		limit.skip = (page - 1) * step;
+		limit.limit = step;
+		limit.fields["messages"] = 0;
+	}
+
+	query["messageCount"] = { $gt: msg_count };
+
+	return {
+		find() {
+			return Chats.find(query, limit);
+		},
+		children: [
+			{
+				find(chat) {
+					return Meteor.users.find(
+						{ _id: { $in: chat.users } },
+						{ fields: get_maximal_user_query_limit() }
+					);
+				},
+				children: [
+					{
+						find(user) {
+							return Users.find(
+								{ systemId: user._id },
+								{ fields: get_maximal_user_query_limit() }
+							);
+						}
+					}
+				]
+			}
+		]
+	};
 });
+
+
+
+
+
 
 //returns the latest chat's time, to be able to sort chats in the page
 Meteor.publish("maxChatDatePerPage", async function(list) {
@@ -480,39 +601,79 @@ Meteor.publish("chatMessageCount", async function(list) {
 	}
 });
 
-Meteor.publish("Contacts_Users", function(list) {
+// Meteor.publish("Contacts_Users", function(list) {
 
-	if (!list || list["noQuery"])
-		return this.stop();
+// 	if (!list || list["noQuery"])
+// 		return this.stop();
 
-	//gets user's id
-	var system_id = this.userId;
-	if (system_id) {
+// 	//gets user's id
+// 	var system_id = this.userId;
+// 	if (system_id) {
 
-		return 	Meteor.publishWithRelations({
-					handle: this,
-					collection: Contacts,
-					filter: {userSystemId: system_id},
-					mappings: [
-						{collection: Meteor.users,
-						key: "contactId",
+// 		return 	Meteor.publishWithRelations({
+// 					handle: this,
+// 					collection: Contacts,
+// 					filter: {userSystemId: system_id},
+// 					mappings: [
+// 						{collection: Meteor.users,
+// 						key: "contactId",
 
-			        	mappings: [{
-			        		reverse: true,
-				        	key: 'systemId',
-				        	collection: Users,
-				        	options: get_maximal_user_query_limit(),
-				        	},
-				        ],
-				        },
-					]
-		    	});
+// 			        	mappings: [{
+// 			        		reverse: true,
+// 				        	key: 'systemId',
+// 				        	collection: Users,
+// 				        	options: get_maximal_user_query_limit(),
+// 				        	},
+// 				        ],
+// 				        },
+// 					]
+// 		    	});
+// 	}
+// 	else {
+// 		not_loggedin_msg();
+// 		return this.stop();
+// 	}	
+// });
+
+
+publishComposite('Contacts_Users', function (list) {
+	if (!list || list["noQuery"]) {
+		return [];
 	}
-	else {
+
+	const system_id = this.userId;
+	if (!system_id) {
 		not_loggedin_msg();
-		return this.stop();
-	}	
+		return [];
+	}
+
+	return {
+		find() {
+			return Contacts.find({ userSystemId: system_id });
+		},
+		children: [
+			{
+				find(contact) {
+					return Meteor.users.find(
+						{ _id: contact.contactId }
+					);
+				},
+				children: [
+					{
+						find(user) {
+							return Users.find(
+								{ systemId: user._id },
+								{ fields: get_maximal_user_query_limit() }
+							);
+						}
+					}
+				]
+			}
+		]
+	};
 });
+
+
 
 
 Meteor.publish("SearchNewContacts", function(list) {

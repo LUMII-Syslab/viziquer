@@ -110,8 +110,8 @@ async function is_project_admin(user_id, doc) {
 
 //checks if the user is system admin
 async function is_system_admin(system_id) {
-
   const user = await Users.findOneAsync({ systemId: system_id });
+
   if (user && user["isSystemAdmin"] === true) {
     return true;
   }

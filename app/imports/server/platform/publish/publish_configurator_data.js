@@ -8,7 +8,7 @@ import { is_system_admin } from '../../../libs/platform/user_rights.js'
 import { error_msg } from '../_global_functions.js'
 
 
-Meteor.publish("Structure_Tools", function(list) {
+Meteor.publish("Structure_Tools", async function(list) {
 
 	if (!list || list["noQuery"])
 		return this.stop();
@@ -17,7 +17,7 @@ Meteor.publish("Structure_Tools", function(list) {
 	if (user_id) {
 
 		//removes the configurator from the query
-		var query = {_id: {$ne: get_configurator_tool_id()}, isDeprecated: {$ne: true},};
+		var query = {_id: {$ne: await get_configurator_tool_id()}, isDeprecated: {$ne: true},};
 
 		return Tools.find(query, {fields: {name: 1}});
 	}
@@ -36,7 +36,7 @@ Meteor.publish("Tools", async function(list) {
 	if (await is_system_admin(user_id)) {
 
 		//removes the configurator from the query
-		var query = {_id: {$ne: get_configurator_tool_id()}};
+		var query = {_id: {$ne: await get_configurator_tool_id()}};
 		var fields = {createdBy: 0, documents: 0, forum: 0,
 						users: 0, archive: 0, analytics: 0, training: 0, tasks: 0};
 
@@ -49,28 +49,25 @@ Meteor.publish("Tools", async function(list) {
 });
 
 Meteor.publish("ToolVersions_Diagrams_DiagramTypes", async function(list) {
-
 	if (!list || list["noQuery"])
 		return this.stop();
 
 	//gets user's id
 	var user_id = this.userId;
 	if (await is_system_admin(user_id)) {
-
 		var version_id = list["versionId"];
 
 		//if no version is specified, then selects the last version
 		if (!version_id) {
-			var version = await ToolVersions.findOneAsync({toolId: list["toolId"]},
-												{sort: {startDate: -1}});
+			var version = await ToolVersions.findOneAsync({toolId: list["toolId"]}, {sort: {startDate: -1}});
 			if (version)
 				version_id = version["_id"];
 		}
 
-		var tools_query = {_id: {$ne: get_configurator_tool_id()}};
+		var tools_query = {_id: {$ne: await get_configurator_tool_id()}};
 
 		//var diagram_type_query1 = {toolId: list["toolId"], versionId: version_id};
-		var diagram_type_query2 = {toolId: get_configurator_tool_id()};
+		var diagram_type_query2 = {toolId: await get_configurator_tool_id()};
 
 		return [
 				// Tools.find({_id: list["toolId"]}),
@@ -120,7 +117,7 @@ Meteor.publish("ConfiguratorDiagram", async function(list) {
 									versionId: list["versionId"],
 									diagramId: list["diagramId"]};
 
-		var diagram_type_query2	= {toolId: get_configurator_tool_id(),
+		var diagram_type_query2	= {toolId: await get_configurator_tool_id(),
 									_id: list["diagramTypeId"]};
 
 		//selecting the current tool types
@@ -129,12 +126,11 @@ Meteor.publish("ConfiguratorDiagram", async function(list) {
 		//				diagramId: list["diagramId"]};
 
 		//selecting the configurator tool's types
-		var query2 = {toolId: get_configurator_tool_id(),
+		var query2 = {toolId: await get_configurator_tool_id(),
 						diagramTypeId: list["diagramTypeId"]};
 
-		var diagram_type_query2	= {toolId: get_configurator_tool_id(),
+		var diagram_type_query2	= {toolId: await get_configurator_tool_id(),
 									_id: list["diagramTypeId"]};
-
 
 
 		return [
@@ -165,12 +161,10 @@ Meteor.publish("ConfiguratorDiagram", async function(list) {
 });
 
 Meteor.publish("ConfiguratorDiagramTypes", async function(list) {
-
 	if (!list || list["noQuery"])
 		return this.stop();
 
 	if (await is_system_admin(this.userId)) {
-
 		var diagram_query = {_id: list["diagramId"],
 							toolId: list["toolId"],
 							versionId: list["versionId"]};
@@ -190,7 +184,7 @@ Meteor.publish("ConfiguratorDiagramTypes", async function(list) {
 					};
 
 		//selecting the configurator tool's types
-		var query2 = {toolId: get_configurator_tool_id(),
+		var query2 = {toolId: await get_configurator_tool_id(),
 						diagramTypeId: list["diagramTypeId"]};
 
 		return [

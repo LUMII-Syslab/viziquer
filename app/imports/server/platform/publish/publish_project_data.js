@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { publishComposite } from 'meteor/reywood:publish-composite'
 
 import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Projects, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, DialogTabs, ForumPostTags, DiagramLogs } from '../../../db/platform/collections.js'
 import { get_configurator_tool_id } from '../../../libs/platform/helpers.js'
@@ -265,45 +266,102 @@ Meteor.publish("Diagram_Palette_ElementType", async function(list) {
 	}
 });
 
-Meteor.publish("DiagramLogs", async function(list) {
+// Meteor.publish("DiagramLogs", async function(list) {
 
-	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
-		return this.stop();
+// 	var user_id = this.userId;
+// 	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
+// 		return this.stop();
 
-	var proj_id = list["projectId"];
-	var proj_user = await ProjectsUsers.findOneAsync({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
-		return;
+// 	var proj_id = list["projectId"];
+// 	var proj_user = await ProjectsUsers.findOneAsync({projectId: proj_id, userSystemId: user_id});
+// 	if (!proj_user)
+// 		return;
 
-	var role = proj_user["role"];
-	if (await is_project_version_reader(user_id, list, role)) {
+// 	var role = proj_user["role"];
+// 	if (await is_project_version_reader(user_id, list, role)) {
 
-		return 	Meteor.publishWithRelations({
-					handle: this,
-					collection: DiagramLogs,
-					filter: {diagramId: list["diagramId"], projectId: list["projectId"],
-							versionId: list["versionId"]},
-					//filter: {diagramId: list["diagramId"]},
-					options: {
-						sort: {createdAt: -1},
-						limit: list["logsCount"],
-					},
-					mappings: [
-						{collection: Meteor.users,
-						key: "authorId",
+// 		return 	Meteor.publishWithRelations({
+// 					handle: this,
+// 					collection: DiagramLogs,
+// 					filter: {diagramId: list["diagramId"], projectId: list["projectId"],
+// 							versionId: list["versionId"]},
+// 					//filter: {diagramId: list["diagramId"]},
+// 					options: {
+// 						sort: {createdAt: -1},
+// 						limit: list["logsCount"],
+// 					},
+// 					mappings: [
+// 						{collection: Meteor.users,
+// 						key: "authorId",
 
-			        	mappings: [{
-			        		reverse: true,
-				        	key: 'systemId',
-				        	collection: Users
-				        	},
-				        ],
-				        },
-					]
-		    	});
+// 			        	mappings: [{
+// 			        		reverse: true,
+// 				        	key: 'systemId',
+// 				        	collection: Users
+// 				        	},
+// 				        ],
+// 				        },
+// 					]
+// 		    	});
+// 	}
+// });
+
+publishComposite('DiagramLogs', async function (list) {
+	const user_id = this.userId;
+
+	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
+		return [];
 	}
+
+	const proj_id = list["projectId"];
+	const proj_user = await ProjectsUsers.findOneAsync({ projectId: proj_id, userSystemId: user_id });
+
+	if (!proj_user) {
+		return [];
+	}
+
+	const role = proj_user["role"];
+	const canRead = await is_project_version_reader(user_id, list, role);
+
+	if (!canRead) {
+		return [];
+	}
+
+	return {
+		find() {
+			return DiagramLogs.find(
+				{
+					diagramId: list["diagramId"],
+					projectId: list["projectId"],
+					versionId: list["versionId"]
+				},
+				{
+					sort: { createdAt: -1 },
+					limit: list["logsCount"]
+				}
+			);
+		},
+		children: [
+			{
+				find(log) {
+					return Meteor.users.find({ _id: log.authorId });
+				},
+				children: [
+					{
+						find(user) {
+							return Users.find(
+								{ systemId: user._id }
+							);
+						}
+					}
+				]
+			}
+		]
+	};
 });
+
+
+
 
 Meteor.publish("Diagram_Types", async function(list) {
 
@@ -446,69 +504,142 @@ Meteor.publish("SearchNewProjectUsers", async function(list) {
 	}
 });
 
-Meteor.publish("Posts_Users", async function(list) {
+// Meteor.publish("Posts_Users", async function(list) {
 
-	if (!list || list["noQuery"])
-		return this.stop();
+// 	if (!list || list["noQuery"])
+// 		return this.stop();
 
-	var posts_fields = {projectId: 0};
+// 	var posts_fields = {projectId: 0};
 
-	if (await is_project_member(this.userId, list)) {
-		return	Meteor.publishWithRelations({
-					handle: this,
-					collection: Posts,
-					filter: {projectId: list["projectId"]},
-					filter: {},
-					options: {
-						sort: {createdAt: -1},
-						limit: list["limit"],
-						fields: posts_fields,
-					},
-					mappings: [
-						{
-			        	key: "authorId",
-			        	collection: Meteor.users,
-			        	mappings: [
-							{
-				        	reverse: true,
-				        	key: 'systemId',
-				        	collection: Users,
-				        	options: get_maximal_user_query_limit(),
-				        	},
-			        	]
-				        },
+// 	if (await is_project_member(this.userId, list)) {
+// 		return	Meteor.publishWithRelations({
+// 					handle: this,
+// 					collection: Posts,
+// 					filter: {projectId: list["projectId"]},
+// 					filter: {},
+// 					options: {
+// 						sort: {createdAt: -1},
+// 						limit: list["limit"],
+// 						fields: posts_fields,
+// 					},
+// 					mappings: [
+// 						{
+// 			        	key: "authorId",
+// 			        	collection: Meteor.users,
+// 			        	mappings: [
+// 							{
+// 				        	reverse: true,
+// 				        	key: 'systemId',
+// 				        	collection: Users,
+// 				        	options: get_maximal_user_query_limit(),
+// 				        	},
+// 			        	]
+// 				        },
 
-						{
-			        	key: "postId",
-			        	collection: Likers,
-			        	reverse: true,
+// 						{
+// 			        	key: "postId",
+// 			        	collection: Likers,
+// 			        	reverse: true,
 
-						options: {
-							fields: {projectId: 0},
-						},
+// 						options: {
+// 							fields: {projectId: 0},
+// 						},
 
-			        	mappings: [
-							{
-				        	key: "userSystemId",
-				        	collection: Meteor.users,
-				        	mappings: [
-								{
-					        	reverse: true,
-					        	key: 'systemId',
-					        	collection: Users,
-					        	options: get_maximal_user_query_limit(),
-					        	},
-				        	]
-					        },
-			        	]
-				        },
-					]
-		    	});
+// 			        	mappings: [
+// 							{
+// 				        	key: "userSystemId",
+// 				        	collection: Meteor.users,
+// 				        	mappings: [
+// 								{
+// 					        	reverse: true,
+// 					        	key: 'systemId',
+// 					        	collection: Users,
+// 					        	options: get_maximal_user_query_limit(),
+// 					        	},
+// 				        	]
+// 					        },
+// 			        	]
+// 				        },
+// 					]
+// 		    	});
+// 	}
+// 	else {
+// 		error_msg();
+// 		return this.stop();
+// 	}
+// });
+
+
+publishComposite('Posts_Users', async function (list) {
+	if (!list || list["noQuery"]) {
+		return [];
 	}
-	else {
+
+	const userId = this.userId;
+
+	if (!await is_project_member(userId, list)) {
 		error_msg();
-		return this.stop();
+		return [];
 	}
+
+	const posts_fields = { projectId: 0 };
+
+	return {
+		find() {
+			return Posts.find(
+				{ projectId: list["projectId"] },
+				{
+					sort: { createdAt: -1 },
+					limit: list["limit"],
+					fields: posts_fields,
+				}
+			);
+		},
+		children: [
+			// Author -> Meteor.users
+			{
+				find(post) {
+					return Meteor.users.find({ _id: post.authorId });
+				},
+				children: [
+					{
+						find(user) {
+							return Users.find(
+								{ systemId: user._id },
+								{ fields: get_maximal_user_query_limit() }
+							);
+						}
+					}
+				]
+			},
+			// Likers -> Likers collection via postId
+			{
+				find(post) {
+					return Likers.find(
+						{ postId: post._id },
+						{ fields: { projectId: 0 } }
+					);
+				},
+				children: [
+					{
+						find(liker) {
+							return Meteor.users.find({ _id: liker.userSystemId });
+						},
+						children: [
+							{
+								find(user) {
+									return Users.find(
+										{ systemId: user._id },
+										{ fields: get_maximal_user_query_limit() }
+									);
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	};
 });
 
 
@@ -614,39 +745,78 @@ Meteor.publish("elementsCount", async function (list) {
 });
 
 
-Meteor.publish("ProjectsUsers_Users", async function(list) {
-	if (!list || list["noQuery"])
-		return this.stop();
+// Meteor.publish("ProjectsUsers_Users", async function(list) {
+// 	if (!list || list["noQuery"])
+// 		return this.stop();
 
-	//gets user's id
-	if (await is_project_member(this.userId, list)) {
+// 	//gets user's id
+// 	if (await is_project_member(this.userId, list)) {
 
-		return 	Meteor.publishWithRelations({
-					handle: this,
-					collection: ProjectsUsers,
-					filter: {projectId: list["projectId"]},
+// 		return 	Meteor.publishWithRelations({
+// 					handle: this,
+// 					collection: ProjectsUsers,
+// 					filter: {projectId: list["projectId"]},
 
-					mappings: [
-						{
-			        	key: 'userSystemId',
-			        	collection: Meteor.users,
+// 					mappings: [
+// 						{
+// 			        	key: 'userSystemId',
+// 			        	collection: Meteor.users,
 
-						mappings: [
-							{reverse: true,
-				        	key: 'systemId',
-				        	collection: Users,
-				        	options: get_maximal_user_query_limit(),
-					        },
-					    ]
-				        },
-				    ]
-				})
+// 						mappings: [
+// 							{reverse: true,
+// 				        	key: 'systemId',
+// 				        	collection: Users,
+// 				        	options: get_maximal_user_query_limit(),
+// 					        },
+// 					    ]
+// 				        },
+// 				    ]
+// 				})
+// 	}
+// 	else {
+// 		error_msg();
+// 		return this.stop();
+// 	}
+// });
+
+
+publishComposite('ProjectsUsers_Users', async function (list) {
+	if (!list || list["noQuery"]) {
+		return [];
 	}
-	else {
+
+	const userId = this.userId;
+
+	if (!await is_project_member(userId, list)) {
 		error_msg();
-		return this.stop();
+		return [];
 	}
+
+	return {
+		find() {
+			return ProjectsUsers.find({ projectId: list["projectId"] });
+		},
+		children: [
+			{
+				find(projectUser) {
+					return Meteor.users.find({ _id: projectUser.userSystemId });
+				},
+				children: [
+					{
+						find(user) {
+							return Users.find(
+								{ systemId: user._id },
+								{ fields: get_maximal_user_query_limit() }
+							);
+						}
+					}
+				]
+			}
+		]
+	};
 });
+
+
 
 Meteor.publish("Searches", async function(list) {
 
@@ -718,49 +888,99 @@ Meteor.publish("UserSearches", function(list) {
 });
 
 
-Meteor.publish("Forum_Posts", async function(list) {
+// Meteor.publish("Forum_Posts", async function(list) {
 
-	//gets user's id
-	var user_id = this.userId;
-	if (!user_id || !list || list["noQuery"])
-		return this.stop();
+// 	//gets user's id
+// 	var user_id = this.userId;
+// 	if (!user_id || !list || list["noQuery"])
+// 		return this.stop();
 
-	var filter = await select_project_users(user_id, list);
+// 	var filter = await select_project_users(user_id, list);
+
+// 	if (list["postId"]) {
+// 		filter["_id"] = list["postId"];
+// 	}
+
+// 	if (list["tag"])
+// 		filter["tags"] = list["tag"];
+
+// 	var limit = {};
+// 	limit["sort"] = {createdAt: -1};
+// 	limit["skip"] = (list["nr"] - 1) * list["step"];
+// 	limit["limit"] = list["step"];
+
+// 	return Meteor.publishWithRelations({
+// 						handle: this,
+// 						collection: ForumPosts,
+// 						filter: filter,
+// 						options: limit,
+
+// 						mappings: [{
+// 				        	key: 'authorId',
+// 				        	collection: Meteor.users,
+
+// 							mappings: [{
+// 								reverse: true,
+// 					        	key: 'systemId',
+// 					        	collection: Users,
+// 					        	options: get_maximal_user_query_limit(),
+// 						    },]
+// 					    	},
+// 					    ],
+// 					});
+
+
+// });
+
+
+publishComposite('Forum_Posts', async function (list) {
+	const userId = this.userId;
+	if (!userId || !list || list["noQuery"]) {
+		return [];
+	}
+
+	const filter = await select_project_users(userId, list);
 
 	if (list["postId"]) {
 		filter["_id"] = list["postId"];
 	}
 
-	if (list["tag"])
+	if (list["tag"]) {
 		filter["tags"] = list["tag"];
+	}
 
-	var limit = {};
-	limit["sort"] = {createdAt: -1};
-	limit["skip"] = (list["nr"] - 1) * list["step"];
-	limit["limit"] = list["step"];
+	const options = {
+		sort: { createdAt: -1 },
+		skip: (list["nr"] - 1) * list["step"],
+		limit: list["step"]
+	};
 
-	return Meteor.publishWithRelations({
-						handle: this,
-						collection: ForumPosts,
-						filter: filter,
-						options: limit,
-
-						mappings: [{
-				        	key: 'authorId',
-				        	collection: Meteor.users,
-
-							mappings: [{
-								reverse: true,
-					        	key: 'systemId',
-					        	collection: Users,
-					        	options: get_maximal_user_query_limit(),
-						    },]
-					    	},
-					    ],
-					});
-
-
+	return {
+		find() {
+			return ForumPosts.find(filter, options);
+		},
+		children: [
+			{
+				find(post) {
+					return Meteor.users.find({ _id: post.authorId });
+				},
+				children: [
+					{
+						find(user) {
+							return Users.find(
+								{ systemId: user._id },
+								{ fields: get_maximal_user_query_limit() }
+							);
+						}
+					}
+				]
+			}
+		]
+	};
 });
+
+
+
 
 // server: publish the current size of a collection
 Meteor.publish("forumPostsCount", async function(list) {
@@ -807,45 +1027,89 @@ Meteor.publish("forumPostsCount", async function(list) {
 
 });
 
-Meteor.publish("Forum_PostComments", async function(list) {
+// Meteor.publish("Forum_PostComments", async function(list) {
 
-	if (!list || list["noQuery"])
-		return this.stop();
+// 	if (!list || list["noQuery"])
+// 		return this.stop();
 
-	//gets user's id
-	var user_id = this.userId;
-	if (await is_project_member(user_id, list)) {
+// 	//gets user's id
+// 	var user_id = this.userId;
+// 	if (await is_project_member(user_id, list)) {
 
-		var filter = build_forum_project_users_query(list);
-		if (list["postId"])
-			filter["forumPostId"] = list["postId"];
+// 		var filter = build_forum_project_users_query(list);
+// 		if (list["postId"])
+// 			filter["forumPostId"] = list["postId"];
 
-		return Meteor.publishWithRelations({
-					handle: this,
-					collection: ForumPostComments,
-					filter: filter,
+// 		return Meteor.publishWithRelations({
+// 					handle: this,
+// 					collection: ForumPostComments,
+// 					filter: filter,
 
-					mappings: [
-						{
-			        	key: 'authorId',
-			        	collection: Meteor.users,
+// 					mappings: [
+// 						{
+// 			        	key: 'authorId',
+// 			        	collection: Meteor.users,
 
-						mappings: [
-							{reverse: true,
-				        	key: 'systemId',
-				        	collection: Users,
-				        	options: get_maximal_user_query_limit(),
-					        },
-					    ]
-				        },
-				    ]
-				});
+// 						mappings: [
+// 							{reverse: true,
+// 				        	key: 'systemId',
+// 				        	collection: Users,
+// 				        	options: get_maximal_user_query_limit(),
+// 					        },
+// 					    ]
+// 				        },
+// 				    ]
+// 				});
+// 	}
+// 	else {
+// 		error_msg();
+// 		return this.stop();
+// 	}
+// });
+
+publishComposite('Forum_PostComments', async function (list) {
+	const userId = this.userId;
+
+	if (!list || list["noQuery"]) {
+		return [];
 	}
-	else {
+
+	if (!await is_project_member(userId, list)) {
 		error_msg();
-		return this.stop();
+		return [];
 	}
+
+	const filter = build_forum_project_users_query(list);
+
+	if (list["postId"]) {
+		filter["forumPostId"] = list["postId"];
+	}
+
+	return {
+		find() {
+			return ForumPostComments.find(filter);
+		},
+		children: [
+			{
+				find(comment) {
+					return Meteor.users.find({ _id: comment.authorId });
+				},
+				children: [
+					{
+						find(user) {
+							return Users.find(
+								{ systemId: user._id },
+								{ fields: get_maximal_user_query_limit() }
+							);
+						}
+					}
+				]
+			}
+		]
+	};
 });
+
+
 
 
 //Forum_Tags

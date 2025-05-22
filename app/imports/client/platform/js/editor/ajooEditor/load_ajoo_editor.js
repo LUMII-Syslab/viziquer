@@ -9,7 +9,7 @@ import { get_context_menu_list } from '../../interpretator/context_menu.js'
 import { compute_new_line_type } from '../../interpretator/NewElement.js'
 
 Interpreter.loadAjooEditor = function(diagram) {
-
+	
 	if (!(diagram && diagram["style"])) {
 		console.error("Error: no diagram");
 		return;

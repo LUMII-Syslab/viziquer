@@ -11,7 +11,6 @@ Template.registerHelper('_', function (key, ...args) {
   return i18n.getTranslation(key, ...args);
 });
 
-
 i18n.setLocale('en');
 
 

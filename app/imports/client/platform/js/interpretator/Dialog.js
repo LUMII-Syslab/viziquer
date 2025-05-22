@@ -4,6 +4,8 @@ import { Interpreter } from '../../../lib/interpreter.js'
 import { ElementTypes, CompartmentTypes, Compartments, DiagramFiles, CloudFiles } from '../../../../db/platform/collections.js'
 import { reset_variable, Utilities } from '../utilities/utils.js'
 
+import 'bootstrap-colorpicker';
+
 Interpreter.methods({
 
 	UpdateCompartment: function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
@@ -537,7 +539,7 @@ const Dialog = {
 	},
 
 	addColorPicker: function() {
-		$(".color-picker").colorpicker();
+		// $(".color-picker").colorpicker();
 	},
 
 	initTooltip: function() {
