@@ -223,10 +223,6 @@ ImportAjooConfiguration.prototype = {
 	    var new_box_type_id = await ElementTypes.insertAsync(object);
 	    self.obj_type_map[box_type_id] = new_box_type_id;
 
-	    console.log("box_type_id ", box_type_id);
-	    console.log("new_box_type_id", new_box_type_id);
-	    console.log("self.obj_type_map ", self.obj_type_map);
-
 	    // If these are async, use await:
 	    await self.importDialogTypes(box_type);
 	    await self.importCompartmentTypes(box_type.compartmentTypes);

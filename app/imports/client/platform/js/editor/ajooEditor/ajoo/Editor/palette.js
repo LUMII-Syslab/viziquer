@@ -4,13 +4,6 @@ import Link from '../Elements/Lines/render_lines.js'
 var Palette = function(editor, palette_obj) {
 	var palette = this;
 
-	import { PaletteButtons } from '../../../../../../../db/platform/collections.js'
-
-
-
-	console.log("asdfaf", PaletteButtons.find().fetch())
-
-
 	palette.editor = editor;
 	palette.state = {};
 	palette.selectedId = undefined;
