@@ -2,6 +2,7 @@ import { is_system_admin, is_project_admin, is_project_version_admin, is_project
 import { is_public_diagram, get_unknown_public_user_name } from '../../_helpers.js'
 import { Tools, DiagramTypes, Projects, Versions, Diagrams, Elements, Compartments } from '../../../../db/platform/collections.js'
 import { generate_id } from '../../../../libs/platform/lib.js'
+import { fetch, Headers } from 'meteor/fetch';
 
 Diagrams.after.remove(async function(user_id, doc) {
 	if (!doc)
@@ -50,25 +51,35 @@ Meteor.methods({
 		}
 
 		const schema_server = await Meteor.callAsync("getEnvVariable", "SCHEMA_SERVER_URL");
-		const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
+		// const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
+    let responseData
+    try {
+      const resp = await fetch(`${schema_server}/info`)
+      responseData = await resp.json() || {}
+
+    } catch(err) {
+      console.error('error while fetching schemata info')
+      console.error(err)
+      responseData = {}
+    }
 
 		let schema;
 
 		if ( list_in.schema !== undefined && list_in.schema !== '') {
-			schema = _.find(response.data, function(item) {
+			schema = _.find(responseData, function(item) {
 							return item.display_name == list_in.schema;
 						});
 		}
 		else if (list_in.endpoint !== undefined && list_in.endpoint !== '') {
-			let schemas = _.filter(response.data, function(item) {
+			let schemas = _.filter(responseData, function(item) {
 							return item.sparql_url == list_in.endpoint;
 						});
 			if (schemas.length > 1) {
-				schema = _.find(response.data, function(item) {
+				schema = _.find(responseData, function(item) {
 							return item.sparql_url == list_in.endpoint && item.is_default_for_endpoint;
 						});
 				if ( schema == undefined) {
-					schema = _.find(response.data, function(item) {
+					schema = _.find(responseData, function(item) {
 							return item.sparql_url == list_in.endpoint;
 						});
 				}
