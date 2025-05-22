@@ -363,7 +363,7 @@ function build_diagram(list, user_id) {
 	var time = new Date();
 	list["createdAt"] = time;
 	list["createdBy"] = user_id;
-	list["imageUrl"] = "http://placehold.it/770x347";
+	list["imageUrl"] = "https://placehold.co/770x347";
 	list["edit"] = {action: "new", time: time, userId: user_id},
 	list["parentDiagrams"] = [];
 	list["allowedGroups"] = [];

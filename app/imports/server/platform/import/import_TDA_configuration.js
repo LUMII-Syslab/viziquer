@@ -119,7 +119,7 @@ var ImportTDAConfiguration = {
 								createdBy: self.userId,
 								editorType: "ajooEditor",
 
-								imageUrl: "http://placehold.it/770x347",
+								imageUrl: "https://placehold.co/770x347",
 								parentDiagrams: [],
 								allowedGroups: [],
 								editing: {},

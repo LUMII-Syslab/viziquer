@@ -46,7 +46,7 @@ Meteor.methods({
 			dgr_list["createdBy"] = user_id;
 			dgr_list["editorType"] = list["editorType"];
 
-			dgr_list["imageUrl"] = "http://placehold.it/770x347";
+			dgr_list["imageUrl"] = "https://placehold.co/770x347";
 			//dgr_list["edit"] = {action: "new", time: time, userId: user_id};
 			dgr_list["parentDiagrams"] = [];
 			dgr_list["allowedGroups"] = [];
