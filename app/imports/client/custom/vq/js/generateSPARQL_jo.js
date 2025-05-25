@@ -1100,7 +1100,7 @@ async function executeSparqlString(sparql, paging_info) {
                                       query: sparql,
                                },
                         },
-						endPoint: endpoint,
+						endpoint,
 						endpointUsername: proj.endpointUsername,
 						endpointPassword: proj.endpointPassword,
 						// httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries

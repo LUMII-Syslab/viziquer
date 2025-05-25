@@ -397,7 +397,7 @@ function selectHttpRequestProfile(options) {
   if (options && options.httpRequestProfileName) {
     return selectHttpRequestProfileByName(options.httpRequestProfileName);
   }
-  const profileName = selectHttpRequestProfileNameByUrl(options.endPoint || options.endpoint); // TODO: vienādot rakstību
+  const profileName = selectHttpRequestProfileNameByUrl(options.endpoint);
   return selectHttpRequestProfileByName(profileName);
 }
 
