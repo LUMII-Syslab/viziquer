@@ -7,7 +7,8 @@ import { is_public_diagram } from '../../platform/_helpers.js'
 import { VQ_sparql_logs } from '../../../db/custom/vq/collections.js'
 
 // import fetch from 'node-fetch';
-const xml2js = Npm.require('xml2js');
+// const xml2js = Npm.require('xml2js');
+import xml2js from 'xml2js';
 
 function removeMultilines(q) {
   return q
@@ -123,12 +124,12 @@ function detectContentType(content) {
   return `${ct} (${text.length} chars, "${text.length < 32 ? text : `${text.slice(0, 32)}...`}")`;
 }
 
-const TIMEOUT = 0;
+const TIMEOUT = 5_000;
 
-const XML_FORMAT = 'application/sparql-results+xml';
-const JSON_FORMAT = 'application/sparql-results+json';
-const XML_FORMAT_SHORT = 'xml';
-const JSON_FORMAT_SHORT = 'json';
+const RESPONSE_FORMAT_XML = 'application/sparql-results+xml';
+const RESPONSE_FORMAT_JSON = 'application/sparql-results+json';
+const RESPONSE_FORMAT_XML_SHORT = 'xml';
+const RESPONSE_FORMAT_JSON_SHORT = 'json';
 
 const USER_AGENT = 'ViziQuer 0.x';
 
@@ -140,7 +141,7 @@ const COMMON_HEADERS = {
   'Cache-Control': 'no-cache',
 };
 
-const DO_CALL_DEBUG = (method, url, options, cb) => {
+const DO_CALL_DEBUG0 = (method, url, options, cb) => {
   console.log('☕', method, decodeURI(url), options);
   if (cb) {
     try {
@@ -166,6 +167,30 @@ const DO_CALL_DEBUG = (method, url, options, cb) => {
       console.error('Error in HTTP call', err);
       return err;
     }
+  }
+};
+
+const DO_CALL_DEBUG = async (method, url, options) => {
+  console.log('☕', method, decodeURI(url), options);
+  try {
+    options.method = method;
+    if (!options.data) delete options.data;
+
+    const resp = await fetch(url, options);
+    if (!resp.ok) {
+      console.log('🥤', resp.status, resp);
+    }
+    // console.log('🦊', resp.status, resp.headers['content-type'], detectContentType(resp.content));
+    console.log('🦊', resp.status, resp.headers['content-type']);
+    return resp;
+  } catch (err) {
+    if (['AbortError', 'TimeoutError'].includes(err.name)) {
+      console.log(`👻 request timed out at ${TIMEOUT/1000} seconds`)
+    } else {
+      console.error('Error in HTTP call', err);
+    }
+    console.log(err.name)
+    return err;
   }
 };
 
@@ -200,7 +225,7 @@ const DO_CALL = DO_CALL_DEBUG;
  * P4* - POST with encoded params in URL (non-standard).
  */
 
-function doHttpRequestP1(url, httpOptions, query, namedGraph, preferJSON, callback) {
+async function doHttpRequestP1(url, httpOptions, query, namedGraph, preferJSON) {
   // console.log("profile P1", url, query, namedGraph, httpOptions, preferJSON);
   // let fullUrl = `${url}?query=${encodeQuery2(query)}`;
   let fullUrl = `${url}?query=${encodeQueryForUrl(query)}`;
@@ -208,18 +233,21 @@ function doHttpRequestP1(url, httpOptions, query, namedGraph, preferJSON, callba
     fullUrl += `&default-graph-uri=${encodeURIComponent(namedGraph)}`;
   }
   const fullOptions = { ...httpOptions, timeout: TIMEOUT };
+  if (TIMEOUT) {
+    fullOptions.signal = AbortSignal.timeout(TIMEOUT)
+  }
   fullOptions.headers = { ...COMMON_HEADERS };
   if (preferJSON) {
-    fullUrl += `&format=${JSON_FORMAT_SHORT}`;
-    fullOptions.headers.Accept = JSON_FORMAT;
+    fullUrl += `&format=${RESPONSE_FORMAT_JSON_SHORT}`;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_JSON;
   } else {
-    fullUrl += `&format=${XML_FORMAT_SHORT}`;
-    fullOptions.headers.Accept = XML_FORMAT;
+    fullUrl += `&format=${RESPONSE_FORMAT_XML_SHORT}`;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_XML;
   }
-  return DO_CALL('GET', fullUrl, fullOptions, callback);
+  return DO_CALL('GET', fullUrl, fullOptions);
 }
 
-function doHttpRequestP1b(url, httpOptions, query, namedGraph, preferJSON, callback) {
+async function doHttpRequestP1b(url, httpOptions, query, namedGraph, preferJSON) {
   // console.log("profile P1b", url, query, namedGraph, httpOptions, preferJSON);
   const fullUrl = url;
   const fullOptions = { ...httpOptions, timeout: TIMEOUT };
@@ -233,16 +261,16 @@ function doHttpRequestP1b(url, httpOptions, query, namedGraph, preferJSON, callb
 
   fullOptions.headers = { ...COMMON_HEADERS};
   if (preferJSON) {
-    fullOptions.params.format = JSON_FORMAT_SHORT;
-    fullOptions.headers.Accept = JSON_FORMAT;
+    fullOptions.params.format = RESPONSE_FORMAT_JSON_SHORT;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_JSON;
   } else {
-    fullOptions.params.format = XML_FORMAT_SHORT;
-    fullOptions.headers.Accept = XML_FORMAT;
+    fullOptions.params.format = RESPONSE_FORMAT_XML_SHORT;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_XML;
   }
-  return DO_CALL('GET', fullUrl, fullOptions, callback);
+  return DO_CALL('GET', fullUrl, fullOptions);
 }
 
-function doHttpRequestP1c(url, httpOptions, query, namedGraph, preferJSON, callback) {
+async function doHttpRequestP1c(url, httpOptions, query, namedGraph, preferJSON) {
   // console.log("profile P1c", url, query, namedGraph, httpOptions, preferJSON);
   const fullUrl = url;
   const fullOptions = { ...httpOptions, timeout: TIMEOUT };
@@ -257,16 +285,16 @@ function doHttpRequestP1c(url, httpOptions, query, namedGraph, preferJSON, callb
   fullOptions.headers = { ...COMMON_HEADERS };
   // if (preferJSON) {
   // fullOptions.params['format'] = 'application%2Fsparql-results%2Bjson';
-  fullOptions.params.format = XML_FORMAT;
-  fullOptions.headers.Accept = XML_FORMAT;
+  fullOptions.params.format = RESPONSE_FORMAT_XML;
+  fullOptions.headers.Accept = RESPONSE_FORMAT_XML;
   // } else {
   //     fullOptions.params['format'] = XML_FORMAT_SHORT;
   //     fullOptions.headers['Accept'] = XML_FORMAT;
   // }
-  return DO_CALL('GET', fullUrl, fullOptions, callback);
+  return DO_CALL('GET', fullUrl, fullOptions);
 }
 
-function doHttpRequestP2(url, httpOptions, query, namedGraph, preferJSON, callback) {
+async function doHttpRequestP2(url, httpOptions, query, namedGraph, preferJSON) {
   // console.log("profile P2", url, query, namedGraph, httpOptions, preferJSON);
   const fullUrl = url;
   const fullOptions = { ...httpOptions, timeout: TIMEOUT };
@@ -281,16 +309,16 @@ function doHttpRequestP2(url, httpOptions, query, namedGraph, preferJSON, callba
     fullOptions.content += `&default-graph-uri=${encodeURIComponent(namedGraph)}`;
   }
   if (preferJSON) {
-    fullOptions.content += `&format=${JSON_FORMAT_SHORT}`;
-    fullOptions.headers.Accept = JSON_FORMAT;
+    fullOptions.content += `&format=${RESPONSE_FORMAT_JSON_SHORT}`;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_JSON;
   } else {
-    fullOptions.content += `&format=${XML_FORMAT_SHORT}`;
-    fullOptions.headers.Accept = XML_FORMAT;
+    fullOptions.content += `&format=${RESPONSE_FORMAT_XML_SHORT}`;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_XML;
   }
-  return DO_CALL('POST', fullUrl, fullOptions, callback);
+  return DO_CALL('POST', fullUrl, fullOptions);
 }
 
-function doHttpRequestP2b(url, httpOptions, query, namedGraph, preferJSON, callback) {
+async function doHttpRequestP2b(url, httpOptions, query, namedGraph, preferJSON) {
   // console.log("profile P2b", url, query, namedGraph, httpOptions, preferJSON);
   const fullUrl = url;
   const fullOptions = { ...httpOptions, timeout: TIMEOUT};
@@ -306,16 +334,16 @@ function doHttpRequestP2b(url, httpOptions, query, namedGraph, preferJSON, callb
     fullOptions.params['default-graph-uri'] = namedGraph;
   }
   if (preferJSON) {
-    fullOptions.params.format = JSON_FORMAT_SHORT;
-    fullOptions.headers.Accept = JSON_FORMAT;
+    fullOptions.params.format = RESPONSE_FORMAT_JSON_SHORT;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_JSON;
   } else {
-    fullOptions.params.format = XML_FORMAT_SHORT;
-    fullOptions.headers.Accept = XML_FORMAT;
+    fullOptions.params.format = RESPONSE_FORMAT_XML_SHORT;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_XML;
   }
-  return DO_CALL('POST', fullUrl, fullOptions, callback);
+  return DO_CALL('POST', fullUrl, fullOptions);
 }
 
-function doHttpRequestP3(url, httpOptions, query, namedGraph, preferJSON, callback) {
+async function doHttpRequestP3(url, httpOptions, query, namedGraph, preferJSON) {
   // console.log("profile P3", url, query, namedGraph, httpOptions, preferJSON);
   let fullUrl = `${url}`;
   if (namedGraph) {
@@ -328,16 +356,16 @@ function doHttpRequestP3(url, httpOptions, query, namedGraph, preferJSON, callba
   };
   fullOptions.content = query;
   if (preferJSON) {
-    fullUrl += `&format=${JSON_FORMAT_SHORT}`;
-    fullOptions.headers.Accept = JSON_FORMAT;
+    fullUrl += `&format=${RESPONSE_FORMAT_JSON_SHORT}`;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_JSON;
   } else {
-    fullUrl += `&format=${XML_FORMAT_SHORT}`;
-    fullOptions.headers.Accept = XML_FORMAT;
+    fullUrl += `&format=${RESPONSE_FORMAT_XML_SHORT}`;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_XML;
   }
-  return DO_CALL('POST', fullUrl, fullOptions, callback);
+  return DO_CALL('POST', fullUrl, fullOptions);
 }
 
-function doHttpRequestP4(url, httpOptions, query, namedGraph, preferJSON, callback) {
+async function doHttpRequestP4(url, httpOptions, query, namedGraph, preferJSON) {
   // console.log("profile P4", url, query, namedGraph, httpOptions, preferJSON);
   let fullUrl = `${url}?query=${encodeQueryForUrl(query)}`;
   if (namedGraph) {
@@ -346,13 +374,13 @@ function doHttpRequestP4(url, httpOptions, query, namedGraph, preferJSON, callba
   const fullOptions = { ...httpOptions, timeout: TIMEOUT };
   fullOptions.headers = { ...COMMON_HEADERS };
   if (preferJSON) {
-    fullUrl += `&format=${JSON_FORMAT_SHORT}`;
-    fullOptions.headers.Accept = JSON_FORMAT;
+    fullUrl += `&format=${RESPONSE_FORMAT_JSON_SHORT}`;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_JSON;
   } else {
-    fullUrl += `&format=${XML_FORMAT_SHORT}`;
-    fullOptions.headers.Accept = XML_FORMAT;
+    fullUrl += `&format=${RESPONSE_FORMAT_XML_SHORT}`;
+    fullOptions.headers.Accept = RESPONSE_FORMAT_XML;
   }
-  return DO_CALL('POST', fullUrl, fullOptions, callback);
+  return DO_CALL('POST', fullUrl, fullOptions);
 }
 
 const PROFILE_MAP = {
@@ -365,7 +393,7 @@ const PROFILE_MAP = {
   P4: doHttpRequestP4,
 };
 
-const DEFAULT_PROFILE_NAME = 'P2'; // <-- change here to switch the default profile for http requests
+const DEFAULT_PROFILE_NAME = 'P1'; // <-- change here to switch the default profile for http requests
 const DEFAULT_PROFILE = PROFILE_MAP[DEFAULT_PROFILE_NAME];
 
 function selectHttpRequestProfileByName(name) {
@@ -401,10 +429,70 @@ function selectHttpRequestProfile(options) {
   return selectHttpRequestProfileByName(profileName);
 }
 
+function isJsonResponse(response) {
+  console.log('response headers', response.headers)
+  if (response.headers['content-type'].toLowerCase().startsWith('text')) {
+    return true; // TODO uzlabot
+  }
+  return false;
+}
+
+function peekResponseType(response) {
+  console.log('response headers', response.headers, typeof response.headers);
+  let header = response.headers.get('content-type')
+  console.log('🙈', header)
+  if (Array.isArray(header)) header = header[0]
+  console.log('🙈🙈', header)
+  if (header.toLowerCase().startsWith(RESPONSE_FORMAT_JSON)) {
+    return 'JSON';
+  }
+  if (header.toLowerCase().startsWith(RESPONSE_FORMAT_XML)) {
+    return 'XML';
+  }
+  if (header.toLowerCase().startsWith('text')) {
+    return 'HTML';
+  }
+  return 'unk';
+}
+
 // ---------------------
 
 Meteor.methods({
 
+  /**
+   *
+   * @param {*} list: {
+   *   projectId,
+   *   versionId,
+   *   diagramId,
+   *   paging_info: {},
+   *   options: {
+   *     params: {
+   *       params: {
+   *         "default-graph-uri": graph_iri,
+   *         query: sparql,
+   *       }
+   *     },
+   *     endpoint,
+   *     endpointUsername?,
+   *     endpointPassword?,
+   *   }}
+   *   }
+   * }
+   * @returns {
+   *   status,
+   *   result: {
+   *     sparql: {
+   *       head: [],
+   *       results: [ result ]
+   *     }
+   *   },
+   *   error: string | { response: { content } }
+   * }
+   *
+   * status 503 - endpoint unreachable
+   * status 504 - results unreadable
+   */
   async executeSparql(list) {
     const user_id = Meteor.userId();
 
@@ -455,9 +543,9 @@ Meteor.methods({
         const httpOptions = { ...authOptions };
         // let httpOptions = Object.assign({}, count_options.params, authOptions); // ?? vai count_options.params var saturēt ko noderīgu?
 
-        const qres = HTTP_REQUEST_FN(count_options.endPoint, httpOptions, query, namedGraph, true);
+        const qres = await HTTP_REQUEST_FN(count_options.endpoint, httpOptions, query, namedGraph, true);
 
-        if (qres.statusCode === 200) {
+        if (qres.status === 200) {
           const content = JSON.parse(qres.content);
           number_of_rows = content.results.bindings[0].number_of_rows_in_query_xyz.value;
           sparql_log_entry.successfull = true;
@@ -502,45 +590,24 @@ Meteor.methods({
     sparql_log_entry.number_of_rows = number_of_rows;
     await add_sparql_log(sparql_log_entry);
 
-    // const Future = Npm.require('fibers/future'); // FIXME
-    const future = new Future();
+    // to modify endpoint by adding URL encoded querry
+    const { query } = options.params.params;
+    const namedGraph = options.params.params['default-graph-uri'];
+
+    // query = encodeQuery(query);
+    // options.endpoint = options.endpoint + '?'+ 'default-graph-uri=' + namedGraph +'&query=' + query;
+
+    const httpOptions = { ...authOptions };
+    // let httpOptions = Object.assign({}, options.params, authOptions);
 
     try {
-      // to modify endpoint by adding URL encoded querry
-      const { query } = options.params.params;
-      const namedGraph = options.params.params['default-graph-uri'];
+      let errorMessage;
 
-      // query = encodeQuery(query);
-      // options.endPoint = options.endPoint + '?'+ 'default-graph-uri=' + namedGraph +'&query=' + query;
-
-      const httpOptions = { ...authOptions };
-      // let httpOptions = Object.assign({}, options.params, authOptions);
-
-      HTTP_REQUEST_FN(options.endPoint, httpOptions, query, namedGraph, false, (err, resp) => {
-        if (err) {
-          future.return({
-            status: 505,
-            error: err,
-            limit_set: false,
-            number_of_rows: 0,
-          });
-        }
-
-        if (resp.statusCode !== 200) {
-          if (resp.headers['content-type'].toLowerCase().startsWith('text')) {
-            let error_message = resp.content;
-            if (error_message.length > 514) error_message = error_message.substring(0, 514) + "...";
-            future.return({ status: 504, error: resp.content, limit_set: false, number_of_rows: 0 });
-          } else {
-            future.return({ status: 504, error: 'bad response from the endpoint', limit_set: false, number_of_rows: 0 })
-          }
-        }
-
-        // 200
-        if (resp.headers['content-type'].toLowerCase().startsWith('application/json')) {
-          try {
+      const resp2 = await HTTP_REQUEST_FN(options.endpoint, httpOptions, query, namedGraph, false);
+      if (resp2.ok) {
+        if (isJsonResponse(resp2)) {
             // TODO: saskaņot JSON un XML formātu apstrādi; šobrīd JSON netiks saprasts
-            const json_res = { sparql: JSON.parse(resp.content) };
+            const json_res = { sparql: await resp2.json() };
             if (limit_set) {
               if (options.paging_info) {
                 json_res.limit = 50;
@@ -552,57 +619,123 @@ Meteor.methods({
             }
             json_res.limit_set = limit_set;
             json_res.number_of_rows = number_of_rows;
-            future.return({ status: 200, result: json_res });
-          } catch (err2) {
-            future.return({
-              status: 504,
-              error: new Error('Unable to parse JSON response'),
-              limit_set: false,
-              number_of_rows: 0,
-            });
+
+            return({ status: 200, result: json_res });
+        } else { // xml
+          let xmlText = await resp2.text();
+          let xmlJson = await xml2js.parseStringPromise(xmlText);
+
+          const result = {
+            ...xmlJson,
+            limit_set,
+            number_of_rows,
+          };
+
+          if (limit_set) {
+            if (options.paging_info) {
+              result.limit = 50;
+              result.offset = options.paging_info.offset + 50;
+            } else {
+              result.limit = 50;
+              result.offset = 50;
+            }
           }
-        } else {
-          xml2js.parseString(resp.content, (json_err, json_res) => {
-            if (json_err) {
-              future.return({
-                status: 504,
-                error: json_err,
-                limit_set: false,
-                number_of_rows: 0,
-              });
-            }
-
-            const result = {
-              ...json_res,
-              limit_set,
-              number_of_rows,
-            };
-
-            if (limit_set) {
-              if (options.paging_info) {
-                result.limit = 50;
-                result.offset = options.paging_info.offset + 50;
-              } else {
-                result.limit = 50;
-                result.offset = 50;
-              }
-            }
-            future.return({ status: 200, result });
-          });
+          return({ status: 200, result });
         }
-      });
-    } catch (ex) {
-      future.return({
-        status: 503,
-        ex,
+
+      } else {
+        let badText = await resp2.text();
+        return({
+          status: 505,
+          error: badText.length > 514
+            ? badText.slice(0, 514) + '...'
+            : badText,
+          limit_set: false,
+          number_of_rows: 0,
+        });
+      }
+    } catch(err) {
+      return({
+        status: 504,
+        // error: new Error('Unable to parse JSON response'),
+        error: 'bad response from the endpoint: ' + err.message,
         limit_set: false,
-        number_of_rows: 0,
-      });
+        number_of_rows: 0 })
     }
 
-    return future.wait();
   },
 
+
+
+  async testProjectEndpoint(options) {
+    const user_id = Meteor.userId();
+    debugger;
+    if (!(await is_project_member(user_id, options))) return null;
+
+    console.log('in test endpoint');
+    console.log('options:', options);
+
+    if (!options.endpoint) {
+      console.error('No data specified');
+      return {
+        status: 500,
+      };
+    }
+
+    const HTTP_REQUEST_FN = selectHttpRequestProfile(options);
+
+    const httpOptions = {};
+
+    if (hasAuthInfo(options)) {
+      httpOptions.auth = makeAuthString(options);
+    }
+
+    // httpOptions.timeout = 100;
+    // let x = setTimeout(() => {
+    //     console.log('timeout in endpoint test');
+    //     future.return({status: 408});
+    // }, 3000);
+
+    try {
+      console.log('😎')
+      // let r = await HTTP_REQUEST_FN(options.endpoint, httpOptions, ENDPOINT_TEST_QUERY, options.uri, false);
+      let r = await HTTP_REQUEST_FN(options.endpoint, httpOptions, ENDPOINT_TEST_QUERY, options.uri, true);
+      console.log('😎 😎')
+
+      if (r.ok) {
+        let resposeFormat = peekResponseType(r)
+        if (resposeFormat === 'JSON') {
+          let data = await r.json();
+          // console.log('😎 😎 😎', data)
+          console.log('😎 😎 😎', JSON.stringify(data, null, 2))
+          return({ status: 200, });
+        } else if (resposeFormat === 'XML') {
+          let xmlText = await r.text();
+          let xmlJson = await xml2js.parseStringPromise(xmlText);
+          // console.log('😎 😎 😎 😎', xmlJson)
+          console.log('😎 😎 😎 😎', JSON.stringify(xmlJson, null, 2))
+          return({ status: 200, });
+        } else {
+          // TODO
+        }
+      }
+
+      console.log(`status not ok (${r.status})`);
+      console.log('😎 😎 😎 😎 😎')
+      if (r.status === 401) {
+        return({ status: 401, });
+      } else {
+        return({ status: 500, });
+      }
+
+    } catch(err) {
+      console.error('error while testing connection', err);
+      return({ status: 500, });
+    }
+
+  },
+
+/*
   async testProjectEndPointOld(options) {
     const user_id = Meteor.userId();
     if (!(await is_project_member(user_id, options))) return;
@@ -649,59 +782,6 @@ Meteor.methods({
       status: 200,
     };
   },
-
-  async testProjectEndPoint(options) {
-    const user_id = Meteor.userId();
-    if (!(await is_project_member(user_id, options))) return null;
-
-    console.log('in test endpoint');
-    console.log('options:', options);
-
-    if (!options.endpoint) {
-      console.error('No data specified');
-      return {
-        status: 500,
-      };
-    }
-
-    const HTTP_REQUEST_FN = selectHttpRequestProfile(options);
-
-    // const Future = Npm.require('fibers/future'); // FIXME
-    const future = new Future();
-
-    const httpOptions = {};
-
-    if (hasAuthInfo(options)) {
-      httpOptions.auth = makeAuthString(options);
-    }
-
-    // httpOptions.timeout = 100;
-    // let x = setTimeout(() => {
-    //     console.log('timeout in endpoint test');
-    //     future.return({status: 408});
-    // }, 3000);
-
-    HTTP_REQUEST_FN(options.endpoint, httpOptions, ENDPOINT_TEST_QUERY, options.uri, false, (err, resp) => {
-      if (err) {
-        console.log(err);
-        if (err.response.statusCode === 401) {
-          future.return({ status: 401, });
-        } else {
-          future.return({ status: 500, });
-        }
-      } else {
-        xml2js.parseString(resp.content, (json_err, json_res) => {
-          if (json_err) {
-            console.log(json_err);
-            future.return({ status: 500, });
-          } else {
-            future.return({ status: 200, });
-          }
-        });
-      }
-    });
-
-    return future.wait();
-  },
+*/
 
 });
