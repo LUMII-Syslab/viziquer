@@ -440,11 +440,6 @@ Meteor.publish("Diagram_Locker", async function(list) {
 
 			changed: async function(new_doc, old_doc) {
 				var user = await Users.findOneAsync({systemId: new_doc["editingUserId"]});
-
-				// if (old_doc["editingUserId"]) {
-				// 	self.removed('Users', old_doc["editingUserId"]);
-				// }
-
 				if (new_doc["editingUserId"] && user) {
 					self.added("Users", new_doc["editingUserId"], user);
 				}
@@ -460,9 +455,11 @@ Meteor.publish("Diagram_Locker", async function(list) {
 
 		self.ready();
 
-		self.onStop(function () {
-			handle.stop();
-		});
+		if (handle && typeof handle.stop === "function") {
+			self.onStop(function () {
+				handle.stop();
+			});
+		}
 	}
 
 });
