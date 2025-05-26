@@ -294,7 +294,7 @@ Meteor.methods({
 					var lines = [];
 
 					//iterates over boxes
-					_.each(elements, async function(element) {
+					for (const element of elements) {
 						if (element["type"] == "Box") {
 							var old_id = element["_id"];
 
@@ -314,10 +314,10 @@ Meteor.methods({
 							//strores old_id -> new_id
 							old_new_id_list[old_id] = new_id;
 						}
-					});
+					}
 
 					//iterates over lines
-					_.each(elements, async function(element) {
+					for (const element of elements) {
 						if (element["type"] == "Line") {
 							var old_id = element["_id"];
 
@@ -355,25 +355,25 @@ Meteor.methods({
 								old_new_id_list[old_id] = new_id;
 							}
 						}
-					});
+					}
 
-					_.each(compartments, async function(compartment) {
+					for (const compartment of compartments) {
 						delete compartment["_id"];
 						compartment["elementId"] = old_new_id_list[compartment["elementId"]];
 
 						_.extend(compartment, new_ids);
 
 						await Compartments.insertAsync(compartment);
-					});
+					}
 
-					_.each(elements_sections, async function(element_section) {
+					for (const element_section of elements_sections) {
 						delete element_section["_id"];
 						element_section["elementId"] = old_new_id_list[element_section["elementId"]];
 
 						_.extend(element_section, new_ids);
 
 						await ElementsSections.insertAsync(element_section);
-					});
+					}
 
 					if (!x && !y) {
 						await Clipboard.updateAsync({_id: clipboard["_id"]}, {$inc: {count: 1}});
@@ -525,11 +525,11 @@ async function resize_element(list, query, system_id) {
 
 	await Elements.updateAsync(elem_query, {$set: elem_update});
 
-	_.each(list["lines"], async function(line) {
+	for (const line of list["lines"]) {
 		var line_query = {_id: line["_id"],};
 		_.extend(line_query, query);
 		await Elements.updateAsync(line_query, {$set: {points: line["points"]}});
-	});
+	}
 }
 
 async function change_position(list, query, system_id) {
@@ -576,7 +576,7 @@ async function change_position(list, query, system_id) {
 
 	if (list["movedBoxes"]) {
 
-		_.each(list["movedBoxes"], async function(box) {
+		for (const box of list["movedBoxes"]) {
 			var box_query = {_id: box.id, type: "Box"};
 			_.extend(box_query, query);
 
@@ -598,7 +598,7 @@ async function change_position(list, query, system_id) {
 			}
 
 			await Elements.updateAsync(box_query, {$set: update});
-		});
+		}
 
 	}
 
@@ -624,9 +624,16 @@ async function delete_elements(system_id, list) {
 					]};
 
 	if (list["projectId"])
-		_.each(query["$or"], function(or_query) {or_query["projectId"] = list["projectId"];});
-	else if (list["toolId"])
-		_.each(query["$or"], function(or_query) {or_query["toolId"] = list["toolId"];});
+		// _.each(query["$or"], function(or_query) {
+		for (const or_query of query["$or"]) {
+			or_query["projectId"] = list["projectId"];
+		}
+	else if (list["toolId"]) {
+		// _.each(query["$or"], function(or_query) {
+		for (const or_query of query["$or"]) {
+			or_query["toolId"] = list["toolId"];
+		}
+	}
 	else
 		return;
 
@@ -687,16 +694,18 @@ async function get_compartment_type_names(compartments) {
 
 
 function add_element_type_names(elements, element_type_names) {
-	_.each(elements, function(element) {
+	// _.each(elements, function(element) {
+	for (const element of elements) {
 		_.extend(element, {typeName: element_type_names[element.elementTypeId]});
-	});
+	}
 }
 
 
 function add_compartment_type_names(compartments, compartemnt_type_names) {
-	_.each(compartments, function(compartment) {
+	// _.each(compartments, function(compartment) {
+	for (const compartment of compartments) {
 		_.extend(compartment, {typeName: compartemnt_type_names[compartment.compartmentTypeId]});
-	});
+	}
 }
 
 
@@ -715,15 +724,15 @@ async function add_element_type_ids(elements, diagram_id) {
 		elem_types_names_map[elem_type.name] = elem_type._id;
 	});
 
-	_.each(elements, function(elem) {
-						let elem_type_id = elem.elementTypeId;
-						let new_elem_type_id = elem_type_id;
-						if (!elem_types_ids_map[elem_type_id]) {
-							new_elem_type_id = elem_types_names_map[elem.typeName];
-						}
+	for (const elem of elements) {
+		let elem_type_id = elem.elementTypeId;
+		let new_elem_type_id = elem_type_id;
+		if (!elem_types_ids_map[elem_type_id]) {
+			new_elem_type_id = elem_types_names_map[elem.typeName];
+		}
 
-						_.extend(elem, {elementTypeId: new_elem_type_id,});
-					});
+		_.extend(elem, {elementTypeId: new_elem_type_id,});
+	}
 }
 
 
@@ -742,16 +751,18 @@ async function add_compartment_type_ids(compartments, diagram_id) {
 		compart_types_names_map[compart_type.name] = compart_type._id;
 	});
 
-	_.each(compartments, function(compart) {
-							// let compart_type_id = compart.elementTypeId;
-							let compart_type_id = compart.compartmentTypeId;
-							let new_compart_type_id = compart_type_id;
-							if (!compart_types_ids_map[compart_type_id]) {
-								new_compart_type_id = compart_types_names_map[compart.typeName];
-							}
+	// _.each(compartments, function(compart) {
 
-							_.extend(compart, {compartmentTypeId: new_compart_type_id,});
-						});
+	for (const compart of compartments) {
+		// let compart_type_id = compart.elementTypeId;
+		let compart_type_id = compart.compartmentTypeId;
+		let new_compart_type_id = compart_type_id;
+		if (!compart_types_ids_map[compart_type_id]) {
+			new_compart_type_id = compart_types_names_map[compart.typeName];
+		}
+
+		_.extend(compart, {compartmentTypeId: new_compart_type_id,});
+	}
 }
 
 
