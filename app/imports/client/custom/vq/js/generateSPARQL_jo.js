@@ -1090,23 +1090,25 @@ async function executeSparqlString(sparql, paging_info) {
     return;
   };
 
-  var list = {projectId: Session.get("activeProject"),
-              versionId: Session.get("versionId"),
-              diagramId: Session.get("activeDiagram"),
-              options: {
-                        params: {
-                               params: {
-                                     "default-graph-uri": graph_iri,
-                                      query: sparql,
-                               },
-                        },
-						endPoint: endpoint,
-						endpointUsername: proj.endpointUsername,
-						endpointPassword: proj.endpointPassword,
-						// httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
-                        paging_info: paging_info
-              },
-           };
+  var list = {
+    projectId: Session.get("activeProject"),
+    versionId: Session.get("versionId"),
+    diagramId: Session.get("activeDiagram"),
+    options: {
+      params: {
+        params: {
+          "default-graph-uri": graph_iri,
+          query: sparql,
+        },
+      },
+      endpoint,
+      endpointUsername: proj.endpointUsername,
+      endpointPassword: proj.endpointPassword,
+      // httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
+      paging_info: paging_info
+    },
+  };
+
 	try {
 		const res = await Utilities.callMeteorMethodAsync("executeSparql", list);
 

@@ -1,6 +1,7 @@
 import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '../../../db/platform/collections.js'
 import { is_project_member } from '../../../libs/platform/user_rights.js'
 import { is_public_diagram } from '../../platform/_helpers.js'
+import { fetch, Headers } from 'meteor/fetch';
 
 Meteor.methods({
 
@@ -83,15 +84,23 @@ Meteor.methods({
 		}
 	},
 
-    uploadProjectDataByUrl: async function(list) {
+  uploadProjectDataByUrl: async function(list) {
 
 		//console.log("in uploadProjectDataByUrl", list)
-        var result = HTTP.call('GET', list.url);
+        // var result = HTTP.call('GET', list.url);
 		//console.log("result", result.data)
-		list.data = result.data;
+		// list.data = result.data;
+    try {
+      const resp = await fetch(list.url);
+      list.data = await resp.json();
 
-		await uploadProject(list);
-    },
+  		await uploadProject(list);
+    } catch(err) {
+      console.error('error while fetching project data', err)
+      // list.data = {}
+    }
+
+  },
 
 	uploadProjectData: async function(list) {
 

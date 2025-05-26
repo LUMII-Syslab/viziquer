@@ -132,7 +132,7 @@ Template.diagramsRibbon.helpers({
 		else {
 			tool.schema = '';
 			tool.hasSchema = false;
-		}	
+		}
 
 		return tool;
 	},
@@ -600,7 +600,7 @@ Template.uploadProject.helpers({
 	},
 	projects: function() {
 		var result = [];
-		
+
 		var project = Projects.findOne({_id: Session.get("activeProject")});
 		if (project) {
 
@@ -701,14 +701,14 @@ Template.ontologySettings.onCreated(function() {
 
 Template.ontologySettings.onDestroyed(function() {
 	Session.set("msg", undefined);
-	
+
 });
 
 
 Template.ontologySettings.events({
 
 	'click #ok-ontology-settings' : async function() {
-		
+
 		// var myRows = [];
 		// var $headers = $("th");
 		// var $rows = $("tbody tr").each(function(index) {
@@ -722,7 +722,7 @@ Template.ontologySettings.events({
 		// myRows[index]["index"] = index;
 		// });
 
-		
+
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 					diagramId: Session.get("activeDiagram"),
@@ -758,7 +758,7 @@ Template.ontologySettings.events({
 		dataShapes.clearSchema();
 		await dataShapes.changeActiveProjectFull(list);
 		await Template.schemaTree.rendered();  // Šis ir vajadzīgs publiskajām diagrammām
-		
+
 	},
 
 	'click #use-default-grouping-separator' : function() {
@@ -804,47 +804,47 @@ Template.ontologySettings.events({
 		Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
 		Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
 		//Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
-		// if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) 
+		// if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" )
 			// Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
-		// else 
+		// else
 			// Template.ontologySettings.graphs.set([]);
 
 	},
 
-	"click #test-endpoint": function() {
+	"click #test-endpoint": async function() {
 
-		var list = {projectId: Session.get("activeProject"),
-					versionId: Session.get("versionId"),
-					uri: $("#ontology-uri").val(),
-					endpoint: $("#ontology-endpoint").val(),
-					endpointUsername: $("#endpoint-username").val(),
-					endpointPassword: $("#endpoint-password").val(),
-					// httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
-				};
+    const list = {
+      projectId: Session.get("activeProject"),
+      versionId: Session.get("versionId"),
+      uri: $("#ontology-uri").val(),
+      endpoint: $("#ontology-endpoint").val(),
+      endpointUsername: $("#endpoint-username").val(),
+      endpointPassword: $("#endpoint-password").val(),
+      // httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
+    };
 
-		Utilities.callMeteorMethod("testProjectEndPoint", list, function(res) {
+		const res = await Utilities.callMeteorMethodAsync("testProjectEndpoint", list);
 
-			var class_name = "danger";
-			var text = "Connection is not ok";
+    var class_name = "danger";
+    var text = "Connection is not ok";
 
-			if (res.status == 200) {
-				class_name = "success";
-				text = "Connection is ok";
-			} else if (res.status === 401) {
-				text = "Connection failed; probably wrong credentials";
-			}
+    if (res.status == 200) {
+      class_name = "success";
+      text = "Connection is ok";
+    } else if (res.status === 401) {
+      text = "Connection failed; probably wrong credentials";
+    }
 
-			var msg = {text: text,
-						class: class_name,
-					};
+    var msg = {text: text,
+          class: class_name,
+        };
 
-			Session.set("msg", msg);
+    Session.set("msg", msg);
 
-			setTimeout(function() {
-				Session.set("msg", undefined);
-			}, 4000);
+    setTimeout(function() {
+      Session.set("msg", undefined);
+    }, 4000);
 
-		});
 
 	},
 	// 'click #dss-schema' : function(e) {
@@ -880,11 +880,11 @@ Template.ontologySettings.events({
 
 	//removes context menu item
 	'click .remove-graph-menu-item': function(e) {
-		
+
 		var index = e.target.parentElement.parentElement.parentElement.rowIndex;
 		if(typeof index === "undefined") index = e.target.parentElement.parentElement.parentElement.parentElement.rowIndex;
 		index--;
-		
+
 		var myRows = [];
 		var $headers = $("th");
 		var $rows = $("tbody tr").each(function(index) {
@@ -897,7 +897,7 @@ Template.ontologySettings.events({
 			});
 			myRows[index]["index"] = index;
 		});
-		
+
 		var graphsT = [];
 		var i = 0;
 		for(var graph in myRows){
@@ -906,7 +906,7 @@ Template.ontologySettings.events({
 				i++;
 			}
 		}
-		
+
 		Template.ontologySettings.graphs.set(graphsT);
 	},
 
@@ -933,7 +933,7 @@ Template.ontologySettings.rendered = async function() {
 	var tags = rr.tags;
 	tags.unshift({name:"All", display_name: "All schemas"});
 	Template.ontologySettings.schemaTags.set(tags);
-	
+
 	var schemas = rr.schemas;
 	Template.ontologySettings.allSchemas.set(schemas);
 	schemas = getSchemas('All');
@@ -950,7 +950,7 @@ Template.ontologySettings.rendered = async function() {
 
 		// if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
 		// else Template.ontologySettings.graphs.set([]);
-		
+
 		if (proj.schema != undefined && proj.schema != "") {
 			var selected = schemas.filter(function(o){ return o.display_name == proj.schema});
 			if ( selected.length > 0 ) {
@@ -966,7 +966,7 @@ Template.ontologySettings.helpers({
 	msg: function() {
 		return Session.get("msg");
 	},
-	
+
 	project: function() {
 		return Projects.findOne({_id: Session.get("activeProject")});
 	},
@@ -986,7 +986,7 @@ Template.ontologySettings.helpers({
 		//	return endpoint;
 		// }
 	},
-	
+
 	schemas: function() {
 		return Template.ontologySettings.schemas.get();
 	},
@@ -994,7 +994,7 @@ Template.ontologySettings.helpers({
 	schema_tags:function() {
 		return Template.ontologySettings.schemaTags.get();
 	},
-	
+
 	useStringLiteralConversionList: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 
