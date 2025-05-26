@@ -546,22 +546,52 @@ Meteor.methods({
         // const httpOptions = { ...authOptions };
         // let httpOptions = Object.assign({}, count_options.params, authOptions); // ?? vai count_options.params var saturēt ko noderīgu?
 
-        const countRequest = HTTP_REQUEST_BUILDER(countOptions.endpoint, options, query, namedGraph, PREFER_JSON_RESPONSE, TIMEOUT_TEST);
+        // const countRequest = HTTP_REQUEST_BUILDER(countOptions.endpoint, options, query, namedGraph, PREFER_JSON_RESPONSE, TIMEOUT_TEST);
+        const countRequest = HTTP_REQUEST_BUILDER(countOptions.endpoint, options, query, namedGraph, true, TIMEOUT_TEST);
         const countResponse = await fetch(countRequest);
 
         if (countResponse.ok) {
-          const content = await countResponse.json();
-          number_of_rows = content.results.bindings[0].number_of_rows_in_query_xyz.value;
-          sparql_log_entry.successfull = true;
-          if (number_of_rows > SPARQL_PAGE_SIZE) {
-            options.params.params.query = buildEnhancedQuery(
-              options.params.params.query,
-              'SELECT',
-              'SELECT * WHERE {',
-              `} LIMIT ${SPARQL_PAGE_SIZE}`,
-            );
-            limit_set = true;
+          const respType = peekResponseType(countResponse);
+          if (respType === 'JSON') {
+            const content = await countResponse.json();
+            console.log('👽 👽', JSON.stringify(content, null, 2));
+
+            number_of_rows = content.results.bindings[0].number_of_rows_in_query_xyz.value;
+
+            sparql_log_entry.successfull = true;
+            if (number_of_rows > SPARQL_PAGE_SIZE) {
+              options.params.params.query = buildEnhancedQuery(
+                options.params.params.query,
+                'SELECT',
+                'SELECT * WHERE {',
+                `} LIMIT ${SPARQL_PAGE_SIZE}`,
+              );
+              limit_set = true;
+            }
+          } else if (respType === 'XML') {
+            const content = await countResponse.text();
+            const xmlJson = await xml2js.parseStringPromise(content);
+            console.log('👽 👽', JSON.stringify(xmlJson, null, 2));
+
+            number_of_rows = xmlJson.sparql.results[0].result[0].binding[0].literal[0]._;
+
+            sparql_log_entry.successfull = true;
+            if (number_of_rows > SPARQL_PAGE_SIZE) {
+              options.params.params.query = buildEnhancedQuery(
+                options.params.params.query,
+                'SELECT',
+                'SELECT * WHERE {',
+                `} LIMIT ${SPARQL_PAGE_SIZE}`,
+              );
+              limit_set = true;
+            }
+          } else {
+            console.error(`unsupported response type ${respType}`);
+            sparql_log_entry.successfull = false;
+            sparql_log_entry.error_message = `Unsupported response type: ${respType}`;
+            throw new Error(sparql_log_entry.error_message);
           }
+
         }
       } catch (ex) {
         // ERROR - pass the original SPARQL to the server
