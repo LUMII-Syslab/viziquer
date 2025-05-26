@@ -6,7 +6,6 @@ import { is_public_diagram } from '../../platform/_helpers.js'
 
 import { VQ_sparql_logs } from '../../../db/custom/vq/collections.js'
 
-// const xml2js = Npm.require('xml2js');
 import xml2js from 'xml2js';
 
 function removeMultilines(q) {
@@ -115,14 +114,6 @@ function detectContentType(content) {
   return `${ct} (${text.length} chars, "${text.length < 32 ? text : `${text.slice(0, 32)}...`}")`;
 }
 
-function isJsonResponse(response) {
-  console.log('response headers', response.headers)
-  if (response.headers.get('content-type').toLowerCase().startsWith('text')) {
-    return true; // TODO uzlabot
-  }
-  return false;
-}
-
 function peekResponseType(response) {
   console.log('response headers', response.headers, typeof response.headers);
   let header = response.headers.get('content-type')
@@ -145,6 +136,7 @@ const TIMEOUT_TEST = 5_000;
 const TIMEOUT_EXECUTE = 15_000;
 
 const SPARQL_PAGE_SIZE = 50;
+
 // const PREFER_JSON_RESPONSE = true;
 const PREFER_JSON_RESPONSE = false;
 
@@ -426,7 +418,7 @@ const PROFILE_MAP = {
   P4: createHttpRequestP4,
 };
 
-const DEFAULT_PROFILE_NAME = 'P1'; // <-- change here to switch the default profile for http requests
+const DEFAULT_PROFILE_NAME = 'P2'; // <-- change here to switch the default profile for http requests
 const DEFAULT_PROFILE = PROFILE_MAP[DEFAULT_PROFILE_NAME];
 
 function selectHttpRequestProfileByName(name) {
@@ -604,7 +596,7 @@ Meteor.methods({
 
     // to modify endpoint by adding URL encoded querry
     const { query } = options.params.params;
-    const namedGraph = options.params.params['default-graph-uri'];
+    const namedGraph = options.params.params[PARAM_DEFAULT_GRAPH_URI];
 
     // query = encodeQuery(query);
     // options.endpoint = options.endpoint + '?'+ 'default-graph-uri=' + namedGraph +'&query=' + query;
@@ -619,7 +611,8 @@ Meteor.methods({
       const resp2 = await fetch(req);
 
       if (resp2.ok) {
-        if (isJsonResponse(resp2)) {
+        const respType = peekResponseType(resp2);
+        if (respType === 'JSON') {
             // TODO: saskaņot JSON un XML formātu apstrādi; šobrīd JSON netiks saprasts
             const json_res = { sparql: await resp2.json() };
             if (limit_set) {
@@ -635,7 +628,7 @@ Meteor.methods({
             json_res.number_of_rows = number_of_rows;
 
             return({ status: 200, result: json_res });
-        } else { // xml
+        } else if (respType === 'XML') { // xml
           let xmlText = await resp2.text();
           let xmlJson = await xml2js.parseStringPromise(xmlText);
 
@@ -655,6 +648,9 @@ Meteor.methods({
             }
           }
           return({ status: 200, result });
+        } else {
+          console.error(`unsupported response type ${respType}`)
+          return { status: 400 }
         }
 
       } else {
