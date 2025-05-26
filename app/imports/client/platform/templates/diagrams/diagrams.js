@@ -811,40 +811,40 @@ Template.ontologySettings.events({
 
 	},
 
-	"click #test-endpoint": function() {
+	"click #test-endpoint": async function() {
 
-		var list = {projectId: Session.get("activeProject"),
-					versionId: Session.get("versionId"),
-					uri: $("#ontology-uri").val(),
-					endpoint: $("#ontology-endpoint").val(),
-					endpointUsername: $("#endpoint-username").val(),
-					endpointPassword: $("#endpoint-password").val(),
-					// httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
-				};
+    const list = {
+      projectId: Session.get("activeProject"),
+      versionId: Session.get("versionId"),
+      uri: $("#ontology-uri").val(),
+      endpoint: $("#ontology-endpoint").val(),
+      endpointUsername: $("#endpoint-username").val(),
+      endpointPassword: $("#endpoint-password").val(),
+      // httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
+    };
 
-		Utilities.callMeteorMethod("testProjectEndpoint", list, function(res) {
+		const res = await Utilities.callMeteorMethodAsync("testProjectEndpoint", list);
 
-			var class_name = "danger";
-			var text = "Connection is not ok";
+    var class_name = "danger";
+    var text = "Connection is not ok";
 
-			if (res.status == 200) {
-				class_name = "success";
-				text = "Connection is ok";
-			} else if (res.status === 401) {
-				text = "Connection failed; probably wrong credentials";
-			}
+    if (res.status == 200) {
+      class_name = "success";
+      text = "Connection is ok";
+    } else if (res.status === 401) {
+      text = "Connection failed; probably wrong credentials";
+    }
 
-			var msg = {text: text,
-						class: class_name,
-					};
+    var msg = {text: text,
+          class: class_name,
+        };
 
-			Session.set("msg", msg);
+    Session.set("msg", msg);
 
-			setTimeout(function() {
-				Session.set("msg", undefined);
-			}, 4000);
+    setTimeout(function() {
+      Session.set("msg", undefined);
+    }, 4000);
 
-		});
 
 	},
 	// 'click #dss-schema' : function(e) {
