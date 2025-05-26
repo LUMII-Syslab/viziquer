@@ -115,11 +115,9 @@ function detectContentType(content) {
 }
 
 function peekResponseType(response) {
-  console.log('response headers', response.headers, typeof response.headers);
-  let header = response.headers.get('content-type')
-  console.log('🙈', header)
-  if (Array.isArray(header)) header = header[0]
-  console.log('🙈🙈', header)
+  // console.log('response headers', response.headers, typeof response.headers);
+  let header = response.headers.get('content-type');
+  // TODO - varbūt jāiemācās saņemt arī turtle utml?
   if (header.toLowerCase().startsWith(RESPONSE_FORMAT_JSON)) {
     return 'JSON';
   }
@@ -151,6 +149,7 @@ const PARAM_DEFAULT_GRAPH_URI = 'default-graph-uri';
 
 const RESPONSE_FORMAT_XML = 'application/sparql-results+xml';
 const RESPONSE_FORMAT_JSON = 'application/sparql-results+json';
+const RESPONSE_FORMAT_TURTLE = 'text/turtle';
 const RESPONSE_FORMAT_XML_SHORT = 'xml';
 const RESPONSE_FORMAT_JSON_SHORT = 'json';
 
@@ -240,6 +239,7 @@ const DO_CALL = DO_CALL_DEBUG;
 // NOTE: Blazegraph seems to like User-Agent.
 
 //#region profiles defs
+
 /**
  * HTTP request profiles for calling SPARQL endpoints:
  *
@@ -252,7 +252,7 @@ const DO_CALL = DO_CALL_DEBUG;
  */
 
 function buildOptionsBase(httpOptions, method, timeout = 0) {
-  if (httpOptions) console.log('⛑️ ⛑️ ⛑️', httpOptions)
+  // if (httpOptions) console.log('⛑️ ⛑️ ⛑️', httpOptions)
   let base = {
     // ...httpOptions,
     method,
@@ -324,7 +324,7 @@ function createHttpRequestP2(url, httpOptions, query, namedGraph, preferJSON, ti
     fullOptions.headers.append(HEADER_ACCEPT, RESPONSE_FORMAT_XML);
   }
   fullOptions.body = params.toString();
-  console.log('👍', params, params.toString())
+  // console.log('👍', params, params.toString())
 
   // return DO_CALL('POST', fullUrl, fullOptions);
   return new Request(fullUrl, fullOptions);
@@ -554,7 +554,7 @@ Meteor.methods({
           const respType = peekResponseType(countResponse);
           if (respType === 'JSON') {
             const content = await countResponse.json();
-            console.log('👽 👽', JSON.stringify(content, null, 2));
+            // console.log('👽 👽', JSON.stringify(content, null, 2));
 
             number_of_rows = content.results.bindings[0].number_of_rows_in_query_xyz.value;
 
@@ -571,7 +571,7 @@ Meteor.methods({
           } else if (respType === 'XML') {
             const content = await countResponse.text();
             const xmlJson = await xml2js.parseStringPromise(content);
-            console.log('👽 👽', JSON.stringify(xmlJson, null, 2));
+            // console.log('👽 👽', JSON.stringify(xmlJson, null, 2));
 
             number_of_rows = xmlJson.sparql.results[0].result[0].binding[0].literal[0]._;
 
@@ -727,24 +727,20 @@ Meteor.methods({
     const httpOptions = {};
 
     try {
-      console.log('😎')
       // let r = await HTTP_REQUEST_BUILDER(options.endpoint, httpOptions, ENDPOINT_TEST_QUERY, options.uri, false);
       let req = HTTP_REQUEST_BUILDER(options.endpoint, httpOptions, ENDPOINT_TEST_QUERY, options.uri, PREFER_JSON_RESPONSE, TIMEOUT_TEST);
       let resp = await fetch(req);
-      console.log('😎 😎')
 
       if (resp.ok) {
         let resposeFormat = peekResponseType(resp)
         if (resposeFormat === 'JSON') {
           let data = await resp.json();
-          // console.log('😎 😎 😎', data)
-          console.log('😎 😎 😎', JSON.stringify(data, null, 2))
+          // console.log('😎 😎 😎', JSON.stringify(data, null, 2))
           return({ status: 200, });
         } else if (resposeFormat === 'XML') {
           let xmlText = await resp.text();
           let xmlJson = await xml2js.parseStringPromise(xmlText);
-          // console.log('😎 😎 😎 😎', xmlJson)
-          console.log('😎 😎 😎 😎', JSON.stringify(xmlJson, null, 2))
+          // console.log('😎 😎 😎 😎', JSON.stringify(xmlJson, null, 2))
           return({ status: 200, });
         } else {
           // TODO
@@ -752,7 +748,6 @@ Meteor.methods({
       }
 
       console.log(`status not ok (${resp.status})`);
-      console.log('😎 😎 😎 😎 😎')
       if (resp.status === 401) {
         return({ status: 401, });
       } else {
