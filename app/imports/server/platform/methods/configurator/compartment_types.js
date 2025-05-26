@@ -334,7 +334,7 @@ function get_compartment_style_by_id(styles, id) {
 		return;
 	}
 
-	for (var i=0;i<styles.length;i++) {
+	for (let i=0;i<styles.length;i++) {
 		var tmp_style = styles[i];
 		if (tmp_style["id"] === id) {
 			return tmp_style;
@@ -346,7 +346,7 @@ function build_compartment_style_update(update, styles, style_id) {
 
 	var base_style_obj = styles[0];
 	if (base_style_obj && base_style_obj["style"])
-		for (var key in base_style_obj["style"])
+		for (let key in base_style_obj["style"])
 			update["style." + key] = base_style_obj["style"][key];
 
 	//selecting the new style
@@ -355,7 +355,7 @@ function build_compartment_style_update(update, styles, style_id) {
 	var new_style = new_style_obj["style"];
 
 	//overraiding the base style
-	for (var key in new_style)
+	for (let key in new_style)
 		update["style." + key] = new_style[key];
 
 }
@@ -365,13 +365,13 @@ function build_element_style_update(update, styles, style_id) {
 	var base_style_obj = styles[0];
 	if (base_style_obj && base_style_obj["style"]) {
 
-		for (var key in base_style_obj["style"]["elementStyle"])
+		for (let key in base_style_obj["style"]["elementStyle"])
 			update["style.elementStyle." + key] = base_style_obj["style"]["elementStyle"][key];
 
-		for (var key in base_style_obj["style"]["startShapeStyle"])
+		for (let key in base_style_obj["style"]["startShapeStyle"])
 			update["style.startShapeStyle." + key] = base_style_obj["style"]["startShapeStyle"][key];
 
-		for (var key in base_style_obj["style"]["endShapeStyle"])
+		for (let key in base_style_obj["style"]["endShapeStyle"])
 			update["style.endShapeStyle." + key] = base_style_obj["style"]["endShapeStyle"][key];
 	}
 
@@ -379,13 +379,13 @@ function build_element_style_update(update, styles, style_id) {
 	var new_style_obj = get_element_style_by_id(styles, style_id);
 
 	//overraiding the base style
-	for (var key in new_style_obj["elementStyle"])
+	for (let key in new_style_obj["elementStyle"])
 		update["style.elementStyle." + key] = new_style_obj["elementStyle"][key];
 
-	for (var key in new_style_obj["startShapeStyle"])
+	for (let key in new_style_obj["startShapeStyle"])
 		update["style.startShapeStyle." + key] = new_style_obj["startShapeStyle"][key];
 
-	for (var key in new_style_obj["endShapeStyle"])
+	for (let key in new_style_obj["endShapeStyle"])
 		update["style.endShapeStyle." + key] = new_style_obj["endShapeStyle"][key];
 }
 
@@ -394,7 +394,7 @@ function get_element_style_by_id(styles, id) {
 	if (id === "NoStyle")
 		return;
 
-	for (var i=0;i<styles.length;i++) {
+	for (let i=0;i<styles.length;i++) {
 		var tmp_style = styles[i];
 		if (tmp_style["id"] === id) {
 			return tmp_style;

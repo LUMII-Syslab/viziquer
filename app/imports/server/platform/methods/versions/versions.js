@@ -60,7 +60,7 @@ Versions.after.insert(async function(user_id, doc) {
 
 	//diagram things
 	var diagram_list = {};
-	_.each(await diagrams.fetchAsync(), async function(diagram) {
+	for (const diagram of await diagrams.fetchAsync()) {
 		diagram["versionId"] = new_version_id;
 
 		var old_id = diagram["_id"];
@@ -71,9 +71,9 @@ Versions.after.insert(async function(user_id, doc) {
 
 		var new_id = await Diagrams.insertAsync(diagram, {removeEmptyStrings: false});
 		diagram_list[old_id] = new_id;
-	});
+	}
 
-	_.each(await users_settings.fetchAsync(), async function(user_settings) {
+	for (const user_settings of await users_settings.fetchAsync()) {
 		user_settings["versionId"] = new_version_id;
 		user_settings["diagramId"] = diagram_list[user_settings["diagramId"]];
 
@@ -93,10 +93,10 @@ Versions.after.insert(async function(user_id, doc) {
 			user_settings["documentsSelectedGroup"] = "none";
 
 		var new_user_diagram_id = await UserVersionSettings.insertAsync(user_settings);
-	});
+	}
 
 	var element_list = {};
-	_.each(await elements.fetchAsync(), async function(element) {
+	for (const element of await elements.fetchAsync()) {
 		element["versionId"] = new_version_id;
 		element["diagramId"] = diagram_list[element["diagramId"]];
 
@@ -111,10 +111,10 @@ Versions.after.insert(async function(user_id, doc) {
 
 		var new_elem_id = await Elements.insertAsync(element);
 		element_list[old_elem_id] = new_elem_id;
-	});
+	}
 
 
-	_.each(await compartments.fetchAsync(), async function(compartment) {
+	for (const compartment of await compartments.fetchAsync()) {
 		compartment["versionId"] = new_version_id;
 
 		compartment["diagramId"] = diagram_list[compartment["diagramId"]];
@@ -124,7 +124,7 @@ Versions.after.insert(async function(user_id, doc) {
 
 		delete compartment["_id"];
 		await Compartments.insertAsync(compartment, {removeEmptyStrings: false});
-	});
+	}
 
 
 	var notification = {projectId: project_id,

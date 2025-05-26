@@ -69,7 +69,7 @@ var Configurator = {
 			var extension_point = _.find(element_type["extensionPoints"], function(extensionPoint) {
 				return extensionPoint["extensionPoint"] === extension_point_name;
 			});
-				
+
 			if (extension_point) {
 				return extension_point.procedure;
 			}
@@ -92,19 +92,19 @@ var Configurator = {
 
 		var list = {
 					toolId: Session.get("toolId"),
-					versionId: Session.get("toolVersionId"),		
+					versionId: Session.get("toolVersionId"),
 					attrName: attr_name,
 					attrValue: attr_value
 				};
 
 	 	if (Session.get("activeElement")) {
-	 	
+
 	 		var elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
 	 		if (elem_type) {
 				_.extend(list, {diagramTypeId: Session.get("targetDiagramType"),
 								id: elem_type["_id"],
 							});
-							
+
 				Utilities.callMeteorMethod("updateElementType", list);
 	 		}
 		}
@@ -216,7 +216,7 @@ var Configurator = {
 				if (obj && obj["style"]) {
 					return obj["style"]["elementStyle"];
 				}
-			}	
+			}
 		}
 	},
 
@@ -254,7 +254,7 @@ var Configurator = {
 		if (collection["collection"] == "ElementTypes") {
 			var elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
 			if (elem_type) {
-				var list = {id: elem_type["_id"],
+				let list = {id: elem_type["_id"],
 							array: collection["array"],
 							data: table_data,
 						};
@@ -262,9 +262,9 @@ var Configurator = {
 			}
 		}
 
-		//diagram types	
+		//diagram types
 		else {
-			var list = {id: Session.get("targetDiagramType"),
+			let list = {id: Session.get("targetDiagramType"),
 						array: collection["array"],
 						data: table_data,
 					};
@@ -317,7 +317,7 @@ var Configurator = {
 
 		//diagram types
 		else {
-			var list = {id: Session.get("targetDiagramType"), push: data};
+			let list = {id: Session.get("targetDiagramType"), push: data};
 			Utilities.callMeteorMethod("addDiagramTypeKeystrokeOrItem", list);
 		}
 	},
@@ -338,7 +338,7 @@ var Configurator = {
 			}
 		}
 
-		//diagram types	
+		//diagram types
 		else {
 			var list = {id: Session.get("targetDiagramType"), field: field_update};
 			Utilities.callMeteorMethod("updateDiagramTypeKeystrokeOrItem", list);
@@ -362,7 +362,7 @@ function update_element_style_object(attr_name, attr_value, style_type) {
 		list["type"] = target_elem_type["type"];
 		list["toolId"] = Session.get("toolId");
 		list["styleId"] = target_elem_type["styles"][list["styleIndex"]]["id"];
-		list["elementId"] = Session.get("activeElement");		
+		list["elementId"] = Session.get("activeElement");
 
 		Utilities.callMeteorMethod("updateElementTypeStyle", list);
 	}
@@ -372,8 +372,8 @@ function update_element_style_object(attr_name, attr_value, style_type) {
 		list["elementId"] = Session.get("activeElement");
 		list["diagramId"] = Session.get("activeDiagram");
 		list["projectId"] = Session.get("activeProject");
-		list["versionId"] = Session.get("versionId");		
-		list["styleId"] = "custom";	
+		list["versionId"] = Session.get("versionId");
+		list["styleId"] = "custom";
 
 		Utilities.callMeteorMethod("updateElementStyle", list);
 	}

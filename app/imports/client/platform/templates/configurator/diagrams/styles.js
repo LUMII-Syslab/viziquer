@@ -96,11 +96,11 @@ function update_diagram_style_from_input(e) {
 function update_diagram_style(attr_name, attr_value) {
 
 	var target_diagram_type = DiagramTypes.findOne({diagramId: Session.get("activeDiagram")});
-	
+
 	//updating the diagram type
 	if (target_diagram_type) {
 
-		var list = {id: target_diagram_type["_id"],
+		let list = {id: target_diagram_type["_id"],
 					diagramId: Session.get("activeDiagram"),
 					toolId: Session.get("toolId"),
 					versionId: Session.get("toolVersionId"),
@@ -110,10 +110,10 @@ function update_diagram_style(attr_name, attr_value) {
 
 		Utilities.callMeteorMethod("updateDiagramTypeStyle", list);
 	}
-	
+
 	//updating the diagram
 	else {
-		var list = {id: Session.get("activeDiagram"),
+		let list = {id: Session.get("activeDiagram"),
 					attrName: attr_name,
 					attrValue: attr_value,
 					projectId: Session.get("activeProject"),

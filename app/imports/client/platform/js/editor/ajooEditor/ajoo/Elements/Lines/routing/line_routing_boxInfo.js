@@ -2,7 +2,7 @@ import ConnArea from './line_routing_connArea.js'
 import PointInfo from './line_routing_pointInfo.js'
 
 //******************************************************************************
-// BoxInfo 
+// BoxInfo
 //******************************************************************************
 var BoxInfo = function(info) {
 
@@ -84,12 +84,12 @@ BoxInfo.prototype.hasSideCrossings = function(paths, side) {
         if (path.n > 3)
             segments[dir].push((path.from === id) ? path.segm(3) : path.segm(path.n - 3));
     });
-    
+
     var segms = segments[1 - dir];
     var l = segms.length;
     if (l === 0)
         return false;
-    
+
     var f = 0;
     var i;
     _.each(segments[dir], function(segm) {
@@ -106,7 +106,7 @@ BoxInfo.prototype.hasSideCrossings = function(paths, side) {
             }
         });
     });
-    
+
     return rc;
 };
 BoxInfo.prototype.getTurn = function(path, side) {
@@ -152,11 +152,11 @@ BoxInfo.prototype.reduceSideCrossings = function(paths, side) {
     var self = this;
     var id = this.id;
     var levs, lev, turn, n;
-    
+
     // collect turns
     var turns = [];
     _.each(paths, function(path) {turns.push(self.getTurn(path, side)); });
-    
+
     // set coordinates
     var c = turns[0].lev[0];
     var coords = [[], [], [], []];
@@ -164,12 +164,12 @@ BoxInfo.prototype.reduceSideCrossings = function(paths, side) {
     // order 1 segm of turn list
     turns.sort((function(a, b) {return (a.lev[1] < b.lev[1]) ? -1 : (a.lev[1] > b.lev[1]) ? 1 : 0; }));
     coords[1] = _.map(turns, function(turn){ return turn.lev[1];  });
-    
+
     // order 2 segm of turn list
     turns.sort((function(a, b) {return self.Compare2Turns(a, b); }));
     var midPathIds = _.map(turns, function(turn){ return turn.owner.id;  });
     coords[2] = _.map(turns, function(turn){ return turn.lev[2];  });
-    
+
     // order 3 segm of turn list
     turns.sort((function(a, b) {return self.Compare3Turns(a, b); }));
     var farPathIds = _.map(turns, function(turn){ return turn.owner.id;  });
@@ -177,22 +177,22 @@ BoxInfo.prototype.reduceSideCrossings = function(paths, side) {
 
 //    console.log();
 //    var str = "\nCoors";
-//    _.each(coords, function(level, i) {  
-//        str += "\n\t" + i + ":"; 
-//        _.each(level, function(v, j) {  
-//            str += "\t" + v; 
+//    _.each(coords, function(level, i) {
+//        str += "\n\t" + i + ":";
+//        _.each(level, function(v, j) {
+//            str += "\t" + v;
 //        });
 //    });
 //    str += "\nPaths:";
-//    _.each(turns, function(turn, i){ 
-//        str += "\t" + turn.owner.id; 
+//    _.each(turns, function(turn, i){
+//        str += "\t" + turn.owner.id;
 //    });
 //    str += "\nType:";
-//    _.each(turns, function(turn, i){ 
-//        str += "\t" + turn.type; 
+//    _.each(turns, function(turn, i){
+//        str += "\t" + turn.type;
 //    });
 //    console.log(str);
-    
+
     var path;
     _.each(coords, function(coord, i) {
         _.each(turns, function(turn, j) {
@@ -234,13 +234,13 @@ BoxInfo.prototype.Compare2Turns = function(a, b) {
             return -1;
         else
             return 1;
-        
+
 //   |_____  |  ____|
 //  _____  | | |  ____
 //    _  | | | | |  _
 //   | | | | | | | | |
 //     0 1 2 4 8 9 10
-//     
+//
     // type === 8, 9, 10
     else if (a.lev[2] === b.lev[2])
             return 0;
@@ -276,7 +276,7 @@ BoxInfo.prototype.Compare3Turns = function(a, b) {
                 return 1;
             else
                 return -1;
-        // type === 1    
+        // type === 1
         else if (a.lev[2] == b.lev[2])
             return 0;
         else if (a.lev[2] < b.lev[2])
@@ -304,7 +304,7 @@ BoxInfo.prototype.Compare3Turns = function(a, b) {
             return 1;
         else
             return -1;
-    // type === 8    
+    // type === 8
     else if (a.lev[3] === b.lev[3])
         return 0;
     else if (a.lev[3] < b.lev[3])
@@ -319,7 +319,7 @@ BoxInfo.prototype.reduceConnectionCrossings = function() {
     _.each(this.paths, function(path) {
         nodePaths[path.side(self.id)].push(path);
     });
-    
+
     _.each(nodePaths, function(paths, side) {
         self.reduceSideCrossings(paths, side);
     });
@@ -327,11 +327,11 @@ BoxInfo.prototype.reduceConnectionCrossings = function() {
 BoxInfo.prototype.processPaths = function(paths) {
     // printText("\t\t\t\tprocessPaths start:: ");
     var disconnected = {};
-    
+
     for (var i = 0; i < paths.length; i++) {
         disconnected[path[i]] = true;
     }
-    
+
     printText("\t\t\t\tprocessPaths end ");
 };
 BoxInfo.prototype.createConnArea = function(side, disconnPaths, connPaths) {
@@ -350,7 +350,7 @@ BoxInfo.prototype.createConnArea = function(side, disconnPaths, connPaths) {
     testBox[3 - d] = testBox[1 - d];
     rc.side = side;
     rc.disconnectedSegm = [];
-    for (var i = 0; i < disconnPaths.length; i++) {
+    for (let i = 0; i < disconnPaths.length; i++) {
         path = disconnPaths[i];
         var segm = this.offSegm((path.from === this.id) ? path.segm(1) : path.segm(path.n - 1), side);
         rc.disconnectedSegm.push(segm);
@@ -361,10 +361,10 @@ BoxInfo.prototype.createConnArea = function(side, disconnPaths, connPaths) {
     // collect affected segments
     rc.intersectSegm = [[], []];
     if (connPaths)
-        for (var i = 0; i < connPaths.length; i++) {
+        for (let i = 0; i < connPaths.length; i++) {
             var path = connPaths[i];
             if (path.from === this.id)
-                for (var j = 1; j < path.n; j++) {
+                for (let j = 1; j < path.n; j++) {
                     var segm = this.offSegm(path.segm(j), side);
                     if (segm.intersectRect(testBox))
                         rc.intersectSegm[segm.dir].push(segm);
@@ -372,7 +372,7 @@ BoxInfo.prototype.createConnArea = function(side, disconnPaths, connPaths) {
                         break;
                 }
             else
-                for (var j = path.n - 1; j > 0; j--) {
+                for (let j = path.n - 1; j > 0; j--) {
                     var segm = this.offSegm(path.segm(j), side);
                     if (segm.intersectRect(testBox))
                         rc.intersectSegm[segm.dir].push(segm);
@@ -380,10 +380,10 @@ BoxInfo.prototype.createConnArea = function(side, disconnPaths, connPaths) {
                         break;
                 }
         }
-    for (var j = 0; j < 2; j++)
-        for (var i = 0; i < rc.intersectSegm[j].length; i++)
+    for (let j = 0; j < 2; j++)
+        for (let i = 0; i < rc.intersectSegm[j].length; i++)
 //            printText("\t\t\t\t\t" + rc.intersectSegm[j][i].toString());
-    
+
     // printText("\t\t\t\tcreateConnArea end:: ");
     return rc;
 };
@@ -404,9 +404,9 @@ BoxInfo.prototype.processDisconnectPaths = function() {
                 paths[(path.hasToProj()) ? conn : disconn][path.toSide()].push(path);
         }
     });
-    
+
     // process disconnected paths by side
-    for (var side = 0; side < paths[disconn].length; side++) {
+    for (let side = 0; side < paths[disconn].length; side++) {
 //        printText("\t\t\t\tside " + side + "; disconn " + paths[disconn][side].length + "; conn " + paths[conn][side].length);
         if (paths[disconn][side].length > 0) {
 //            var connInfo = this.connectPaths(side, paths[disconn][side], paths[conn][side]);
@@ -422,43 +422,43 @@ BoxInfo.prototype.processDisconnectPaths = function() {
 BoxInfo.prototype.processDisconnectedPathsNew = function(pathList) {
     var boxPathSide = {};
     var isDisconnectedPath = {};
-    for (var j = 0; j < pathList.length; j++) {
-        var path = pathList[j];
-        var side = path.side(boxId);
+    for (let j = 0; j < pathList.length; j++) {
+        let path = pathList[j];
+        let side = path.side(boxId);
         isDisconnectedPath[path] = true;
         if (boxPathSide[side] === undefined)
             boxPathSide[side] = [[path], []];
         else
             boxPathSide[side][0].push(path);
     }
-    for (var i = 0; i < this.paths.length; i++) {
-        var path = this.paths[i];
-        var side = path.side(this, id);
+    for (let i = 0; i < this.paths.length; i++) {
+        let path = this.paths[i];
+        let side = path.side(this, id);
         if (isDisconnectedPath[path] !== true && boxPathSide[side] !== undefined)
             boxPathSide[side][1].push(path);
     }
-    for (var side in boxPathSide)
+    for (let side in boxPathSide)
         this.processSideDisconnectedPaths(side, boxPathSide[side][0], boxPathSide[side][1]);
 };
 BoxInfo.prototype.processDisconnectedPaths = function() {
     var disconnected = [];
     var nodes = {};
     // printText("\t\t\tinput paths:: ");
-    for (var i = 0; i < this.paths.length; i++) {
+    for (let i = 0; i < this.paths.length; i++) {
         var path = this.paths[i];
         // printText("\t\t\t " + path.toString());
         if (this.id === path.from && path.hasToProj())
             if (nodes[path.from] === undefined)
                 nodes[path.from] = [path];
-            else 
+            else
                 nodes[path.from].push(path);
         if (this.id === path.to && path.hasFromProj())
             if (nodes[path.to] === undefined)
                 nodes[path.to] = [path];
-            else 
+            else
                 nodes[path.to].push(path);
     }
-    for (var nodeId in nodes) {
+    for (let nodeId in nodes) {
         var box = this.owner[nodeId];
         box.processPaths(nodes[nodeId]);
     }
@@ -491,7 +491,7 @@ BoxInfo.prototype.onResizeBox = function() {
 };
 BoxInfo.prototype.simplifyBoxPaths = function() {
     var id = this.id;
-    var i, s;    
+    var i, s;
     var paths = [[], [], [], []];
     // collect
     _.each(this.paths, function(path) {
@@ -508,7 +508,7 @@ BoxInfo.prototype.simplifyBoxPaths = function() {
         else
             paths[path.toSide()].push(path);
     });
-    for (s = 0; s < 4; s++) 
+    for (s = 0; s < 4; s++)
         if (paths[s].length > 0) {
             var connArea = new ConnArea(this, s, [], paths[s]);
             connArea.simplifyPaths();

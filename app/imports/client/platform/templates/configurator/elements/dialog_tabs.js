@@ -11,7 +11,7 @@ Template.dialogAccordion.helpers({
 
 		//if there is an active element, then selects its tabs
 		if (Session.get("activeElement")) {
-			
+
 			//selects active element's target type
 			var target_elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
 			if (target_elem_type)
@@ -44,7 +44,7 @@ Template.dialogAccordion.helpers({
 				});
 		}
 	},
-});	
+});
 
 Template.dialogAccordion.events({
 
@@ -85,12 +85,12 @@ Template.dialogAccordion.events({
 Template.row.rendered = function() {
 
 	var old_tab_id;
-    $(".compartments").sortable({              
+    $(".compartments").sortable({
         items: ".compartment",
         connectWith: ".compartments",
         distance: 3,
 
-        start: function(event, ui) {  
+        start: function(event, ui) {
         	var el = $(ui.item);
         	old_tab_id = el.closest(".tab").attr("id");
         },
@@ -123,7 +123,7 @@ Template.row.rendered = function() {
 		        			};
 
 		        	//method is used because there is need to update multiple
-		        	//compartment types at once 
+		        	//compartment types at once
 		        	Meteor.call("reorderCompartmentTypeTabIndexes", params, function(err) {
 		        		if (err) {
 		        			console.log("Error in reorderCompartments callback", err);
@@ -132,14 +132,14 @@ Template.row.rendered = function() {
 	        	}
 	        }
 
-	        old_tab_id = reset_variable();	        
+	        old_tab_id = reset_variable();
         },
     });
 }
 
 Template.dialogAccordion.rendered = function(){
 
-    $("#tabs").sortable({              
+    $("#tabs").sortable({
 		items: ".tab",
 
         stop: function(event, ui) {
@@ -156,14 +156,14 @@ Template.dialogAccordion.rendered = function(){
 	        	var tab_id = el.attr("id");
 	        	var tabs = el.closest(".dd-list").find(".dd-item");
 
-	        	//update 
+	        	//update
 	           	var params = {prevIndex: Number(prev_index),
 		    				currentIndex: Number(el.attr("index")),
 		    				dialogTabId: tab_id,
 		    				toolId: Session.get("toolId"),
 		    				diagramTypeId: Session.get("targetDiagramType"),
 		    				versionId: Session.get("toolVersionId"),
-		    			}; 	
+		    			};
 
 		    	if (Session.get("activeElement")) {
 		    		var elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
@@ -172,7 +172,7 @@ Template.dialogAccordion.rendered = function(){
 		    		}
 		    	}
 
-	        	//method is used because there is need to update multiple compartment types at once 
+	        	//method is used because there is need to update multiple compartment types at once
 	        	Meteor.call("reorderTabIndexes", params, function(err) {
 	        		if (err)
 	        			console.log("Error in reorderTabIndexes callback", err);
@@ -198,13 +198,13 @@ Template.newTab.events({
 					type: tab_name,
 					name: name,
 				};
-				
+
 		var elem_type = ElementTypes.findOne({$and: [{elementId: Session.get("activeElement")},
 													{elementId: {$exists: true}}]});
 		if (elem_type) {
 			list["elementTypeId"] = elem_type["_id"];
 
-			var dialog_tab = DialogTabs.findOne({elementTypeId: elem_type["_id"]},
+			let dialog_tab = DialogTabs.findOne({elementTypeId: elem_type["_id"]},
 												{sort: {index: -1}});
 			if (dialog_tab) {
 				list["index"] = dialog_tab["index"] + 1;
@@ -214,7 +214,7 @@ Template.newTab.events({
 			}
 		}
 		else {
-			var dialog_tab = DialogTabs.findOne({diagramTypeId: Session.get("targetDiagramType"),
+			let dialog_tab = DialogTabs.findOne({diagramTypeId: Session.get("targetDiagramType"),
 												elementTypeId: {$exists: false}},
 												{sort: {index: -1}});
 			if (dialog_tab) {
@@ -261,7 +261,7 @@ Template.editTab.events({
 	//closing the dialog
 	'click #edit-tab' : function(e, templ) {
 		$('#edit-tab-form').attr("OKPressed", true);
-		$("#edit-tab-form").modal("hide");		
+		$("#edit-tab-form").modal("hide");
 	},
 
 	//if ok was clicked, then updating the DB
@@ -273,15 +273,15 @@ Template.editTab.events({
 
 			var id = Session.get("tabId");
 			var name = $("#edit-tab-name").val();
-			update_tab_name(id, name);	
+			update_tab_name(id, name);
 
-			Session.set("tabId", reset_variable());	
+			Session.set("tabId", reset_variable());
 		}
 	},
 });
 
 function insert_tab(list) {
-	Utilities.callMeteorMethod("insertTab", list);	
+	Utilities.callMeteorMethod("insertTab", list);
 }
 
 function update_tab_name(id, name) {
@@ -291,7 +291,7 @@ function update_tab_name(id, name) {
 				name: name,
 			};
 
-	Utilities.callMeteorMethod("updateTab", list);		
+	Utilities.callMeteorMethod("updateTab", list);
 }
 
 function remove_tab(tab_id) {

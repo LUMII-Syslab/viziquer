@@ -5,7 +5,7 @@ import {getPairOfValue, getValueOfPair, cloneObject, cloneArray, rectOverlapRect
 import {SVGObject, LineSVGObject} from './svg_collisions.js'
 
 ////******************************************************************************
-// PathInfo 
+// PathInfo
 //******************************************************************************
 var PathInfo = function(info) {
     this.fromRect;
@@ -173,8 +173,8 @@ PathInfo.prototype.dummyPath = function(f, t) {
 PathInfo.prototype.dummyDeltaPath = function(delta2) {
     var f = this.fromRect;
     var t = this.toRect;
-    var fBox = this.owner.infoDataMap[this.from]; 
-    var tBox = this.owner.infoDataMap[this.to]; 
+    var fBox = this.owner.infoDataMap[this.from];
+    var tBox = this.owner.infoDataMap[this.to];
     var delta = delta2 * 2;
     var v;
     var q = [];
@@ -259,7 +259,7 @@ PathInfo.prototype.dummyDeltaPath = function(delta2) {
 };
 PathInfo.prototype.setDummySinglePath = function() {
     // turnOnPrinting("xxx");
-    
+
     var f = this.fromRect;
     var t = this.toRect;
     var v;
@@ -303,18 +303,18 @@ PathInfo.prototype.setDummySelfloop = function() {
     var corner = (q[0] > 0) ? ((q[1] > 0) ? 3 : 2) : (q[1] > 0) ? 1 : 0;
     this.owner.dummySelfloopCornerCount[corner]++;
     var delta = this.owner.delta * this.owner.dummySelfloopCornerCount[corner];
-    
+
     if (corner === 0)
         this.lev = [this.fromRect[0] + delta, this.fromRect[1] - delta, this.fromRect[0] - delta, this.fromRect[1] + delta];
     else if (corner === 1)
         this.lev = [this.fromRect[0] + delta, this.fromRect[3] + delta, this.fromRect[0] - delta, this.fromRect[3] - delta];
     else if (corner === 2)
         this.lev = [this.fromRect[2] - delta, this.fromRect[1] - delta, this.fromRect[2] + delta, this.fromRect[1] + delta];
-    else 
+    else
         this.lev = [this.fromRect[2] - delta, this.fromRect[3] + delta, this.fromRect[2] + delta, this.fromRect[3] - delta];
     this.dir = 0;
     this.n = this.lev.length - 1;
-    
+
     // printText("setDummySelfloop q = " + q.toString() + "; corner " + corner + "; delta " + delta + "; " + this.toString());
 };
 PathInfo.prototype.setDummyPath = function() {
@@ -353,7 +353,7 @@ PathInfo.prototype.clipOnBoxes = function() {
     var start_line_points = this.buildEndSegmentForClipping(point0, point1);
     var start_segment_svg = new LineSVGObject(start_line_points, 0);
 
-    var new_start_point_obj = start_segment_svg.getIntersectionWithElement(this.fromObject, [point1.c[0], point1.c[1]]);   
+    var new_start_point_obj = start_segment_svg.getIntersectionWithElement(this.fromObject, [point1.c[0], point1.c[1]]);
     if (new_start_point_obj.point && new_start_point_obj.point.length === 2) {
         this.lev[0] = new_start_point_obj.point[this.dir];
         this.lev[1] = new_start_point_obj.point[1 - this.dir];
@@ -365,7 +365,7 @@ PathInfo.prototype.clipOnBoxes = function() {
 //clipping end point
     point0 = this.point(this.n - 2);
     point1 = this.point(this.n - 1);
-    
+
     // if (point0 === undefined || point1 === undefined) {
     //     warning("clipOnBoxes: endpoints are undefined " + this.toString());
     // }
@@ -581,7 +581,7 @@ PathInfo.prototype.cutPoints = function(cutList) {
         return;
     var k = cutList.length;
     var cor = ((k & 1) === 0 && k > 1);
-    for (var i = 0; cor && i < k; i += 2)
+    for (let i = 0; cor && i < k; i += 2)
         cor = cutList[i] < cutList[i + 1] && (i < 2 || cutList[i - 1] < cutList[i]);
     if (!cor) {
         // warning("cutPoints wrong cutList " + cutList.toString());
@@ -590,7 +590,7 @@ PathInfo.prototype.cutPoints = function(cutList) {
 
     var j = 0;
     var m = -1;
-    for (var i = 0; cutList[i] <= this.ind && i < k; i += 2) {
+    for (let i = 0; cutList[i] <= this.ind && i < k; i += 2) {
         if (cutList[i] <= this.ind && this.ind <= cutList[i + 1])
             m = j + this.ind - cutList[i];
         j += cutList[i + 1] - cutList[i];
@@ -599,8 +599,8 @@ PathInfo.prototype.cutPoints = function(cutList) {
     var newLev = [];
     if ((cutList[0] & 1) === 1)
         this.dir = 1 - this.dir;
-    for (var i = 0; i < k; i += 2)
-        for (var j = cutList[i]; j <= cutList[i + 1]; j++)
+    for (let i = 0; i < k; i += 2)
+        for (let j = cutList[i]; j <= cutList[i + 1]; j++)
             newLev.push(this.lev[j]);
     this.lev = newLev;
     this.n = this.lev.length - 1;
@@ -742,13 +742,13 @@ PathInfo.prototype.smoothConnection = function(boxId) {
     }));
     if (sign === -1)
         levList.reverse();
-    
+
     // find best interval
     // addText("\n\t\t\t levList::");
     // for (var i = 0; i < levList.length; i++)
         // addText(" (" + levList[i] + "; " + levMap[levList[i]] + ")");?
     // printText(".");
-    
+
     var m = -1;
     var v = Number.MAX_VALUE;
     var k = 0;
@@ -810,7 +810,7 @@ PathInfo.prototype.simplifySelfloop = function() {
     var t = this.getFirstPointOutsideToBox(this.n - 1);
     if (f < t && (f > 1 || t < this.n - 1))
         this.cutPoints([f - 1, t + 2]);
-    
+
 };
 PathInfo.prototype.simplifyPath = function() {
     if (this.point(0).inside(this.toRect) || this.point(this.n - 1).inside(this.fromRect)) {
@@ -880,7 +880,7 @@ PathInfo.prototype.simplify = function() {
         this.simplifySelfloop();
     else
         this.simplifyPath();
-        
+
     this.n = this.lev.length - 1;
     this.clipOnBoxes();
     // printText("\n\t\tsimplify final: " + this.toString());

@@ -1,5 +1,5 @@
-import { 
-  UserTools, Tools, ToolVersions, Versions, DialogTabs, PaletteButtons, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments 
+import {
+  UserTools, Tools, ToolVersions, Versions, DialogTabs, PaletteButtons, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments
 } from '../../db/platform/collections'
 
 
@@ -18,7 +18,7 @@ ToolVersions.after.insert(async function(user_id, doc) {
 	if (user_tool) {
 		await UserTools.updateAsync({userSystemId: user_id, toolId: doc["toolId"]}, {$set: {versionId: _id,}});
 	}
-	
+
 	else {
 		if (!user_id) {
 			var configurator = await Tools.findOneAsync({_id: doc["toolId"]});
@@ -29,7 +29,7 @@ ToolVersions.after.insert(async function(user_id, doc) {
 
 		await UserTools.insertAsync({userSystemId: user_id, toolId: doc["toolId"], versionId: _id});
 	}
-	
+
 
 	//the last published project version
 	var last_version = await ToolVersions.findOneAsync({toolId: tool_id, status: "Published"},
@@ -53,17 +53,17 @@ ToolVersions.after.insert(async function(user_id, doc) {
 //diagram things
 	//presentation things
 	var diagram_list = {};
-	_.each(await diagrams.fetchAsync(), async function(diagram) {
+	for (let diagram of await diagrams.fetchAsync()) {
 		diagram["versionId"] = new_version_id;
 
 		var old_id = diagram["_id"];
 		delete diagram["_id"];
 		var new_id = await Diagrams.insertAsync(diagram);
 		diagram_list[old_id] = new_id;
-	});
+	}
 
 	var element_list = {};
-	_.each(await elements.fetchAsync(), async function(element) {
+	for (const element of await elements.fetchAsync()) {
 		element["versionId"] = new_version_id;
 		element["diagramId"] = diagram_list[element["diagramId"]];
 
@@ -71,10 +71,10 @@ ToolVersions.after.insert(async function(user_id, doc) {
 		delete element["_id"];
 		var new_id = await Elements.insertAsync(element);
 		element_list[old_id] = new_id;
-	});
+	}
 
 	var compartment_list = {};
-	_.each(await compartments.fetchAsync(), async function(compartment) {
+	for (const compartment of await compartments.fetchAsync()) {
 		compartment["versionId"] = new_version_id;
 		compartment["diagramId"] = diagram_list[compartment["diagramId"]];
 		compartment["elementId"] = element_list[compartment["elementId"]];;
@@ -83,11 +83,11 @@ ToolVersions.after.insert(async function(user_id, doc) {
 		delete compartment["_id"];
 		var new_id = await Compartments.insertAsync(compartment);
 		compartment_list[old_id] = new_id;
-	});			
+	}
 
 
 	var diagram_type_list = {};
-	_.each(await diagram_types.fetchAsync(), async function(diagram_type) {
+	for (const diagram_type of await diagram_types.fetchAsync()) {
 		diagram_type["versionId"] = new_version_id;
 		diagram_type["diagramId"] = diagram_list[diagram_type["diagramId"]];
 
@@ -95,47 +95,47 @@ ToolVersions.after.insert(async function(user_id, doc) {
 		delete diagram_type["_id"];
 		var new_id = await DiagramTypes.insertAsync(diagram_type);
 		diagram_type_list[old_id] = new_id;
-	});
+	}
 
 	var element_type_list = {};
-	_.each(await element_types.fetchAsync(), async function(element_type) {
+	for (const element_type of await element_types.fetchAsync()) {
 		element_type["versionId"] = new_version_id;
 		element_type["diagramTypeId"] = diagram_type_list[element_type["diagramTypeId"]];
 
 		var old_elem_id = element_type["_id"];
-		delete element_type["_id"];	
+		delete element_type["_id"];
 		var new_elem_id = await ElementTypes.insertAsync(element_type);
 		element_type_list[old_elem_id] = new_elem_id;
-	});
+	}
 
-	_.each(await compartment_types.fetchAsync(), async function(compartment) {
+	for (const compartment_type of await compartment_types.fetchAsync()) {
 		compartment_type["versionId"] = new_version_id;
 		compartment_type["diagramTypeId"] = element_list[compartment_type["diagramTypeId"]];
 		compartment_type["elementTypeId"] = element_list[compartment_type["elementTypeId"]];
 
-		delete compartment_type["_id"];	
+		delete compartment_type["_id"];
 		await CompartmentTypes.insertAsync(compartment_type);
-	});
+	}
 
 	var palette_button_list = {};
-	_.each(await palette_buttons.fetchAsync(), async function(palette_button) {
+	for (const palette_button of await palette_buttons.fetchAsync()) {
 		palette_button["versionId"] = new_version_id;
 
 		var old_palette_button_id = palette_button["_id"];
-		delete palette_button["_id"];	
+		delete palette_button["_id"];
 		var new_palette_button_id = await PaletteButtons.insertAsync(palette_button);
 		palette_button_list[old_palette_button_id] = new_palette_button_id;
-		});
+		}
 
 	var dialog_tab_list = {};
-	_.each(await dialog_tabs.fetchAsync(), async function(dialog_tab) {
+	for (const dialog_tab of await dialog_tabs.fetchAsync()) {
 		dialog_tab["versionId"] = new_version_id;
 
 		var old_tab = dialog_tab["_id"];
 		delete dialog_tab["_id"];
 		var new_tab = await DialogTabs.insertAsync(dialog_tab);
 		dialog_tab_list[old_tab] = new_tab;
-	});
+	}
 
 });
 
@@ -151,7 +151,7 @@ ToolVersions.after.remove(async function(user_id, doc) {
 	var last_tool_version = await ToolVersions.findOneAsync({toolId: tool_id}, {sort: {createdAt: -1}});
 	if (!last_tool_version)
 		return false;
-	
+
 	var last_tool_version_id = last_tool_version["_id"];
 
 	//the creator's current version is updated to the new one

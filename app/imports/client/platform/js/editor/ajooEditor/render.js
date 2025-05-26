@@ -181,7 +181,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 						drag_layer.batchDraw();
 						// parent.batchDraw();
 					}
-				}			
+				}
 			}
 
 			//if position or size changed
@@ -196,8 +196,8 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 				element.setElementPosition(location.x, location.y);
 				element.updateSizeAndCompartments(location.width, location.height) ;
 
-				var parent_layer = element.presentation.getLayer();	
-	
+				var parent_layer = element.presentation.getLayer();
+
 				if (element.type == "Box") {
 					var selected = editor.getSelectedElements();
 					if (selected[element._id]) {
@@ -252,7 +252,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 			var drag_layer = editor.getLayer("DragLayer");
 			drag_layer.batchDraw();
 
-			var drawing_layer = editor.getLayer("DrawingLayer");			
+			var drawing_layer = editor.getLayer("DrawingLayer");
 			drawing_layer.batchDraw();
 		}
     });
@@ -307,7 +307,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 		   			else {
 		   				parent_layer.batchDraw();
-		   				// element_presentation.draw();	
+		   				// element_presentation.draw();
 		   			}
 	   			}
    			}
@@ -456,7 +456,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 						compartments.recomputeCompartmentsPosition();
 						element_presentation.draw();
 					}
-					
+
 					return;
 				}
 
@@ -470,7 +470,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 					element_presentation.draw();
 
 					return;
-				}	   	
+				}
 
 				if (fields["swimlane"]) {
 
@@ -507,7 +507,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    					compartments["placements"][name]["height"] -= compartment["textHeight"];
 
 					compartments.computeGroupsPositions();
-					compartments.computeTextsPositions();	   					
+					compartments.computeTextsPositions();
    				}
    			// }
    		},
@@ -540,7 +540,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 		changed: function(id, fields) {
 
 			//if selection style changed, then updating the editor
-			if (fields["selectionStyle"]) { 
+			if (fields["selectionStyle"]) {
 				editor.selectionStyle.style = fields["selectionStyle"];
 			}
 
@@ -567,7 +567,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
    	init = false;
 }
-
+/*
 function get_shape_group_from_text(text) {
 	var text_parent = get_parent(text);
 	if (!text_parent)
@@ -595,7 +595,7 @@ function rebuild_labels(element) {
 	var layer = element.presentation.getLayer();
 	layer.batchDraw();
 }
-
+*/
 function recompute_palette(editor, palette) {
 
 	editor.palette.buttonWidth = palette.buttonWidth || 35;

@@ -38,14 +38,14 @@ Meteor.methods({
 
 				var elem_type = await ElementTypes.findOneAsync({_id: elem.elementTypeId,});
 				await CompartmentTypes.find({elementTypeId:elem_type._id}).forEachAsync(function(compType){
-					compartments = Compartments.find({projectId:projectId, elementId:elem._id, compartmentTypeId:compType._id });
+					let compartments = Compartments.find({projectId:projectId, elementId:elem._id, compartmentTypeId:compType._id });
 					if (compartments.count() == 1 ){
 					    compartments.forEach(async function(c) {
 							await Compartments.updateAsync({_id: c._id, projectId:projectId,},{$set: { index: compType.index,}});
 						})
 					}
 					if (compartments.count() > 1 ){
-						comp_ind = compartments.map(function (c) {
+						let comp_ind = compartments.map(function (c) {
 							return {_id:c._id, index:c.index, input:c.input};
 						});
 						comp_ind.sort(function(a, b) { return a.index - b.index; })

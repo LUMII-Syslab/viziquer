@@ -1,53 +1,53 @@
 //******************************************************************************
-// LayoutInfo 
+// LayoutInfo
 
 const { BoxCompartments } = require("../../Boxes/box_compartments");
 
 //******************************************************************************
 function my_layout_diagram(diagram) {
     console.log("\ndiagram with ", diagram.boxes.length, " boxes and ", diagram.lines.length, " lines.");
-	return diagram;    
+	return diagram;
     if (diagram.boxes.length + diagram.lines.length > 255) {
         console.log("\ndiagram too big.\n");
-        return diagram;    
+        return diagram;
     }
-    
+
     setNodeMinSize(diagram);
 //    getNodeAndLinkTypes(diagram);
-    
+
 
 
     var flowGraph = new FlowGraph(diagram);
 //    console.log(flowGraph.getDiagramStr("\nInitial diagram"));
-    
+
     // create graph flow part of input diagram
     flowGraph.createFlow(FlowLinkTypes);
 //    flowGraph.setResultDiagram();
-    
-    
+
+
 //    console.log(flowGraph.getLevelStr(flowGraph.nodes, "Flow nodes:"));
-    
+
     flowGraph.createUnflow();
     flowGraph.setUnflowLevels();
-    
+
 //    console.log(flowGraph.getLevelStr(flowGraph.nodes, "Flow nodes:"));
 //    console.log(flowGraph.getLevelStr(flowGraph.unflowNodes, "Unflow nodes:"));
-    
+
     flowGraph.markUnflowObjects();
-    
+
 //    flowGraph.updateUnfixed();
 
 //    flowGraph.init(SplitLinkTypes);
-//    
-    
+//
+
     // set layout options
 //    flowGraph.initLayoutOptions({mode: 0, routingStyle: 0});
     flowGraph.initLayoutOptions({mode: 0, routingStyle: 3});
     result = flowGraph.arrangeLayout(flowGraph.nodes, false);
-    
+
 //    console.log(flowGraph.getLevelStr(flowGraph.nodes, "\nFinal"));
 //    console.log("result::", result);
-    
+
     flowGraph.setLayoutResult(result);
     flowGraph.setLevels(flowGraph.nodes);
     console.log(flowGraph.getLevelStr(flowGraph.nodes, "\nFinal"));
@@ -57,14 +57,14 @@ function my_layout_diagram(diagram) {
 //            keeped.push(line);
 //    });
 //    flowGraph.lines = keeped;
-    
+
     flowGraph.setResultDiagram();
 //    console.log(getDiagranNodesStr("##L", diagram.boxes));
-    
+
 //    console.log(flowGraph.getDiagramStr("\nFinal diagram"));
 
     diagram.flow = flowGraph;
-    
+
     return diagram;
 };
 function my_reroute_flowGraph(diagram) {
@@ -81,10 +81,10 @@ function setNodeMinSize(diagram) {
     var box_self = buildCompartmentsSelf();
 //    var str = "\n\nCalculate box min size:";
     _.each(diagram.boxes, function(box, i) {
-//        str += "\n\tbox " + box._id + " size before (" + box.location.width + ", " + box.location.height + ")"; 
-        
+//        str += "\n\tbox " + box._id + " size before (" + box.location.width + ", " + box.location.height + ")";
+
         box_self.compartments = [];
-        
+
         var relative_size = buildBoxMinSize(box_self, box);
         box.location.width = relative_size.width;
         box.location.height = relative_size.height;
@@ -135,7 +135,7 @@ FlowPath.prototype.otherNode = function(nodeId) {
         return this.owner.idToObject[this.from];
 };
 //******************************************************************************
-// FlowGraph 
+// FlowGraph
 //******************************************************************************
 function FlowGraph(diagram) {
     this.genindex = 0;
@@ -146,9 +146,9 @@ function FlowGraph(diagram) {
     this.parent = diagram;
     this.unflowNodes = [];
     this.idToObject = {};
-    
+
     // default layout options
-    this.mode = 0; // layout.. 0: "INVERSE_HORIZONTAL"; 1: "VERTICAL"; 2: "HORIZONTAL"; 3: "INVERSE_VERTICAL" 
+    this.mode = 0; // layout.. 0: "INVERSE_HORIZONTAL"; 1: "VERTICAL"; 2: "HORIZONTAL"; 3: "INVERSE_VERTICAL"
     this.layoutStyle = 0; // ["HIERARHICAL", "SYMMETRIC", "UNIVERSAL"]
     this.routingStyle = 3; // ["ORThOGONAL", "POLYLINE", "SPLINE", "STRAIGHT"]
 //    this.lineStyle = 0; // ["Orthogonal", "Direct", "Direct", "Direct"]
@@ -203,10 +203,10 @@ FlowGraph.prototype.reroute = function() {
     var direction = this.mode;
     console.log(layoutStyle, routingType, direction);
     this.routeDummyOrthogonal();
-    
+
     // get connected komponents
     var components = this.connectedComponents();
-    
+
     var turns, newTurn, levels, other;
     _.each(components, function(nodes) {
         levels = self.setLevels(nodes);
@@ -236,18 +236,18 @@ FlowGraph.prototype.reroute = function() {
                         str += ", cross " + turn.cross(sideTurns[j - 1]);
                 });
             });
-            
+
             console.log(str);
         });
     });
-    
-};    
+
+};
 FlowGraph.prototype.getTurns = function(paths) {
     var dir = this.getDir();
     var turns = [];
     _.each(paths, function(path, i) { turns.push(new TurnInfo(path, dir)); });
     return turns;
-};    
+};
 FlowGraph.prototype.routeDummyOrthogonal = function() {
     var self = this;
     var dir = this.getDir();
@@ -261,18 +261,18 @@ FlowGraph.prototype.routeDummyOrthogonal = function() {
         sz = [(source.size[0] - target.size[0]) / 2, (source.size[1] - target.size[1]) / 2];
         if (dir === 0)
             line.points = [
-                source.center[0] + sng * source.size[0] / 2, source.center[1], 
-                (source.center[0] + target.center[0] - sz[0]) / 2, source.center[1], 
-                (source.center[0] + target.center[0] - sz[0]) / 2, target.center[1], 
+                source.center[0] + sng * source.size[0] / 2, source.center[1],
+                (source.center[0] + target.center[0] - sz[0]) / 2, source.center[1],
+                (source.center[0] + target.center[0] - sz[0]) / 2, target.center[1],
                 target.center[0] - sng * target.size[0] / 2, target.center[1]];
         else
             line.points = [
-                source.center[0], source.center[1] + sng * source.size[1] / 2, 
-                source.center[0],(source.center[1] + target.center[1] - sz[1]) / 2,  
-                target.center[0], (source.center[1] + target.center[1] - sz[1]) / 2, 
+                source.center[0], source.center[1] + sng * source.size[1] / 2,
+                source.center[0],(source.center[1] + target.center[1] - sz[1]) / 2,
+                target.center[0], (source.center[1] + target.center[1] - sz[1]) / 2,
                 target.center[0], target.center[1] - sng * target.size[1] / 2];
     });
-};    
+};
 
 //******************************************************************************
 // reroute part end
@@ -330,7 +330,7 @@ FlowGraph.prototype.connectedComponents = function() {
         }
         component.push(node);
     });
-    
+
 //    var str = "\nComponents:";
 //    _.each(components, function(component) {
 //        str += "\n\t" + component[0].component + "[";
@@ -340,17 +340,17 @@ FlowGraph.prototype.connectedComponents = function() {
 //        str += "]";
 //    });
 //    console.log(str);
-    
+
     return components;
 };
 FlowGraph.prototype.DFS = function() {
     var compNum = 0;
     _.each(this.nodes, function(node) { node.component = undefined; });
-    _.each(this.nodes, function(node, i) { 
+    _.each(this.nodes, function(node, i) {
         if (node.component === undefined) {
             node.component = compNum++;
             node.DFS();
-        } 
+        }
     });
 };
 FlowGraph.prototype.addNodes = function() {
@@ -385,10 +385,10 @@ FlowGraph.prototype.addPath = function(line) {
     this.paths.push(path);
     path.from = line.startElement;
     path.to = line.endElement;
-    
+
     if (OWLTypes[line.elementTypeId] === undefined)
         console.log("Undefined ", "'" + line.elementTypeId + "'");
-    
+
     path.type = OWLTypes[line.elementTypeId].type;
     var source = this.idToObject[path.from];
     var target = this.idToObject[path.to];
@@ -437,7 +437,7 @@ FlowGraph.prototype.splitLine = function(line) {
 //    this.addNode(dummy);
 //    console.log("\tadd dummy node ", dummy._id);
 //    this.genindex++;
-    
+
     var c = this.compareSplitLine(line);
 //    console.log("splitLine ", line._id, ":", line.startElement, "->", line.endElement, "::", c);
     var dummyOld;
@@ -486,8 +486,8 @@ FlowGraph.prototype.splitLine = function(line) {
 FlowGraph.prototype.markUnflowObjects = function() {
     var self = this;
     var id;
-    _.each(this.unflowNodes, function(w) { 
-        self.idToObject[w.id] = undefined; 
+    _.each(this.unflowNodes, function(w) {
+        self.idToObject[w.id] = undefined;
     });
     _.each(this.parent.boxes, function(box) {
         if (self.idToObject[box._id] === undefined) {
@@ -507,9 +507,9 @@ FlowGraph.prototype.setUnflowLevels = function() {
     var self = this;
     var path, v, lev;
 //    var str = "\ncalc levels";
-    
+
     _.each(this.unflowNodes, function(w) { w.temp = 0; });
-//    _.each(this.unflowNodes, function(w) { 
+//    _.each(this.unflowNodes, function(w) {
 //        str += "\n\t" + w.id + "::";
 //        _.each(w.paths, function(v) { str += v.id + ", " + v.level + "; "; });
 //    });
@@ -532,7 +532,7 @@ FlowGraph.prototype.setUnflowLevels = function() {
         _.each(this.unflowNodes, function(w) { w.level = w.temp; });
     }
     this.levels = {};
-    
+
 //    str += "\nFinal " + i + "; " + diff;
 //    _.each(this.unflowNodes, function(w) {
 //        w.level = Math.round(w.level);
@@ -543,7 +543,7 @@ FlowGraph.prototype.setUnflowLevels = function() {
 };
 FlowGraph.prototype.createFlow = function(flowLinkTypes) {
     var self = this;
-    
+
     // set flow part of diagram
     this.init(flowLinkTypes);
 
@@ -564,7 +564,7 @@ FlowGraph.prototype.createUnflow = function() {
     var self = this;
     var map = {};
     var path, v, w;
-    _.each(this.parent.boxes, function(box) { 
+    _.each(this.parent.boxes, function(box) {
         if (map[box._id] === undefined) {
             if (self.idToObject[box._id] === undefined) {
                 var node = {id: box._id, parent: box, level: 0, fixed: false, paths: []};
@@ -596,9 +596,9 @@ FlowGraph.prototype.setLevels = function(nodes) {
     var self = this;
     var levels = [];
     var dir = this.getDir();
-    
+
     var c, level;
-    _.each(nodes, function(node) { 
+    _.each(nodes, function(node) {
         c = node.center[dir];
         if (levels.length < 1) {
             levels.push(c);
@@ -626,12 +626,12 @@ FlowGraph.prototype.setLevels = function(nodes) {
         n--;
     }
 
-    _.each(nodes, function(node) { 
+    _.each(nodes, function(node) {
         node.level = set[node.center[dir]];
         levels[node.level].push(node);
 //        console.log("\t\tnew  level", node.id, node.level, node.center[dir]);
     });
-    
+
     return levels;
 };
 FlowGraph.prototype.checkOWLTypes = function(diagramObjects) {
@@ -673,7 +673,7 @@ FlowGraph.prototype.setResultDiagram = function() {
     });
     if (!_.isEmpty(this.removed)) {
         var newLines = [];
-        _.each(self.parent.lines, function(line) { 
+        _.each(self.parent.lines, function(line) {
             if (self.removed[line._id] !== true)
                 newLines.push(line);
         });
@@ -686,7 +686,7 @@ FlowGraph.prototype.setLayoutResult = function(result) {
 //    str = "";
     _.each(result.boxes, function(box, i) {
         node = self.idToObject[i];
-//        str += "\n\tbox " + node.id + " after layout (" + box.width + ", " + box.height + ")"; 
+//        str += "\n\tbox " + node.id + " after layout (" + box.width + ", " + box.height + ")";
         node.size = [box.width, box.height];
         node.center = [box.x + node.size[0] / 2, box.y + node.size[1] / 2];
         node.fixed = true;
@@ -727,7 +727,7 @@ FlowGraph.prototype.arrangeLayout = function(nodes, incrementally) {
             }
         }
     });
-    var options;        
+    var options;
 //    var options = {lineType: "STRAIGHT", startSides: 4, endSides: 1};
     var fromNode, toNode, options, lineStyle;
     _.each(nodes, function(node, i) {
@@ -735,19 +735,19 @@ FlowGraph.prototype.arrangeLayout = function(nodes, incrementally) {
             if (added[path.id] === undefined) {
                 if (added[path.from] === undefined || added[path.to] === undefined)
                     warning("FlowGraph.prototype.arrangeLayout path end nodes are not added to layout graph.");
-                
+
                 if (OWLTypes[path.parent.elementTypeId].type === "flow")
                     path.parent.style.lineType = LineTypes[self.routingStyle];
                 else
                     path.parent.style.lineType = "Direct";
-                
+
 //                if (path.parent.style.lineType === undefined)
 //                    path.parent.style.lineType = LineTypes[self.routingStyle];
 //                else if (options.lineType === "Orthogonal" && path.parent.style.lineType !== "Orthogonal")
 //                    path.parent.style.lineType = "Orthogonal";
 //                else if (options.lineType !== "Orthogonal")
 //                    path.parent.style.lineType = "Direct";
-                
+
                 added[path.id] = path;
                 lineStyle = (path.parent.style.lineType === "Orthogonal") ? "ORTHOGONAL" : "STRAIGHT";
                 options = {lineType: lineStyle, startSides: self.fromSide(), endSides: self.toSide()};
@@ -759,7 +759,7 @@ FlowGraph.prototype.arrangeLayout = function(nodes, incrementally) {
         });
     });
     console.log("\nArrangeFromScratch graph component with ", this.nodes.length, " nodes and ", this.paths.length, " links.");
-    
+
     if (incrementally)
 //        return layout.arrangeFromScratch();
         return layout.arrangeIncrementally();
@@ -830,7 +830,7 @@ FlowGraph.prototype.getDiagramStr = function(text) {
     return str;
 };
 //******************************************************************************
-// Node min size 
+// Node min size
 //******************************************************************************
 function buildCompartmentsSelf() {
     return  {editor: {compartmentList: []},
@@ -843,15 +843,15 @@ function buildCompartmentsSelf() {
 }
 
 function buildBoxMinSize(comparts_this, box) {
-    
+
     var w = 2;
     var h = 2;
-    
+
     return BoxCompartments.prototype.getCompartmentsArea.call(
             comparts_this,
             box.compartments,
             w, h
-            );     
+            );
 };
 
 //******************************************************************************
@@ -860,7 +860,7 @@ function buildBoxMinSize(comparts_this, box) {
 function getDiagranNodesStr(text, boxes) {
     var str = text;
     _.each(boxes, function(box) {
-        str += "(" + box._id + ":xy[" + box.location.x + "," + box.location.y + 
+        str += "(" + box._id + ":xy[" + box.location.x + "," + box.location.y +
                 "]s[" + (box.location.x + box.location.width / 2) + "," + (box.location.y + box.location.height / 2) + "])" +
                 "]c[" + box.location.width + "," + box.location.height + "])";
     });
@@ -883,7 +883,7 @@ function my_getNodeAndLinkTypes(diagrams) {
             lineTypes[line.type]++;
         });
     });
-    str = "nodeTypes:\n";
+    let str = "nodeTypes:\n";
     _.each(nodeTypes, function(value, key) {
         str += "\t" + key + ":" + value + "\n";
     });
@@ -922,7 +922,7 @@ var LayoutStyles = [["INVERSE_HORIZONTAL", "VERTICAL", "HORIZONTAL", "INVERSE_VE
 var RoutingTypes = ["ORTHOGONAL", "POLYLINE", "SPLINE", "STRAIGHT"];
 var LineTypes = ["Orthogonal", "Direct", "Direct", "Direct"];
 var FlowLinkTypes = { "OWL.AssocToFork": true, "OWL.Generalization": false, "OWL.GeneralizationToFork": true };
-var SplitLinkTypes = { "OWL.Association": "dummy", "OWL.Connector": "dummy", "OWL.Dependency": "dummy", 
+var SplitLinkTypes = { "OWL.Association": "dummy", "OWL.Connector": "dummy", "OWL.Dependency": "dummy",
     "OWL.Disjoint": "dummy", "OWL.Link": "dummy", "OWL.Restriction": "dummy", "OWL.EquivalentClass": "dummy"};
 
 var OWLTypes = {
@@ -937,7 +937,7 @@ var OWLTypes = {
     "OWL.Object": {name: "O", type: "object"},
     "OWL.VerticalFork": {name: "VF", type: "fork", orientation: "vertical"},
     "OWL.DummyBox": {name: "DB", type: "dummy"},
-    // line        
+    // line
     "OWL.Association": {name: "A", type: "any"},
     "OWL.AssocToFork": {name: "AF", type: "flow"},
     "OWL.Connector": {name: "C", type: "any"},
@@ -963,7 +963,7 @@ function TurnInfo(path, dir) {
     var tCenter = node.center;
     var bottom = (sCenter[dir] < tCenter[dir]) ? sCenter[d] : tCenter[d];
     var top = (sCenter[dir] > tCenter[dir]) ? sCenter[d] : tCenter[d];
-    
+
 //    this.type = (bottom === top) ? 4 : (bottom < top) ? 8 : 2;
 //    this.min = (this.type === 2) ? top : bottom;
 //    this.max = (this.type === 8) ? top : bottom;
@@ -990,7 +990,7 @@ TurnInfo.prototype.compare = function(other) {
         return 1;
     // intersect intervals
     else if (this.type !== other.type)
-        // turns has crossing 
+        // turns has crossing
         if (this.type < other.type)
             return -1;
         else
@@ -1005,7 +1005,7 @@ TurnInfo.prototype.compare = function(other) {
             return -1;
         else if (this.min > other.min && this.max > other.max)
             return 1;
-        // turns has crossing 
+        // turns has crossing
         else if (this.min < other.min &&  this.max > other.max)
             return -1;
         else
@@ -1015,7 +1015,7 @@ TurnInfo.prototype.compare = function(other) {
             return 1;
         else if (this.min < other.min && this.max < other.max)
             return -11;
-        // turns has crossing 
+        // turns has crossing
         else if (this.min > other.min && this.max < other.max)
             return 1;
         else

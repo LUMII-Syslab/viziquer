@@ -173,7 +173,7 @@ function build_compartment(compart_type, list, compart_in) {
 			value = compart_in.value;
 		}
 		else {
-			default_value = get_default_value(compart_type);
+			let default_value = get_default_value(compart_type);
 			var prefix = get_prefix(compart_type, default_value);
 			var suffix = get_suffix(compart_type, default_value);
 
