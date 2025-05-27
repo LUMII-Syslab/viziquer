@@ -7,7 +7,6 @@ Meteor.methods({
 
 	getProjectJson: async function(list) {
 
-		console.log("zzz")
 		console.log("getProjectJson", list)
 		console.log("")
 
@@ -84,23 +83,22 @@ Meteor.methods({
 		}
 	},
 
-  uploadProjectDataByUrl: async function(list) {
+	uploadProjectDataByUrl: async function(list) {
 
-		//console.log("in uploadProjectDataByUrl", list)
-        // var result = HTTP.call('GET', list.url);
-		//console.log("result", result.data)
+		// console.log("in uploadProjectDataByUrl", list)
+    	// var result = HTTP.call('GET', list.url);
+		// console.log("result", result.data)
 		// list.data = result.data;
-    try {
-      const resp = await fetch(list.url);
-      list.data = await resp.json();
+    	try {
+    		const resp = await fetch(list.url);
+    		list.data = await resp.json();
 
-  		await uploadProject(list);
-    } catch(err) {
-      console.error('error while fetching project data', err)
-      // list.data = {}
-    }
-
-  },
+  			await uploadProject(list);
+    	} catch(err) {
+    		console.error('error while fetching project data', err)
+    		// list.data = {}
+    	}
+	},
 
 	uploadProjectData: async function(list) {
 
@@ -110,7 +108,8 @@ Meteor.methods({
 });
 
 async function uploadProject(list) {
-		var user_id = this.userId;
+		//var user_id = this.userId;
+		var user_id = list.user_id;
 		if (await is_project_member(user_id, list)) {
 
 			var project_id = list.projectId;
@@ -181,7 +180,248 @@ async function uploadProject(list) {
 														endpointPassword: project_data.endpointPassword,
 														schema: project_data.schema,
 													}});
+			var tool = await Tools.findOneAsync({_id: project.toolId,});
+			if (!tool) {
+				tool = await Tools.findOneAsync({name: project.toolName,})
+				if (!tool) {
+					console.error("No Tool", project.toolId);
+						return;
+				}
+			}
+			var tool_id = tool._id;
+			for (const diagram of data.diagrams) {
+				var elements = diagram.elements;
+				delete diagram.elements;
+				delete diagram._id;
 
+				var diagram_type_id = diagram.diagramTypeId;
+
+				var diagram_type = await DiagramTypes.findOneAsync({_id: diagram_type_id, toolId: tool_id,});
+				if (!diagram_type) {
+					var diagram_type_name = diagram.diagramTypeName;
+					diagram_type = await DiagramTypes.findOneAsync({name: diagram_type_name, toolId: tool_id,});
+					if (!diagram_type) {
+						console.error("No DiagramType", diagram_type_id, diagram_type_name);
+						return; 
+					}
+				}
+				if ( diagram_type != undefined) {
+					_.extend(diagram, {projectId: project_id,
+						versionId: version_id,
+						diagramTypeId: diagram_type._id,
+						toolId: tool_id,
+					});
+					var diagram_id = await Diagrams.insertAsync(diagram);
+					var elem_map = {};
+					for (const element of elements) {
+						var old_elem_id = element._id;
+	
+						var compartments = element.compartments;
+						delete element.compartments;
+						delete element._id;
+	
+						var elem_type_id = element.elementTypeId;
+	
+						var element_type = await ElementTypes.findOneAsync({_id: elem_type_id, toolId: tool_id,});
+						if (!element_type) {
+							var element_type_name = element.elementTypeName;
+							element_type = await ElementTypes.findOneAsync({name: element_type_name,
+																			toolId: tool_id,
+																			diagramTypeId: diagram_type._id,
+																			});
+	
+							if (!element_type) {
+								console.error("No ElementType", elem_type_id);
+								return;
+							}
+						}
+	
+						_.extend(element, {projectId: project_id,
+											versionId: version_id,
+											diagramId: diagram_id,
+											elementTypeId: element_type._id,
+											diagramTypeId: diagram_type._id,
+											toolId: tool_id,
+										});
+	
+						if (element.type == "Line") {
+							_.extend(element, {startElement: elem_map[element.startElement],
+												endElement: elem_map[element.endElement],
+											});
+						}
+	
+						var element_id = await Elements.insertAsync(element);
+	
+						elem_map[old_elem_id] = element_id;
+	
+						for (const compartment of compartments) {
+							delete compartment._id;
+	
+							var compart_type_id = compartment.compartmentTypeId;
+	
+							var compart_type = await CompartmentTypes.findOneAsync({_id: compart_type_id, toolId: tool_id,});
+							if (!compart_type) {
+	
+								var compart_type_name = compartment.compartmentTypeName;
+								compart_type = await CompartmentTypes.findOneAsync({name: compart_type_name,
+																						toolId: tool_id,
+																						diagramTypeId: diagram_type._id,
+																						elementTypeId: element_type._id,
+																					});
+	
+								if (!compart_type) {
+									console.error("No CompartmentType", compart_type_id);
+									return;
+								}
+							}
+	
+							_.extend(compartment, {projectId: project_id,
+													versionId: version_id,
+													diagramId: diagram_id,
+													elementId: element_id,
+													compartmentTypeId: compart_type._id,
+	
+													elementTypeId: element_type._id,
+													diagramTypeId: diagram_type._id,
+													toolId: tool_id,
+												});
+	
+							await Compartments.insertAsync(compartment);
+						}
+						/*
+						_.each(compartments, async function(compartment) {
+							delete compartment._id;
+	
+							var compart_type_id = compartment.compartmentTypeId;
+	
+							var compart_type = await CompartmentTypes.findOneAsync({_id: compart_type_id, toolId: tool_id,});
+							if (!compart_type) {
+	
+								//compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
+								if (!compart_type) {
+	
+									var compart_type_name = compartment.compartmentTypeName;
+									compart_type = await CompartmentTypes.findOneAsync({name: compart_type_name,
+																				toolId: tool_id,
+																				diagramTypeId: diagram_type._id,
+																				elementTypeId: element_type._id,
+																			});
+	
+									if (!compart_type) {
+										console.error("No CompartmentType", compart_type_id);
+										return;
+									}
+								}
+							}
+	
+							_.extend(compartment, {projectId: project_id,
+													versionId: version_id,
+													diagramId: diagram_id,
+													elementId: element_id,
+													compartmentTypeId: compart_type._id,
+	
+													elementTypeId: element_type._id,
+													diagramTypeId: diagram_type._id,
+													toolId: tool_id,
+												});
+	
+							await Compartments.insertAsync(compartment);
+						});
+						*/
+					}
+					/*
+					_.each(elements, async function(element) {
+	
+						var old_elem_id = element._id;
+	
+						var compartments = element.compartments;
+						delete element.compartments;
+						delete element._id;
+	
+						var elem_type_id = element.elementTypeId;
+	
+						var element_type = await ElementTypes.findOneAsync({_id: elem_type_id, toolId: tool_id,});
+						if (!element_type) {
+	
+							//element_type = ElementTypes.findOne({_id: elem_type_id,});
+							if (!element_type) {
+	
+								var element_type_name = element.elementTypeName;
+								element_type = await ElementTypes.findOneAsync({name: element_type_name,
+																		toolId: tool_id,
+																		diagramTypeId: diagram_type._id,
+																	});
+	
+								if (!element_type) {
+									console.error("No ElementType", elem_type_id);
+									return;
+								}
+							}
+						}
+	
+						_.extend(element, {projectId: project_id,
+											versionId: version_id,
+											diagramId: diagram_id,
+											elementTypeId: element_type._id,
+											diagramTypeId: diagram_type._id,
+											toolId: tool_id,
+										});
+	
+						if (element.type == "Line") {
+							_.extend(element, {startElement: elem_map[element.startElement],
+												endElement: elem_map[element.endElement],
+											});
+						}
+	
+						var element_id = await Elements.insertAsync(element);
+	
+						elem_map[old_elem_id] = element_id;
+	
+						_.each(compartments, async function(compartment) {
+							delete compartment._id;
+	
+							var compart_type_id = compartment.compartmentTypeId;
+	
+							var compart_type = await CompartmentTypes.findOneAsync({_id: compart_type_id, toolId: tool_id,});
+							if (!compart_type) {
+	
+								//compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
+								if (!compart_type) {
+	
+									var compart_type_name = compartment.compartmentTypeName;
+									compart_type = await CompartmentTypes.findOneAsync({name: compart_type_name,
+																				toolId: tool_id,
+																				diagramTypeId: diagram_type._id,
+																				elementTypeId: element_type._id,
+																			});
+	
+									if (!compart_type) {
+										console.error("No CompartmentType", compart_type_id);
+										return;
+									}
+								}
+							}
+	
+							_.extend(compartment, {projectId: project_id,
+													versionId: version_id,
+													diagramId: diagram_id,
+													elementId: element_id,
+													compartmentTypeId: compart_type._id,
+	
+													elementTypeId: element_type._id,
+													diagramTypeId: diagram_type._id,
+													toolId: tool_id,
+												});
+	
+							await Compartments.insertAsync(compartment);
+						});
+	
+					}); */
+				}
+			} 
+
+
+			/*
 			_.each(data.diagrams, async function(diagram) {
 
 				var tool = await Tools.findOneAsync({_id: project.toolId,});
@@ -313,6 +553,7 @@ async function uploadProject(list) {
 
 				});
 			});
+			*/
 
 		}
 }

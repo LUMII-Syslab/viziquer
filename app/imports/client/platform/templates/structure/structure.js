@@ -260,7 +260,7 @@ Template.createProjectModal.helpers({
 
 Template.createProjectModal.events({
 
-	'click #create-project': function() {
+	'click #create-project': async function() {
 
 		var project_name_obj = $('#project-name');
 		var icon_name_obj = $("#icon-name");
@@ -292,10 +292,6 @@ Template.createProjectModal.events({
 			var icon_name = icon_name_obj.val();
 			var category_name = category_obj.val();
 
-			//console.log(tool_id);
-			//console.log(Services.find().count())
-			//console.log(Services.findOne({toolId: tool_id }));
-
 			//resets tools query
 			Session.set("tools", reset_variable());
 
@@ -307,7 +303,7 @@ Template.createProjectModal.events({
 						decorateInstancePositionConstants: "true",
 					};
 
-			//var obj = $('input[name=stack-radio]:checked').closest(".schema");
+			var obj = $('input[name=stack-radio]:checked').closest(".schema");
 			list.project_link = obj.attr("link")	
 			//console.log("Jauna projekta taisīšana");
 			
@@ -315,7 +311,6 @@ Template.createProjectModal.events({
 				var schemas = Template.createProjectModal.schemas.get();
 				var schema_info = _.filter(schemas, function(o){ return o.display_name == schema_name});
 
-				// var schema_info = .filter(function(o){ return o.display_name == schema_name});
 				if ( schema_info.length > 0 && schema_info[0].display_name != "") {
 					list.schema = schema_name;
 					list.endpoint = schema_info[0].sparql_url;
@@ -325,12 +320,15 @@ Template.createProjectModal.events({
 					list.indirectClassMembershipRole = schema_info[0].indirect_class_role;
 				}
 			}
-
+			//console.log("Jauna projekta taisīšana", list);
 			Template.createProjectModal.loading.set(true);
-			Utilities.callMeteorMethod("insertProject", list, function() {
-				$("#add-project").modal("hide");
-				Template.createProjectModal.loading.set(false);
-			});
+			//Utilities.callMeteorMethod("insertProject", list, function() {
+			//	$("#add-project").modal("hide");
+			//	Template.createProjectModal.loading.set(false);
+			//});
+			await Utilities.callMeteorMethodAsync("insertProject", list);
+			$("#add-project").modal("hide");
+			Template.createProjectModal.loading.set(false);
 			
 		} else {
 			

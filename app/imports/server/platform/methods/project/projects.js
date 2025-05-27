@@ -122,31 +122,28 @@ Meteor.methods({
 				project_link = list.project_link;
 				delete 	list.project_link;
 			}
-
-      await Projects.insertAsync(list);
-
-			var project = await Projects.findOneAsync({
-        createdAt: list["createdAt"],
-        createdBy: user_id,
-        name: list["name"],
-      });
-			var projectsUsers = await ProjectsUsers.findOneAsync({
-        projectId: project._id,
-      })
+		
+      		await Projects.insertAsync(list);
+		
+			var project = await Projects.findOneAsync({ createdAt: list["createdAt"], createdBy: user_id, name: list["name"] });
+			var projectsUsers = await ProjectsUsers.findOneAsync({ projectId: project._id })
+		
 			if (projectsUsers) {
 				versionId = projectsUsers.versionId;
-      }
+        	}
 
 			//console.log(project)
 			//console.log(projectsUsers)
 
 			if (project_link) {
-				//console.log("Ir projekta links")
+				// console.log("Ir projekta links", project_link)
 				const list2 = {
-          projectId: project._id,
-          versionId: versionId,
-          url: project_link,
-        };
+            		projectId: project._id,
+          			versionId: versionId,
+         			url: project_link,
+					user_id:user_id
+        		};
+
 				await Meteor.callAsync("uploadProjectDataByUrl", list2);
 			}
 			return project._id;
