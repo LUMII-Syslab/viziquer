@@ -85,6 +85,39 @@ Meteor.methods({
 		}
 
         list.element_type_id = class_type._id;
+		for (const key of Object.keys(ontology.Class)) {
+			const item = ontology.Class[key];
+			if (element_map[key]) {
+				console.error("Key already exists", key, element_map);
+				return;
+			}
+
+            let class_style = class_type["styles"][0];
+            let class_style_old = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeOld});
+            let class_style_new = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeNew});
+            if ( class_style_old != undefined )
+                class_style = class_style_old;
+            if ( class_style_new != undefined )
+                class_style = class_style_new;
+
+			let object = {diagramId: new_diagram_id,
+							type: "Box",
+							location: {x: 10, y: 10, width: 5, height: 5},
+							styleId: class_style["id"],
+							style: class_style,
+							elementTypeId: class_type._id,
+							diagramTypeId: diagram_type._id,
+							projectId: list.projectId,
+							versionId: list.versionId,
+						};
+
+			let new_box_id = await Elements.insertAsync(object);
+			element_map[key] = new_box_id;
+            list.element_id = new_box_id;
+
+			await add_class_compartments(list, item);
+		}
+		/*
 		_.each(ontology.Class, async function(item, key) {
 
 			if (element_map[key]) {
@@ -117,6 +150,7 @@ Meteor.methods({
 
 			await add_class_compartments(list, item);
 		});
+		*/
 
 		// Gen part
 		let gen_type = await ElementTypes.findOneAsync({name: "Generalization", diagramTypeId: diagram_type._id});
@@ -128,6 +162,33 @@ Meteor.methods({
 		let gen_style = gen_type["styles"][0];
         let gen_layoutSettings = ( gen_type.layoutSettings != undefined) ?  gen_type.layoutSettings : {};
 
+		for (const key of Object.keys(ontology.Generalization)) {
+			const item = ontology.Generalization[key];
+			let object = {diagramId: new_diagram_id,
+							type: "Line",
+							points: [0, 20, 20, 20],
+                            startElement: element_map[item.target],
+							endElement: element_map[item.source],
+                            startSides: gen_type.startSides || 4,
+                            endSides: gen_type.endSides || 1,
+							styleId: gen_style["id"],
+							elementTypeId: gen_type._id,
+							diagramTypeId: diagram_type._id,
+                            style:{
+								elementStyle: gen_style.elementStyle,
+								startShapeStyle: gen_style.startShapeStyle,
+								endShapeStyle: gen_style.endShapeStyle,
+								lineType: "Orthogonal",
+                            },
+                            layoutSettings: gen_layoutSettings,
+							projectId: list.projectId,
+							versionId: list.versionId,
+						};
+
+            let new_gen_id = await Elements.insertAsync(object);
+			element_map[key] = new_gen_id;  // Priekš kam ?
+		}
+		/*
 		_.each(ontology.Generalization, async function(item, key) {
 			let object = {diagramId: new_diagram_id,
 							type: "Line",
@@ -154,7 +215,7 @@ Meteor.methods({
 			element_map[key] = new_gen_id;  // Priekš kam ?
 
 		});
-
+		*/
 
 		// Lines part
 		let line_type = await ElementTypes.findOneAsync({name: "ObjectProperty", diagramTypeId: diagram_type._id});
@@ -168,6 +229,37 @@ Meteor.methods({
         let line_layoutSettings = ( line_type.layoutSettings != undefined) ?  line_type.layoutSettings : {};
         let cut_info = {cut:false, class_cnt:0, max:5};
 
+		for (const key of Object.keys(ontology.ObjectProperty)) {
+			const item = ontology.ObjectProperty[key];
+			let object = {diagramId: new_diagram_id,
+				type: "Line",
+				points: [0, 10, 10, 10],
+				startElement: element_map[item.source],
+				endElement: element_map[item.target],
+				styleId: line_style["id"],
+				style:{
+					elementStyle: line_style.elementStyle,
+					startShapeStyle: line_style.startShapeStyle,
+					endShapeStyle: line_style.endShapeStyle,
+					lineType: "Orthogonal",
+				},
+				layoutSettings: line_layoutSettings,
+				elementTypeId: line_type._id,
+				diagramTypeId: diagram_type._id,
+				projectId: list.projectId,
+				versionId: list.versionId,
+			};
+
+			let new_line_id = await Elements.insertAsync(object);
+			list.element_id = new_line_id;
+			element_map[key] = new_line_id;
+			cut_info.class_cnt = ontology.Class[item.source].Cnt;
+			const lineCompCount = 5;
+			cut_info.cut = item.compartments.Name.length > lineCompCount;
+			cut_info.max = lineCompCount;
+			await add_one_compartment_from_list(list, "Name", item.compartments.Name, '', cut_info);
+		}
+		/*
 		_.each(ontology.ObjectProperty, async function(item, key) {
 			let object = {diagramId: new_diagram_id,
 							type: "Line",
@@ -197,6 +289,7 @@ Meteor.methods({
             cut_info.max = lineCompCount;
             await add_one_compartment_from_list(list, "Name", item.compartments.Name, '', cut_info);
 		});
+		*/
 
         // Intersect Lines part
 		let iline_type = await ElementTypes.findOneAsync({name: "intersection", diagramTypeId: diagram_type._id});
@@ -209,6 +302,33 @@ Meteor.methods({
 		let iline_style = iline_type["styles"][0];
         let iline_layoutSettings = ( iline_type.layoutSettings != undefined) ?  iline_type.layoutSettings : {};
 
+		for (const key of Object.keys(ontology.Intersect)) {
+			const item = ontology.Intersect[key];
+			let object = {diagramId: new_diagram_id,
+				type: "Line",
+				points: [0, 10, 10, 10],
+				startElement: element_map[item.source],
+				endElement: element_map[item.target],
+				styleId: iline_style["id"],
+				style:{
+					elementStyle: iline_style.elementStyle,
+					startShapeStyle: iline_style.startShapeStyle,
+					endShapeStyle: iline_style.endShapeStyle,
+					lineType: "Orthogonal",
+				},
+				layoutSettings: iline_layoutSettings,
+				elementTypeId: iline_type._id,
+				diagramTypeId: diagram_type._id,
+				projectId: list.projectId,
+				versionId: list.versionId,
+			};
+
+			let new_line_id = await Elements.insertAsync(object);
+			list.element_id = new_line_id;
+			element_map[key] = new_line_id;
+			await add_one_compartment(list, "Information", item.compartments.Information, '');
+		}
+		/*
 		_.each(ontology.Intersect, async function(item, key) {
 			let object = {diagramId: new_diagram_id,
 							type: "Line",
@@ -234,61 +354,9 @@ Meteor.methods({
             element_map[key] = new_line_id;
             await add_one_compartment(list, "Information", item.compartments.Information, '');
 		})
+		*/
 	},
 });
-
-async function add_compartment(list, item, diagram_id, diagram_type_id, element_id, element_type_id) {
-    // Vecajam Artūra variantam
-	let compartments = item.compartments;
-
-	let fill = "";
-	let placement = "";
-	let value = "";
-	if (compartments.string) {
-		value = replace_newline(compartments.string);
-		placement = "start-left";
-		fill = "rgb(65,113,156)";
-	}
-	else {
-		value = replace_newline(compartments.name) + "\n" + replace_newline(compartments.atr_string) + "\n" + replace_newline(compartments.group_string);
-		placement = "inside";
-		fill = "white";
-
-	}
-
-
-	let compartment_type = await CompartmentTypes.findOneAsync({elementTypeId: element_type_id,});
-	if (!compartment_type) {
-		console.error("No compartment type");
-		return;
-	}
-
-
-	let style_obj = compartment_type["styles"][0];
-	let style = style_obj["style"];
-	_.extend(style, {placement: placement,
-						strokeWidth: "1",
-						fill: fill,
-					});
-
-	let compart_obj = {diagramId: diagram_id,
-						diagramTypeId: diagram_type_id,
-						projectId: list.projectId,
-						versionId: list.versionId,
-						elementId: element_id,
-						elementTypeId: element_type_id,
-						compartmentTypeId: compartment_type._id,
-						style: style,
-						styleId: style_obj["id"],
-						isObjectRepresentation: false,
-						index: 1,
-						input: value,
-						value: value,
-						valueLC: value,
-					};
-
-	await Compartments.insertAsync(compart_obj);
-}
 
 async function add_class_compartments(list, item) {
 	let compartments = item.compartments;
