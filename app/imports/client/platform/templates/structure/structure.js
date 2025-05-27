@@ -369,8 +369,8 @@ function getSchemas(tag) {
 
 Template.createProjectModal.rendered = async function() {
 	// var rr = await dataShapes.getOntologies();
-	// var rr = await dataShapes.getOntologiesAndTags();
-	var rr = {};
+	var rr = await dataShapes.getOntologiesAndTags();
+	//var rr = {};
 	var tags = rr.tags;
 
 	if (_.size(tags) > 0) {
