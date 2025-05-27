@@ -389,18 +389,16 @@ function parsedExpressionField(expression){
 }
 
 function clearMergeValuesInput(){
-	var defaultFunctions = document.getElementsByName("radio-function");
-	_.each(defaultFunctions, function(e){
-		if (e.value == "count") e.checked = true;
-		else e.checked = false;
-	});
+  const defaultFunctions = document.getElementsByName("radio-function");
+  for (let e of defaultFunctions) {
+    e.checked = (e.value === "count");
+  }
 
-	var defaultRadio = document.getElementsByName("type-radio-merge");
-	_.each(defaultRadio, function(e){
-		if (e.value == "SINGLE") e.checked = true;
-		else e.checked = false;
-	});
-	
+  const defaultRadio = document.getElementsByName("type-radio-merge");
+  for (let e of defaultRadio) {
+    e.checked = (e.value === "SINGLE");
+  }
+
 	document.getElementById("merge-alias-name").value = Template.AddMergeValues.mergeAlias.get();
 	document.getElementById("merge-display-results").checked = false;
 	document.getElementById("require-merge-check-box").checked = false;

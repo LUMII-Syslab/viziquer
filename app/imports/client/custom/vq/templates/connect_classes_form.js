@@ -64,12 +64,12 @@ Interpreter.customMethods({
 
 				if (await startClass.isUnion() && !(await startClass.isRoot())) { // [ + ] element, that has link to upper class 
 					if (await startClass.getLinkToRoot()){
-						var element = await startClass.getLinkToRoot().link.getElements();
+						let element = await startClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
 						if (await startClass.getLinkToRoot().start) {
-							var newStartClass = await createVQ_Element(element.start.obj._id);
+							  newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
-		    				var newStartClass = await createVQ_Element(element.end.obj._id);
+		    				newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
 		    			if (newStartClass.obj["_id"] != endClass.obj["_id"]) {
 			    			usedClasses[0].name = await newStartClass.getName();
@@ -83,12 +83,12 @@ Interpreter.customMethods({
 
 				if (await endClass.isUnion() && !(await endClass.isRoot())) { // [ + ] element, that has link to upper class 
 					if (await endClass.getLinkToRoot()){
-						var element = await endClass.getLinkToRoot().link.getElements();
+						let element = await endClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
 						if (await endClass.getLinkToRoot().start) {
-							var newStartClass = await createVQ_Element(element.start.obj._id);
+							newStartClass = await createVQ_Element(element.start.obj._id);
 		    			} else {
-		    				var newStartClass = await createVQ_Element(element.end.obj._id);
+		    				newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
 		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
 		    				usedClasses[1].name = await newStartClass.getName();
@@ -140,7 +140,7 @@ Interpreter.customMethods({
 				var usedClasses = [{name: await startClass.getName(), id: startClass.obj["_id"]}, {name: await endClass.getName(), id: endClass.obj["_id"]}];
 				if (await startClass.isUnion() && !(await startClass.isRoot())) { // [ + ] element, that has link to upper class 
 					if (await startClass.getLinkToRoot()){
-						var element = await startClass.getLinkToRoot().link.getElements();
+						let element = await startClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
 						if (await startClass.getLinkToRoot().start) {
 							var newStartClass = await createVQ_Element(element.start.obj._id);
@@ -159,7 +159,7 @@ Interpreter.customMethods({
 
 				if (await endClass.isUnion() && !(await endClass.isRoot())) { // [ + ] element, that has link to upper class 
 					if (await endClass.getLinkToRoot()){
-						var element = await endClass.getLinkToRoot().link.getElements();
+						let element = await endClass.getLinkToRoot().link.getElements();
 						var newStartClass = "";
 						if (await endClass.getLinkToRoot().start) {
 							var newStartClass = await createVQ_Element(element.start.obj._id);
@@ -275,69 +275,72 @@ Template.ConnectClasses.helpers({
 });
 
 Template.ConnectClasses.events({
-	"keyup #searchList": function(){
-		$('#chain_text')[0].style.color = "";
-		var value = $("#searchList").val().toLowerCase(); 
-		value = value.trim(); 
-		//console.log("mySearch: ", value);
-		var data = Template.ConnectClasses.linkList.curValue;
-		var inverseCount = Template.ConnectClassesSettings.inverseValue.curValue.data; //"none", "one", "more"
-		if (value == "") {//empty string
-			_.each(data, function(e){
-				if (inverseCount == "more" || (inverseCount == "one" && e.countInverseLinks < 2) || (inverseCount == "none" && e.countInverseLinks < 1)) {
-					e.show = true;
-				}
-			})			
-		} else if (value.indexOf('.') > -1){
-			value = value.split('.');
-			if (value.length > 2) {
-				console.log("too many points");
-				$(".searchBox").append("<div id='errorFieldCC' style='color:red; margin-top: 5px;'>Please, use only 1 period to separate link and class</div>");
-				return;
-			}
+  "keyup #searchList": function () {
+    $('#chain_text')[0].style.color = "";
+    let value = $("#searchList").val().toLowerCase().trim();
 
-		} else{
-			_.each(data, function(e){
-			//if number of inverse link is ok - check for value				
-				if (inverseCount == "more" || (inverseCount == "one" && e.countInverseLinks < 2) || (inverseCount == "none" && e.countInverseLinks < 1)) {
-					var found = false;
+    const data = Template.ConnectClasses.linkList.curValue;
+    const inverseCount = Template.ConnectClassesSettings.inverseValue.curValue.data; // "none", "one", "more"
 
-					_.each(e.array, function(a){ //console.log(e.array.indexOf(a), e.array.length - 1);
-						// the first class is not checked
-						if (e.array.indexOf(a) > 0 && e.array.indexOf(a) != e.array.length - 1){ 						
-						// given classes are not searched for value 
-						// except last element - check both class and link
-							if (a.link.toLowerCase().indexOf(value) > -1 || a.class.toLowerCase().indexOf(value) > -1) {
-								found = true;
-							}
-						} else if (e.array.indexOf(a) == e.array.length - 1) {
-						//last element - check only link
-							if (a.link.toLowerCase().indexOf(value) > -1) {
-								found = true;
-							}
-						}
-					});
-					
-					if (found) {
-						data[data.indexOf(e)].show = true;
-					} else {
-						data[data.indexOf(e)].show = false;
-					}
-				} else {
-					data[data.indexOf(e)].show = false;
-				}
-			})
-		}
-		data.sort(function (x, y) {
-		    var n = x.array.length - y.array.length;
-		    if (n !== 0) {
-		        return n;
-		    }
-		    return x.countInverseLinks - y.countInverseLinks;
-		});
+    if (value === "") {
+      for (let e of data) {
+        if (
+          inverseCount === "more" ||
+          (inverseCount === "one" && e.countInverseLinks < 2) ||
+          (inverseCount === "none" && e.countInverseLinks < 1)
+        ) {
+          e.show = true;
+        }
+      }
+    } else if (value.indexOf('.') > -1) {
+      const splitVal = value.split('.');
+      if (splitVal.length > 2) {
+        console.log("too many points");
+        $(".searchBox").append("<div id='errorFieldCC' style='color:red; margin-top: 5px;'>Please, use only 1 period to separate link and class</div>");
+        return;
+      }
+    } else {
+      for (let e of data) {
+        if (
+          inverseCount === "more" ||
+          (inverseCount === "one" && e.countInverseLinks < 2) ||
+          (inverseCount === "none" && e.countInverseLinks < 1)
+        ) {
+          let found = false;
 
-		Template.ConnectClasses.linkList.set(data);
-	},
+          for (let i = 0; i < e.array.length; i++) {
+            const a = e.array[i];
+
+            if (i > 0 && i !== e.array.length - 1) {
+              if (
+                a.link.toLowerCase().includes(value) ||
+                a.class.toLowerCase().includes(value)
+              ) {
+                found = true;
+              }
+            } else if (i === e.array.length - 1) {
+              if (a.link.toLowerCase().includes(value)) {
+                found = true;
+              }
+            }
+          }
+
+          e.show = found;
+        } else {
+          e.show = false;
+        }
+      }
+    }
+
+    data.sort(function (x, y) {
+      const n = x.array.length - y.array.length;
+      if (n !== 0) return n;
+      return x.countInverseLinks - y.countInverseLinks;
+    });
+
+    Template.ConnectClasses.linkList.set(data);
+  },
+
 
 
 	"click #ok-connect": async function(){
@@ -379,20 +382,22 @@ Template.ConnectClasses.events({
 			//console.log("TODO property path");
 			var class_name = lastElement.name;
 			var name = ""; //link name
-			_.each(chain, function(e){ //{link: ee["name"], class: ee["class"], type: " <= ", direction: ee["type"]}
-				if (e.type.indexOf("<=") > -1) {
-					name = name.concat("^",e.link, ".");
-				} else {
-					name = name.concat(e.link, ".");
-				}
-			});
+			for (let e of chain) {
+        // {link: ee["name"], class: ee["class"], type: " <= ", direction: ee["type"]}
+        if (e.type.indexOf("<=") > -1) {
+          name = name.concat("^", e.link, ".");
+        } else {
+          name = name.concat(e.link, ".");
+        }
+      }
+
 			name = name.slice(0,-1);
 			//console.log(class_name, name);
 
 			if (Template.ConnectClasses.addLongLink.get().data){			
 				var d = 30; //distance between boxes
-	            var oldPosition = await currentVQElment.getCoordinates(); //Old class coordinates and size
-	            var newPosition = await currentVQElment.getNewLocation(d); //New class coordinates and size  
+	            let oldPosition = await currentVQElment.getCoordinates(); //Old class coordinates and size
+	            let newPosition = await currentVQElment.getNewLocation(d); //New class coordinates and size
 	            var nameLength = 12*class_name.length  + 2*(class_name.match(/[A-Z]/g) || []).length;        
 			    if (nameLength < 75) nameLength = 75; //default minimal width
 	            if (nameLength > 512) nameLength = 512; //default maximal width
@@ -403,7 +408,7 @@ Template.ConnectClasses.events({
 	            //Link Coordinates
 	            var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
 	            var coordY = oldPosition.y + oldPosition.height;
-	            var locLink = [];
+	            let locLink = [];
 				
 				const cl = await Create_VQ_Element_Async(newPosition);
 				await cl.setName(class_name);
@@ -454,8 +459,8 @@ Template.ConnectClasses.events({
 			} else {				
 				var nextVQElement = await createVQ_Element(lastElement.id);
 				
-				var oldPosition = await currentVQElment.getCoordinates(); //Old class coordinates and size
-	            var newPosition = await nextVQElement.getCoordinates(); //New class coordinates and size
+				let oldPosition = await currentVQElment.getCoordinates(); //Old class coordinates and size
+	            let newPosition = await nextVQElement.getCoordinates(); //New class coordinates and size
 	            //Link Coordinates	            
 	            var locLink = [oldPosition.x + Math.round(oldPosition.width/2), oldPosition.y + oldPosition.height, 
 	            				oldPosition.x + Math.round(oldPosition.width/2), Math.max(oldPosition.y + oldPosition.height, newPosition.y + newPosition.height) + 60,
@@ -549,31 +554,45 @@ Template.ConnectClasses.events({
 		$("#searchList")[0].value = "";
 	},
 
-	"click #choose-second-class-button": async function(){
-		$('#chain_text')[0].style.color = "";
-		var nextClassName = $('#classList2').val();
-		var ids = [{text: Template.ConnectClasses.IDS.curValue["id"]}, {text: "no_class_exists", name: nextClassName}];
-		var list = await GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+  "click #choose-second-class-button": async function () {
+    $('#chain_text')[0].style.color = "";
 
-		var inverseCount = Template.ConnectClassesSettings.inverseValue.curValue.data;
-		_.each(list, function(a){					
-			if (inverseCount == "more" || (inverseCount == "none" && a.countInverseLinks < 1) || (inverseCount == "one" && a.countInverseLinks < 2)) {
-				a.show = true;
-			} else {
-				a.show = false;
-			}			
-		});
+    const nextClassName = $('#classList2').val();
+    const ids = [
+      { text: Template.ConnectClasses.IDS.curValue["id"] },
+      { text: "no_class_exists", name: nextClassName }
+    ];
 
-		Template.ConnectClassesSettings.fromToClass.set({fromName: Template.ConnectClasses.IDS.curValue["name"], fromID: Template.ConnectClasses.IDS.curValue["id"], toName: nextClassName, toID:"no_class_exists"});
-		list.sort(function (x, y) {
-		    var n = x.array.length - y.array.length;
-		    if (n !== 0) {
-		        return n;
-		    }
-		    return x.countInverseLinks - y.countInverseLinks;
-		});
-		Template.ConnectClasses.linkList.set(list);		
-	},
+    const list = await GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+    const inverseCount = Template.ConnectClassesSettings.inverseValue.curValue.data;
+
+    for (let a of list) {
+      if (
+        inverseCount === "more" ||
+        (inverseCount === "none" && a.countInverseLinks < 1) ||
+        (inverseCount === "one" && a.countInverseLinks < 2)
+      ) {
+        a.show = true;
+      } else {
+        a.show = false;
+      }
+    }
+
+    Template.ConnectClassesSettings.fromToClass.set({
+      fromName: Template.ConnectClasses.IDS.curValue["name"],
+      fromID: Template.ConnectClasses.IDS.curValue["id"],
+      toName: nextClassName,
+      toID: "no_class_exists"
+    });
+
+    list.sort((x, y) => {
+      const n = x.array.length - y.array.length;
+      return n !== 0 ? n : x.countInverseLinks - y.countInverseLinks;
+    });
+
+    Template.ConnectClasses.linkList.set(list);
+  },
+
 
 	"click #not-show-as-property-path": function(){
 		var settings = Template.ConnectClasses.gotoSubquery.get();		
@@ -680,14 +699,20 @@ Template.ConnectClassesSettings.events({
 		//Inverse
 		var inverseCount = $('input[name=inverse-links]:checked').val();
 		Template.ConnectClassesSettings.inverseValue.set({data: inverseCount});
-		var data = Template.ConnectClasses.linkList.curValue;
-		_.each(data, function(a){						
-			if (inverseCount == "more" || (inverseCount == "none" && a.countInverseLinks < 1) || (inverseCount == "one" && a.countInverseLinks < 2)) {
-				a.show = true;
-			} else {
-				a.show = false;
-			}			
-		});
+    let data = Template.ConnectClasses.linkList.curValue;
+
+    for (let a of data) {
+      if (
+        inverseCount === "more" ||
+        (inverseCount === "none" && a.countInverseLinks < 1) ||
+        (inverseCount === "one" && a.countInverseLinks < 2)
+      ) {
+        a.show = true;
+      } else {
+        a.show = false;
+      }
+    }
+
 		data.sort(function (x, y) {
 		    var n = x.array.length - y.array.length;
 		    if (n !== 0) {
@@ -742,10 +767,10 @@ function clearConnectClassesInput(){
 	Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
 	var defaultRadio = document.getElementsByName("path-radio");
-	_.each(defaultRadio, function(e){
-		if (e.value == Template.ConnectClassesSettings.fromToClass.curValue.fromID) e.checked = true;
-		else e.checked = false;
-	});
+  for (let e of defaultRadio) {
+    e.checked = (e.value === Template.ConnectClassesSettings.fromToClass.curValue.fromID);
+  }
+
 
 	Template.ConnectClassesSettings.fromToClass.set({fromName: "", fromID: "", toName: "", toID:""});
 	Template.ConnectClassesSettings.directionValue.set({data: 0});
@@ -757,73 +782,89 @@ function clearConnectClassesInput(){
 	Interpreter.destroyErrorMsg();
 }
 
-function clearConnectClassesSettingsInput(){
-	_.each($('input[name=path-radio]'), function(e){
-			if (e.value == Template.ConnectClassesSettings.directionValue.curValue.data) e.checked = true;
-		});
-	_.each($('input[name=inverse-links]'), function(e){
-		if (e.value == Template.ConnectClassesSettings.inverseValue.curValue.data) e.checked = true;
-	});
+function clearConnectClassesSettingsInput() {
+  for (let e of document.querySelectorAll('input[name=path-radio]')) {
+    if (e.value === Template.ConnectClassesSettings.directionValue.curValue.data) {
+      e.checked = true;
+    }
+  }
+
+  for (let e of document.querySelectorAll('input[name=inverse-links]')) {
+    if (e.value === Template.ConnectClassesSettings.inverseValue.curValue.data) {
+      e.checked = true;
+    }
+  }
 }
+
 //Based on AddLink
 //Find all the associations for class with given ID
 //Output: association name, class on the other side, link direction as [{name: "", class: "", type: "(inv)", direction: "=>"}]
-async function GetChains(ids, maxLength){
-	
-	
-	var resultStringArray=[]
-	
-	if(ids.length == 2){
-		var elem1 = await createVQ_Element(ids[0]["text"]);
-		var elem2 = await createVQ_Element(ids[1]["text"]);
-		var params = {propertyKind:'Object'};
-		var props = await dataShapes.getProperties(params, elem1, elem2);
-		var props2 = await dataShapes.getProperties(params, elem2, elem1);
-		
-		var i = 0;
-		_.each(props.data, function(e){
-			
-			var resultChain = [];
-			//prefix:name
-			var prefix;
-			if(e.is_local == true)prefix = "";
-			else prefix = e.prefix+":";
-			var eName = prefix + e.display_name;
-		
-			if(e.mark == "out") resultChain.push({link: eName, type: "",  direction:e.type});
-			else resultChain.push({name: eName, type: "<=",  direction:e.type});
-					
-			resultStringArray.push({number: i, show: true, countInverseLinks: countInverse(resultChain), array: resultChain});
-			i++;
-		});
-		
-		_.each(props2.data, function(e){
-			console.log("EEEEEE", e)
-			
-			var resultChain = [];
-			//prefix:name
-			var prefix;
-			if(e.is_local == true)prefix = "";
-			else prefix = e.prefix+":";
-			var eName = prefix + e.display_name;
-		
-			if(e.mark == "out") resultChain.push({link: eName, type: "<=",  direction:e.type});
-			else resultChain.push({name: eName, type: "",  direction:e.type});
-					
-			resultStringArray.push({number: i, show: true, countInverseLinks: countInverse(resultChain), array: resultChain});
-			i++;
-		});
-		
-		
-	}
-	
-	console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", resultStringArray)
-	
-	if(resultStringArray.length == 0) {
-		resultStringArray.push({array:[{class: "No connection of given length is found"}], show: true, countInverseLinks: 0, number: -1});
-	};
+async function GetChains(ids, maxLength) {
+  const resultStringArray = [];
 
-	return resultStringArray;
+  if (ids.length === 2) {
+    const elem1 = await createVQ_Element(ids[0]["text"]);
+    const elem2 = await createVQ_Element(ids[1]["text"]);
+    const params = { propertyKind: 'Object' };
+
+    const props = await dataShapes.getProperties(params, elem1, elem2);
+    const props2 = await dataShapes.getProperties(params, elem2, elem1);
+
+    let i = 0;
+
+    for (let e of props.data) {
+      const resultChain = [];
+
+      const prefix = e.is_local === true ? "" : e.prefix + ":";
+      const eName = prefix + e.display_name;
+
+      if (e.mark === "out") {
+        resultChain.push({ link: eName, type: "", direction: e.type });
+      } else {
+        resultChain.push({ name: eName, type: "<=", direction: e.type });
+      }
+
+      resultStringArray.push({
+        number: i,
+        show: true,
+        countInverseLinks: countInverse(resultChain),
+        array: resultChain
+      });
+      i++;
+    }
+
+    for (let e of props2.data) {
+      const resultChain = [];
+
+      const prefix = e.is_local === true ? "" : e.prefix + ":";
+      const eName = prefix + e.display_name;
+
+      if (e.mark === "out") {
+        resultChain.push({ link: eName, type: "<=", direction: e.type });
+      } else {
+        resultChain.push({ name: eName, type: "", direction: e.type });
+      }
+
+      resultStringArray.push({
+        number: i,
+        show: true,
+        countInverseLinks: countInverse(resultChain),
+        array: resultChain
+      });
+      i++;
+    }
+  }
+
+  if (resultStringArray.length === 0) {
+    resultStringArray.push({
+      array: [{ class: "No connection of given length is found" }],
+      show: true,
+      countInverseLinks: 0,
+      number: -1
+    });
+  }
+
+  return resultStringArray;
 }
 
 async function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryFromElement, longLink){
@@ -850,12 +891,12 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 		nesting = "PLAIN";
 	}
 	
-    var oldPosition = await currentElement.getCoordinates(); //Old class coordinates and size
-    var locLink = [];	
+    let oldPosition = await currentElement.getCoordinates(); //Old class coordinates and size
+    let locLink = [];
 	if (chain[0].class == lastElement.name && !longLink) {
 		var lastVQElement = await createVQ_Element(lastElement.id);
 		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});			
-		var newPosition = await lastVQElement.getCoordinates(); 
+		let newPosition = await lastVQElement.getCoordinates();
 		var coordinates = GetLinkCoordinates(oldPosition, newPosition);
 		await lastVQElement.setClassStyle("condition");
 				
@@ -917,7 +958,7 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
         }
 	} else { 
 		var d = 30; //distance between boxes
-	    var newPosition = await currentElement.getNewLocation(d); //New class coordinates and size
+	    let newPosition = await currentElement.getNewLocation(d); //New class coordinates and size
 	    var nameLength = 12*chain[0].class.length + 2*(chain[0].class.match(/[A-Z]/g) || []).length;	    
 	    if (nameLength < 75) nameLength = 75; //default minimal width
         if (nameLength > 512) nameLength = 512; //default maximal width
@@ -1077,13 +1118,15 @@ function applySearch(list, value){
 	return newList;
 }
 
-function countInverse(list) {			
-	var count = 0;
-	_.each(list, function(a){
-		var aDirection = a.direction;
-		if (aDirection && aDirection == "<=") {
-			count++;
-		}
-	})						
-	return count;
+function countInverse(list) {
+  let count = 0;
+
+  for (let a of list) {
+    const aDirection = a.direction;
+    if (aDirection && aDirection === "<=") {
+      count++;
+    }
+  }
+
+  return count;
 }

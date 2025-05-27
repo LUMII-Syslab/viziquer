@@ -1,5 +1,5 @@
-import { 
-  generateSymbolTable, 
+import {
+  generateSymbolTable,
   findAttributeInAbstractTable,
  } from '../../../custom/vq/js/transformations.js'
 
@@ -230,33 +230,36 @@ Template.AggregateWizard.events({
 		return;
 	},
 
-	"change #field-list": async function() {
-		// console.log("changed field");
-		var vq_obj = await createVQ_Element(Template.AggregateWizard.endClassId.curValue);
-		var vq_start_obj = await createVQ_Element(Template.AggregateWizard.startClassId.curValue);
-		var alias = $('input[id=alias-name]').val();
-		// var newFunction = $('option[name=function-name]:selected').val();
-		var newFunction = $('input[name=aggregate-list-radio]:checked').val()
-		// var fieldName = $('option[name=field-name]:selected').val();
-		var fieldName = document.getElementById('field-list').value;
-		var cName = await vq_start_obj.getName();
-		if(cName == null) cName = "";
-		//console.log(cName.charAt(0), fieldName.length);
-		var functionArray = Template.AggregateWizard.attList.curValue;
-		_.each(functionArray, function(f) {
-			var defaultName = cName.charAt(0) + "_" + newFunction;
-			var defaultFieldName = newFunction + "_" + f.attribute;
-			if ((alias == defaultName || alias == defaultFieldName) && fieldName.length == 0) {
-				let defaultAlias = cName.charAt(0);
-				if(cName.indexOf(":") !== -1) defaultAlias = cName.charAt(cName.indexOf(":")+1);
-				Template.AggregateWizard.defaultAlias.set(defaultAlias + "_" + newFunction);
-			} else if ((alias == defaultName || alias == defaultFieldName) && fieldName.length != 0) {
-				Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
-			}
-		})
-		return;
-	},
-	
+	"change #field-list": async function () {
+    const vq_obj = await createVQ_Element(Template.AggregateWizard.endClassId.curValue);
+    const vq_start_obj = await createVQ_Element(Template.AggregateWizard.startClassId.curValue);
+    const alias = $('input[id=alias-name]').val();
+    const newFunction = $('input[name=aggregate-list-radio]:checked').val();
+    const fieldName = document.getElementById('field-list').value;
+    let cName = await vq_start_obj.getName();
+    if (cName == null) cName = "";
+
+    const functionArray = Template.AggregateWizard.attList.curValue;
+
+    for (let f of functionArray) {
+      const defaultName = cName.charAt(0) + "_" + newFunction;
+      const defaultFieldName = newFunction + "_" + f.attribute;
+
+      if ((alias === defaultName || alias === defaultFieldName) && fieldName.length === 0) {
+        let defaultAlias = cName.charAt(0);
+        if (cName.indexOf(":") !== -1) {
+          defaultAlias = cName.charAt(cName.indexOf(":") + 1);
+        }
+        Template.AggregateWizard.defaultAlias.set(defaultAlias + "_" + newFunction);
+      } else if ((alias === defaultName || alias === defaultFieldName) && fieldName.length !== 0) {
+        Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
+      }
+    }
+
+    return;
+  },
+
+
 	'click #extra-options-button': function(e) {
 		if(document.getElementById("extra-options").style.display == "none") document.getElementById("extra-options").style.display = "block";
 		else document.getElementById("extra-options").style.display = "none";
@@ -303,13 +306,13 @@ function clearAggregateInput(){
 	document.getElementById("field-list").value = "";
 }
 
-function defaultFieldList(){
-	var defaultFunctions = document.getElementsByName("field-name");
-	_.each(defaultFunctions, function(e){
-		if (e.value == "") e.selected = true;
-		else e.selected = false;
-	});
+function defaultFieldList() {
+  const defaultFunctions = document.getElementsByName("field-name");
+  for (let e of defaultFunctions) {
+    e.selected = (e.value === "");
+  }
 }
+
 
 async function onAggregationChange(){
 	var vq_obj = await createVQ_Element(Template.AggregateWizard.endClassId.curValue);
@@ -351,23 +354,29 @@ async function onAggregationChange(){
 		Template.AggregateWizard.attList.set(newAttrList);
 
 		//Set default alias
-		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "group_concat"];
-		_.each(functionArray, function(f) {
-			if(cName === null) cName = ""
-			var defaultName = cName.charAt(0) + "_" + f;
-			var defaultFieldName = f + "_" + fieldName;
-			if (alias == defaultName) {
-				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
-			} else if (alias == defaultFieldName) {
-				if (newAttrList.indexOf(fieldName) > -1) {
-					Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
-				} else {
-					let defaultAlias = cName.charAt(0);
-					if(cName.indexOf(":") !== -1) defaultAlias = cName.charAt(cName.indexOf(":")+1);
-					Template.AggregateWizard.defaultAlias.set(defaultAlias + "_" + newFunction);
-				}
-			}
-		})
+	const functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "group_concat"];
+
+  for (let f of functionArray) {
+    if (cName === null) cName = "";
+
+    const defaultName = cName.charAt(0) + "_" + f;
+    const defaultFieldName = f + "_" + fieldName;
+
+    if (alias === defaultName) {
+      Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
+    } else if (alias === defaultFieldName) {
+      if (newAttrList.indexOf(fieldName) > -1) {
+        Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
+      } else {
+        let defaultAlias = cName.charAt(0);
+        if (cName.indexOf(":") !== -1) {
+          defaultAlias = cName.charAt(cName.indexOf(":") + 1);
+        }
+        Template.AggregateWizard.defaultAlias.set(defaultAlias + "_" + newFunction);
+      }
+    }
+  }
+
 
 		//Set at least/at most
 		if (newFunction == "count" || newFunction == "sum" || newFunction == "avg" || newFunction == "count_distinct"){

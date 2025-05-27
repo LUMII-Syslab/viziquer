@@ -264,36 +264,59 @@ function createTriples(tripleTable, tripleType){
 		tripleStart = "OPTIONAL{";
 		tripleEnd = "}";
 	}
-	_.each(tripleTable,function(triple) {
-		var dot = ".";
-		if(typeof triple["BIND"] === 'string') triples.push(triple["BIND"]);
-		else if(typeof triple["VALUES"] === 'string') triples.push(triple["VALUES"]);
-		else{
-			var objectName =  triple["object"];
-			if(objectName.indexOf("://") != -1 && objectName.indexOf("<") != 0) objectName = "<" + objectName + ">";
-			else if(objectName.indexOf(":") != -1) {
-				//TODO add prefix to table
-			} else if(objectName.startsWith("_b")){
-				objectName = "";
-				dot = "";
-			}else objectName = "?"+objectName;
-			if(tripleType == "out"){
-				if(parseType == "attribute") {
-					if(!triple["prefixedName"].startsWith("undefined:")){
-						let tripleString = objectName + " " + triple["prefixedName"] + " " + triple["var"] + ".";
-						if(attributeFilter != ""){
-							tripleString = tripleString+ " FILTER("+attributeFilter+")";
-						}
-						triples.push(tripleString);
-					}
-				}
-				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && (triple["inFilter"] == null || applyExistsToFilter == false))) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
-			} else {
-				if(parseType == "different" || (parseType == "condition" && triple["inFilter"] == true)) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + dot);
-			}
-		//	triples.push("?" + triple["object"] + " " + triple["prefixedName"] + " " + triple["var"] + "." );
-		}
-	})
+  for (let triple of tripleTable) {
+    let dot = ".";
+
+    if (typeof triple["BIND"] === 'string') {
+      triples.push(triple["BIND"]);
+    } else if (typeof triple["VALUES"] === 'string') {
+      triples.push(triple["VALUES"]);
+    } else {
+      let objectName = triple["object"];
+
+      if (objectName.indexOf("://") !== -1 && !objectName.startsWith("<")) {
+        objectName = "<" + objectName + ">";
+      } else if (objectName.indexOf(":") !== -1) {
+        // TODO: add prefix to table
+      } else if (objectName.startsWith("_b")) {
+        objectName = "";
+        dot = "";
+      } else {
+        objectName = "?" + objectName;
+      }
+
+      if (tripleType === "out") {
+        if (parseType === "attribute") {
+          if (!triple["prefixedName"].startsWith("undefined:")) {
+            let tripleString = objectName + " " + triple["prefixedName"] + " " + triple["var"] + ".";
+            if (attributeFilter !== "") {
+              tripleString += " FILTER(" + attributeFilter + ")";
+            }
+            triples.push(tripleString);
+          }
+        }
+
+        if (
+          parseType === "class" ||
+          parseType === "aggregation" ||
+          (parseType === "condition" && (triple["inFilter"] == null || applyExistsToFilter === false))
+        ) {
+          triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot);
+        }
+
+      } else {
+        if (
+          parseType === "different" ||
+          (parseType === "condition" && triple["inFilter"] === true)
+        ) {
+          triples.push(
+            tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + dot
+          );
+        }
+      }
+    }
+  }
+
 	return triples;
 }
 

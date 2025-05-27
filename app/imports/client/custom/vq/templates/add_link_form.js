@@ -25,7 +25,7 @@ Interpreter.customMethods({
 		var joinLinkDesc = "join information from the host node and the linked node";
 		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about its links";
 		const elemName = await currentElement.getName();
-		if(currentElement !== null && elemName != null && elemName != "") 
+		if(currentElement !== null && elemName !== null && elemName !== "")
 		{
 			joinLinkDesc = "join information from "+elemName+" and the linked node";
 			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+elemName+" about its links";
@@ -47,9 +47,21 @@ Interpreter.customMethods({
 		
 		
 		Template.AddLink.Count.set(startCount);
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
+		const associations = await getAllAssociations();
+    for (let a of associations) {
+      asc.push({
+        name: a.name,
+        class: a.class,
+        text: a.text,
+        type: a.type,
+        card: a.card,
+        clr: a.clr,
+        show: true,
+        is: a.is,
+        of: a.of
+      });
+    }
+
 		Template.AddLink.fullList.set(asc);
 		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
 		Template.AddLink.testAddLink.set({data: false});
@@ -92,10 +104,22 @@ Interpreter.customMethods({
 		$('#linked-instance-exists').removeAttr("disabled");
 		$("#mySearch")[0].value = "";
 		$("#add-link-form").modal("show");
-		
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
+
+		const associations = await getAllAssociations();
+    for (let a of associations) {
+      asc.push({
+        name: a.name,
+        class: a.class,
+        text: a.text,
+        type: a.type,
+        card: a.card,
+        clr: a.clr,
+        show: true,
+        is: a.is,
+        of: a.of
+      });
+    }
+
 		Template.AddLink.fullList.set(asc);
 	},
 	
@@ -132,11 +156,23 @@ Interpreter.customMethods({
 		$('#linked-instance-exists').removeAttr("disabled");
 		$("#mySearch")[0].value = "";
 		$("#add-link-form").modal("show");
-		
-		
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
+
+
+    const associations = await getAllAssociations();
+    for (let a of associations) {
+      asc.push({
+        name: a.name,
+        class: a.class,
+        text: a.text,
+        type: a.type,
+        card: a.card,
+        clr: a.clr,
+        show: true,
+        is: a.is,
+        of: a.of
+      });
+    }
+
 		Template.AddLink.fullList.set(asc);
 	},
 
@@ -293,18 +329,29 @@ Template.SelectTargetClass.events({
 		classes = classes.data;
 		
 		if(typeof schemaName === "undefined") schemaName = "";
-		
-		_.each(classes, function(e){
-			var prefix;
-			if(dataShapes.schema.schema === schemaName && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
-			else prefix = e.prefix+":";
-			e.short_class_name = prefix + e.display_name;
-			if(e.principal_class == 2) e.clr = "color: purple";
-			else if(e.principal_class == 0) e.clr = "color: #C5C5C5";
-			else e.clr = "color: #777777";
-			//style="{{clr}}"
-			
-		})
+
+		for (let e of classes) {
+      let prefix;
+      if (
+        dataShapes.schema.schema === schemaName &&
+        (e.is_local === true || e.prefix === "" || (schemaName.toLowerCase() === "wikidata" && e.prefix === "wd"))
+      ) {
+        prefix = "";
+      } else {
+        prefix = e.prefix + ":";
+      }
+
+      e.short_class_name = prefix + e.display_name;
+
+      if (e.principal_class === 2) {
+        e.clr = "color: purple";
+      } else if (e.principal_class === 0) {
+        e.clr = "color: #C5C5C5";
+      } else {
+        e.clr = "color: #777777";
+      }
+  }
+
 		Template.SelectTargetClass.classes.set(classes);
 	},
 	
@@ -342,9 +389,22 @@ Template.AddLink.events({
 		Template.AddLink.Count.set(count);
 		
 		var asc = [];
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
+		const associations = await getAllAssociations();
+
+    for (let a of associations) {
+      asc.push({
+        name: a.name,
+        class: a.class,
+        text: a.text,
+        type: a.type,
+        card: a.card,
+        clr: a.clr,
+        show: true,
+        is: a.is,
+        of: a.of
+      });
+    }
+
 		Template.AddLink.fullList.set(asc);
 		
 		// Template.AddLink.fullList.set(await getAllAssociations());
@@ -617,17 +677,31 @@ Template.AddLink.events({
 		classes = classes.data;
 		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 
-		_.each(classes, function(e){
-			var prefix;
-			if(dataShapes.schema.schema === schemaName &&(proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd"))))prefix = "";
-			else prefix = e.prefix+":";
-			// e.short_class_name = prefix + e.display_name;
-			e.short_class_name = e.full_name;
-			if(e.principal_class == 2) e.clr = "color: purple";
-			else if(e.principal_class == 0) e.clr = "color: #bbbbbb";
-			else e.clr = "color: #777777";
-		})
-		
+		for (let e of classes) {
+      let prefix;
+
+      if (
+        dataShapes.schema.schema === schemaName &&
+        proj.showPrefixesForAllNames !== "true" &&
+        proj.showPrefixesForAllNames !== true &&
+        (e.is_local === true || e.prefix === "" || (schemaName.toLowerCase() === "wikidata" && e.prefix === "wd"))
+      ) {
+        prefix = "";
+      } else {
+        prefix = e.prefix + ":";
+      }
+
+      e.short_class_name = e.full_name;
+
+      if (e.principal_class === 2) {
+        e.clr = "color: purple";
+      } else if (e.principal_class === 0) {
+        e.clr = "color: #bbbbbb";
+      } else {
+        e.clr = "color: #777777";
+      }
+    }
+
 		classes = classes.filter(function(e) { return e.short_class_name !== class_name });
 		
 		if(class_name != null && class_name !== "" && class_name != " "){
@@ -778,9 +852,22 @@ Template.AddLink.events({
 	},
 	'click #apply-button': async function(e) {
 		var asc = [];
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
+		const associations = await getAllAssociations();
+
+    for (const a of associations) {
+      asc.push({
+        name: a.name,
+        class: a.class,
+        text: a.text,
+        type: a.type,
+        card: a.card,
+        clr: a.clr,
+        show: true,
+        is: a.is,
+        of: a.of
+      });
+    }
+
 		Template.AddLink.fullList.set(asc);
 		return;
 	},
@@ -789,9 +876,23 @@ Template.AddLink.events({
 		await delay(delayTime);
 		if (linkKeyDownTimeStamp === e.timeStamp ) {
 			var asc = [];
-			_.each(await getAllAssociations(), function(a){
-				asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-			})
+
+      const associations = await getAllAssociations();
+
+      for (const a of associations) {
+        asc.push({
+          name: a.name,
+          class: a.class,
+          text: a.text,
+          type: a.type,
+          card: a.card,
+          clr: a.clr,
+          show: true,
+          is: a.is,
+          of: a.of
+        });
+      }
+
 			Template.AddLink.fullList.set(asc);
 		}
 		return;
@@ -799,9 +900,23 @@ Template.AddLink.events({
 	'click #dbp_for_links': async function(e) {
 
 		var asc = [];
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
+    const associations = await getAllAssociations();
+
+    for (const a of associations) {
+      asc.push({
+        name: a.name,
+        class: a.class,
+        text: a.text,
+        type: a.type,
+        card: a.card,
+        clr: a.clr,
+        show: true,
+        is: a.is,
+        of: a.of
+      });
+    }
+
+
 		Template.AddLink.fullList.set(asc);
 		return;
 	},
@@ -840,10 +955,10 @@ Template.BuildLinkPath.events({
 function clearAddLinkInput(){
 	$('input[name=link-list-radio]:checked').attr('checked', false);
 	var defaultRadio = document.getElementsByName("type-radio");
-	_.each(defaultRadio, function(e){
-		if (e.value == "JOIN") e.checked = true;
-		else e.checked = false;
-	});
+  for (let e of defaultRadio) {
+    e.checked = (e.value === "JOIN");
+  }
+
 
 	Template.AddLink.fullList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 	// Template.AddLink.shortList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
@@ -939,87 +1054,111 @@ async function getAllAssociations(){
 									
 					if(typeof schemaName === "undefined") schemaName = "";
 
-					_.each(allAssociations, function(e){
-						if ( e.mark === 'out') {
-							e.type = '=>';
-							e.is = "";
-							e.of = "";
-						} else {
-							e.type = '<=';
-							e.is = "is";
-							e.of = "of";
-						}
-						
-						if (e.class_iri !== undefined && e.class_iri !== null) {
-							var prefix;
-							if(dataShapes.schema.schema === schemaName && ((proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true) && e.class_is_local == true || (schemaName.toLowerCase() == "wikidata" && e.class_prefix == "wd")))prefix = "";
-							else prefix = e.class_prefix+":";
-							e.short_class_name = prefix + e.class_display_name;						
-						}
-						else
-							e.short_class_name = "";
-						
-					});
+					for (let e of allAssociations) {
+            if (e.mark === 'out') {
+              e.type = '=>';
+              e.is = "";
+              e.of = "";
+            } else {
+              e.type = '<=';
+              e.is = "is";
+              e.of = "of";
+            }
+
+            if (e.class_iri !== undefined && e.class_iri !== null) {
+              let prefix;
+              if (
+                dataShapes.schema.schema === schemaName &&
+                (
+                  (proj.showPrefixesForAllNames !== "true" && proj.showPrefixesForAllNames !== true && e.class_is_local === true) ||
+                  (schemaName.toLowerCase() === "wikidata" && e.class_prefix === "wd")
+                )
+              ) {
+                prefix = "";
+              } else {
+                prefix = e.class_prefix + ":";
+              }
+
+              e.short_class_name = prefix + e.class_display_name;
+            } else {
+              e.short_class_name = "";
+            }
+        }
+
 
 					//remove duplicates - moved to getAllAssociations()
-					//allAssociations = allAssociations.filter(function(obj, index, self) { 
+					//allAssociations = allAssociations.filter(function(obj, index, self) {
 					//	return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
 					//});
-					_.each(allAssociations, function(e){
-						var cardinality = "";
-						var colorLetters = ""; 				
-						if (proj) {				
-							if (proj.showCardinalities==true){ 
-								if (e.type == "<=") {
-									cardinality = cardinality.concat("[*]");
-									colorLetters = colorLetters.concat("color: purple");
-								} else {
-									var maxCard = e.x_max_cardinality;
-									
-									if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
-										cardinality = cardinality.concat("[*]");
-										colorLetters = colorLetters.concat("color: purple");
-									}
-								}
-								/*if (!hasCardinalities || e.type == "<=") { 
-									cardinality = cardinality.concat("[*]");
-									colorLetters = colorLetters.concat("color: purple");
-								} else {
-									_.each(ascDetails, function(d){
-										//if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || (d.from == e.class && d.to == className && e.type == "<="))) { 
-										if (d.name == e.name && (d.from == className && d.to == e.class && e.type == "=>") 
-											&& d.max == -1) {
-											cardinality = cardinality.concat("[*]");
-											colorLetters = colorLetters.concat("color: purple");
-										}
-										//}
-									});
-									
-								}*/
-							}
-						} 			
-						
-						
-						//prefix:name
-						var prefix;
+          for (let e of allAssociations) {
+            let cardinality = "";
+            let colorLetters = "";
 
-						if(dataShapes.schema.schema === schemaName && ((proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true) && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt"))))prefix = "";
-						else prefix = e.prefix+":";
-						var eName = prefix + e.display_name;
-						
-						if(e.mark == "out") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
-						else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
-						
-						if (e.class == className && e.type == "=>"){ //Link to itself
-							ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters, is:e.is, of:e.of});
-						}
-					});
+            if (proj && proj.showCardinalities === true) {
+              if (e.type === "<=") {
+                cardinality += "[*]";
+                colorLetters += "color: purple";
+              } else {
+                const maxCard = e.x_max_cardinality;
+                if (maxCard == null || !maxCard || maxCard === -1 || maxCard > 1) {
+                  cardinality += "[*]";
+                  colorLetters += "color: purple";
+                }
+              }
+            }
+
+            // Compute prefix:name
+            let prefix;
+            if (
+              dataShapes.schema.schema === schemaName &&
+              (
+                (proj.showPrefixesForAllNames !== "true" && proj.showPrefixesForAllNames !== true) &&
+                (e.is_local === true || (schemaName.toLowerCase() === "wikidata" && e.prefix === "wdt"))
+              )
+            ) {
+              prefix = "";
+            } else {
+              prefix = e.prefix + ":";
+            }
+
+            const eName = prefix + e.display_name;
+
+            const entry = {
+              name: eName,
+              class: e.short_class_name,
+              type: e.type,
+              card: cardinality,
+              clr: colorLetters,
+              is: e.is,
+              of: e.of
+            };
+
+            if (e.mark === "out") {
+              asc.push(entry);
+            } else {
+              ascReverse.push(entry);
+            }
+
+            // Handle link to itself
+            if (e.class === className && e.type === "=>") {
+              ascReverse.push({
+                name: e.name,
+                class: e.short_class_name,
+                type: "<=",
+                card: cardinality,
+                clr: colorLetters,
+                is: e.is,
+                of: e.of
+              });
+            }
+          }
+
 				// }
 			}
 				//default value for any case
 			if (proj){
 				if (proj.showCardinalities==true)
-					ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "[*]", clr: "color: purple", is:"", of:""}); 
+					ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "[*]", clr: "color: purple", is:"", of:""});
 				else {
 					ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "", clr: "", is:"", of:""});
 				}

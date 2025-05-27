@@ -13,7 +13,7 @@ import { Projects, Compartments, Elements, ElementTypes, Diagrams} from '../../.
 // import {OrthogonalCollectionRerouting} from '../../../platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting.js'
 
 import { dataShapes } from './DataShapes.js'
-import { Create_VQ_Element_Async, VQ_Element, Create_VQ_Element_Declaration } from './VQ_Element.js';
+import { Create_VQ_Element_Async, VQ_Element, Create_VQ_Element_Declaration, createVQ_Element } from './VQ_Element.js';
 import { getDeclarations } from './genAbstractQuery.js';
 
 import { isURI } from './transformations.js'
@@ -71,7 +71,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 	   
 	  directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	  indirectClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-		allPrefixes = parsedQuery.prefixes;
+
 		let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		 if (proj) {
 			  
@@ -119,6 +119,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  let parsedQuery = await Utilities.callMeteorMethodAsync("parseSPARQLText", text);
+    allPrefixes = parsedQuery.prefixes;
 	  // Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		// x = xx;
 		y = yy;
@@ -167,7 +168,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 			}
 		}
 
-		var isNotConnectdClass = true;
+		let isNotConnectdClass = true;
 		while(isNotConnectdClass == true){
 			isNotConnectdClass = false;
 			let ct = [];
@@ -297,8 +298,8 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		if(abstractTable["fullSPARQL"] !== '') classesTable["fullSPARQL"] =  abstractTable["fullSPARQL"];
 
 		// Visualize query based on tree structure
-		var queryId = queries[query]["id"];
-		var queryQuestion = queries[query]["question"];
+		queryId = queries[query]["id"];
+		queryQuestion = queries[query]["question"];
 		
 		VQ_Elements = {};
 		VQ_Links = {};
@@ -534,7 +535,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			}
 		}
 			
-		var isNotConnectdClass = true;
+		let isNotConnectdClass = true;
 		while(isNotConnectdClass == true){
 			isNotConnectdClass = false;
 			let ct = [];
@@ -567,8 +568,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 				}
 			}
 		}
-			
-		if(parsedQuery["where"].length == 1 && parsedQuery["where"][0]["type"] == "optional" && (parsedQuery["where"][0]["patterns"].length != 1 || 
+
+		if(parsedQuery["where"].length == 1 && parsedQuery["where"][0]["type"] == "optional" && (parsedQuery["where"][0]["patterns"].length != 1 ||
 		(parsedQuery["where"][0]["patterns"].length == 1 && parsedQuery["where"][0]["patterns"][0]["type"] == "bgp" && parsedQuery["where"][0]["patterns"][0]["triples"].length != 1))){
 			var unit
 			if(typeof classesTable["[ ]"] === 'undefined'){
@@ -5108,7 +5109,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		let tempDirectClassMembershipRole = directClassMembershipRole;
 		let tempInDirectClassMembershipRole = indirectClassMembershipRole;
 		let ontologies = await dataShapes.getOntologies();
-		for(onto = 0; onto < ontologies.length; onto++){
+		for(let onto = 0; onto < ontologies.length; onto++){
 			if(ontologies[onto]["sparql_url"] === where["name"]["value"]){
 				
 				directClassMembershipRole = ontologies[onto]["direct_class_role"];
@@ -5163,7 +5164,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 		
 		let linkFound = false;
-		var pn = null;
+		let pn = null;
 		for(let node in abstractTable["nodeList"]){
 			if(typeof nodeList[node] !== 'undefined' && typeof nodeList[node] !== 'function'){
 				//find links outside subquery
@@ -5575,7 +5576,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			}
 		}
 		
-		var isNotConnectdClass = true;
+		let isNotConnectdClass = true;
 		while(isNotConnectdClass == true){
 			isNotConnectdClass = false;
 			let ct = [];
@@ -5972,13 +5973,13 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 
 		let linkFound = false;
-		var pn = null;
+		let pn = null;
 		for(let node in abstractTable["nodeList"]){
 			if(typeof nodeList[node] !== 'undefined' && typeof nodeList[node] !== 'function'){
 				
 				//find links outside subquery
 				for(let subLink = 0; subLink < abstractTable["linkTable"].length; subLink++){
-					if((typeof classesTable[abstractTable["linkTable"][subLink]["subject"]]!=='undefined' && classesTable[abstractTable["linkTable"][subLink]["subject"]]["variableName"] == node) 
+					if((typeof classesTable[abstractTable["linkTable"][subLink]["subject"]]!=='undefined' && classesTable[abstractTable["linkTable"][subLink]["subject"]]["variableName"] == node)
 						|| (typeof classesTable[abstractTable["linkTable"][subLink]["object"]] !== 'undefined' && classesTable[abstractTable["linkTable"][subLink]["object"]]["variableName"] == node)){
 						if(linkFound==false){
 							let subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject", nodeList[node]);
@@ -6297,7 +6298,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				}
 			}
 		}
-		var isNotConnectdClass = true;
+		let isNotConnectdClass = true;
 		while(isNotConnectdClass == true){
 			isNotConnectdClass = false;
 			let ct = [];
@@ -7872,7 +7873,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								linkTable.push(link);
 								linkTableAdded.push(link);
 								orderCounter++;
-								console.log("LINK 1", link, selectVariables.indexOf(triples[triple]["predicate"]["value"]));
+								// console.log("LINK 1", link, selectVariables.indexOf(triples[triple]["predicate"]["value"]));
 							  }
 							}
 						  }
@@ -9466,7 +9467,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 			let xTemp = x+300;
 			let newPositionD = { xTemp, y, width, height };
 			let cl = await Create_VQ_Element_Declaration(newPositionD);
-			console.log("DDDDDDDDDDDD", cl, newPositionD);
+
 			for (let p in usedPrefixesinQuery) {
 				if (typeof usedPrefixesinQuery[p] !== "function") {
 					let addPrefix = false;
@@ -9832,8 +9833,6 @@ async function generateInstanceAlias(uri, resolve){
 			let	newShortName = "n_"+counter + ":"+splittedUri.name
 			counter++;
 			return newShortName;
-			
-			return "<" + uri + ">";
 		}
 	}else {
 		let splittedUri = splitURI(uri);

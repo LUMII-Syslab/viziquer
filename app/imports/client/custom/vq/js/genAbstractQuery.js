@@ -29,13 +29,13 @@ Interpreter.customMethods({
     });
     //console.log(elems_in_diagram_ids);
     // Print All Queries within the diagram
-    _.each(await genAbstractQueryForElementList(elems_in_diagram_ids),async function(q) {
-         //console.log(JSON.stringify(q,null,2));
-		 var st = await resolveTypesAndBuildSymbolTable(q)
-         console.log(JSON.stringify(st,null,2));
-         //resolveTypesAndBuildSymbolTable(q);
-       })
-    //_.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) { console.log(JSON.stringify(q,null,2))});
+   const queries = await genAbstractQueryForElementList(elems_in_diagram_ids);
+
+  for (let q of queries) {
+    const st = await resolveTypesAndBuildSymbolTable(q);
+    console.log(JSON.stringify(st, null, 2));
+  }
+
      console.log("GenerateAbstractQuery ends");
   },
 });
@@ -420,36 +420,53 @@ async function resolveTypesAndBuildSymbolTable(query) {
 
 
     // we should build symbol table entry for this Class.
-    symbol_table[obj_class.identification._id] = {};
-    _.each(my_scope_table, function(value, key) {
-       _.each(value, function(entry) {
-         if (!symbol_table[obj_class.identification._id][entry.id]) {
-           symbol_table[obj_class.identification._id][entry.id] = [];
-         };
-         symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery, distanceFromClass:entry.distanceFromClass});
-       })
-    })
+   symbol_table[obj_class.identification._id] = {};
 
-	// we should build symbol table entry for this Class.
+    for (let key in my_scope_table) {
+      const value = my_scope_table[key];
+      for (let entry of value) {
+        if (!symbol_table[obj_class.identification._id][entry.id]) {
+          symbol_table[obj_class.identification._id][entry.id] = [];
+        }
+        symbol_table[obj_class.identification._id][entry.id].push({
+          kind: key,
+          type: entry.type,
+          context: entry.context,
+          upByOptional: entry.upByOptional,
+          upBySubQuery: entry.upBySubQuery,
+          distanceFromClass: entry.distanceFromClass
+        });
+      }
+    }
+
+    // We should build symbol table entry for this Class.
     symbol_table["root"] = {};
-    _.each(diagram_scope_table, function(value, key) {
-       _.each(value, function(entry) {
-         if (!symbol_table["root"][entry.id]) {
-           symbol_table["root"][entry.id] = [];
-         };
-         symbol_table["root"][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery, distanceFromClass:entry.distanceFromClass});
-       })
-    })
-	
+
+    for (let key in diagram_scope_table) {
+      const value = diagram_scope_table[key];
+      for (let entry of value) {
+        if (!symbol_table["root"][entry.id]) {
+          symbol_table["root"][entry.id] = [];
+        }
+        symbol_table["root"][entry.id].push({
+          kind: key,
+          type: entry.type,
+          context: entry.context,
+          upByOptional: entry.upByOptional,
+          upBySubQuery: entry.upBySubQuery,
+          distanceFromClass: entry.distanceFromClass
+        });
+      }
+    }
+
+
 
     return;
   };
 
   var empty_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
   let class_schema_name = "";
-  
-  console.log("query.root.graphsService", query.root);
-  
+
   if(query.root.graphsService.graphInstruction === "SERVICE" && query.root.graphsService.schema !== "")class_schema_name = query.root.graphsService.schema;
   query.root.identification.schemaName = class_schema_name;
   await resolveClass(query.root, empty_scope_table);
@@ -548,53 +565,60 @@ async function resolveTypesAndBuildSymbolTable(query) {
   // String, ObjectId, String, IdObject -->
   //update all entries of identifier name from context = sets kind and type (optional)
   function updateSymbolTable(name, context, kind, type, parentType) {
-      _.each(symbol_table, function(name_list, current_context) {
-          
-		  if (name_list[name]) {
-            let name_in_context = _.find(name_list[name], function(n) {return n.context == context} );
-            if (name_in_context) {
-              if (kind) {
-                name_in_context["kind"] = kind;
-              };
-              if (type) {
-                name_in_context["type"] = type;
-              };
-              if (parentType) {
-                name_in_context["parentType"] = parentType;
-              }
-            }
-          }
-      })
-  };
+    for (let current_context in symbol_table) {
+      const name_list = symbol_table[current_context];
 
-  // String, String -->
-  // rename the entry
+      if (name_list[name]) {
+        const name_in_context = name_list[name].find(n => n.context === context);
+        if (name_in_context) {
+          if (kind) {
+            name_in_context["kind"] = kind;
+          }
+          if (type) {
+            name_in_context["type"] = type;
+          }
+          if (parentType) {
+            name_in_context["parentType"] = parentType;
+          }
+        }
+      }
+    }
+  }
+
   function renameNameInSymbolTable(name, new_name) {
-      _.each(symbol_table, function(name_list, current_context) {
-          if (name_list[name]) {
-            if (!symbol_table[current_context][new_name]) {
-              symbol_table[current_context][new_name] = name_list[name];
-            } else {
-              symbol_table[current_context][new_name] = symbol_table[current_context][new_name].concat(symbol_table[current_context][name]);
-            };
-            delete symbol_table[current_context][name];
-          }
-      })
-  };
+    for (let current_context in symbol_table) {
+      const name_list = symbol_table[current_context];
 
-  // -->
-  //remove all UNRESOLVED_NAME and UNRESOLVED_FIELD_ALIAS entries
+      if (name_list[name]) {
+        if (!symbol_table[current_context][new_name]) {
+          symbol_table[current_context][new_name] = name_list[name];
+        } else {
+          symbol_table[current_context][new_name] =
+            symbol_table[current_context][new_name].concat(name_list[name]);
+        }
+        delete symbol_table[current_context][name];
+      }
+    }
+  }
+
   function cleanSymbolTable() {
-      _.each(symbol_table, function(name_list, current_context) {
-            _.each(name_list, function(entry_list, name) {
-                symbol_table[current_context][name] = _.reject(entry_list, function(n) {return (n.kind == "UNRESOLVED_NAME" || n.kind == "UNRESOLVED_FIELD_ALIAS" || n.upBySubQuery > 1) } );
-				if (_.isEmpty(symbol_table[current_context][name])) {
-				  delete symbol_table[current_context][name];
-                };
+    for (let current_context in symbol_table) {
+      const name_list = symbol_table[current_context];
 
-            })
-      })
-  };
+      for (let name in name_list) {
+        symbol_table[current_context][name] = name_list[name].filter(n =>
+          !(n.kind === "UNRESOLVED_NAME" ||
+            n.kind === "UNRESOLVED_FIELD_ALIAS" ||
+            n.upBySubQuery > 1)
+        );
+
+        if (symbol_table[current_context][name].length === 0) {
+          delete symbol_table[current_context][name];
+        }
+      }
+    }
+  }
+
 
   // JSON -->
   // Parses all expressions in the object and recursively in all children
@@ -625,21 +649,37 @@ async function resolveTypesAndBuildSymbolTable(query) {
       var oc_st = symbol_table[obj_class.identification._id];
 
       // copy from parent, DOWN
-      _.each(pc_st, async function(entry_list, id) {
-        _.each(entry_list, async function(entry) {
-          if (((obj_class.linkType == "REQUIRED") && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) ||
-              (entry.kind == "CLASS_ALIAS" && !((obj_class.linkType=="OPTIONAL") && entry.upByOptional))) {
-            if (!oc_st[id]) { oc_st[id] = []; };
-            if (!_.any(oc_st[id], async function(oc_st_id_entry) { return ((oc_st_id_entry.context == entry.context)&&(oc_st_id_entry.kind == entry.kind))})) {
-                // Note that _.clone does SHALLOW copy. Thus type is not copied, but referenced.
-                let entry_clone = _.clone(entry);
-                if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) { entry_clone["downBySubquery"] = true; };
-                oc_st[id].push(entry_clone);
-            };
-          };
+     for (let id in pc_st) {
+      const entry_list = pc_st[id];
 
-        })
-      })
+      for (let entry of entry_list) {
+        const isRequired = obj_class.linkType === "REQUIRED" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery;
+        const isAlias = entry.kind === "CLASS_ALIAS" && !(obj_class.linkType === "OPTIONAL" && entry.upByOptional);
+
+        if (isRequired || isAlias) {
+          if (!oc_st[id]) {
+            oc_st[id] = [];
+          }
+
+          const exists = oc_st[id].some(oc_st_id_entry =>
+            oc_st_id_entry.context === entry.context &&
+            oc_st_id_entry.kind === entry.kind
+          );
+
+          if (!exists) {
+            // Manual shallow clone (you could also use structuredClone if available)
+            const entry_clone = { ...entry };
+
+            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
+              entry_clone["downBySubquery"] = true;
+            }
+
+            oc_st[id].push(entry_clone);
+          }
+        }
+      }
+    }
+
 
     }
 
@@ -1131,13 +1171,19 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 
   var element_list = elements_raw.filter(v => v && v.obj);
   // determine which elements are root elements
-  _.each(element_list, function(e) {
-	  if(e.obj.type == "Box"){
-		  classAccessTable[e.obj._id] = [];
-	  }
-    e.setVirtualRoot(_.any(virtual_root_id_list, function(id) { return id == e._id() }));
-  });
-  
+    for (let e of element_list) {
+      if (e.obj.type === "Box") {
+        classAccessTable[e.obj._id] = [];
+      }
+
+     // e.setVirtualRoot(_.any(virtual_root_id_list, function(id) { return id == e._id() }));
+     e.setVirtualRoot(
+        Array.isArray(virtual_root_id_list) &&
+        virtual_root_id_list.some(id => id === e._id())
+      );
+    }
+
+
   for(let clazz in classAccessTable){
 	  if(typeof classAccessTable[clazz] !== "function"){
 		for(let clazzc in classAccessTable){
@@ -1489,19 +1535,24 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
     //console.log(condition_links);
     // push all registered condition links to json
     function addConditionLinks(v) {
-      _.each(condition_links, function(cl) {
-        if (cl["from"]==v["identification"]["_id"]) {
+      for (let cl of condition_links) {
+        if (cl["from"] === v["identification"]["_id"]) {
           v["conditionLinks"].push(cl["link_info"]);
         }
-      });
-      _.each(v["children"], function(ch) {addConditionLinks(ch)});
-    };
+      }
 
-    addConditionLinks(query_in_abstract_syntax["root"]);
-    _.each(element_list, function(e) {
-      e.setVirtualRoot(false)
-    });
-	
+      for (let ch of v["children"]) {
+        addConditionLinks(ch);
+      }
+   }
+
+   addConditionLinks(query_in_abstract_syntax["root"]);
+
+   for (let e of element_list) {
+     e.setVirtualRoot(false);
+   }
+
+
 	if(messages.length > 0)query_in_abstract_syntax["messages"] = messages;
 	if(warnings.length > 0)query_in_abstract_syntax["warnings"] = warnings;
 	// getConnectedClasses(classAccessTable);
@@ -1601,15 +1652,22 @@ function isURI(text) {
   return 0;
 };
 
-function replaceArithmetics(parse_obj_table, sign){
-	var parse_obj = "";
-	_.each(parse_obj_table, function(obj) {
-        if(parse_obj == "") parse_obj = obj;
-		else if(obj.startsWith(".") == false && obj != "") parse_obj =  parse_obj + " " + sign + " " +obj;
-		else if(obj == "") parse_obj = parse_obj  + sign;
-		else parse_obj = parse_obj  + sign + obj;
-    });
-	return parse_obj
+function replaceArithmetics(parse_obj_table, sign) {
+  let parse_obj = "";
+
+  for (let obj of parse_obj_table) {
+    if (parse_obj === "") {
+      parse_obj = obj;
+    } else if (!obj.startsWith(".") && obj !== "") {
+      parse_obj = parse_obj + " " + sign + " " + obj;
+    } else if (obj === "") {
+      parse_obj = parse_obj + sign;
+    } else {
+      parse_obj = parse_obj + sign + obj;
+    }
+  }
+
+  return parse_obj;
 }
 
 function replaceSymbols(instanceAlias){
@@ -1690,7 +1748,7 @@ async function getResolveInformation(parsed_exp, schemaName, symbol_table, conte
 	return parsed_exp;
 }
 
-async function resolveTypeFromSymbolTable(id, cont, symbol_table) {
+function resolveTypeFromSymbolTable(id, cont, symbol_table) {
     let context = cont._id;
 
     if(typeof symbol_table[context] === 'undefined') return null;
@@ -1712,7 +1770,7 @@ async function resolveTypeFromSymbolTable(id, cont, symbol_table) {
     	}
 };
 
-async function resolveTypeFromSymbolTableForContext(id, cont, symbol_table) {
+function resolveTypeFromSymbolTableForContext(id, cont, symbol_table) {
     let context = cont._id;
 	
     if(typeof symbol_table[context] === 'undefined') return null;
@@ -1732,7 +1790,7 @@ async function resolveTypeFromSymbolTableForContext(id, cont, symbol_table) {
 };
     			// string -> idObject
     			// returns kind of the identifier from symbol table. Null if does not exist.
-async function resolveKindFromSymbolTable(id, cont, symbol_table) {
+function resolveKindFromSymbolTable(id, cont, symbol_table) {
     				let context = cont._id;
 
     				if(typeof symbol_table[context] === 'undefined') return null;
@@ -1755,7 +1813,7 @@ async function resolveKindFromSymbolTable(id, cont, symbol_table) {
     				}
 };
 
-async function resolveKindFromSymbolTableForContext(id, cont, symbol_table) {
+function resolveKindFromSymbolTableForContext(id, cont, symbol_table) {
     let context = cont._id;
 	
     if(typeof symbol_table[context] === 'undefined') return null;

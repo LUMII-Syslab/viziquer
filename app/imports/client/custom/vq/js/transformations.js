@@ -844,7 +844,6 @@ Interpreter.customMethods({
 	},
 
 	AggregateWizard: async function(e) {
-		console.log("AAAAAAAAAAAAAAAAAAAAAAAAA")
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
 		var compart_type = await CompartmentTypes.findOneAsync({_id: parent_id});
@@ -1423,29 +1422,32 @@ async function getAggregatedField(e, fieldName){
 		return parent.find("." + exression_id);
 }
 
-function findAttributeInAbstractTable(context, clazz, fieldValue){
-	var fieldInContext = {};
+function findAttributeInAbstractTable(context, clazz, fieldValue) {
+  let fieldInContext = {};
 
-	if(clazz["identification"]["_id"] == context){
-		//attributes
-		_.each(clazz["fields"],function(field) {
-			if(field["alias"] == fieldValue || field["exp"] == fieldValue){
-				fieldInContext = field;
-			}
-		})
-	} else{
+  if (clazz["identification"]["_id"] === context) {
+    // attributes
+    for (let field of clazz["fields"]) {
+      if (field["alias"] === fieldValue || field["exp"] === fieldValue) {
+        fieldInContext = field;
+        break; // optional: stop once found
+      }
+    }
+  } else {
+    for (let subclazz of clazz["children"]) {
+      fieldInContext = findAttributeInAbstractTable(context, subclazz, fieldValue);
+      if (Object.keys(fieldInContext).length !== 0) {
+        break; // optional: stop once a match is found in children
+      }
+    }
+  }
 
-		_.each(clazz["children"],function(subclazz) {
-			fieldInContext = findAttributeInAbstractTable(context, subclazz, fieldValue);
-		})
-	}
-
-	return fieldInContext;
-
+  return fieldInContext;
 }
 
+
 async function generateSymbolTable(notResolveTable) {
- 
+
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
 	var abstractQueryTable = {}
@@ -1527,7 +1529,7 @@ async function findNamedGraphsInQuery(elem, visitedClasses){
 		} else {
 			clazzId = elemLinks[e]["link"]["obj"]["startElement"];
 		}
-		clazz = await createVQ_Element(clazzId);
+		let clazz = await createVQ_Element(clazzId);
 		if(visitedClasses.indexOf(clazzId) === -1) {
 			visitedClasses.push(clazzId);
 			let nGraphs = await clazz.getNamedGraphs();

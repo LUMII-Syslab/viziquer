@@ -27,7 +27,7 @@ Interpreter.customMethods({
 		const d = new Date();
 		time = d.getTime();
 		if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
-		getSchemaNameFromABS();
+		await getSchemaNameFromABS();
 		await autoCompletion(e);
 	},
 
@@ -36,11 +36,11 @@ Interpreter.customMethods({
 		const d = new Date();
 		time = d.getTime();
 		if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
-		getSchemaNameFromABS();
+		await getSchemaNameFromABS();
 		await autoCompletion(e);
 	},
-	
-	attributeConditionAutoCompletion: async function(e, compart) {
+
+	attributeConditionAutoCompletion: function(e, compart) {
 		grammarType = "attributeCondition"
 	},
 
@@ -48,13 +48,13 @@ Interpreter.customMethods({
 		grammarType = "link"
 		const d = new Date();
 		time = d.getTime();
-		getSchemaNameFromABS();
+		await getSchemaNameFromABS();
 		await autoCompletion(e);
 	},
 	
 	classAutoCompletion: async function(e, compart) {
 		grammarType = "className"
-		getSchemaNameFromABS();
+		await getSchemaNameFromABS();
 		await autoCompletion(e);
 	},
 	
@@ -82,7 +82,7 @@ Interpreter.customMethods({
 		grammarType = "instance"
 		let ev = e.originalEvent;
 		if ((ev.ctrlKey || ev.metaKey) && ev.code === 'Space') {
-			getSchemaNameFromABS();
+			await getSchemaNameFromABS();
 			await autoCompletion(e);
 		}	
 	},
@@ -106,13 +106,13 @@ const autoCompletionAddCondition = async function(e) {
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
-	getSchemaNameFromABS();
+	await getSchemaNameFromABS();
 	await autoCompletion(e);
 }
 
 const autoCompletionClass = async function(e) {
 	grammarType = "className"
-	getSchemaNameFromABS();
+	await getSchemaNameFromABS();
 	await autoCompletion(e);
 }
 
@@ -121,7 +121,7 @@ const autoCompletionAddAttribute = async function(e) {
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
-	getSchemaNameFromABS();
+	await getSchemaNameFromABS();
 	await autoCompletion(e);
 }
 
@@ -130,7 +130,7 @@ const autoCompletionAddLink = async function(e) {
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
-	getSchemaNameFromABS();
+	await getSchemaNameFromABS();
 	await autoCompletion(e);
 }
 
@@ -138,7 +138,7 @@ const autoCompletionInstance = async function(e) {
 	grammarType = "instance"
 	let ev = e.originalEvent;
 	if ((ev.ctrlKey || ev.metaKey) && ev.code === 'Space') {
-		getSchemaNameFromABS();
+		await getSchemaNameFromABS();
 		await autoCompletion(e);
 	}	
 }
@@ -218,7 +218,7 @@ async function requestAndProcessContinuations(textBefore, text, cursorPosition, 
 
 var requestAndProcessContinuationsDebounced = _.debounce(requestAndProcessContinuations, 300);
 
-async function keyUpHandler(e){
+function keyUpHandler(e){
 	if (e.keyCode === 8){
 		var m = document.getElementById("message");
 		if(m != null) {
@@ -288,7 +288,7 @@ function clickHandler(e){
 	//elem.removeEventListener("keyup", keyUpHandler);
 }
 
-async function autocomplete(inp, continuations) {
+function autocomplete(inp, continuations) {
 
 	const colorForType = (type) => {
 		switch (type) {

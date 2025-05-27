@@ -176,7 +176,6 @@ async function Create_VQ_Element_Async(location, isLink, source, target) {
 
   } else {
     let elem_type = await ElementTypes.findOneAsync({name:"Class", diagramTypeId:active_diagram_type_id});
-    console.log("elem_type", elem_type, active_diagram_type_id);
 	let elem_style = _.find(elem_type.styles, function(style) {
                 return style.name === "Default";
     });
@@ -1334,7 +1333,7 @@ VQ_Element.prototype = {
 	},
 	
 	// sets link type. Possible values: PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION, GRAPH
-	setLinkQueryType: async function(value) {
+	setLinkQueryType: function(value) {
 		 if (this.isLink()) {
         // By default link is PLAIN
 				var setSub = "false";
@@ -1921,32 +1920,36 @@ class VQ_Element_Async{
   //            }
   //          ]
   async getMultiCompartmentSubCompartmentValues(compartment_name, subcompartment_name_list) {
-    var elem_type_id = this.obj["elementTypeId"];
-    var comp_type = await CompartmentTypes.findOneAsync({name: compartment_name, elementTypeId: elem_type_id});
-    if (comp_type) {
-      var comp_type_id = comp_type["_id"];
-      var compartments = Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id});
-      return compartments.map(function(c) {
-        var res = { fulltext:c["input"], _id:c["_id"] };
-        if (c.subCompartments) {
-        if (c.subCompartments[compartment_name]) {
-          if (c.subCompartments[compartment_name][compartment_name]) {
-            _.each(subcompartment_name_list, function(sc_name) {
-                if (c.subCompartments[compartment_name][compartment_name][sc_name.name]) {
-                  var transformer = function(v) { return v};
-                  if (sc_name["transformer"]) {
-                    transformer = sc_name["transformer"];
-                  };
-                  res[sc_name.title]=transformer(c.subCompartments[compartment_name][compartment_name][sc_name.name]["input"]);
-                };
-              });
-          }
-        }}
+    const elem_type_id = this.obj["elementTypeId"];
+    const comp_type = await CompartmentTypes.findOneAsync({
+      name: compartment_name,
+      elementTypeId: elem_type_id
+    });
 
-        return res;
-      })
-    };
-    return [];
+    if (!comp_type) return [];
+
+    const comp_type_id = comp_type["_id"];
+    const compartments = Compartments.find({
+      elementId: this._id(),
+      compartmentTypeId: comp_type_id
+    });
+
+    return compartments.map(c => {
+      const res = { fulltext: c["input"], _id: c["_id"] };
+
+      const subs1 = c.subCompartments?.[compartment_name]?.[compartment_name];
+      if (subs1) {
+        for (let sc_name of subcompartment_name_list) {
+          const sc = subs1[sc_name.name];
+          if (sc) {
+            const transformer = sc_name.transformer || (v => v);
+            res[sc_name.title] = transformer(sc["input"]);
+          }
+        }
+      }
+
+      return res;
+    });
   }
 	// --> string
 	// returns name of the VQ element's type Class, Link, Comment, CommentLink, null
@@ -2495,22 +2498,50 @@ class VQ_Element_Async{
   // --> [{link:VQ_Element, start:bool}, ...]
   // returns an array of objects containing links as VQ_Elements and flag whether is has been retrieved by opposite end as start
   // start true means that the link has been retrieved from link "end"
+  // async getLinks() {
+    // const startLinks = await Promise.all(
+		// Elements.find({ startElement: this.obj["_id"] }).map(async (link) => {
+		  // return { link: await createVQ_Element(link["_id"]), start: false };
+		// })
+	  // );
+
+	  // const endLinks = await Promise.all(
+		// Elements.find({ endElement: this.obj["_id"] }).map(async (link) => {
+		  // return { link: await createVQ_Element(link["_id"]), start: true };
+		// })
+	  // );
+
+	  // return _.filter(_.union(startLinks, endLinks), async function (linkobj) {
+		// return await linkobj.link.isLink();
+	  // });
+  // }
+
   async getLinks() {
-	  const startLinks = await Promise.all(
-		Elements.find({ startElement: this.obj["_id"] }).map(async (link) => {
-		  return { link: await createVQ_Element(link["_id"]), start: false };
-		})
-	  );
+    const startLinks = await Promise.all(
+      Elements.find({ startElement: this.obj["_id"] }).map(async (link) => {
+        return { link: await createVQ_Element(link["_id"]), start: false };
+      })
+    );
 
-	  const endLinks = await Promise.all(
-		Elements.find({ endElement: this.obj["_id"] }).map(async (link) => {
-		  return { link: await createVQ_Element(link["_id"]), start: true };
-		})
-	  );
+    const endLinks = await Promise.all(
+      Elements.find({ endElement: this.obj["_id"] }).map(async (link) => {
+        return { link: await createVQ_Element(link["_id"]), start: true };
+      })
+    );
 
-	  return _.filter(_.union(startLinks, endLinks), async function (linkobj) {
-		return await linkobj.link.isLink();
-	  });
+    const combinedLinks = startLinks.concat(endLinks);
+
+    // Perform async filtering manually
+    const results = await Promise.all(
+      combinedLinks.map(async (linkobj) => ({
+        linkobj,
+        isLink: await linkobj.link.isLink()
+      }))
+    );
+
+    return results
+      .filter(res => res.isLink)
+      .map(res => res.linkobj);
   }
 
   // --> {link:VQ_Element, start:bool}
@@ -2635,36 +2666,50 @@ class VQ_Element_Async{
   // (plain-required-unionfree UP/DOWN, otherwise UP in the tree)
   // TODO: union-free
   async isTherePathToElement(toElement) {
-    var visited_elems = {};
+      const visited_elems = {};
 
-    async function findToElem(e) {
-       if (e.isEqualTo(toElement)) { return true };
-       var res = false;
-       visited_elems[e._id()]=true;
- 			_.each(e.getLinks(),async function(link) {
+      async function findToElem(e) {
+        if (e.isEqualTo(toElement)) return true;
+
+        visited_elems[e._id()] = true;
+        let res = false;
+
+        const links = await e.getLinks(); // wait for links if it's async
+        for (let link of links) {
           if (!visited_elems[link.link._id()] && !(await link.link.isConditional())) {
- 						visited_elems[link.link._id()]=true;
-            var next_el = null;
-            var UP_direction = link.link.getRootDirection();
-            if (link.start) {
-              if (UP_direction=="start" || (UP_direction=="end" && await link.link.isPlain() && await link.link.isRequired())) {
-                next_el=await link.link.getStartElement();
-              }
- 						} else {
-              if (UP_direction=="end" || (UP_direction=="start" && await link.link.isPlain() && await link.link.isRequired())) {
-                next_el=await link.link.getEndElement();
-              }
- 						};
- 						if (next_el && !visited_elems[next_el._id()]) {
- 							 res = res || await findToElem(next_el);
- 						};
- 					};
- 			});
-      return res;
-    };
+            visited_elems[link.link._id()] = true;
 
-    return await findToElem(this);
-  }
+            let next_el = null;
+            const UP_direction = link.link.getRootDirection();
+
+            if (link.start) {
+              if (
+                UP_direction === "start" ||
+                (UP_direction === "end" && await link.link.isPlain() && await link.link.isRequired())
+              ) {
+                next_el = await link.link.getStartElement();
+              }
+            } else {
+              if (
+                UP_direction === "end" ||
+                (UP_direction === "start" && await link.link.isPlain() && await link.link.isRequired())
+              ) {
+                next_el = await link.link.getEndElement();
+              }
+            }
+
+            if (next_el && !visited_elems[next_el._id()]) {
+              res = res || await findToElem(next_el);
+            }
+          }
+        }
+
+        return res;
+      }
+
+      return await findToElem(this);
+    }
+
 	// bool -->
 	// sets the link name compartment's visibility
 	// async setLinkNameVisibility(visible, input, value) {
@@ -3157,45 +3202,56 @@ class VQ_Element_Async{
       var sorted_sub_compart_types = _.sortBy(ct["subCompartmentTypes"][0]["subCompartmentTypes"], function(sct) {return sct.index} );
       var value_array = [];
 
-      _.each(sorted_sub_compart_types, function(sub_c) {
-         c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name] = {};
-        var sc_value = "";
-        var sc = _.find(subcompartment_value_list, function(s) {return s.name == sub_c.name});
+      for (let sub_c of sorted_sub_compart_types) {
+        c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name] = {};
+
+        let sc_value = "";
+        const sc = subcompartment_value_list.find(s => s.name === sub_c.name);
+
         if (sc) {
-
           if (sc.name && sc.value) {
-             var transformer = (sc.transformer) ? sc.transformer : function(v)  {return v};
+            const transformer = sc.transformer || (v => v);
 
-            var mapped_value = undefined;
-            if (sub_c["inputType"]["type"] == "checkbox") {
-                mapped_value = _.find(sub_c["inputType"]["values"], function(s) { return transformer(sc.value) == s["input"]})["value"];
-            };
-			if(typeof sc.input !== "undefined") mapped_value = sc.input;
-             sc_value = Dialog.buildCompartmentValue(sub_c,  transformer(sc.value), mapped_value);
-             c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sc.name]["input"] = transformer(sc.value);
-             c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sc.name]["value"] = sc_value;
-            //
+            let mapped_value = undefined;
+            if (sub_c["inputType"]["type"] === "checkbox") {
+              const matched = sub_c["inputType"]["values"].find(s => transformer(sc.value) === s["input"]);
+              if (matched) {
+                mapped_value = matched["value"];
+              }
+            }
+
+            if (typeof sc.input !== "undefined") {
+              mapped_value = sc.input;
+            }
+
+            sc_value = Dialog.buildCompartmentValue(sub_c, transformer(sc.value), mapped_value);
+
+            const target = c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sc.name];
+            target["input"] = transformer(sc.value);
+            target["value"] = sc_value;
           }
         } else {
           // THIS probably doesn't work
           sc_value = Dialog.buildCompartmentValue(sub_c);
-          c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name]["input"] = sc_value;
-          c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name]["value"] = sc_value;
-        };
+          const target = c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name];
+          target["input"] = sc_value;
+          target["value"] = sc_value;
+        }
 
         if (sc_value) {
           value_array.push(sc_value);
-          value_array.push(ct["concatStyle"])
-        };
-      });
+          value_array.push(ct["concatStyle"]);
+        }
+      }
+
       value_array.pop();
-	 
+
       c_to_create["compartment"]["value"] = value_array.join("");
       c_to_create["compartment"]["input"] = c_to_create["compartment"]["value"];
 	  c_to_create["compartment"]["value"] = value_array.join("");
 	  if(!c_to_create["compartment"]["value"].startsWith(prefix)) c_to_create["compartment"]["value"] = prefix + c_to_create["compartment"]["value"];
 	  if(!c_to_create["compartment"]["value"].endsWith(sufix)) c_to_create["compartment"]["value"] = c_to_create["compartment"]["value"] + sufix;
-	  // c_to_create["compartment"]["value"] = prefix + value_array.join("") + sufix; 
+	  // c_to_create["compartment"]["value"] = prefix + value_array.join("") + sufix;
 
 	  await Utilities.callMeteorMethodAsync("insertCompartment", c_to_create);
     };
@@ -3241,67 +3297,64 @@ class VQ_Element_Async{
 	// Temporal solution: Put new element below target element, as close as possible without overlapping
 	// d - step to move below after each try
 	// Returns {x: x, y: y1, width: w, height: h} (the left upper corner + dimensions)
-   async getNewLocation (d = 30) {
-	    //console.log(this);
-	    var boxCoord = await this.getCoordinates();
-	    var x = boxCoord["x"];
-	    var y = boxCoord["y"];     
-	    var w = boxCoord["width"];
-	    var h = boxCoord["height"];
-	    //y1 - coordinate for a new element; 1st itteration
-	    var y1 = y + h + d;
+   async getNewLocation(d = 30) {
+    const boxCoord = await this.getCoordinates();
+    const x = boxCoord["x"];
+    const y = boxCoord["y"];
+    const w = boxCoord["width"];
+    const h = boxCoord["height"];
 
-	    var elem_list = [];
-	    var elem_over = []; //Potentionally - for more complex search for a better place
-	    var max_y;
+    let y1 = y + h + d;
+    const elem_list = [];
+    const elem_over = [];
+    let max_y;
 
-	    Elements.find({type: "Box"}).forEach(function(el) {
-	        elem_list.push(el);
-	    })
+    Elements.find({ type: "Box" }).forEach(el => {
+      elem_list.push(el);
+    });
 
-	    do{
-	        elem_over.length = 0;
+    do {
+      elem_over.length = 0;
 
-	        _.each(elem_list, function(el) {
-	            //Check, if start point of new element could lead to overlap with existing elements
-	            if (el["location"]["x"] < (x+w)){
-	                if (el["location"]["y"] < (y1+h)){
-	                    //Check, if end point of existing element could lead to overlap
-	                    if((el["location"]["x"]+el["location"]["width"]) > x){
-	                        if((el["location"]["y"])+el["location"]["height"] > y1){
-	                            elem_over.push({
-	                                _id: el["_id"],
-	                                x: el["location"]["x"],
-	                                y: el["location"]["y"],
-	                                w: el["location"]["width"],
-	                                h: el["location"]["height"]
-	                            });
-	                        }
-	                    }
-	                }
-	            }
-	        })
-	        // If any disturbing element exist, find the lowest one (max y) and try new space that is lower by d
-	        if (elem_over.length > 0){
-	            max_y = 0;
+      for (let el of elem_list) {
+        // Check if the new element at (x, y1) would overlap with existing one
+        if (el["location"]["x"] < (x + w) &&
+            el["location"]["y"] < (y1 + h) &&
+            (el["location"]["x"] + el["location"]["width"]) > x &&
+            (el["location"]["y"] + el["location"]["height"]) > y1) {
 
-	            _.each(elem_over, function(el){
-	                if (max_y < (el["y"]+el["h"])) {
-	                    max_y = el["y"]+el["h"];
-	                }
-	            })
+          elem_over.push({
+            _id: el["_id"],
+            x: el["location"]["x"],
+            y: el["location"]["y"],
+            w: el["location"]["width"],
+            h: el["location"]["height"]
+          });
+        }
+      }
 
-	            y1 = max_y + d;
-	        }
-	    } while (elem_over.length > 0);
+      // If overlapping elements exist, shift y1 below the lowest one
+      if (elem_over.length > 0) {
+        max_y = 0;
+        for (let el of elem_over) {
+          const bottom = el["y"] + el["h"];
+          if (max_y < bottom) {
+            max_y = bottom;
+          }
+        }
+        y1 = max_y + d;
+      }
 
-	    return {x: x, y: y1, width: w, height: h};
-	}
+    } while (elem_over.length > 0);
 
-	//Set appearence for known class styles 
+    return { x: x, y: y1, width: w, height: h };
+  }
+
+
+	//Set appearence for known class styles
     //Entry data: query, condition, subquery
-   	async setClassStyle(style) {  
-      
+   	async setClassStyle(style) {
+
 	    var elem_type = await ElementTypes.findOneAsync({_id: this.obj.elementTypeId});
 	    if (!elem_type){
 	    		console.error("setClassStyle: no elem_type");
