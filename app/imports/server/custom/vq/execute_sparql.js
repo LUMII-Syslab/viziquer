@@ -294,7 +294,7 @@ function createHttpRequestP1(url, httpOptions, query, namedGraph, preferJSON, ti
   }
 
   // return DO_CALL('GET', fullUrl, fullOptions);
-  return new Request(fullUrl, fullOptions);
+  return new Request(fullUrl.toString().replace(/\+/g, '%20'), fullOptions);
 }
 
 function createHttpRequestP2(url, httpOptions, query, namedGraph, preferJSON, timeout) {
