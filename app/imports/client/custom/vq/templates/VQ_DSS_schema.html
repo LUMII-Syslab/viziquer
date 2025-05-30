@@ -141,10 +141,22 @@
 							</div>
 
 							{{#if has_cpc}}
-								<div style="padding-top: 10px;">
+								<div id="fragment-div" style="padding-top: 10px;">
 									<label for="fragment-size">Fragment size:</label>
 									<input type="number" id="fragment-size" name="fragment-size" value="10">
+									<label for="fragment-algorithm">Fragment selection algorithm:</label>
+									<select name="fragment-algorithm" id="fragment-algorithm">
+										<option value="trivial">Trivial</option>
+										<option value="heuristic">Heuristic</option>
+										<option value="ppr">Personalized PageRank</option>
+										<option value="limited-ppr">Limited PPR</option>
+									</select>
 									<button id="getFragment" type="button" class="btn btn-primary" >Get fragment</button>
+									<!-- Optional. Used to show adj with edge weights to analyze fragment finding algorithms -->
+									<!-- <div id="fragment-relevances">
+										<p id="fragment-ancestor-classes"></p>
+										<ul id="fragment-adj-classes" style="padding-left: 10px;"></ul>
+									</div> -->
 								</div>
 							{{else}}
 								<label for="fragment-size">Fragments can only be obtained for schemes for which cpc_rels information is available.</label>
