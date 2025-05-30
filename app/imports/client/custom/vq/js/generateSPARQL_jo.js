@@ -587,14 +587,14 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	let startElement = await link.getStartElement();
 	let endElement = await link.getEndElement();
 
-	let linkName = link.getCompartmentValue("Name");
-	let startElementName = startElement.getCompartmentValue("Name");
-	let endElementName = endElement.getCompartmentValue("Name");
+	let linkName = await link.getCompartmentValue("Name");
+	let startElementName = await startElement.getCompartmentValue("Name");
+	let endElementName = await endElement.getCompartmentValue("Name");
 
 	let startClassSPRAQL = "";
 	let endClassSPRAQL = "";
 
-	let classList = startElement.getCompartmentValue("ClassList");
+	let classList = await startElement.getCompartmentValue("ClassList");
 
 	if(classList === null){
 
@@ -614,7 +614,7 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 		messages = messages.concat(startGroupSchemaBox["messages"]);
 	}
 
-	classList = endElement.getCompartmentValue("ClassList");
+	classList = await endElement.getCompartmentValue("ClassList");
 
 	if(classList === null){
 		let startSimpleSchemaBox = await simpleSchemaBox(endElement, 1, dirRole, usedNames, true);
@@ -690,7 +690,7 @@ async function generateSPARQLtextFromSchema(){
 			dirRole = proj.directClassMembershipRole;
 		}
 	}
-	let classList = selected_elem.getCompartmentValue("ClassList");
+	let classList = await selected_elem.getCompartmentValue("ClassList");
 
 	if(classList === null){
 		return simpleSchemaBox(selected_elem, n, dirRole, []);
@@ -740,7 +740,7 @@ async function generateSPARQLtextFromSchemaForSelection(){
 	for (const [key, value] of Object.entries(classAccessTable)) {
 		let selected_elem = await createVQ_Element(key);
 
-		let classList = selected_elem.getCompartmentValue("ClassList");
+		let classList = await selected_elem.getCompartmentValue("ClassList");
 
 		if(classList === null){
 			let startSimpleSchemaBox = await simpleSchemaBox(selected_elem, n, dirRole, usedNames, true);
@@ -765,7 +765,7 @@ async function generateSPARQLtextFromSchemaForSelection(){
 		let startElement = await link.getStartElement();
 		let endElement = await link.getEndElement();
 
-		let linkName = link.getCompartmentValue("Name");
+		let linkName = await link.getCompartmentValue("Name");
 		let startElementName = classNames[startElement.obj._id];;
 		let endElementName = classNames[endElement.obj._id];
 
@@ -815,22 +815,17 @@ async function generateSPARQLtextFromSchemaForSelection(){
 
 }
 
-function getClassListFromString(classList){
-	// Regular expression to trim the optional beginning and ending parts
-	// const regex = /^(?:\(\w+\)\s*)?(.*?)(?:\s*\((\d|\.)+[A-Z]\))?$/gm;
-	// Extract only the "prefix:name", ":name", or "name" part
-	// const stringValues = classList.match(regex).map(line => line.replace(regex, '$1')).filter(Boolean);
-
-		return classList.split("\n")
-         .map(line => line.replace(/^(?:\(\w+\)\s*)?(.*?)(?:\s*\([^()]*\))?\s*$/, '$1')) // Remove optional (type) or (type) and last occurrence of (anything) from end
-         .filter(Boolean); // Remove empty lines
-
-	// return stringValues;
+async function getClassListFromString(classListPromise) {
+    const classList = await classListPromise;
+    return classList
+        .split("\n")
+        .map(line => line.replace(/^(?:\(\w+\)\s*)?(.*?)(?:\s*\([^()]*\))?\s*$/, '$1')) // Clean up
+        .filter(Boolean); // Remove empty lines
 }
 
 async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNames, onlyWhere){
 	let messages = [];
-	let classList = getClassListFromString(classListString);
+	let classList = await getClassListFromString(classListString);
 
 	let sparqlQueryText = "";
 	if(!onlyWhere) sparqlQueryText = "SELECT * WHERE{\n";
@@ -838,7 +833,9 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	let propertyTable = [];
 	let className = "exp";
 	// Regular expression to match and remove the optional parts at the beginning and end
-	className = await selected_elem.getName().replace(/^(?:\(\w+\)\s*)?(?:[\w-]*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
+	className = await selected_elem.getName();
+
+  className = className.replace(/^(?:\(\w+\)\s*)?(?:[\w-]*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
 										.replace(/\s+et al\..*$/, '');               // Remove " et al. string" at the end
 	if(className.indexOf("[") !== -1 && className.indexOf(" ") !== -1) className = className.substring(className.indexOf("[")+1, className.indexOf(" "))
 	if(typeof usedNames !== "undefined" && usedNames !== null && typeof usedNames[className] !== "undefined") {
@@ -927,7 +924,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 
 async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 	let messages = [];
-	let name = selected_elem.getCompartmentValue("Name");
+	let name = await selected_elem.getCompartmentValue("Name");
 	if(name.indexOf("[") !== -1) name = name.substring(0, name.indexOf("]")+1);
 	else {
 		if(name.startsWith("(")) name = name.substring(name.indexOf("(")+1);
