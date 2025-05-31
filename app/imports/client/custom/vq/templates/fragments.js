@@ -2,8 +2,9 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 
 
 // Creates an adjacency list (a list of relevant cpc_rels for each class)
-export async function getCPCAdj(weightByCPCsum) {
+export async function getCPCAdj(weightByCPCsum, useBothClasses) {
 	if (weightByCPCsum !== true && weightByCPCsum !== false) {console.error("getCPCAdj: weightByCPCsum is not true or false");}
+	if (useBothClasses !== true && useBothClasses !== false) {console.error("getCPCAdj: useBothClasses is not true or false");}
 	const CPCs = await dataShapes.callServerFunction("xx_getCPCInfo", {main: {}});
 
 	// If weightByCPCsum is true, calculate total cpc count of each class. Otherwise use number of instances in a class
@@ -36,13 +37,17 @@ export async function getCPCAdj(weightByCPCsum) {
 		}
 		const cnt = parseFloat(cpc.cnt);
 		// Calculate edge weight. Do not allow a weight greater than 0.9. Important in cases where class size is used and cpc count is high; especially if one of the classes is small -- weight can become > 1000.
-		cpcWeight = cnt / classSizes.get(otherC) * cnt / classSizes.get(c);
-		if (weightByCPCsum === true) {cpcWeight = Math.min(0.9, cpcWeight);}
-		adj.get(otherC).push({class: c, property: cpc.property_id, weight: cpcWeight, propDirection: "out"});
-		adj.get(c).push({class: otherC, property: cpc.property_id, weight: cpcWeight, propDirection: "in"});		
+		if (useBothClasses === true) {
+			cpcWeight = cnt / classSizes.get(otherC) * cnt / classSizes.get(c);
+			cpcWeight = Math.min(0.9, cpcWeight);
+			adj.get(otherC).push({class: c, property: cpc.property_id, weight: cpcWeight, propDirection: "out"});
+			adj.get(c).push({class: otherC, property: cpc.property_id, weight: cpcWeight, propDirection: "in"});		
+		}
 		// For one-directional weight (swapping the weights is also worth considering)
-		// adj.get(otherC).push({class: c, property: cpc.property_id, weight: Math.min(0.9, cnt / classSizes.get(otherC)), propDirection: "out"});
-		// adj.get(c).push({class: otherC, property: cpc.property_id, weight: Math.min(0.9, cnt / classSizes.get(c)), propDirection: "in"});		
+		else {
+			adj.get(otherC).push({class: c, property: cpc.property_id, weight: Math.min(0.9, cnt / classSizes.get(otherC)), propDirection: "out"});
+			adj.get(c).push({class: otherC, property: cpc.property_id, weight: Math.min(0.9, cnt / classSizes.get(c)), propDirection: "in"});		
+		}
 	});
 
 	// Sort adjacency list of each class in decreasing order by weight and normalize to make all edges of a class have a total weight of 1
@@ -57,8 +62,9 @@ export async function getCPCAdj(weightByCPCsum) {
 }
 
 // Calculate adjacency list with weights from cp rels (pair each c->p to each p->c to get cpc)
-async function getAdjFromCP(weightByCPCsum) {
+async function getAdjFromCP(weightByCPCsum, useBothClasses) {
 	if (weightByCPCsum !== true && weightByCPCsum !== false) {console.error("getAdjFromCP: weightByCPCsum is not true or false");}
+	if (useBothClasses !== true && useBothClasses !== false) {console.error("getAdjFromCP: useBothClasses is not true or false");}
 	const xxCPs = await dataShapes.callServerFunction("xx_getCPInfoObjectProps", {main: {}});
 	const CPs = xxCPs.data;
 
@@ -113,15 +119,16 @@ async function getAdjFromCP(weightByCPCsum) {
 					if (!adj.get(c1)) {adj.set(c1, []);}
 
 					// Calculate weight of c2->p->c1 in regards to c2 and add to adj
-					let cpcWeight = Math.min(0.9, cnt / classSizes.get(c2) * cnt / classSizes.get(c1));
-					cpcWeight *= cp1_cnt / PtoCPCnt.get(p).get(1);	// In both directions
-					// let cpcWeight = Math.min(0.9, cnt / classSizes.get(c2)) * cp1_cnt / PtoCPCnt.get(p).get(1);	// In one direction
+					let cpcWeight;
+					if (useBothClasses === false) {	cpcWeight = Math.min(0.9, cnt / classSizes.get(c2)); }
+					else { cpcWeight = Math.min(0.9, cnt / classSizes.get(c2) * cnt / classSizes.get(c1)); }
+					cpcWeight *= cp1_cnt / PtoCPCnt.get(p).get(1);	// Account for uncertainty of which is the correct other end
 					adj.get(c2).push({class: c1, property: p, weight: cpcWeight, propDirection: "out" });
-
+					
 					// Calculate weight of c2->p->c1 in regards to c1 and add to adj
-					cpcWeight = Math.min(0.9, cnt / classSizes.get(c1) * cnt / classSizes.get(c2));
-					cpcWeight *= cp2_cnt / PtoCPCnt.get(p).get(2);	// In both directions
-					// cpcWeight = Math.min(0.9, cnt / classSizes.get(c1)) * cp2_cnt / PtoCPCnt.get(p).get(2);	// In one direction
+					if (useBothClasses === false) {	cpcWeight = Math.min(0.9, cnt / classSizes.get(c1)); }
+					else { cpcWeight = Math.min(0.9, cnt / classSizes.get(c2) * cnt / classSizes.get(c1)); }
+					cpcWeight *= cp2_cnt / PtoCPCnt.get(p).get(2);	// Account for uncertainty of which is the correct other end
 					adj.get(c1).push({class: c2, property: p, weight: cpcWeight, propDirection: "in"});
 				});
 			});
@@ -141,14 +148,8 @@ async function getAdjFromCP(weightByCPCsum) {
 }
 
 // Finds a fragment surrounding main classes. Only classes that are directly connected to main classes are considered. Each main class gives its neighbors a total of 1/mainClassCount relevance
-export async function fragmentsTrivial(mainClasses, fragmentClassCount, weightByCPCsum, adj) {
+export async function fragmentsTrivial(mainClasses, fragmentClassCount, adj) {
 	const mainClassCount = mainClasses.length;
-
-	// Create an adjacency list (a list of relevant cpc_rels for each class) if not given as a parameter
-	if (adj === undefined) {
-		adj = await getCPCAdj(weightByCPCsum);
-		if (adj.size == 0) {adj = await getAdjFromCP(weightByCPCsum);}
-	}
 
 	const classRelevance = new Map();
 	const candidatesSet = new Set(mainClasses);
@@ -178,16 +179,10 @@ export async function fragmentsTrivial(mainClasses, fragmentClassCount, weightBy
 }
 
 // Heuristic calculation of fragments, uses CPC rels
-export async function fragmentsHeuristic(mainClasses, fragmentClassCount, weightByCPCsum, adj) {
+export async function fragmentsHeuristic(mainClasses, fragmentClassCount, adj) {
 	const mainClassCount = mainClasses.length;
 	const mainClass = mainClasses[0];
 	
-	// Create an adjacency list (a list of relevant cpc_rels for each class) if not given as a parameter
-	if (adj === undefined) {
-		adj = await getCPCAdj(weightByCPCsum);
-		if (adj.size == 0) {adj = await getAdjFromCP(weightByCPCsum);}
-	}
-
 	let currClassCount = 0;
 	const classes = [];
 	const classRelevance = new Map();
@@ -269,13 +264,7 @@ function PPR(adj, mainClasses, alpha, tol) {
 }
 
 // Finds a fragment using Personalized PageRank, uses CPC rels
-export async function fragmentsPPR(mainClasses, fragmentClassCount, alpha, tol, weightByCPCsum, adj) {
-	// Create an adjacency list (a list of relevant cpc_rels for each class) if not given as a parameter
-	if (adj === undefined) {
-		adj = await getCPCAdj(weightByCPCsum);
-		if (adj.size == 0) {adj = await getAdjFromCP(weightByCPCsum);}
-	}
-
+export async function fragmentsPPR(mainClasses, fragmentClassCount, alpha, tol, adj) {
 	// Calculate rank using PPR
 	const rank = PPR(adj, mainClasses, alpha, tol);
 
@@ -289,13 +278,7 @@ export async function fragmentsPPR(mainClasses, fragmentClassCount, alpha, tol, 
 }
 
 // Limited Personalized PageRank (cross between heuristic and PPR), uses CPC rels
-export async function fragmentsLimitedPPR(mainClasses, fragmentClassCount, alpha, tol, weightByCPCsum, adj) {
-	// Create an adjacency list (a list of relevant cpc_rels for each class) if not given as a parameter
-	if (adj === undefined) {
-		adj = await getCPCAdj(weightByCPCsum);
-		if (adj.size == 0) {adj = await getAdjFromCP(weightByCPCsum);}
-	}
-
+export async function fragmentsLimitedPPR(mainClasses, fragmentClassCount, alpha, tol, adj) {
 	// Initially choose the main classes as fragment classes
 	const classes = [...mainClasses];
 
@@ -338,34 +321,55 @@ export async function fragmentsLimitedPPR(mainClasses, fragmentClassCount, alpha
 	return [classes, rank];	
 }
 
+function getBoolsFromEdgeWeightContext(edgeWeightContext) {
+	let weightByCPCsum;
+	if (edgeWeightContext === "src-tgt-size" || edgeWeightContext === "src-size") {weightByCPCsum = false;}
+	else if (edgeWeightContext === "src-tgt-conn" || edgeWeightContext === "src-conn") {weightByCPCsum = true;}
+
+	let useBothClasses;
+	if (edgeWeightContext === "src-size" || edgeWeightContext === "src-conn") {useBothClasses = false;}
+	else if (edgeWeightContext === "src-tgt-size" || edgeWeightContext === "src-tgt-conn") {useBothClasses = true;}
+
+	return [weightByCPCsum, useBothClasses];
+}
+
 let classNames, propertyNames;
-export async function runFragmentAlgorithm(algorithm, mainClasses, fragSize, weightByCPCsum, adj) {
+export async function runFragmentAlgorithm(algorithm, edgeWeightContext, mainClasses, fragSize, adj) {
 	// Class and property names needed for justifyFragmentRelevance
 	const xxClasses = await dataShapes.callServerFunction("xx_getClassesSimple", {main: {}});
 	classNames = new Map(xxClasses.data.map(obj => [obj.id, `${obj.ns_name}:${obj.class_name}`]));
 	const xxProperties = await dataShapes.callServerFunction("xx_getPropertiesSimple", {main: {}});
 	propertyNames = new Map(xxProperties.data.map(obj => [obj.id, obj.name]));
 
+	let [weightByCPCsum, useBothClasses] = getBoolsFromEdgeWeightContext(edgeWeightContext);
+
+	// Create an adjacency list (a list of relevant cpc_rels for each class) if not given as a parameter
+	if (adj === undefined) {
+		adj = await getCPCAdj(weightByCPCsum, useBothClasses);
+		if (adj.size == 0) {adj = await getAdjFromCP(weightByCPCsum, useBothClasses);}
+	}
+
 	let fragmentClasses, rank;
 	switch (algorithm) {
 		case "trivial":
-			[fragmentClasses, rank] = await fragmentsTrivial(mainClasses, fragSize, weightByCPCsum, adj);
+			[fragmentClasses, rank] = await fragmentsTrivial(mainClasses, fragSize, adj);
 			break;
 		case "heuristic":
-			[fragmentClasses, rank] = await fragmentsHeuristic(mainClasses, fragSize, weightByCPCsum, adj);
+			[fragmentClasses, rank] = await fragmentsHeuristic(mainClasses, fragSize, adj);
 			break;
 		case "ppr":
-			[fragmentClasses, rank] = await fragmentsPPR(mainClasses, fragSize, 0.85, 1e-5, weightByCPCsum, adj);
+			[fragmentClasses, rank] = await fragmentsPPR(mainClasses, fragSize, 0.85, 1e-5, adj);
 			break;
 		case "limited-ppr":
-			[fragmentClasses, rank] = await fragmentsLimitedPPR(mainClasses, fragSize, 0.85, 1e-5, weightByCPCsum, adj);
+			[fragmentClasses, rank] = await fragmentsLimitedPPR(mainClasses, fragSize, 0.85, 1e-5, adj);
 	}
 	return [fragmentClasses, rank];
 }
 
-// Compare fragments calculated by various algorithms by calculating the fraction of common classes; uses each of selected classes as a main class
-export async function compareFragmentAlgorithmsIntersection(weightByCPCsum) {
-	const adj = await getCPCAdj(weightByCPCsum);
+// Compare fragments calculated by various algorithms by calculating the fraction of common classes; uses each of selected classes as a main class. Currently always uses CPC rels.
+export async function compareFragmentAlgorithmsIntersection(edgeWeightContext) {
+	let [weightByCPCsum, useBothClasses] = getBoolsFromEdgeWeightContext(edgeWeightContext);
+	const adj = await getCPCAdj(weightByCPCsum, useBothClasses);
 	const mainClasses = Template.VQ_DSS_schema.Classes.get().map(c => c.id);		// Classes around which the fragment should be created
 	const algorithms = ["trivial", "heuristic", "ppr", "limited-ppr"];
 	for (let a1 = 0; a1 < algorithms.length; a1++) {
@@ -377,8 +381,8 @@ export async function compareFragmentAlgorithmsIntersection(weightByCPCsum) {
 				similarities.set(fragSize, []);
 				for (let i = 0; i < mainClasses.length; i++) {
 					const mainClass = mainClasses[i];
-					const [frag1, ] = await runFragmentAlgorithm(alg1, [mainClass], fragSize, weightByCPCsum, adj);
-					const [frag2, ] = await runFragmentAlgorithm(alg2, [mainClass], fragSize, weightByCPCsum, adj);
+					const [frag1, ] = await runFragmentAlgorithm(alg1, undefined, [mainClass], fragSize, adj);
+					const [frag2, ] = await runFragmentAlgorithm(alg2, undefined, [mainClass], fragSize, adj);
 					const commonClasses = frag1.filter(c => frag2.includes(c));
 					const commonFraction = commonClasses.length / Math.max(frag1.length, frag2.length);
 					similarities.get(fragSize).push(commonFraction);
@@ -404,12 +408,12 @@ export async function compareFragmentAlgorithmsSizeIncrease(weightByCPCsum) {
 				similarities.set(fragSize, []);
 				for (let i = 0; i < mainClasses.length; i++) {
 					const mainClass = mainClasses[i];
-					const [frag1, ] = await runFragmentAlgorithm(alg1, [mainClass], fragSize, weightByCPCsum, adj);
+					const [frag1, ] = await runFragmentAlgorithm(alg1, undefined, [mainClass], fragSize, adj);
 					let minSize = fragSize-1;
 					let maxSize = dataShapes.schema.diagram.filteredClassList.length;
 					while (maxSize - minSize > 1) {
 						let size = Math.floor((minSize + maxSize) / 2);
-						const [frag2, ] = await runFragmentAlgorithm(alg2, [mainClass], size, weightByCPCsum, adj);
+						const [frag2, ] = await runFragmentAlgorithm(alg1, undefined, [mainClass], fragSize, adj);
 						const commonClasses = frag1.filter(c => frag2.includes(c));
 						if (commonClasses.length == frag1.length) {
 							maxSize = size;
@@ -439,7 +443,7 @@ function normalizedRank(rank) {
 	return rank;
 }
 
-// Compare fragments calculated by various algorithms by comparing relevance (rank); uses each of selected classes as a main class
+// Compare fragments calculated by various algorithms by comparing relevance (rank); uses each of selected classes as a main class. Results are more difficult to interpret
 export async function compareFragmentAlgorithmsRank(weightByCPCsum) {
 	const adj = await getCPCAdj(weightByCPCsum);
 	const mainClasses = Template.VQ_DSS_schema.Classes.get().map(c => c.id);		// Classes around which the fragment should be created
@@ -455,8 +459,8 @@ export async function compareFragmentAlgorithmsRank(weightByCPCsum) {
 				rankDistances.set(fragSize, []);
 				for (let i = 0; i < mainClasses.length; i++) {
 					const mainClass = mainClasses[i];
-					let [frag1, rank1] = await runFragmentAlgorithm(alg1, [mainClass], fragSize, weightByCPCsum, adj);
-					let [frag2, rank2] = await runFragmentAlgorithm(alg2, [mainClass], fragSize, weightByCPCsum, adj);
+					let [frag1, rank1] = await runFragmentAlgorithm(alg1, undefined, [mainClass], fragSize, adj);
+					let [frag2, rank2] = await runFragmentAlgorithm(alg1, undefined, [mainClass], fragSize, adj);
 					rank1 = normalizedRank(rank1);
 					rank2 = normalizedRank(rank2);
 					let rankDistance = 0;

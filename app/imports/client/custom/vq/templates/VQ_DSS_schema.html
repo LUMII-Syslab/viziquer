@@ -143,15 +143,22 @@
 							{{#if has_cpc}}
 								<div id="fragment-div" style="padding-top: 10px;">
 									<label for="fragment-size">Fragment size:</label>
-									<input type="number" id="fragment-size" name="fragment-size" value="10">
-									<label for="fragment-algorithm">Fragment selection algorithm:</label>
+									<input type="number" id="fragment-size" name="fragment-size" value="10" size="5">
+									<label for="fragment-algorithm" style="margin-left: 10px;">Algorithm:</label>
 									<select name="fragment-algorithm" id="fragment-algorithm">
-										<option value="trivial">Trivial</option>
-										<option value="heuristic">Heuristic</option>
+										<option value="trivial">Direct</option>
+										<option value="heuristic">Heuristic (greedy)</option>
 										<option value="ppr">Personalized PageRank</option>
-										<option value="limited-ppr">Limited PPR</option>
+										<option value="limited-ppr">Stepwise PPR</option>
 									</select>
-									<button id="getFragment" type="button" class="btn btn-primary" >Get fragment</button>
+									<label for="fragment-edge-weight-context" style="margin-left: 10px;">Weight context:</label>
+									<select name="fragment-edge-weight-context" id="fragment-edge-weight-context">
+										<option value="src-conn">Source class connectivity</option>
+										<option value="src-tgt-conn">Source and target class connectivity</option>
+										<option value="src-size">Source class size</option>
+										<option value="src-tgt-size">Source and target class size</option>
+									</select>
+									<button id="getFragment" type="button" class="btn btn-primary" style="margin-left: 10px;">Get fragment</button>
 									<!-- Optional. Used to show adj with edge weights to analyze fragment finding algorithms -->
 									<!-- <div id="fragment-relevances">
 										<p id="fragment-ancestor-classes"></p>

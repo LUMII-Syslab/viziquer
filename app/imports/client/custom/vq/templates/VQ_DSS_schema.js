@@ -672,6 +672,7 @@ Template.VQ_DSS_schema.events({
 		const mainClasses = Template.VQ_DSS_schema.Classes.get().map(c => c.id);		// Classes around which the fragment should be created
 		const fragSize = parseInt(document.getElementById("fragment-size").value);
 		const fragAlgorithm = document.getElementById("fragment-algorithm").value;
+		const fragEdgeWeightContext = document.getElementById("fragment-edge-weight-context").value;
 
 		// Uncomment to console log fragment similarity comparison for different algorithms
 		// compareFragmentAlgorithmsIntersection();
@@ -679,7 +680,7 @@ Template.VQ_DSS_schema.events({
 		// compareFragmentAlgorithmsRank();
 
 		// Calculate fragment
-		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, mainClasses, fragSize, true);
+		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize);
 		
 		// Update list of chosen classes
 		const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){return fragmentClasses.includes(c.id)});
