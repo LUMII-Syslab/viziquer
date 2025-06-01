@@ -6,12 +6,11 @@ import { i18n } from 'meteor/universe:i18n';
 
 import { Template } from 'meteor/templating';
 
-
-Template.registerHelper('_', function (key, ...args) {
-  return i18n.getTranslation(key, ...args);
-});
-
 i18n.setLocale('en');
+Template.registerHelper('_', function (key, options) {
+  const params = (options && options.hash) || {};
+  return i18n.__(key, params);
+});
 
 
 Template.nav.helpers({
@@ -72,10 +71,6 @@ Template.userT.helpers({
   profile: function() {
     var user = Users.findOne({systemId: Session.get("userSystemId")});
     if (user) {
-
-        console.log("user changed")
-
-
         Session.set("activeProject", user["activeProject"]);
         Session.set("versionId", user["activeVersion"]);
 

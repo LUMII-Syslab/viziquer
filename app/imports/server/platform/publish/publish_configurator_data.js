@@ -132,7 +132,6 @@ Meteor.publish("ConfiguratorDiagram", async function(list) {
 		var diagram_type_query2	= {toolId: await get_configurator_tool_id(),
 									_id: list["diagramTypeId"]};
 
-
 		return [
 				Diagrams.find({$or: [diagram_query, query2]}),
 				Elements.find({$or: [diagram_elems_query, query2]}),

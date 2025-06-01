@@ -67,21 +67,12 @@ Template.projectsList.events({
 Template.projectsList.helpers({
 
   projectsCount: function() {
-      console.log("sadf ", ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).count())
-
-
       return ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).count();
   },
 
   projects: function() {
-
-    console.log("in projects")
-
   	return ProjectsUsers.find({userSystemId: Session.get("userSystemId")}, {limit: 10}).map(
-  		function(proj_user) {
-
-        console.log("in proj_user", proj_user)
-  			
+  		function(proj_user) {  			
   			//selecting the project name
   			var project = Projects.findOne({_id: proj_user["projectId"]});
         if (project) {

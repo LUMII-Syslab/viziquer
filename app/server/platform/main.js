@@ -3,6 +3,12 @@ import { Meteor } from 'meteor/meteor'
 import path from 'path'
 import dotenv from 'dotenv'
 
+import express from 'express';
+import bodyParser from 'body-parser';
+// import { Meteor } from 'meteor/meteor';
+import { WebApp } from 'meteor/webapp';
+
+
 import { CompartmentTypes } from '/imports/db/platform/collections'
 
 
@@ -63,6 +69,7 @@ import '/imports/db/custom/vq/collections'
 import '/imports/libs/custom/mytest'
 // import '/libs/custom/ontologyParams'
 
+
 Meteor.startup(async () => {
     console.log("Loading server");
 
@@ -103,56 +110,29 @@ Meteor.startup(async () => {
     // console.log('Effective environment:', process.env);
     // }
 
-    //FIXME: pagaidām aizkomentēju Restivus, kurš pirmajā brīdī izskatās nesaderīgs ar meteor 3
-/*
-    let Api = new Restivus({
-        // useDefaultAuth: true,
-        prettyJson: true
+
+    const app = express();
+    app.use(bodyParser.json());
+
+    app.post('/public-diagram', async (req, res) => {
+      try {
+        const list = req.body;
+
+        // Call Meteor method asynchronously
+        const diagram = await Meteor.callAsync("addPublicDiagram", list);
+
+        const url = `/public/project/${diagram.projectId}/diagram/${diagram._id}/type/${diagram.diagramTypeId}/version/${diagram.versionId}`;
+
+        res.status(200).json({ url });
+      } catch (error) {
+        console.error("Error in /public-diagram:", error);
+        res.status(500).json({ error: error.message });
+      }
     });
 
+    // Mount it under /api
+    WebApp.connectHandlers.use('/api', app);
 
-    Api.addRoute('public-diagram', {}, {
 
-        // get: function () {
-        //     let list = {};
-        //     _.extend(list, this.queryParams);
-
-        //     let diagram = Meteor.call("addPublicDiagram", list);
-
-        //     let url = "http://78.84.99.73:5000/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
-
-        //     return {
-        //         statusCode: 200,
-        //         headers: {
-        //             'Content-Type': 'text/plain',
-        //             'Location': url
-        //         },
-        //         body: 'Location: ' + url,
-        //     };
-        // },
-
-        post: {
-            action: function () {
-                let list = {};
-                // _.extend(list, this.queryParams);
-                _.extend(list, this.bodyParams);
-
-                let diagram = Meteor.call("addPublicDiagram", list);
-
-                let url = "/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
-
-                return {
-                    statusCode: 200,
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Access-Control-Allow-Origin': '*',
-                    },
-                    // response: {url: url,},
-                    body: { url }
-                };
-            }
-        }
-    });
-*/
     console.log("End startup");
 });
