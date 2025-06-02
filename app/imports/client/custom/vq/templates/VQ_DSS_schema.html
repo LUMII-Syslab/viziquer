@@ -4,7 +4,7 @@
 
 	<!-- Modal for new document -->
     <div id="VQ-DSS-schema" class="modal fade" data-backdrop="static" data-keyboard="false">
-        
+
         <div class="modal-dialog" style="width:1000px">
             <div class="modal-content">
                 <div class="modal-header" style="overflow:scroll;">
@@ -22,7 +22,7 @@
 						  {{/if}}
 					</ul>
 					  <div class="tab-content" style="overflow:auto;">
-						
+
 						  <div id="VQ-DSS-main" class="tab-pane fade in active">
 							<div class="explain-form-group" style="padding-bottom:5px; padding-top:10px;">
 								<span class="label label-default" style="font-size:15px; background-color:transparent;">Class list filters:</span>
@@ -34,7 +34,7 @@
 											<p><span id="classCount-slider-span"> </span> Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
 											<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount"  {{filterDisabled}}>
 										</div>
-										
+
 										<select class="form-control" id="nsFilter" {{filterDisabled}} style="width: 400px;">
 											{{#each nsFilters}}
 												<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
@@ -52,7 +52,7 @@
 										<div class="slidecontainer" style="width: 400px; padding-top:10px;">
 											<p><span id="propCount-slider-span"> </span>. Properties in the diagram - {{propCount}}</p>
 											<input type="range" min="0" max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider" {{filterDisabled}} >
-										</div>	
+										</div>
 									</div>
 								</div>
 							</div>
@@ -75,15 +75,15 @@
 										<label>Rest classes ({{classCountRest}})</label>
 									</div>
 								</div>
-							</div>	
-							
+							</div>
+
 							<div class="container-fluid">
 									<div style="display: inline-block; vertical-align:top;">
 										<select class="form-select" id="selectedClasses" size="17" multiple aria-label="multiple select 1" style="width: 400px;">
 											{{#each classes}}
 												<option value="{{id}}" {{selected}}>{{display_name}} </option>
 											{{/each}}
-										</select>						
+										</select>
 									</div>
 									<div style="display: inline-block; vertical-align:top;">
 										<button id="removeSelected" type="button" class="btn btn-primary"  {{manualDisabled}}>&rarr;</button>
@@ -94,20 +94,20 @@
 											{{#each restClasses}}
 												<option value="{{id}}" {{selected}}>{{display_name}}</option>
 											{{/each}}
-										</select>					
+										</select>
 									</div>
 							</div>
 
 							<!--<div class="container-fluid"> -->
 							<!--	<div class="row"> -->
 							<!--		<div class="col-sm-6"> -->
-	
+
 							<!--		</div> -->
 							<!--		<div class="col-sm-6"> -->
 							<!--			<button id="getProperties" type="button" class="btn btn-primary" >Show all properties</button> -->
 							<!--		</div> -->
 							<!--	</div> -->
-							<!--</div>	-->						
+							<!--</div>	-->
 							<div class="container-fluid">
 								<div class="row">
 									<div class="col-sm-6">
@@ -117,7 +117,7 @@
 										<label>Rest properties ({{propCountRest}})</label>
 									</div>
 								</div>
-							</div>				
+							</div>
 
 							<div class="container-fluid">
 								<div style="display: inline-block; vertical-align:top;">
@@ -125,7 +125,7 @@
 										{{#each properties}}
 											<option value="{{id}}">{{p_name}} </option>
 										{{/each}}
-									</select>						
+									</select>
 								</div>
 								<div style="display: inline-block; vertical-align:top;">
 									<button id="removeSelectedProp" type="button" class="btn btn-primary" {{manualDisabled}}>&rarr;</button>
@@ -136,39 +136,40 @@
 										{{#each restProperties}}
 											<option value="{{id}}">{{p_name}}</option>
 										{{/each}}
-									</select>					
+									</select>
 								</div>
 							</div>
 
-							{{#if has_cpc}}
-								<div id="fragment-div" style="padding-top: 10px;">
-									<label for="fragment-size">Fragment size:</label>
-									<input type="number" id="fragment-size" name="fragment-size" value="10" size="5">
-									<label for="fragment-algorithm" style="margin-left: 10px;">Algorithm:</label>
-									<select name="fragment-algorithm" id="fragment-algorithm">
-										<option value="trivial">Direct</option>
-										<option value="heuristic">Heuristic (greedy)</option>
-										<option value="ppr">Personalized PageRank</option>
-										<option value="limited-ppr">Stepwise PPR</option>
-									</select>
-									<label for="fragment-edge-weight-context" style="margin-left: 10px;">Weight context:</label>
-									<select name="fragment-edge-weight-context" id="fragment-edge-weight-context">
-										<option value="src-conn">Source class connectivity</option>
-										<option value="src-tgt-conn">Source and target class connectivity</option>
-										<option value="src-size">Source class size</option>
-										<option value="src-tgt-size">Source and target class size</option>
-									</select>
-									<button id="getFragment" type="button" class="btn btn-primary" style="margin-left: 10px;">Get fragment</button>
-									<!-- Optional. Used to show adj with edge weights to analyze fragment finding algorithms -->
-									<!-- <div id="fragment-relevances">
-										<p id="fragment-ancestor-classes"></p>
-										<ul id="fragment-adj-classes" style="padding-left: 10px;"></ul>
-									</div> -->
-								</div>
-							{{else}}
-								<label for="fragment-size">Fragments can only be obtained for schemes for which cpc_rels information is available.</label>
-							{{/if}}
-
+              {{#if showFragmentBlock}}
+                {{#if has_cpc}}
+                  <div id="fragment-div" style="padding-top: 10px;">
+                    <label for="fragment-size">Fragment size:</label>
+                    <input type="number" id="fragment-size" name="fragment-size" value="10" size="5">
+                    <label for="fragment-algorithm" style="margin-left: 10px;">Algorithm:</label>
+                    <select name="fragment-algorithm" id="fragment-algorithm">
+                      <option value="trivial">Direct</option>
+                      <option value="heuristic">Heuristic (greedy)</option>
+                      <option value="ppr">Personalized PageRank</option>
+                      <option value="limited-ppr">Stepwise PPR</option>
+                    </select>
+                    <label for="fragment-edge-weight-context" style="margin-left: 10px;">Weight context:</label>
+                    <select name="fragment-edge-weight-context" id="fragment-edge-weight-context">
+                      <option value="src-conn">Source class connectivity</option>
+                      <option value="src-tgt-conn">Source and target class connectivity</option>
+                      <option value="src-size">Source class size</option>
+                      <option value="src-tgt-size">Source and target class size</option>
+                    </select>
+                    <button id="getFragment" type="button" class="btn btn-primary" style="margin-left: 10px;">Get fragment</button>
+                    <!-- Optional. Used to show adj with edge weights to analyze fragment finding algorithms -->
+                    <!-- <div id="fragment-relevances">
+                      <p id="fragment-ancestor-classes"></p>
+                      <ul id="fragment-adj-classes" style="padding-left: 10px;"></ul>
+                    </div> -->
+                  </div>
+                {{else}}
+                  <label for="fragment-size">Fragments can only be obtained for schemes for which cpc_rels information is available.</label>
+                {{/if}}
+              {{/if}}
 
 							<div class="container-fluid">
 								<div class="row">
@@ -181,7 +182,7 @@
 
 									</div>
 								</div>
-							</div>	
+							</div>
 						  </div>
 						  <!-- //////////////////////////////////////// -->
 						  <div id="paremeters" class="tab-pane fade">
@@ -196,7 +197,7 @@
 											<label class="form-check-label" style="padding-bottom:10px; padding-top:10px;">
 												<input class="form-check-input" name = "merge" id="merge" type="checkbox">
 												<span class="custom-checkbox"></span>
-												Enable merging 
+												Enable merging
 											</label>
 											<div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
 												<p><span id="DiffG-slider-span"> </span> Classes in the diagram - {{diffG}}</p>
@@ -214,19 +215,19 @@
 											<label class="form-check-label" style="padding-top:10px;">
 												<input class="form-check-input" name = "abstr" id="abstr" type="checkbox">
 												<span class="custom-checkbox"></span>
-												Make abstract superclasses 
+												Make abstract superclasses
 											</label>
 											<label class="form-check-label">
 												<input class="form-check-input" name = "cover" id="cover" type="checkbox" checked = "checked">
 												<span class="custom-checkbox"></span>
-												Use DB Cover set indexes 
+												Use DB Cover set indexes
 											</label>
 										</div>
 										<div class="col-sm-4">
 											<div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
 												<p><span id="propCount-slider-span2"> </span>. Properties - {{propCount}}</p>
 												<input type="range" min="0" max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider2" {{filterDisabled}} >
-											</div>	
+											</div>
 											<select class="form-control" id="pw" style="width:300px" >
 												<option value=0 >Size factor: power = 0 </option>
 												<option value=3 >Size factor: power = 1/3 </option>
@@ -256,7 +257,7 @@
 												<option selected value=7 >Max. 7 one object property edges</option>
 												<option value=10 >Max. 10 one object property edges</option>
 												<option value=0 >Draw all object properties in the diagram</option>
-											</select>	
+											</select>
 											<select class="form-control" id="hideSmall">
 												<option selected value=0 >Draw all object properties in the diagram</option>
 												<option value=5 >Draw object properties ( triples > 5 ) </option>
@@ -267,7 +268,7 @@
 												<input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">
 												<span class="custom-checkbox"></span>
 												Compact view of properties
-											</label>										
+											</label>
 											<label class="form-check-label">
 												<input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
 												<span class="custom-checkbox"></span>
@@ -296,7 +297,7 @@
 												<span class="custom-checkbox"></span>
 												Old diffs
 											</label>
-											<!--<label class="form-check-label"> 
+											<!--<label class="form-check-label">
 												<input class="form-check-input" name = "withoutGen" id="withoutGen" type="checkbox">
 												<span class="custom-checkbox"></span>
 												Without generalizations
@@ -316,8 +317,8 @@
 													{{#each usedClasses}}
 														<option value={{id}} {{selected}}> {{display_name}} </option>
 													{{/each}}
-												</select>						
-											</div>										
+												</select>
+											</div>
 										</div>
 										<div class="col-sm-4">
 											<label>Class/Class+Subclasses</label>
@@ -326,7 +327,7 @@
 													{{#each subClasses}}
 														<option value={{id}} {{selected}}>{{display_name}}</option>
 													{{/each}}
-												</select>					
+												</select>
 											</div>
 										</div>
 										<div class="col-sm-4">
@@ -336,11 +337,11 @@
 													{{#each classProperties}}
 														<option value={{id}} {{selected}}>{{display_name}}</option>
 													{{/each}}
-												</select>					
+												</select>
 											</div>
 										</div>
 									</div>
-								</div>								
+								</div>
 						  </div>
 						  <!-- //////////////////////////////////////// -->
 						  <div id="support" class="tab-pane fade">
@@ -373,12 +374,12 @@
 						<button id="makeDiagrAJOO2" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Create Schema diagram</button>
 						<button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Export Schema diagram data</button>
 						{{/if}}
-                    <button id="cancel-VQ-DSS-schema" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>	
+                    <button id="cancel-VQ-DSS-schema" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
 
     </div><!-- /.modal -->
 
-   
+
 </template>
