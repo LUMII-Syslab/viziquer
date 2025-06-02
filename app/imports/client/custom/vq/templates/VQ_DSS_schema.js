@@ -36,7 +36,6 @@ Template.VQ_DSS_schema.IsPublic = new ReactiveVar(false);
 Template.VQ_DSS_schema.HasClasses = new ReactiveVar('');
 Template.VQ_DSS_schema.HasCPC = new ReactiveVar('');
 Template.VQ_DSS_schema.ShowFragmentBlock = new ReactiveVar('');
-Template.VQ_DSS_schema.FragmentButtonCaption = new ReactiveVar('');
 
 Interpreter.customMethods({
 	VQ_DSS_schema: function(){
@@ -62,9 +61,8 @@ Interpreter.customMethods({
 Template.VQ_DSS_schema.rendered = function() {
 	clearData();
 	Template.VQ_DSS_schema.IsPublic.set(true); // TODO kā lai atšķir, publiskais vai nepubliskais varaints?
-  Template.VQ_DSS_schema.ShowFragmentBlock.set(true);
-  Template.VQ_DSS_schema.FragmentButtonCaption.set('Hide');
-	Template.VQ_DSS_schema.SchemaName.set(dataShapes.schema.schemaName);
+  Template.VQ_DSS_schema.ShowFragmentBlock.set(false);
+  Template.VQ_DSS_schema.SchemaName.set(dataShapes.schema.schemaName);
 	Template.VQ_DSS_schema.ClassCountAll.set(dataShapes.schema.classCount);
 	Template.VQ_DSS_schema.PropCountAll.set(dataShapes.schema.propCount);
 	Template.VQ_DSS_schema.HasCPC.set(dataShapes.schema.has_cpc);
@@ -184,10 +182,6 @@ Template.VQ_DSS_schema.helpers({
   showFragmentBlock: function() {
     return Template.VQ_DSS_schema.ShowFragmentBlock.get();
   },
-  button_caption: function() {
-    return Template.VQ_DSS_schema.FragmentButtonCaption.get();
-  }
-
 });
 
 function getParams() {
@@ -801,12 +795,10 @@ Template.VQ_DSS_schema.events({
     isFragment = false;
   },
   'click #hideFragment': function() {
-    if (Template.VQ_DSS_schema.FragmentButtonCaption.get()== captionHide ) {
-      Template.VQ_DSS_schema.FragmentButtonCaption.set(captionShow);
+    if (Template.VQ_DSS_schema.ShowFragmentBlock.get() ) {
       Template.VQ_DSS_schema.ShowFragmentBlock.set(false);
     }
     else {
-      Template.VQ_DSS_schema.FragmentButtonCaption.set(captionHide);
       Template.VQ_DSS_schema.ShowFragmentBlock.set(true);
     }
   },
@@ -1002,8 +994,6 @@ var propSliderTextValues = [];
 var propPositions = [];
 var params = {};
 var isFragment = false;
-const captionShow = 'Show Schema fragment part';
-const captionHide = 'Hide';
 const u_to_type =   '\u21D2';
 const u_from_type = '\u21D0';
 const u_in_prop = '\u21A4'; //'\u21E4'; //'\u2B70';
