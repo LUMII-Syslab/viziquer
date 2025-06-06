@@ -54,7 +54,7 @@ VQ_Schema.prototype = {
 //  - source Class (for Link)
 //  - target Class (for Link)
 //    funtion(VQ_Element), location, bool, VQ_Element, VQ_Element  -->
-function Create_VQ_Element(func, location, isLink, source, target) {
+/*function Create_VQ_Element(func, location, isLink, source, target) {
 
   var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
 
@@ -128,6 +128,7 @@ function Create_VQ_Element(func, location, isLink, source, target) {
   }
 
 };
+*/
 
 
 async function Create_VQ_Element_Async(location, isLink, source, target) {
@@ -305,11 +306,11 @@ VQ_Element.prototype = {
   _id: function() {return this.obj["_id"]},
   // VQ_Element --> bool
   // Determines whether this VQ_Element is the same as the argument
-  isEqualTo: function(e) {if (e) { return this.obj["_id"]==e.obj["_id"]} else {return false}},
+ /* isEqualTo: function(e) {if (e) { return this.obj["_id"]==e.obj["_id"]} else {return false}},
   // --> string (ajoo diagram id)
   getDiagram_id: function() {return this.obj["diagramId"]},
   // string --> string
-  // Returns the value (INPUT) of the given compartment by name or null if such compartment does not exist
+  // Returns the value (INPUT) of the given compartment by name or null if such compartment does not exist*/
   getCompartmentValue: function(compartment_name) {
     if (!this.obj) {
       console.error(this.obj);
@@ -328,29 +329,29 @@ VQ_Element.prototype = {
   },
   // string --> string
   // Returns the value (VALUE) of the given compartment by name or null if such compartment does not exist
-  getCompartmentValueValue: function(compartment_name) {
-    var elem_type_id = this.obj["elementTypeId"];
-    var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
-    if (comp_type) {
-      var comp_type_id = comp_type["_id"];
-      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
-      if (comp) {
-          return comp["value"];
-      };
-    };
-    return null;
-  },
+  // getCompartmentValueValue: function(compartment_name) {
+    // var elem_type_id = this.obj["elementTypeId"];
+    // var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
+    // if (comp_type) {
+      // var comp_type_id = comp_type["_id"];
+      // var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
+      // if (comp) {
+          // return comp["value"];
+      // };
+    // };
+    // return null;
+  // },
   // string --> [string]
   // Returns the array of values of the given compartment by name or [] if such compartment does not exist
-  getMultiCompartmentValues: function(compartment_name) {
-    var elem_type_id = this.obj["elementTypeId"];
-    var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
-    if (comp_type) {
-      var comp_type_id = comp_type["_id"];
-      return Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id}).map(function(c){return c["input"];});
-    };
-    return [];
-  },
+  // getMultiCompartmentValues: function(compartment_name) {
+    // var elem_type_id = this.obj["elementTypeId"];
+    // var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
+    // if (comp_type) {
+      // var comp_type_id = comp_type["_id"];
+      // return Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id}).map(function(c){return c["input"];});
+    // };
+    // return [];
+  // },
   // string, [{title:string, name:string, transformer:function}, ...] --> [{fulltext:string, title1:string, ...}}]
   // Returns array of values of the given compartment together with the values of specified subcompartments
   // Arguments are:
@@ -373,34 +374,34 @@ VQ_Element.prototype = {
   //              "isDescending": true
   //            }
   //          ]
-  getMultiCompartmentSubCompartmentValues: function(compartment_name, subcompartment_name_list) {
-    var elem_type_id = this.obj["elementTypeId"];
-    var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
-    if (comp_type) {
-      var comp_type_id = comp_type["_id"];
-      var compartments = Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id});
-      return compartments.map(function(c) {
-        var res = { fulltext:c["input"], _id:c["_id"] };
-        if (c.subCompartments) {
-        if (c.subCompartments[compartment_name]) {
-          if (c.subCompartments[compartment_name][compartment_name]) {
-            _.each(subcompartment_name_list, function(sc_name) {
-                if (c.subCompartments[compartment_name][compartment_name][sc_name.name]) {
-                  var transformer = function(v) { return v};
-                  if (sc_name["transformer"]) {
-                    transformer = sc_name["transformer"];
-                  };
-                  res[sc_name.title]=transformer(c.subCompartments[compartment_name][compartment_name][sc_name.name]["input"]);
-                };
-              });
-          }
-        }}
+  // getMultiCompartmentSubCompartmentValues: function(compartment_name, subcompartment_name_list) {
+    // var elem_type_id = this.obj["elementTypeId"];
+    // var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
+    // if (comp_type) {
+      // var comp_type_id = comp_type["_id"];
+      // var compartments = Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id});
+      // return compartments.map(function(c) {
+        // var res = { fulltext:c["input"], _id:c["_id"] };
+        // if (c.subCompartments) {
+        // if (c.subCompartments[compartment_name]) {
+          // if (c.subCompartments[compartment_name][compartment_name]) {
+            // _.each(subcompartment_name_list, function(sc_name) {
+                // if (c.subCompartments[compartment_name][compartment_name][sc_name.name]) {
+                  // var transformer = function(v) { return v};
+                  // if (sc_name["transformer"]) {
+                    // transformer = sc_name["transformer"];
+                  // };
+                  // res[sc_name.title]=transformer(c.subCompartments[compartment_name][compartment_name][sc_name.name]["input"]);
+                // };
+              // });
+          // }
+        // }}
 
-        return res;
-      })
-    };
-    return [];
-  },
+        // return res;
+      // })
+    // };
+    // return [];
+  // },
 	// --> string
 	// returns name of the VQ element's type Class, Link, Comment, CommentLink, null
 	getElementTypeName: function() {
@@ -414,36 +415,36 @@ VQ_Element.prototype = {
   isClass: function() {
 		return this.getElementTypeName()=="Class";
 	},
-  isLink: function() {
-		return this.getElementTypeName()=="Link";
-	},
-  isUnion: function() {
-		return this.getName()== "[ + ]";
-	},
-	isUnit: function() {
-		return this.getName()=="[ ]";
-	},
+  // isLink: function() {
+		// return this.getElementTypeName()=="Link";
+	// },
+  // isUnion: function() {
+		// return this.getName()== "[ + ]";
+	// },
+	// isUnit: function() {
+		// return this.getName()=="[ ]";
+	// },
   // Determines whether the VQ_Element is the root class of the query
-  isRoot: function() {
-    return this.getType()=="query" || this.isVirtualRoot;
-  },
+  // isRoot: function() {
+    // return this.getType()=="query" || this.isVirtualRoot;
+  // },
 	// Determines whether the VQ_Element is the subquery root
-	isSubQueryRoot: function() {
-		return _.any(this.getLinks(), function(l) {
-			 var dir = l.link.getRootDirection();
-			 return l.link.isSubQuery() && (l.start && dir == "start" || !l.start && dir == "end")
-		});
-	},
+	// isSubQueryRoot: function() {
+		// return _.any(this.getLinks(), function(l) {
+			 // var dir = l.link.getRootDirection();
+			 // return l.link.isSubQuery() && (l.start && dir == "start" || !l.start && dir == "end")
+		// });
+	// },
 	// Determines whether the VQ_Element is the global subquery root
-	isGlobalSubQueryRoot: function() {
-		return _.any(this.getLinks(), function(l) {
-			 var dir = l.link.getRootDirection();
-			 return l.link.isGlobalSubQuery() && (l.start && dir == "start" || !l.start && dir == "end")
-		});
-	},
+	// isGlobalSubQueryRoot: function() {
+		// return _.any(this.getLinks(), function(l) {
+			 // var dir = l.link.getRootDirection();
+			 // return l.link.isGlobalSubQuery() && (l.start && dir == "start" || !l.start && dir == "end")
+		// });
+	// },
   // --> string
   // gets the name of the class or link, in fact it is the classname or rolename
-  getName: function() {
+  /*getName: function() {
     // Since we need inv(name) also in the input, we should extract the name in this case
     var name = this.getCompartmentValue("Name");
     // if (name && name.substring(0,4)=="inv(") {
@@ -451,15 +452,15 @@ VQ_Element.prototype = {
     // } else {
         return name;
     // }
-  },
+  },*/
   // --> string
-  getInstanceAlias: function() {
-    return this.getCompartmentValue("Instance");
-  },
+  // getInstanceAlias: function() {
+    // return this.getCompartmentValue("Instance");
+  // },
   // string -->
-  setInstanceAlias: function(instanceAlias) {
-    this.setCompartmentValue("Instance",instanceAlias, instanceAlias);
-  },
+  // setInstanceAlias: function(instanceAlias) {
+    // this.setCompartmentValue("Instance",instanceAlias, instanceAlias);
+  // },
 
   // --> string
   // getStereotype: function() {
@@ -483,7 +484,7 @@ VQ_Element.prototype = {
       } else { return "REQUIRED";};
     } else { return null;};
   },
-  // determines whether a class rather than instance is searched
+ /* // determines whether a class rather than instance is searched
   isVariable: function() {
     var name = this.getName();
 	if(name != null){
@@ -1835,7 +1836,7 @@ VQ_Element.prototype = {
     	// elements: array of IDs; elementNames: empty or array of IDs (for logs)
     	Interpreter.extensionPoints.DeleteElementsCollection({elements: [this.obj["_id"]], elementNames: [this.obj["_id"]], diagramId: Session.get("activeDiagram"), versionId: Session.get("versionId")});    	 
     },
-
+*/
 }
 
 
@@ -3443,7 +3444,7 @@ class VQ_Element_Async{
 export {
   VQ_Element,
   createVQ_Element,
-  Create_VQ_Element,
+  // Create_VQ_Element,
   Create_VQ_Element_Async,
   // async_Create_VQ_Element,
   Create_VQ_Element_Declaration,

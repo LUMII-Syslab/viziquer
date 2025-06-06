@@ -4,7 +4,7 @@ import {
  } from '../../../custom/vq/js/transformations.js'
 
 import { autoCompletionAddAttribute } from '../../../custom/vq/js/autoCompletion.js'
-import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
+import { createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 import './aggregate_wizard_form.html'
 
 

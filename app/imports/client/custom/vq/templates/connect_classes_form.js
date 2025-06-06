@@ -3,7 +3,7 @@ import { Interpreter } from '../../../lib/interpreter.js'
 import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 import './connect_classes_form.html'
-import { Create_VQ_Element_Async, VQ_Element, createVQ_Element } from '../js/VQ_Element.js'
+import { Create_VQ_Element_Async, createVQ_Element } from '../js/VQ_Element.js'
 import { Elements, Projects } from '../../../../db/platform/collections.js'
 
 Interpreter.customMethods({

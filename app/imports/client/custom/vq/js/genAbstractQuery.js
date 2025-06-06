@@ -4,7 +4,7 @@ import { Projects, Elements, ElementTypes } from '../../../../db/platform/collec
 import { dataShapes } from './DataShapes.js'
 import { checkIfIsSimpleVariable, findINExpressionTable } from './parserCommon.js'
 import { countMaxExpressionCardinality } from './parser.js';
-import { VQ_Element, createVQ_Element } from './VQ_Element.js'
+import { createVQ_Element } from './VQ_Element.js'
 
 import * as vq_grammar_parser from './vq_grammar_parser.js'
 import * as vq_variable_grammar_parser from './vq_variable_grammar_parser.js'

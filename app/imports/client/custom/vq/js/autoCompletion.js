@@ -4,7 +4,7 @@ import { Dialog } from '../../../platform/js/interpretator/Dialog.js'
 
 import { dataShapes } from './DataShapes.js'
 import { generateSymbolTable, findAttributeInAbstractTable, setSchemaNamesForQuery } from './transformations.js'
-import { VQ_Element, createVQ_Element } from './VQ_Element.js'
+import { createVQ_Element } from './VQ_Element.js'
 
 import * as vq_grammar_completion_parser from './vq_grammar_completion_parser.js'
 import * as vq_property_path_grammar_completion_parser from './vq_property_path_grammar_completion_parser.js'

@@ -2,7 +2,7 @@ import { Interpreter } from '../../../lib/interpreter.js'
 import { Elements } from '../../../../db/platform/collections.js'
 
 import { autoCompletionClass, autoCompletionCleanup } from '../../../custom/vq/js/autoCompletion.js'
-import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
+import { createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 
 import './add_class_name_form.html'
 

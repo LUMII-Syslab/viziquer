@@ -13,7 +13,7 @@ import { Projects, Compartments, Elements, ElementTypes, Diagrams} from '../../.
 // import {OrthogonalCollectionRerouting} from '../../../platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting.js'
 
 import { dataShapes } from './DataShapes.js'
-import { Create_VQ_Element_Async, VQ_Element, Create_VQ_Element_Declaration, createVQ_Element } from './VQ_Element.js';
+import { Create_VQ_Element_Async, Create_VQ_Element_Declaration, createVQ_Element } from './VQ_Element.js';
 import { getDeclarations } from './genAbstractQuery.js';
 
 import { isURI } from './transformations.js'

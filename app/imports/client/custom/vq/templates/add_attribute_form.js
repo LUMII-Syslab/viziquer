@@ -8,7 +8,7 @@ import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 import { generateSymbolTable, getSchemaNameForElement } from '../../../custom/vq/js/transformations.js'
 import { autoCompletionAddAttribute, autoCompletionCleanup } from '../../../custom/vq/js/autoCompletion.js'
 
-import { VQ_Element, createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
+import { createVQ_Element } from '../../../custom/vq/js/VQ_Element.js';
 
 import './add_attribute_form.html'
 import { AddMergeValues2 } from './add_merge_form.js'
