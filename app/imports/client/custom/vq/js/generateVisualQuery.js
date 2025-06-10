@@ -1835,7 +1835,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 								found = true;
 								if(typeof attributeInfoTemp["exp"] !== 'undefined') attributeNameSplit[replaceIndex] = attributeInfoTemp["exp"];
 								else attributeNameSplit[replaceIndex] = attributeInfoTemp["identification"]["short_name"];
-								classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = "*" + attributeNameSplit.join("");
+								if(attributeTable[attribute]["identification"] !== null && attributeTable[attribute]["identification"]["max_cardinality"] === 1)classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = attributeNameSplit.join("");
+								else classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = "*" + attributeNameSplit.join("");
 							}
 						}
 					}
