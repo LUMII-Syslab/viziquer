@@ -23,10 +23,10 @@ Go to the [ViziQuer Tools repository](https://github.com/LUMII-Syslab/viziquer-t
 
 ### To setup ViziQuer locally
 
-1. Download and install _Meteor_ framework, follow instructions: https://www.meteor.com/install
+1. Download and install _Meteor_ framework, follow instructions: [https://www.meteor.com/install](https://docs.meteor.com/about/install.html)
 1. Perform `git clone` for this repository.
 1. Change to the `./viziquer/app` directory.
-1. Execute the command `meteor npm ci` to install the required _node_ packages.
+1. Execute the command `meteor npm ci` to install the required _node.js_ packages.
 1. Now to run the ViziQuer tool, type `meteor` in the ViziQuer directory.
  To run on a specific port, type, for example, `meteor --port 4000`.
 1. Open the web browser and type `localhost:3000` (default port: 3000) or with the specified port `localhost:4000`
