@@ -19,9 +19,9 @@
                             <h4>{{name}}</h4>
 
                             {{#if isDefault}}
-                                <span class="m-left-xs">{{_ "user_role" context=role}}/{{_ "user_status" context=status}}</span>
+                                <span class="m-left-xs">{{role}}/{{status}}</span>
                             {{else}}
-                                <span class="m-left-xs">{{role}}/{{_ "user_status" context=status}}</span>    
+                                <span class="m-left-xs">{{role}}/{{status}}</span>    
                             {{/if}}
                             
                             <div class="stat-icon">
