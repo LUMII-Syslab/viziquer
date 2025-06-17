@@ -3263,6 +3263,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var'] !== 'undefined'
 						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['Reference'] === 'undefined'
 						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == 'PROPERTY_NAME'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['ref'] == null
 						
 						&& typeof expressionTable[key]['NumericExpressionR'] !== 'undefined'
 						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression'] !== 'undefined'

@@ -3398,23 +3398,23 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 			if(subclazz["isSubQuery"] == true || subclazz["isGlobalSubQuery"] == true){
 
 				//ORDER BY
-				if (typeof(orderings) != "undefined" && orderings != null) {temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, subclazz["classMembership"], knownPrefixes, symbolTable, variableNamesTable, variableNamesCounter);}
+				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, subclazz["classMembership"], knownPrefixes, symbolTable, variableNamesTable, variableNamesCounter);
 
 				//GROUP BY
 
-				//temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
+				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
 
 				//HAVING
-				//temp["sparqlTable"]["having"] = getHaving(subclazz["having"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
+				temp["sparqlTable"]["having"] = getHaving(subclazz["having"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
 
-				//messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
-				//messages = messages.concat(temp["sparqlTable"]["groupBy"]["messages"]);
+				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
+				messages = messages.concat(temp["sparqlTable"]["groupBy"]["messages"]);
 
 				//OFFSET
-				//temp["sparqlTable"]["offset"] = subclazz["offset"];
+				temp["sparqlTable"]["offset"] = subclazz["offset"];
 
 				 //LIMIT
-				 //temp["sparqlTable"]["limit"] = subclazz["limit"];
+				 temp["sparqlTable"]["limit"] = subclazz["limit"];
 			}
 		//}
 
@@ -3483,7 +3483,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	var orderTable = [];
 	var orderTripleTable = [];
 	var orderGroupBy = [];
-	for (const order of orderings) {
+	for (const order of orderings || []) {
 		if(order["exp"] != null && order["exp"].replace(" ", "") !=""){
 			if(order["exp"].startsWith("?")){
 				if(typeof fieldNames[order["exp"].substring(1)] !== "undefined"){
@@ -3686,7 +3686,7 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	var groupTripleTable = [];
 	var orderGroupBy = [];
 
-	for (const group of groupings) {
+	for (const group of (groupings || [])) {
 		if(group["exp"] != null && group["exp"].replace(" ", "") !=""){
 			var groupName = group["exp"];
 			if(groupName.search(":") != -1) groupName = groupName.substring(groupName.search(":")+1);
@@ -4572,7 +4572,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							//GROUP BY
 							var groupByFromFields = sparqlTable["subClasses"][subclass]["groupBy"];
 							
-							if (typeof(groupByFormFields) !== "undefined" && groupByFormFields !== null) {
+							if (typeof(groupByFromFields) !== "undefined" && groupByFromFields !== null) {
 								//ad triples from group by
 								if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) {
 									temp = temp.concat(groupByFromFields["triples"])
@@ -4592,7 +4592,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 							selectResult["groupBy"] = selectResult["groupBy"].concat(refTable);
 							if (typeof(orderBy) !== "undefined" && orderBy !== null) selectResult["groupBy"] = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
-							if (typeof(groupByFormFields) !== "undefined" && groupByFormFields !== null) selectResult["groupBy"] = selectResult["groupBy"].concat(groupByFromFields["groupings"]);
+							if (typeof(groupByFromFields) !== "undefined" && groupByFromFields !== null) selectResult["groupBy"] = selectResult["groupBy"].concat(groupByFromFields["groupings"]);
 
 							selectResult["groupBy"] = selectResult["groupBy"].filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;
@@ -4641,11 +4641,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
 							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) subQuery = subQuery + groupBy;
-							if (typeof(having) !== "undefined" && having !== null) {
-								if(having!== null && having.exp != "") subQuery = subQuery + "\n"+SPARQL_interval + "HAVING(" + having.exp + ")";
-							}
+							if(typeof(having) !== "undefined" && having!== null && having.exp != "") subQuery = subQuery + "\n"+SPARQL_interval + "HAVING(" + having.exp + ")";
 							//ORDER BY
-							if (typeof(orderBy) !== "undefined" && orderBy !== null) if (orderBy["orders"] != "") subQuery = subQuery + "\n"+SPARQL_interval+"ORDER BY " + orderBy["orders"];
+							if (typeof(orderBy) !== "undefined" && orderBy !== null && orderBy["orders"] != "") subQuery = subQuery + "\n"+SPARQL_interval+"ORDER BY " + orderBy["orders"];
 
 
 

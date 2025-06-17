@@ -1263,7 +1263,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 										addVariable = false;
 									}
 								}
-								if(addVariable === true){
+								if(addVariable === true && typeof classesTable[parsedAttributeRes["value"]] === "undefined"){
 									for(let clazz in classesTable){
 										if(typeof classesTable[clazz] !== "function"){
 											classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
@@ -1445,7 +1445,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					//aggregate on class  
 					let classes = findByVariableName(classesTable, expression["expression"]["value"]);
 
-					if(Object.keys(classes).length == 1){
+					if(Object.keys(classes).length == 1 && typeof nodeList[expression["expression"]["value"]]!== "undefined"){
 						if(expression["aggregation"].toLowerCase() == "count") {
 							if(distinct == "") aggregationExp = "count(.)";
 							else  aggregationExp = "count_distinct(.)";
@@ -3860,6 +3860,23 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			}
 			// if more then one class from parrent query found
 			if(moreThenOneClassFound == true){
+				if(Object.keys(classesBeforeUnion).length === 1){
+					const firstKey = Object.keys(classesBeforeUnion)[0];  // "value"
+					// const firstValue = obj[firstKey];
+					let link = {
+					"linkIdentification":{local_name: "++", display_name: "++", short_name: "++"},
+					"object":unionClass,
+					"subject":firstKey,
+					"isVisited":false,
+					"linkType":"REQUIRED",
+					"isSubQuery":false,
+					"isGlobalSubQuery":false,
+					"counter":orderCounter
+				}
+				linkTable.push(link);
+				linkTableAdded.push(link);
+				orderCounter++;
+				}
 				// TO DO
 			} else {
 				// creaet ++ link from parrent to [+]
@@ -7072,7 +7089,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 
 		//class definitions
 		
-		if(((triples[triple]["predicate"]["value"] == directClassMembershipRole || (typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined" && triples[triple]["object"]["termType"] !== "Variable"))) && (typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' || isUnderUnion === true) && triples[triple]["object"]["termType"] !== "BlankNode"
+		if(((triples[triple]["predicate"]["value"] == directClassMembershipRole || (typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined" && triples[triple]["object"]["termType"] !== "Variable"))) && 
+		(typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' || isUnderUnion === true || 
+		(nodeList[triples[triple]["subject"]["value"]] !== "undefined" && nodeList[triples[triple]["subject"]["value"]]["count"] > 2)) 
+		&& triples[triple]["object"]["termType"] !== "BlankNode"
 			&& typeof variableList[triples[triple]["object"]["value"]+"Label"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"AltLabel"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"Description"] === "undefined"){
 			let instanceAlias = null;
 			//var classResolvedR = await dataShapes.resolveClassByName({name: triples[triple]["object"]});
@@ -7193,7 +7213,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 					} else if(nodeList[triples[triple]["subject"]["value"]]["count"] > 1){
 						// if class used more than once, copy class from parent scope (to decide later whether to build a new class box or not)
 						// console.log("CLASS 4", subjectNameParsed["value"]);
-						classesTable[createClass] = {
+						classesTable[createClass+counter] = {
 							"variableName":triples[triple]["subject"]["value"],
 							"identification":classResolved,
 							"instanceAlias":instanceAlias,
@@ -7202,8 +7222,9 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							"isUnion":false,
 							"orderCounter":triples[triple]["tableCounter"]
 						};
-						classTableAdded.push(createClass);
-						nodeList[triples[triple]["subject"]["value"]]["uses"][createClass] = "class";
+						classTableAdded.push(createClass+counter);
+						nodeList[triples[triple]["subject"]["value"]]["uses"][createClass+counter] = "class";
+						counter++;
 					}
 				}
 			} else {
@@ -8842,7 +8863,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 						linkTable[linkName]["linkIdentification"]["short_name"].indexOf(".") !== -1) exp = "[[" + exp + "]]";
 						var requred = true;
 						if(linkTable[linkName]["linkType"] == "OPTIONAL") requred = false;
-						var internal = true;
+						var internal = false;
 						let addLabel = false;
 						let addAltLabel = false;
 						let addDescription = false;
@@ -8905,7 +8926,11 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 								}
 							}
 						
-						if(createAttribute)clazz = addAttributeToClass(clazz, attributeInfo);
+						if(createAttribute){
+							clazz = addAttributeToClass(clazz, attributeInfo);
+							// attributeTable[attrAlias] = attributeInfo;
+						}
+						
 						if(createAttribute === true && attributeInfo["isInternal"] === true && typeof childerenClass["groupByThis"] !== 'undefined' && childerenClass["groupByThis"] == true) {
 							var group = exp;
 							if(childerenClass["instanceAlias"] != null && childerenClass["instanceAlias"] != "") group = childerenClass["instanceAlias"];
@@ -10260,5 +10285,10 @@ async function combineKnownPrefixesWithDefinedPrefixes(knownPrefixes){
 			}
 		}
 	}
+	knownPrefixes.push({
+						is_local: false,
+						name: "bif",
+						value: "http://www.openlinksw.com/schemas/bif#"
+					})
 	return knownPrefixes;
 }
