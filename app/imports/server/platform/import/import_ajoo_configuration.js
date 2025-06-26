@@ -5,7 +5,6 @@ import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements
 Meteor.methods({
 
 	importAjooConfiguration: async function(list) {
-		console.log("IIIIIIIIIIIII", list);
 		var _import = new ImportAjooConfiguration(list.toolId, list.versionId);
     await _import.init();
 
@@ -48,7 +47,6 @@ Meteor.methods({
 
 
 function ImportAjooConfiguration(tool_id, version_id) {
-	console.log("ttttttttttttt", tool_id, version_id)
 	this.toolId = tool_id;
 	this.versionId = version_id;
 	this.obj_type_map = {};

@@ -1,0 +1,53 @@
+
+<template name="VQ_DSS_custom_sparql">
+
+
+	<!-- Modal for new document -->
+    <div id="VQ-DSS-custom-sparql" class="modal fade" data-backdrop="static" data-keyboard="false">
+
+        <div class="modal-dialog" style="width:1000px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Qenerate SPARQL from schema class {{className}}.</h4>
+                </div>
+				
+				<div class="container-fluid">
+					<div style="display: inline-block; vertical-align:top;">
+						<p>Unselected properties</p>
+						<select class="form-select" id="unSelectedProperties" size="17" multiple aria-label="multiple select 1" style="width: 400px;">
+							{{#each properties}}
+								<option value="{{localName}}">{{displayName}} </option>
+							{{/each}}
+						</select>
+					</div>
+					<div style="display: inline-block; vertical-align:top; margin-top: 3%;">
+							<button id="addPropertyToSelection" type="button" class="btn btn-primary">&rarr;</button>
+							<button id="removePropertyFromSelection" type="button" class="btn btn-primary">&larr;</button>
+					</div>
+					<div style="display: inline-block; vertical-align:top;">
+						<p>Selected properties</p>
+						<select class="form-select" id="selectedProperties2" size="17" multiple aria-label="multiple select 2" style="width: 400px;">
+							{{#each selectedProperties}}
+								<option value="{{localName}}">{{displayName}}</option>
+							{{/each}}
+						</select>
+					</div>
+					<div style="display: inline-block; vertical-align:top; margin-top: 3%;">
+							<button id="UpProperty" type="button" class="btn btn-primary">&uarr;</button>
+							<button id="DownProperty" type="button" class="btn btn-primary">&darr;</button>
+					</div>
+				</div>
+
+                <div class="modal-footer" style="clear: both;">
+					<button id="generate-VQ-DSS-custom-sparql" type="button" class="btn btn-primary" data-dismiss="modal">Generate SPARQL</button>
+					<button id="execute-VQ-DSS-custom-sparql" type="button" class="btn btn-primary" data-dismiss="modal">Execute SPARQL</button>		
+                    <button id="cancel-VQ-DSS-custom-sparql" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+    </div><!-- /.modal -->
+
+
+</template>

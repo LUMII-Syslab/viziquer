@@ -10,7 +10,6 @@ import { build_compartment } from '../methods/diagrams/compartments.js'
 Meteor.methods({
 
 	importConfiguration: async function(list) {
-		console.log("FFFFFFFFFFFFFF", list);
 		var user_id = Meteor.userId();
 		if (await is_system_admin(user_id) && list) {
 

@@ -7,6 +7,7 @@ import { createVQ_Element } from './VQ_Element.js'
 import { dataShapes } from './DataShapes.js'
 import { setSchemaNamesForQuery } from './transformations.js'
 import { ElementTypes, DiagramTypes } from '../../../../db/platform/collections.js'
+import '../templates/VQ_DSS_custom_sparql.html'
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -436,6 +437,10 @@ Interpreter.customMethods({
 		 Interpreter.showErrorMsg(messages.join(" // "), -3);
 	  }
   },
+  
+  // GenereteSPARQL_form_class_costumise_DSS: async function() {
+      // $("#VQ-DSS-custom-sparql").modal("show");
+  // },
 
   GenereteSPARQL_Diagram_from_class_DSS: async function() {
       Interpreter.destroyErrorMsg();
@@ -923,7 +928,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 
 
 async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
-	let messages = [];
+	let messages = []; 
 	let name = await selected_elem.getCompartmentValue("Name");
 	if(name.indexOf("[") !== -1) name = name.substring(0, name.indexOf("]")+1);
 	else {
@@ -5701,4 +5706,8 @@ function combineWithDefinedPrefixes(knownPrefixes, prefixDeclarations){
 		}
 	}
 	return {knownPrefixes:knownPrefixes, messages:messages};
+}
+
+export {
+  executeSparqlString
 }

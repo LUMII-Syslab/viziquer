@@ -5898,6 +5898,10 @@
               {
                 "item": "Execute SPARQL",
                 "procedure": "ExecuteSPARQL_form_class_DSS"
+              },
+              {
+                "item": "Custom SPARQL",
+                "procedure": "GenereteSPARQL_form_class_costumise_DSS"
               }
             ],
             "readModeContextMenu": [],
