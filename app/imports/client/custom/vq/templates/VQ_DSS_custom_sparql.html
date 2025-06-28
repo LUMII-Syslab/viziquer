@@ -14,7 +14,7 @@
 				
 				<div class="container-fluid">
 					<div style="display: inline-block; vertical-align:top;">
-						<p>Unselected properties</p>
+						<p>Selected properties</p>
 						<select class="form-select" id="unSelectedProperties" size="17" multiple aria-label="multiple select 1" style="width: 400px;">
 							{{#each properties}}
 								<option value="{{localName}}">{{displayName}} </option>
@@ -22,21 +22,24 @@
 						</select>
 					</div>
 					<div style="display: inline-block; vertical-align:top; margin-top: 3%;">
-							<button id="addPropertyToSelection" type="button" class="btn btn-primary">&rarr;</button>
-							<button id="removePropertyFromSelection" type="button" class="btn btn-primary">&larr;</button>
+						<div>
+							<button id="addPropertyToSelection" type="button" class="btn btn-primary" style="width: 40px; height: 40px; margin: 2px;">&rarr;</button>
+							<button id="removePropertyFromSelection" type="button" class="btn btn-primary" style="width: 40px; height: 40px; margin: 2px;">&larr;</button>
+						</div>
+						<div style="margin-top: 10px;">
+							<button id="UpProperty" type="button" class="btn btn-primary" style="width: 40px; height: 40px; margin: 2px;">&uarr;</button>
+							<button id="DownProperty" type="button" class="btn btn-primary" style="width: 40px; height: 40px; margin: 2px;">&darr;</button>
+						</div>
 					</div>
 					<div style="display: inline-block; vertical-align:top;">
-						<p>Selected properties</p>
+						<p>Unselected properties</p>
 						<select class="form-select" id="selectedProperties2" size="17" multiple aria-label="multiple select 2" style="width: 400px;">
 							{{#each selectedProperties}}
 								<option value="{{localName}}">{{displayName}}</option>
 							{{/each}}
 						</select>
 					</div>
-					<div style="display: inline-block; vertical-align:top; margin-top: 3%;">
-							<button id="UpProperty" type="button" class="btn btn-primary">&uarr;</button>
-							<button id="DownProperty" type="button" class="btn btn-primary">&darr;</button>
-					</div>
+					
 				</div>
 
                 <div class="modal-footer" style="clear: both;">

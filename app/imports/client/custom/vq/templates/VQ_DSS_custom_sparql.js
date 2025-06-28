@@ -122,7 +122,7 @@ Template.VQ_DSS_custom_sparql.events({
 		}
 	},
 	'click #UpProperty':  function (event, template) {
-		 const select = document.getElementById('selectedProperties2');
+		 const select = document.getElementById('unSelectedProperties');
 		const options = select.options;
 		const selectedIndices = [];
 		
@@ -152,11 +152,11 @@ Template.VQ_DSS_custom_sparql.events({
 								 (i === selectedIndices[0] - 1 && !selectedIndices.includes(i));
 		}
 		
-		$('#selectedProperties2 option').prop('selected', false);
+		$('#unSelectedProperties option').prop('selected', false);
 	},
 
     'click #DownProperty':  function (event, template) {
-		const select = document.getElementById('selectedProperties2');
+		const select = document.getElementById('unSelectedProperties');
 		const options = select.options;
 		const selectedIndices = [];
 		
@@ -187,14 +187,15 @@ Template.VQ_DSS_custom_sparql.events({
 								  !selectedIndices.includes(i));
 		}
 		
-		$('#selectedProperties2 option').prop('selected', false);
+		$('#unSelectedProperties option').prop('selected', false);
    },
    
    'click #generate-VQ-DSS-custom-sparql':  async function (event, template) {
 		event.preventDefault();
 		const className = Template.VQ_DSS_custom_sparql.ClassName.get();
-		const selectedProperties = Template.VQ_DSS_custom_sparql.SelectedProperties.get();
+		const selectedProperties = await Template.VQ_DSS_custom_sparql.Properties.get();
 		const DirRole = Template.VQ_DSS_custom_sparql.DirRole.get();
+		
 		
 		let params = {name: className};
 		let cls = await dataShapes.resolveClassByName(params);
@@ -226,7 +227,7 @@ Template.VQ_DSS_custom_sparql.events({
    'click #execute-VQ-DSS-custom-sparql':  async function (event, template) {
 		event.preventDefault();
 		const className = Template.VQ_DSS_custom_sparql.ClassName.get();
-		const selectedProperties = Template.VQ_DSS_custom_sparql.SelectedProperties.get();
+		const selectedProperties = await Template.VQ_DSS_custom_sparql.Properties.get();
 		const DirRole = Template.VQ_DSS_custom_sparql.DirRole.get();
 		
 		let params = {name: className};
@@ -234,13 +235,14 @@ Template.VQ_DSS_custom_sparql.events({
 
 		const classSubject = cls["data"][0]["prefix"]+":"+cls["data"][0]["local_name"];
 		const classObject = "?"+cls["data"][0]["display_name"];
-		
-		let sparqlText = "SELECT * WHERE{\n  "+ classObject + " " + DirRole+ " " + classSubject + ". \n  ";
-		let prefixes = await dataShapes.getNamespaces();
 		let prefixTable = [];
+		let sparqlText = "SELECT * WHERE{\n  "+ classObject + " " + DirRole+ " " + classSubject + ". \n  ";
+		prefixTable[cls["data"][0]["prefix"]] = "";
+		let prefixes = await dataShapes.getNamespaces();
+		
 		for (let i = 0; i < selectedProperties.length; i++) {
 			prefixTable[selectedProperties[i]["prefix"]] = "";
-			sparqlText = sparqlText + classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .\n  ";
+			sparqlText = sparqlText + "OPTIONAL{"+ classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .}\n  ";
 		}
 		sparqlText = sparqlText + "}";
 		
