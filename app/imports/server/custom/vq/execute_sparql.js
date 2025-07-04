@@ -117,11 +117,18 @@ function detectContentType(content) {
 function peekResponseType(response) {
   // console.log('response headers', response.headers, typeof response.headers);
   let header = response.headers.get('content-type');
+  console.log('⛑️', header)
   // TODO - varbūt jāiemācās saņemt arī turtle utml?
   if (header.toLowerCase().startsWith(RESPONSE_FORMAT_JSON)) {
     return 'JSON';
   }
+  if (header.toLowerCase().startsWith(RESPONSE_FORMAT_JSON_2)) {
+    return 'JSON';
+  }
   if (header.toLowerCase().startsWith(RESPONSE_FORMAT_XML)) {
+    return 'XML';
+  }
+  if (header.toLowerCase().startsWith(RESPONSE_FORMAT_XML_2)) {
     return 'XML';
   }
   if (header.toLowerCase().startsWith('text')) {
@@ -148,7 +155,9 @@ const PARAM_FORMAT = 'format';
 const PARAM_DEFAULT_GRAPH_URI = 'default-graph-uri';
 
 const RESPONSE_FORMAT_XML = 'application/sparql-results+xml';
+const RESPONSE_FORMAT_XML_2 = 'application/xml';
 const RESPONSE_FORMAT_JSON = 'application/sparql-results+json';
+const RESPONSE_FORMAT_JSON_2 = 'application/json';
 const RESPONSE_FORMAT_TURTLE = 'text/turtle';
 const RESPONSE_FORMAT_XML_SHORT = 'xml';
 const RESPONSE_FORMAT_JSON_SHORT = 'json';
@@ -356,6 +365,34 @@ function createHttpRequestP2b(url, httpOptions, query, namedGraph, preferJSON, t
   return new Request(fullUrl, fullOptions);
 }
 
+function createHttpRequestP2c(url, httpOptions, query, namedGraph, preferJSON, timeout) {
+  // console.log("profile P2b", url, query, namedGraph, httpOptions, preferJSON);
+  const fullUrl = new URL(url);
+
+  preferJSON = false
+
+  const fullOptions = buildOptionsBase(httpOptions, 'POST', timeout);
+  fullOptions.headers.append(HEADER_CONTENT_TYPE, BODY_FORMAT_FORM_URLENCODED);
+
+  const params = new URLSearchParams();
+  params.append('query', query);
+
+  if (namedGraph) {
+    params.append(PARAM_DEFAULT_GRAPH_URI, namedGraph);
+  }
+  if (preferJSON) {
+    params.append('output', 'json');
+    // fullOptions.headers.append(HEADER_ACCEPT, RESPONSE_FORMAT_JSON);
+  } else {
+    params.append('output', 'xml');
+    // fullOptions.headers.append(HEADER_ACCEPT, RESPONSE_FORMAT_XML);
+  }
+  fullOptions.body = params.toString();
+
+  // return DO_CALL('POST', fullUrl, fullOptions);
+  return new Request(fullUrl, fullOptions);
+}
+
 function createHttpRequestP3(url, httpOptions, query, namedGraph, preferJSON, timeout) {
   // console.log("profile P3", url, query, namedGraph, httpOptions, preferJSON);
   // let fullUrl = `${url}`;
@@ -414,6 +451,7 @@ const PROFILE_MAP = {
   P1: createHttpRequestP1,
   P2: createHttpRequestP2,
   P2b: createHttpRequestP2b,
+  P2c: createHttpRequestP2c,
   P3: createHttpRequestP3,
   P4: createHttpRequestP4,
 };
@@ -436,7 +474,7 @@ const SITE_SPECIFIC_PROFILES = [
   { pattern: 'wikidata.org', profileName: 'P1' },
   { pattern: 'scholarlydata.org', profileName: 'P4' },
   { pattern: 'digital-agenda-data.eu', profileName: 'P1' },
-  { pattern: 'data.nobelprize.org', profileName: 'P2b' },
+  { pattern: 'data.nobelprize.org', profileName: 'P2c' },
 ];
 
 function selectHttpRequestProfileNameByUrl(url) {
@@ -729,7 +767,10 @@ Meteor.methods({
     try {
       // let r = await HTTP_REQUEST_BUILDER(options.endpoint, httpOptions, ENDPOINT_TEST_QUERY, options.uri, false);
       let req = HTTP_REQUEST_BUILDER(options.endpoint, httpOptions, ENDPOINT_TEST_QUERY, options.uri, PREFER_JSON_RESPONSE, TIMEOUT_TEST);
+      // console.log(req.url, req.method, req.headers)
+      // console.log(decodeURI(req.body.toString()))
       let resp = await fetch(req);
+      // console.log(resp.headers)
 
       if (resp.ok) {
         let resposeFormat = peekResponseType(resp)
@@ -744,10 +785,13 @@ Meteor.methods({
           return({ status: 200, });
         } else {
           // TODO
+          let text = await resp.text()
+          console.log('👻 👻 👻', text.slice(0, 1000))
         }
       }
 
       console.log(`status not ok (${resp.status})`);
+      // console.log(resp)
       if (resp.status === 401) {
         return({ status: 401, });
       } else {
