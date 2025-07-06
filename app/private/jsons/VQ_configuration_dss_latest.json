@@ -5892,15 +5892,15 @@
                 "procedure": "Delete"
               },
               {
+                "item": "Show Data",
+                "procedure": "ExecuteSPARQL_form_class_DSS"
+              },
+              {
                 "item": "Generate SPARQL",
                 "procedure": "GenereteSPARQL_form_class_DSS"
               },
               {
-                "item": "Execute SPARQL",
-                "procedure": "ExecuteSPARQL_form_class_DSS"
-              },
-              {
-                "item": "Custom SPARQL",
+                "item": "Custom Data",
                 "procedure": "GenereteSPARQL_form_class_costumise_DSS"
               }
             ],
