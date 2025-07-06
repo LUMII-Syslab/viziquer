@@ -11,9 +11,9 @@ We demonstrate the work with the application at [ViziQuer Playground](https://vi
 There are ways of installing ViziQuer locally, e.g. as a part of the
 [ViziQuer Tools]() container system, as well. 
 The local installation currently is required, if you want to work with a data set not available on the [Playground](https://viziquer.app). 
-The following walk-through applies to the locally created ViziQuer instances, as well.
+The following walk-through applies to the locally created ViziQuer instances, as well (in the context of locally available data schemas).
  
-Further information on getting started with ViziQuer is in
+Additional information on working with ViziQuer is in
 [ViziQuer wiki](https://github.com/LUMII-Syslab/viziquer/wiki).
 
 ## Accessing ViziQuer
