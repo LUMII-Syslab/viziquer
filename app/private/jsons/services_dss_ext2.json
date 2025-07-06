@@ -3,6 +3,12 @@
 	],
 	"projects": [
 	{
+		"caption": "Nobel Prize sample project",
+		"name": "NobelPrizes_sample",
+		"link": "https://viziquer.lumii.lv/dss/resources/Nobel_Prizes_demo.json",
+		"description": "Data schema and query examples over Nobel Prize Data Set"
+	},
+	{
 		"caption": "StarWars sample project",
 		"name": "StarWars_sample",
 		"link": "https://viziquer.lumii.lv/dss/resources/StarWars_Example.json",
