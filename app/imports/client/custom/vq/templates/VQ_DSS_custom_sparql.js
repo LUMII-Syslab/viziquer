@@ -26,9 +26,10 @@ Interpreter.customMethods({
 			name = name.substring(0, nameIndex);
 	  }
 	  Template.VQ_DSS_custom_sparql.ClassName.set(name);
-	  let properties = getProperties(name);
+	  let properties = await getProperties(name);
+	  let propertiesAll = await getPropertiesAll(name, properties);
 	  Template.VQ_DSS_custom_sparql.Properties.set(properties);
-	  Template.VQ_DSS_custom_sparql.SelectedProperties.set([]);
+	  Template.VQ_DSS_custom_sparql.SelectedProperties.set(propertiesAll);
 	  
 	  
 	  let dirRole = "a";
@@ -91,6 +92,11 @@ Template.VQ_DSS_custom_sparql.events({
 			Template.VQ_DSS_custom_sparql.SelectedProperties.set(SelectedProperties);
 			
 			$('#unSelectedProperties option').prop('selected', false);
+			
+			// Select moved items in selected list
+			$('#selectedProperties2 option').each(function() {
+				$(this).prop('selected', toSelectSet.has($(this).val()));
+			});
 		}
 	},
 	'click #removePropertyFromSelection': async function() {
@@ -106,34 +112,42 @@ Template.VQ_DSS_custom_sparql.events({
 			const newProperties = SelectedProperties.filter(prop => !toSelectSet.has(prop.localName));
 			
 			// Get the items to be moved
-			const movedProperties = SelectedProperties.filter(prop => toSelectSet.has(prop.localName));
+			const movedProperties = SelectedProperties.filter(prop => toSelectSet.has(prop.localName))
+            // .map(prop => ({ ...prop, selected: "selected" }));  // Add selected attribute
+			
+			
 			
 			// Update the arrays
 			SelectedProperties.length = 0; // Clear original array
 			SelectedProperties.push(...newProperties); // Add back remaining properties
-			
+			Properties.map(prop => ({ ...prop, selected: "" })); 
 			Properties.push(...movedProperties); // Add moved properties
 			
-			Template.VQ_DSS_custom_sparql.Properties.set(Properties);
-			Template.VQ_DSS_custom_sparql.SelectedProperties.set(SelectedProperties);
-			
+			await Template.VQ_DSS_custom_sparql.Properties.set(Properties);
+			await Template.VQ_DSS_custom_sparql.SelectedProperties.set(SelectedProperties);
 			
 			$('#selectedProperties2 option').prop('selected', false);
+			await delay(10);
+			// Select moved items in unselected list
+			$('#unSelectedProperties option').each(function() {
+				$(this).prop('selected', toSelectSet.has($(this).val()));
+			});
 		}
 	},
-	'click #UpProperty':  function (event, template) {
-		 const select = document.getElementById('unSelectedProperties');
+	'click #UpProperty': function(event, template) {
+		const select = document.getElementById('unSelectedProperties');
 		const options = select.options;
 		const selectedIndices = [];
+		const selectedValues = [];
 		
-		// Get indices of selected options
+		// Get indices and values of selected options
 		for (let i = 0; i < options.length; i++) {
 			if (options[i].selected) {
 				selectedIndices.push(i);
+				selectedValues.push(options[i].value);
 			}
 		}
 		
-		// If nothing selected or first item is selected, do nothing
 		if (selectedIndices.length === 0 || selectedIndices.includes(0)) {
 			return;
 		}
@@ -146,28 +160,25 @@ Template.VQ_DSS_custom_sparql.events({
 			}
 		}
 		
-		// Restore selection
+		// Restore selection based on values (not indices)
 		for (let i = 0; i < options.length; i++) {
-			options[i].selected = selectedIndices.includes(i - 1) || 
-								 (i === selectedIndices[0] - 1 && !selectedIndices.includes(i));
+			options[i].selected = selectedValues.includes(options[i].value);
 		}
-		
-		$('#unSelectedProperties option').prop('selected', false);
 	},
-
-    'click #DownProperty':  function (event, template) {
+	'click #DownProperty': function(event, template) {
 		const select = document.getElementById('unSelectedProperties');
 		const options = select.options;
 		const selectedIndices = [];
+		const selectedValues = [];
 		
-		// Get indices of selected options
+		// Get indices and values of selected options
 		for (let i = 0; i < options.length; i++) {
 			if (options[i].selected) {
 				selectedIndices.push(i);
+				selectedValues.push(options[i].value);
 			}
 		}
 		
-		// If nothing selected or last item is selected, do nothing
 		if (selectedIndices.length === 0 || selectedIndices.includes(options.length - 1)) {
 			return;
 		}
@@ -180,15 +191,11 @@ Template.VQ_DSS_custom_sparql.events({
 			}
 		}
 		
-		// Restore selection
+		// Restore selection based on values (not indices)
 		for (let i = 0; i < options.length; i++) {
-			options[i].selected = selectedIndices.includes(i + 1) || 
-								 (i === selectedIndices[selectedIndices.length - 1] + 1 && 
-								  !selectedIndices.includes(i));
+			options[i].selected = selectedValues.includes(options[i].value);
 		}
-		
-		$('#unSelectedProperties option').prop('selected', false);
-   },
+	},
    
    'click #generate-VQ-DSS-custom-sparql':  async function (event, template) {
 		event.preventDefault();
@@ -202,10 +209,11 @@ Template.VQ_DSS_custom_sparql.events({
 
 		const classSubject = cls["data"][0]["prefix"]+":"+cls["data"][0]["local_name"];
 		const classObject = "?"+cls["data"][0]["display_name"];
-		
-		let sparqlText = "SELECT * WHERE{\n  "+ classObject + " " + DirRole+ " " + classSubject + ". \n  ";
-		let prefixes = await dataShapes.getNamespaces();
 		let prefixTable = [];
+		let sparqlText = "SELECT DISTINCT * WHERE{\n  "+ classObject + " " + DirRole+ " " + classSubject + ". \n  ";
+		prefixTable[cls["data"][0]["prefix"]] = "";
+		let prefixes = await dataShapes.getNamespaces();
+		
 		for (let i = 0; i < selectedProperties.length; i++) {
 			prefixTable[selectedProperties[i]["prefix"]] = "";
 			sparqlText = sparqlText + "OPTIONAL{"+classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .}\n  ";
@@ -236,7 +244,7 @@ Template.VQ_DSS_custom_sparql.events({
 		const classSubject = cls["data"][0]["prefix"]+":"+cls["data"][0]["local_name"];
 		const classObject = "?"+cls["data"][0]["display_name"];
 		let prefixTable = [];
-		let sparqlText = "SELECT * WHERE{\n  "+ classObject + " " + DirRole+ " " + classSubject + ". \n  ";
+		let sparqlText = "SELECT DISTINCT * WHERE{\n  "+ classObject + " " + DirRole+ " " + classSubject + ". \n  ";
 		prefixTable[cls["data"][0]["prefix"]] = "";
 		let prefixes = await dataShapes.getNamespaces();
 		
@@ -260,6 +268,8 @@ Template.VQ_DSS_custom_sparql.events({
    }
 });
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 function setText_In_SPARQL_Editor(text) {
   let yasqe = Template.sparqlForm_see_results.yasqe.get();
   let yasqe3 = Template.sparqlForm.yasqe3.get();
@@ -270,6 +280,20 @@ function setText_In_SPARQL_Editor(text) {
 
 async function getProperties(className){
 	let propList = [];
+	let params = {main:{propertyKind:'Data',"limit": 7}}
+	params.element = {className: className};
+	let props = await dataShapes.getPropertiesFull(params);
+	let prop = props["data"];
+	for(let cl in prop){
+		if(typeof prop[cl] !== "function"){
+			var prefix = prop[cl]["prefix"]+":";
+			propList.push({displayName:prefix+prop[cl]["display_name"], aliasName:prop[cl]["display_name"], localName: prefix+prop[cl]["local_name"], prefix: prop[cl]["prefix"], selected:""})
+		}
+	}
+	return propList;
+}
+async function getPropertiesAll(className, defaultProp){
+	let propList = [];
 	let params = {main:{propertyKind:'All',"limit": 100}}
 	params.element = {className: className};
 	let props = await dataShapes.getPropertiesFull(params);
@@ -277,10 +301,13 @@ async function getProperties(className){
 	for(let cl in prop){
 		if(typeof prop[cl] !== "function"){
 			var prefix = prop[cl]["prefix"]+":";
-			propList.push({displayName:prefix+prop[cl]["display_name"], aliasName:prop[cl]["display_name"], localName: prefix+prop[cl]["local_name"], prefix: prop[cl]["prefix"]})
+			propList.push({displayName:prefix+prop[cl]["display_name"], aliasName:prop[cl]["display_name"], localName: prefix+prop[cl]["local_name"], prefix: prop[cl]["prefix"], selected:""})
 		}
 	}
-	return propList;
+	const filteredProps = propList.filter(prop => 
+	  !defaultProp.some(defaultProp => defaultProp.displayName === prop.displayName)
+	);
+	return filteredProps;
 }
 
 function moveSelectedOptions(direction) {

@@ -674,7 +674,7 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
     : objectPropertiesUnion[0];  // If only one element, leave it as is
 	if(typeof result === "undefined") result = "";
 
-	result = prefixText + "\nSELECT * WHERE{\n" + result + "\n\n" + startClassSPRAQL + "\n" + endClassSPRAQL + "\n}";
+	result = prefixText + "\nSELECT DISTINCT * WHERE{\n" + result + "\n\n" + startClassSPRAQL + "\n" + endClassSPRAQL + "\n}";
 	setText_In_SPARQL_Editor(result);
 
 	return {SPARQL_text:result, messages:messages};
@@ -814,7 +814,7 @@ async function generateSPARQLtextFromSchemaForSelection(){
 		if(typeof prefixMembership[prefix] !== 'function') prefixText = prefixText+"PREFIX " + prefix + " " + prefixMembership[prefix] + "\n";
 	}
 
-	let result = prefixText + "\nSELECT * WHERE{\n" + objectPropertiesUnion.join("\n") + "\n\n" + classSPARQL.join("\n") + "\n}";
+	let result = prefixText + "\nSELECT DISTINCT * WHERE{\n" + objectPropertiesUnion.join("\n") + "\n\n" + classSPARQL.join("\n") + "\n}";
 	setText_In_SPARQL_Editor(result);
 	return {SPARQL_text:result, messages:messages};
 
@@ -833,7 +833,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	let classList = await getClassListFromString(classListString);
 
 	let sparqlQueryText = "";
-	if(!onlyWhere) sparqlQueryText = "SELECT * WHERE{\n";
+	if(!onlyWhere) sparqlQueryText = "SELECT DISTINCT * WHERE{\n";
 	let classUnionTable = [];
 	let propertyTable = [];
 	let className = "exp";
@@ -959,7 +959,7 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 	}
 	let className = "";
 	let sparqlQueryText = "";
-	if(!onlyWhere) sparqlQueryText = "SELECT * WHERE{\n";
+	if(!onlyWhere) sparqlQueryText = "SELECT DISTINCT * WHERE{\n";
 	if(cls.complete === true){
 		className = cls["data"][0]["local_name"];
 		if(usedNames !== null && typeof usedNames[className] !== "undefined") {
