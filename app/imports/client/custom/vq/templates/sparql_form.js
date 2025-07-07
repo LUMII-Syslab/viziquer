@@ -53,7 +53,7 @@ var sparql_form_events = {
 
 		let yasqe = Template.sparqlForm_see_results.yasqe.get();
     let query = yasqe.getValue();
-	
+
     console.log("query ", query)
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query);
@@ -188,16 +188,16 @@ Template.sparqlForm.onRendered( async function() {
 	});
 	Session.set("generatedSparql", undefined);
 	yasqe3.setValue("");
-	
+
 	var project_id = Session.get("activeProject");
 	var project = Projects.findOne({_id: project_id,});
 	//console.log(project)
-	
+
 	if (project!== undefined && project.newPublicProject) {
-	
+
 		await dataShapes.changeActiveProject(project_id);
 		var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
-		//console.log(diagram)	
+		//console.log(diagram)
 		if (diagram.query !== undefined && diagram.query.length > 0) {
 			yasqe3.setValue(diagram.query);
 			if (project.isVisualizationNeeded){
@@ -206,7 +206,7 @@ Template.sparqlForm.onRendered( async function() {
 			}
 		}
 		var list = {projectId: project_id, set: {newPublicProject: false, isVisualizationNeeded: false},};
-		Utilities.callMeteorMethod("updateProject", list);	
+		Utilities.callMeteorMethod("updateProject", list);
 	}
 
 	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"
@@ -258,7 +258,7 @@ Template.sparqlForm_see_results.onRendered(function() {
 	//yasqe.setValue("A");
 
 
-	Template.sparqlForm_see_results.yasqe = new ReactiveVar(yasqe);	
+	Template.sparqlForm_see_results.yasqe = new ReactiveVar(yasqe);
 });
 
 
@@ -388,7 +388,7 @@ function customClassCompleter(yasqe_doc) {
 			}
 
 			callback(result);
-			
+
 		}
 	};
 }
@@ -407,7 +407,7 @@ function customPropertyCompleter(yasqe_doc) {
 			const sparqlQuery = yasqe_doc.getValue();
 			const extractedTriples = extractTriplePatternsFromQuery(sparqlQuery);
 			const classes = await getTokenClassesFromTriples(previousToken, extractedTriples);
-			
+
 			// Get properties of possible classes
 			if (classes) {
 				for (let c of classes) {
@@ -419,10 +419,10 @@ function customPropertyCompleter(yasqe_doc) {
 				}
 				// Remove duplicates
 				result = [...new Set(result)];
-	
+
 				// Filter and sort the results based on incomplete token
 				result = sortAndFilterResult(result, token);
-			}			
+			}
 
 			callback(result);
 

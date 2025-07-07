@@ -437,7 +437,7 @@ Interpreter.customMethods({
 		 Interpreter.showErrorMsg(messages.join(" // "), -3);
 	  }
   },
-  
+
   // GenereteSPARQL_form_class_costumise_DSS: async function() {
       // $("#VQ-DSS-custom-sparql").modal("show");
   // },
@@ -928,7 +928,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 
 
 async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
-	let messages = []; 
+	let messages = [];
 	let name = await selected_elem.getCompartmentValue("Name");
 	if(name.indexOf("[") !== -1) name = name.substring(0, name.indexOf("]")+1);
 	else {
@@ -1108,50 +1108,52 @@ async function executeSparqlString(sparql, paging_info) {
 		if (res.status == 200) {
 
 		  if (!paging_info || (paging_info && !paging_info.download)) {
-			Session.set("executedSparql", res.result);
-			Interpreter.destroyErrorMsg();
-			$('#vq-tab a[href="#executed"]').tab('show');
-		  } else {
+        Session.set("executedSparql", res.result);
+        Interpreter.destroyErrorMsg();
+        $('#vq-tab a[href="#executed"]').tab('show');
 
-			if (paging_info && paging_info.download && res.result.sparql) {
-			  // here - parse res.result
-			  var fields = res.result.sparql.head[0].variable.map(v => v["$"].name);
+      } else {
 
-			  const csv_table = res.result.sparql.results[0].result.map(result_item => {
-        const csv_row = {};
+        if (paging_info && paging_info.download && res.result.sparql) {
+          // here - parse res.result
+          var fields = res.result.sparql.head[0].variable.map(v => v["$"].name);
 
-        fields.forEach(field => {
-          const result_item_attr = result_item.binding.find(attr => attr["$"].name === field);
-          let value;
+          const csv_table = res.result.sparql.results[0].result.map(result_item => {
 
-          if (result_item_attr) {
-            if (result_item_attr.literal) {
-              value = result_item_attr.literal[0]._ !== undefined
-                ? result_item_attr.literal[0]._
-                : result_item_attr.literal[0];
-            } else if (result_item_attr.uri) {
-              value = result_item_attr.uri[0];
-            } else {
-              value = null;
-            }
-          } else {
-            value = undefined;
-          }
+            const csv_row = {};
+            fields.forEach(field => {
+              const result_item_attr = result_item.binding.find(attr => attr["$"].name === field);
+              let value;
 
-          csv_row[field] = value;
-        });
+              if (result_item_attr) {
+                if (result_item_attr.literal) {
+                  value = result_item_attr.literal[0]._ !== undefined
+                    ? result_item_attr.literal[0]._
+                    : result_item_attr.literal[0];
+                } else if (result_item_attr.uri) {
+                  value = result_item_attr.uri[0];
+                } else {
+                  value = null;
+                }
+              } else {
+                value = undefined;
+              }
 
-        return csv_row;
-      });
+              csv_row[field] = value;
+            });
 
-			  list = {fields:fields, json:csv_table};
-			  const csv = await Utilities.callMeteorMethodAsync("json2csv", list);
-			  const csv_data = "text/csv;charset=utf-8," + encodeURIComponent(csv);
-			  const link = $('<a href="data:' + csv_data + '" download="result.csv">download Results</a>');
-			  link.appendTo('#download-hack');
-			  link[0].click();
-			}
-		  }
+            return csv_row;
+          });
+
+          list = {fields:fields, json:csv_table};
+          const csv = await Utilities.callMeteorMethodAsync("json2csv", list);
+          const csv_data = "text/csv;charset=utf-8," + encodeURIComponent(csv);
+          const link = $('<a href="data:' + csv_data + '" download="result.csv">download Results</a>');
+          link.appendTo('#download-hack');
+          link[0].click();
+        }
+
+      }
 
 
 		} else {
@@ -4576,7 +4578,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 							//GROUP BY
 							var groupByFromFields = sparqlTable["subClasses"][subclass]["groupBy"];
-							
+
 							if (typeof(groupByFromFields) !== "undefined" && groupByFromFields !== null) {
 								//ad triples from group by
 								if(sparqlTable["subClasses"][subclass]["agregationInside"] == true || selectResult["aggregate"].length > 0) {
@@ -4589,7 +4591,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							});
 
 							var having = sparqlTable["subClasses"][subclass]["having"];
-							
+
 							if (typeof(having) !== "undefined" && having !== null) {
 								//ad triples from order by
 								if(having !== null)temp = temp.concat(having["triples"])

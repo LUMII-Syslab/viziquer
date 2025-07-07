@@ -126,57 +126,57 @@
                 </div>
             </div>
           {{#with executedSparql}}
-          <div class="panel panel-default">
+            <div class="panel panel-default">
               <div class="panel-heading">
-                  Results: {{#if limit_set}} Only 50 rows shown.{{/if}} Total number of rows: {{number_of_rows}}.
+                Results: {{#if limit_set}} Only 50 rows shown.{{/if}} Total number of rows: {{number_of_rows}}.
               </div>
 
               <div class="panel-body">
 
-                  <div class="row">
-                      <div class="col-sm-12 col-md-12">
-                          <div class="table-responsive">
-                              <table class="table table-bordered table-condensed table-hover table-striped">
-                                  <thead>
-                                      <tr>
-                                        <th>#</th>
-                                        {{#each sparql.head.[0].variable}}
-                                           <th>{{$.name}}</th>
-                                        {{/each}}
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      {{#each augmentedResult}}
-                                          <tr index="{{plusOne @index}}">
-                                              <td style="width:3%;"><div class="toolbar-item" attribute="item" contentEditable="true">{{plusOneOffset @index parent.offset}}</div></td>
-                                              {{#each binding}}
-                                              {{#if literal}}
-                                                {{#if literal.[0]._}}
-                                              <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]._}}</div></td>
-                                                {{else}}
-                                              <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]}}</div></td>
-                                                {{/if}}
-                                              {{else}}
-                                                {{#if uri}}
-                                                  <td><div class="toolbar-item" attribute="item"><a href="{{uri.[0]}}" target="_blank">{{uri.[0]}}</a></div></td>
-                                                {{else}}
-                                                  <td><div class="toolbar-item" attribute="item" contentEditable="true"></div></td>
-                                                {{/if}}
-                                              {{/if}}
-                                              {{/each}}
-                                          </tr>
-                                      {{/each}}
-                                  </tbody>
-                              </table>
-                          </div>
-                          {{#if limit_set}}
-                            {{#if showPrev offset}}<button id="prev-sparql" class="btn btn-success btn-sm">Previous 50</button>{{/if}}
-                            {{#if showNext offset number_of_rows}}<button id="next-sparql" class="btn btn-success btn-sm">Next 50</button>{{/if}}
-                          {{/if}}
+                <div class="row">
+                  <div class="col-sm-12 col-md-12">
+                      <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover table-striped">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              {{#each sparql.head.[0].variable}}
+                                <th>{{$.name}}</th>
+                              {{/each}}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {{#each augmentedResult}}
+                              <tr index="{{plusOne @index}}">
+                                <td style="width:3%;"><div class="toolbar-item" attribute="item" contentEditable="true">{{plusOneOffset @index parent.offset}}</div></td>
+                                {{#each binding}}
+                                  {{#if literal}}
+                                    {{#if literal.[0]._}}
+                                      <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]._}}</div></td>
+                                    {{else}}
+                                      <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]}}</div></td>
+                                    {{/if}}
+                                  {{else}}
+                                    {{#if uri}}
+                                      <td><div class="toolbar-item" attribute="item"><a href="{{uri.[0]}}" target="_blank">{{uri.[0].length > 40 ? uri.[0].slice(0, 40) + '...' : uri.[0]}}</a></div></td>
+                                    {{else}}
+                                      <td><div class="toolbar-item" attribute="item" contentEditable="true"></div></td>
+                                    {{/if}}
+                                  {{/if}}
+                                {{/each}}
+                              </tr>
+                            {{/each}}
+                          </tbody>
+                        </table>
                       </div>
+                      {{#if limit_set}}
+                        {{#if showPrev offset}}<button id="prev-sparql" class="btn btn-success btn-sm">Previous 50</button>{{/if}}
+                        {{#if showNext offset number_of_rows}}<button id="next-sparql" class="btn btn-success btn-sm">Next 50</button>{{/if}}
+                      {{/if}}
                   </div>
+                </div>
               </div>
-          </div>
+            </div>
           {{/with}}
 
     </div>
