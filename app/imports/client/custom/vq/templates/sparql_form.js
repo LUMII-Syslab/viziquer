@@ -94,6 +94,7 @@ var sparql_form_events = {
 
 };
 
+const MAX_URI_DISPLAYED = 45;
 
 var sparql_form_helpers = {
 
@@ -157,7 +158,14 @@ var sparql_form_helpers = {
 
   showNext: function(offset, number) {
 		return offset < number;
-	}
+	},
+
+  shortifyUri: function(uri) {
+    if (uri.length > MAX_URI_DISPLAYED) {
+      return uri.slice(0, MAX_URI_DISPLAYED - 2) + '...'
+    }
+    return uri;
+  }
 
 };
 
