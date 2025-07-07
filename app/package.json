@@ -10,11 +10,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@babel/runtime": "^7.27.1",
+    "@babel/runtime": "^7.27.6",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "bootstrap-colorpicker": "^3.4.0",
     "ClientStorage": "^4.0.1",
-    "dotenv": "^16.5.0",
+    "dotenv": "^17.0.1",
     "express": "^5.1.0",
     "font-awesome": "^4.7.0",
     "html2canvas": "^1.4.1",
@@ -33,9 +33,9 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.27.1",
-    "@babel/preset-env": "^7.27.2",
-    "@eslint/js": "^9.27.0",
+    "@babel/eslint-parser": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@eslint/js": "^9.30.1",
     "@types/jquery": "^3.5.32",
     "@types/meteor-collection-hooks": "^0.8.9",
     "@types/meteor-publish-composite": "^0.0.43",
@@ -43,11 +43,11 @@
     "@types/node": "^22.15.21",
     "@types/node-fetch": "^2.6.12",
     "@types/sparql-http-client": "^3.0.5",
-    "eslint": "^9.27.0",
-    "eslint-plugin-import": "^2.31.0",
+    "eslint": "^9.30.1",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-meteor": "^7.3.0",
     "eslint-plugin-no-floating-promise": "^2.0.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.14.0",
-    "globals": "^16.1.0"
+    "globals": "^16.3.0"
   }
 }
