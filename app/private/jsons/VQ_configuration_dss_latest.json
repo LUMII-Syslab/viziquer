@@ -5763,21 +5763,21 @@
             "procedure": "DeleteCollection"
           },
 		  {
-            "item": "Execute selection",
+            "item": "Show Data for Fragment",
             "procedure": "ExecuteSPARQL_form_selection_DSS"
           },
           {
-            "item": "Generate SPARQL from selection",
+            "item": "Generate SPARQL for Fragment Data",
             "procedure": "GenereteSPARQL_form_selection_DSS"
           }
         ],
         "readModeCollectionContextMenu": [
 		  {
-            "item": "Execute selection",
+            "item": "Show Data for Fragment",
             "procedure": "ExecuteSPARQL_form_selection_DSS"
           },
           {
-            "item": "Generate SPARQL from selection",
+            "item": "Generate SPARQL for Fragment Data",
             "procedure": "GenereteSPARQL_form_selection_DSS"
           }
 		],
@@ -7057,12 +7057,12 @@
                 "procedure": "Delete"
               },
               {
-                "item": "Generate SPARQL",
-                "procedure": "GenereteSPARQL_form_object_property_DSS"
+                "item": "Show Linked Data",
+                "procedure": "ExecuteSPARQL_form_object_property_DSS"
               },
               {
-                "item": "Execute SPARQL",
-                "procedure": "ExecuteSPARQL_form_object_property_DSS"
+                "item": "Generate SPARQL",
+                "procedure": "GenereteSPARQL_form_object_property_DSS"
               }
             ],
             "readModeContextMenu": [],
