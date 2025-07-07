@@ -10,7 +10,7 @@
                 <span class="line"></span>
             </h5>
         {{/if}}
-        
+
         <div class="row">
             {{#each projects}}
     			<div class="col-sm-6 col-md-3 container">
@@ -19,26 +19,26 @@
                             <h4>{{name}}</h4>
 
                             {{#if isDefault}}
-                                <span class="m-left-xs">{{_ "user_role" context=role}}/{{_ "user_status" context=status}}</span>
+                                <span class="m-left-xs">{{role}}/{{status}}</span>
                             {{else}}
-                                <span class="m-left-xs">{{role}}/{{_ "user_status" context=status}}</span>    
+                                <span class="m-left-xs">{{role}}/{{status}}</span>
                             {{/if}}
-                            
+
                             <div class="stat-icon">
 
     	                        {{#if icon}}
     	                            <i class="fa fa-{{icon}} fa-2x"></i>
     	                        {{/if}}
-              
+
                             </div>
                         </div>
 
                         {{#if isEditable}}
     						<div class="project-dropdown-container hidden" style="position: absolute; top: 3px;">
     							<a class="edit-project" href="#" data-toggle="dropdown">
-    	                            <i class="fa fa-angle-down fa-lg"></i> 
+    	                            <i class="fa fa-angle-down fa-lg"></i>
     	                        </a>
-    	                        <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;"> 
+    	                        <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;">
 
                                     <li>
                                         <a class="duplicate-project-obj" href="#">
@@ -50,13 +50,13 @@
                                     {{#if isOwner}}
         	                            <li>
         	                                <a class="edit-project-obj" href="#">
-        	                                    <i class="fa fa-pencil fa-lg"></i> 
+        	                                    <i class="fa fa-pencil fa-lg"></i>
         	                                    {{_ "edit"}}
         	                                </a>
         	                            </li>
         	                            <li>
         	                                <a class="remove-project-obj" href="#">
-        	                                    <i class="fa fa-trash-o fa-lg"></i> 
+        	                                    <i class="fa fa-trash-o fa-lg"></i>
         	                                    {{_ "delete"}}
         	                                </a>
         	                            </li>
@@ -64,7 +64,7 @@
 
                                     <li>
                                         <a class="leave-project" href="#">
-                                            <i class="fa fa-sign-out fa-lg"></i> 
+                                            <i class="fa fa-sign-out fa-lg"></i>
                                             Leave project
                                         </a>
                                     </li>
@@ -76,12 +76,12 @@
 
                             <div class="project-dropdown-container hidden" style="position: absolute; top: 3px;">
                                 <a class="edit-project" href="#" data-toggle="dropdown">
-                                    <i class="fa fa-angle-down fa-lg"></i> 
+                                    <i class="fa fa-angle-down fa-lg"></i>
                                 </a>
-                                <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;"> 
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;">
                                     <li>
                                         <a class="leave-project" href="#">
-                                            <i class="fa fa-sign-out fa-lg"></i> 
+                                            <i class="fa fa-sign-out fa-lg"></i>
                                             Leave project
                                         </a>
                                     </li>
@@ -144,7 +144,7 @@
                                 <p style="color:red;">Project name is required</p>
                             </div>
                         </div>
-						
+
 						<div class="form-group">
                             <label for="project-name" class="col-sm-2 control-label">{{_ "project_name"}}</label>
                             <div class="col-sm-10">
@@ -180,7 +180,7 @@
                                 </select>
                             </div>
                         </div>
-						
+
 						<div class="form-group">
 							<label for="dss-schema" class="control-label col-sm-2">DSS schema</label>
 							<div class="col-sm-10">
@@ -202,9 +202,9 @@
 								</select>
 							</div>
 						</div>
-						
-						<div class="form-group">	
-								<label for="Init" class="control-label col-sm-2">  </label>						
+
+						<div class="form-group">
+								<label for="Init" class="control-label col-sm-2">  </label>
 								<div class="col-lg-10 schema" name="Def" type = "def">
                                     <label class="label-radio">
                                         <input type="radio" name="stack-radio" value="Def" checked="checked">
@@ -213,10 +213,10 @@
                                     </label>
                                 </div>
 					    </div>
-							
-                        <div class="form-group">  
+
+                        <div class="form-group">
                             {{#each services.projects}}
-								<label for="Init" class="control-label col-sm-2">  </label>	
+								<label for="Init" class="control-label col-sm-2">  </label>
                                 <div class="col-lg-10 schema" name="{{name}}" type = "project" link = "{{link}}" >
                                     <label class="label-radio">
                                         <input type="radio" name="stack-radio" value="{{name}}" {{name}} >
@@ -227,7 +227,7 @@
                             {{/each}}
                         </div>
 
-                    </form>  
+                    </form>
 					{{/if}}
                 </div>
 				{{#if loading }}
@@ -284,7 +284,7 @@
                                 </div>
                             </div>
                         {{/with}}
-                    </form>  
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
