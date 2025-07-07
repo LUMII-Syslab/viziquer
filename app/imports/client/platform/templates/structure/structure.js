@@ -23,7 +23,7 @@ Template.structureTemplate.helpers({
 			function(user_proj) {
 				var proj_id = user_proj["projectId"];
 				var project = Projects.findOne({_id: proj_id});
-				
+
 				var category = "";
 				if (project) {
 					user_proj["name"] = project["name"];
@@ -90,12 +90,12 @@ Template.structureTemplate.events({
 	},
 
 	'mouseleave .project-container': function(e) {
-		$(e.target).closest(".container").find(".project-dropdown-container").addClass("hidden");								
+		$(e.target).closest(".container").find(".project-dropdown-container").addClass("hidden");
 	},
 
 	'click .project-path': async function(e) {
 		e.preventDefault();
-		
+
 		var src = $(e.target).closest(".project-path");
 		var proj_id = src.attr("id");
 		var version_id = Utilities.changeUserActiveProject(proj_id);
@@ -104,7 +104,7 @@ Template.structureTemplate.events({
 
 		//return;
 	},
-  
+
 	'click .project-dropdown-container': function(e) {
 		e.stopPropagation();
 		$(e.target).closest(".container").find(".project-dropdown-container").addClass("open").removeClass("hidden");
@@ -183,32 +183,30 @@ Template.createProjectModal.schemas = new ReactiveVar();
 Template.createProjectModal.allSchemas = new ReactiveVar();
 Template.createProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
 
-function setServices (tool_id) {
+async function setServices (tool_id) {
 	var result = {};
 
-	Meteor.subscribe("Services", {});	
-	
+	Meteor.subscribe("Services", {}); // TODO bez šī man reizēm neizdevās tikst klāt
+
 	if ( tool_id != 'undefined')
 	{
-		var services = Services.findOne({toolId: tool_id });
-		if (services && services.schemas)
-		{
-			result.schemas = [];
-			_.each(services.schemas, function (s){
-				result.schemas.push({caption: "Initialise project by " + s.caption, name: s.name, link: s.link});
-			});
-		}
-		
+		//var services = Services.findOne({toolId: tool_id });
+    var services = await Services.findOneAsync({toolId: tool_id });
+
 		if (services && services.projects)
 		{
 			result.projects = [];
-			_.each(services.projects, function (p){
-			
-				result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
+      for (const p of services.projects) {
+        result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
+      }
+      /*
+      _.each(services.projects, function (p){
+					result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
 			});
-		}			
-	} 
-				
+      */
+		}
+	}
+
 	Template.createProjectModal.services.set(result);
 }
 
@@ -222,31 +220,43 @@ Template.createProjectModal.helpers({
 	schema_tags:function() {
 		return Template.createProjectModal.schemaTags.get();
 	},
-	tools: function() {
-		var tools = Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}}); 
+	tools: async function() {
+		//var tools = Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}});
+    var tools = await Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}}).fetchAsync();
+
 		var result = {tools:[]};
 		var tool_id = "";
 
+    for (const t of tools) {
+			var tt = {_id: t._id, name: t.name};
+			if ( t.name == "Viziquer" || t.name == "ViziQuer") {
+				tt["selected"] = "selected";
+				tool_id = t._id;
+			}
+			result.tools.push(tt);
+    }
+    /*
 		tools.forEach(function(t) {
 			var tt = {_id: t._id, name: t.name};
 			if ( t.name == "Viziquer" || t.name == "ViziQuer") {
 				tt["selected"] = "selected";
 				tool_id = t._id;
-			}	
-			result.tools.push(tt); 
+			}
+			result.tools.push(tt);
 		});
-		
-		if ( tool_id == "" && tools.count() > 0) {
+    */
+
+		if ( tool_id == "" && result.tools.length > 0) {
 			result.tools[0]["selected"] = "selected";
 			tool_id = result.tools[0]._id;
 		}
-		
+
 		if (tool_id != "")
-			setServices (tool_id); 
-			
-		//if ( tools.count() > 0) 
+			await setServices (tool_id);
+
+		//if ( tools.count() > 0)
 		//	Session.set("tool", result.tools[0]._id);  // !!!!!!
-	
+
 		//else
 		//	Session.set("tool", reset_variable());
 
@@ -270,24 +280,24 @@ Template.createProjectModal.events({
 
 		var project_name = project_name_obj.val();
 		var obj = $('input[name=stack-radio]:checked').closest(".schema");
-		
+
 		if (project_name == "" && obj.attr("name") != undefined && obj.attr("name") != "" && obj.attr("name") != "Def") {
 			project_name = obj.attr("name");
 			isProject = true;
 		}
-		
+
 		if (project_name == "" && schema_name != "") {
 			project_name = schema_name;
 		}
-		
-				
+
+
 		if(project_name != ""){
-			
+
 			document.getElementById("project-name-required").style.display = "none";
 			document.getElementById("project-name").style.borderColor = "#ccc";
-			
+
 			//$("#add-project").modal("hide");
-			
+
 			var tool_id = $("#tool").find(":selected").attr("id");
 			var icon_name = icon_name_obj.val();
 			var category_name = category_obj.val();
@@ -304,9 +314,9 @@ Template.createProjectModal.events({
 					};
 
 			var obj = $('input[name=stack-radio]:checked').closest(".schema");
-			list.project_link = obj.attr("link")	
+			list.project_link = obj.attr("link")
 			//console.log("Jauna projekta taisīšana");
-			
+
 			if ( schema_name != "" && !isProject) {
 				var schemas = Template.createProjectModal.schemas.get();
 				var schema_info = _.filter(schemas, function(o){ return o.display_name == schema_name});
@@ -329,18 +339,18 @@ Template.createProjectModal.events({
 			await Utilities.callMeteorMethodAsync("insertProject", list);
 			$("#add-project").modal("hide");
 			Template.createProjectModal.loading.set(false);
-			
+
 		} else {
-			
+
 			console.log(document.getElementById("project-name").style.borderColor)
-			
+
 			document.getElementById("project-name").style.borderColor = "red";
 			document.getElementById("project-name-required").style.display = "block";
 		}
 	},
-	'change #tool' : function(){
+	'change #tool' : async function(){
 		var tool_id = $("#tool").find(":selected").attr("id");
-		setServices (tool_id); 
+		await setServices (tool_id);
 		//Session.set("tool", tool_id);
 	},
 	'change #schema-tags' : function(){
@@ -376,9 +386,9 @@ Template.createProjectModal.rendered = async function() {
 		Template.createProjectModal.schemaTags.set(tags);
 	}
 	Template.createProjectModal.loading.set(false);
-	
+
 	var schemas = rr.schemas;
-	if (_.size(schemas) > 0) {
+	if ( schemas.length > 0) {
 		Template.createProjectModal.allSchemas.set(schemas);
 	}
 	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
@@ -389,7 +399,7 @@ Template.createProjectModal.rendered = async function() {
 }
 
 //Template.createProjectModal.onDestroyed(function() {
-//	Session.set("tool", reset_variable()) ;  
+//	Session.set("tool", reset_variable()) ;
 //});
 
 Template.editProjectModal.helpers({
@@ -416,7 +426,7 @@ Template.editProjectModal.events({
 		var icon_name = $("#edit-icon-name").val();
 		var category_name = $("#edit-category-name").val();
 		var proj_id = Session.get("editProjectId");
-		
+
 		var list = {projectId: proj_id,
 					set: {name: project_name, icon: icon_name, category: category_name},
 				};
