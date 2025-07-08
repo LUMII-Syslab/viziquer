@@ -181,7 +181,7 @@ var sparql_form_helpers = {
     }
 
     let localName = uri.slice(splitPos);
-    let beforeLocalName = uri.split(0, splitPos);
+    let beforeLocalName = uri.slice(0, splitPos);
 
     return `${beforeLocalName.slice(0, MAX_URI_DISPLAYED - localName.length - 2)}...${localName}`
   }
