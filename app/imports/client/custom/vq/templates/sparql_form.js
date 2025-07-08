@@ -161,10 +161,29 @@ var sparql_form_helpers = {
 	},
 
   shortifyUri: function(uri) {
-    if (uri.length > MAX_URI_DISPLAYED) {
-      return uri.slice(0, MAX_URI_DISPLAYED - 2) + '...'
+    if (!uri || typeof uri !== 'string') return '';
+    if (uri.length <= MAX_URI_DISPLAYED) return uri;
+
+    let splitPos = uri.length;
+    let pos = uri.indexOf('#');
+    if (pos >= 0) {
+      splitPos = pos + 1;
+    } else {
+      pos = uri.indexOf('/');
+      if (pos >= 0) {
+        splitPos = pos + 1;
+      } else {
+        pos = uri.indexOf(':');
+        if (pos >= 0) {
+          splitPos = pos + 1;
+        }
+      }
     }
-    return uri;
+
+    let localName = uri.slice(splitPos);
+    let beforeLocalName = uri.split(0, splitPos);
+
+    return `${beforeLocalName.slice(0, MAX_URI_DISPLAYED - localName.length - 2)}...${localName}`
   }
 
 };
