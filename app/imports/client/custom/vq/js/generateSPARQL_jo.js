@@ -908,21 +908,21 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 			usedNames[dataPropName] = 1;
 		}
 
-		sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + p + " ?" + dataPropName + " .}\n";
+		sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + p + " ?" + dataPropName + " ."
 		
 		if(typeof propertyTableFullInfo[p]["data_types"] !== "undefined"){
 				const cleaned = propertyTableFullInfo[p]["data_types"].filter(value => value)
 																.map(v => v.toLowerCase());          
-				if (cleaned.includes("rdf:langstring") && language != "") {
+				if (cleaned.includes("rdf:langstring") && language != "" && typeof language !== "undefined" && language !== null) {
 					if(cleaned.length === 1){
-						sparqlQueryText = sparqlQueryText + "  FILTER(lang(?"+dataPropName+")='"+language+"')\n";
+						sparqlQueryText = sparqlQueryText + "\n    FILTER(lang(?"+dataPropName+")='"+language+"')\n";
 					} else {
-						sparqlQueryText = sparqlQueryText + "  FILTER(!(datatype(?"+dataPropName+")=rdf:langString) || lang(?"+dataPropName+")='"+language+"')\n"
+						sparqlQueryText = sparqlQueryText + "\n    FILTER(!(datatype(?"+dataPropName+")=rdf:langString) || lang(?"+dataPropName+")='"+language+"')\n"
 
 					}
 				}
 		}
-		
+		sparqlQueryText = sparqlQueryText + "  }\n";
 		prefixTable[p.substring(0, p.indexOf(":"))] = "";
 
 	}
@@ -1016,19 +1016,20 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 				usedNames[dataPropName] = 1;
 			}
 			
-			sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + dataProp + " ?" +dataPropName+ " .}\n";
+			sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + dataProp + " ?" +dataPropName+ " .";
 			if(typeof dataProperty["data_types"] !== "undefined"){
 				const cleaned = dataProperty["data_types"].filter(value => value)
 																.map(v => v.toLowerCase());          
-				if (cleaned.includes("rdf:langstring") && language != "") {
+				if (cleaned.includes("rdf:langstring") && language !== "" && typeof language !== "undefined" && language !== null) {
 					if(cleaned.length === 1){
-						sparqlQueryText = sparqlQueryText + "  FILTER(lang(?"+dataPropName+")='"+language+"')\n";
+						sparqlQueryText = sparqlQueryText + "\n    FILTER(lang(?"+dataPropName+")='"+language+"')\n";
 					} else {
-						sparqlQueryText = sparqlQueryText + "  FILTER(!(datatype(?"+dataPropName+")=rdf:langString) || lang(?"+dataPropName+")='"+language+"')\n"
+						sparqlQueryText = sparqlQueryText + "\n    FILTER(!(datatype(?"+dataPropName+")=rdf:langString) || lang(?"+dataPropName+")='"+language+"')\n"
 
 					}
 				}
 			}
+			sparqlQueryText = sparqlQueryText + "  }\n";
 			prefixTable[dataProperty.prefix] = "";
 		}
 	}

@@ -4445,7 +4445,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 		// !
 		else if(where["operator"] == "!"){
-			viziQuerExpr["exprString"] = viziQuerExpr["exprString"]  + where["operator"] ;
+			viziQuerExpr["exprString"] = viziQuerExpr["exprString"]  + where["operator"] + "(" ;
 
 			if(typeof where["args"][0]["termType"] !== 'undefined') {
 				let arg1 = generateArgument(where["args"][0]);
@@ -4460,6 +4460,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
 				viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
 			}
+			viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + ")" ;
 		}
 		//not exists
 		else if(where["operator"] == "notexists"){

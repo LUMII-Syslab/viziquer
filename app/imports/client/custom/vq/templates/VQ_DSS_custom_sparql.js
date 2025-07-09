@@ -227,19 +227,20 @@ Template.VQ_DSS_custom_sparql.events({
 		
 		for (let i = 0; i < selectedProperties.length; i++) {
 			prefixTable[selectedProperties[i]["prefix"]] = "";
-			sparqlText = sparqlText + "OPTIONAL{"+classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .}\n  ";
+			sparqlText = sparqlText + "OPTIONAL{"+classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .";
 			if(typeof selectedProperties[i]["dataTypes"] !== "undefined"){
 				const cleaned = selectedProperties[i]["dataTypes"].filter(value => value)
 																.map(v => v.toLowerCase());          
-				if (cleaned.includes("rdf:langstring") && language != "") {
+				if (cleaned.includes("rdf:langstring") && language !== "" && typeof language !== "undefined" && language !== null) {
 					if(cleaned.length === 1){
-						sparqlText = sparqlText + "FILTER(lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n  ";
+						sparqlText = sparqlText + "\n    FILTER(lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n";
 					} else {
-						sparqlText = sparqlText + "FILTER(!(datatype(?"+selectedProperties[i]["aliasName"]+")=rdf:langString) || lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n  "
+						sparqlText = sparqlText + "\n    FILTER(!(datatype(?"+selectedProperties[i]["aliasName"]+")=rdf:langString) || lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n"
 
 					}
 				}
 			}
+			sparqlText = sparqlText + "  }\n  ";
 		}
 		sparqlText = sparqlText + "}";
 		
@@ -276,19 +277,20 @@ Template.VQ_DSS_custom_sparql.events({
 		
 		for (let i = 0; i < selectedProperties.length; i++) {
 			prefixTable[selectedProperties[i]["prefix"]] = "";
-			sparqlText = sparqlText + "OPTIONAL{"+classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .}\n  ";
+			sparqlText = sparqlText + "OPTIONAL{"+classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .";
 			if(typeof selectedProperties[i]["dataTypes"] !== "undefined"){
 				const cleaned = selectedProperties[i]["dataTypes"].filter(value => value)
 																.map(v => v.toLowerCase());          
-				if (cleaned.includes("rdf:langstring") && language != "") {
+				if (cleaned.includes("rdf:langstring") && language !== "" && typeof language !== "undefined" && language !== null) {
 					if(cleaned.length === 1){
-						sparqlText = sparqlText + "FILTER(lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n  ";
+						sparqlText = sparqlText + "\n    FILTER(lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"') \n";
 					} else {
-						sparqlText = sparqlText + "FILTER(!(datatype(?"+selectedProperties[i]["aliasName"]+")=rdf:langString) || lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n  "
+						sparqlText = sparqlText + "\n    FILTER(!(datatype(?"+selectedProperties[i]["aliasName"]+")=rdf:langString) || lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n"
 
 					}
 				}
 			}
+			sparqlText = sparqlText + "  }\n  ";
 		}
 		sparqlText = sparqlText + "}";
 		
