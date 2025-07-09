@@ -11,13 +11,39 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Custom data from schema class {{className}}.</h4>
                 </div>
+
+				<div class="container-fluid">
+				<label for="language">Language:</label>
+    			<input id="schema-diagram-data-language" type="text" list="LanguageList" class="form-control" value="{{language}}" autocomplete="off" style="width: 250px;" >	
+				<datalist id="LanguageList" class="datalist">
+					<option mappedValue="en" input="en">en</option>
+					<option mappedValue="fr" input="fr">fr</option>
+					<option mappedValue="de" input="de">de</option>
+					<option mappedValue="es" input="es">es</option>
+					<option mappedValue="it" input="it">it</option>
+					<option mappedValue="ru" input="ru">ru</option>
+					<option mappedValue="zh" input="zh">zh</option>
+					<option mappedValue="ja" input="ja">ja</option>
+					<option mappedValue="pt" input="pt">pt</option>
+					<option mappedValue="nl" input="nl">nl</option>
+					<option mappedValue="sv" input="sv">sv</option>
+					<option mappedValue="pl" input="pl">pl</option>
+					<option mappedValue="fi" input="fi">fi</option>
+					<option mappedValue="cs" input="cs">cs</option>
+					<option mappedValue="hu" input="hu">hu</option>
+					<option mappedValue="lt" input="lt">lt</option>
+					<option mappedValue="lv" input="lv">lv</option>
+					<option mappedValue="et" input="et">et</option>
+				</datalist>
+				
+				</div>
 				
 				<div class="container-fluid">
 					<div style="display: inline-block; vertical-align:top;">
 						<p>Selected properties</p>
 						<select class="form-select" id="unSelectedProperties" size="12" multiple aria-label="multiple select 1" style="width: 250px;">
 							{{#each properties}}
-								<option value="{{localName}}" >{{displayName}} </option>
+								<option value="{{localName}} " data-datatypes='{{dataTypes}}'>{{displayName}} </option>
 							{{/each}}
 						</select>
 					</div>

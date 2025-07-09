@@ -1475,6 +1475,9 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 		  if (proj.allowTopDownNamesInBINDs) {
             proj_params.allowTopDownNamesInBINDs = proj.allowTopDownNamesInBINDs;
           };
+		  if (proj.schemaDiagramDataLanguage) {
+            proj_params.schemaDiagramDataLanguage = proj.schemaDiagramDataLanguage;
+          };
 		  // if (proj.showGraphServiceCompartments) {
             // proj_params.showGraphServiceCompartments = proj.showGraphServiceCompartments;
           // };

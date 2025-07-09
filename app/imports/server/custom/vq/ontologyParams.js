@@ -27,6 +27,7 @@ Meteor.methods({
 															 showGraphServiceCompartments: list.showGraphServiceCompartments,
 															 enableWikibaseLabelServices: list.enableWikibaseLabelServices,
 															 allowTopDownNamesInBINDs: list.allowTopDownNamesInBINDs,
+															 schemaDiagramDataLanguage: list.schemaDiagramDataLanguage,
 															 keepVariableNames: list.keepVariableNames,
 															 simpleConditionImplementation: list.simpleConditionImplementation,
 															 endpointUsername: list.endpointUsername,

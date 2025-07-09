@@ -781,18 +781,49 @@
     											<!-- </div> -->
     										<!-- </div> -->
 											
+											<!-- <div class="form-group"> -->
+    											<!-- <div class="col-sm-10"> -->
+    												<!-- <label class="form-check-label"> -->
+    												 <!-- <input class="form-check-input" id="allow-top-down-names-in-BINDs" type="text" checked="{{project.allowTopDownNamesInBINDs}}"> -->
+    												 <!-- <span class="custom-checkbox"></span> -->
+    												 <!-- Allow top-down names in BINDs -->
+    											  <!-- </label> -->
+    											  <!-- <div class="help-tip"> -->
+    												<!-- <p>Allow top-down names in BINDs</p> -->
+    											  <!-- </div> -->
+    											<!-- </div> -->
+    										<!-- </div> -->
+											
 											<div class="form-group">
-    											<div class="col-sm-10">
-    												<label class="form-check-label">
-    												 <input class="form-check-input" id="allow-top-down-names-in-BINDs" type="checkbox" checked="{{project.allowTopDownNamesInBINDs}}">
-    												 <span class="custom-checkbox"></span>
-    												 Allow top-down names in BINDs
-    											  </label>
-    											  <div class="help-tip">
-    												<p>Allow top-down names in BINDs</p>
-    											  </div>
+    											<label for="indirect-class-membership-role" class="col-sm-3 control-label">Schema Diagram Data Language</label>
+    											<div class="col-sm-9" style="width: 70%;">
+    												<input id="schema-diagram-data-language" type="text" list="LanguageList" class="form-control" value="{{project.schemaDiagramDataLanguage}}" autocomplete="off" >	
+													<datalist id="LanguageList" class="datalist">
+														<option mappedValue="en" input="en">en</option>
+														<option mappedValue="fr" input="fr">fr</option>
+														<option mappedValue="de" input="de">de</option>
+														<option mappedValue="es" input="es">es</option>
+														<option mappedValue="it" input="it">it</option>
+														<option mappedValue="ru" input="ru">ru</option>
+														<option mappedValue="zh" input="zh">zh</option>
+														<option mappedValue="ja" input="ja">ja</option>
+														<option mappedValue="pt" input="pt">pt</option>
+														<option mappedValue="nl" input="nl">nl</option>
+														<option mappedValue="sv" input="sv">sv</option>
+														<option mappedValue="pl" input="pl">pl</option>
+														<option mappedValue="fi" input="fi">fi</option>
+														<option mappedValue="cs" input="cs">cs</option>
+														<option mappedValue="hu" input="hu">hu</option>
+														<option mappedValue="lt" input="lt">lt</option>
+														<option mappedValue="lv" input="lv">lv</option>
+														<option mappedValue="et" input="et">et</option>
+													</datalist>
+												</div>
+    											<div class="help-tip">
+    											  <p>Schema Diagram Data Language</p>
     											</div>
     										</div>
+											
     										<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
     										
     										<!-- <div class="form-group"> -->

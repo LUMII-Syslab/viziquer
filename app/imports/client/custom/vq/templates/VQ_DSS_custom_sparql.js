@@ -54,6 +54,15 @@ Interpreter.customMethods({
 
 
 Template.VQ_DSS_custom_sparql.helpers({
+	language: async function(){
+		 var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
+		 if (proj) {
+			return proj.schemaDiagramDataLanguage;
+		 }
+		 return "";
+	},
+	
+	
 	className: function() {
 		return Template.VQ_DSS_custom_sparql.ClassName.get();
 	},
@@ -199,6 +208,8 @@ Template.VQ_DSS_custom_sparql.events({
    
    'click #generate-VQ-DSS-custom-sparql':  async function (event, template) {
 		event.preventDefault();
+		const selectLanguage = document.getElementById("schema-diagram-data-language");
+		const language = selectLanguage.value;
 		const className = Template.VQ_DSS_custom_sparql.ClassName.get();
 		const selectedProperties = await Template.VQ_DSS_custom_sparql.Properties.get();
 		const DirRole = Template.VQ_DSS_custom_sparql.DirRole.get();
@@ -217,6 +228,18 @@ Template.VQ_DSS_custom_sparql.events({
 		for (let i = 0; i < selectedProperties.length; i++) {
 			prefixTable[selectedProperties[i]["prefix"]] = "";
 			sparqlText = sparqlText + "OPTIONAL{"+classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .}\n  ";
+			if(typeof selectedProperties[i]["dataTypes"] !== "undefined"){
+				const cleaned = selectedProperties[i]["dataTypes"].filter(value => value)
+																.map(v => v.toLowerCase());          
+				if (cleaned.includes("rdf:langstring") && language != "") {
+					if(cleaned.length === 1){
+						sparqlText = sparqlText + "FILTER(lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n  ";
+					} else {
+						sparqlText = sparqlText + "FILTER(!(datatype(?"+selectedProperties[i]["aliasName"]+")=rdf:langString) || lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n  "
+
+					}
+				}
+			}
 		}
 		sparqlText = sparqlText + "}";
 		
@@ -234,9 +257,12 @@ Template.VQ_DSS_custom_sparql.events({
    
    'click #execute-VQ-DSS-custom-sparql':  async function (event, template) {
 		event.preventDefault();
+		const selectLanguage = document.getElementById("schema-diagram-data-language");
+		const language = selectLanguage.value;
 		const className = Template.VQ_DSS_custom_sparql.ClassName.get();
 		const selectedProperties = await Template.VQ_DSS_custom_sparql.Properties.get();
 		const DirRole = Template.VQ_DSS_custom_sparql.DirRole.get();
+		
 		
 		let params = {name: className};
 		let cls = await dataShapes.resolveClassByName(params);
@@ -250,9 +276,22 @@ Template.VQ_DSS_custom_sparql.events({
 		
 		for (let i = 0; i < selectedProperties.length; i++) {
 			prefixTable[selectedProperties[i]["prefix"]] = "";
-			sparqlText = sparqlText + "OPTIONAL{"+ classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .}\n  ";
+			sparqlText = sparqlText + "OPTIONAL{"+classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .}\n  ";
+			if(typeof selectedProperties[i]["dataTypes"] !== "undefined"){
+				const cleaned = selectedProperties[i]["dataTypes"].filter(value => value)
+																.map(v => v.toLowerCase());          
+				if (cleaned.includes("rdf:langstring") && language != "") {
+					if(cleaned.length === 1){
+						sparqlText = sparqlText + "FILTER(lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n  ";
+					} else {
+						sparqlText = sparqlText + "FILTER(!(datatype(?"+selectedProperties[i]["aliasName"]+")=rdf:langString) || lang(?"+selectedProperties[i]["aliasName"]+")='"+language+"')\n  "
+
+					}
+				}
+			}
 		}
 		sparqlText = sparqlText + "}";
+		
 		
 		let prefixText = "";
 		for(let p = 0; p < prefixes.length; p++){
@@ -261,7 +300,6 @@ Template.VQ_DSS_custom_sparql.events({
 			}
 		}
 		sparqlText = prefixText + sparqlText;
-		
 	  Interpreter.destroyErrorMsg();
 	  setText_In_SPARQL_Editor(sparqlText);
 	  await executeSparqlString(sparqlText);
@@ -280,28 +318,30 @@ function setText_In_SPARQL_Editor(text) {
 
 async function getProperties(className){
 	let propList = [];
-	let params = {main:{propertyKind:'Data',"limit": 7}}
+	let params = {main:{propertyKind:'Data',"limit": 7,addTypes:true}}
+
 	params.element = {className: className};
 	let props = await dataShapes.getPropertiesFull(params);
 	let prop = props["data"];
+	
 	for(let cl in prop){
 		if(typeof prop[cl] !== "function"){
 			var prefix = prop[cl]["prefix"]+":";
-			propList.push({displayName:prefix+prop[cl]["display_name"], aliasName:prop[cl]["display_name"], localName: prefix+prop[cl]["local_name"], prefix: prop[cl]["prefix"], selected:""})
+			propList.push({displayName:prefix+prop[cl]["display_name"], aliasName:prop[cl]["display_name"], localName: prefix+prop[cl]["local_name"], prefix: prop[cl]["prefix"], dataTypes: prop[cl]["data_types"]})
 		}
 	}
 	return propList;
 }
 async function getPropertiesAll(className, defaultProp){
 	let propList = [];
-	let params = {main:{propertyKind:'All',"limit": 100}}
+	let params = {main:{propertyKind:'All',"limit": 100, addTypes:true}}
 	params.element = {className: className};
 	let props = await dataShapes.getPropertiesFull(params);
 	let prop = props["data"];
 	for(let cl in prop){
 		if(typeof prop[cl] !== "function"){
 			var prefix = prop[cl]["prefix"]+":";
-			propList.push({displayName:prefix+prop[cl]["display_name"], aliasName:prop[cl]["display_name"], localName: prefix+prop[cl]["local_name"], prefix: prop[cl]["prefix"], selected:""})
+			propList.push({displayName:prefix+prop[cl]["display_name"], aliasName:prop[cl]["display_name"], localName: prefix+prop[cl]["local_name"], prefix: prop[cl]["prefix"], dataTypes: prop[cl]["data_types"]})
 		}
 	}
 	const filteredProps = propList.filter(prop => 

@@ -836,6 +836,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	if(!onlyWhere) sparqlQueryText = "SELECT DISTINCT * WHERE{\n";
 	let classUnionTable = [];
 	let propertyTable = [];
+	let propertyTableFullInfo = [];
 	let className = "exp";
 	// Regular expression to match and remove the optional parts at the beginning and end
 	className = await selected_elem.getName();
@@ -867,7 +868,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 			classUnionTable.push( "    {?" + className + " " + dirRole + " " + clazz + " .}\n");
 			prefixTable[classPrefix] = "";
 
-			let propParams = {main:{propertyKind:'Data',"limit": 30}};
+			let propParams = {main:{propertyKind:'Data',"limit": 30, addTypes:true}};
 			propParams.element = {className: classList[clazz]};
 			let props = await dataShapes.getPropertiesFull(propParams);
 			for(let prop = 0; prop < props.data.length; prop++){
@@ -877,6 +878,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 				else{
 					if(dataProperty.data_cnt > propertyTable[dataProp]) propertyTable[dataProp] = dataProperty.data_cnt;
 				}
+				propertyTableFullInfo[dataProp] = dataProperty;
 			}
 		} else {
 			messages.push("The class name '"+ classList[clazz] +"' could not be resolved within the data schema.");
@@ -890,7 +892,13 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 
 	const firstNEntries = Object.entries(sortedObj).slice(0, n);
 	const firstNResults = Object.fromEntries(firstNEntries);
-
+	
+	let language = "";
+	var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
+	if (proj) {
+		language = proj.schemaDiagramDataLanguage;
+	}
+	
 	for(let p in firstNResults){
 		let dataPropName = p.substring(p.indexOf(":")+1);
 		if(usedNames !== null && typeof usedNames[dataPropName] !== "undefined") {
@@ -901,6 +909,20 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 		}
 
 		sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + p + " ?" + dataPropName + " .}\n";
+		
+		if(typeof propertyTableFullInfo[p]["data_types"] !== "undefined"){
+				const cleaned = propertyTableFullInfo[p]["data_types"].filter(value => value)
+																.map(v => v.toLowerCase());          
+				if (cleaned.includes("rdf:langstring") && language != "") {
+					if(cleaned.length === 1){
+						sparqlQueryText = sparqlQueryText + "  FILTER(lang(?"+dataPropName+")='"+language+"')\n";
+					} else {
+						sparqlQueryText = sparqlQueryText + "  FILTER(!(datatype(?"+dataPropName+")=rdf:langString) || lang(?"+dataPropName+")='"+language+"')\n"
+
+					}
+				}
+		}
+		
 		prefixTable[p.substring(0, p.indexOf(":"))] = "";
 
 	}
@@ -944,7 +966,7 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 	if(cls.complete != true || typeof cls["data"] === "undefined"){
 		messages.push("The class name '"+ name +"' could not be resolved within the data schema.");
 	} else {
-		params = {main:{propertyKind:'Data',"limit": n}}
+		params = {main:{propertyKind:'Data',"limit": n, addTypes:true}}
 		params.element = {className: name};
 		props = await dataShapes.getPropertiesFull(params);
 	}
@@ -974,6 +996,14 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 		let clazz = classPrefix +":"+cls["data"][0]["local_name"];
 		sparqlQueryText = sparqlQueryText + "  ?" + className + " " + dirRole + " " + clazz + " .\n";
 		prefixTable[classPrefix] = "";
+		
+		let language = "";
+		
+		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
+		if (proj) {
+			language = proj.schemaDiagramDataLanguage;
+		}
+		
 
 		for(let prop = 0; prop < props.data.length; prop++){
 			let dataProperty = props.data[prop];
@@ -985,8 +1015,20 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 			} else {
 				usedNames[dataPropName] = 1;
 			}
-
+			
 			sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + dataProp + " ?" +dataPropName+ " .}\n";
+			if(typeof dataProperty["data_types"] !== "undefined"){
+				const cleaned = dataProperty["data_types"].filter(value => value)
+																.map(v => v.toLowerCase());          
+				if (cleaned.includes("rdf:langstring") && language != "") {
+					if(cleaned.length === 1){
+						sparqlQueryText = sparqlQueryText + "  FILTER(lang(?"+dataPropName+")='"+language+"')\n";
+					} else {
+						sparqlQueryText = sparqlQueryText + "  FILTER(!(datatype(?"+dataPropName+")=rdf:langString) || lang(?"+dataPropName+")='"+language+"')\n"
+
+					}
+				}
+			}
 			prefixTable[dataProperty.prefix] = "";
 		}
 	}
