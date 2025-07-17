@@ -165,7 +165,7 @@ var sparql_form_helpers = {
     if (uri.length <= MAX_URI_DISPLAYED) return uri;
 
     let splitPos = uri.length;
-    let pos = uri.lastIndexOf('#');
+    let pos = uri.indexOf('#');
     if (pos >= 0) {
       splitPos = pos;
     } else {
