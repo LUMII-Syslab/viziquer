@@ -615,6 +615,13 @@ Template.VQ_DSS_schema.events({
 		Template.VQ_DSS_schema.Properties.set(rr.data);
 		Template.VQ_DSS_schema.PropCount.set(rr.data.length);
 	},
+  'click #getProperties2': async function() {
+		let classList = Template.VQ_DSS_schema.Classes.get();
+		classList = classList.map(v => v.id);
+		const rr = await dataShapes.callServerFunction("xx_getPropList2", {main: { c_list: `${classList}`}});
+		Template.VQ_DSS_schema.Properties.set(rr.data);
+		Template.VQ_DSS_schema.PropCount.set(rr.data.length);
+	},
 	'change #classCount': function() {
 		const classCount = $("#classCount").val();
 		document.getElementById("classCount-slider-span2").innerHTML = classCount;
@@ -689,10 +696,15 @@ Template.VQ_DSS_schema.events({
 		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize);
 
 		// Update list of chosen classes
-		const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){return fragmentClasses.includes(c.id)});
-		const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return !fragmentClasses.includes(c.id)});
-		setClassListInfo(classes, restClasses);
-		clearData();
+    _.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+			if ( fragmentClasses.includes(cl.id)) cl.sel = 1;
+			else cl.sel = 0;
+		});
+    makeClassLists();
+		//const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){return fragmentClasses.includes(c.id)});
+		//const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return !fragmentClasses.includes(c.id)});
+		//setClassListInfo(classes, restClasses);
+		//clearData();
 	},
 	'click #removeAll': function() {
 		// TODO Šīs pogas vairs nav
