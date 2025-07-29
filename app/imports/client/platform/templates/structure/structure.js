@@ -276,7 +276,8 @@ Template.createProjectModal.events({
 		var icon_name_obj = $("#icon-name");
 		var category_obj = $("#category-name");
 		var isProject = false;
-		var schema_name = $("#dss-schema").val();
+    var schema_name = $("#dss-schema").find(":selected").attr("name");
+		//var schema_name = $("#dss-schema").val();
 
 		var project_name = project_name_obj.val();
 		var obj = $('input[name=stack-radio]:checked').closest(".schema");
@@ -358,6 +359,10 @@ Template.createProjectModal.events({
 		Template.createProjectModal.schemas.set(getSchemas(tag));
 		//var tag = $("#schema-tags").find(":selected").attr("id");
 	},
+  'keyup #filter' : function(){
+    var filter = $("#filter").val().toLowerCase();
+    Template.createProjectModal.schemas.set(filterSchemas(filter));
+  },
 });
 
 function getSchemas(tag) {
@@ -368,6 +373,19 @@ function getSchemas(tag) {
 		if ( tag != 'All' && sc.tags.includes(tag))
 			schemas.push(sc);
 		else if ( tag == 'All' )
+			schemas.push(sc);
+	}
+
+	schemas.unshift({display_name: ""});
+	return schemas;
+}
+
+function filterSchemas(filter) {
+	let schemas = [];
+	const allSchemas = Template.createProjectModal.allSchemas.get() || [];
+
+	for ( const sc of allSchemas ) {
+    if ( sc.display_name_full.toLowerCase().indexOf(filter) > -1)
 			schemas.push(sc);
 	}
 
@@ -389,6 +407,9 @@ Template.createProjectModal.rendered = async function() {
 
 	var schemas = rr.schemas;
 	if ( schemas.length > 0) {
+    for ( const sc of schemas ) {
+      sc.display_name_full = `${sc.display_name}  ${sc.sparql_url} (${sc.class_count})`;
+    }
 		Template.createProjectModal.allSchemas.set(schemas);
 	}
 	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
