@@ -263,16 +263,6 @@ async function getClassesAndProperties(addSupClasses = true) {
 	return [classList, propList, namespacesL];
 }
 
-async function printSup(par0) {
-	const classesAndProperties = await getClassesAndProperties();
-	const classList = classesAndProperties[0];
-	const propList = classesAndProperties[1];
-	let par = getParams();
-	par.printGroups = par0.printGroups;
-	par.printDiffs = par0.printDiffs;
-	await dataShapes.makeSuperDiagr(classList, propList, par, getInfo().join('\n'));
-}
-
 function setClassProperties(cId) {
 	const basic = Template.VQ_DSS_schema.UsedClasses.get()[0].basic;
 	const cInfo = rezFull.classes[cId];
@@ -468,14 +458,6 @@ Template.VQ_DSS_schema.events({
 		//cl = await dataShapes.resolveClassByName({name: 'w:Photograph'})
 		//console.log(cl)
 
-	},
-	'click #printGroups': async function() {
-		//TODO šis vēlāk vairs nebūs
-		await printSup({printGroups:true});
-	},
-	'click #printDiffs': async function() {
-		//TODO šis vēlāk vairs nebūs
-		await printSup({printDiffs:true});
 	},
 	'click #showClasses': async function() {
 		await getBasicClasses();
@@ -1046,7 +1028,7 @@ function setPropSliderInfo() {
 	return 0; // TODO, te varētu būt arī lielāks skaitlis, ja propertiju ir visai daudz
 }
 function clearData() {
-	rezFull = {classes:{}, assoc:{}, lines:{}, schema:dataShapes.schema.schema, type:'makeSuperDiagr', diffMax:0}; // TODO te zīmešanai nav vairāku variantu
+	rezFull = {classes:{}, assoc:{}, lines:{}, schema:dataShapes.schema.schema, diffMax:0};
 	p_list_full = {};
 	//state = 0;
 	Gnum = 101;
@@ -2649,6 +2631,4 @@ function makeDiagramData() {
 
 	rezFull.assoc = assoc;
 }
-
-
 // **********************************************************************************************************
