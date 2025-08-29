@@ -276,8 +276,15 @@ Template.createProjectModal.events({
 		var icon_name_obj = $("#icon-name");
 		var category_obj = $("#category-name");
 		var isProject = false;
-    var schema_name = $("#dss-schema").find(":selected").attr("name");
+    //var schema_name = $("#dss-schema").find(":selected").attr("name");
 		//var schema_name = $("#dss-schema").val();
+    var schema_name = "";
+    const selectSchema = document.getElementById("schema-selection");
+    const selection = selectSchema.value;
+
+    const selectedSchema = Template.createProjectModal.schemas.get().filter(function(f){ return f.display_name_full == selection;})
+    if ( selectedSchema.length > 0 )
+      schema_name = selectedSchema[0].display_name;
 
 		var project_name = project_name_obj.val();
 		var obj = $('input[name=stack-radio]:checked').closest(".schema");
@@ -290,7 +297,6 @@ Template.createProjectModal.events({
 		if (project_name == "" && schema_name != "") {
 			project_name = schema_name;
 		}
-
 
 		if(project_name != ""){
 
@@ -359,10 +365,6 @@ Template.createProjectModal.events({
 		Template.createProjectModal.schemas.set(getSchemas(tag));
 		//var tag = $("#schema-tags").find(":selected").attr("id");
 	},
-  'keyup #filter' : function(){
-    var filter = $("#filter").val().toLowerCase();
-    Template.createProjectModal.schemas.set(filterSchemas(filter));
-  },
 });
 
 function getSchemas(tag) {
@@ -376,7 +378,7 @@ function getSchemas(tag) {
 			schemas.push(sc);
 	}
 
-	schemas.unshift({display_name: ""});
+	schemas.unshift({display_name: "", display_name_full: ""});
 	return schemas;
 }
 
@@ -408,7 +410,7 @@ Template.createProjectModal.rendered = async function() {
 	var schemas = rr.schemas;
 	if ( schemas.length > 0) {
     for ( const sc of schemas ) {
-      sc.display_name_full = `${sc.display_name}  ${sc.sparql_url} (${sc.class_count})`;
+      sc.display_name_full = `${sc.display_name} (${sc.sparql_url} Class count:${sc.class_count})`;
     }
 		Template.createProjectModal.allSchemas.set(schemas);
 	}
