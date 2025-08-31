@@ -2215,7 +2215,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			patterns[1]["expression"]["args"][0]["type"] == "operation" && 
 			patterns[1]["expression"]["args"][0]["operator"] == "lang"
 		) { 
-			
 			visited = true;
 			bgptype = "optional";
 			let triples = patterns[0]["triples"];
@@ -2302,21 +2301,24 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 		
 		if(patterns.length == 2 && patterns[0]["type"] == "bgp" && patterns[1]["type"] == "filter" && visited == false){
-									  
-			bgptype = "optional";
-			let temp = await parseSPARQLjsStructureWhere(patterns[0], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, bgptype, allClasses, variableList, patternType, bindTable, generateOnlyExpression);
-			if(temp["attributeTableAdded"].length == 1){		
-				attributeTable = temp["attributeTable"];
-				attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
-				if(patterns[1]["expression"]["args"].length == 2 && temp["attributeTableAdded"][0] == patterns[1]["expression"]["args"][0]["value"]){
-					var operators = ["=", "!=" , "<=" , ">=" ,"<" , ">"]
-					if(patterns[1]["expression"]["type"] == "operation" && operators.indexOf(patterns[1]["expression"]["operator"]) != -1 && patterns[1]["expression"]["args"][1]["termType"] == "Literal" && patterns[1]["expression"]["args"][1]["language"] == ""){
-						var attributeCondition = patterns[1]["expression"]["operator"] + patterns[1]["expression"]["args"][1]["value"];
-						attributeTable[temp["attributeTableAdded"][0]]["attributeCondition"] = attributeCondition;
+			bgptype = "optionalLink";
+			let operators = ["=", "!=" , "<=" , ">=" ,"<" , ">"];
+			if(patterns[1]["expression"]["args"].length == 2 && patterns[1]["expression"]["type"] == "operation" && operators.indexOf(patterns[1]["expression"]["operator"]) != -1 && patterns[1]["expression"]["args"][1]["termType"] == "Literal" && patterns[1]["expression"]["args"][1]["language"] == ""){
+				bgptype = "optional";
+				let temp = await parseSPARQLjsStructureWhere(patterns[0], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, bgptype, allClasses, variableList, patternType, bindTable, generateOnlyExpression);
+				if(temp["attributeTableAdded"].length == 1){		
+					attributeTable = temp["attributeTable"];
+					attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
+					if(patterns[1]["expression"]["args"].length == 2 && temp["attributeTableAdded"][0] == patterns[1]["expression"]["args"][0]["value"]){
+						
+						if(patterns[1]["expression"]["type"] == "operation" && operators.indexOf(patterns[1]["expression"]["operator"]) != -1 && patterns[1]["expression"]["args"][1]["termType"] == "Literal" && patterns[1]["expression"]["args"][1]["language"] == ""){
+							var attributeCondition = patterns[1]["expression"]["operator"] + patterns[1]["expression"]["args"][1]["value"];
+							attributeTable[temp["attributeTableAdded"][0]]["attributeCondition"] = attributeCondition;
+						}
 					}
+					visited = true;
 				}
-				visited = true;
-			}
+			}	
 		}
 		
 		if(visited == false){
@@ -7298,7 +7300,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				else if(propertyResolved.data[0].is_local != true || showPrefixesForAllNames == true)sn = propertyResolved.data[0].prefix+ ":" + sn;
 				propertyResolved.data[0].short_name = sn;
 			}
-			
 			if(propertyResolved.complete == true && propertyResolved.data[0].object_cnt == 0 && propertyResolved.data[0].data_cnt > 0 && bgptype != "optionalLink" && getVariable(triples[triple]["object"])["type"] != "iri"){
 				//subjest
 				let subjectNameParsed = getVariable(triples[triple]["subject"])["value"];
