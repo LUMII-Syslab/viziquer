@@ -192,8 +192,6 @@ FlowRouter.route('/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:
 });
 
 
-
-
 FlowRouter.route('/public/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId', {
   name: 'public-diagram',
   waitOn() {

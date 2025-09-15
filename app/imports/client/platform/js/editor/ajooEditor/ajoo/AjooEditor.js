@@ -120,8 +120,8 @@ var AjooEditor = function(settings) {
     editor.size = new Size(editor);
 
     //adding elements to the scene
-    var data = settings["data"];  
-
+    var data = settings["data"];
+    
     editor.addElements(data, is_refresh_not_needed);
 
     if (settings["isEditModeEnabled"]) {

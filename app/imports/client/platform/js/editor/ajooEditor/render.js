@@ -291,6 +291,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 	   				element.compartments.removeAllRespresentations();
 	   				var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
+
 	   				element.compartments.create(compartments);
 
 	   				var element_presentation = element.presentation;

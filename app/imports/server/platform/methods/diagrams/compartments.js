@@ -46,6 +46,14 @@ Meteor.methods({
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
 
+				var compart_type = await CompartmentTypes.findOneAsync({_id: compart_in.compartmentTypeId});
+				compart_type.type = compart_type.type || "text";
+
+				// var compart_insert = build_compartment(compart_type, list, compart_in);
+				// console.log("compart_insert", compart_insert)
+				compart_in.type = compart_type.type;
+
+				// await Compartments.insertAsync(compart_insert);
 				await Compartments.insertAsync(compart_in);
 				// Compartments.insert(compart_in, {trimStrings: false});
 
@@ -78,13 +86,16 @@ Meteor.methods({
 					await Compartments.removeAsync({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]});
 				}
 				else {
+					// var compart_type = await CompartmentTypes.findOneAsync({_id: update.compartmentTypeId});
+					// update.type = compart_type.type;
+
 					await Compartments.updateAsync({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]},
 										{$set: update});
 									// {$set: update}, {trimStrings: false, removeEmptyStrings: false,});
 				}
 
 				if (list["elementStyleUpdate"]) {
-					var elem_update = list["elementStyleUpdate"]
+					var elem_update = list["elementStyleUpdate"];
 					await Elements.updateAsync({_id: list["elementId"]}, {$set: elem_update});
 				}
 			}
@@ -163,7 +174,6 @@ async function add_compartment(compart_type, list, compart_in) {
 }
 
 function build_compartment(compart_type, list, compart_in) {
-
 	if (compart_type["styles"] && compart_type["styles"][0]) {
 
 		var input = "";
@@ -196,6 +206,9 @@ function build_compartment(compart_type, list, compart_in) {
 			input: input,
 			index: compart_type["index"],
 
+			type: compart_type["type"] || "text",
+			// type: "horizontalLine",
+
 			styleId: style_obj["id"],
 			style: style,
 
@@ -219,8 +232,6 @@ function build_compartment(compart_type, list, compart_in) {
 
 //TODO: Needs extension points executions
 function get_default_value(compart_type) {
-
-	//
 	return compart_type["defaultValue"];
 }
 

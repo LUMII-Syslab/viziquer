@@ -134,10 +134,6 @@ Template.diagramsRibbon.helpers({
 			tool.hasSchema = false;
 		}
 
-		console.log("tool", tool)
-
-		console.log("tool", tool.toolbar)
-
 		return tool;
 	},
 
@@ -570,8 +566,8 @@ Template.diagramsSearchBar.helpers({
 Template.addDiagram.events({
 
 	'submit form'(event, template) {
-		event.preventDefault();            // 🚫 stop full page reload
-		$('#create-diagram').click();      // simulate OK button
+		event.preventDefault();
+		$('#create-diagram').click();
 	},
 
 	'click #create-diagram' : function() {

@@ -184,9 +184,6 @@ var PaletteButton = function(palette) {
 	//					-palette_button_overlay
 
 	paletteButton.build_button_container = function(palette_layer, palette_button) {
-
-		console.log("build_button_container", palette_button)
-
 		var button_container = new Konva.Group({x: palette_button["x"], y: palette_button["y"]});
 		button_container["name"] = "PaletteButtonGroup";
 
@@ -227,11 +224,8 @@ var PaletteButton = function(palette) {
 	}
 
 	paletteButton.addBox = function(button_container, palette_button) {
-
 		var paletteButton = this;
-
-		console.log("palette_button ", palette_button)
-
+		
 		var style = palette_button["style"];
 		var elem_style = process_style_attributes(style["elementStyle"]);
 

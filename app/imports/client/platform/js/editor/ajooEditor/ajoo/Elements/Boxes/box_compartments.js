@@ -82,11 +82,8 @@ BoxCompartments.prototype = {
 		var element = compartments.element;
 		var editor = compartments.editor;
 
-		var comparts = compartments.compartments;	
+		var comparts = compartments.compartments;
 		_.each(comparts_in, function(compart_in) {
-			
-			compart_in.type = compart_in.type || "text";
-			
 			if ((compart_in && compart_in["type"] == "text" && compart_in["value"] == "") ||
 				(compart_in["style"] && compart_in["style"]["visible"] == false)) {
 				return;
@@ -161,7 +158,7 @@ BoxCompartments.prototype = {
 
 		//updating each texts group label
 		_.each(comparts, function(compart) {
-			var presentation = compart.presentation;			
+			var presentation = compart.presentation;
 			if (compart.type == "text") {
 				var text = presentation;
 
@@ -253,7 +250,8 @@ var Compartment = function(compartments, compart_in, parent) {
 
 	compart._id = compart_in["_id"];
 
-	compart_in.type = compart_in.type || "text";
+	// compart_in.type = compart_in.type || "text";
+	compart_in.type = compart_in.type;
 	compart.type = compart_in.type;
 
 	compart.textsParent = parent;
@@ -280,7 +278,6 @@ var Compartment = function(compartments, compart_in, parent) {
 		}
 
 	}
-
 
 	compart.compartmentTypeId = compart_in.compartmentTypeId;
 

@@ -40,7 +40,7 @@ Interpreter.methods({
 		var compart_type = this;
 		var compartment = Compartments.findOne({elementId: elem_id, compartmentTypeId: compart_type["_id"]});
 		if (  compartment && compartment.input.length != compartment.value.length) {
-			console.log('Imaiņas netiek veiktas! Saīsināto datu situācija.')
+			console.log('Izmaiņas netiek veiktas! Saīsināto datu situācija.')
 			return;
 		}
 		var value = Dialog.buildCompartmentValue(compart_type, input, mapped_value);
@@ -142,7 +142,6 @@ const Dialog = {
 	},
 
 	buildCompartmentList: function(compart_type, elem_id, input, value) {
-
 		var compart = {
 				projectId: Session.get("activeProject"),
 				diagramId: Session.get("activeDiagram"),
@@ -156,7 +155,8 @@ const Dialog = {
 				value: value,
 				index: compart_type["index"],
 				isObjectRepresentation: compart_type["isObjectRepresentation"],
-				type: compart_type["type"] || "text",
+				// type: compart_type["type"] || "text",
+				// type: compart_type["type"],
 			};
 
 		// if multifield
@@ -603,11 +603,11 @@ const Dialog = {
 		var compartments = [];
 		CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEach(
 			function(compart_type) {
-
 				if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField") {
 					return;
 				}
 				else {
+					var compart_type_type = compart_type.type || "text";
 					var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", compart_type);
 					if (proc_name && proc_name != "") {
 
@@ -616,6 +616,7 @@ const Dialog = {
 						compartments.push({input: val,
 											value: val,
 											compartmentTypeId: compart_type._id,
+											type: compart_type_type,
 										});
 					}
 					else {
@@ -623,6 +624,7 @@ const Dialog = {
 							compartments.push({input: (compart_type["defaultValue"] || ""),
 												value: (compart_type["defaultValue"] || ""),
 												compartmentTypeId: compart_type._id,
+												type: compart_type_type,
 											});
 						}
 					}

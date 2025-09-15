@@ -41,6 +41,11 @@ _.extend(Interpreter, {
 		var editor_type = diagram["editorType"];
 		Session.set("editorType", editor_type);
 
+
+		console.log("loading diagram", diagram)
+
+		
+
 		//loading an editor
 		var editor = Interpreter.loadAjooEditor(diagram);
 
