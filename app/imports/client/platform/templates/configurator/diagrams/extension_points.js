@@ -8,6 +8,9 @@ import './extension_points.html'
 Template.diagramExtensions.helpers({
 
 	extensions: function() {
+		console.log("get_diagram_type_extension_points ", get_diagram_type_extension_points())
+
+
 		return get_diagram_type_extension_points();
 	},
 });

@@ -153,7 +153,7 @@ ProjectsUsers.after.update(async function(user_id, doc, fieldNames, modifier, op
 									});
 		}
 
-		await Users.updateAsync({systemId: user_id, activeProject: proj_id}, {$set: {activeVersion: version_id}});
+		// await Users.updateAsync({systemId: user_id, activeProject: proj_id}, {$set: {activeVersion: version_id}});
 
 	}
 

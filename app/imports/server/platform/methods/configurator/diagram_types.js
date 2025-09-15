@@ -140,9 +140,7 @@ Meteor.methods({
 			}
 			else if (list["diagramId"]) {
 				query["diagramId"] = list["diagramId"];
-
 				await DiagramTypes.updateAsync(query, {$set: update}, async function(err, res) {
-
 					if (err) {
 						console.error("Error in update diagramType");
 					}

@@ -134,6 +134,10 @@ Template.diagramsRibbon.helpers({
 			tool.hasSchema = false;
 		}
 
+		console.log("tool", tool)
+
+		console.log("tool", tool.toolbar)
+
 		return tool;
 	},
 
@@ -565,6 +569,11 @@ Template.diagramsSearchBar.helpers({
 
 Template.addDiagram.events({
 
+	'submit form'(event, template) {
+		event.preventDefault();            // 🚫 stop full page reload
+		$('#create-diagram').click();      // simulate OK button
+	},
+
 	'click #create-diagram' : function() {
 
 		$('#add-diagram').attr("OKPressed", true);
@@ -572,6 +581,7 @@ Template.addDiagram.events({
 		//hidding the form
 		$('#add-diagram').modal("hide");
 	},
+
 
 	//if ok was clicked, then starting a new chat
 	'hidden.bs.modal #add-diagram' : function() {
@@ -586,6 +596,13 @@ Template.addDiagram.events({
 
 			Interpreter.execute("createDiagram", [diagram_name, diagram_type_id]);
 
+		}
+	},
+
+	'keydown #diagram-name, keydown #diagramType'(event, template) {
+		if (event.key === "Enter") {
+			event.preventDefault(); // stop form submission
+			$('#create-diagram').click(); // simulate OK button click
 		}
 	},
 
@@ -914,9 +931,9 @@ Template.ontologySettings.events({
 
 
 function getSchemas(tag) {
-	let schemas = [];
-	const allSchemas = Template.ontologySettings.allSchemas.get();
+	const allSchemas = Template.ontologySettings.allSchemas.get() || [];
 
+	let schemas = [];
 	for ( const sc of allSchemas ) {
 		if ( tag != 'All' && sc.tags.includes(tag))
 			schemas.push(sc);
@@ -930,7 +947,7 @@ function getSchemas(tag) {
 
 Template.ontologySettings.rendered = async function() {
 	var rr = await dataShapes.getOntologiesAndTags();
-	var tags = rr.tags;
+	var tags = rr.tags || [];
 	tags.unshift({name:"All", display_name: "All schemas"});
 	Template.ontologySettings.schemaTags.set(tags);
 

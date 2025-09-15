@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor'
 import { Tools, ToolVersions, UserTools, Projects } from '../../../../db/platform/collections.js'
 import { is_system_admin } from '../../../../libs/platform/user_rights.js'
+import { generate_id } from '../../../../libs/platform/lib.js'
 
 
 Tools.after.remove(async function(user_id, doc) {
@@ -31,6 +32,14 @@ Meteor.methods({
 
 			list["tasks"] = false;
 			list["training"] = false;
+
+			list["toolbar"] = [
+				{id: generate_id(), name: "Download .png", procedure: "DownloadPng", icon: "fa-download"},	
+				// {id: generate_id(), name: "Toggle Dialog", procedure: "ToggleDialog", icon: "fa-plus"},
+				// {id: generate_id(), name: "Toggle Footer", procedure: "ToggleFooter", icon: "fa-minus"},	
+
+				{id: generate_id(), name: "Toggle Grid", procedure: "ToggleGrid", icon: "fa-th"},
+			];
 
 			var id = await Tools.insertAsync(list);
 

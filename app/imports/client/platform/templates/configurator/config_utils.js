@@ -118,6 +118,9 @@ var Configurator = {
 	updateElementFromInput: function(e, function_name) {
 		var update = Configurator.getInputFieldValue(e);
 
+		console.log("updateElementFromInput", update)
+		console.log("function_name", function_name)
+
 		var list = {diagramId: Session.get("activeDiagram"),
 					projectId: Session.get("activeProject"),
 					toolId: Session.get("toolId"),

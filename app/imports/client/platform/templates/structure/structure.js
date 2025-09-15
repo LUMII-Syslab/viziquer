@@ -99,7 +99,7 @@ Template.structureTemplate.events({
 		var src = $(e.target).closest(".project-path");
 		var proj_id = src.attr("id");
 		var version_id = Utilities.changeUserActiveProject(proj_id);
-		await dataShapes.changeActiveProject(proj_id);
+		// await dataShapes.changeActiveProject(proj_id);
 		FlowRouter.go("diagrams", {projectId: proj_id, versionId: version_id});
 
 		//return;
@@ -388,7 +388,7 @@ Template.createProjectModal.rendered = async function() {
 	Template.createProjectModal.loading.set(false);
 
 	var schemas = rr.schemas;
-	if ( schemas.length > 0) {
+	if (schemas && schemas.length > 0) {
 		Template.createProjectModal.allSchemas.set(schemas);
 	}
 	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts

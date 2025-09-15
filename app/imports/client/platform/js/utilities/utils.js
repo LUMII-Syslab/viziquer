@@ -71,9 +71,11 @@ const Utilities = {
 	},
 
 	changeUserActiveProject: function(proj_id) {
+			// console.log("in changeUserActiveProject")
 	    var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: Session.get("userSystemId")});
 	    if (proj_user) {
 	        var version_id = proj_user["versionId"];
+	        // Session.set("activeProject", proj_id)
 	        Utilities.editUserProfile({activeProject: proj_id, activeVersion: version_id});
 
 	        return version_id;

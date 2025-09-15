@@ -3,6 +3,7 @@ import { generate_id } from '../../../../../libs/platform/lib.js'
 function build_initial_diagram_type(list, editor_type) {
 
 	list["extensionPoints"] = [
+		{extensionPoint: "beforeRenderDiagram", procedure: ""},
 		{extensionPoint: "beforeCreateDiagram", procedure: ""},
 		{extensionPoint: "afterCreateDiagram", procedure: ""},
 		{extensionPoint: "createDiagram", procedure: "CreateDiagram"},
@@ -34,6 +35,10 @@ function build_initial_diagram_type(list, editor_type) {
 	];
 
 	list["toolbar"] = [
+		{id: generate_id(), name: "Download .png", procedure: "DownloadPng", icon: "fa-download"},	
+		// {id: generate_id(), name: "Toggle Dialog", procedure: "ToggleDialog", icon: "fa-plus"},
+		// {id: generate_id(), name: "Toggle Footer", procedure: "ToggleFooter", icon: "fa-minus"},	
+
 		{id: generate_id(), name: "Toggle Grid", procedure: "ToggleGrid", icon: "fa-th"},
 
 		{id: generate_id(), name: "Zoom out", procedure: "ZoomingOut", icon: "fa-minus"},	
@@ -48,7 +53,11 @@ function build_initial_diagram_type(list, editor_type) {
 	];
 
 	list["readModeToolbar"] = [		
-		
+		{id: generate_id(), name: "Download .png", procedure: "DownloadPng", icon: "fa-download"},	
+		// {id: generate_id(), name: "Toggle Dialog", procedure: "ToggleDialog", icon: "fa-plus"},
+		// {id: generate_id(), name: "Toggle Footer", procedure: "ToggleFooter", icon: "fa-minus"},	
+
+
 		{id: generate_id(), name: "Zoom out", procedure: "ZoomingOut",
 		icon: "fa-minus", isInEditableVersion: false, isForAdminOnly: false},	
 		

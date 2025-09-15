@@ -240,7 +240,7 @@ FlowRouter.route('/public/project/:projectId/diagram/:_id/type/:diagramTypeId/ve
   //sets active diagram
     Session.set("activeDiagram", dgr_id);
     Session.set("diagramType", type_id);
-    Session.set("activeProject", proj_id);
+    // Session.set("activeProject", proj_id);
     Session.set("activeElement", reset_variable());
 
   //sets version id
