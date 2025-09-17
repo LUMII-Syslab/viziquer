@@ -1,5 +1,5 @@
 # The tag here should match the Meteor version of your app, per .meteor/release
-FROM geoffreybooth/meteor-base:3.3
+FROM geoffreybooth/meteor-base:3.3.2
 
 # Copy app package.json and package-lock.json into container
 COPY ./app/package*.json $APP_SOURCE_FOLDER/
@@ -12,9 +12,8 @@ COPY ./app $APP_SOURCE_FOLDER/
 RUN bash $SCRIPTS_FOLDER/build-meteor-bundle.sh
 
 
-# Use the specific version of Node expected by your Meteor release, per https://docs.meteor.com/changelog.html; this is expected for Meteor 3.0.2
-# for 2.14 we would need 14.21.4-alpine, which does not exist in dockerhub
-FROM node:22.16.0-alpine
+# Use the specific version of Node expected by your Meteor release, per https://docs.meteor.com/changelog.html; this is expected for Meteor 3.1.2
+FROM node:22.19.0-alpine
 
 ENV APP_BUNDLE_FOLDER=/opt/bundle
 ENV SCRIPTS_FOLDER=/docker
@@ -34,12 +33,13 @@ COPY --from=0 $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
 
 RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh --build-from-source
 
+
 # Start another Docker stage, so that the final image doesn’t contain the layer with the build dependencies
 # See previous FROM line; this must match
-FROM node:22.16.0-alpine
+FROM node:22.19.0-alpine
 
-ENV APP_BUNDLE_FOLDER /opt/bundle
-ENV SCRIPTS_FOLDER /docker
+ENV APP_BUNDLE_FOLDER=/opt/bundle
+ENV SCRIPTS_FOLDER=/docker
 
 # Install OS runtime dependencies
 RUN apk --no-cache add \
