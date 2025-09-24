@@ -71,6 +71,21 @@ Template.diagramTemplate.onRendered(function() {
 	// YASQE.registerAutocompleter('customPropertyCompleter', customPropertyCompleter);
 	// YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyCompleter", "variables"];
 
+	var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
+	if (!diagram) {
+		return;
+	}
+
+	var diagram_type_id = diagram["diagramTypeId"];
+	var diagram_type = DiagramTypes.findOne({_id: diagram_type_id});
+
+	// console.log("in diagram rendered")
+	// Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
+
+	var list = {};
+	var res = Interpreter.executeExtensionPoint(diagram_type, "beforeRenderDiagram", list);
+
+
 	if (Session.get("editMode")) {
 		set_locked_diagram();
 	}

@@ -1,6 +1,19 @@
 
 <template name="diagramExtensions">
 	{{#with extensions}}
+
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12">	
+				<form role="form">
+					<div class="form-group">
+						<label for="createDiagram">beforeRenderDiagram</label>
+						<input type="text" class="form-control dialog-input" id="beforeRenderDiagram" value="{{beforeRenderDiagram}}">
+					</div>
+	            </form>
+	        </div>
+		</div>
+
+
 		<div class="row">
 			<div class="col-sm-6 col-md-6 col-lg-6">	
 				<form role="form">

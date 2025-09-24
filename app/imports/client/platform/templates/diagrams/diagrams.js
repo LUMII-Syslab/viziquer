@@ -565,6 +565,11 @@ Template.diagramsSearchBar.helpers({
 
 Template.addDiagram.events({
 
+	'submit form'(event, template) {
+		event.preventDefault();
+		$('#create-diagram').click();
+	},
+
 	'click #create-diagram' : function() {
 
 		$('#add-diagram').attr("OKPressed", true);
@@ -586,6 +591,13 @@ Template.addDiagram.events({
 
 			Interpreter.execute("createDiagram", [diagram_name, diagram_type_id]);
 
+		}
+	},
+
+	'keydown #diagram-name, keydown #diagramType'(event, template) {
+		if (event.key === "Enter") {
+			event.preventDefault(); // stop form submission
+			$('#create-diagram').click(); // simulate OK button click
 		}
 	},
 
@@ -917,7 +929,7 @@ Template.ontologySettings.events({
 
 function getSchemas(tag) {
 	let schemas = [];
-	const allSchemas = Template.ontologySettings.allSchemas.get();
+	const allSchemas = Template.ontologySettings.allSchemas.get() || [];
 
 	for ( const sc of allSchemas ) {
 		if ( tag != 'All' && sc.tags.includes(tag))
@@ -932,7 +944,7 @@ function getSchemas(tag) {
 
 Template.ontologySettings.rendered = async function() {
 	var rr = await dataShapes.getOntologiesAndTags();
-	var tags = rr.tags;
+	var tags = rr.tags || [];
 	tags.unshift({name:"All", display_name: "All schemas"});
 	Template.ontologySettings.schemaTags.set(tags);
 

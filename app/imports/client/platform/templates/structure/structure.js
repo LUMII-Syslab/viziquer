@@ -408,7 +408,7 @@ Template.createProjectModal.rendered = async function() {
 	Template.createProjectModal.loading.set(false);
 
 	var schemas = rr.schemas;
-	if ( schemas.length > 0) {
+	if (schemas && schemas.length > 0) {
     for ( const sc of schemas ) {
       sc.display_name_full = `${sc.display_name} (${sc.sparql_url} Class count:${sc.class_count})`;
     }
