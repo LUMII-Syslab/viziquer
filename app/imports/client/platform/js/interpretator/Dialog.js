@@ -156,7 +156,7 @@ const Dialog = {
 				value: value,
 				index: compart_type["index"],
 				isObjectRepresentation: compart_type["isObjectRepresentation"],
-				type: compart_type["type"] || "text",
+				// type: compart_type["type"] || "text",
 			};
 
 		// if multifield
@@ -608,6 +608,7 @@ const Dialog = {
 					return;
 				}
 				else {
+					var compart_type_type = compart_type.type || "text";
 					var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", compart_type);
 					if (proc_name && proc_name != "") {
 
@@ -616,6 +617,7 @@ const Dialog = {
 						compartments.push({input: val,
 											value: val,
 											compartmentTypeId: compart_type._id,
+											type: compart_type_type,
 										});
 					}
 					else {
@@ -623,6 +625,7 @@ const Dialog = {
 							compartments.push({input: (compart_type["defaultValue"] || ""),
 												value: (compart_type["defaultValue"] || ""),
 												compartmentTypeId: compart_type._id,
+												type: compart_type_type,
 											});
 						}
 					}

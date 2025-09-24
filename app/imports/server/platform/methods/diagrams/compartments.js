@@ -46,6 +46,10 @@ Meteor.methods({
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
 
+				var compart_type = await CompartmentTypes.findOneAsync({_id: compart_in.compartmentTypeId});
+				
+				compart_type.type = compart_type.type || "text";
+
 				await Compartments.insertAsync(compart_in);
 				// Compartments.insert(compart_in, {trimStrings: false});
 
@@ -78,6 +82,7 @@ Meteor.methods({
 					await Compartments.removeAsync({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]});
 				}
 				else {
+
 					await Compartments.updateAsync({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]},
 										{$set: update});
 									// {$set: update}, {trimStrings: false, removeEmptyStrings: false,});
@@ -196,6 +201,8 @@ function build_compartment(compart_type, list, compart_in) {
 			input: input,
 			index: compart_type["index"],
 
+			type: compart_type["type"] || "text",
+
 			styleId: style_obj["id"],
 			style: style,
 
@@ -212,6 +219,9 @@ function build_compartment(compart_type, list, compart_in) {
 		else if (list["toolId"]) {
 			compart["toolId"] = list["toolId"];
 		}
+
+
+		console.log("in new compart", compart)
 
 		return compart;
 	}
