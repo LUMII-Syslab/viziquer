@@ -138,7 +138,7 @@ function peekResponseType(response) {
 }
 
 const TIMEOUT_TEST = 5_000;
-const TIMEOUT_EXECUTE = 15_000;
+const TIMEOUT_EXECUTE = 75_000;
 
 const SPARQL_PAGE_SIZE = 50;
 
