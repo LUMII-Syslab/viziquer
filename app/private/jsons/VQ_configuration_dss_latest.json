@@ -6781,6 +6781,48 @@
                 ],
                 "label": "ClassList"
               }
+            },
+			{
+              "object": {
+                "_id": "4iRaG2vm2QiJ97TWr",
+                "toolId": "ti3aaE7ZGoi2HxC8x",
+                "versionId": "4RWs2nhwB88xc6K2F",
+                "diagramTypeId": "QPP4RcjwqAtpXPBJe",
+                "diagramId": "jEKjivtbJ2T4hKxou",
+                "elementTypeId": "vEsLxF8gwbtBTBSKP",
+                "elementId": "59FbRP3qMGEwpveZG",
+                "index": 100,
+                "noRepresentation": true,
+                "tabIndex": 200,
+                "dialogTabId": "no3KmTgk9N55o5GnJ",
+                "name": "SchemaInformation",
+                "description": "",
+                "prefix": "",
+                "suffix": "",
+                "defaultValue": "",
+                "isObjectRepresentation": false,
+                "inputType": {},
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "b3f88353300725885881022a",
+                    "style": {
+                      "align": "left",
+                      "fill": "rgb(0,0,0)",
+                      "padding": 0,
+                      "visible": false,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "placement": "start-left"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                ],
+                "label": "Schema Information"
+              }
             }
           ],
            "dialog": [
@@ -7197,6 +7239,48 @@
                   }
                 ],
                 "label": "Object properties"
+              }
+            },
+			{
+              "object": {
+                "_id": "4iRaG2vm2QiJ97TWe",
+                "toolId": "ti3aaE7ZGoi2HxC8x",
+                "versionId": "4RWs2nhwB88xc6K2F",
+                "diagramTypeId": "QPP4RcjwqAtpXPBJe",
+                "diagramId": "jEKjivtbJ2T4hKxou",
+                "elementTypeId": "TKSpfRqgHdQkMJikj",
+                "elementId": "u8nL5N5riRaRYxGLJ",
+                "index": 100,
+                "noRepresentation": true,
+                "tabIndex": 200,
+                "dialogTabId": "no3KmTgk9N55o5GnJ",
+                "name": "SchemaInformation",
+                "description": "",
+                "prefix": "",
+                "suffix": "",
+                "defaultValue": "",
+                "isObjectRepresentation": false,
+                "inputType": {},
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "b3f88353300725885881022a",
+                    "style": {
+                      "align": "left",
+                      "fill": "rgb(0,0,0)",
+                      "padding": 0,
+                      "visible": false,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "placement": "start-left"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                ],
+                "label": "Schema Information"
               }
             }
           ],
