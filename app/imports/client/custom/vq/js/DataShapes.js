@@ -27,6 +27,7 @@ const DIAGRAM_CLASS_LIMIT = 2000;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
 const ConsoleLog = false;
+const isPublic = false;  // Parametrs testu paslēpšanai
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -377,6 +378,7 @@ const classes = [
 
 const getEmptySchema  = () => {
 	return {
+    isPublic:isPublic,
 		filling: 0,
 		classCount: 0,
 		resolvedClasses: {},
@@ -1212,6 +1214,7 @@ const dataShapes = {
 	},
 	getClassList : async function(par) {
 	// console.log(dataShapes.getClassList({}))
+    // Šī funkcija liekas netiek vairs izsaukta
 		//par = {class_count_limit:30, class_ind:1, only_local:false, not_in:['owl','rdf','rdfs']};
 		//console.log(par)
 		let rr = [];

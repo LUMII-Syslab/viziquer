@@ -35,7 +35,7 @@ Meteor.methods({
 								projectId: list.projectId,
 								versionId: list.versionId,
 								isLayoutComputationNeededOnLoad: 1,
-                                description:`${ontology.ClassCount} classes, ${ontology.NodesCount} nodes, ${ontology.LinesCount + ontology.generalizationCount} (${ontology.LinesCount}a + ${ontology.generalizationCount}g) lines, Merging level - ${ontology.params.diffG}`
+                description:ontology.diagram_description
 							};
 
         //if ( !ontology.hasGeneralization ) {
@@ -44,17 +44,18 @@ Meteor.methods({
         //    //console.log(diagram_object, diagram_object.description, 'aaaaa')
         //}
 
-        let new_diagram_id = await Diagrams.insertAsync(diagram_object);
-		let element_map = {};
+      let new_diagram_id = await Diagrams.insertAsync(diagram_object);
+		  let element_map = {};
 
-        // Namespaces part
-        let ns_type = await ElementTypes.findOneAsync({name: "Namespaces", diagramTypeId: diagram_type._id});
-        if (!ns_type) {
-			console.error("No Namespaces type");
-			return;
-		}
+      // Namespaces part
+
+      let ns_type = await ElementTypes.findOneAsync({name: "Namespaces", diagramTypeId: diagram_type._id});
+      if (!ns_type) {
+        console.error("No Namespaces type");
+        return;
+      }
         let ns_style = ns_type["styles"][0];
-		let ns_style_id = ns_style["id"];
+        let ns_style_id = ns_style["id"];
         let ns_object = {diagramId: new_diagram_id,
             type: "Box",
             location: {x: 10, y: 10, width: 5, height: 5},
@@ -66,7 +67,7 @@ Meteor.methods({
             versionId: list.versionId,
         };
         list.diagram_id = new_diagram_id;
-		list.diagram_type_id = diagram_type._id;
+        list.diagram_type_id = diagram_type._id;
         list.compactClassView = ontology.CompactClassView;
         list.uStrings = ontology.uStrings;
 
@@ -77,14 +78,15 @@ Meteor.methods({
         list.element_type_id = ns_type._id;
         await add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, '', {cut:false}, false)
 
-        // Class part
+
+    // Class part
 		let class_type = await ElementTypes.findOneAsync({name: "Class", diagramTypeId: diagram_type._id});
 		if (!class_type) {
 			console.error("No Class type");
 			return;
 		}
 
-        list.element_type_id = class_type._id;
+    list.element_type_id = class_type._id;
 		for (const key of Object.keys(ontology.Class)) {
 			const item = ontology.Class[key];
 			if (element_map[key]) {
@@ -401,6 +403,10 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const length = value_list.length;
     let max_count = value_list.length;
+    if ( compartmentName == 'ClassList' ||  compartmentName == 'Name' ) {
+      const nList = value_list.map(a => a.shortName)
+      await add_one_compartment(list, 'SchemaInformation', JSON.stringify(nList), JSON.stringify(nList));
+    }
     if ( !list.compactClassView && compartmentName != 'ClassList')
         cut_info.cut = false;
     if ( cut_info.cut ) {
@@ -426,6 +432,9 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
     let value = ( sort ) ? replace_newline(value_list.map(a => `${pref}${a.name}`).sort().join('\n')) : replace_newline(value_list.map(a => `${pref}${a.name}`).join('\n'));
     if ( max_count < length )  value = `${value}\n...(${length-max_count})...`;
 
+    if ( compartmentName == 'ClassList' && value_list.length == 1 ) {
+      value = '';
+    }
     await add_one_compartment(list, compartmentName, input, value);
 }
 

@@ -593,6 +593,10 @@ async function generateSPARQLtextFromSchemaForObjectProperty(){
 	let endElement = await link.getEndElement();
 
 	let linkName = await link.getCompartmentValue("Name");
+  //****************************************************
+  let linkList = await link.getCompartmentValue("SchemaInformation");
+  console.log('***********************', JSON.parse(linkList))
+
 	let startElementName = await startElement.getCompartmentValue("Name");
 	let endElementName = await endElement.getCompartmentValue("Name");
 
@@ -892,13 +896,13 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 
 	const firstNEntries = Object.entries(sortedObj).slice(0, n);
 	const firstNResults = Object.fromEntries(firstNEntries);
-	
+
 	let language = "";
 	var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 	if (proj) {
 		language = proj.schemaDiagramDataLanguage;
 	}
-	
+
 	for(let p in firstNResults){
 		let dataPropName = p.substring(p.indexOf(":")+1);
 		if(usedNames !== null && typeof usedNames[dataPropName] !== "undefined") {
@@ -909,10 +913,10 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 		}
 
 		sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + p + " ?" + dataPropName + " ."
-		
+
 		if(typeof propertyTableFullInfo[p]["data_types"] !== "undefined"){
 				const cleaned = propertyTableFullInfo[p]["data_types"].filter(value => value)
-																.map(v => v.toLowerCase());          
+																.map(v => v.toLowerCase());
 				if (cleaned.includes("rdf:langstring") && language != "" && typeof language !== "undefined" && language !== null) {
 					if(cleaned.length === 1){
 						sparqlQueryText = sparqlQueryText + "\n    FILTER(lang(?"+dataPropName+")='"+language+"')\n";
@@ -996,14 +1000,14 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 		let clazz = classPrefix +":"+cls["data"][0]["local_name"];
 		sparqlQueryText = sparqlQueryText + "  ?" + className + " " + dirRole + " " + clazz + " .\n";
 		prefixTable[classPrefix] = "";
-		
+
 		let language = "";
-		
+
 		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		if (proj) {
 			language = proj.schemaDiagramDataLanguage;
 		}
-		
+
 
 		for(let prop = 0; prop < props.data.length; prop++){
 			let dataProperty = props.data[prop];
@@ -1015,11 +1019,11 @@ async function simpleSchemaBox(selected_elem, n, dirRole, usedNames, onlyWhere){
 			} else {
 				usedNames[dataPropName] = 1;
 			}
-			
+
 			sparqlQueryText = sparqlQueryText + "  OPTIONAL{?" + className + " " + dataProp + " ?" +dataPropName+ " .";
 			if(typeof dataProperty["data_types"] !== "undefined"){
 				const cleaned = dataProperty["data_types"].filter(value => value)
-																.map(v => v.toLowerCase());          
+																.map(v => v.toLowerCase());
 				if (cleaned.includes("rdf:langstring") && language !== "" && typeof language !== "undefined" && language !== null) {
 					if(cleaned.length === 1){
 						sparqlQueryText = sparqlQueryText + "\n    FILTER(lang(?"+dataPropName+")='"+language+"')\n";

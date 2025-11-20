@@ -157,6 +157,9 @@ Template.diagramsToolbar.helpers({
 		}
 		return false;
 	},
+  isPublic: function() {
+    return dataShapes.schema.isPublic;
+  }
 })
 
 Template.diagramsToolbar.events({
@@ -216,7 +219,13 @@ Template.diagramsToolbar.events({
 	'click #saveSchema': async function(e) {
 		await dataShapes.changeActiveProject(Session.get("activeProject"));
 		Dialog.destroyTooltip(e);
-		await Template.VQ_DSS_schema.rendered();
+		await Template.VQ_DSS_schema.rendered('schema');
+		$('#VQ-DSS-schema').modal("show");
+	},
+  'click #schemaFragment': async function(e) {
+		await dataShapes.changeActiveProject(Session.get("activeProject"));
+		Dialog.destroyTooltip(e);
+		await Template.VQ_DSS_schema.rendered('fragment');
 		$('#VQ-DSS-schema').modal("show");
 	},
 
