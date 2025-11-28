@@ -95,8 +95,8 @@ Meteor.methods({
 			}
 
             let class_style = class_type["styles"][0];
-            let class_style_old = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeOld});
-            let class_style_new = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeNew});
+            let class_style_old = class_type["styles"].find(function(s){ return s.name == item.TypeOld});
+            let class_style_new = class_type["styles"].find(function(s){ return s.name == item.TypeNew});
             if ( class_style_old != undefined )
                 class_style = class_style_old;
             if ( class_style_new != undefined )
@@ -394,12 +394,12 @@ async function add_class_compartments(list, item) {
     if ( compartments.ClassList.length > 0 ) {
         cut_info.cut = compartments.ClassList.length > classCount;
         cut_info.max = classCount;
-        await add_one_compartment_from_list(list, "ClassList", compartments.ClassList, '', cut_info);
+        await add_one_compartment_from_list(list, "ClassList", compartments.ClassList, '', cut_info, true, item.IsGroup );
     }
 
 }
 
-async function add_one_compartment_from_list(list, compartmentName, value_list, pref, cut_info, sort = true) {
+async function add_one_compartment_from_list(list, compartmentName, value_list, pref, cut_info, sort = true, isGroup = false) {
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const length = value_list.length;
     let max_count = value_list.length;
@@ -432,7 +432,7 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
     let value = ( sort ) ? replace_newline(value_list.map(a => `${pref}${a.name}`).sort().join('\n')) : replace_newline(value_list.map(a => `${pref}${a.name}`).join('\n'));
     if ( max_count < length )  value = `${value}\n...(${length-max_count})...`;
 
-    if ( compartmentName == 'ClassList' && value_list.length == 1 ) {
+    if ( compartmentName == 'ClassList' && !isGroup ) { // ( compartmentName == 'ClassList' && value_list.length == 1 ) {
       value = '';
     }
     await add_one_compartment(list, compartmentName, input, value);

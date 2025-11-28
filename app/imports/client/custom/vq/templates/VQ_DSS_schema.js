@@ -644,7 +644,7 @@ Template.VQ_DSS_schema.events({
 		//if ( state == 0 )
     const startTime = Date.now();
 		await getBasicClasses();
-    console.log('************* pēc getBasicClasses',Date.now() - startTime);
+    console.log('################### pēc getBasicClasses',Date.now() - startTime);
     let time2 = Date.now();
   	await calculateGroups();
     console.log('################### pēc calculateGroups',Date.now() - time2)
@@ -685,10 +685,12 @@ Template.VQ_DSS_schema.events({
 			if ( el.used ) {
 				let type = el.type;
 				let typeNew = el.type;
+        let isGroup = false;
 				if ( type == 'Classif') {
 					if ( el.sub_classes_group_string != undefined ) {
 						type = 'ClassifierGroup'
 						typeNew = 'ClassifierGroup'
+            isGroup = true;
 					}
 					else {
 						type = 'Classifier';
@@ -698,6 +700,7 @@ Template.VQ_DSS_schema.events({
 				if ( type == 'Class' && el.sub_classes_group_string != undefined ) {
 					type = 'ClassGroup';
 					typeNew = `ClassGroup${el.size}`;
+          isGroup = true;
 				}
 				if ( type == 'Class' && el.sub_classes_group_string == undefined ) {
 					type = 'Class';
@@ -714,11 +717,12 @@ Template.VQ_DSS_schema.events({
 				table_representation.Class[k] = { compartments:{
 						Name:el.fullNameD,
 						AttributesT:el.attributesT,
-						ClassList:[],
-						TypeOld:type,
-						TypeNew:typeNew},
+						ClassList:[]},
+            TypeOld:type,
+						TypeNew:typeNew,
+            IsGroup:isGroup,
 					  Cnt:el.cnt};
-				if ( el.sub_classes_group_string != undefined )
+				if ( el.sub_classes_list != undefined && el.sub_classes_list.length > 0 )
 					table_representation.Class[k].compartments.ClassList = el.sub_classes_list;
         else
           table_representation.Class[k].compartments.ClassList = [{cnt:el.cnt, name:el.fullNameD, shortName:el.displayName }];
@@ -2411,10 +2415,14 @@ function makeSuperClasses() {
 		}
 
 		rezFull.classes[sc_id] = { id:sc_id, used:true, hasGen:true,
-			type:'Abstract', super_classes:[], c_list:[], c_list_id:[]};
+			type:'Abstract', super_classes:[], c_list:[], c_list_id:[], sub_classes_list:[]};
 
 		let g_list = [];
 		let c_list_full = [];
+    let c_list_full_elem = [];
+    //rezFull.classes[g_id].sub_classes_list =  _.map(c_list_full, function(c) {
+		//	return {cnt:c.cnt, name:c.fullNameD, shortName:c.displayName};
+
 		let cnt = 0;
 		for (let classInfo of cl_list) {
 			const atr_list = makeAtrList(classInfo.atr_list);
@@ -2427,10 +2435,12 @@ function makeSuperClasses() {
 				for (let g_cl of classInfo.c_list) {
 					rezFull.classes[g_cl].S_id = sc_id;
 					rezFull.classes[sc_id].c_list_id.push(rezFull.classes[g_cl].id_id);
+          rezFull.classes[sc_id].sub_classes_list.push({cnt:rezFull.classes[g_cl].cnt, name:rezFull.classes[g_cl].fullNameD, shortName:rezFull.classes[g_cl].displayName});
 				}
 			}
 			else {
 				rezFull.classes[sc_id].c_list_id.push(classInfo.id_id);
+        rezFull.classes[sc_id].sub_classes_list.push({cnt:classInfo.cnt, name:classInfo.fullNameD, shortName:classInfo.displayName});
 			}
 			if ( atr_list.length > 0 )
 				rezFull.classes[sc_id].c_list.push(classInfo.id);

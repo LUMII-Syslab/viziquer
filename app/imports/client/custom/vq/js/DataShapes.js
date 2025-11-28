@@ -27,7 +27,7 @@ const DIAGRAM_CLASS_LIMIT = 2000;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
 const ConsoleLog = false;
-const isPublic = false;  // Parametrs testu paslēpšanai
+const isPublic = true;  // Parametrs testu paslēpšanai
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
