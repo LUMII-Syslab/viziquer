@@ -9782,7 +9782,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 				await linkLine.addGraphsServices(graph, graphInstruction, serviceSchemaName);
 			}
 			if((isSubQuery === true || isGlobalSubQuery === true || linkType === "OPTIONAL" || linkType === "NOT" || typeof graph !== "undefined") && parentClassOrderCounter<clazz.linkIdentification.orderCounter){
-				await linkLine.setIsDelayedLink(true);
+				// await linkLine.setIsDelayedLink(true);
 			} else if(linkQueryType === "PLAIN" && linkType === "REQUIRED" && typeof graph === "undefined" && parentClassOrderCounter<clazz.orderCounterDelayed) clazz.orderCounterDelayed = parentClassOrderCounter;
 			
 
@@ -9800,7 +9800,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 				await linkLine.addGraphsServices(graph, graphInstruction, serviceSchemaName);
 			}
 			if((isSubQuery === true || isGlobalSubQuery === true || linkType === "OPTIONAL" || linkType === "NOT" || typeof graph !== "undefined") && parentClassOrderCounter<clazz.linkIdentification.orderCounter){
-				await linkLine.setIsDelayedLink(true);
+				// await linkLine.setIsDelayedLink(true);
 			} else if(linkQueryType === "PLAIN" && linkType === "REQUIRED" && typeof graph === "undefined" && parentClassOrderCounter<clazz.orderCounterDelayed) clazz.orderCounterDelayed = parentClassOrderCounter;
 			
 			link_count = link_count + 1;
