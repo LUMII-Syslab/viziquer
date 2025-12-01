@@ -16,7 +16,7 @@
     "bootstrap-colorpicker": "^3.4.0",
     "ClientStorage": "^4.0.1",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0",
+    "express": "^5.2.0",
     "font-awesome": "^4.7.0",
     "html2canvas": "^1.4.1",
     "jquery": "^3.7.1",
