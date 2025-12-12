@@ -24,6 +24,17 @@ export default defineConfig([globalIgnores([
     "imports/platform/client/js/editor/ajooEditor/ajoo/layoutEngine.js",
     "imports/platform/client/js/editor/ajooEditor/ajoo/layoutEngine.max.js",
     "imports/platform/client/js/editor/ajooEditor/ajoo/layoutEngine.min.js",
+    "imports/platform/client/js/editor/ajooEditor/ajoo/elements/Lines/routing/IntersectionUtilities.js",
+    "imports/custom/vq/client/js/vq_grammar_parser.js",
+    "imports/custom/vq/client/js/vq_grammar_completion_parser.js",
+    "imports/custom/vq/client/js/vq_visual_grammar_parser.js",
+    "imports/custom/vq/client/js/vq_attribute_condition_grammar_parser.js",
+    "imports/custom/vq/client/js/vq_variable_grammar_parser.js",
+    "imports/custom/vq/client/js/vq_property_path_grammar_parser.js",
+    "imports/custom/vq/client/js/vq_property_path_grammar_completion_parser.js",
+    "imports/custom/vq/client/js/vq_language_grammar_completion_parser.js",
+    "imports/custom/vq/client/js/generateSQL.js",
+    "imports/platform/client/js/editor/ajooEditor/ajoo/*",
   ]), {
     extends: compat.extends("eslint:recommended"),
 
