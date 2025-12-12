@@ -98,8 +98,8 @@ Template.structureTemplate.events({
 
 		var src = $(e.target).closest(".project-path");
 		var proj_id = src.attr("id");
-		var version_id = Utilities.changeUserActiveProject(proj_id);
-		await dataShapes.changeActiveProject(proj_id);
+		var version_id = await Utilities.changeUserActiveProject(proj_id);
+		//await dataShapes.changeActiveProject(proj_id, 'click .project-path');
 		FlowRouter.go("diagrams", {projectId: proj_id, versionId: version_id});
 
 		//return;
@@ -415,9 +415,6 @@ Template.createProjectModal.rendered = async function() {
 		Template.createProjectModal.allSchemas.set(schemas);
 	}
 	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
-
-	//var services_all = await dataShapes.getServices();
-	//console.log('Pārbaude createProjectModal, kas ir services kolekcijā ', services_all)
 
 }
 

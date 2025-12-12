@@ -473,25 +473,27 @@ const dataShapes = {
 
 		return NaN;
 	},
-	changeActiveProject : async function(proj_id) {
+	changeActiveProject : async function(proj_id, txt = 'nezināma vieta') {
 		//console.log('------changeActiveProject-------')
 		//const proj = Projects.findOne({_id: proj_id});
 		const proj = await Projects.findOneAsync({_id: proj_id});
 		//this.schema = getEmptySchema();
 		if (proj !== undefined) {
-			await this.changeActiveProjectFull(proj);
+			await this.changeActiveProjectFull(proj, txt);
 		}
 	},
-	changeActiveProjectFull : async function(proj) {
-		//console.log('------changeActiveProjectFull-------')
+	changeActiveProjectFull : async function(proj, txt) {
+		console.log('------changeActiveProjectFull-------', txt )
 		let projectId_in_process = this.schema.projectId_in_process;
 		if ( proj !== undefined && projectId_in_process == proj._id ) {
 			while (projectId_in_process == proj._id) {
-				await delay(5000);
+        console.log('----Iestājas gaidīšana------')
+				await delay(500);// await delay(5000);
 				projectId_in_process = this.schema.projectId_in_process;
 			}
 		}
 		else if (proj !== undefined && ( this.schema.projectId != proj._id || this.schema.filling === 0 )) {
+      console.log('--- !!!!!!------- Tiek mainīts projekts -------!!!!!!---------', proj._id)
 			this.schema = getEmptySchema();
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.projectId = proj._id;
@@ -617,7 +619,7 @@ const dataShapes = {
 		}
 
 		if (s === "" || s === undefined ) {
-			await this.changeActiveProject(Session.get("activeProject"));
+			await this.changeActiveProject(Session.get("activeProject"), 'Ir nomainīts projekts, callServerFunction');
 			s = this.schema.schema;
 		}
 

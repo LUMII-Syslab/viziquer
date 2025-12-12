@@ -67,12 +67,12 @@ ImportAjooConfiguration.prototype = {
 
 	importTool: async function(tool) {
 		await Tools.updateAsync({_id: this.toolId},
-					 {$set: {toolbar: tool.toolbar,}
+					 {$set: {toolbar: tool.toolbar, toolGroup:tool.toolGroup, extensionPoints:tool.extensionPoints}
 					 // {$set: {name: tool.name, toolbar: tool.toolbar,}
 					});
 	},
 
-
+ 
 	importDiagramTypes: async function(diagram_types) {
 	  var self = this;
 

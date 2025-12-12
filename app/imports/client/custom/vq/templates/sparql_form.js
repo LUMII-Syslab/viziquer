@@ -222,7 +222,7 @@ Template.sparqlForm.onRendered( async function() {
 
 	if (project!== undefined && project.newPublicProject) {
 
-		await dataShapes.changeActiveProject(project_id);
+		await dataShapes.changeActiveProject(project_id, 'Template.sparqlForm.onRendered');
 		var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
 		//console.log(diagram)
 		if (diagram.query !== undefined && diagram.query.length > 0) {

@@ -1,7 +1,14 @@
 { 
   "tool": {
     "name": "Viziquer",
-    "toolbar": "diagramsToolbar"
+    "toolbar": "diagramsToolbar",
+	"toolGroup": "VQ",
+	"extensionPoints": [
+	  {
+		"extensionPoint": "changeProject",
+		"procedure": "changeProject"
+	  }
+	]	
   },
   "types": [
     {
@@ -17,6 +24,9 @@
           {
             "extensionPoint": "createDiagram",
             "procedure": "CreateDiagram"
+          },
+		  {
+            "extensionPoint": "beforeRenderDiagram"
           },
           {
             "extensionPoint": "beforeDeleteCollection"
@@ -5537,6 +5547,10 @@
           {
             "extensionPoint": "createDiagram",
             "procedure": "CreateDiagram"
+          },
+		  {
+            "extensionPoint": "beforeRenderDiagram",
+            "procedure": "beforeRenderDiagram"
           },
           {
             "extensionPoint": "beforeDeleteCollection",

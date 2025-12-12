@@ -1,6 +1,6 @@
 import { Interpreter } from '../../../lib/interpreter.js'
 import { Utilities } from '../../../platform/js/utilities/utils.js'
-import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '../../../../db/platform/collections.js'
+import { Tools, Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '../../../../db/platform/collections.js'
 import { Dialog } from '../../../platform/js/interpretator/Dialog.js'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery.js'
 import { getPathFullGrammarChangeDirection } from './parser.js';
@@ -9,7 +9,10 @@ import * as vq_property_path_grammar_parser from './vq_property_path_grammar_par
 import { dataShapes } from './DataShapes.js'
 
 Interpreter.customMethods({
-	
+	changeProject: async function(projId){
+		console.log("$$$$$$$$$$$$$ transformations  $$$$$$$$$$$$$$ - changeProject", Session.get("activeProject"), projId)
+		await dataShapes.changeActiveProject(projId, 'changeProject');
+	},
 	linkChangeDirection: async function(){
 		let elem = await createVQ_Element(Session.get("activeElement"));
 		

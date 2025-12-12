@@ -1,7 +1,7 @@
 import { Utilities } from '../../js/utilities/utils.js'
 import { Users, Projects, ProjectsUsers } from '../../../../db/platform/collections.js'
 
-import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
+//import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 import './projects.html'
 
@@ -59,8 +59,8 @@ Template.projectsList.events({
       //e.preventDefault();
       var proj_id = $(e.target).closest(".projects-dropdown-item").attr("id");
 	  
-      Utilities.changeUserActiveProject(proj_id);
-	  await dataShapes.changeActiveProject(proj_id);
+      await Utilities.changeUserActiveProject(proj_id);
+	  //await dataShapes.changeActiveProject(proj_id, 'click .projects-dropdown-item');
   },
 });
 

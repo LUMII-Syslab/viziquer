@@ -38,7 +38,8 @@ Meteor.publish("Tools", async function(list) {
 		//removes the configurator from the query
 		var query = {_id: {$ne: await get_configurator_tool_id()}};
 		var fields = {createdBy: 0, documents: 0, forum: 0,
-						users: 0, archive: 0, analytics: 0, training: 0, tasks: 0};
+					users: 0, archive: 0, analytics: 0, training: 0, tasks: 0, toolGroup:0, extensionPoints:0 };
+					//Par šo īsti neesmu pārliecināta
 
 		return [Tools.find(query, {sort: {name: 1}, fields: fields}),
 				UserTools.find({userSystemId: user_id})];

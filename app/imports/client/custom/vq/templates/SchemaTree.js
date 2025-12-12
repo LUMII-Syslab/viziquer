@@ -443,7 +443,7 @@ Template.schemaTree.events({
 	'click #reload': async function(){
 		//console.log('click #reload')
 		Template.schemaTree.Waiting.set(true);
-		await dataShapes.changeActiveProject(Session.get("activeProject"));
+		await dataShapes.changeActiveProject(Session.get("activeProject"), 'Tree click #reload');
 		Template.schemaTree.Waiting.set(false);
 		Template.schemaTree.NeedReload.set(false);
 		if (dataShapes.schema.filling !== 3) {
@@ -478,7 +478,7 @@ Template.schemaTree.rendered = async function() {
 	//const proj = Projects.findOne(Session.get("activeProject")); // Nez kā šis strādāja?
 	const proj = await Projects.findOneAsync({_id:Session.get("activeProject")});
 	if ( (proj !== undefined && dataShapes.schema.projectId != proj._id) || (dataShapes.schema.filling === 0 && proj !== undefined)) {
-		await dataShapes.changeActiveProjectFull(proj);
+		await dataShapes.changeActiveProjectFull(proj, 'Template.schemaTree.rendered');
 	}
 	Template.schemaTree.Waiting.set(false);
 	//console.log(dataShapes.schema)

@@ -1,5 +1,7 @@
 import { build_project_version_admin_role  } from '../../../../libs/platform/user_rights.js'
-import { ProjectsUsers, ProjectsGroups, DiagramTypes  } from '../../../../db/platform/collections.js'
+import { Projects, Tools, ProjectsUsers, ProjectsGroups, DiagramTypes  } from '../../../../db/platform/collections.js'
+import { Interpreter } from '../../../lib/interpreter.js'
+
 
 const Utilities = {
 					
@@ -23,8 +25,8 @@ const Utilities = {
 
 			var role = build_project_version_admin_role(Session.get("activeProject"), Session.get("versionId"));
 
-			console.log("user roles", user["roles"])
-			console.log("role ", role)
+			//console.log("user roles", user["roles"])
+			//console.log("role ", role)
 
 			// to be fixed
 			// return _.find(user["roles"], function(role_in) {
@@ -67,15 +69,27 @@ const Utilities = {
 		var list = {update: update,
 					operation: operation};
 
-		Utilities.callMeteorMethod("updateUser", list);
+		Utilities.callMeteorMethod("updateUser", list);   
 	},
+	changeUserActiveProject: async function(proj_id) {
+		const proj = await Projects.findOneAsync({_id: proj_id});
 
-	changeUserActiveProject: function(proj_id) {
 	    var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: Session.get("userSystemId")});
 	    if (proj_user) {
 	        var version_id = proj_user["versionId"];
 	        Utilities.editUserProfile({activeProject: proj_id, activeVersion: version_id});
-
+				if ( proj != undefined ) {
+					const tool = await Tools.findOneAsync({_id: proj.toolId});
+					//console.log('@@@@@@@@  changeUserActiveProject  @@@@@@@@', tool)
+					if ( tool.toolGroup != undefined ) { // Jaunā konfigurācija
+						if ( tool.toolGroup == 'VQ') {
+							Interpreter.executeExtensionPoint(tool, "changeProject", proj_id);
+						}	
+					}
+					else {
+						Interpreter.executeExtensionPoint({extensionPoints:[{extensionPoint: 'changeProject', procedure: 'changeProject'}]}, "changeProject", proj_id);
+					}
+				}
 	        return version_id;
 	    }
 	},
