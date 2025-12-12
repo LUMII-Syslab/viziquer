@@ -13,56 +13,56 @@ import { CompartmentTypes } from '/imports/db/platform/collections'
 
 
 // import
-import '/imports/server/platform/import/import_ajoo_configuration'
-import '/imports/server/platform/import/import_TDA_configuration'
+import '/imports/platform/server/import/import_ajoo_configuration'
+import '/imports/platform/server/import/import_TDA_configuration'
 
 
 // server methods
-import '/imports/server/platform/user_account';
-import '/imports/server/platform/settings';
-import '/imports/server/platform/toolVersions';
+import '/imports/platform/server/user_account';
+import '/imports/platform/server/settings';
+import '/imports/platform/server/toolVersions';
 
-import '/imports/server/platform/methods/project/projects'
-import '/imports/server/platform/methods/project/project_users'
+import '/imports/platform/server/methods/project/projects'
+import '/imports/platform/server/methods/project/project_users'
 
-import '/imports/server/platform/methods/diagrams/diagrams'
-import '/imports/server/platform/methods/diagrams/elements'
-import '/imports/server/platform/methods/diagrams/compartments'
-import '/imports/server/platform/methods/diagrams/diagrams_sections'
-import '/imports/server/platform/methods/diagrams/elements_sections'
+import '/imports/platform/server/methods/diagrams/diagrams'
+import '/imports/platform/server/methods/diagrams/elements'
+import '/imports/platform/server/methods/diagrams/compartments'
+import '/imports/platform/server/methods/diagrams/diagrams_sections'
+import '/imports/platform/server/methods/diagrams/elements_sections'
 
-import '/imports/server/platform/methods/notifications/notifications'
-import '/imports/server/platform/methods/search/searches'
-import '/imports/server/platform/methods/users/projects_groups'
-import '/imports/server/platform/methods/versions/versions'
+import '/imports/platform/server/methods/notifications/notifications'
+import '/imports/platform/server/methods/search/searches'
+import '/imports/platform/server/methods/users/projects_groups'
+import '/imports/platform/server/methods/versions/versions'
 
 
 // configurator
-import '/imports/server/platform/methods/configurator/tools'
-import '/imports/server/platform/methods/configurator/diagram_types'
-import '/imports/server/platform/methods/configurator/element_types'
-import '/imports/server/platform/methods/configurator/compartment_types'
-import '/imports/server/platform/methods/configurator/dialog_tabs'
-import '/imports/server/platform/methods/configurator/documentTypes'
+import '/imports/platform/server/methods/configurator/tools'
+import '/imports/platform/server/methods/configurator/diagram_types'
+import '/imports/platform/server/methods/configurator/element_types'
+import '/imports/platform/server/methods/configurator/compartment_types'
+import '/imports/platform/server/methods/configurator/dialog_tabs'
+import '/imports/platform/server/methods/configurator/documentTypes'
 
 
 // publish
-import '/imports/server/platform/publish/publish_configurator_data'
-import '/imports/server/platform/publish/publish_data_analytics'
-import '/imports/server/platform/publish/publish_project_data'
-import '/imports/server/platform/publish/publish_user_data'
+import '/imports/platform/server/publish/publish_configurator_data'
+import '/imports/platform/server/publish/publish_data_analytics'
+import '/imports/platform/server/publish/publish_project_data'
+import '/imports/platform/server/publish/publish_user_data'
 
 
 // server custom
-import '/imports/server/custom/vq/convertJson2CSV'
-import '/imports/server/custom/vq/download_upload_project'
-import '/imports/server/custom/vq/execute_sparql'
-import '/imports/server/custom/vq/export_configruation'
-import '/imports/server/custom/vq/generate_query_from_SPARQL'
-import '/imports/server/custom/vq/publish'
-import '/imports/server/custom/vq/version_migration'
-import '/imports/server/custom/vq/ontologyParams'
-import '/imports/server/custom/vq/import_ontology'
+import '/imports/custom/vq/server/convertJson2CSV'
+import '/imports/custom/vq/server/download_upload_project'
+import '/imports/custom/vq/server/execute_sparql'
+import '/imports/custom/vq/server/export_configruation'
+import '/imports/custom/vq/server/generate_query_from_SPARQL'
+import '/imports/custom/vq/server/publish'
+import '/imports/custom/vq/server/version_migration'
+import '/imports/custom/vq/server/ontologyParams'
+import '/imports/custom/vq/server/import_ontology'
 
 // libs custom
 import '/imports/db/custom/vq/collections'

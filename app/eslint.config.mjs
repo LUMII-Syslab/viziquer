@@ -21,9 +21,9 @@ export default defineConfig([globalIgnores([
     "**/node_modules",
     "**/.meteor",
     "libs/3rdparty",
-    "imports/client/platform/js/editor/ajooEditor/ajoo/layoutEngine.js",
-    "imports/client/platform/js/editor/ajooEditor/ajoo/layoutEngine.max.js",
-    "imports/client/platform/js/editor/ajooEditor/ajoo/layoutEngine.min.js",
+    "imports/platform/client/js/editor/ajooEditor/ajoo/layoutEngine.js",
+    "imports/platform/client/js/editor/ajooEditor/ajoo/layoutEngine.max.js",
+    "imports/platform/client/js/editor/ajooEditor/ajoo/layoutEngine.min.js",
   ]), {
     extends: compat.extends("eslint:recommended"),
 

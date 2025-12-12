@@ -1,5 +1,5 @@
 import { Elements } from '../../db/platform/collections.js'
-import { reset_variable } from '../platform/js/utilities/utils.js'
+import { reset_variable } from '../../platform/client/js/utilities/utils.js'
 
 $(document).on('keypress', function (e) {
 
@@ -118,7 +118,7 @@ var Interpreter = {
 	},
 
 	destroy: function() {
-		//this.editor = 
+		//this.editor =
 	},
 
 };
