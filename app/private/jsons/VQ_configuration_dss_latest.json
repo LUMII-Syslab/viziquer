@@ -5549,8 +5549,7 @@
             "procedure": "CreateDiagram"
           },
 		  {
-            "extensionPoint": "beforeRenderDiagram",
-            "procedure": "beforeRenderDiagram"
+            "extensionPoint": "beforeRenderDiagram"
           },
           {
             "extensionPoint": "beforeDeleteCollection",
