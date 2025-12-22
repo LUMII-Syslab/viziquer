@@ -9465,7 +9465,8 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, parentClass
 		 var active_diagram_type_id = await Diagrams.findOneAsync({_id:Session.get("activeDiagram")})["diagramTypeId"];
 	 
 		let elem_type = await ElementTypes.findOneAsync({name:"Declaration", diagramTypeId:active_diagram_type_id});
-		var elems_in_diagram_ids = Elements.find({diagramId:diagramId, type:"Box", elementTypeId:elem_type._id })
+		let elems_in_diagram_ids = [];
+		if(elem_type) elems_in_diagram_ids = Elements.find({diagramId:diagramId, type:"Box", elementTypeId:elem_type._id })
 		
 		.map(function(e) {
 		  return e["_id"]
