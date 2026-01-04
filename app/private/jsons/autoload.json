@@ -1,6 +1,11 @@
 [
   {
     "toolName": "ViziQuer",
-    "configurationFile": "VQ_configuration_dss_latest.json"
+    "configurationFile": "vq/VQ_configuration_dss_latest.json",
+    "services": "vq/services_dss_ext2.json"
+  },
+  {
+    "toolName": "OWLGrEd",
+    "configurationFile": "owlgred/owlgred_09_2025.json"
   }
 ]
