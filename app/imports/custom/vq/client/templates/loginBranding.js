@@ -3,17 +3,31 @@ import { Template } from 'meteor/templating.js'
 import './loginBranding.html'
 
 Template.loginBranding.helpers({
-	toolVersion: function() {
-		return '0.5.1';
+	toolVersion() {
+		// return '0.5.1';
+		return Session.get('_toolVersion');
 	},
-	toolName: function() {
-		return 'MyViziQuer';
+	toolName() {
+		// return 'MyViziQuer';
+		return Session.get('_toolName');
 	},
-	toolSiteName: function() {
-		return 'viziquer.com';
+	toolSiteName() {
+		// return 'viziquer.com';
+		return Session.get('_toolSiteName');
 	},
-	toolSiteURL: function() {
-		return 'https://viziquer.com';
+	toolSiteURL() {
+		// return 'https://viziquer.com';
+		return Session.get('_toolSiteURL');
+	},
+
+  platformName() {
+		return Session.get('_platformName');
+	},
+  platformVersion() {
+		return Session.get('_platformVersion');
+	},
+  currentYear() {
+		return new Date().getFullYear();
 	},
 
 });

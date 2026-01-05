@@ -54,7 +54,7 @@ import '/imports/platform/client/templates/diagrams/dialog/multiField.html'
 import '/imports/platform/client/templates/diagrams/dialog/subCompartments.js'
 import '/imports/platform/client/templates/diagrams/dialog/swimlane.js'
 
-import '/imports/platform/client/templates/diagrams/diagram_log.html'
+// import '/imports/platform/client/templates/diagrams/diagram_log.html'
 import '/imports/platform/client/templates/diagrams/diagram.js'
 import '/imports/platform/client/templates/diagrams/diagrams.js'
 import '/imports/platform/client/templates/diagrams/public_diagram.js'

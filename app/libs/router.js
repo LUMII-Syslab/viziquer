@@ -4,7 +4,7 @@ import { Users, DiagramTypes } from "../imports/db/platform/collections.js";
 import { reset_variable } from "../imports/platform/client/js/utilities/utils.js";
 
 import "../imports/platform/client/templates/publicLayout.html";
-import "../imports/custom/vq/client/templates/loginBranding.html";
+// import "../imports/custom/vq/client/templates/loginBranding.html";
 import "../imports/platform/client/templates/structure/projects.js";
 import "../imports/platform/client/templates/structure/structure.js";
 import "../imports/platform/client/templates/notifications/notifications.js";

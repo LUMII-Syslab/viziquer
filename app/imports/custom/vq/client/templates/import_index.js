@@ -19,4 +19,5 @@ import '/imports/custom/vq/client/templates/fragments.js'
 
 // import '/imports/custom/vq/client/templates/add_subquery_form.html'
 import '/imports/custom/vq/client/templates/ajoo_bkus.html'
-import '/imports/custom/vq/client/templates/loginBranding.html'
+// import '/imports/custom/vq/client/templates/loginBranding.html'
+import '/imports/custom/vq/client/templates/loginBranding.js'
