@@ -2,9 +2,9 @@
 	options = arguments[1];
 
 	function makeVar(o) {return makeString(o);};
-			
+
 }
-			
+
 main
   = space? expressions:expression+ { return expressions; }
 
@@ -34,17 +34,17 @@ filterExprs
     }
 
 filterExpr
-  = filterItem1: filterItem space filterOp: filterOp space filterItem2:filterItem { 
-      return { filterItem1: filterItem1, filterOp: filterOp, filterItem2: filterItem2 }; 
+  = filterItem1: filterItem space filterOp: filterOp space filterItem2:filterItem {
+      return { filterItem1: filterItem1, filterOp: filterOp, filterItem2: filterItem2 };
     }
 
 filterItem
   = function
-  / "'" stringFilteredItem "'" 
-  / pathFunction 
-  / path 
-  / number 
-  / "true" 
+  / "'" stringFilteredItem "'"
+  / pathFunction
+  / path
+  / number
+  / "true"
   / "false"
 
 filterOp
@@ -70,7 +70,7 @@ pathFilter
 
 path
   = path:pathBody { return { path: path }; }
-  
+
 pathBody
   = path:(("/" (string / ".." / filter))+) {
       // Extract the `pathBody` from each matched segment
@@ -117,7 +117,7 @@ mandatory
   = "!" "(" expressions:mandatoryExpressions ")" filterExpr: filterExpr? { return { mandatory: {expressions:expressions, filterExpr:filterExpr} }; }
 
 mandatoryExpressions
-  = (space expression)+ 
+  = (space expression)+
 
 optional
   = optionalExpressions / optionalfunctionExpr
@@ -145,7 +145,7 @@ axiomSymbols
 
 stringExtended
   = [A-Za-z]+ / [0-9]+ / ":" / "/" / "."
- 
+
 string
    = [A-Za-z_]+ [A-Za-z0-9_+]* { return text(); }
 

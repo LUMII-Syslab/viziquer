@@ -31,10 +31,10 @@
 
                             {{#if publish}}
                                 {{> publish_version}}
-                            {{/if}}        
+                            {{/if}}
 
                             </div>
-                        </a>    
+                        </a>
                     {{else}}
                         <a class="clearfix notification" href="#" projectId="{{projectId}}" id="{{_id}}" role="{{data.role}}">
 
@@ -42,11 +42,11 @@
                             <div class="detail">
                                 {{> user_invited}}
                             </div>
-                            
+
                             {{#unless confirmed}}
                                 {{> user_confirm_buttons}}
                             {{/unless}}
-                            
+
                         {{/if}}
 
                         {{#if changed}}
@@ -186,7 +186,7 @@
 
 <template name="user_removed">
     {{{_ "notifications_user_removed" project=projectName remover=sendedBy}}}
-    <small class="text-muted"><i class="fa fa-clock-o"></i> {{_ "time_since" number=time.number context=time.time}}</small>    
+    <small class="text-muted"><i class="fa fa-clock-o"></i> {{_ "time_since" number=time.number context=time.time}}</small>
 </template>
 
 <template name="user_rejected">

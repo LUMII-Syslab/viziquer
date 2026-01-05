@@ -60,7 +60,7 @@ AnnotationAssertion([/eEnd/start:$elemType == 'Object'][/Property:$isEmpty == tr
 AnnotationAssertion([/eEnd/start:$elemType == 'Object'][/Property:$isEmpty == true][/ValueLanguage/Value:$isURI != true]$getAnnotationProperty(/AnnotationType /Namespace) $getObjectExpr(/eEnd/start) "$value(/ValueLanguage/Value)" ?(@$value(/ValueLanguage/Language)))
 AnnotationAssertion([/Property:$isEmpty != true][/ValueLanguage/Value:$isURI == true]$getAnnotationProperty(/AnnotationType /Namespace) $getUri(/Property) $value(/ValueLanguage/Value))
 AnnotationAssertion([/Property:$isEmpty != true][/ValueLanguage/Value:$isURI != true]$getAnnotationProperty(/AnnotationType /Namespace) $getUri(/Property) "$value(/ValueLanguage/Value)" ?(@$value(/ValueLanguage/Language)))
-	
+
 DifferentIndividuals(?(Annotation(/Annotation:$getAnnotationProperty(/AnnotationType /Namespace) "$value(/Annotation/ValueLanguage/Value)" ?(@$value(/Annotation/ValueLanguage/Language)))) !(?$getObjectExpr(/eEnd/start) ?$getObjectExpr(/eStart/end))[$count > 1])
 SameIndividual(?(Annotation(/Annotation:$getAnnotationProperty(/AnnotationType /Namespace) "$value(/Annotation/ValueLanguage/Value)" ?(@$value(/Annotation/ValueLanguage/Language)))) !(?$getObjectExpr(/eEnd/start) ?$getObjectExpr(/eStart/end))[$count > 1])
 EquivalentClasses(?(Annotation(/Annotation:$getAnnotationProperty(/AnnotationType /Namespace) "$value(/Annotation/ValueLanguage/Value)" ?(@$value(/Annotation/ValueLanguage/Language)))) !(?$getClassExpr(/eEnd/start) ?$getClassExpr(/eStart/end))[$count > 1])

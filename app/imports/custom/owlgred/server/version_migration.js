@@ -11,7 +11,7 @@ Meteor.methods({
 		}
 
 		migrateProjectByTool(target_tool, list);
-	},	
+	},
 
 	migrateProject: function(list) {
 		var user_id = Meteor.userId();
@@ -27,7 +27,7 @@ Meteor.methods({
 			});
 		}
 	},
-	
+
 	migrateIndexes: function(projectId) {
 
 		Diagrams.find({projectId: projectId}).forEach(function(diagram) {
@@ -42,28 +42,28 @@ Meteor.methods({
 					if (compartments.count() == 1 ){
 					    compartments.forEach(function(c){
 							Compartments.update({_id: c._id, projectId:projectId,},{$set: { index: compType.index,}});
-						})  
+						})
 					}
 					if (compartments.count() > 1 ){
 						comp_ind = compartments.map(function (c) {
 							return {_id:c._id, index:c.index, input:c.input};
 						});
 						comp_ind.sort(function(a, b) { return a.index - b.index; })
-						var i = 0; 
+						var i = 0;
 						comp_ind.forEach(function(c)
 						{
-							Compartments.update({_id: c._id, projectId: projectId,},{$set: { index: compType.index+i,}});					   
+							Compartments.update({_id: c._id, projectId: projectId,},{$set: { index: compType.index+i,}});
 							i = i + 1
-						})		   
+						})
 					}
 				});
-				
-						
+
+
 
 			});
 		});
 		console.log("Done");
-	}, 
+	},
 });
 
 

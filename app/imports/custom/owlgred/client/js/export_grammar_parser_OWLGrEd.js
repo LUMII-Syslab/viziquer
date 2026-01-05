@@ -60,8 +60,8 @@
               const allFilterExprs = [first, ...rest.map(r => r[3])];
               return allFilterExprs;
             },
-        peg$c15 = function(filterItem1, filterOp, filterItem2) { 
-              return { filterItem1: filterItem1, filterOp: filterOp, filterItem2: filterItem2 }; 
+        peg$c15 = function(filterItem1, filterOp, filterItem2) {
+              return { filterItem1: filterItem1, filterOp: filterOp, filterItem2: filterItem2 };
             },
         peg$c16 = "'",
         peg$c17 = { type: "literal", value: "'", description: "\"'\"" },
@@ -3520,7 +3520,7 @@
     	options = arguments[1];
 
     	function makeVar(o) {return makeString(o);};
-    			
+
 
 
     peg$result = peg$startRuleFunction();

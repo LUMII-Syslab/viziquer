@@ -35,9 +35,9 @@ Meteor.methods({
 								projectId: list.projectId,
 								versionId: list.versionId,
 								isLayoutComputationNeededOnLoad: 1,
-                                description:`${ontology.ClassCount} classes, ${ontology.NodesCount} nodes, ${ontology.LinesCount + ontology.generalizationCount} (${ontology.LinesCount}a + ${ontology.generalizationCount}g) lines, Merging level - ${ontology.params.diffG}` 
+                                description:`${ontology.ClassCount} classes, ${ontology.NodesCount} nodes, ${ontology.LinesCount + ontology.generalizationCount} (${ontology.LinesCount}a + ${ontology.generalizationCount}g) lines, Merging level - ${ontology.params.diffG}`
 							};
-        
+
         //if ( !ontology.hasGeneralization ) {
         //    console.log('Mēģinam likt klāt citu izvietojumu', ontology.Schema)
         //    diagram_object['layoutSettings'] = {layout: 'UNIVERSAL', arrangeMethod: 'arrangeFromScratch'};
@@ -47,14 +47,14 @@ Meteor.methods({
         let new_diagram_id = Diagrams.insert(diagram_object);
 		let element_map = {};
 
-        // Namespaces part 
+        // Namespaces part
         let ns_type = ElementTypes.findOne({name: "Namespaces", diagramTypeId: diagram_type._id});
         if (!ns_type) {
 			console.error("No Namespaces type");
 			return;
-		}    
+		}
         let ns_style = ns_type["styles"][0];
-		let ns_style_id = ns_style["id"];   
+		let ns_style_id = ns_style["id"];
         let ns_object = {diagramId: new_diagram_id,
             type: "Box",
             location: {x: 10, y: 10, width: 5, height: 5},
@@ -71,13 +71,13 @@ Meteor.methods({
         list.uStrings = ontology.uStrings;
 
         let ns_element = Elements.insert(ns_object);
-        //const nsProc = (ontology.Namespaces.n_0.compartments.List.length > 35) ? Math.round(3500/ontology.Namespaces.n_0.compartments.List.length) : 100; 
+        //const nsProc = (ontology.Namespaces.n_0.compartments.List.length > 35) ? Math.round(3500/ontology.Namespaces.n_0.compartments.List.length) : 100;
         //add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, '', nsProc, new_diagram_id, diagram_type._id, ns_element, ns_type._id, false)
         list.element_id = ns_element;
         list.element_type_id = ns_type._id;
         add_one_compartment_from_list(list, "List", ontology.Namespaces.n_0.compartments.List, '', {cut:false}, false)
 
-        // Class part 
+        // Class part
 		let class_type = ElementTypes.findOne({name: "Class", diagramTypeId: diagram_type._id});
 		if (!class_type) {
 			console.error("No Class type");
@@ -96,9 +96,9 @@ Meteor.methods({
             let class_style_old = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeOld});
             let class_style_new = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeNew});
             if ( class_style_old != undefined )
-                class_style = class_style_old; 
+                class_style = class_style_old;
             if ( class_style_new != undefined )
-                class_style = class_style_new; 
+                class_style = class_style_new;
 
 			let object = {diagramId: new_diagram_id,
 							type: "Box",
@@ -194,10 +194,10 @@ Meteor.methods({
             cut_info.class_cnt = ontology.Class[item.source].Cnt;
             const lineCompCount = 5;
             cut_info.cut = item.compartments.Name.length > lineCompCount;
-            cut_info.max = lineCompCount; 
+            cut_info.max = lineCompCount;
             add_one_compartment_from_list(list, "Name", item.compartments.Name, '', cut_info);
 		});
-        
+
         // Intersect Lines part
 		let iline_type = ElementTypes.findOne({name: "intersection", diagramTypeId: diagram_type._id});
 		if (!iline_type) {
@@ -294,7 +294,7 @@ function add_class_compartments(list, item ) {
 	let compartments = item.compartments;
     // Class Name
     add_one_compartment(list, "Name", compartments.Name, compartments.Name)
-  
+
     const outCount = 7;
     const inCount = 5;
     const classCount = 7;
@@ -306,24 +306,24 @@ function add_class_compartments(list, item ) {
     // Attributes
     if ( compartments.AttributesT.out.length > 0 ) {
         cut_info.cut = compartments.AttributesT.out.length > outCount;
-        cut_info.max = outCount; 
+        cut_info.max = outCount;
         add_one_compartment_from_list(list, "PropOut", compartments.AttributesT.out, '', cut_info)
     }
     if ( compartments.AttributesT.in.length > 0 ) {
         cut_info.cut = compartments.AttributesT.in.length > inCount;
-        cut_info.max = inCount; 
+        cut_info.max = inCount;
         add_one_compartment_from_list(list, "PropIn", compartments.AttributesT.in, `${list.uStrings.u_in_prop} `, cut_info)
     }
     if ( compartments.AttributesT.c.length > 0 ) {
         cut_info.cut = compartments.AttributesT.c.length > inCount;
-        cut_info.max = inCount; 
+        cut_info.max = inCount;
         add_one_compartment_from_list(list, "PropC", compartments.AttributesT.c, `${list.uStrings.u_c_prop} `, cut_info)
     }
 
     //SubClasses
     if ( compartments.ClassList.length > 0 ) {
         cut_info.cut = compartments.ClassList.length > classCount;
-        cut_info.max = classCount; 
+        cut_info.max = classCount;
         add_one_compartment_from_list(list, "ClassList", compartments.ClassList, '', cut_info);
     }
 
@@ -331,10 +331,10 @@ function add_class_compartments(list, item ) {
 
 function add_one_compartment_from_list(list, compartmentName, value_list, pref, cut_info, sort = true) {
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
-    const length = value_list.length;  
-    let max_count = value_list.length; 
+    const length = value_list.length;
+    let max_count = value_list.length;
     if ( !list.compactClassView && compartmentName != 'ClassList')
-        cut_info.cut = false; 
+        cut_info.cut = false;
     if ( cut_info.cut ) {
         const values75 = value_list.filter(function(v){ return v.cnt > 0.75*cut_info.class_cnt; });
         const values50 = value_list.filter(function(v){ return v.cnt > 0.5*cut_info.class_cnt; });
@@ -351,12 +351,12 @@ function add_one_compartment_from_list(list, compartmentName, value_list, pref, 
         if ( length - max_count < 3 )
             max_count = length;
     }
- 
+
     if ( max_count < length ) {
         value_list = value_list.slice(0, max_count);
     }
     let value = ( sort ) ? replace_newline(value_list.map(a => `${pref}${a.name}`).sort().join('\n')) : replace_newline(value_list.map(a => `${pref}${a.name}`).join('\n'));
-    if ( max_count < length )  value = `${value}\n...(${length-max_count})...`; 
+    if ( max_count < length )  value = `${value}\n...(${length-max_count})...`;
 
     add_one_compartment(list, compartmentName, input, value);
 }
@@ -365,13 +365,13 @@ function add_one_compartment_from_list(list, compartmentName, value_list, pref, 
 function add_one_compartment_from_list(list, compartmentName, value_list, pref, proc, diagram_id, diagram_type_id, element_id, element_type_id, sort = true) {
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const max_count = Math.round(value_list.length*proc/100);
-    const length = value_list.length;   
+    const length = value_list.length;
     if ( value_list.length < 3 || length-max_count == 1) proc = 100; // TODO šis ir lai nesanāk dīvaini
     if ( proc < 100 ) {
         value_list = value_list.slice(0, max_count);
     }
     let value = ( sort ) ? replace_newline(value_list.map(a => `${pref}${a.name}`).sort().join('\n')) : replace_newline(value_list.map(a => `${pref}${a.name}`).join('\n'));
-    if ( proc < 100 )  value = `${value}\n...(${length-max_count})...`; 
+    if ( proc < 100 )  value = `${value}\n...(${length-max_count})...`;
 
     add_one_compartment(list, compartmentName, input, value);
 } */

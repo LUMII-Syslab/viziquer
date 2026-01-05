@@ -53,7 +53,7 @@ ExportDiagramConfig.prototype = {
 						}
 
 						var diagram_type_id = diagram_type._id;
-							
+
 						var diagram_type_out = {object: diagram_type,
 												dialog: self.exportDiagramTypeDialog(diagram_type_id),
 												compartmentTypes: self.exportDiagramTypeCompartmentTypes(diagram_type_id),

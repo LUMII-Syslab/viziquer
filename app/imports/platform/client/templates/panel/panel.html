@@ -1,16 +1,16 @@
 <template name="panel">
-    <aside class="fixed skin-{{skin}}" activePanelItem="{{activePanelItem}}">    
+    <aside class="fixed skin-{{skin}}" activePanelItem="{{activePanelItem}}">
         <div class="sidebar-inner scrollable-sidebar">
-            
+
             <div class="main-menu">
                 <ul>
                     <li class="structure {{isProjectsActive}} panel-item">
                         <a id="structure" href="{{pathFor 'structure'}}">
                             <span class="menu-icon">
-                                <i class="fa fa-folder fa-lg"></i> 
+                                <i class="fa fa-folder fa-lg"></i>
                             </span>
                             <span class="text">
-                                {{_ "structure"}}   
+                                {{_ "structure"}}
                             </span>
                             <span class="menu-hover"></span>
                         </a>
@@ -26,16 +26,16 @@
                 </div><!-- /user-block -->
             {{/with}}
 
-            <div class="main-menu">        
-                <ul>   
+            <div class="main-menu">
+                <ul>
 
-                    {{#each panel}} 
+                    {{#each panel}}
 
                         {{#if isVisible}}
                             <li class="{{id}} {{active}} panel-item">
                                 <a id="{{id}}" href="{{pathFor route projectId=this.projectId versionId=this.versionId}}">
                                     <span class="menu-icon">
-                                        <i class="fa fa-{{icon}} fa-lg"></i> 
+                                        <i class="fa fa-{{icon}} fa-lg"></i>
                                     </span>
                                     <span class="text">
                                         {{_ id}}
@@ -49,7 +49,7 @@
 
                 </ul>
             </div><!-- /main-menu -->
-    
+
         </div><!-- /sidebar-inner -->
     </aside>
 </template>

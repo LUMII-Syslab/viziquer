@@ -13,7 +13,7 @@
 	                    <form onsubmit="return false;">
 	                    	{{#if fields}}
 								{{#each fields}}
-								
+
 									{{#if Name}}
 										 <div class="form-group" style="margin-bottom:10px;">
 											<label>Name</label>
@@ -23,7 +23,7 @@
 										 <div class="form-group" style="margin-bottom:10px;">
 											<label>Type</label>
 											<input id="add-attribute-type" list="dataTypes" type="text" autocomplete="off" class="form-control" value="{{field_value}}">
-											
+
 											<datalist id="dataTypes" class="datalist">
 												<option mappedValue="Literal" input="Literal">Literal</option>
 												<option mappedValue="NCName" input="NCName">NCName</option>
@@ -66,12 +66,12 @@
 									{{else if Multiplicity}}
 									  <div class="form-group" style="margin-bottom:10px;">
 											<label>Multiplicity</label>
-											<input id="add-attribute-multiplicity" list="multiplicityList" type="text" autocomplete="off" class="form-control" value="{{field_value}}">			
+											<input id="add-attribute-multiplicity" list="multiplicityList" type="text" autocomplete="off" class="form-control" value="{{field_value}}">
 											<datalist id="multiplicityList" class="datalist">
 												<option mappedValue="*" input="*">*</option>
 												<option mappedValue="1" input="1">1</option>
 												<option mappedValue="0..1" input="0..1">0..1</option>
-												<option mappedValue="1..*" input="1..*">1..*</option>	
+												<option mappedValue="1..*" input="1..*">1..*</option>
 											</datalist>
 									  </div>
 									{{else if Annotation}}
@@ -111,7 +111,7 @@
 										  </tbody>
 										</table>
 
-										
+
 										<datalist id="AnnotationTypeList" class="datalist">
 										  <option mappedValue="backwardCompatibleWith" input="backwardCompatibleWith">backwardCompatibleWith</option>
 										  <option mappedValue="comment" input="comment">comment</option>
@@ -143,7 +143,7 @@
 									</div>
 									{{else if IsFunctional}}
 									  <div class="form-group" style="margin-bottom:10px;">
-											<label class="label-checkbox">					
+											<label class="label-checkbox">
 												<input id="add-attribute-IsFunctional" type="checkbox" checked="{{checked}}">
 												<span class="custom-checkbox"></span>
 												Is Functional
@@ -190,7 +190,7 @@
 									{{else if SuperProperties}}
 									   <div class="form-group" style="margin-bottom:10px;">
 											<label class="label-checkbox">
-											   
+
 												Super Properties
 												<div style="border: 1px solid #ccc; border-radius: 5px; padding: 15px;">
 												<table id="property-table-super" class="table table-bordered">
@@ -212,13 +212,13 @@
 													  </button>
 													</td>
 												  </tr>
-												{{/each}}									
+												{{/each}}
 												</tbody>
 											  </table>
 											  <div style="text-align: right; margin-top: 10px;">
 											  <button id="add-super-properties-row-btn" class="btn btn-primary btn-sm" style="padding: 1px 6px;">
 												<i class="fa fa-plus"></i> Add
-											  </button>	
+											  </button>
 											   </div>
 											   </div>
 											</label>
@@ -247,13 +247,13 @@
 														  </button>
 														</td>
 													  </tr>
-													{{/each}}									
+													{{/each}}
 												</tbody>
 											  </table>
 											  <div style="text-align: right; margin-top: 10px;">
 											  <button id="add-disjoint-properties-row-btn" class="btn btn-primary btn-sm" style="padding: 1px 6px;">
 												<i class="fa fa-plus"></i> Add
-											  </button>	
+											  </button>
 											  </div>
 											  </div>
 											</label>
@@ -261,8 +261,8 @@
 									<!-- {{else}} -->
 									  <!-- {{> Template.dynamic template="dialogTabContent" data=fields}} -->
 									{{/if}}
-								
-								
+
+
 	                        	{{/each}}
 
 	                        {{/if}}
