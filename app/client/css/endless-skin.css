@@ -98,12 +98,12 @@ aside.skin-1 .main-menu > ul > li > .submenu  li.active a .submenu-label{
     aside.skin-1 .main-menu > ul > li > .dropdown-menu li a {
        color: #777;
     }
-    
-    aside.skin-1 .main-menu > ul > li > .dropdown-menu li a:hover 
+
+    aside.skin-1 .main-menu > ul > li > .dropdown-menu li a:hover
     ,aside.skin-1 .main-menu > ul > li > .dropdown-menu li a:focus {
        color: #777;
        background: #f9f9f9;
-    } 
+    }
 }
 #top-nav.skin-1 {
   background: #3c8dbc;
@@ -113,7 +113,7 @@ aside.skin-1 .main-menu > ul > li > .submenu  li.active a .submenu-label{
   background-color: #fff;
 }
 #top-nav.skin-1 .brand {
-  color: #c3e3f5;	
+  color: #c3e3f5;
   background: #3c8dbc;
 }
 #top-nav.skin-1 .page-title {
@@ -234,8 +234,8 @@ aside.skin-2 .main-menu > ul > li > .submenu  li.active a .submenu-label{
     aside.skin-2 .main-menu > ul > li > .dropdown-menu li a {
        color: #777;
     }
-    
-    aside.skin-2 .main-menu > ul > li > .dropdown-menu li a:hover 
+
+    aside.skin-2 .main-menu > ul > li > .dropdown-menu li a:hover
        ,aside.skin-2 .main-menu > ul > li > .dropdown-menu li a:focus {
         color: #fff;
         background: #bd3f26;
@@ -249,7 +249,7 @@ aside.skin-2 .main-menu > ul > li > .submenu  li.active a .submenu-label{
   background-color: #fff;
 }
 #top-nav.skin-2 .brand {
-  color: #f4cdc5;	
+  color: #f4cdc5;
   background: #BD3F26;
 }
 #top-nav.skin-2 .page-title {
@@ -370,8 +370,8 @@ aside.skin-3 .main-menu > ul > li > .submenu  li.active a .submenu-label{
     aside.skin-3 .main-menu > ul > li > .dropdown-menu li a {
        color: #d6e8f7;
     }
-    
-    aside.skin-3 .main-menu > ul > li > .dropdown-menu li a:hover 
+
+    aside.skin-3 .main-menu > ul > li > .dropdown-menu li a:hover
     ,aside.skin-3 .main-menu > ul > li > .dropdown-menu li a:focus {
         color: #fff;
         background: #396389;
@@ -386,7 +386,7 @@ aside.skin-3 .main-menu > ul > li > .submenu  li.active a .submenu-label{
 }
 #top-nav.skin-3 .brand {
   color: #fff;
-  background: #3e6b96;  
+  background: #3e6b96;
 }
 #top-nav.skin-3 .page-title {
   color: #999;
@@ -506,8 +506,8 @@ aside.skin-4 .main-menu > ul > li > .submenu  li.active a .submenu-label{
     aside.skin-4 .main-menu > ul > li > .dropdown-menu li a {
        color: #f7e4d7;
     }
-    
-    aside.skin-4 .main-menu > ul > li > .dropdown-menu li a:hover 
+
+    aside.skin-4 .main-menu > ul > li > .dropdown-menu li a:hover
     ,aside.skin-4 .main-menu > ul > li > .dropdown-menu li a:focus {
         color: #fff;
         background: #55473e;
@@ -521,7 +521,7 @@ aside.skin-4 .main-menu > ul > li > .submenu  li.active a .submenu-label{
   background-color: #F7E4D7;
 }
 #top-nav.skin-4 .brand {
-  color: #F7E4D7;	
+  color: #F7E4D7;
   background: #635247;
 }
 #top-nav.skin-4 .page-title {
@@ -638,8 +638,8 @@ aside.skin-5 .main-menu > ul > li > .submenu  li.active a .submenu-label{
     aside.skin-5 .main-menu > ul > li > .dropdown-menu li a {
        color: #999;
     }
-    
-    aside.skin-5 .main-menu > ul > li > .dropdown-menu li a:hover 
+
+    aside.skin-5 .main-menu > ul > li > .dropdown-menu li a:hover
        ,aside.skin-5 .main-menu > ul > li > .dropdown-menu li a:focus {
         color: #fff;
         background: #333;
@@ -653,7 +653,7 @@ aside.skin-5 .main-menu > ul > li > .submenu  li.active a .submenu-label{
   background-color: #fff;
 }
 #top-nav.skin-5 .brand {
-  color: #999;	
+  color: #999;
   background: #3a3a3a;
 }
 #top-nav.skin-5 .page-title {
@@ -770,8 +770,8 @@ aside.skin-6 .main-menu > ul > li > .submenu  li.active a .submenu-label{
     aside.skin-6 .main-menu > ul > li > .dropdown-menu li a {
        color: #BECFE0;
     }
-    
-    aside.skin-6 .main-menu > ul > li > .dropdown-menu li a:hover 
+
+    aside.skin-6 .main-menu > ul > li > .dropdown-menu li a:hover
        ,aside.skin-6 .main-menu > ul > li > .dropdown-menu li a:focus {
         color: #fff;
         background: #415160;
@@ -785,12 +785,12 @@ aside.skin-6 .main-menu > ul > li > .submenu  li.active a .submenu-label{
   background-color: #fff;
 }
 #top-nav.skin-6 .brand {
-  color: #BECFE0;	
+  color: #BECFE0;
   background: #2B333C;
 }
 #top-nav.skin-6 .brand:hover
 ,#top-nav.skin-6 .brand:focus {
-  color: #fff;	
+  color: #fff;
 }
 #top-nav.skin-6 .page-title {
   color: #BECFE0;
