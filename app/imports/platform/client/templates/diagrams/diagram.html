@@ -78,6 +78,7 @@
               {{> Template.dynamic template=templateId}}
           {{/each}}
 
+          <!-- FIXME-TOOLGROUPS Start -->
           {{> AddLink}}
           {{> ConnectClasses}}
           {{> ConnectClassesSettings}}
@@ -94,6 +95,13 @@
           {{> ExplainField}}
           {{> VQ_DSS_schema}}
           {{> VQ_DSS_custom_sparql}}
+
+          {{> loadOntologyOWLGrEd}}
+          <!-- {{> AddAttribute_OWLGrEd}} -->
+          <!-- {{> AddKeys_OWLGrEd}} -->
+          <!-- {{> AddPropertyChain_OWLGrEd}} -->
+
+          <!-- FIXME-TOOLGROUPS End -->
 
     {{else}}
         Loading
