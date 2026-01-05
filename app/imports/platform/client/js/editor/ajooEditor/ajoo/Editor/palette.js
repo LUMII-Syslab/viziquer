@@ -41,7 +41,7 @@ var Palette = function(editor, palette_obj) {
                                         height: editor.height,
                                         });
 
-    editor.paletteStage = paletteStage;    
+    editor.paletteStage = paletteStage;
 
 	//adding palette layer
 	var palette_layer = new Konva.Layer();
@@ -85,7 +85,7 @@ Palette.prototype = {
 
 			//computing the button position
 			palette_button["x"] = x;
-			palette_button["y"] = y + (height + distance_between_buttons) * index; 			
+			palette_button["y"] = y + (height + distance_between_buttons) * index;
 
 			//building button
 			var button = new PaletteButton(palette);
@@ -113,7 +113,7 @@ Palette.prototype = {
             palette_layer.destroyChildren();
         }
 
-        //if needed, refreshing the layer 
+        //if needed, refreshing the layer
         if (is_refresh_needed) {
             palette.refresh();
         }
@@ -204,7 +204,7 @@ var PaletteButton = function(palette) {
 		var button_style = paletteButton.backgroundRectStyle();
 		button_style["perfectDrawEnabled"] = false;
 		button_style["listening"] = false;
-		
+
 		var palette_button_rect = new Konva.Rect(button_style);
 			palette_button_rect["name"] = "ButtonRect";
 
@@ -305,7 +305,7 @@ var PaletteButton = function(palette) {
 				start_shape_style["width"] = compute_palette_line_end_shape_radius(start_shape_style["width"]);
 
 			if (start_shape_style["height"])
-				start_shape_style["height"] = compute_palette_line_end_shape_radius(start_shape_style["height"]);		
+				start_shape_style["height"] = compute_palette_line_end_shape_radius(start_shape_style["height"]);
 		}
 
 		var end_shape_style = style["endShapeStyle"];
@@ -321,7 +321,7 @@ var PaletteButton = function(palette) {
 			// 	end_shape_style["width"] = max_width;
 
 			//if (end_shape_style["height"] > max_height)
-			// 	end_shape_style["height"] = max_height;				
+			// 	end_shape_style["height"] = max_height;
 		}
 
 		var x1 = 5;
@@ -372,7 +372,7 @@ var PaletteButton = function(palette) {
 			var palette_icon = link.presentation;
 			palette_icon["name"] = "PaletteIcon";
 		}
-		
+
 /*		var link = new Link(editor);
 		link.render(button_container, properties);
 
@@ -390,7 +390,7 @@ var PaletteButton = function(palette) {
 												    opacity: 0,
 												    perfectDrawEnabled: false,
 												});
-			palette_button_overlay["name"] = "Overlay";	
+			palette_button_overlay["name"] = "Overlay";
 
 		button_container.add(palette_button_overlay);
 		palette_button_overlay.moveToTop();
@@ -404,24 +404,24 @@ var PaletteButton = function(palette) {
 	}
 
 	Palette.tooltip = null
-	Palette.layer = null  
+	Palette.layer = null
 
 	function addTooltip(y, tooltipText, stage){
 		//console.log("adding tooltip ... ")
 		//absolute top x and y are absolute coordinates of a left upper corner of a visible area of the component ajoo_scene
-		//visible area can be different from full component area in cases where horizontal or vertical scrolling is involved 
-		let absoluteTop_y = document.getElementById("ajoo_scene").getBoundingClientRect().top - 
+		//visible area can be different from full component area in cases where horizontal or vertical scrolling is involved
+		let absoluteTop_y = document.getElementById("ajoo_scene").getBoundingClientRect().top -
 		                    document.getElementById("ajoo_scene").children[0].getBoundingClientRect().top;
-		
-		let absoluteTop_x = document.getElementById("ajoo_scene").getBoundingClientRect().left - 
+
+		let absoluteTop_x = document.getElementById("ajoo_scene").getBoundingClientRect().left -
 							document.getElementById("ajoo_scene").children[0].getBoundingClientRect().left;
-		
+
 		if (Palette.layer == null) {
 			Palette.layer = new Konva.Layer();
 			//console.log(stage)
 			stage.add(Palette.layer);
 		}
-		
+
 		if (Palette.tooltip == null) {
 			// label with left pointer
 			Palette.tooltip = new Konva.Label({
@@ -453,8 +453,8 @@ var PaletteButton = function(palette) {
 
 			// add the labels to layer
 			Palette.layer.add(Palette.tooltip);
-			Palette.layer.draw();	
-			//console.log(Palette.layer)	
+			Palette.layer.draw();
+			//console.log(Palette.layer)
 		}
 	}
 
@@ -467,7 +467,7 @@ var PaletteButton = function(palette) {
 		// console.log("elementTypeID = ", this.data.elementTypeId )
 
 		//find element_type by this.data.elementTypeId
-		
+
 		// console.log(window.rootVueInstance.$children[0].$children[2].elementTypes)
 		//const AjooEditorVueComponent = window.Vue.$children[0].$children[2]
 
@@ -500,7 +500,7 @@ var PaletteButton = function(palette) {
 
 		if (is_no_refresh)
 			return;
-		
+
 		if(Palette.tooltip){
 			Palette.tooltip.destroy()
 			Palette.layer.draw()
@@ -554,7 +554,7 @@ PaletteButton.prototype = {
 		paletteButton.add_palette_button_overlay(button_container);
 
 		//adding palette button handlers
-		new PaletteButtonHandlers(paletteButton);	
+		new PaletteButtonHandlers(paletteButton);
 	},
 
 	remove: function() {
@@ -577,7 +577,7 @@ PaletteButton.prototype = {
 
 		//changing style
 		paletteButton.setActiveStyle();
-	}, 
+	},
 
 	unPressPaletteButton: function(is_no_refresh) {
 		var paletteButton = this;

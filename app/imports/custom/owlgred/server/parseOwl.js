@@ -12,7 +12,7 @@ Meteor.methods({
     const result = $rdf.serialize(null, store, baseURI, 'application/rdf+xml');
     return result;
   },
-  
+
   declareOwlClass() {
     const store = $rdf.graph();
 
@@ -30,15 +30,15 @@ Meteor.methods({
 	// const ntriples = $rdf.serialize(null, store, 'http://example.org/', 'application/n-triples');
 	// const n3 = $rdf.serialize(null, store, 'http://example.org/', 'text/n3');
 	// const jsonld = $rdf.serialize(null, store, 'http://example.org/', 'application/ld+json');
-	
+
     return turtle;
   },
-  
+
   generateOwlRDFLib(onto, namespaceTable, format = 'text/turtle') {
 
 	  const store = $rdf.graph();
-    
-    
+
+
     store.namespaces = {
       rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
       owl: 'http://www.w3.org/2002/07/owl#',
@@ -53,7 +53,7 @@ Meteor.methods({
 	  }
       else store.namespaces[key] = namespaceTable[key]
     }
-    
+
 	  const ns = {
 		rdf: $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#'),
 		rdfs: $rdf.Namespace('http://www.w3.org/2000/01/rdf-schema#'),
@@ -82,8 +82,8 @@ Meteor.methods({
 	  };
 
 	  const { Ontology, Class, DataType, AnnotationProperty, ObjectProperty, NamedIndividual } = onto;
-	  
-	  
+
+
 
 	  const addTriple = (s, p, o) => store.add($rdf.sym(s), $rdf.sym(p), $rdf.sym(o));
 	  for (const key of Object.keys(Ontology)) {
@@ -131,7 +131,7 @@ Meteor.methods({
 		  } else if (ax.type === "DataPropertyRange") {
 			  const attrIRI = ax.axiom[0].IRI;
 			  const classIRI = ax.axiom[1].IRI;
-			  addTriple(attrIRI, ns.rdfs('range').uri, classIRI); 
+			  addTriple(attrIRI, ns.rdfs('range').uri, classIRI);
 		  }else if (ax.type === "FunctionalDataProperty") {
 			addTriple(ax.axiom.IRI, ns.rdf('type').uri, ns.owl('FunctionalProperty').uri);
 		  } else if (["EquivalentDataProperties", "DisjointDataProperties", "SubDataPropertyOf"].includes(ax.type)) {
@@ -141,13 +141,13 @@ Meteor.methods({
 					  DisjointDataProperties: ns.owl('propertyDisjointWith').uri,
 					  SubDataPropertyOf: ns.rdfs('subPropertyOf').uri
 					};
-			
+
 				  const base = ax.axiom[0].IRI;
 				  for (let i = 1; i < ax.axiom.length; i++) {
 					addTriple(base, predMap[ax.type] ,ax.axiom[i].IRI);
 				  }
 				}
-			  
+
 		  } else if (["EquivalentClasses", "DisjointClasses", "SubClassOf"].includes(ax.type)) {
         const typeMap = {
           EquivalentClasses: ns.owl('equivalentClass').uri,
@@ -230,7 +230,7 @@ Meteor.methods({
 			throw new Error("Expected ObjectUnionOf in ax.axiom[1]");
 		  }
 
-			
+
 			const RDF  = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 			const OWL  = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
 			  const [left, right] = ax.axiom;
@@ -255,20 +255,20 @@ Meteor.methods({
 
 			  // :LHS owl:equivalentClass _:u .
 			  store.add(LHS, OWL('equivalentClass'), unionExpr);
-			
+
 
 		}else{
-		  if(ax.axiom.length > 2 && ax.type === "DisjointClasses"){	 
+		  if(ax.axiom.length > 2 && ax.type === "DisjointClasses"){
 			const RDF = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 			const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
 			const EX = $rdf.Namespace('http://example.org/');
-					
+
 			// Convert to RDFLib NamedNodes
 			const classNodes = ax.axiom.map(c => $rdf.namedNode(c.IRI));
 
 			// Create a blank node for the axiom
-			const axiom = $rdf.blankNode();		
-			
+			const axiom = $rdf.blankNode();
+
 			// Add type triple: [] a owl:AllDisjointClasses
 			store.add(axiom, RDF('type'), OWL('AllDisjointClasses'));
 
@@ -313,7 +313,7 @@ Meteor.methods({
 			  }
 			}
 		  } else if (ax.type === "HasKey") {
-			  
+
 			  const RDF = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 			  const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
 			  const cls = ax.axiom[0];
@@ -342,7 +342,7 @@ Meteor.methods({
 
 			  // :Class owl:hasKey ( ... )
 			  store.add(classNode, OWL('hasKey'), keyList);
-			
+
 		  }
 		}
 	  }
@@ -369,9 +369,9 @@ Meteor.methods({
 			   if (dt && dtdefinition) {
 				  const attrIRI = ax.axiom[0].IRI;
 				  const classIRI = ax.axiom[1].IRI;
-				  addTriple(dt, ns.owl('onDatatype').uri, dtdefinition); 
+				  addTriple(dt, ns.owl('onDatatype').uri, dtdefinition);
 			  }
-			} 
+			}
 		}
 	  }
 
@@ -404,10 +404,10 @@ Meteor.methods({
         for (const obj of ax.axiom[1]) {
           addTriple(subj, ns.rdfs('subPropertyOf'), obj.IRI);
         }
-		  } 
+		  }
 		}
 	  }
-    
+
     for (const key of Object.keys(NamedIndividual)) {
 		for (const p of Object.keys(NamedIndividual[key])) {
 		  const ax = NamedIndividual[key][p];
@@ -443,10 +443,10 @@ Meteor.methods({
 			const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
 
 			// Convert to NamedNodes (dedupe, drop falsy)
-			const inds = ax.axiom.map(x => $rdf.namedNode(x.IRI));  
+			const inds = ax.axiom.map(x => $rdf.namedNode(x.IRI));
 
-			if (inds.length >= 2) {	
-			  
+			if (inds.length >= 2) {
+
 			  const head = inds[0];
 			  // for (let i = 1; i < inds.length; i++) {
 				// store.add(head, OWL('sameAs'), inds[i]);
@@ -460,7 +460,7 @@ Meteor.methods({
 			    }
 			  }
 			}
-			  
+
 		  } else if(ax.type === "DifferentIndivids"){
 			const RDF = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 			const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
@@ -492,7 +492,7 @@ Meteor.methods({
 				  // plain literal
 				  objectLiteral = $rdf.literal(ax.axiom[2].value);
 				}
-			
+
 				// Add triple: :subject :property "value"^^type
 				store.add(
 				  $rdf.sym(ax.axiom[1].IRI),
@@ -562,7 +562,7 @@ Meteor.methods({
 			};
 			if(typeof ax.axiom[0].IRI !== "undefined" && typeof ax.axiom[1].IRI !== "undefined")addTriple(ax.axiom[0].IRI, predMap[ax.type], ax.axiom[1].IRI);
 		  } else if (["EquivalentObjectProperties", "DisjointObjectProperties", "SubObjectPropertyOf"].includes(ax.type)) {
-			
+
 			if(typeof ax.axiom[1].axiom !== "undefined" && typeof ax.axiom[1].axiom.type !== "undefined" && ax.axiom[1].axiom.type === "ObjectPropertyChain"){
 				const RDF = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 				const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
@@ -582,10 +582,10 @@ Meteor.methods({
 				// rdflib can create RDF Collections directly
 				const list = new $rdf.Collection(items);
 				store.add(superProp, OWL('propertyChainAxiom'), list);
-				
+
 			} else {
-			
-			
+
+
 				const predMap = {
 				  EquivalentObjectProperties: ns.owl('equivalentProperty').uri,
 				  DisjointObjectProperties: ns.owl('propertyDisjointWith').uri,
@@ -700,7 +700,7 @@ Meteor.methods({
 				  TransitiveObjectProperty: ns.owl('TransitiveProperty').uri
 				};
 				const subj = ax.axiom[1].IRI;
-				
+
 				addTriple(subj, ns.rdf('type').uri, objMap[ax.type]);
 			}
 		  }else if (ax.type === "AnnotationAssertion") {
@@ -719,12 +719,12 @@ Meteor.methods({
 				store.add(axiomNode, ns.owl('annotatedSource'), $rdf.sym(subj));
 				store.add(axiomNode, ns.owl('annotatedProperty'), pred);
 				store.add(axiomNode, ns.owl('annotatedTarget'), $rdf.literal(obj));
-				
+
 				for (const ann of annotations) {
 				  const annPred = annotationPropertyTypes[ann.IRI] || $rdf.sym(ann.IRI);
 				  const annValue = $rdf.literal(ann.value);
 				  store.add(axiomNode, annPred, annValue);
-			
+
 				  // Handle one level of nested annotations if present as object
 				  const nestedAnnotations = ann.annotations;
 				  if (Object.keys(nestedAnnotations).length > 0) {

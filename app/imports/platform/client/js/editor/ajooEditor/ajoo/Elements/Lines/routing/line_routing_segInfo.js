@@ -1,5 +1,5 @@
 //******************************************************************************
-// SegmInfo 
+// SegmInfo
 //******************************************************************************
 var SegmInfo = function(info) {
     this.dir = info[0];
@@ -76,8 +76,8 @@ SegmInfo.prototype.projSegm = function(s) {
     return rc;
 };
 SegmInfo.prototype.toString = function() {
-    return "segm{" + "dir: " + this.dir + "; min: " + this.min + "; lev:" + this.lev + 
-            "; max: " + this.max + "; ind: " + this.ind + "; mark: " + this.mark + 
+    return "segm{" + "dir: " + this.dir + "; min: " + this.min + "; lev:" + this.lev +
+            "; max: " + this.max + "; ind: " + this.ind + "; mark: " + this.mark +
              "; disconn: " + this.disconnected + "; myId: " + this.owner.myId + "}";
 };
 

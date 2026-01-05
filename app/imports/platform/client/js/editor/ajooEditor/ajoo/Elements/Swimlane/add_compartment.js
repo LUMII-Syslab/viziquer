@@ -22,7 +22,7 @@ SwimlaneCompartments.prototype = {
 		var editor = compartments.editor;
 
 		//adding compartments
-		var comparts = compartments.compartments;	
+		var comparts = compartments.compartments;
 		_.each(comparts_in, function(compart_in) {
 
 			if (!compart_in["value"])
@@ -38,8 +38,8 @@ SwimlaneCompartments.prototype = {
 			compartments.add_text_handlers(compart);
 
 			comparts[compart._id] = compart;
-			editor.compartmentList[compart._id] = compart;			
-			
+			editor.compartmentList[compart._id] = compart;
+
 			compart.presentation.moveToBottom();
 		});
 
@@ -173,7 +173,7 @@ SwimlaneCompartments.prototype = {
 						};
 
 			//checking if the mouse was clicked in this cell
-			if (cell_rect["x1"] <= mouse_x && mouse_x <= cell_rect["x2"] && 
+			if (cell_rect["x1"] <= mouse_x && mouse_x <= cell_rect["x2"] &&
 				cell_rect["y1"] <= mouse_y && mouse_y <= cell_rect["y2"]) {
 
 				return {row: cell["row"], column: cell["column"]};

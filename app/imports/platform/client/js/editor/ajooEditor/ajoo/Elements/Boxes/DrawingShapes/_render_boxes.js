@@ -41,7 +41,7 @@ var Box = function(editor) {
 		switch (elem_style["fillPriority"]) {
 		    case "color":
 		        res["fill"] = elem_style["fill"];
-		        
+
 		        break;
 
 		    case "linear-gradient":
@@ -58,38 +58,38 @@ var Box = function(editor) {
 		    		//-1.75, -0.75, 0.25, -1.25
 
 					res["fillLinearGradientStartPointX"] = -1.75 * offset_x + box_width * elem_style["fillLinearGradientStartPointX"];
-					res["fillLinearGradientStartPointY"] = -0.75 * offset_y + box_height * elem_style["fillLinearGradientStartPointY"];						
+					res["fillLinearGradientStartPointY"] = -0.75 * offset_y + box_height * elem_style["fillLinearGradientStartPointY"];
 					res["fillLinearGradientEndPointX"] = -0.25 * offset_x + box_width * elem_style["fillLinearGradientEndPointX"];
-					res["fillLinearGradientEndPointY"] = -1.25 * offset_y + box_height * elem_style["fillLinearGradientEndPointY"];	
+					res["fillLinearGradientEndPointY"] = -1.25 * offset_y + box_height * elem_style["fillLinearGradientEndPointY"];
 		    	}
 
 		    	else if (elem_style["shape"] == "Hexagon") {
 					res["fillLinearGradientStartPointX"] = box_height * elem_style["fillLinearGradientStartPointY"] - offset_y;
-					res["fillLinearGradientStartPointY"] = box_width * elem_style["fillLinearGradientStartPointX"] - offset_x;							
-					res["fillLinearGradientEndPointX"] = box_height * elem_style["fillLinearGradientEndPointY"] - offset_y;	
+					res["fillLinearGradientStartPointY"] = box_width * elem_style["fillLinearGradientStartPointX"] - offset_x;
+					res["fillLinearGradientEndPointX"] = box_height * elem_style["fillLinearGradientEndPointY"] - offset_y;
 					res["fillLinearGradientEndPointY"] = box_width * elem_style["fillLinearGradientEndPointX"] - offset_x;
 		    	}
 
 		    	else {
 					res["fillLinearGradientStartPointX"] = box_width * elem_style["fillLinearGradientStartPointX"] - offset_x;
-					res["fillLinearGradientStartPointY"] = box_height * elem_style["fillLinearGradientStartPointY"] - offset_y;								
+					res["fillLinearGradientStartPointY"] = box_height * elem_style["fillLinearGradientStartPointY"] - offset_y;
 					res["fillLinearGradientEndPointX"] = box_width * elem_style["fillLinearGradientEndPointX"] - offset_x;
-					res["fillLinearGradientEndPointY"] = box_height * elem_style["fillLinearGradientEndPointY"] - offset_y;	
+					res["fillLinearGradientEndPointY"] = box_height * elem_style["fillLinearGradientEndPointY"] - offset_y;
 				}
 
 				res["fillLinearGradientColorStops"] = elem_style["fillLinearGradientColorStops"];
-		       
+
 		        break;
 
 		    case "radial-gradient":
 				res["fillRadialGradientStartPointX"] = box_width * elem_style["fillRadialGradientStartPointX"] - offset_x;
-				res["fillRadialGradientStartPointY"] = box_height * elem_style["fillRadialGradientStartPointY"] - offset_y;				
+				res["fillRadialGradientStartPointY"] = box_height * elem_style["fillRadialGradientStartPointY"] - offset_y;
 				res["fillRadialGradientEndPointX"] = box_width * elem_style["fillRadialGradientEndPointX"] - offset_x;
 				res["fillRadialGradientEndPointY"] = box_height * elem_style["fillRadialGradientEndPointY"] - offset_y;
 				res["fillRadialGradientStartRadius"] = box_width * elem_style["fillRadialGradientStartRadius"];
 				res["fillRadialGradientEndRadius"] = box_width * elem_style["fillRadialGradientEndRadius"];
 				res["fillRadialGradientColorStops"] = elem_style["fillRadialGradientColorStops"];
-		       
+
 		        break;
 
 		    case "pattern":
@@ -101,7 +101,7 @@ var Box = function(editor) {
 	box.resizeGradient = function(element, shape_group, style) {
 
 		var shape = this.editor.findChild(shape_group, "Shape");
-		if (shape) {	
+		if (shape) {
 
 			if (shape["attrs"]["fillPriority"] != "color") {
 
@@ -117,7 +117,7 @@ var Box = function(editor) {
 				var transformed_style = {};
 
 				box.setFillStyle(transformed_style, style, size["width"], size["height"], size["centerX"], size["centerY"]);
-				
+
 				shape.setAttrs(transformed_style);
 			}
 		}
@@ -152,7 +152,7 @@ Box.prototype = {
 		box["minHeight"] = new_shape_obj["minHeight"] || 16;
 
 		//applying min limits
-		var box_settings = box.settings;		
+		var box_settings = box.settings;
 		if (box_settings.isMaxSizeEnabled) {
 			box["maxWidth"] = new_shape_obj["maxWidth"] || 512;
 			box["maxHeight"] = new_shape_obj["maxHeight"] || 512;
@@ -193,7 +193,7 @@ Box.prototype = {
 
 		//adds element compartments
 		var compartments = element["compartments"];
-		
+
 		box.compartments = new BoxCompartments(box, compartments);
 
 		box.data = element.data;
@@ -275,7 +275,7 @@ Box.prototype = {
 	},
 
 	updateElementSize: function(new_x, new_y, new_x2, new_y2) {
-		
+
 		var element = this;
 
 		//element size before update
@@ -301,7 +301,7 @@ Box.prototype = {
 	},
 
 	getSize: function() {
-		var box = this;	
+		var box = this;
 		var shape_group = box.presentation;
 		var stage = box.editor.stage;
 
@@ -462,7 +462,7 @@ Box.prototype = {
 	setUnselectedStyle: function() {
 		var box = this;
 		var editor = box.editor;
-		
+
 		if (editor.isEditMode() && box.type == "Box") {
 			box.removeResizers();
 		}
@@ -519,7 +519,7 @@ Box.prototype = {
 		var size = box.getElementPosition();
 		var path = box.toSVG(x, y, size.width, size.height);
 
-		return new SVGObject(path); 
+		return new SVGObject(path);
 	},
 
 	compartmentArea: function() {
@@ -555,7 +555,7 @@ Box.prototype = {
 		var elem = this;
 
 	    _.each(elem[in_or_out], function(line, id) {
-	        
+
 	        //checking if the line was already selected
 	    	var line_id = lines_map[id];
 	    	if (line_id) {
@@ -566,7 +566,7 @@ Box.prototype = {
 	    	}
 
 	        var points = line.getPoints().slice();
-	        
+
 	        var index = 0;
 	        var start_obj = selected[line.startElementId];
 	        if (!start_obj) {
@@ -672,7 +672,7 @@ Box.prototype = {
 										width: size.width,
 										height: size.height,
 								    });
-		konva_img.name = "ShapeImage";		
+		konva_img.name = "ShapeImage";
 		box.presentation.add(konva_img);
 
 		var imageObj = new Image();
@@ -712,7 +712,7 @@ Box.prototype = {
 			var point2 = point2_obj.point;
 			connection_point_positions["BottomMiddle"] = {x: point2[0], y: point2[1]};
 		}
-							
+
 
 		//vertical line intersections
 		var y = pos["y"] + elem_size["height"] / 2;

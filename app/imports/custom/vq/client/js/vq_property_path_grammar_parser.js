@@ -1,5 +1,5 @@
 import { makeString } from './parserCommon.js'
-import { dataShapes } from './DataShapes.js'																 
+import { dataShapes } from './DataShapes.js'
   "use strict";
 
   /*
@@ -2528,47 +2528,47 @@ import { dataShapes } from './DataShapes.js'
     			// returns type of the identifier from symbol table. Null if does not exist.
     			async function resolveTypeFromSymbolTable(id) {
     				var context = options.context;
-    				
+
     				if(typeof options.symbol_table[context] === 'undefined') return null;
-    				
-    				var st_row = options.symbol_table[context][id]; 
-    				if (st_row) { 
+
+    				var st_row = options.symbol_table[context][id];
+    				if (st_row) {
     					if(st_row.length == 0) return null;
     					if(st_row.length == 1){
-    						return st_row[0].type 
+    						return st_row[0].type
     					}
     					if(st_row.length > 1){
     						for (var symbol in st_row) {
     							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
     						}
     					}
-    					return st_row.type 
-    				} else { 
-    					return null 
-    				} 
+    					return st_row.type
+    				} else {
+    					return null
+    				}
     			};
     			// string -> idObject
     			// returns kind of the identifier from symbol table. Null if does not exist.
-    			async function resolveKindFromSymbolTable(id) { 
+    			async function resolveKindFromSymbolTable(id) {
     				var context = options.context;
-    				
+
     				if(typeof options.symbol_table[context] === 'undefined') return null;
-    				
-    				var st_row = options.symbol_table[context][id]; 
-    				if (st_row) { 
+
+    				var st_row = options.symbol_table[context][id];
+    				if (st_row) {
     					if(st_row.length == 0) return null;
     					if(st_row.length == 1){
-    						return st_row[0].kind 
+    						return st_row[0].kind
     					}
     					if(st_row.length > 1){
     						for (var symbol in st_row) {
     							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
     						}
     					}
-    					return st_row.kind 
-    				} else { 
-    					return null 
-    				} 
+    					return st_row.kind
+    				} else {
+    					return null
+    				}
     			};
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
@@ -2581,13 +2581,13 @@ import { dataShapes } from './DataShapes.js'
 					let param = {name: id}
 					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
 						param["schema"] = scName;
-					}	
+					}
 					var cls = await dataShapes.resolveClassByName(param)
 					if(cls["complete"] == false) return null;
 					if(cls["data"].length > 0){
 						return cls["data"][0];
 					}
-					
+
 					return null;
 				};
     			// string -> idObject
@@ -2597,15 +2597,15 @@ import { dataShapes } from './DataShapes.js'
 					let param = {name: id}
 					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
 						param["schema"] = scName;
-					}	
+					}
 					if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
 						id = "wdt:"+id;
 					}
 					//console.log("resolveTypeFromSchemaForAttributeAndLink", options.schemaName)
 					var aorl = await dataShapes.resolvePropertyByName(param);
-	
+
 					// if(aorl["complete"] == false) return null;
-					
+
 					var res = aorl["data"][0];
 					if(res){
 						if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
@@ -2636,10 +2636,10 @@ import { dataShapes } from './DataShapes.js'
     			// then in schema. Null if does not exist
     			async function resolveType(id) {var t=await resolveTypeFromSymbolTable(id);
 					if (!t) {
-						t=await resolveTypeFromSchemaForAttributeAndLink(id); 
+						t=await resolveTypeFromSchemaForAttributeAndLink(id);
 						if (!t) {t=await resolveTypeFromSchemaForClass(id)}
-					} 
-					
+					}
+
 					return t;
 				};
     			//string -> string
@@ -2655,7 +2655,7 @@ import { dataShapes } from './DataShapes.js'
     					  }
     						return k;
     			};
-    		
+
 
     peg$result = await peg$startRuleFunction();
 

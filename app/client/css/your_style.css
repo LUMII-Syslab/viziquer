@@ -52,7 +52,7 @@
 }
 
 .feed-message {
-	background: white !important; 
+	background: white !important;
 }
 
 .post-reply {
@@ -413,7 +413,7 @@ chat-body li.message img.online {
 	padding-right: 30px;
 	padding-top: 30px;
 	padding-bottom: 30px;
-	border-botton: 2px solid #EAEAEA;	
+	border-botton: 2px solid #EAEAEA;
 }
 
 /* Document style */
@@ -451,12 +451,12 @@ chat-body li.message img.online {
 }
 
 .hr-document {
-	margin-top: 0px !important;	
+	margin-top: 0px !important;
 }
 
 .list-section {
 	margin-bottom: 2px !important;
-	margin-top: 2px !important; 
+	margin-top: 2px !important;
 	margin-right: 10px;
 }
 

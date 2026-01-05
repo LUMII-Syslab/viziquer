@@ -2,7 +2,7 @@
 <template name="versions">
 
 	<div class="timeline-wrapper">
-		
+
 		<div class="timeline-item">
 			<div class="timeline-info">
                 <div class="timeline-icon bg-grey">
@@ -13,7 +13,7 @@
             {{> tool_version_buttons}}
 
 		</div><!-- /timeline-item -->
-    
+
         {{> timeline}}
 
 <!-- 		<div class="timeline-date">
@@ -41,7 +41,7 @@
                     <div class="timeline-icon bg-danger">
                         <i class="fa fa-briefcase"></i>
                     </div>
-                {{else}}        
+                {{else}}
                     <div class="timeline-icon bg-warning">
                         <i class="fa fa-briefcase"></i>
                     </div>
@@ -69,10 +69,10 @@
     {{#with buttons}}
         <div class="panel panel-default timeline-panel version-button-panel">
             <a class="btn btn-success" id="new-version" disabled="{{new_version_disabled}}"><i class="fa fa-file-o"></i> New version</a>
-            
+
             <a class="btn btn-danger" id="remove-version-button" disabled="{{remove_version_disabled}}"><i class="fa fa-trash-o"></i> Remove</a>
-            
-            <a class="btn btn-primary" id="publish-version-button" disabled="{{publish_version_disabled}}"><i class="fa fa-upload"></i> Publish</a>                 
+
+            <a class="btn btn-primary" id="publish-version-button" disabled="{{publish_version_disabled}}"><i class="fa fa-upload"></i> Publish</a>
         </div><!-- /panel -->
     {{/with}}
 </template>
@@ -94,7 +94,7 @@
                             	<textarea id="comment" class="form-control" rows="7"></textarea>
                             </div>
                         </div>
-                    </form>  
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

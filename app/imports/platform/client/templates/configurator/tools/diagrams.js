@@ -32,7 +32,7 @@ Template.toolDiagrams.events({
 		e.preventDefault();
 
 		$("#upload-data").modal("show");
-	
+
 		return;
 	},
 
@@ -89,7 +89,7 @@ Template.importConfigurationForm.events({
 	            catch (e) {
 	                console.error("Error in reading JSON ", e);
 	                return;
-	            }   
+	            }
 
 	            var list = {toolId: Session.get("toolId"),
 							versionId: Session.get("toolVersionId"),
@@ -102,7 +102,7 @@ Template.importConfigurationForm.events({
 	        };   //reader.onload
 
 	        reader.onerror = function(error) {
-	            console.error("Error ", error); 
+	            console.error("Error ", error);
 	        }
 
         	reader.readAsText(myFile);
@@ -137,7 +137,7 @@ Template.addConfiguratorDiagram.events({
 														editorType: editor_type_id});
 
 			if (diagram_type) {
-				var diagram_type_id = diagram_type["_id"];		
+				var diagram_type_id = diagram_type["_id"];
 				//create_diagram(diagram_name, diagram_type_id);
 
 				var list = {toolId: Session.get("toolId"),

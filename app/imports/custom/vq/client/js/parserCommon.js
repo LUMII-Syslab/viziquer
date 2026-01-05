@@ -19,24 +19,24 @@ function makeString(o){
 }
 
 function checkIfIsSimpleVariable(expressionTable, isSimpleVariable, isUnderInRelation, isSimpleFilter, isUnderOr, isUnderIf, isIRIREF){
-	
+
 	for(let key in expressionTable){
-		
+
 		if(key == "Concat" || key == "Additive" || key == "Unary"  || (key == "Function" && expressionTable[key] != "langmatchesShort" && expressionTable[key] != "langmatchesShortMultiple") || key == "RegexExpression" || key == "Aggregate" ||
 		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime"){
 			isSimpleVariable = false;
 		}
 		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" || key == "Aggregate" ||
-		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime" 
-		|| key == "Comma" || key == "OROriginal" || key == "ANDOriginal"  || key == "ValueScope"  || key == "Filter"  || key == "NotExistsExpr" 
-		|| key == "ExistsExpr" || key == "notBound" || key == "Bound" || key == "ArgListExpression" || key == "ExpressionList" || key == "FunctionExpression" || key == "classExpr" 
+		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime"
+		|| key == "Comma" || key == "OROriginal" || key == "ANDOriginal"  || key == "ValueScope"  || key == "Filter"  || key == "NotExistsExpr"
+		|| key == "ExistsExpr" || key == "notBound" || key == "Bound" || key == "ArgListExpression" || key == "ExpressionList" || key == "FunctionExpression" || key == "classExpr"
 		|| key == "NotExistsFunc" || key == "ExistsFunc" || key == "BrackettedExpression" || key == "VariableName" ){
 			isSimpleFilter = false;
 		}
 		if(key == "OROriginal") isUnderOr = true;
 		if(key == "Function" && expressionTable[key] == "IF") isUnderIf = true;
 		if(key == "IRIREF") isIRIREF = true;
-		
+
 		//if(isSimpleVariable == true && typeof expressionTable[key] == 'object'){
 		if(typeof expressionTable[key] == 'object'){
 			var temp = checkIfIsSimpleVariable(expressionTable[key], isSimpleVariable, isUnderInRelation, isSimpleFilter, isUnderOr, isUnderIf, isIRIREF);
@@ -51,15 +51,15 @@ function checkIfIsSimpleVariable(expressionTable, isSimpleVariable, isUnderInRel
 }
 
 function checkIfIsSimpleVariableForNameDef(expressionTable, isSimpleVariableForNameDef){
-	
+
 	for(let key in expressionTable){
-		
-		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" || 
+
+		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" ||
 		//key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime"){
 		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "FunctionTime"){
 			isSimpleVariableForNameDef = false;
 		}
-		
+
 		if(isSimpleVariableForNameDef == true && typeof expressionTable[key] == 'object'){
 			var temp = checkIfIsSimpleVariableForNameDef(expressionTable[key], isSimpleVariableForNameDef);
 			if(temp==false) isSimpleVariableForNameDef = false;
@@ -90,7 +90,7 @@ function findINExpressionTable(expressionTable, level){
 //???
  function transformSubstring(expressionTable){
 	for(let key in expressionTable){
-		
+
 		if(typeof expressionTable[key] == 'object'){
 			transformSubstring(expressionTable[key]);
 		}
@@ -115,10 +115,10 @@ function findINExpressionTable(expressionTable, level){
 				substrEnd = substrStart;
 				substrStart = 1;
 			}
-		
+
 			t["Substring"] = "";
-			
-			expressionTable["PrimaryExpression"] = {"SubstringExpression" : { 
+
+			expressionTable["PrimaryExpression"] = {"SubstringExpression" : {
 				"Expression1":{
 					"OrExpression" : [ {
 					    "ANDExpression" : [ {
@@ -141,7 +141,7 @@ function findINExpressionTable(expressionTable, level){
 							} ]
 						} ]
 					} ]
-				}, 
+				},
 				"Expression2":{
 				  "OrExpression" : [ {
 					  "ANDExpression" : [ {
@@ -168,7 +168,7 @@ function findINExpressionTable(expressionTable, level){
 							} ]
 						} ]
 					} ]
-				}, 
+				},
 				"Expression3":{
 				  "OrExpression" : [ {
 					  "ANDExpression" : [ {
@@ -205,10 +205,10 @@ function findINExpressionTable(expressionTable, level){
 function isDateVarSymbolTable(symbolTable, expression, dateType){
 	var value = false;
 	for(let key in symbolTable){
-		if(typeof symbolTable[expression] !== 'undefined' && 
+		if(typeof symbolTable[expression] !== 'undefined' &&
 			symbolTable[expression]["type"] != null
 			&& dateType.indexOf(symbolTable[expression]["type"]["data_type"]) > -1) value = true;
-		
+
 	}
 	return value;
 }

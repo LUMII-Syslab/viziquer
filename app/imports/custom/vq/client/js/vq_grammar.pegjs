@@ -330,7 +330,7 @@
 			NumericLiteralNegative = DECIMAL_NEGATIVE / DOUBLE_NEGATIVE / INTEGER_NEGATIVE
 			DECIMAL = DECIMAL:([0-9]* "." [0-9]+) {return {Number:makeVar(DECIMAL)}}
 			// DOUBLE = DOUBLE:(([0-9]+ "." [0-9]* [eE] [+-]? [0-9]+) / ("." ([0-9])+ [eE] [+-]? [0-9]+) / (([0-9])+ [eE] [+-]? [0-9]+)) {return {Number:DOUBLE.join("")}}
-			DOUBLE = DOUBLE:(([0-9]+ "." [0-9]* [eE] [+-]? [0-9]+) / ("." ([0-9])+ [eE] [+-]? [0-9]+) / (([0-9])+ [eE] [+-]? [0-9]+)) {return {Number:makeVar(DOUBLE)}} 
+			DOUBLE = DOUBLE:(([0-9]+ "." [0-9]* [eE] [+-]? [0-9]+) / ("." ([0-9])+ [eE] [+-]? [0-9]+) / (([0-9])+ [eE] [+-]? [0-9]+)) {return {Number:makeVar(DOUBLE)}}
 			INTEGER = INTEGER:[0-9]+ {return {Number:INTEGER.join("")}}
 			INTEGER_POSITIVE = Number:("+" INTEGER) {return {Number:Number.join("")}}
 			DECIMAL_POSITIVE = Number:("+" DECIMAL){return {Number:Number.join("")}}
@@ -393,7 +393,7 @@
 			Chars_String_variables = ("[[" Chars_String_variables:Chars_String_prefix "]]") {return Chars_String_variables}
 																																																//atributs vai associacija
 			LN =((LNameINV / LNameINV2  / LNameINV3 / LName) )
-			
+
 			Substring = ("[" (INTEGER ("," space INTEGER)?) "]")?
 			LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix))
 
@@ -407,7 +407,7 @@
 			DoubleSquareBracketName = PropertyReference:PropertyReference? LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:null, kind:null, PropertyReference:PropertyReference}}}
 			squarePrefix = Chars_String_prefix ":"
 			squareVariable = "["  Chars_String_square  "]"
-			
+
 
 			Relation = "->" /"=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"
 			space = ((" ")*) {return }

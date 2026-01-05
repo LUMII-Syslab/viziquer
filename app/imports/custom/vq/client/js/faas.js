@@ -59,12 +59,12 @@ const callFAASFindInstances = async (faasIParams) => {
 	// 		inProperties: [],  // properting incoming to instance
 	// 		outProperties: [], // properties outgoing from instance
 	// 		textFilter: "",    // text to be found in the Labels/AltLabels
-	// 		id: [],            // exact IDs. might be useful while gathering properties 
+	// 		id: [],            // exact IDs. might be useful while gathering properties
     //      idNot: [],         // exact IDs not to be in results
     //      isType: "",        // class indicator. Currently available only `true` value
     // 		limit: 100         // number of returned records
 	// 	}
-	
+
     var arrlimit=500;
 	//var callText = `http://localhost:59286/api/FindInstances?words=${faasIParams.textFilter}&instanceOf=${faasIParams.instanceOf.join('%20')}&inProp=${faasIParams.inProperties.join('%20AND%20')}&outProp=${faasIParams.outProperties.join('%20AND%20')}&limit=${faasIParams.limit}`
 	var callText = `/FindInstances?` + new URLSearchParams({
@@ -82,7 +82,7 @@ const callFAASFindInstances = async (faasIParams) => {
 
 const callFAASFindClasses = async (faasIParams) => {
     // *** console.log("------------callFAASClasses ------------------");
-	
+
     var arrlimit=500;
 	//var callText = `http://localhost:59286/api/FindClasses?words=${faasIParams.textFilter}&instanceOf=${faasIParams.instanceOf.join('%20')}&inProp=${faasIParams.inProperties.join('%20AND%20')}&outProp=${faasIParams.outProperties.join('%20AND%20')}&limit=${faasIParams.limit}`
 	var callText = `/FindClasses?` + new URLSearchParams({
@@ -99,7 +99,7 @@ const callFAASFindClasses = async (faasIParams) => {
 
 const callFAASFindIndividuals = async (faasIParams) => {
     // *** console.log("------------callFAASIndividuals ------------------");
-	
+
     var arrlimit=500;
 	//var callText = `http://localhost:59286/api/FindIndividuals?words=${faasIParams.textFilter}&instanceOf=${faasIParams.instanceOf.join('%20')}&inProp=${faasIParams.inProperties.join('%20AND%20')}&outProp=${faasIParams.outProperties.join('%20AND%20')}&limit=${faasIParams.limit}`
 	var callText = `/FindIndividuals?` + new URLSearchParams({
@@ -156,7 +156,7 @@ const faas = {
         //console.log(`getClasses allParams=${JSON.stringify(allParams)}`)
 		var rr;
         var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
-        
+
         // get info about instance first
         if (faasParam.id.length != 0) {
             var inst = await callFAASFindInstances(faasParam);
@@ -166,7 +166,7 @@ const faas = {
             });
             faasParam.id = cls;
         }
-        
+
         if (faasParam.id.length==0 && !faasParam.textFilter) {
             rr = [{id:"Q0", label: "Noting Found"}];
         } else {
@@ -176,8 +176,8 @@ const faas = {
         //console.log(`rr=${JSON.stringify(rr)}`);
         if (rr.error != undefined)
             rr = [];
-		
-		// output text formated hopefully same way as other autocompletion data providers 
+
+		// output text formated hopefully same way as other autocompletion data providers
         return {
             data: rr.map(this.mapEntityToVQClasses)
         }
@@ -186,7 +186,7 @@ const faas = {
 		// *** console.log("------------getClassProperties ------------------");
         //console.log(`getClassesFull allParams=${JSON.stringify(allParams)}`)
         var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
-        
+
         // at this moment is not improtant would it be in or out property
         var prop = await callFAASFindProperties({id : faasParam.inProperties.concat(faasParam.outProperties)})
 
@@ -220,8 +220,8 @@ const faas = {
         //console.log(`rr=${JSON.stringify(rr)}`);
         if (rr.error != undefined)
             rr = [];
-		
-		// output text formated hopefully same way as other autocompletion data providers 
+
+		// output text formated hopefully same way as other autocompletion data providers
 		return rr.map(this.mapEntityToVQInstances);
 	},
     getIndividualProperties : async function(allParams = {}) {
@@ -240,7 +240,7 @@ const faas = {
 		var faasIParam = await this.convertAllParamsToFindInstancesParams(allParams);
 
         faasIParam.limit = MAX_IND_ANSWERS * 100; // get x100 more instances to retrieve more properties of different instances
-        // here we search instances only, because depending how much info is specified we can 
+        // here we search instances only, because depending how much info is specified we can
         // get here either class or individual instance.
 		var ins = await callFAASFindInstances(faasIParam);
         var ip =[], op=[];
@@ -256,16 +256,16 @@ const faas = {
         }
 		var prop = await callFAASFindProperties(faasPParam);
         //console.log(`prop=${JSON.stringify(prop)}`);
-        
+
         // function to build in/out properties for Viziquer
         // both in and out properties might contain the same property.
         function buildPropArray(faasPropsId = [], faasPropsArr = [], mark = "") {
             // buildPropArray(["P1"],[{id:"P1",label="test"}],"in")
             // buildPropArray(["P1"],[{id:"P1",label="test"}],"out")
             return faasPropsId.map(pid => {
-                let s = faasPropsArr.find(x => x.id == pid); 
+                let s = faasPropsArr.find(x => x.id == pid);
                 if (!s) return {};
-    
+
                 let label=s.label;
                 let text=(label?`[${label} (${pid})]`:pid);
                 return {
@@ -289,7 +289,7 @@ const faas = {
     },
 	convertAllParamsToFindInstancesParams : async function(allParams = {}) {
 		// *** console.log("------------convertAllParamsToFindInstancesParams ------------------");
-		// expects "params" structure is 
+		// expects "params" structure is
 		//	{
 		// 		"main": { "limit": 100, "filter": "Karin" },
 		// 		"element": {
@@ -300,7 +300,7 @@ const faas = {
 		// 			}
 		// 		}
 		//	}
-		// expects "nsAllowed" to hold a list of namespaces the FAAS should look into. 
+		// expects "nsAllowed" to hold a list of namespaces the FAAS should look into.
 		// Example below is for Wikidata
 		//	["wdt","wd", ...]
 		//
@@ -310,7 +310,7 @@ const faas = {
 			inProperties: [],              // properting incoming to instance
 			outProperties: [],             // properties outgoing from instance
 			textFilter: "",                // text to be found in the Labels/AltLabels
-            id: [],                        // exact IDs. might be useful while gathering properties 
+            id: [],                        // exact IDs. might be useful while gathering properties
             idNot: [],                     // exact IDs not to be in results
             isType: "",                    // class indicator. Currently available only `true` value
 			limit: MAX_IND_ANSWERS         // number of returned records

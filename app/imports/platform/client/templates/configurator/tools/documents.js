@@ -32,7 +32,7 @@ Template.toolDocuments.events({
 
 		//assigning the document type name to the field
 		var edit_field = $("#edit-document-type-name");
-		edit_field.val(doc_type["name"]); 
+		edit_field.val(doc_type["name"]);
 
 		//adding the document type id to the form
 		var form = $("#edit-document-type-form");
@@ -65,8 +65,8 @@ Template.toolDocuments.events({
 
 Template.toolDocuments.rendered = function() {
 
-	//adding sorting functionality to the document list 
-    $("#document-types").sortable({              
+	//adding sorting functionality to the document list
+    $("#document-types").sortable({
 		items: ".tab",
 
         stop: function(event, ui) {
@@ -92,7 +92,7 @@ Template.toolDocuments.rendered = function() {
 	        		if (err)
 	        			console.log("Error in updateDocumentTypeIndex callback", err);
 	        	});
-	        }    
+	        }
         },
     });
 

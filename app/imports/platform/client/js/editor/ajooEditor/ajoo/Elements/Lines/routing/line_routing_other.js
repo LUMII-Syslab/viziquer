@@ -1,7 +1,7 @@
 // import { _ } from 'vue-underscore';
 
 //******************************************************************************
-// Other 
+// Other
 //******************************************************************************
 var printWarning = false;
 var printOutput = false;
@@ -87,8 +87,8 @@ var koef = function(v) {
     n /= 2;
     while (v < n) {
         n /= 2;
-//        i *= 2; 
-        i += 1; 
+//        i *= 2;
+        i += 1;
     }
     return i;
 };

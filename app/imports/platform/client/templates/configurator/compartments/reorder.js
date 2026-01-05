@@ -17,7 +17,7 @@ Template.compartmentReorder.helpers({
 Template.compartmentReorder.rendered = function() {
 
 	//adding dialog tab sorting
-    $(".compartmentTypes").sortable({              
+    $(".compartmentTypes").sortable({
         items: ".compartmentType",
         distance: 3,
 

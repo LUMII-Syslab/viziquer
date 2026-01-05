@@ -4,7 +4,7 @@
 			overflow-y: auto;
 			max-height: 60vh;
 		}
-		
+
 		div.wizard-list {
             margin-top: 5px;
             margin-left: 20px;
@@ -29,43 +29,43 @@
         <!-- } -->
 
         .wizard-list form, #field-name, #aggregate-wizard-function-list, #field-list {
-            position: relative;             
+            position: relative;
             width:90%;
             border-radius:5px;
             font-size: 12px;
         }
 
         #results_least, #results-most{
-            width: 95%;            
+            width: 95%;
         }
-		
+
 		form {
 		  margin-bottom: 10px;
 		}
-		
+
 		.label-aggregate {
 		  padding-top:0px;
 		}
     </style>
     <!-- Modal for new document -->
     <div id="aggregate-wizard-form" class="modal fade" data-backdrop="static" data-keyboard="false" onload="getDefaultName()">
-        
+
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Aggregate wizard</h4>
                 </div>
-                <div class="modal-body">                
-                    <form class="form-horizontal" role="form"> 
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
 
 						<form onsubmit="return false;" autocomplete="off">
                             <p style="color:purple">Result name (alias): </p>
                             <input class="form-control" id="alias-name" type="text" placeholder="(e.g., A_count)" style="width:98%;display: inline-block;" value="{{defaultAlias}}">
 							<!-- <input type="text" id="alias-name-aggr"><br> -->
                         </form>
-						
-						
+
+
 						<form class="function-radio-list" style="width:55%" autocomplete="off" onsubmit="return false;">
                             <p style="color:purple">Function: </p>
                                     <label class="label-radio inline label-aggregate">
@@ -108,18 +108,18 @@
                                         <span class="custom-radio"></span>
                                         <span>group_concat</span>
                                     </label>
-		
-                        </form>    
 
-                        
-						
+                        </form>
+
+
+
                         <div id = "what_to_aggregate" autocomplete="off" onsubmit="return false;">
-                            <p style="color:purple">What to aggregate:  
+                            <p style="color:purple">What to aggregate:
 							<!-- <div class="help-tip">
                                 <p>Field or expression. Leave blank for class instance aggregation. </p>
                             </div> -->
 							<!-- <div style="color:grey">(leave blank for instances themselves)</div> --> </p>
-							<input class="form-control" id="field-list" name="field-list" type="text" list="field-list-datalist" 
+							<input class="form-control" id="field-list" name="field-list" type="text" list="field-list-datalist"
 									placeholder="{{fieldsPlaceholder}}" style="width:77%;display: inline-block;" value="{{expression}}">
 							<!-- <input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist"> -->
 							<!-- <datalist id="field-list-datalist" class="datalist"> -->
@@ -138,7 +138,7 @@
                             <!-- </select> -->
                         </div>
 
-						
+
 						<div id="extra-options" style="display: none;">
 							<p> Extra options: <br>
 							<form id="distinct-aggr" style="display:inline-block">
@@ -153,16 +153,16 @@
 							</form>
 							</p>
 						</div>
-						
-						
-						  
-						
+
+
+
+
 						<hr>
 
                         <form style="display: {{showDisplay}};" onsubmit="return false;"> <!-- style="color: lightgrey !important;" -->
                             <input type="checkbox" id="display-results">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Display result (in host node)</p> 
+                            <p style="display:inline;">Display result (in host node)</p>
 							<a id="add-conditions-button" class="btn btn-xs btn-success"><i>Add conditions</i></a>
                         </form>
 
@@ -176,11 +176,11 @@
                             <label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
                             <input class="form-control" id="results-most" type="number" pattern="[0-9]" step="any" required>
                             <!-- <span class="validity"></span>   -->
-                        </form>                        
+                        </form>
                     </form>
                 </div>
 
-                <div class="modal-footer">                    
+                <div class="modal-footer">
                     <button id="cancel-aggregate-wizard" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-aggregate-wizard" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>

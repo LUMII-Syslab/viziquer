@@ -87,8 +87,8 @@ var Actions = function(editor, action_name) {
 
                     finish: function() {
                         var object = actions.state["object"];
-                        var target = actions.state.target;   
-                        
+                        var target = actions.state.target;
+
                         object.finishDragging(target);
                     },
                 },
@@ -98,7 +98,7 @@ var Actions = function(editor, action_name) {
 
                         new Event(editor, "clickedOnDiagram", e);
 
-                        var selection_rect = new SelectionRect(editor); 
+                        var selection_rect = new SelectionRect(editor);
                         actions.state["object"] = selection_rect;
                     },
 
@@ -180,7 +180,7 @@ var Actions = function(editor, action_name) {
                 //         var moving = new MovingSwimlane(params.line, params.swimlane);
                 //         moving.startDragging();
                 //         actions.state["object"] = moving;
-                //     },  
+                //     },
 
                 //     move: function() {
                 //         var object = actions.state["object"];
@@ -196,13 +196,13 @@ var Actions = function(editor, action_name) {
                 // SwimlaneTextEditing: {
                 //     start: function(text) {
                 //         new Event(editor, "dbClickOnSwimlaneText", text);
-                //     },  
+                //     },
                 // },
 
                 // SwimlaneDbClick: {
                 //     start: function(params) {
-                //         new Event(editor, "dbClickOnSwimlane", params); 
-                //     },  
+                //         new Event(editor, "dbClickOnSwimlane", params);
+                //     },
                 // },
 
                 ShowConnectionPoints: {
@@ -213,7 +213,7 @@ var Actions = function(editor, action_name) {
 
                     move: function() {
 
-                        var target = editor.actions.state.target    
+                        var target = editor.actions.state.target
                         if (target) {
                             return;
                         }
@@ -223,8 +223,8 @@ var Actions = function(editor, action_name) {
                             if (active_point) {
                                 return;
                             }
-                        
-                            else { 
+
+                            else {
                                 editor.connectionPoints.removeStartPoints(true);
                                 actions.finish();
                             }
@@ -284,7 +284,7 @@ Actions.prototype = {
             //starts creating the selection rect
             else if (!editor.isAction()) {
 
-                if (editor.isSelectionEmpty()) { 
+                if (editor.isSelectionEmpty()) {
 
                     if (editor.isPanningEnabled()) {
                         actions.startAction("PanningDrag", ev);
@@ -375,7 +375,7 @@ var EditorHandlers = function(actions) {
         actions.start(ev);
     });
 
-    //stage.on("contentMousemove", function(e) {     
+    //stage.on("contentMousemove", function(e) {
     editor.getSceneContainer().on("mousemove touchmove", function(e) {
 
         editor.mouseState.mouseMove(e);
@@ -397,7 +397,7 @@ var EditorHandlers = function(actions) {
     });
 
     //if mouse leaves the editor and the selection was started
-    stage.on("mouseleave touchend contentMouseleave", function(e) { 
+    stage.on("mouseleave touchend contentMouseleave", function(e) {
         editor.setCursorStyle("default");
         if (editor["action"] && editor["action"]["name"] == "Selecting") {
             actions.finish(e);

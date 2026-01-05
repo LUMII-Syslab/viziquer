@@ -1,7 +1,7 @@
 
 
 Meteor.methods({
-	parseSPARQLText: function(text) {	 
+	parseSPARQLText: function(text) {
 		try{
 			let SparqlParser = Npm.require('sparqljs').Parser;
 			let parser = new SparqlParser();
@@ -11,9 +11,9 @@ Meteor.methods({
 			return {status:"ERROR", error:err.toString()};
 		}
 	},
-	
+
 	parseService: function(parsedQuery) {
-		
+
 		var query = {
 			 "queryType": "SELECT",
 			 "variables": [
@@ -57,7 +57,7 @@ Meteor.methods({
 			"where": []
 		}
 		query.where.push(parsedQuery)
-		
+
 		// Regenerate a SPARQL query from a JSON object
 		var SparqlGenerator = Npm.require('sparqljs').Generator;
 		var generator = new SparqlGenerator({ /* prefixes, baseIRI, factory, sparqlStar */ });

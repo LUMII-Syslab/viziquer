@@ -7,7 +7,7 @@ var SelectionDragging = function(editor) {
 	selection_dragging.editor = editor;
 
 	selection_dragging.shapesLayer = editor.getLayer("ShapesLayer");
-	selection_dragging.dragLayer = editor.getLayer("DragLayer"); 
+	selection_dragging.dragLayer = editor.getLayer("DragLayer");
 	selection_dragging.dragGroup = editor.findChild(selection_dragging.dragLayer, "DragGroup");
 
 	selection_dragging.inLinesGroup = editor.findChild(selection_dragging.dragLayer, "InLinesGroup");
@@ -150,7 +150,7 @@ SelectionDragging.prototype = {
 		}
 
 		//recomputing lines
-		selection_dragging.recomputeDirectLines(delta_obj);		
+		selection_dragging.recomputeDirectLines(delta_obj);
 		selection_dragging.buildGraphInfo(delta_obj);
 	},
 
@@ -221,7 +221,7 @@ SelectionDragging.prototype = {
 			link.transformLinePoints(line_points, 1);
 
 			list["lines"].push({id: link._id,
-								points: line_points,			
+								points: line_points,
 							});
 
 			link.line.listening(true);
@@ -500,7 +500,7 @@ SelectionDragging.prototype = {
 
 		    //computing end point
 		    var end_elem = elem_list[line_obj.line.endElementId];
-		    var new_end_point_obj = line_svg.getIntersectionWithElement(end_elem, [points[0], points[1]]);   
+		    var new_end_point_obj = line_svg.getIntersectionWithElement(end_elem, [points[0], points[1]]);
 
 		    if (!new_end_point_obj.point) {
 

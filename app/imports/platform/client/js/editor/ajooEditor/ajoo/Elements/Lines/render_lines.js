@@ -41,7 +41,7 @@ Link.prototype = {
 	},
 
 	render: function(parent, list) {
-		
+
 		var link = this;
 
 		//shape group stores shape and all its properties in one element
@@ -64,7 +64,7 @@ Link.prototype = {
 
 		//add the shape to the shape group
 		shape_group.add(new_line);
-		link.line = new_line;		
+		link.line = new_line;
 
 	//TODO vajag rename, nav labi nosaukumi
 		//creates line start and end shape
@@ -80,7 +80,7 @@ Link.prototype = {
 
 		link.presentation = shape_group;
 
-		link.lineType = style["lineType"];	
+		link.lineType = style["lineType"];
 		link.elementTypeId = list["elementTypeId"];
 		link.layoutSettings = list["layoutSettings"] || {};
 		link.data = list.data;
@@ -89,7 +89,7 @@ Link.prototype = {
 	getPoints: function() {
 		var link = this;
 		var line = link.line;
-		
+
 		return this.processPoints(line.points());
 	},
 
@@ -162,7 +162,7 @@ Link.prototype = {
 					context.lineTo(last_x, last_y);
 
 					last_y = points[index + offset + 1];
-					context.lineTo(last_x, last_y);  
+					context.lineTo(last_x, last_y);
 				}
 
 				else if (link.is_horizontal(points, index)) {
@@ -172,7 +172,7 @@ Link.prototype = {
 					last_y = last_y + w;
 					context.lineTo(last_x, last_y);
 
-					last_x = points[index + offset]; 
+					last_x = points[index + offset];
 					context.lineTo(last_x, last_y);
 				}
 		   	}
@@ -248,7 +248,7 @@ Link.prototype = {
 	},
 
 	setUnselectedStyle: function() {
-		var line = this;		
+		var line = this;
 		line.setStyle({elementStyle: {shadowBlur: 0}}, "elementStyle");
 	},
 

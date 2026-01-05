@@ -23,7 +23,7 @@ var Layers = function(editor, area) {
 
 	    editor.getSceneContainer().css({background: background_style["fill"]});
 	    return layer;
-	    
+
 	}(area["background"]);
 
 	layers.DragLayerF = function() {

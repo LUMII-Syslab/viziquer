@@ -1,27 +1,27 @@
 <template name="AddMergeValues">
     <style>
         div.modal-bodyMF {
-			margin-right: 5px; 
+			margin-right: 5px;
 		}
 		div.merge-values-list {
             margin-top: 5px;
-            margin-left: 20px;                        
+            margin-left: 20px;
         }
 		div.merge-values-wizard {
             margin-top: 5px;
-            margin-left: 20px;    
-			margin-right: 10px; 
+            margin-left: 20px;
+			margin-right: 10px;
         }
 		#extra-options-merge {
             margin-top: 5px;
-            margin-left: 20px;                        
-            margin-right: 10px; 
-			display: none;			
+            margin-left: 20px;
+            margin-right: 10px;
+			display: none;
         }
 		div.merge-values-expression {
             margin-top: 5px;
-            margin-left: 20px;                        
-            margin-right: 10px;                        
+            margin-left: 20px;
+            margin-right: 10px;
         }
 
 		div.merge-type-part {
@@ -45,7 +45,7 @@
         }
 
         .merge-values-list select {
-            position: relative;             
+            position: relative;
             width:90%;
             border-radius:5px;
             font-size: 13px;
@@ -53,11 +53,11 @@
 		input {
 			width: 100%;
 		}
-		
+
 		#merge-results-least, #merge-results-most{
-            width: 95%;            
+            width: 95%;
         }
-		
+
 		 hr {
             margin-top: 20px;
             margin-bottom: 10px;
@@ -66,24 +66,24 @@
             border-top: 1px solid #c9c7c7;
             width:95%
         }
-		
+
     </style>
     <!-- Modal for new document -->
     <div id="merge-values-form" class="modal fade" data-backdrop="static" data-keyboard="false">
-        
+
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Merge values</h4>
                 </div>
-                <div class="modal-bodyMF">                
-					
-					{{#if isMultiple}}                   
+                <div class="modal-bodyMF">
+
+					{{#if isMultiple}}
 					   <div class="merge-type-part">
 							<form id="merge-choice" class="form-horizontal" role="form">
-								<div class="form-group">                            
-									<div name="chain">                       
+								<div class="form-group">
+									<div name="chain">
 										<label class="label-radio">
 											<input type="radio" name="type-radio-merge" value="SINGLE" checked="checked">
 											<span class="custom-radio"></span>
@@ -94,20 +94,20 @@
 											Merge over multiple {{className}} (move to Aggregates) &ensp;
 										</label>
 									</div>
-								</div>                        
-							</form>                    
+								</div>
+							</form>
 						</div>
 					{{else}}
 						<div class="move-type-part">
 							<form id="type-choice" class="form-horizontal" role="form">
-								<div class="form-group">                            
-									<div name="chain">                       
+								<div class="form-group">
+									<div name="chain">
 										<label class="label-radio">
 											Move ({{expression}}) to Aggregates block to aggregate (sum, count, etc.) over multiple ({{className}}) &ensp;
 										</label>
 									</div>
-								</div>                        
-							</form>                    
+								</div>
+							</form>
 						</div>
 				    {{/if}}
 					<div class="merge-values-expression">
@@ -115,8 +115,8 @@
 						<input class="form-control" type="text" name="expression-merge" autocomplete="off" value="{{expression}}" style="width:83%;display: inline-block;">
 						<a id="extra-options-button-merge" class="btn btn-xs btn-success"><i>Extra Options</i></a>
 					</div>
-					
-					
+
+
 					<div id="extra-options-merge" style="display:none">
 						<p> Extra options: <br>
 						<form id="distinct-merge" style="display:inline-block">
@@ -131,8 +131,8 @@
 						</form>
 						</p>
 					</div>
-					
-					<div class="merge-values-list">                       
+
+					<div class="merge-values-list">
                         <form id="radio-function-form" class="function-radio-list" style="width:55%">
                             <p style="color:purple">Function: </p>
 
@@ -169,21 +169,21 @@
 								<span class="custom-radio"></span>
 								group_concat &ensp;
 							</label>
-							
-                        </form>                                          
+
+                        </form>
                     </div>
 					{{#if isMultiple}}
-					
-					<div class="merge-values-wizard" id="merge-values-wizard-id" style="display:none;width:95%;">                       
-                        
+
+					<div class="merge-values-wizard" id="merge-values-wizard-id" style="display:none;width:95%;">
+
                          <form>
                             <p style="color:purple">Give name to result: </p>
                             <input class="form-control" type="text" id="merge-alias-name" autocomplete="off" value="{{mergeAlias}}" ><br>
                         </form>
-						
-                        
+
+
 						{{#if isNotRootClass}}
-						<div  style="display:block;">            
+						<div  style="display:block;">
 							<hr>
 
 							<form> <!-- style="color: lightgrey !important;" -->
@@ -202,10 +202,10 @@
 								<label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
 								<input class="form-control" id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
 								<!-- <span class="validity"></span>   -->
-							</form> 
-						</div>						
+							</form>
+						</div>
 						{{else}}
-						<div  style="display:none;">            
+						<div  style="display:none;">
 							<hr>
 
 							<form> <!-- style="color: lightgrey !important;" -->
@@ -224,22 +224,22 @@
 								<label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
 								<input class="form-control" id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
 								<!-- <span class="validity"></span>   -->
-							</form> 
-						</div>		
-						
+							</form>
+						</div>
+
 						{{/if}}
-						
+
                     </div>
 					{{else}}
-					<div class="merge-values-wizard" id="merge-values-wizard-id" style="display:block;width:95%;">                       
-                        
+					<div class="merge-values-wizard" id="merge-values-wizard-id" style="display:block;width:95%;">
+
                         <form>
                             <p style="color:purple">Give name to result: </p>
                             <input class="form-control" type="text" id="merge-alias-name" autocomplete="off" value="{{mergeAlias}}" ><br>
                         </form>
-						
+
 						{{#if isNotRootClass}}
-						<div style="display:block;">            
+						<div style="display:block;">
 							<hr>
 
 							<form> <!-- style="color: lightgrey !important;" -->
@@ -258,10 +258,10 @@
 								<label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
 								<input class="form-control" id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
 								<!-- <span class="validity"></span>   -->
-							</form> 
-						</div>						
+							</form>
+						</div>
 						{{else}}
-						<div style="display:none;">            
+						<div style="display:none;">
 							<hr>
 
 							<form> <!-- style="color: lightgrey !important;" -->
@@ -280,17 +280,17 @@
 								<label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
 								<input class="form-control" id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
 								<!-- <span class="validity"></span>   -->
-							</form> 
-						</div>		
-						
+							</form>
+						</div>
+
 						{{/if}}
-						
+
                     </div>
-					
+
 					{{/if}}
                 </div>
 
-                <div class="modal-footer">                    
+                <div class="modal-footer">
                     <button id="cancel-merge-values" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-merge-values" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
@@ -299,6 +299,6 @@
     </div>
 
     <script>
-        
+
     </script>
 </template>

@@ -34,7 +34,7 @@ Template.index.events({
 		}
 		//return false;
 	},
-        
+
 });
 
 Template.index.helpers({
@@ -137,7 +137,7 @@ function login_on_success() {
 	var list = {};
 	var meteor_user = Meteor.user();
 	Meteor.subscribe("LoginUser", list, function() {
-		
+
 		var user = Users.findOne({systemId: meteor_user["_id"]});
 		if (user) {
 			redirect_on_login(user);
@@ -160,7 +160,7 @@ function redirect_on_login(user) {
 	// var minute = 60000;
 	// UserStatus.startMonitor({threshold: 7 * minute, idle: 10 * minute});
 
-	const clientStorage = new ClientStorage("localStorage"); 
+	const clientStorage = new ClientStorage("localStorage");
 	clientStorage.set('current_user', JSON.stringify(user));
 
 

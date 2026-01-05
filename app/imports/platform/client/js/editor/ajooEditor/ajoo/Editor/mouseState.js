@@ -40,7 +40,7 @@ MouseState.prototype = {
 	        state["mouseY"] = mouse_pos.y;
 
 	        state["originalX"] = mouse_pos.originalX;
-	        state["originalY"] = mouse_pos.originalY;  
+	        state["originalY"] = mouse_pos.originalY;
 	    }
 
 	},
@@ -50,7 +50,7 @@ MouseState.prototype = {
 		var mouseState = this;
 		var editor = mouseState.editor;
 		var stage = editor.stage;
-		var zoom = editor.getZoom(); 
+		var zoom = editor.getZoom();
 
 		var original_mouse_x = mouseState.getEditorMouseX(e);
 		var original_mouse_y = mouseState.getEditorMouseY(e);
@@ -65,7 +65,7 @@ MouseState.prototype = {
 		else {
 			mouse_x = (original_mouse_x - stage.x()) / zoom.x;
 			mouse_y = (original_mouse_y - stage.y()) / zoom.y;
-		}	
+		}
 
 		return {x: mouse_x, y: mouse_y, originalX: original_mouse_x, originalY: original_mouse_y};
 	},
@@ -99,7 +99,7 @@ MouseState.prototype = {
 		var x, y;
 		if (e.originalEvent) {
 			var ev = e.originalEvent;
-								
+
 			x = ev.offsetX;
 			y = ev.offsetY;
 		}
@@ -249,7 +249,7 @@ MouseState.prototype = {
 				e.type == "touchmove" ||
 				e.type == "touchend" ||
 
-				e.type == "contentTouchstart" ||	
+				e.type == "contentTouchstart" ||
 				e.type == "contentTouchmove" ||
 				e.type == "contentTouchend";
 	},

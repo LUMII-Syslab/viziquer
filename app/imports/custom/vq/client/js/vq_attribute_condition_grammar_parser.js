@@ -1281,7 +1281,7 @@ import { makeString } from './parserCommon.js'
     		function insertVariable(o) {return options.variable};
     		function makeExpression(o) {return makeString(o)};
 
-    	  
+
 
     peg$result = await peg$startRuleFunction();
 

@@ -26,9 +26,9 @@ function build_initial_diagram_type(list, editor_type) {
 		{extensionPoint: "pasteCollection", procedure: "PasteCollection"},
 
 		{extensionPoint: "beforeDeleteDiagram", procedure: ""},
-		{extensionPoint: "afterDeleteDiagram", procedure: ""},		
+		{extensionPoint: "afterDeleteDiagram", procedure: ""},
 		{extensionPoint: "deleteDiagram", procedure: "DeleteDiagramObject"},
-						
+
 		{extensionPoint: "updateDiagram", procedure: "UpdateDiagram"},
 		{extensionPoint: "changeCollectionPosition", procedure: "ChangeCollectionPosition"},
 		{extensionPoint: "canvasToImage", procedure: "CanvasToImage"},
@@ -37,22 +37,22 @@ function build_initial_diagram_type(list, editor_type) {
 	list["toolbar"] = [
 		{id: generate_id(), name: "Toggle Grid", procedure: "ToggleGrid", icon: "fa-th"},
 
-		{id: generate_id(), name: "Zoom out", procedure: "ZoomingOut", icon: "fa-minus"},	
+		{id: generate_id(), name: "Zoom out", procedure: "ZoomingOut", icon: "fa-minus"},
 		{id: generate_id(), name: "Zoom in", procedure: "ZoomingIn", icon: "fa-plus"},
 
 		{id: generate_id(), name: "Action history", procedure: "ShowDiagramLog", icon: "fa-history"},
 
-		{id: generate_id(), name: "Diagram settings", procedure: "ShowDiagramSettings", icon: "fa-gear"},			
+		{id: generate_id(), name: "Diagram settings", procedure: "ShowDiagramSettings", icon: "fa-gear"},
 		{id: generate_id(), name: "Permissions", procedure: "Permissions", icon: "fa-lock"},
 
-		{id: generate_id(), name: "Delete", procedure: "DeleteDiagram", icon: "fa-trash-o"},	
+		{id: generate_id(), name: "Delete", procedure: "DeleteDiagram", icon: "fa-trash-o"},
 	];
 
-	list["readModeToolbar"] = [		
-		
+	list["readModeToolbar"] = [
+
 		{id: generate_id(), name: "Zoom out", procedure: "ZoomingOut",
-		icon: "fa-minus", isInEditableVersion: false, isForAdminOnly: false},	
-		
+		icon: "fa-minus", isInEditableVersion: false, isForAdminOnly: false},
+
 		{id: generate_id(), name: "Zoom in", procedure: "ZoomingIn",
 		icon: "fa-plus", isInEditableVersion: false, isForAdminOnly: false},
 
@@ -93,14 +93,14 @@ function build_initial_diagram_type(list, editor_type) {
 			procedure: "DeleteCollection"},
 		];
 
-	list["readModeCollectionKeyStrokes"] = [];										
+	list["readModeCollectionKeyStrokes"] = [];
 
 	list["noCollectionContextMenu"] = [
 		{item: "Paste",
 			procedure: "Paste"},
 		];
 
-	list["readModeNoCollectionContextMenu"] = [];						
+	list["readModeNoCollectionContextMenu"] = [];
 
 	list["collectionContextMenu"] = [
 		{item: "Cut",
@@ -135,7 +135,7 @@ function diagram_default_style() {
 
 			//linear gradient
 			fillLinearGradientStartPointX: 0.5,
-			fillLinearGradientStartPointY: 0,			
+			fillLinearGradientStartPointY: 0,
 			fillLinearGradientEndPointX: 0.5,
 			fillLinearGradientEndPointY: 1,
 			fillLinearGradientColorStops: [0, 'white', 1, 'black'],
@@ -154,6 +154,6 @@ function diagram_default_style() {
 
 
 export {
-  diagram_default_style, 
+  diagram_default_style,
   build_initial_diagram_type
 }

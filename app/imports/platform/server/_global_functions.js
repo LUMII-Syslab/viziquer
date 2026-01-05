@@ -4,7 +4,7 @@ import { ProjectsUsers, Versions, ToolVersions, Projects } from '../../db/platfo
 async function get_user_rights_to_access_project(list, user_system_id) {
 	if (list) {
 		var proj_id = list["projectId"];
-		
+
 		//checks if user has logged in
 		if (user_system_id) {
 			var user = await ProjectsUsers.findOneAsync({userSystemId: user_system_id, projectId: proj_id});
@@ -35,10 +35,10 @@ async function get_user_rights_to_access_project(list, user_system_id) {
 						}
 						else {
 							return {isValidUser: false,
-								error: "There is not such a project with the specified tool"};	
+								error: "There is not such a project with the specified tool"};
 						}
 					}
-					
+
 					var version = await Versions.findOneAsync(version_query);
 					if (version) {
 
@@ -47,8 +47,8 @@ async function get_user_rights_to_access_project(list, user_system_id) {
 							return {isValidUser: true,
 									role: user["role"]};
 
-						//New versions are availabe only for the admins and system admins 
-						//TODO: If user is a system admin, 
+						//New versions are availabe only for the admins and system admins
+						//TODO: If user is a system admin,
 						//then he also has rights to access the project
 						else if (version["status"] == "New" && (user["role"] == "Admin")) {
 
@@ -61,7 +61,7 @@ async function get_user_rights_to_access_project(list, user_system_id) {
 					}
 					else {
 						return {isValidUser: false,
-								error: "There is not such a version in the project"};	
+								error: "There is not such a version in the project"};
 					}
 				}
 
@@ -75,7 +75,7 @@ async function get_user_rights_to_access_project(list, user_system_id) {
 								error: "User has no rights to access the project"};
 			}
 			else
-				return {isValidUser: false, error: "User has no rights to access the project"};	
+				return {isValidUser: false, error: "User has no rights to access the project"};
 		}
 		else
 			return {isValidUser: false, error: "User is not logged in"};
@@ -104,7 +104,7 @@ async function is_allowed_version(list) {
 	var version = await Versions.findOneAsync({_id: list["versionId"],
 									projectId: list["projectId"],
 									status: "New"});
-	
+
 	if (version && list["versionId"] == version["_id"])
 		return true;
 	else
@@ -139,12 +139,12 @@ function build_user_search_query(text) {
 
 		//filters by name, surname or email
     	if (search_items.length == 1) {
-    		query = {$or: [{nameLC: {'$regex': "^" + search_items[0]}}, 
-    						{surnameLC: {'$regex': "^" + search_items[0]}}, 
+    		query = {$or: [{nameLC: {'$regex': "^" + search_items[0]}},
+    						{surnameLC: {'$regex': "^" + search_items[0]}},
     						{email: {'$regex': "^" + search_items[0]}}
     					]};
     	}
-    	else 
+    	else
     		if (search_items.length == 2) {
 				query = {$or: [
 					{$and: [{nameLC: {'$regex': "^" + search_items[0]}},
@@ -152,7 +152,7 @@ function build_user_search_query(text) {
 
 					{$and: [{nameLC: {'$regex': "^" + search_items[1]}},
 							{surnameLC: {'$regex': "^" + search_items[0]}}]},
-				]};   		
+				]};
     		}
     		else
     			query = reset_query();

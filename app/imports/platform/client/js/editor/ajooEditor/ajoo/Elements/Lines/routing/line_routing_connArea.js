@@ -21,7 +21,7 @@ var ConnArea = function(box, side, disconnPaths, connPaths) {
     this.coordInd = {};
     this.coors = 0;
     this.pairs = {};
-    this.norm = (this.box.owner.delta * 2) / this.box.size[this.side & 1]; 
+    this.norm = (this.box.owner.delta * 2) / this.box.size[this.side & 1];
 };
 ConnArea.prototype.initDisconnSegm = function(segm) {
     segm.disconnected = true;
@@ -39,10 +39,10 @@ ConnArea.prototype.initTestRect = function() {
     this.testRect[1 - d] = this.box.offValue(this.testRect[((this.side > 1) ? 3 : 1) - d], this.side);
     this.testRect[3 - d] = this.testRect[1 - d];
     this.segments = [];
-    
+
     if (this.disconnPaths.length > 3)
         var iii = 0;
-    
+
     var i, path, segm;
     var self = this;
     _.each(this.disconnPaths, function(path) {
@@ -127,7 +127,7 @@ ConnArea.prototype.createIntervals = function() {
     this.setCoordInd(this.testRect[2 + d]);
 //    this.indCoord.sort();
     this.indCoord.sort((function(a, b) { return (a < b) ? -1 : (a > b) ? 1 : 0; }));
-    
+
     for (j = 0; j < this.coors; j++)
         this.coordInd[this.indCoord[j]] = j;
     if (this.coors !== this.indCoord.length)
@@ -370,7 +370,7 @@ ConnArea.prototype.simplifyPaths = function() {
                 segm = path.segm(path.n - 2);
                 segments.push(self.box.offSegm(segm, self.side));
             }
-        else if (path.n === 2) 
+        else if (path.n === 2)
             straights.push(path);
         else if (path.from === id) {
             segm = path.segm(2);
@@ -404,11 +404,11 @@ ConnArea.prototype.simplifyPaths = function() {
     var d = this.side & 1;
     var g = this.box.size[d] / (this.connPaths.length + selfloops.length + 1);
     var v = this.box.center[d] - this.box.size[d] / 2 + g;
-    
+
     var k = 0;
     while (k < segments.length && segments[k].forward(id))
         k++;
-    
+
     var i = 0;
     var path, isSL;
     while (i < k) {

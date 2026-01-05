@@ -29,7 +29,7 @@ Template.timeline.helpers({
 		}
 
 		return ToolVersions.find({}, {sort: {createdAt: -1}}).map(function(version) {
-				
+
 			//transforms the published date in different form
 			var date = version["publishedAt"];
 			if (date)
@@ -57,7 +57,7 @@ Template.timeline.events({
 		var version_id = timeline_panel.attr("id");
 		var tool_id = Session.get("toolId");
 
-		Session.set("diagram", {toolId: tool_id, versionId: version_id});	
+		Session.set("diagram", {toolId: tool_id, versionId: version_id});
 
 		var list = {toolId: tool_id, versionId: version_id};
 		Meteor.call("upsertUserTool", list, function(err){
@@ -90,7 +90,7 @@ Template.tool_version_buttons.helpers({
 				if (version_count > 1)
 					return is_publish_bottom_disabled();
 				else
-					return true		
+					return true
 			},
 
 			publish_version_disabled: is_publish_bottom_disabled(),
@@ -126,7 +126,7 @@ Template.tool_version_buttons.events({
 			remove_tool_version(version_id);
 
 			var user_tools = UserTools.findOne({versionId: version_id});
-			if (user_tools) { 
+			if (user_tools) {
 
 				if (user_tools["versionId"] === version_id) {
 
@@ -171,7 +171,7 @@ Template.publishToolVersion.events({
 						versionId: new_version["_id"],
 						comment: comment,
 					};
-					
+
 			Meteor.call("publishToolVersion", list, function(err){
 				if (err)
 					console.log("Error in publishToolVersion callback", err);

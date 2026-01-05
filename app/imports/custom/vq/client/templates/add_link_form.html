@@ -6,7 +6,7 @@
         padding-top: 0px;
         overflow-y: auto;
         max-height: 60vh;
-        min-height: 140px;             
+        min-height: 140px;
     }
 
     div.link-type-part {
@@ -14,7 +14,7 @@
         background-color: white;
         margin-left: 10px;
         margin-right: 10px;
-        width: 30%;        
+        width: 30%;
     }
 
     div.searchBox {
@@ -42,7 +42,7 @@
     .help-tip:before{
         content:'?';
         font-weight: bold;
-        color:#fff;               
+        color:#fff;
     }
 
     .help-tip:hover p{
@@ -52,21 +52,21 @@
     .help-tip p{
         display: none;
         text-align: left;
-        font-size: 12px; 
+        font-size: 12px;
         line-height: 16px;
         color: white;
         border: 1px solid #7F7F7F;
-        background-color: slategrey; 
-        border-radius: 5px;       
+        background-color: slategrey;
+        border-radius: 5px;
         padding: 10px;
         width: 200px;
         position: absolute;
-        right: 105%; 
+        right: 105%;
         z-index: 1000;
-    }  
+    }
 
     .describe {
-        margin-left:25px; 
+        margin-left:25px;
         font-size:90%;
         font-style: italic;
     }
@@ -79,7 +79,7 @@
 
 	<!-- Modal for new document -->
     <div id="add-link-form" class="modal fade" data-backdrop="static" data-keyboard="false">
-        
+
         <div class="modal-dialog" style="width:750px">
             <div class="modal-content">
                 <div class="modal-header">
@@ -87,12 +87,12 @@
                     <h4 class="modal-title">Add Link</h4>
                 </div>
 
-                <div class="searchBox" id="searchBox">   
+                <div class="searchBox" id="searchBox">
 					<label class="form-check-label">
 						<input class="form-check-input" name = "dbp_for_links" id="dbp_for_links" type="checkbox" checked="checked">
 						<span class="custom-checkbox"></span>
 						Basic order
-					</label>				
+					</label>
                     <input class="form-control" id="mySearch" type="text" autocomplete="off" placeholder="Search.." style="width:58%;display: inline-block;">
                     <!-- &ensp; -->
 					<!-- <a id="apply-button" class="btn btn-xs btn-success"><i>Apply filter</i></a> -->
@@ -103,20 +103,20 @@
                     <input class="form-control" id="classSearch" type="text" placeholder="Linked class .." style="width:25%;display: inline-block;">
                     &ensp;
 					<a id="link-new-button" class="btn btn-xs btn-success button-new"><i>Build link ..</i></a> -->
-					
+
 					<!-- <div class="help-tip">
                         <p style="width:500px">Period is used to separate search in link and class parts:<br>&ensp;&ensp;[what to search in link]<span style="color:orange; font-size: 20px;">.</span>[what to search in class].<br>Only one period symbol is allowed.<br>Spaces and commas are allowed as separators to search for multiple words.</p>
                     </div> -->
                     <hr>
                 </div>
-   
+
                 <div class="link-type-part">
                     <form class="form-horizontal" role="form">
-                        <div class="form-group">                            
-                            <div name="chain">                       
+                        <div class="form-group">
+                            <div name="chain">
                                 <p style="color: black;"> Change Link Type </p>
                                 <div id="add-link-type-choice">
-    								<label class="label-radio">                                    
+    								<label class="label-radio">
                                         <input type="radio" name="type-radio" value="JOIN">
                                         <span class="custom-radio"></span>
                                         Join Link &ensp;
@@ -151,14 +151,14 @@
                                     <input type="checkbox" id="linked-instance-exists" value="DISPLAY" disabled>
                                     <span class="custom-checkbox"></span>
                                    Linked instance exists
-                                </div> 
+                                </div>
                             </div>
-                        </div>                        
-                    </form>                    
+                        </div>
+                    </form>
                 </div>
-               
-                <div class="modal-body" id="mbodyAL">                    
-                    <form id="link-list-form" class="form-horizontal" role="form">                        
+
+                <div class="modal-body" id="mbodyAL">
+                    <form id="link-list-form" class="form-horizontal" role="form">
                         <div class="form-group">
                         <!-- {{#if testAddLink.data}}                    -->
                             {{#each fullList}}
@@ -174,7 +174,7 @@
                                     <label class="label-radio">
                                         <input type="radio" name="link-list-radio" value="{{name}}" card={{card}}>
                                         <span class="custom-radio"></span>
-										 
+
                                         <span style="color:#009688; font-weight: normal;"> {{is}} </span>
                                         <span style="{{clr}}">{{name}} {{text}} </span>
 										<span style="color:#009688; font-weight: normal;"> {{of}} </span>
@@ -197,17 +197,17 @@
                             {{/each}}
                         {{/if}} -->
                         </div>
-						
+
 						<div>
 						<a style="width: 53px;" id="more-add-link-button" class="btn btn-xs btn-success button-new"><i>More..</i></a>
 						 </div>
-						
+
                         <!-- <div class="form-group">
                             <div class="col-sm-10">
         						<input id="fileList" type='file' multiple/>
                             </div>
                         </div> -->
-                    </form> 
+                    </form>
                 </div>
 
                 <div class="modal-footer" style="clear: both;">
@@ -228,7 +228,7 @@
 
 	<!-- Modal for new document -->
     <div id="build-path-form" class="modal fade" data-backdrop="static" data-keyboard="false">
-        
+
         <div class="modal-dialog" style="width:750px">
             <div class="modal-content" >
                 <div class="modal-header">
@@ -258,7 +258,7 @@
 
 	<!-- Modal for new document -->
     <div id="select-class-form" class="modal fade" data-backdrop="static" data-keyboard="false">
-        
+
         <div class="modal-dialog" style="width:550px;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -269,7 +269,7 @@
 
                  <div class="form-group" >
 					<form autocomplete="off" onsubmit="return false;">
-					<div class="searchBox" id="searchBox">   				
+					<div class="searchBox" id="searchBox">
 						<input class="form-control" id="class-search" type="text" placeholder="Search.." style="display: inline-block;">
 					</div>
 					</form>
@@ -280,8 +280,8 @@
                                         <span class="custom-radio"></span>
                                         <span>(no_class)</span>
                                     </label>
-                                </div>            
-                            {{#each classes}}                    
+                                </div>
+                            {{#each classes}}
                                 <div class="col-lg-10 targetClass" name="{{short_class_name}}" className="{{short_class_name}}">
                                     <label class="label-radio">
                                         <input type="radio" name="class-list-radio" value="{{short_class_name}}">
@@ -292,7 +292,7 @@
                             {{/each}}
                     </div>
                 </div>
-				
+
 
                 <div class="modal-footer" style="clear: both;">
                     <button id="cancel-select-class" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

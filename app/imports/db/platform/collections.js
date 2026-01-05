@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 
- 
+
 const Users = new Mongo.Collection("Users");
 
 const Projects = new Mongo.Collection("Projects");

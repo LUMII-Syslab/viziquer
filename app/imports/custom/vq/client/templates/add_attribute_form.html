@@ -4,7 +4,7 @@
         overflow-y: auto;
         max-height: 60vh;
     }
-	
+
 	.form-group-associations{
 		display: none;
     }
@@ -15,7 +15,7 @@
 	  border: 1px solid #cccccc;
 	  width: 18px;
 	  height: 18px;
-	  display:inline-block;    
+	  display:inline-block;
       vertical-align: middle;
       horizontal-align: middle;
 	  padding: 1px 1px 1px 2px;
@@ -34,7 +34,7 @@
 	}
 	#resp-table-body{
 	  display: table-row-group;
-	  
+
 	}
 	.resp-table-row{
 	  display: table-row;
@@ -42,14 +42,14 @@
 	.table-body-cell{
 	  display: table-cell;
 	}
-	
+
 	button:disabled,
 	button[disabled]{
 	  border: 1px solid #999999;
 	  background-color: #cccccc;
 	  color: #666666;
 	}
-	
+
 	.help-tip-attribute{
         display:inline;
         padding-right: 5px;
@@ -69,7 +69,7 @@
     .help-tip-attribute:before{
         content:'?';
         font-weight: bold;
-        color:#fff;               
+        color:#fff;
     }
 
     .help-tip-attribute:hover p{
@@ -79,18 +79,18 @@
     .help-tip-attribute p{
         display: none;
         text-align: left;
-        font-size: 12px; 
+        font-size: 12px;
         line-height: 16px;
         color: white;
         border: 1px solid #7F7F7F;
-        background-color: slategrey; 
-        border-radius: 5px;       
+        background-color: slategrey;
+        border-radius: 5px;
         padding: 10px;
         width: 700px;
         position: absolute;
         z-index: 1000;
-    }  
-	
+    }
+
 </style>
 
 	<!-- Modal for new document -->
@@ -104,7 +104,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" autocomplete="off" onsubmit="return false;" role="form">
-						
+
 						<div class="form-group">
 							<table class="table table-striped" style="margin-bottom:0px;margin-left:10px;margin-right:10px;width:95%;">
 									<tbody>
@@ -126,22 +126,22 @@
 											</tr>
 											{{/if}}
 										{{/each}}
-										
+
 									</tbody>
 								</table>
 						</div>
-						<div class="searchBox" id="searchBox-attribute">   
+						<div class="searchBox" id="searchBox-attribute">
 							<label class="form-check-label">
 								<input class="form-check-input" name = "dbp_for_attributes" id="dbp_for_attributes" type="checkbox" checked="checked">
 								<span class="custom-checkbox"></span>
 								Basic order
-							</label>						
+							</label>
 							<input class="form-control" id="mySearch-attribute" type="text" placeholder="Search.." style="width:50%;display: inline-block;">
 							&ensp;
 							<!-- <a id="attribute-apply-button" class="btn btn-xs btn-success button-new"><i>Apply filter</i></a> -->
 							&ensp;
 							<a id="attribute-new-button" class="btn btn-xs btn-success button-new"><i>Build expression ..</i></a>
-							
+
 						</div>
                         <div class="form-group">
 							<div class="col-lg-10 attribute">
@@ -163,13 +163,13 @@
                                 {{/if}}
 
                             {{/each}}
-							
+
                         </div>
 						<div>
 						<a style="width: 53px;" id="more-attributes-button" class="btn btn-xs btn-success button-new"><i>More..</i></a>
 						 </div>
                     </form>
-					
+
 					<button id="show-class-associations">[+]</button>
 					<form class="form-horizontal" role="form">
 						<div class="form-group-associations form-group"  id="class-associations" style="display: none">
@@ -183,18 +183,18 @@
                                 </div>
 
                             {{/each}}
-							
+
                         </div>
 						<div>
 						<a style="width: 53px;" id="more-associations-button" class="btn btn-xs btn-success button-new" complete="false"><i>More..</i></a>
 						</div>
 					</form>
                 </div>
-				
-				
-				
+
+
+
                 <div class="modal-footer">
-					
+
 					<div class="help-tip-attribute">
                         <p>Tick the box by an attribute name to include it as an optional attribute in the selection.<br><br>
 
@@ -227,7 +227,7 @@ You can always edit the attibute list also from the node property pane to the ri
                 <div id="add-new-attribute-id" class="modal-body" style="width: 550px" attributeid="{{attributeid}}">
 	                <form autocomplete="off" onsubmit="return false;">
 					{{#if fields}}
-					
+
 						{{#each fields}}
 							{{#if Graphinstruction}}
 								<div class="form-group" style="margin-bottom:10px;">
@@ -251,7 +251,7 @@ You can always edit the attibute list also from the node property pane to the ri
 									<input id="add-new-attribute-alias" type="text" class="form-control" value="{{field_value}}">
 								</div>
 							{{/if}}
-						
+
 							{{#if Expression}}
 								<div id = "add-new-attribute-expression-field" class="form-group" style="margin-bottom:10px;">
 									<label>Expression</label>
@@ -261,7 +261,7 @@ You can always edit the attibute list also from the node property pane to the ri
 							{{/if}}
 							{{#if RequireValues}}
 								<div class="form-group" style="margin-bottom:10px;">
-									<label class="label-checkbox">					
+									<label class="label-checkbox">
 										<input id="add-new-attribute-requireValues" type="checkbox" checked="{{checked}}">
 										<span class="custom-checkbox"></span>
 										Require Values
@@ -332,7 +332,7 @@ You can always edit the attibute list also from the node property pane to the ri
 								</div>
 							{{/if}}
 						{{/each}}
-					
+
 					{{else}}
 						{{#if showGraph}}
 						<div class="form-group" style="margin-bottom:10px;">
@@ -348,18 +348,18 @@ You can always edit the attibute list also from the node property pane to the ri
 							<input id="add-new-attribute-graph" autocomplete="off" class="form-control input-sm" value="{{graph}}">
 						</div>
 						{{/if}}
-						
+
 						<div class="form-group" style="margin-bottom:10px;">
 							<label>Alias</label>
 							<input id="add-new-attribute-alias" class="form-control input-sm" value="{{alias}}">
 						</div>
 						<div id = "add-new-attribute-expression-field" class="form-group" style="margin-bottom:10px;">
 							<label>Expression</label>
-							<input id="add-new-attribute-expression" type="text" class="form-control input-sm" value="{{expression}}">	
+							<input id="add-new-attribute-expression" type="text" class="form-control input-sm" value="{{expression}}">
 							<span class="help-block">Use Ctrl+Space for text auto-completion</span>
 						</div>
 						<div class="form-group" style="margin-bottom:10px;">
-							<label class="label-checkbox">					
+							<label class="label-checkbox">
 								<input id="add-new-attribute-requireValues" type="checkbox" class="dialog-checkbox input-sm" {{selectThis}} {{requireValues}}>
 								<span class="custom-checkbox"></span>
 								Require Values
@@ -395,7 +395,7 @@ You can always edit the attibute list also from the node property pane to the ri
 							</label>
 						</div>
 						{{/if}}
-						
+
 						<div class="form-group " style="margin-bottom:10px;">
 							<label>Condition(s)</label>
 							<div>
@@ -407,7 +407,7 @@ You can always edit the attibute list also from the node property pane to the ri
 							<!-- <label>Required condition</label> -->
 							<!-- <input autocomplete="off" class="form-control dialog-input input-sm" id="add-new-attribute-required-condition" value="{{attributeConditionSelection}}"> -->
 						<!-- </div> -->
-						
+
 						<div class="form-group "  id = "more-condition-options-node" style="margin-bottom:10px;  display: none;">
 							<label class="label-checkbox">
 								<input id="add-new-node-level-condition" type="checkbox" class="dialog-checkbox input-sm" {{addNodeLevelCondition}}>
@@ -430,7 +430,7 @@ You can always edit the attibute list also from the node property pane to the ri
                 <div class="modal-footer">
 				{{#if fields}}
 					<div class="col-md-2 pull-left">
-					
+
 						   <button id="merge-values-attribute" type="button" class="btn btn-warning yellow-button">Merge values ..</button>
 					</div>
 				{{/if}}

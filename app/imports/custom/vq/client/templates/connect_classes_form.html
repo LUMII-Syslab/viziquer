@@ -17,7 +17,7 @@
           color: green;
         }
 
-        .form-group { 
+        .form-group {
             padding-left: 10px;
             font-size: 12;
         }
@@ -29,10 +29,10 @@
         .label-radio:hover input ~ .custom-radio{
             background-color: lightgrey;
         }
-       
+
         p{
             margin: 0px 0px;
-            font-size: 80%;       
+            font-size: 80%;
         }
 
         #chain-list {
@@ -47,7 +47,7 @@
         }
 
         #show-settings, #apply-settings {
-            border-radius: 4px; 
+            border-radius: 4px;
             background: transparent;
         }
 
@@ -74,7 +74,7 @@
                             <!-- {{/each}} -->
                         <!-- </datalist> -->
                     <!-- {{else}}                         -->
-                        <p><span style="color:darkorange;">{{elements.[0].name}}</span> => <span style="color:darkorange;">{{elements.[1].name}}</span> 
+                        <p><span style="color:darkorange;">{{elements.[0].name}}</span> => <span style="color:darkorange;">{{elements.[1].name}}</span>
 						<!-- <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options</button>  -->
 						</p>
                     <!-- {{/if}}                     -->
@@ -95,21 +95,21 @@
                             <p id="chain_text" style="font-size:16px; margin-left:10px;">Please choose the chain:</p>
                             <div class="form-group" id="chain-list">
                             {{#each linkList}}
-                                {{#if show}}                                
-                                    <div class="col-lg-10 connections" name="chain">                                
-                                        <label class="label-radio">                                            
+                                {{#if show}}
+                                    <div class="col-lg-10 connections" name="chain">
+                                        <label class="label-radio">
                                             <input type="radio" name="stack-radio" value="{{number}}" style="font-size:14px">
-                                            <span class="custom-radio"></span>                                    
+                                            <span class="custom-radio"></span>
                                             {{#each this.array}}
                                                {{this.type}}{{this.link}} <span style="color:darkorange;">{{this.class}}</span>
                                             {{/each}}
                                         </label>
                                     </div>
                                 {{/if}}
-                            {{/each}}                                                          
+                            {{/each}}
                             </div>
-                        </form>                                 
-                    </div>                  
+                        </form>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -148,7 +148,7 @@
           content: 'V';
           padding-left: 5px;
           color: green;
-        } 
+        }
 
         #connect-setting-warning, #connect-setting-warning-long-length{
             position: relative;
@@ -168,13 +168,13 @@
         #connect-setting-warning:before{
             content:'!';
             font-weight: bold;
-            color:#fff;               
+            color:#fff;
         }
 
         #connect-setting-warning-long-length:before{
             content:'!';
             font-weight: bold;
-            color:#fff;               
+            color:#fff;
         }
 
         .help-tip:hover p{
@@ -186,14 +186,14 @@
             text-align: left;
             color: white;
             border: 1px solid #7F7F7F;
-            background-color: slategrey; 
-            border-radius: 5px;       
+            background-color: slategrey;
+            border-radius: 5px;
             padding: 10px;
             width: 200px;
             position: absolute;
-            right: 105%; 
+            right: 105%;
             z-index: 1000;
-        }         
+        }
     </style>
     <div id="connect-classes-settings" class="modal fade" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
@@ -204,22 +204,22 @@
 
                 <div class="modal-body" style="overflow-y: auto; overflow-x: hidden;">
                     <div id="settings" style="display:block; overflow: hidden;">
-                        <p>Path's direction</p>                        
-                        <div class="col-lg-10 elements">                               
-                            <form id="direction-settings" onsubmit="return false;"> 
+                        <p>Path's direction</p>
+                        <div class="col-lg-10 elements">
+                            <form id="direction-settings" onsubmit="return false;">
                                 {{#if addLongLinkS.data}}
-                                    <label class="label-radio">                                            
+                                    <label class="label-radio">
                                         <input type="radio" name = "path-radio" value="{{fromToClass.fromID}}" style="font-size:14px" checked>
                                         <span class="custom-radio"></span>
-                                        <span style="color:darkorange;">Path direction change is not available for Add Link.</span> 
+                                        <span style="color:darkorange;">Path direction change is not available for Add Link.</span>
                                     </label>
-                                {{else}}                               
-                                    <label class="label-radio">                                            
+                                {{else}}
+                                    <label class="label-radio">
                                         <input type="radio" name = "path-radio" value="{{fromToClass.fromID}}" style="font-size:14px" checked>
                                         <span class="custom-radio"></span>
                                         From <span style="color:darkorange;">{{fromToClass.fromName}}</span> to <span style="color:darkorange;">{{fromToClass.toName}}</span>
                                     </label>
-                                    <label class="label-radio">                                            
+                                    <label class="label-radio">
                                         <input type="radio" name = "path-radio" value="{{fromToClass.toID}}" style="font-size:14px">
                                         <span class="custom-radio"></span>
                                         From <span style="color:darkorange;">{{fromToClass.toName}}</span> to <span style="color:darkorange;">{{fromToClass.fromName}}</span>
@@ -246,17 +246,17 @@
                         </form>
                         <hr style="border: 1px solid lightgrey;">
                         <form>
-                            <label class="label-radio">                                            
+                            <label class="label-radio">
                                 <input type="radio" name = "inverse-links" value="none">
                                 <span class="custom-radio"></span>
                                 <p style="display:inline;">Exclude inverse links</p>
                                 </label>
-                            <label class="label-radio">                                            
+                            <label class="label-radio">
                                 <input type="radio" name = "inverse-links" value="one">
                                 <span class="custom-radio"></span>
                                 <p style="display:inline;">Show paths with at most 1 inverse link</p>
                             </label>
-                            <label class="label-radio">                                            
+                            <label class="label-radio">
                                 <input type="radio" name = "inverse-links" value="more" checked>
                                 <span class="custom-radio"></span>
                                 <p style="display:inline;">Show paths with any inverse links &ensp;</p>
@@ -264,11 +264,11 @@
                                     <p style="left:-50%; bottom:100%; width: 300px;">This can lead to queries that are difficult to read or understand</p>
                                 </div>
                             </label>
-                        </form> 
-                    </div>                                                      
+                        </form>
+                    </div>
                 </div>
 
-                <div class="modal-footer">                   
+                <div class="modal-footer">
                     <button id="cancel-connect-settings" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-connect-settings" type="button" class="btn btn-primary">OK</button>
                 </div>

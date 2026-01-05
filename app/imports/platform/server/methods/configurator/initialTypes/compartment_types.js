@@ -42,12 +42,12 @@ function build_initial_compartment_type(list, elem_type, editor_type) {
 								{extensionPoint: "afterUpdate", procedure: ""},
 								{extensionPoint: "dynamicPrefix", procedure: ""},
 								{extensionPoint: "dynamicSuffix", procedure: ""},
-								{extensionPoint: "dynamicDefaultValue", procedure: ""},					
+								{extensionPoint: "dynamicDefaultValue", procedure: ""},
 								{extensionPoint: "dynamicDropDown", procedure: ""},
 							];
 
 	list["type"] = "text";
-	
+
 
 	console.log("initial type ", list)
 
@@ -90,9 +90,9 @@ function build_line_compartment_style(editor_type) {
 }
 
 
-export { 
-  build_initial_compartment_type, 
-  get_default_compartment_style, 
-  build_box_compartment_style, 
-  build_line_compartment_style 
+export {
+  build_initial_compartment_type,
+  get_default_compartment_style,
+  build_box_compartment_style,
+  build_line_compartment_style
 }

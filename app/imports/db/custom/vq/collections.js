@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo';
- 
+
 // Custom collections
 const Services = new Mongo.Collection("Services");
 

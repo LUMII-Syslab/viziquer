@@ -2,7 +2,7 @@ import BoxInfo from './line_routing_boxInfo.js'
 import PathInfo from './line_routing_pathInfo.js'
 
 //******************************************************************************
-// GraphInfo 
+// GraphInfo
 //******************************************************************************
 var GraphInfo = function() {
     // turnOffPrinting("xxx");
@@ -106,7 +106,7 @@ GraphInfo.prototype.reduceConnectionCrossings = function() {
         if (box.isFork()) {
             box.reduceConnectionCrossings();
         }
-        
+
     });
 };
 GraphInfo.prototype.onDragBoxes = function() {
@@ -147,7 +147,7 @@ GraphInfo.prototype.processAffectedPaths = function() {
 GraphInfo.prototype.avoidPathCrossings = function() {
     // printText("\t\t>>>>>>>>>> avoidPathCrossings start >>>>>>>>>>");
 //    turnOffPrinting("avoidPathCrossings");
-    // avoid affected path crossings with endboxes        
+    // avoid affected path crossings with endboxes
     for (var i = 0; i < this.affectedPaths.length; i++) {
         var path = this.affectedPaths[i];
         if (!path.isSelfloop()) {
@@ -205,7 +205,7 @@ GraphInfo.prototype.collectDisconnectedPaths = function() {
     return rc;
 };
 //******************************************************************************
-// FGraphInfo 
+// FGraphInfo
 //******************************************************************************
 function FGraphInfo() {
     this.boxes = [];
@@ -274,7 +274,7 @@ FGraphInfo.prototype.createGraph = function() {
 //    this.addBox({id:"F3", size: [32, 8], center: [0, 0], type: "nodeFork"});
 //    this.addBox({id:"F4", size: [32, 8], center: [0, 0], type: "nodeFork"});
 //    this.addBox({id:"F5", size: [32, 8], center: [0, 0], type: "nodeFork"});
-//    
+//
 ////    pathInfo.id = "P";
 ////    pathInfo.from = "N1";
 ////    pathInfo.to = "F5";
@@ -472,7 +472,7 @@ FGraphInfo.prototype.getGraphStr = function() {
 };
 
 //******************************************************************************
-// FBoxInfo 
+// FBoxInfo
 //******************************************************************************
 function FBoxInfo(info) {
     _.extend(this, info);
@@ -482,7 +482,7 @@ function FBoxInfo(info) {
 }
 
 //******************************************************************************
-// FPathInfo 
+// FPathInfo
 //******************************************************************************
 function FPathInfo(info) {
     _.extend(this, info);

@@ -38,11 +38,11 @@ Selection.prototype = {
 			}
 
 			else if (elem["type"] == "Line") {
-				selection.selectLine(elem);	
+				selection.selectLine(elem);
 			}
 
 			else if (elem["type"] == "Port") {
-				selection.selectPort(elem);	
+				selection.selectPort(elem);
 			}
 
 			else {
@@ -55,7 +55,7 @@ Selection.prototype = {
 		}
 
 		//refreshing layers
-		var drag_layer = editor.getLayer("DragLayer");		
+		var drag_layer = editor.getLayer("DragLayer");
 		drag_layer.draw();
 
 		var shapes_layer = editor.getLayer("ShapesLayer");
@@ -92,7 +92,7 @@ Selection.prototype = {
 
 	isSingleElementSelection: function() {
 		var selection = this;
-		
+
 		if (_.size(selection.selected) === 1) {
 			return true;
 		}
@@ -111,7 +111,7 @@ Selection.prototype = {
 		_.each(selection.selected, function(element) {
 			_.each(element.ports, function(port) {
 				linked_ports[port._id] = port;
-				
+
 			});
 		});
 
@@ -161,35 +161,35 @@ Selection.prototype = {
 			selection.transformLinePointsToDragGroup(line);
 			line_presentation.moveTo(drag_group);
 		}
-		
+
 		//if a line start element is selected
 		else if (selected[start_elem_id]) {
-			var out_lines_group = groups["OutLinesGroup"];				
+			var out_lines_group = groups["OutLinesGroup"];
 			line_presentation.moveTo(out_lines_group);
 		}
 
 		//if a line end element is selected
 		else if (selected[end_elem_id]) {
-			var in_lines_group = groups["InLinesGroup"];				
-			line_presentation.moveTo(in_lines_group);	
+			var in_lines_group = groups["InLinesGroup"];
+			line_presentation.moveTo(in_lines_group);
 		}
 
 		//if a line is selected but its end points are not selected
 		else if (selected[line._id]) {
-			var no_end_group = groups["NoEndLinesGroup"];				
+			var no_end_group = groups["NoEndLinesGroup"];
 			line_presentation.moveTo(no_end_group);
 		}
 
 		//if a line start element is selected
 		else if (linked_ports[start_elem_id]) {
-			var out_lines_group = groups["OutLinesGroup"];				
+			var out_lines_group = groups["OutLinesGroup"];
 			line_presentation.moveTo(out_lines_group);
 		}
 
 		//if a line end element is selected
 		else if (linked_ports[end_elem_id]) {
-			var in_lines_group = groups["InLinesGroup"];				
-			line_presentation.moveTo(in_lines_group);	
+			var in_lines_group = groups["InLinesGroup"];
+			line_presentation.moveTo(in_lines_group);
 		}
 
 		//if a line is not selected and its end-points are not selected
@@ -213,7 +213,7 @@ Selection.prototype = {
 			var drag_group = selection.dragGroup;
 			shape_group.x(shape_group.x() - drag_group.x());
 			shape_group.y(shape_group.y() - drag_group.y());
-			
+
 			shape_group.moveTo(drag_group);
 
 			_.each(box.ports, function(port) {
@@ -235,7 +235,7 @@ Selection.prototype = {
 
 		//if editor is in edit mode
 		if (editor.isEditMode()) {
-			
+
 			//manage the line
 			selection.manageLineLayer(element);
 
@@ -329,21 +329,21 @@ Selection.prototype = {
 			m = _.min(_.map(_.values(sel), function(arect) {
 				return arect.getElementPosition().x;
 			}));
-			
-			_.each(sel, function(arect) { 
+
+			_.each(sel, function(arect) {
 				var pos = arect.getElementPosition();
 				arect.setElementPosition(m, pos.y);
 			});
 		}
 
 		if (ha === 0) {
-			
+
 			m = avg(_.map(_.values(sel), function(arect) {
 				var pos = arect.getElementPosition();
 				var size = arect.getSize();
 				return Math.round(pos.x + size.width / 2);
 			}));
-			
+
 			_.each(sel, function(arect) {
 				var pos = arect.getElementPosition();
 				var size = arect.getSize();
@@ -352,14 +352,14 @@ Selection.prototype = {
 		}
 
 		if (ha === 1) {
-			
+
 			m = _.max(_.map(_.values(sel), function(arect) {
 				var pos = arect.getElementPosition();
 				var size = arect.getSize();
 				return pos.x + size.width;
 			}));
-				
-			_.each(sel, function(arect) { 
+
+			_.each(sel, function(arect) {
 				var pos = arect.getElementPosition();
 				var size = arect.getSize();
 				arect.setElementPosition(m - size.width, pos.y);
@@ -371,8 +371,8 @@ Selection.prototype = {
 			m = _.min(_.map(_.values(sel), function(arect) {
 				return arect.getElementPosition().y;
 			}));
-			
-			_.each(sel, function(arect) { 
+
+			_.each(sel, function(arect) {
 				var pos = arect.getElementPosition();
 				arect.setElementPosition(pos.x, m);
 			});
@@ -385,8 +385,8 @@ Selection.prototype = {
 				var size = arect.getSize();
 				return Math.round(pos.y + size.height / 2);
 			}));
-			
-			_.each(sel, function(arect) { 
+
+			_.each(sel, function(arect) {
 				var pos = arect.getElementPosition();
 				var size = arect.getSize();
 				arect.setElementPosition(pos.x, Math.round(m - size.height / 2));
@@ -394,14 +394,14 @@ Selection.prototype = {
 		}
 
 		if (va === 1) {
-			
+
 			m = _.max(_.map(_.values(sel), function(arect) {
 				var pos = arect.getElementPosition();
 				var size = arect.getSize();
 				return pos.y + size.height;
 			}));
-			
-			_.each(sel, function(arect) { 					
+
+			_.each(sel, function(arect) {
 				var pos = arect.getElementPosition();
 				var size = arect.getSize();
 				arect.setElementPosition(pos.x, m - size.height);
@@ -439,20 +439,20 @@ Selection.prototype = {
 			m = _.min(_.map(_.values(sel), function(arect) {
 				return arect.getSize().width;
 			}));
-			
-			_.each(sel, function(arect) { 
+
+			_.each(sel, function(arect) {
 				var size = arect.getSize();
 				arect.updateSizeAndCompartments(m, size.height);
 			});
 		}
 
 		if (ha === 1) {
-			
+
 			m = _.max(_.map(_.values(sel), function(arect) {
 				return arect.getSize().width;
 			}));
-				
-			_.each(sel, function(arect) { 
+
+			_.each(sel, function(arect) {
 				var size = arect.getSize();
 				arect.updateSizeAndCompartments(m, size.height);
 			});
@@ -463,27 +463,27 @@ Selection.prototype = {
 			m = _.min(_.map(_.values(sel), function(arect) {
 				return arect.getSize().height;
 			}));
-			
-			_.each(sel, function(arect) { 
+
+			_.each(sel, function(arect) {
 				var size = arect.getSize();
 				arect.updateSizeAndCompartments(size.width, m);
 			});
 		}
 
 		if (va === 1) {
-			
+
 			m = _.max(_.map(_.values(sel), function(arect) {
 				return arect.getSize().height;
 			}));
-			
-			_.each(sel, function(arect) { 					
+
+			_.each(sel, function(arect) {
 				var size = arect.getSize();
 				arect.updateSizeAndCompartments(size.width, m);
 			});
 		}
 
 		//adjusting handles
-		_.each(sel, function(arect) { 					
+		_.each(sel, function(arect) {
 			arect.removeResizers();
 			arect.addResizers();
 		});
@@ -600,7 +600,7 @@ Selection.prototype = {
 			if (drag_elem["type"] == "Box") {
 				drag_elem.collectLinkedLines(lines);
 				dragged_boxes.push(drag_elem);
-			}			
+			}
 		});
 
 		OrthogonalCollectionRerouting.recomputeLines(editor, dragged_boxes, lines.linkedLines, lines.draggedLines, 0, 0);

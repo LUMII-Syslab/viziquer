@@ -11,7 +11,7 @@
             </ul>
         </div>
 
-        <div class="panel-body">        
+        <div class="panel-body">
             <div class="tab-content user-tab-content">
 
                 <!-- tab1 -->
@@ -56,7 +56,7 @@
                 {{> membersViewButton}}
                 <button id="add-user-groups" type="button" class="btn btn-info btn-sm">{{_ "users_group"}}</button>
 
-                <button id="invite-user" type="button" class="btn btn-success btn-sm">Invite user</button> 
+                <button id="invite-user" type="button" class="btn btn-success btn-sm">Invite user</button>
             </div>
 
             <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3 pull-right">
@@ -76,16 +76,16 @@
 <template name="membersViewButton">
     <div class="btn-group">
         <a href="#" class="btn btn-default btn-sm" data-toggle="dropdown">
-            <i class="fa fa-gear fa-lg"></i> 
+            <i class="fa fa-gear fa-lg"></i>
             <i class="fa fa-caret-down"></i>
         </a>
         <ul class="dropdown-menu text-left">
             <li>
                 <a id="defaultView" href="#">
                     {{#if tableView}}
-                        <i class="fa fa-check" style="visibility:hidden;"></i> 
+                        <i class="fa fa-check" style="visibility:hidden;"></i>
                     {{else}}
-                        <i class="fa fa-check"></i> 
+                        <i class="fa fa-check"></i>
                     {{/if}}
                     {{_ "user_default_view"}}
                 </a>
@@ -93,9 +93,9 @@
             <li>
                 <a id="tableView" href="#">
                     {{#if tableView}}
-                        <i class="fa fa-check"></i> 
+                        <i class="fa fa-check"></i>
                     {{else}}
-                        <i class="fa fa-check" style="visibility:hidden;"></i> 
+                        <i class="fa fa-check" style="visibility:hidden;"></i>
                     {{/if}}
                     {{_ "user_table_view"}}
                 </a>
@@ -142,7 +142,7 @@
                             {{/if}}
 
                             <td>{{_ "user_status" context=status}}</td>
-                            <td>{{createdAt}}</td>    
+                            <td>{{createdAt}}</td>
                             {{#if editable}}
                                 <td>
                                     <a href="#" class="decline change-button btn" id="{{systemId}}">
@@ -175,7 +175,7 @@
                         <div class="col-xs-6 col-sm-12 col-md-6">
 
                             {{#if online}}
-                                <i class="fa fa-circle text-success"> </i> 
+                                <i class="fa fa-circle text-success"> </i>
                             {{else}}
                                 {{#if idle}}
                                     <i class="fa fa-circle text-warning"> </i>
@@ -183,13 +183,13 @@
                             {{/if}}
 
                             {{#if name}}
-                                <strong class="font-14">{{name}} {{surname}}</strong>   
+                                <strong class="font-14">{{name}} {{surname}}</strong>
                             {{else}}
 
                                 {{#if surname}}
                                     <strong class="font-14">{{name}} {{surname}}</strong>
                                 {{else}}
-                                     <strong class="font-14">{{email}}</strong>   
+                                     <strong class="font-14">{{email}}</strong>
                                 {{/if}}
 
                             {{/if}}
@@ -200,12 +200,12 @@
                                 {{else}}
                                     {{roleName}} / {{_ "user_status" context=status}}
                                 {{/if}}
-                            </small> 
+                            </small>
                             <div class="seperator"></div>
 
                             <div class="user-profile-buttons">
                                 {{#if editable}}
-                                    <div class="btn-group change-button" id="{{systemId}}"> 
+                                    <div class="btn-group change-button" id="{{systemId}}">
                                         <a class="btn btn-sm btn-success m-bottom-sm dropdown-toggle" data-toggle="dropdown">{{_ "default_view_role"}} <span class="caret"></span></a>
                                         <ul class="dropdown-menu slidedown">
                                             <li role="Reader" class="set-as"><a href="#">{{_ "set_as_reader"}}</a></li>
@@ -217,7 +217,7 @@
 
                                             <li class="divider"></li>
                                             <li class="decline"><a href="#">{{_ "remove_user"}}</a></li>
-                                        </ul>                       
+                                        </ul>
                                     </div>
                                 {{/if}}
                             </div>
@@ -230,7 +230,7 @@
 {{/each}}
 
 </template>
-                           
+
 <template name="foundUsers">
     <div class="row">
         {{#each foundUsers}}
@@ -247,7 +247,7 @@
                                 <strong class="font-14">{{name}} {{surname}}</strong>
                                 <div class="invite-buttons">
                                     {{#if editable}}
-                                        <div class="btn-group change-button" id="{{systemId}}"> 
+                                        <div class="btn-group change-button" id="{{systemId}}">
                                             <a class="btn btn-sm btn-success m-bottom-sm dropdown-toggle" data-toggle="dropdown">{{_ "invite"}} <span class="caret"></span></a>
                                             <ul class="dropdown-menu slidedown">
                                                 <li class="invite" role="Reader"><a href="#">{{_ "invite_as_reader"}}</a></li>
@@ -269,7 +269,7 @@
         {{/each}}
     </div>
 </template>
-                        
+
 
 <template name="usersSearchBar">
 
@@ -323,7 +323,7 @@
                                     </div>
                                     <div id="collapseOne" class="panel-collapse collapse" aria-expanded="false" style="height:0px;">
                                         <div class="panel-body">
-                                            
+
                                                 <div class="margin-bottom">
                                                     <form>
 
@@ -370,7 +370,7 @@
 
                                                     </form>
                                                 </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div><!-- /panel -->
@@ -408,9 +408,9 @@
                                                 <td class="name"><span class="edit-group-name">{{name}}</span></td>
                                             {{/if}}
                                         {{/if}}
-                             
+
                                         <td>{{count}}</td>
-                           
+
                                         <td>
                                             {{#if isRemovable}}
                                             <span>
@@ -426,7 +426,7 @@
                         </div>
 
                     </div>
-                </div>    
+                </div>
             </div><!-- /.modal-content -->
 
         </div><!-- /.modal-dialog -->
@@ -439,7 +439,7 @@
 
     <div id="invite-user-form" class="modal fade">
         <div class="modal-dialog">
-            <div class="modal-content">      
+            <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Send invitation</h4>
@@ -454,7 +454,7 @@
                             <div class="col-sm-10">
                                 <input id="email" type="text" class="form-control" placeholder="">
                             </div>
-                        </div>   
+                        </div>
 
                         <div class="form-group">
                             <label for="role" class="control-label col-sm-2">Role</label>
@@ -478,7 +478,7 @@
 
             </div>
         </div>
-    </div>   
+    </div>
 
 </template>
 

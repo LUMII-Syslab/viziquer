@@ -24,7 +24,7 @@ Template.membersTab.events({
 	'click #tableView' : function(e, templ) {
 		e.preventDefault();
 		Session.set("tableView", true);
-	},	
+	},
 
 });
 // End of members tab
@@ -124,12 +124,12 @@ Template.userGroups.events({
 
 		var all_proj_doc_obj = $("#allProjectDocuments");
 		var all_proj_doc = all_proj_doc_obj.prop('checked');
-		all_proj_doc_obj.prop('checked', false);	
+		all_proj_doc_obj.prop('checked', false);
 
 		var current_proj_doc_obj = $("#currentProjectDocuments");
 		var current_proj_doc = current_proj_doc_obj.prop('checked');
 		current_proj_doc_obj.prop('checked', false);
-				
+
 
 		var list = {name: group_name,
 					projectId: Session.get("activeProject"),
@@ -160,7 +160,7 @@ Template.userGroups.events({
 			if (group["name"] != value)
 				input.text("");
 		}
-		
+
 		var list = {id: group_id, projectId: Session.get("activeProject"), name: value};
 		Utilities.callMeteorMethod("editGroup", list);
 
@@ -225,7 +225,7 @@ Template.foundUsers.helpers({
 			if (search["text"] && search["text"] != "")
 				query1 = build_user_search_query(search["text"]);
 			else
-				query1 = {noQuery: -1};			
+				query1 = {noQuery: -1};
 		}
 
 		var query2 = {systemId: {$nin: user_ids}};
@@ -310,7 +310,7 @@ function get_project_members() {
 		var user_ids = Users.find(members_filter).map(function(user) {return user["systemId"]});
 		if (user_ids.length > 0)
 			filter_query = {systemId: {$in: user_ids}};
-		
+
 		//if no user matches the filter, returns nothing
 		else
 			return;
@@ -392,12 +392,12 @@ function build_user_search_query(search_entered) {
 
 		//filters by name, surname or email
     	if (search_items.length == 1) {
-    		query = {$or: [{name: {'$regex': "^" + search_items[0], $options: 'i'}}, 
-    						{surname: {'$regex': "^" + search_items[0], $options: 'i'}}, 
+    		query = {$or: [{name: {'$regex': "^" + search_items[0], $options: 'i'}},
+    						{surname: {'$regex': "^" + search_items[0], $options: 'i'}},
     						{email: {'$regex': "^" + search_items[0], $options: 'i'}}
     					]};
     	}
-    	else 
+    	else
     		if (search_items.length == 2) {
 				query = {$or: [
 					{$and: [{name: {'$regex': "^" + search_items[0], $options: 'i'}},
@@ -405,7 +405,7 @@ function build_user_search_query(search_entered) {
 
 					{$and: [{name: {'$regex': "^" + search_items[1], $options: 'i'}},
 							{surname: {'$regex': "^" + search_items[0], $options: 'i'}}]},
-				]};   		
+				]};
     		}
     		else
     			query = Utilities.resetQuery();
@@ -442,11 +442,11 @@ function render_members() {
 			if (group)
 				member["roleName"] = group["name"];
 		}
-		
+
 		var meteor_user = Meteor.users.findOne({_id: member["systemId"]});
 		if (meteor_user) {
 			var status = meteor_user.status;
-				
+
 			//online status online, idle
 			if (status) {
 

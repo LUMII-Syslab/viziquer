@@ -45,11 +45,11 @@ function ElementMouseDown(element) {
 			if (palette.isLinePressed() && element.type == "Line") {
 				return;
 			}
-			
+
 			editor.actions.reset();
 	    	editor.actions.startAction("NewElement", element);
 		}
-		
+
 		else {
 
 			//if ctrl key is used to add elements to the selected
@@ -73,7 +73,7 @@ function ElementMouseDown(element) {
 
 			else {
 
-				//if the element already exists in the selected, selected is not changed 
+				//if the element already exists in the selected, selected is not changed
 				if (selected[id]) {
 
 					elementMouseDown.intitLineReRouting(element);
@@ -94,7 +94,7 @@ function ElementMouseDown(element) {
 					new Event(editor, "clickedOnElement", params);
 			    }
 		    }
-		}	
+		}
 	}
 
 	elementMouseDown.intitLineReRouting = function(element) {
@@ -162,7 +162,7 @@ function ElementMouseMove(element) {
 
 	shape_group.on('mousemove touchmove', function(e) {
 		e.cancelBubble = true;
-		
+
 		if (editor.getCursorStyle() == "default") {
 			editor.setCursorStyle("move");
 		}
@@ -213,7 +213,7 @@ function ElementMouseUp(element) {
 				return;
 			}
 		}
-		
+
 	});
 }
 

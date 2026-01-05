@@ -72,7 +72,7 @@ ImportAjooConfiguration.prototype = {
 					});
 	},
 
- 
+
 	importDiagramTypes: async function(diagram_types) {
 	  var self = this;
 

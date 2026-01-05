@@ -99,7 +99,7 @@ ANewLine.prototype = {
 	 															[line_points[0], line_points[1]],
 	 															[line_points[2], line_points[3]]);
 	 	}
-	 	
+
 	 	//saving the first point
 	 	if (new_start_point) {
 			new_points = [new_start_point[0], new_start_point[1]];
@@ -146,7 +146,7 @@ ANewLine.prototype = {
 
 	 	else {
 
-	 		editor.connectionPoints.removeEndPoints(true);	
+	 		editor.connectionPoints.removeEndPoints(true);
 
 	 		//if user mouse overed connection point
 	 		var active_connection_point = editor.connectionPoints.getActiveConnectionPoint();
@@ -189,8 +189,8 @@ ANewLine.prototype = {
 		var newLine = this;
 		var editor = newLine.editor;
 		var state = newLine.state;
-		
-		var connection_points = editor.connectionPoints;		
+
+		var connection_points = editor.connectionPoints;
 	 	if (!target || target.type == "Line") {
 	 		var tmp_target = connection_points.getEndElement();
 	 		connection_points.reset();
@@ -280,7 +280,7 @@ ANewLine.prototype = {
 	 	//line1
 	 	var line1 = [-inf, point1[1], inf, point1[1]];
 	 	var new_line_svg1 = new LineSVGObject(line1, 0);
-	 	
+
 	 	//finding collision with start shape
 	 	var new_point_obj1 = new_line_svg1.getIntersectionWithElement(elem, point2);
 	 	var new_point1 = new_point_obj1["point"];
@@ -288,7 +288,7 @@ ANewLine.prototype = {
 	 	//line2
 	 	var line2 = [point1[0], -inf, point1[0], inf];
 	 	var new_line_svg2 = new LineSVGObject(line2, 0);
-	 		
+
 	 	//finding collision with start shape
 	 	var new_point_obj2 = new_line_svg2.getIntersectionWithElement(elem, point2);
 	 	var new_point2 = new_point_obj2["point"];
@@ -430,7 +430,7 @@ ANewLine.prototype = {
 			if (start_point[0] > new_start_point[0])
 				delta = delta * -1;
 
-			//middle points			
+			//middle points
 			middle_point1 = [new_start_point[0] + delta, new_start_point[1]];
 			middle_point2 = [new_start_point[0] + delta, end_point[1]];
 
@@ -453,7 +453,7 @@ ANewLine.prototype = {
 		var new_end_point = end_point_obj["point"];
 
 		loop_points = [new_start_point[0], new_start_point[1],
-						middle_point1[0], middle_point1[1], 
+						middle_point1[0], middle_point1[1],
 						middle_point2[0], middle_point2[1],
 						new_end_point[0], new_end_point[1]];
 

@@ -13,9 +13,9 @@ function joined_date(date_obj) {
 }
 
 function months() {
-	return ["January", 
-          "February", 
-          "March", 
+	return ["January",
+          "February",
+          "March",
           "April",
           "May",
           "June",
@@ -24,7 +24,7 @@ function months() {
           "September",
           "October",
           "November",
-          "December",                           
+          "December",
         ];
 }
 
@@ -79,7 +79,7 @@ function time_interval_from_given_date(date, current_date) {
             if (res == 1)
                 tmp = "month";
             //diff_text = res + " " + tmp + " ago";
-            diff_text = {number: res, time: tmp}; 
+            diff_text = {number: res, time: tmp};
           }
         }
       }

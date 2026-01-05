@@ -26,7 +26,7 @@ Template.toolbarButtons.events({
 
 		var diagram_type = DiagramTypes.findOne({_id: Session.get("targetDiagramType")});
 		if (diagram_type && diagram_type["toolbar"])
-			Session.set("activeToolbarButton", diagram_type["toolbar"].length);	
+			Session.set("activeToolbarButton", diagram_type["toolbar"].length);
 
 		add_toolbar_item("toolbar", toolbar_button);
 	},
@@ -45,7 +45,7 @@ Template.toolbarButtons.events({
 		var pull;
 		var src = $(".toolbar-tab.active");
 
-		//if edit mode 
+		//if edit mode
 		if (src.attr("type") == "edit-mode") {
 			remove_toolbar_item("toolbar", toolbar_button);
 		}
@@ -92,7 +92,7 @@ Template.readModeToolbarButtonFields.helpers({
 		if (diagram_type && diagram_type["readModeToolbar"]) {
 			var index = Session.get("activeReadModeToolbarButton");
 			var toolbar_button = diagram_type["readModeToolbar"][index];
-			
+
 			if (toolbar_button && toolbar_button["isInEditableVersion"])
 				toolbar_button["isInEditableVersionChecked"] = "checked";
 
@@ -100,7 +100,7 @@ Template.readModeToolbarButtonFields.helpers({
 				toolbar_button["isForAdminOnlyChecked"] = "checked";
 
 			return toolbar_button;
-		}	
+		}
 	},
 });
 
@@ -152,10 +152,10 @@ Template.readModeToolbarButtons.events({
 								icon: src.attr("icon") || "",
 								name: src.attr("name") || "",
 								procedure: src.attr("procedure") || "",
-								//isOnlyEditMode: 
+								//isOnlyEditMode:
 							};
 
-		remove_toolbar_item("readModeToolbar", toolbar_button) 
+		remove_toolbar_item("readModeToolbar", toolbar_button)
 
 		Session.set("activeReadModeToolbarButton", 0);
 	},

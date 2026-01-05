@@ -1,4 +1,4 @@
-<!-- 
+<!--
 <template name="AddSubquery">
 <style>
     div.modal-body {
@@ -6,7 +6,7 @@
         padding-top: 0px;
         overflow-y: auto;
         max-height: 60vh;
-        min-height: 140px;             
+        min-height: 140px;
     }
 
     div.link-type-part {
@@ -15,7 +15,7 @@
         background-color: white;
         margin-left: 10px;
         margin-right: 10px;
-        width: 30%;        
+        width: 30%;
     }
 
     div.searchBoxSQ {
@@ -23,7 +23,7 @@
         margin-left: 10px;
         margin-right: 10px;
         padding-top: 0px;
-        overflow-y: auto;            
+        overflow-y: auto;
     }
 
     .help-tip{
@@ -44,7 +44,7 @@
     .help-tip:before{
         content:'?';
         font-weight: bold;
-        color:#fff;       
+        color:#fff;
     }
 
     .help-tip:hover p{
@@ -56,25 +56,25 @@
         text-align: left;
         color: white;
         border: 1px solid #7F7F7F;
-        background-color: slategrey; 
-        border-radius: 5px;       
+        background-color: slategrey;
+        border-radius: 5px;
         padding: 10px;
         width: 200px;
         position: absolute;
-        right: 105%; 
+        right: 105%;
         z-index: 1000;
-    }  
+    }
 
     .describe {
-        margin-left:25px; 
+        margin-left:25px;
         font-size:90%;
         font-style: italic;
-    }  
+    }
 </style>-->
 
 	<!-- Modal for new document -->
   <!--  <div id="add-subquery-form" class="modal fade">
-        
+
         <div class="modal-dialog" style="width:750px">
             <div class="modal-content">
                 <div class="modal-header">
@@ -83,15 +83,15 @@
                 </div>
 
                 <div class="searchBox" id="searchBoxSQ">
-                    <p style="margin-bottom:10px; size:10px;">Type something in the input field to search the list for specific items (no spaces allowed):</p>  
+                    <p style="margin-bottom:10px; size:10px;">Type something in the input field to search the list for specific items (no spaces allowed):</p>
                     <input class="form-control" id="mySQSearch" type="text" placeholder="Search..">
                     <hr>
                 </div>
-   
+
                 <div class="link-type-part">
                     <form id="sqtype-choice" class="form-horizontal" role="form">
-                        <div class="form-group">                            
-                            <div name="chain">                  
+                        <div class="form-group">
+                            <div name="chain">
                                 <label class="label-radio">
                                     <input type="radio" name="type-radio" value="NESTED" checked="checked" disabled>
                                     <span class="custom-radio"></span>
@@ -106,15 +106,15 @@
                                 <!--    <input type="checkbox" id="goto-SQ-wizard" value="DISPLAY">
                                     <span class="custom-checkbox"></span>
                                     Use Aggregate wizard
-                                </div> 
+                                </div>
                             </div>
-                        </div>                        
-                    </form>                    
+                        </div>
+                    </form>
                 </div>
-               
-                <div class="modal-body">                    
-                    <form id="sqlink-list-form" class="form-horizontal" role="form">                        
-                        <div class="form-group">                   
+
+                <div class="modal-body">
+                    <form id="sqlink-list-form" class="form-horizontal" role="form">
+                        <div class="form-group">
                             {{#each shortList}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">
@@ -125,7 +125,7 @@
                                 </div>
                             {{/each}}
                         </div>
-                    </form> 
+                    </form>
                 </div>
 
                 <div class="modal-footer">
@@ -137,6 +137,6 @@
 
  <!--   </div><!-- /.modal -->
 
- <!--   <script>        
+ <!--   <script>
     </script>
 </template> -->

@@ -81,7 +81,7 @@ Zoom.prototype = {
             shapes_layer.draw();
             drag_layer.draw();
             drawing_layer.draw();
-        }     
+        }
 
         var size = editor.size;
         size.recomputeStageBorders();
@@ -94,7 +94,7 @@ Zoom.prototype = {
 
         editor["zoom"]["x"] = new_x;
         editor["zoom"]["y"] = new_y;
-    }, 
+    },
 
     reset: function() {
         var zoom = this;

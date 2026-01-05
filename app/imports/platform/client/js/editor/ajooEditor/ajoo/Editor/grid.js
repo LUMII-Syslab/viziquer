@@ -41,7 +41,7 @@ Grid.prototype = {
 	                    stroke: 'grey',
 	                    strokeWidth: 0.3,
 	                    //dash: [2, 7],
-	                    perfectDrawEnabled: false,  
+	                    perfectDrawEnabled: false,
 	                };
 
 	    for (var i=0;i<width;i=i+step) {
@@ -60,7 +60,7 @@ Grid.prototype = {
 	        layer.add(line);
 	    }
 
-	    layer.draw();  
+	    layer.draw();
 	},
 
 	showGrid: function(is_refresh_not_needed) {
@@ -114,7 +114,7 @@ Grid.prototype = {
 	    var graphInfo = new GraphInfo();
 		var initial_pos = {
 							deltaX: 0,
-							deltaY: 0, 
+							deltaY: 0,
 							stageX: 0,
 							stageY: 0,
 						};
@@ -133,7 +133,7 @@ Grid.prototype = {
 
 				SelectionDragging.prototype.adjustGridPosition.call(self, initial_pos);
 
-		    	var new_box = SelectionDragging.prototype.addBoxToGraphInfo(element, graphInfo, 0, 0);  	
+		    	var new_box = SelectionDragging.prototype.addBoxToGraphInfo(element, graphInfo, 0, 0);
 		    	graphInfo.dragObjects.push(new_box);
 			}
 			else {
@@ -155,7 +155,7 @@ Grid.prototype = {
 
 			if (element.type == "Box")
 				list.movedBoxes.push({id: element._id, location: element.getSize()});
-			else 
+			else
 				list.lines.push({id: element._id, points: element.getPoints()});
 		});
 

@@ -1,7 +1,7 @@
 import { generate_id, is_ajoo_editor } from '../../../../../libs/platform/lib.js'
 
 function build_initial_element_type(list, editor_type) {
-		
+
 	if (!editor_type)
 		editor_type = "ajooEditor";
 
@@ -49,7 +49,7 @@ function build_initial_element_type(list, editor_type) {
 							elementStyle: build_initial_box_style(editor_type),
 						}];
 
-		res["name"] = "Box";						
+		res["name"] = "Box";
 	}
 
 	//line
@@ -87,7 +87,7 @@ function build_initial_element_type(list, editor_type) {
 	}
 
 	res["isAbstract"] = false;
-	res["layoutSettings"] = {};				
+	res["layoutSettings"] = {};
 
 	return res;
 }
@@ -174,7 +174,7 @@ function build_initial_box_style(editor_type) {
 
 			//linear gradient
 			fillLinearGradientStartPointX: 0.5,
-			fillLinearGradientStartPointY: 0,			
+			fillLinearGradientStartPointY: 0,
 			fillLinearGradientEndPointX: 0.5,
 			fillLinearGradientEndPointY: 1,
 			fillLinearGradientColorStops: [0, 'white', 1, 'black'],
@@ -213,8 +213,8 @@ function build_initial_box_style(editor_type) {
 }
 
 
-export { 
-  build_initial_element_type, 
-  build_initial_line_style, 
-  build_initial_box_style 
+export {
+  build_initial_element_type,
+  build_initial_line_style,
+  build_initial_box_style
 }

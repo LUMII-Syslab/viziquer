@@ -8,7 +8,7 @@ Template.newNotificationsCountT.helpers({
 	newNotificationsCount: function() {
 	    return Notifications.find({status: "new", receiver: Session.get("userSystemId")}).count();
 	},
-});	
+});
 
 
 Template.notificationsDropDownT.onCreated(function() {
@@ -78,7 +78,7 @@ Template.userNotifications.helpers({
 Template.userNotifications.events({
 
 	'click .notification-delete' : function(e) {
-		e.preventDefault();	
+		e.preventDefault();
 		var id = $(e.target).closest(".notification-delete").attr("id");
 
 		var list = {id: id};
@@ -112,12 +112,12 @@ function reject_invitation(e) {
 function accept_invitation(e) {
 	var notification = $(e.target).closest(".notification");
     var id = notification.attr("id");
-    
+
     var list = {id: id, update: {$set: {status: "confirmed"}}};
     Utilities.callMeteorMethod("updateNotification", list, function() {
 
 	    //navigating to the accepted project
-	    var proj_id = notification.attr("projectId");    
+	    var proj_id = notification.attr("projectId");
 	    if (proj_id) {
 
 	    	var proj_user = ProjectsUsers.findOne({projectId: proj_id,

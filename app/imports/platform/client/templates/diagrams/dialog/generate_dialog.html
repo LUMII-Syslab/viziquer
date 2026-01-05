@@ -86,7 +86,7 @@
 			{{/if}}
 
 		</div>
-	
+
 	{{/each}} -->
 
 </template>
@@ -95,7 +95,7 @@
 <template name="dialogTabContent">
 
 	{{#each compart_types}}
-	
+
 		{{#if input}}
 			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}">{{label}}</label>
@@ -147,7 +147,7 @@
 				<label for="{{compartmentId}}">{{label}}</label>
 				<input type="text" class="form-control dialog-combobox {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
-					placeholder="{{_placeholder}}" list="row_{{_id}}" data-element="{{elementId}}" data-update-procedure={{updateProcedure}} data-subCompartmentTypeId={{subCompartmentTypeId}}> 
+					placeholder="{{_placeholder}}" list="row_{{_id}}" data-element="{{elementId}}" data-update-procedure={{updateProcedure}} data-subCompartmentTypeId={{subCompartmentTypeId}}>
 
 					<datalist id="row_{{_id}}" class="datalist">
 						{{#each values}}
@@ -165,7 +165,7 @@
 		{{#if checkbox}}
 			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}" class="label-checkbox">
-				
+
 					<input type="checkbox" class="dialog-checkbox {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" checked="{{checked}}"
 					placeholder="{{_placeholder}}" disabled="{{disabled}}"
@@ -192,18 +192,18 @@
 
 		{{#if radio}}
 			<div id="{{_id}}" class="form-group compart-type {{subCompartmentTypeId}}" compartmentId="{{compartmentId}}" style="margin-bottom:10px;">
-			
+
 				{{#each values}}
 					<label for="{{compartmentId}}" class="label-radio">{{name}}
 
-						<input type="radio" class="dialog-radio" 
-						name="{{_id}}" 
-						input="{{input}}" 	
-						mappedValue="{{value}}" 
-						elementStyleId="{{elementStyle}}" 
+						<input type="radio" class="dialog-radio"
+						name="{{_id}}"
+						input="{{input}}"
+						mappedValue="{{value}}"
+						elementStyleId="{{elementStyle}}"
 						compartmentStyleId="{{compartmentStyle}}"
-						checked="{{checked}}" disabled="{{disabled}}" 
-						data-element="{{elementId}}"> 
+						checked="{{checked}}" disabled="{{disabled}}"
+						data-element="{{elementId}}">
 
 						<span class="custom-radio"></span>
 						{{input}}
@@ -220,9 +220,9 @@
 
 		{{#if cloudFiles}}
 			<div class="custom-row {{subCompartmentTypeId}}" templateName="{{templateName}}" style="margin-bottom:10px;">
-				
+
 				{{#unless disabled}}
-					
+
 					<div class="form-group attach-container">
 						<a class="attach-file-btn btn btn-sm btn-info">Attach files</a>
 						<button id="upload-file" type="button" class="btn btn-info btn-sm">Upload</button>
@@ -230,9 +230,9 @@
 						{{> attachFiles}}
 						{{> uploadFileFormInDiagram}}
 					</div>
-					
+
 				{{/unless}}
-				
+
 
 				<div class="row" style="margin-bottom:10px;">
 					<div class="col-sm-12" >
@@ -250,7 +250,7 @@
 
 										{{#unless disabled}}
 											<td style="width:30px;">
-												<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>			
+												<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>
 											</td>
 										{{/unless}}
 
@@ -261,7 +261,7 @@
 
 										<tr>
 											<td>
-												<video style="width:100%;" controls>  
+												<video style="width:100%;" controls>
 													<source video="video" file-id="{{fileId}}" class="multimedia" type="video/mp4">
 												</video>
 											</td>
@@ -279,7 +279,7 @@
 											<td><a href="{{url}}" class="file-link" target="_blank" initialName="{{initialName}}">{{fullName}}</a></td>
 											{{#unless disabled}}
 												<td style="width:30px;">
-													<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>	
+													<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>
 												</td>
 											{{/unless}}
 										</tr>
@@ -289,7 +289,7 @@
 								{{/if}}
 
 							{{/each}}
-							
+
 							</tbody>
 						</table>
 
@@ -325,13 +325,13 @@
 					<table class="table table-bordered table-condensed table-hover table-striped">
 						<tbody>
 
-						{{#each filesList}}	
+						{{#each filesList}}
 							<tr>
 								<td><p>{{fullName}}</p></td>
 								<td style="width:30px;"><center><a id="{{_id}}" class="btn btn-xs btn-success attach-file"><i class="fa fa-plus"></i></a></center></td>
 							</tr>
 						{{/each}}
-						
+
 						</tbody>
 					</table>
 
@@ -360,14 +360,14 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
-				       
+
 						<div class="form-group">
 							<div class="col-lg-10">
 								<input id="fileToUpload" type="file">
 							</div><!-- /.col -->
 						</div>
 
-                    </form> 
+                    </form>
                 </div>
 
                 <div class="modal-footer">

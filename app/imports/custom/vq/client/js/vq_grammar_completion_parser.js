@@ -21163,17 +21163,17 @@ import { createVQ_Element } from './VQ_Element.js';
     			// parse(string, options) where options is an object
     			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
 options = arguments[1];
-  
+
     			//////////////////////////////////////////////
     		var continuations = {};
-        			
+
         	function makeArray(value){
         		if (continuations[value]==null) {
         			continuations[value] = {};
         		}
         		return continuations;
         	}
-        			
+
         	async function getReferences(place, priority){
         		for(let key in options["symbol_table"]){
 					if(typeof options["symbol_table"][key] !== "function"){
@@ -21191,17 +21191,17 @@ options = arguments[1];
 						act_el = await createVQ_Element(selected_elem_id)
 						}
 					if((await act_el.isUnit() != true && await act_el.isUnion() != true) || !(await act_el.isRoot())) {
-						
+
 						var newStartElement = act_el;
-						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class 
+						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class
 							if (await act_el.getLinkToRoot()){
 								var element = await act_el.getLinkToRoot().link.getElements();
 								if (await act_el.getLinkToRoot().start) {
 									newStartElement = await createVQ_Element(element.start.obj._id);
 								} else {
-									newStartElement = await createVQ_Element(element.end.obj._id);						
-								}						
-							}					
+									newStartElement = await createVQ_Element(element.end.obj._id);
+								}
+							}
 						}
 						let properties = {propertyKind:'Data', limit:dataShapes.schema.limit};
 						let scName = options.schema;
@@ -21214,7 +21214,7 @@ options = arguments[1];
 						prop = prop["data"];
 
 						if(typeof schemaName === "undefined") schemaName = "";
-						
+
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
 								let prefix;
@@ -21228,42 +21228,42 @@ options = arguments[1];
 								if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(place, prop[cl]["prefix"]+":"+prop[cl]["display_name"], 100, false, 1);
 							}
 						}
-							
+
 						await getAssociations(place, 95);
 						await getPropertyAlias(place, 93);
 					}
 				}
    			}
-        	async function getPropertyAlias(place, priority){	
+        	async function getPropertyAlias(place, priority){
         		var selected_elem_id = Session.get("activeElement");
-        		for (var  key in options["symbol_table"]) {	
+        		for (var  key in options["symbol_table"]) {
         			for (var symbol in options["symbol_table"][key]) {
-        				if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){				
+        				if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){
 							if(options["symbol_table"][key][symbol]["upBySubQuery"] == 1 && (typeof options["symbol_table"][key][symbol]["distanceFromClass"] === "undefined" || options["symbol_table"][key][symbol]["distanceFromClass"] <= 1 ))await addContinuation(place, key, priority, false, 3);
         				} else if(options["symbol_table"][key][symbol]["kind"] !== null && options["symbol_table"][key][symbol]["kind"] == "PROPERTY_ALIAS") {
-							await addContinuation(place, key, priority, false, 3);		
+							await addContinuation(place, key, priority, false, 3);
 						}
-        			}	
+        			}
         		}
         	}
-        			
+
         	async function getAssociations(place, priority){
     			var selected_elem_id = Session.get("activeElement");
     			var act_el;
     			if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
     				act_el = await createVQ_Element(selected_elem_id)
     			}
-    			if((await act_el.isUnit() != true && await act_el.isUnion() != true) || !(await act_el.isRoot())) {	
+    			if((await act_el.isUnit() != true && await act_el.isUnion() != true) || !(await act_el.isRoot())) {
 					var newStartElement = act_el;
-						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class 
+						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class
 							if (await act_el.getLinkToRoot()){
 								var element = await act_el.getLinkToRoot().link.getElements();
 								if (await act_el.getLinkToRoot().start) {
 									newStartElement = await createVQ_Element(element.start.obj._id);
 								} else {
-									newStartElement = await createVQ_Element(element.end.obj._id);						
-								}						
-							}					
+									newStartElement = await createVQ_Element(element.end.obj._id);
+								}
+							}
 					}
 					let scName = options.schema;
 					let schemaName = dataShapes.schema.schema;
@@ -21274,10 +21274,10 @@ options = arguments[1];
 					}
 					var prop = await dataShapes.getProperties(properties, newStartElement);
 					prop = prop["data"];
-					
-					
+
+
 					if(typeof schemaName === "undefined") schemaName = "";
-					
+
 					for(let cl in prop){
 						if(typeof prop[cl] !== "function"){
 							let prefix;
@@ -21296,17 +21296,17 @@ options = arguments[1];
 					}
 				}
         	}
-        			
+
         	async function addContinuation(place, continuation, priority, spaceBefore, type, start_end){
         		var position = "start";
         		if(start_end != null)position = start_end;
         		makeArray(place[position]["offset"]);
-        		if(typeof continuations[place[position]["offset"]][continuation] === "undefined" || continuations[place[position]["offset"]][continuation]["priority"] > priority) 
+        		if(typeof continuations[place[position]["offset"]][continuation] === "undefined" || continuations[place[position]["offset"]][continuation]["priority"] > priority)
         		{
         			continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:type, spaceBefore:spaceBefore};
         		}
         	}
-        			
+
         	async function returnContinuation(){
 				continuations["time"] =  options.time;
         		return JSON.stringify(continuations,null,2);
@@ -21320,9 +21320,9 @@ options = arguments[1];
         	async function resolveTypeFromSymbolTable(id) {
             	var context = options.context._id;
             	// if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
-				
-				
-				
+
+
+
             	var st_row = options.symbol_table[id];
             	if (st_row) {
             		if(st_row.length == 0) return null;
@@ -21340,7 +21340,7 @@ options = arguments[1];
             	}
 
            };
-		   
+
             // string -> idObject
             // returns kind of the identifier from symbol table. Null if does not exist.
             async function resolveKindFromSymbolTable(id) {
@@ -21365,7 +21365,7 @@ options = arguments[1];
             	}
 
             };
-            			
+
 			// string -> idObject
             // returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
             async function resolveTypeFromSchemaForClass(id) {
@@ -21379,10 +21379,10 @@ options = arguments[1];
             	if(cls["data"].length > 0){
             		return cls["data"][0];
             	}
-            				
+
             	return null;
             };
-			
+
             // string -> idObject
             // returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
             async function resolveTypeFromSchemaForAttributeAndLink(id) {
@@ -21400,14 +21400,14 @@ options = arguments[1];
             		else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
             		return res;
             	}
-    			
+
             	return null
             };
-			
+
             // string -> idObject
             // returns type of the identifier from schema. Looks everywhere. First in the symbol table,
             // then in schema. Null if does not exist
-            async function resolveType(id) {           			  
+            async function resolveType(id) {
             	if(id !== "undefined"){
 					var t=await resolveTypeFromSymbolTable(id);
             		if (!t) {
@@ -21427,7 +21427,7 @@ options = arguments[1];
 					return t;}
             	return null;
             };
-			
+
              //string -> string
              // resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
              async function resolveKind(id) {
@@ -21452,7 +21452,7 @@ options = arguments[1];
 				}
             	return null
             };
-						  
+
 			async function getInverseAssociations(o){
 				let loc = await location();
 				var textEnd = loc.end.offset;
@@ -21462,16 +21462,16 @@ options = arguments[1];
         		if(pathParts.length > 1){
         			 params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
         		} else {
-        			if (typeof options.className !== 'undefined') params.element = {className: options.className};	
+        			if (typeof options.className !== 'undefined') params.element = {className: options.className};
         		}
-				
+
 				let scName = options.schema;
 				let schemaName = dataShapes.schema.schema;
 				if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
 					schemaName = scName;
 					params.main.schema = scName;
 				}
-				
+
 				let props = await dataShapes.getPropertiesFull(params);
             	props = props["data"];
 
@@ -21484,7 +21484,7 @@ options = arguments[1];
 						((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
-										
+
 						let propName = prefix+props[pr]["display_name"];
 						if ( props[pr].mark === 'in'){
 							var mark = ""
@@ -21499,8 +21499,8 @@ options = arguments[1];
 					}
             	}
             	return;
-			}	  
-					
+			}
+
         	async function pathOrReference(o) {
     			var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
             	var propertyName = "";
@@ -21508,9 +21508,9 @@ options = arguments[1];
             	if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
             	var targetSourceClass = "targetClass";
             	if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
-				
+
 				let p = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
-        		
+
 				let scName = options.schema;
 				let schemaName = dataShapes.schema.schemaType;
 				if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
@@ -21530,14 +21530,14 @@ options = arguments[1];
 						((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
-										
+
 						let propName = prefix+props[pr]["display_name"];
-									
+
 						await addContinuation(await location(), propName, 100, false, 1, "end");
 						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
 					}
 				}
-							
+
 				p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
         		if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
 					p.main.schema = scName;
@@ -21551,33 +21551,33 @@ options = arguments[1];
 						let prefix;
 						if(dataShapes.schema.schema === schemaName &&(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false"))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
-										
+
 						let propName = prefix+props[pr]["display_name"];
 						var mark = "";
 						if ( props[pr].mark === 'in'){
 							propName = "^"+propName;
 							mark = "^";
 						}
-									
+
 						await addContinuation(await location(), propName, 100, false, 2, "end");
 						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), mark+props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 2, "end");
 					}
 				}
             	return o;
             };
-        			
+
 			async function ifObjectDataProperty(o){
         				// var varibleName;
-        				
+
         				// if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
         				// else  varibleName = makeVar(o);
         				// if(await resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) await addContinuation(await location(), ":", 30, false, 4, "end");
-        				
+
         				//console.log(o, varibleName, resolveTypeFromSchemaForAttributeAndLink(varibleName));
-        				
+
         		return o;
         	}
-			
+
     		async function afterVar(o) {
 				let varibleName = makeVar(o);
 				var selected_elem_id = Session.get("activeElement");
@@ -21588,29 +21588,29 @@ options = arguments[1];
 				if((await act_el.isUnit() != true && await act_el.isUnion() != true) || !(await act_el.isRoot())) {
 					var newStartElement = act_el;
 					var className = options.className;
-					if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class 
+					if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class
 						if (await act_el.getLinkToRoot()){
 							var element = await act_el.getLinkToRoot().link.getElements();
 							if (await act_el.getLinkToRoot().start) {
 								newStartElement = await createVQ_Element(element.start.obj._id);
 								className = await newStartElement.getName();
 							} else {
-								newStartElement = await createVQ_Element(element.end.obj._id);	
-								className = await newStartElement.getName();									
-							}						
-						}					
+								newStartElement = await createVQ_Element(element.end.obj._id);
+								className = await newStartElement.getName();
+							}
+						}
 					}
-					
-					
+
+
 					let loc = await location();
 					var textEnd = loc.end.offset;
 					var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
 					let varibleName = makeVar(o);
 					let params = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}}
 					var isInv = false;
-								
+
 					if(pathParts.length > 1){
-						
+
 						var varName = pathParts[pathParts.length-2];
 						if(varName.startsWith("^")){
 							params.element = {"pList": {"out": [{"name": varName.substring(1), "type": "out"}]}}
@@ -21629,7 +21629,7 @@ options = arguments[1];
 
 						if (typeof className !== 'undefined') params.element = {className: className};
 						if (varibleName != "") params.main.filter=varibleName;
-			
+
 						if(pathParts[0].startsWith("^"))isInv = true;
 					}
 					let scName = options.schema;
@@ -21638,15 +21638,15 @@ options = arguments[1];
 						params.main.schema = scName;
 						schemaName = scName;
 					}
-					
+
 					let props = await dataShapes.getPropertiesFull(params);
 					props = props["data"];
-								
+
 					if(typeof schemaName === "undefined") schemaName = "";
-					
+
 					if(isInv == false){
-						
-						
+
+
 						for(let pr in props){
 							if(typeof props[pr] !== "function"){
 								let prefix;
@@ -21662,20 +21662,20 @@ options = arguments[1];
 					}
 					// var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
 					params.main.propertyKind = 'ObjectExt'
-					props = await dataShapes.getPropertiesFull(params);				
-					
+					props = await dataShapes.getPropertiesFull(params);
+
 					props = props["data"];
-					
-					
-					
+
+
+
 					for(let pr in props){
 						if(typeof props[pr] !== "function"){
 							let prefix;
 							if(dataShapes.schema.schema === schemaName &&
-							((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") 
+							((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
-											
+
 							let propName = prefix+props[pr]["display_name"];
 							if ( props[pr].mark === 'in' && isInv == false){
 								propName = "^"+propName;
@@ -21700,8 +21700,8 @@ options = arguments[1];
 				}
 				return o;
     		};
-        			
-        	async function referenceNames(o) {	
+
+        	async function referenceNames(o) {
 				var classAliasTable = [];
         		for(let key in options["symbol_table"]){
 					if(typeof options["symbol_table"][key] !== "function"){
@@ -21714,18 +21714,18 @@ options = arguments[1];
         		if(typeof classAliasTable[o] !== 'undefined') {
 					continuations[loc["end"]["offset"]] = {};
 					let params = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}};
-					params.element = {className: classAliasTable[o]};	
-					
+					params.element = {className: classAliasTable[o]};
+
 					let scName = options.schema;
 					let schemaName = dataShapes.schema.schema;
 					if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
 						params.main.schema = scName;
 						schemaName = scName;
 					}
-					
+
             		let props = await dataShapes.getPropertiesFull(params);
             		props = props["data"];
-						
+
 					if(typeof schemaName === "undefined") schemaName = "";
 
             		for(let pr in props){
@@ -21735,7 +21735,7 @@ options = arguments[1];
 							((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
-										
+
 							let propName = prefix+props[pr]["display_name"];
 							await addContinuation(await location(), propName, 100, false, 1, "end");
 							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
@@ -21752,7 +21752,7 @@ options = arguments[1];
 							((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt")))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
-										
+
 							let propName = prefix+props[pr]["display_name"];
 							if ( props[pr].mark === 'in'){
 								if(o == "^")propName = "^"+propName;
@@ -21767,32 +21767,32 @@ options = arguments[1];
 					if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 						act_el = await createVQ_Element(selected_elem_id)
 					}
-					if((await act_el.isUnit() != true && await act_el.isUnion() != true) || !(await act_el.isRoot())) {	
+					if((await act_el.isUnit() != true && await act_el.isUnion() != true) || !(await act_el.isRoot())) {
 						let loc = await location();
 						var textEnd = loc.end.offset;
 						var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
-						
+
 						var newStartElement = act_el;
 						var className = options.className;
-						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class 
+						if ((await act_el.isUnion() || await act_el.isUnit()) && !(await act_el.isRoot())) { // [ + ] element, that has link to upper class
 							if (await act_el.getLinkToRoot()){
 								var element = await act_el.getLinkToRoot().link.getElements();
 								if (await act_el.getLinkToRoot().start) {
 									newStartElement = await createVQ_Element(element.start.obj._id);
 									className = await newStartElement.getName();
 								} else {
-									newStartElement = await createVQ_Element(element.end.obj._id);	
-									className = await newStartElement.getName();									
-								}						
-							}					
+									newStartElement = await createVQ_Element(element.end.obj._id);
+									className = await newStartElement.getName();
+								}
+							}
 						}
-						
+
 						let scName = options.schema;
 						let schemaName = dataShapes.schema.schema;
 						if(typeof scName !== "undefined" && scName !== null && scName !== "") {
 							schemaName = scName;
 						}
-								
+
 						var prop;
 						if(pathParts.length > 1){
 							let params = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}}
@@ -21804,9 +21804,9 @@ options = arguments[1];
 							}
 							if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
 								params.main.schema = scName;
-							}		 
+							}
 							prop = await dataShapes.getPropertiesFull(params);
-										 
+
 						} else {
 							let params = {propertyKind:'Data'};
 							if(typeof scName !== "undefined" && scName !== null && scName !== "") {
@@ -21814,12 +21814,12 @@ options = arguments[1];
 							}
 							prop = await dataShapes.getProperties(params, newStartElement);
 						}
-								
+
 						prop = prop["data"];
-						
-						
+
+
 						if(typeof schemaName === "undefined") schemaName = "";
-						
+
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
 								let prefix;
@@ -21834,7 +21834,7 @@ options = arguments[1];
 								// if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
 							}
 						}
-								
+
 						if(pathParts.length > 1){
 							let params = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}}
 							params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
@@ -21845,9 +21845,9 @@ options = arguments[1];
 									// }
 							if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
 								params.main.schema = scName;
-							}		 
+							}
 							prop = await dataShapes.getPropertiesFull(params);
-										 
+
 						} else {
 							let params = {propertyKind:'ObjectExt', limit: dataShapes.schema.limit}
 							if(typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
@@ -21856,7 +21856,7 @@ options = arguments[1];
 							prop = await dataShapes.getProperties(params, newStartElement);
 						}
 						prop = prop["data"];
-						
+
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
 								let prefix;
@@ -21880,7 +21880,7 @@ options = arguments[1];
 				}
         		return o;
         	};
-    		
+
 
     peg$result = await peg$startRuleFunction();
 

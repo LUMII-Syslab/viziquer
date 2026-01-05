@@ -777,16 +777,16 @@
     			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
           options = arguments[1];
             			//console.log(options);
-            			
+
           var continuations = {};
-              
+
               function makeArray(value){
               	if (continuations[value]==null) {
               		continuations[value] = {};
               	}
               	return continuations;
               }
-              
+
               function addContinuation(place, continuation, priority, type, start_end){
               	var position = "start";
               	if(start_end != null)position = start_end;
@@ -798,7 +798,7 @@
               	return JSON.stringify(continuations,null,2);
               }
 
-    		
+
 
     peg$result = await peg$startRuleFunction();
 

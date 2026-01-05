@@ -1,4 +1,4 @@
-{ 
+{
   "tool": {
     "name": "Viziquer",
     "toolbar": "diagramsToolbar"
@@ -1053,7 +1053,7 @@
 						"procedure": "AddSelectThis"
 					},
 					{
-						
+
 						"item": "Simple (attribute) ...",
 						"procedure": "AddAttribute"
 					},
@@ -1080,7 +1080,7 @@
 							{
 								"item": "Explain ...",
 								"procedure": "ExplainField"
-							}		
+							}
 						]
 					}
                 ]
@@ -2476,7 +2476,7 @@
                           ]
                         },
 						"description":"Use of non-singleton properties in simple conditions can cause repetitions of result set rows",
-                        "subCompartmentTypes": []			 
+                        "subCompartmentTypes": []
                       }
                     ],
                     "label": "Conditions"
@@ -3711,7 +3711,7 @@
             "lineType": "Orthogonal"
           },
           "compartmentTypes": [
-			
+
 			{
               "object": {
                 "_id": "WtNMiLuHi19RtF5Hf",
@@ -4346,7 +4346,7 @@
                       "elementStyle": "NoStyle",
                       "input": "Reference",
                       "value": "CONDITION"
-                    } 
+                    }
                   ]
                 },
                 "styles": [

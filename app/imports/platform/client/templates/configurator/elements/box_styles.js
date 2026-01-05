@@ -81,7 +81,7 @@ Template.ZoomChartBoxStyle.helpers({
 
 		elem_style["displays"] = [{option: "image"},
 									{option: "text"},
-									{option: "roundtext"},	
+									{option: "roundtext"},
 								];
 		Configurator.selectItem(elem_style["displays"], elem_style["display"]);
 
@@ -89,7 +89,7 @@ Template.ZoomChartBoxStyle.helpers({
 										{option: "crop"},
 										{option: "letterbox"},
 										{option: "fit"},
-										{option: "true"},	
+										{option: "true"},
 									];
 		Configurator.selectItem(elem_style["imageCroppings"], elem_style["imageCropping"]);
 
@@ -110,7 +110,7 @@ Template.ZoomChartBoxStyle.events({
 	'change .dialog-selection' : function(e) {
 		e.preventDefault();
 		Configurator.updateElementStyleFromSelection(e, "elementStyle");
-		return false;		
+		return false;
 	},
 
 });
@@ -154,8 +154,8 @@ Template.ajooBoxStyle.helpers({
 		var elem_id = Session.get("activeElement");
 
 		//if configurator element selected
-		var elem_type = ElementTypes.findOne({elementId: elem_id});	
-		if (elem_type && elem_type["styles"] && elem_type["styles"][index] && 
+		var elem_type = ElementTypes.findOne({elementId: elem_id});
+		if (elem_type && elem_type["styles"] && elem_type["styles"][index] &&
 			elem_type["styles"][index]["elementStyle"]) {
 
 			style_obj = elem_type["styles"][index]["elementStyle"];
@@ -178,7 +178,7 @@ Template.ajooBoxStyle.helpers({
 });
 
 Template.ajooBoxStyle.events({
-	
+
 	'blur .dialog-input' : function(e) {
 		e.preventDefault();
 		Configurator.updateElementStyleFromInput(e);
@@ -188,7 +188,7 @@ Template.ajooBoxStyle.events({
 	'change .dialog-selection' : function(e) {
 		e.preventDefault();
 		Configurator.updateElementStyleFromSelection(e, "elementStyle");
-		return false;		
+		return false;
 	},
 
 });

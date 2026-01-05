@@ -6,16 +6,16 @@
 			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
       options = arguments[1];
         			//console.log(options);
-        			
+
       var continuations = {};
-          
+
           function makeArray(value){
           	if (continuations[value]==null) {
           		continuations[value] = {};
           	}
           	return continuations;
           }
-          
+
           function addContinuation(place, continuation, priority, type, start_end){
           	var position = "start";
           	if(start_end != null)position = start_end;
@@ -28,7 +28,7 @@
           }
 
 		}
-	
+
 			LanguageGrammar = (Language ( comma Language)*)? end
 			Language = Language_c (([A-Za-z] / "_" / "["/ "]") (([A-Za-z] / "_" / "["/ "]"))*)
 			comma = comma_c ","

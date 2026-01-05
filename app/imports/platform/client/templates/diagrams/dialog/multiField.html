@@ -4,7 +4,7 @@
 	{{#with multi_fields_obj}}
 		{{> Template.dynamic template="multiFieldBody" data=this}}
 	{{/with}}
-	
+
 </template>
 
 
@@ -40,7 +40,7 @@
 		{{> Template.dynamic template=next_level_form data=this}}
 		<!-- {{> Template.dynamic template="show_multi_field_form" field_obj=this}} -->
 
-	</div>	
+	</div>
 
 </template>
 
@@ -54,7 +54,7 @@
 	        <div class="modal-dialog">
 
 	            <div class="modal-content">
-	                
+
 	                <div class="modal-header">
 	                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	                    <h4 class="modal-title">{{name}}</h4>
@@ -72,7 +72,7 @@
 
 	                <div class="modal-footer" >
 	                	<div class="row">
-	                		
+
 	                		{{#with extraButton}}
 	                			{{#if isAvailable}}
 			                		<div class="col-md-2 pull-left">

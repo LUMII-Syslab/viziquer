@@ -3,26 +3,26 @@
 <template name="archiveTemplate">
 	<div class="padding-md">
 		<div class="timeline-wrapper">
-			
+
 			<div class="timeline-item">
 				<div class="timeline-info">
 					<div class="timeline-icon bg-grey">
 						<i class="fa fa-circle"></i>
 					</div>
 				</div>
-				
+
 				{{#with buttons_enabled}}
 					<div class="panel panel-default timeline-panel version-button-panel" style="{{style}}">
-					
+
 						<a class="btn btn-success" id="new-version" disabled="{{new_version_disabled}}"><i class="fa fa-file-o"></i> {{_ "new_version_btn"}}</a>
-						
+
 						<a class="btn btn-danger" id="remove-version-button" disabled="{{remove_version_disabled}}"><i class="fa fa-trash-o"></i> {{_ "remove_btn"}}</a>
-						
+
 						<a class="btn btn-primary" id="publish-version-button" disabled="{{publish_version_disabled}}"><i class="fa fa-upload"></i> {{_ "publish_btn"}}</a>
 
 					</div><!-- /panel -->
 				{{/with}}
-				
+
 			</div><!-- /timeline-item -->
 
 			{{#each versions}}
@@ -48,7 +48,7 @@
 						{{_ "version"}} <span class="label label-success m-left-xs">#{{_id}}</span>
 
 						<span class="label label-warning m-left-xs">{{_ "new_badge" context=status}}</span>
-					
+
 						{{#if active}}
 							<span class="label label-danger m-left-xs">{{_ "active_version_badge"}}</span>
 						{{/if}}
@@ -63,7 +63,7 @@
 			</div><!-- /timeline-item -->
 
 			{{/each}}
-			
+
 <!-- 			<div class="timeline-date">
 				3 Oct 2013
 			</div> -->
@@ -98,7 +98,7 @@
                             	<textarea id="comment" class="form-control" rows="7"></textarea>
                             </div>
                         </div>
-                    </form>  
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>

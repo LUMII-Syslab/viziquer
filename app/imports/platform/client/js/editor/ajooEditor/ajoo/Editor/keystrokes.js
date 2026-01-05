@@ -41,7 +41,7 @@ var editor_keydowns = function(e) {
 					is_procedure_executed = process_keystroke(e, elem_type["readModeKeyStrokes"]);
 			}
 
-			//if selection size is greater than 1, then executes function from collectionKeyStrokes array		
+			//if selection size is greater than 1, then executes function from collectionKeyStrokes array
 			else {
 				if (is_editor_in_edit_mode())
 					is_procedure_executed = process_keystroke(e, diagram_type["collectionKeyStrokes"]);
@@ -82,10 +82,10 @@ function process_keystroke(e, key_strokes) {
 	for (var i=0;i<encoded_key_strokes.length;i++) {
 		var keyStroke = encoded_key_strokes[i];
 		if (keyStroke && keyStroke["keys"] &&
-			(keyStroke["keys"]["ctrl"] == ctrl_key && 
+			(keyStroke["keys"]["ctrl"] == ctrl_key &&
 			(keyStroke["keys"]["keyCode"] == key_code || keyStroke["keys"]["keyCode"] == key_code+32))) {
-				
-			execute_procedure_by_name(keyStroke["procedure"]) 
+
+			execute_procedure_by_name(keyStroke["procedure"])
 			return "procedureExecuted";
 		}
 	}
@@ -110,14 +110,14 @@ function encode_keystrokes(key_strokes) {
 			//delete has a special key code
 			if (keys[0] == 'Delete')
 				item["keys"] = {ctrl: false, keyCode: 46};
-			
+
 			//"standart" key stroke
 			else
 				item["keys"] = {ctrl: false, keyCode: keys[0].charCodeAt(0)};
 
 		encoded_keystrokes.push(item);
 	});
-	
+
 	return encoded_keystrokes;
 }
 

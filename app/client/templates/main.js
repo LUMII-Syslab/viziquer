@@ -92,7 +92,7 @@ Template.userT.events({
           }
 
           else {
-              const clientStorage = new ClientStorage("localStorage"); 
+              const clientStorage = new ClientStorage("localStorage");
               clientStorage.set('current_user', "{}");
 
               // if (UserStatus.isMonitoring())

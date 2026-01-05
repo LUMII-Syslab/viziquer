@@ -34,7 +34,7 @@ var Mode = function(editor) {
         //read mode
         else {
 
-            if (palette) 
+            if (palette)
                 palette.hide();
 
             //switching to the read mode

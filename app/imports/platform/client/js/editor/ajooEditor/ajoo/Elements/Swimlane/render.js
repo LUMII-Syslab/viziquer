@@ -144,7 +144,7 @@ Swimlane.prototype.addHandlersToLine = function(lines) {
 		//intitializing swimlane internal line moving
 		line.on('mousedown', function(ev) {
 			ev.cancelBubble = true;
-			if (ev.evt.which == 1) 
+			if (ev.evt.which == 1)
 		 		swimlane.editor.actions.startAction("EditingSwimlane", {line: line, swimlane: swimlane});
 
 		});
@@ -210,9 +210,9 @@ Swimlane.prototype.getSwimlaneMaxTextSize = function(row, column) {
 
 	return {width: max_width, height: max_height};
 }
-	
+
 Swimlane.prototype.add_swimlane_row = function(line_index) {
-	this.add_swimlane_row_or_column(line_index, 1, "HorizontalLines", "VerticalLines");	
+	this.add_swimlane_row_or_column(line_index, 1, "HorizontalLines", "VerticalLines");
 }
 
 Swimlane.prototype.add_swimlane_column = function(line_index) {
@@ -247,7 +247,7 @@ Swimlane.prototype.add_swimlane_row_or_column = function(line_index, index, line
 			//if horizontal line
 			else {
 				var y = points[1];
-				new_line_positions.push([0, y, points[2], y]);	
+				new_line_positions.push([0, y, points[2], y]);
 			}
 		}
 
@@ -319,7 +319,7 @@ Swimlane.prototype.recompute_compartments = function(lines_group_name, line_inde
 	var swimlane = this;
 
 	var index_obj = {};
-	if (lines_group_name == "VerticalLines") 
+	if (lines_group_name == "VerticalLines")
 		index_obj = {rows: line_index};
 	else
 		index_obj = {columns: line_index};
@@ -337,12 +337,12 @@ Swimlane.prototype.recompute_compartments_by_index = function(line_index) {
 	_.each(swimlane.compartments.compartments, function(compartment) {
 
 		//increasing row index
-		var row = compartment.row;		
+		var row = compartment.row;
 		if (row >= r_index)
 			row = row + 1;
 
 		//increasing column index
-		var column = compartment.column;		
+		var column = compartment.column;
 		if (column >= c_index)
 			column = column + 1;
 
@@ -363,7 +363,7 @@ Swimlane.prototype.remove_swimlane_column = function(line_index) {
 Swimlane.prototype.remove_swimlane_row_or_column = function(line_index, index, lines_group1, lines_group2) {
 
 	var swimlane = this;
-	
+
 	//reposition horizontal lines
 	var shape_group = swimlane.presentation;
 
@@ -416,7 +416,7 @@ Swimlane.prototype.remove_swimlane_row_or_column = function(line_index, index, l
 	});
 
 	//recomputing compartments
-	swimlane.recompute_compartments_after_remove(lines_group2, line_index);	
+	swimlane.recompute_compartments_after_remove(lines_group2, line_index);
 
 	swimlane.replacing_swimlane(new_line_positions, lines_group2, index);
 }
@@ -485,7 +485,7 @@ Swimlane.prototype.buildSwimlaneObject = function(data) {
 	});
 
 	//the new swimlane object
-	var new_swimlane_prop = { 
+	var new_swimlane_prop = {
 							style: style,
 							location: {
 								x: size["x"],

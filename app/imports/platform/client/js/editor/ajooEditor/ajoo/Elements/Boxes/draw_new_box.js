@@ -17,7 +17,7 @@ ANewBox.prototype = {
 		var editor = newBox.editor;
 
 		var mouse_state = editor.getMouseState();
-		var mouse_x = mouse_state["mouseX"] 
+		var mouse_x = mouse_state["mouseX"]
 		var mouse_y = mouse_state["mouseY"]
 
 		editor.unSelectElements(undefined, true);

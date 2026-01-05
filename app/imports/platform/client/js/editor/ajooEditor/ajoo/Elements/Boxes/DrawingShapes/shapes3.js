@@ -8,7 +8,7 @@ var SVGShape = function(editor) {
 	Box.call(this, editor);
 
 	this.position = {x: 0, y: 0};
-	this.shapesData = [];	
+	this.shapesData = [];
 }
 
 SVGShape.prototype = Object.create(Box.prototype);
@@ -161,7 +161,7 @@ APackage.prototype.compartmentArea = function() {
 	var size = box.getSize();
     var height = size["height"];
 
-    var res = ARectangle.prototype.compartmentArea.call(box);		
+    var res = ARectangle.prototype.compartmentArea.call(box);
 	res["y1"] = res["y1"] + height / 5;
 
     return res;
@@ -185,7 +185,7 @@ var TwitterBird = function(editor) {
 						path: path,
 						originalWidth: 512,
 						originalHeight: 512,
-					}];	
+					}];
 }
 
 TwitterBird.prototype = Object.create(SVGShape.prototype);
@@ -196,7 +196,7 @@ var ComputedDataPinSingle = function(editor) {
 	SVGShape.call(this, editor);
 
 	this.shapesData = [
-						
+
 						// rect around
 						{
 							name: "ComputedDataPinSingle1",
@@ -226,9 +226,9 @@ var ComputedDataPinSingle = function(editor) {
 							fill:"white",
 							lineJoin:"round"
 						},
-						
-					];	
-	
+
+					];
+
 }
 
 ComputedDataPinSingle.prototype = Object.create(SVGShape.prototype);
@@ -242,10 +242,10 @@ ComputedDataPinSingle.prototype.compartmentArea = function() {
 	var box_size = box.getSize();
 
     var res = {};
-	
+
 	res["x1"] = - 75 ;
 	res["x2"] = box_size.width + 75;
-	
+
 	var delta_y = 25;
 	res["y1"] = 0 - delta_y;
 	res["y2"] = 0 + delta_y;
@@ -259,7 +259,7 @@ var ComputedDataPinMultiple = function(editor) {
 
 	this.shapesData = [
 
-					// rect around			
+					// rect around
 					{
 						name: "ComputedDataPinMultiple1",
 						path: "M0,0 L90,0 L90,90 L0,90 Z",
@@ -278,7 +278,7 @@ var ComputedDataPinMultiple = function(editor) {
 						fill: "black",
 						lineJoin: "round"
 					},
-					
+
 					// triangle
 					{
 						name: "ComputedDataPinMultiple3",
@@ -287,8 +287,8 @@ var ComputedDataPinMultiple = function(editor) {
 						originalHeight: 90,
 						fill: "white",
 						lineJoin: "round"
-					},			
-				];	
+					},
+				];
 }
 
 ComputedDataPinMultiple.prototype = Object.create(SVGShape.prototype);
@@ -302,7 +302,7 @@ var PortIn = function(editor) {
 
 	this.shapesData = [
 
-					// rect around			
+					// rect around
 					{
 						name: "PortIn1",
 						path: "M0,0 L90,0 L90,90 L0,90 Z",
@@ -320,8 +320,8 @@ var PortIn = function(editor) {
 						originalHeight: 90,
 						fill: "white",
 						lineJoin: "round"
-					},			
-				];	
+					},
+				];
 }
 
 PortIn.prototype = Object.create(SVGShape.prototype);
@@ -333,16 +333,16 @@ PortIn.prototype.compartmentArea = function() {
 
 	//box(port) getsize returns coordinates relative to parent box (upper left corner)  x, y, width, heigt
     var port_box_size = port_box.getSize();
-	
+
 
     var parent_box = port_box.parent;
 
 	//parent.size returns absolute coordinates x, y, width, heigt
-	var parent_box_size = parent_box.getSize();	
+	var parent_box_size = parent_box.getSize();
 
     var res = {};
-	
-	if(port_box_size["x"] < 0){ //port is on the left of the parent box 
+
+	if(port_box_size["x"] < 0){ //port is on the left of the parent box
 		//var delta_x = res["x2"] - res["x1"];
 		res["x1"] = 0 - port_box_size["width"] * 4 - 4 ;
 		res["x2"] = 0 + port_box_size["width"] - 4;
@@ -350,7 +350,7 @@ PortIn.prototype.compartmentArea = function() {
 
 	//in normal case () we should be on on the right size of the box 0 + parent_box_size("width")
 	//if free moving of port is enabled than this assumption is not true
-	if(port_box_size["x"] >= 0){//port is on the right of the parent box 
+	if(port_box_size["x"] >= 0){//port is on the right of the parent box
 		res["x1"] = 0 + 4;
 		res["x2"] = 0 + port_box_size["width"] * 4 + 4;
 	}
@@ -393,7 +393,7 @@ var PortOut = function(editor) {
 						lineJoin: "round"
 					},
 
-				];	
+				];
 }
 
 PortOut.prototype = Object.create(SVGShape.prototype);
@@ -417,7 +417,7 @@ var PortOutMultiple = function(editor) {
 						lineJoin: "round"
 					},
 
-					
+
 					// triangle1
 					{
 						name: "ThreeTriangles2",
@@ -427,7 +427,7 @@ var PortOutMultiple = function(editor) {
 						fill: "black",
 						lineJoin: "round"
 					},
-					
+
 					// triangle2
 					{
 						name: "ThreeTriangles3",
@@ -447,7 +447,7 @@ var PortOutMultiple = function(editor) {
 						lineJoin: "round"
 					},
 
-				];	
+				];
 }
 
 PortOutMultiple.prototype = Object.create(SVGShape.prototype);
@@ -470,7 +470,7 @@ var PortInMultiple = function(editor) {
 						fill: "white",
 						lineJoin: "round"
 					},
-					
+
 					// triangle1
 					{
 						name: "ThreeTriangles2",
@@ -480,7 +480,7 @@ var PortInMultiple = function(editor) {
 						fill: "white",
 						lineJoin: "round"
 					},
-					
+
 					// triangle2
 					{
 						name: "ThreeTriangles3",
@@ -500,7 +500,7 @@ var PortInMultiple = function(editor) {
 						lineJoin: "round"
 					},
 
-				];	
+				];
 }
 
 PortInMultiple.prototype = Object.create(SVGShape.prototype);
@@ -514,7 +514,7 @@ var DeclaredRequiredMultiplePin = function(editor) {
 	SVGShape.call(this, editor);
 
 	this.shapesData = [
-						
+
 						// rect around
 						{
 							name: "ComputedDataPinSDeclaredRequiredMultiplePiningle1",
@@ -554,8 +554,8 @@ var DeclaredRequiredMultiplePin = function(editor) {
 							fill:"grey",
 							lineJoin:"round"
 						},
-					];	
-	
+					];
+
 }
 
 DeclaredRequiredMultiplePin.prototype = Object.create(SVGShape.prototype);
@@ -569,7 +569,7 @@ var DeclaredProvidedMultiplePin = function(editor) {
 
 	this.shapesData = [
 
-					// rect around			
+					// rect around
 					{
 						name: "DeclaredProvidedMultiplePin1",
 						path: "M0,0 L90,0 L90,90 L0,90 Z",
@@ -588,7 +588,7 @@ var DeclaredProvidedMultiplePin = function(editor) {
 						fill: "black",
 						lineJoin: "round"
 					},
-					
+
 					// triangle
 					{
 						name: "DeclaredProvidedMultiplePin3",
@@ -597,8 +597,8 @@ var DeclaredProvidedMultiplePin = function(editor) {
 						originalHeight: 90,
 						fill: "black",
 						lineJoin: "round"
-					},			
-				];	
+					},
+				];
 }
 
 DeclaredProvidedMultiplePin.prototype = Object.create(SVGShape.prototype);
@@ -614,7 +614,7 @@ var ThreeTriangles = function(editor) {
 
 	this.shapesData = [
 
-					// rect around			
+					// rect around
 					{
 						name: "ThreeTriangles1",
 						path: "M0,0 L90,0 L90,90 L0,90 Z",
@@ -633,7 +633,7 @@ var ThreeTriangles = function(editor) {
 						fill: "white",
 						lineJoin: "round"
 					},
-					
+
 					// triangle2
 					{
 						name: "ThreeTriangles3",
@@ -652,7 +652,7 @@ var ThreeTriangles = function(editor) {
 						fill: "white",
 						lineJoin: "round"
 					},
-				];	
+				];
 }
 
 ThreeTriangles.prototype = Object.create(SVGShape.prototype);
@@ -685,7 +685,7 @@ var ThreeTrianglesAndRectangle = function(editor) {
 						fill: "white",
 						lineJoin: "round"
 					},
-					
+
 					// triangle2
 					{
 						name: "ThreeTriangles3",
@@ -713,7 +713,7 @@ var ThreeTrianglesAndRectangle = function(editor) {
 						fill: "black",
 						lineJoin: "round"
 					},
-				];	
+				];
 }
 
 ThreeTrianglesAndRectangle.prototype = Object.create(SVGShape.prototype);
@@ -745,7 +745,7 @@ var ThreeFilledTrianglesAndRectangle = function(editor) {
 						fill: "black",
 						lineJoin: "round"
 					},
-					
+
 					// triangle2
 					{
 						name: "ThreeTriangles3",
@@ -773,7 +773,7 @@ var ThreeFilledTrianglesAndRectangle = function(editor) {
 						fill: "black",
 						lineJoin: "round"
 					},
-				];	
+				];
 }
 
 ThreeFilledTrianglesAndRectangle.prototype = Object.create(SVGShape.prototype);
@@ -806,7 +806,7 @@ var RectangleAndThreeTriangles = function(editor) {
 						fill: "white",
 						lineJoin: "round"
 					},
-					
+
 					// triangle2
 					{
 						name: "ThreeTriangles3",
@@ -834,7 +834,7 @@ var RectangleAndThreeTriangles = function(editor) {
 						fill: "black",
 						lineJoin: "round"
 					},
-				];	
+				];
 }
 
 RectangleAndThreeTriangles.prototype = Object.create(SVGShape.prototype);
@@ -867,7 +867,7 @@ var RectangleAndThreeFilledTriangles = function(editor) {
 						fill: "black",
 						lineJoin: "round"
 					},
-					
+
 					// triangle2
 					{
 						name: "ThreeTriangles3",
@@ -903,9 +903,9 @@ var RectangleAndThreeFilledTriangles = function(editor) {
 						originalHeight: 90,
 						fill: "grey",
 						lineJoin: "round",
-						
+
 					},
-				];	
+				];
 }
 
 RectangleAndThreeFilledTriangles.prototype = Object.create(SVGShape.prototype);
@@ -956,7 +956,7 @@ Note.prototype.compartmentArea = function() {
     var size = box.getSize();
     var width = size["width"];
 
-    var res = ARectangle.prototype.compartmentArea.call(box);		
+    var res = ARectangle.prototype.compartmentArea.call(box);
 	res["x2"] = res["x2"] - width / 10;
 
     return res;
@@ -986,7 +986,7 @@ Xex.prototype.compartmentArea = function() {
     var height = size["height"];
 
     var res = ARectangle.prototype.compartmentArea.call(box);
-	
+
 	var delta_x = width / 8;
 	res["x1"] = res["x1"] + delta_x;
 	res["x2"] = res["x2"] - delta_x;
@@ -1059,7 +1059,7 @@ Shoes.prototype.constructor = Shoes;
 
 
 export {
-	SVGShape, Shoes, StarEmpty, Xex, Note, ADocument, TwitterBird, APackage, 
+	SVGShape, Shoes, StarEmpty, Xex, Note, ADocument, TwitterBird, APackage,
 	ComputedDataPinSingle, ComputedDataPinMultiple,
 	PortIn, PortOut, PortInMultiple, PortOutMultiple,
 	DeclaredProvidedMultiplePin,DeclaredRequiredMultiplePin,

@@ -69,7 +69,7 @@ var AjooEditor = function(settings) {
                                   width: scene_width,
                                   height: editor.height,
                                 });
-    
+
     editor.getSceneContainer().on("mouseleave", function() {
         editor.actions.finish({evt: {which: 1}});
     });
@@ -80,7 +80,7 @@ var AjooEditor = function(settings) {
     editor.compartmentList = {};
 
     editor.paletteState = {};
-   
+
     editor.selectionPosition = {x: 0, y: 0};
 
     editor.selectionStyle = new SelectionStyle(settings["selectionStyle"]);
@@ -120,7 +120,7 @@ var AjooEditor = function(settings) {
     editor.size = new Size(editor);
 
     //adding elements to the scene
-    var data = settings["data"];  
+    var data = settings["data"];
 
     editor.addElements(data, is_refresh_not_needed);
 
@@ -133,7 +133,7 @@ var AjooEditor = function(settings) {
         editor.showGrid(is_refresh_not_needed);
     }
 
-    //rendering palette elements  
+    //rendering palette elements
     if (settings["palette"] && settings["palette"]["elements"]) {
         editor.palette.add(settings["palette"]["elements"]);
     }
@@ -159,7 +159,7 @@ var AjooEditor = function(settings) {
 
     //this is a hack to refresh a palette layer when images are present in the scene
     setTimeout(function() {
-        editor.palette.refresh();  
+        editor.palette.refresh();
     }, 500);
 
     editor.stage.draw();
@@ -333,7 +333,7 @@ AjooEditor.prototype = {
         var editor = this;
         return editor.size.state;
     },
-    
+
 //panning
     isPanningEnabled: function() {
         var editor = this;
@@ -352,7 +352,7 @@ AjooEditor.prototype = {
 
     getSwimlane: function() {
         var editor = this;
-        
+
         return _.find(editor.getElements(), function(elem) {
             if (elem.type === "Swimlane") {
                 return elem;

@@ -36,7 +36,7 @@ function init(e) {
     var background = svgDocument.getElementById("background");
 
     info = infoElem.firstChild;
-    
+
     azap.appendNode(infoElem);
     azap.appendNode(mouser.svgNode);
     azap.appendNode(background);

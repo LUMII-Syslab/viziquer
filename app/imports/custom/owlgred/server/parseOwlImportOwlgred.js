@@ -101,11 +101,11 @@ Meteor.methods({
     // **4. Initialize the ontology state structure (same shape as N3 version)**
     const state = {
       prefixes,
-      classes: {}, 
-      individuals: {}, 
-      objectProperties: {}, 
-      dataProperties: {}, 
-      annotationProperties: {}, 
+      classes: {},
+      individuals: {},
+      objectProperties: {},
+      dataProperties: {},
+      annotationProperties: {},
       dataTypes: {},
       // Helper sets to track property types
       isAnnotationProp: new Set(),
@@ -273,7 +273,7 @@ Meteor.methods({
         allValuesFrom:  (allTerm && allTerm.termType === 'NamedNode')  ? allTerm.value  : null,
         hasValue: hvTerm ? (
                     hvTerm.termType === 'NamedNode'
-                      ? hvTerm.value 
+                      ? hvTerm.value
                       : { literal: hvTerm.value, lang: hvTerm.language || null, dt: hvTerm.datatype?.value || null }
                   )
                 : null,
@@ -319,7 +319,7 @@ Meteor.methods({
       return items;
     }
 
-    // Parse an item in owl:hasKey list to { iri, inverse, kind } 
+    // Parse an item in owl:hasKey list to { iri, inverse, kind }
     function parseKeyItem(term) {
       if (!term) return null;
       if (term.termType === 'BlankNode') {
@@ -469,7 +469,7 @@ Meteor.methods({
         }
       }
 
-      // owl:disjointWith or owl:equivalentClass (named-named case) 
+      // owl:disjointWith or owl:equivalentClass (named-named case)
       if ((pIri === OWL + 'disjointWith' || pIri === OWL + 'equivalentClass') &&
           s.termType === 'NamedNode' && o.termType === 'NamedNode') {
         const cls = state.classes[sIri];
@@ -907,7 +907,7 @@ Meteor.methods({
         const entity = entities[iri];
         // Determine term for subject (convert blank node IRIs like "_:abc" to actual blank node)
         const isBlank = iri.startsWith('_:') || !iri.includes(':');
-        const subjTerm = isBlank 
+        const subjTerm = isBlank
           ? $rdf.blankNode(iri.startsWith('_:') ? iri.slice(2) : iri)
           : $rdf.sym(iri);
         const triples = store.match(subjTerm, undefined, undefined);
@@ -918,9 +918,9 @@ Meteor.methods({
           if (!state.isAnnotationProp.has(pIRI) && !builtInAnnPropsList.includes(pIRI)) return;  // not an annotation property
           if (state.isAnnotationProp.has(pIRI) && !isBlank) return;  // skip annotation properties for named subjects (already added in main loop)
           // Add annotation entry to the entity
-          const annEntry = { 
-            p: pIRI, 
-            v: (obj.termType === 'Literal') ? obj.value : obj.value 
+          const annEntry = {
+            p: pIRI,
+            v: (obj.termType === 'Literal') ? obj.value : obj.value
           };
           if (obj.termType === 'Literal') {
             annEntry.dt = obj.datatype ? obj.datatype.value : null;

@@ -62,11 +62,11 @@ ResizingShape.prototype = {
 
 								drawingLayer: drawingLayer,
 								dragLayer: dragLayer,
-								dragGroup: drag_group, 
+								dragGroup: drag_group,
 								shapesLayer: shapesLayer,
 							};
-							
-		if (element.resizers)					
+
+		if (element.resizers)
 			element.resizers.remove();
 
 		//moving element to the drawing layer
@@ -142,19 +142,19 @@ ResizingShape.prototype = {
 			element.updateElementSize(mouse_x, y1, x2, y2);
 		}
 
-		//resizes width, height and x, no y 
+		//resizes width, height and x, no y
 		else if (resizer_name == "BottomLeft") {
 			element.updateElementSize(mouse_x, y1, x2, mouse_y);
 		}
 
-		//resizes width, height and x, no y 
+		//resizes width, height and x, no y
 		else if (resizer_name == "TopRight") {
 			element.updateElementSize(x1, mouse_y, mouse_x, y2);
 		}
 
 		//resizers width and height (no x and y changes)
 		else if (resizer_name == "BottomRight") {
-			element.updateElementSize(x1, y1, mouse_x, mouse_y);	
+			element.updateElementSize(x1, y1, mouse_x, mouse_y);
 		}
 
 		else if (resizer_name == "BottomMiddle") {

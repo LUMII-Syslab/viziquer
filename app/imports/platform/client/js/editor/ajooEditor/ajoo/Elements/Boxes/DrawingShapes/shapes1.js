@@ -92,7 +92,7 @@ ARoundRectangle.prototype.toSVG = function(x, y, width, height) {
 
     var x7 = x;
     var y7 = y + height - corner_radius;
- 
+
     var x8 = x;
     var y8 = y + corner_radius;
 
@@ -105,9 +105,9 @@ ARoundRectangle.prototype.toSVG = function(x, y, width, height) {
         + " L" + x4 + "," + y4
         + " Q" + x4 + "," + y5 + " " + x5 + "," + y5
         + " L" + x6 + "," + y6
-        + " Q" + x7 + "," + y6 + " " + x7 + "," + y7         
+        + " Q" + x7 + "," + y6 + " " + x7 + "," + y7
         + " L" + x8 + "," + y8
-        + " Q" + x8 + "," + y9 + " " + x9 + "," + y9 
+        + " Q" + x8 + "," + y9 + " " + x9 + "," + y9
         + " Z";
 }
 
@@ -123,7 +123,7 @@ HorizontalLine.prototype.constructor = HorizontalLine;
 HorizontalLine.prototype.createShape = function(prop_list) {
 
 	var obj = ARectangle.prototype.createShape.call(this, prop_list);
-	obj["maxHeight"] = 6; 
+	obj["maxHeight"] = 6;
 	return obj;
 }
 
@@ -152,7 +152,7 @@ VerticalLine.prototype.constructor = VerticalLine;
 
 VerticalLine.prototype.createShape = function(prop_list) {
 	var obj = ARectangle.prototype.createShape.call(this, prop_list);
-	obj["maxWidth"] = 6; 
+	obj["maxWidth"] = 6;
 
 	return obj;
 }
@@ -199,7 +199,7 @@ RPolygon.prototype.addResizers = function() {
 
 RPolygon.prototype.buildSVGSize = function(x, y) {
 	var box = this;
- 
+
     var shape = box.shapes[0];
     var radius = shape.radius();
 
@@ -371,7 +371,7 @@ APentagon.prototype.toSVG = function(x, y, radius) {
 	var box = this;
     var side = box.side(radius);
 
-    var delta_x1 = side * Math.sin(54 * Math.PI / 180); 
+    var delta_x1 = side * Math.sin(54 * Math.PI / 180);
     var delta_y1 = side * Math.sin(36 * Math.PI / 180);
 
     var x_middle = x + delta_x1;
@@ -390,7 +390,7 @@ APentagon.prototype.toSVG = function(x, y, radius) {
 	        + " L" + x2 + "," + y2
 	        + " L" + x3  + "," + y3
 	        + " L" + x4 + "," + y3
-	        + " L" + x + "," + y2        
+	        + " L" + x + "," + y2
 	        + " Z";
 }
 
@@ -404,7 +404,7 @@ APentagon.prototype.compartmentArea = function() {
 
 	var side = box.side(radius);
 
-    var delta_x1 = side * Math.sin(54 * Math.PI / 180); 
+    var delta_x1 = side * Math.sin(54 * Math.PI / 180);
     var delta_y1 = side * Math.sin(36 * Math.PI / 180);
 
 	var x1 = delta_x1 / 2;
@@ -493,7 +493,7 @@ AOctagon.prototype.toSVG = function(x, y, radius) {
 	var y2 = y + delta_y1;
 	var y3 = y + radius;
 	var y4 = y + 2 * radius - delta_y1;
-	var y5 = y + 2 * radius;	
+	var y5 = y + 2 * radius;
 
     return "M" + x1 + "," + y
 	        + " L" + x2 + "," + y2
@@ -501,8 +501,8 @@ AOctagon.prototype.toSVG = function(x, y, radius) {
 	        + " L" + x2 + "," + y4
 	        + " L" + x1 + "," + y5
 	        + " L" + x5 + "," + y4
-	        + " L" + x + "," + y3     
-	        + " L" + x5 + "," + y2   
+	        + " L" + x + "," + y3
+	        + " L" + x5 + "," + y2
 	       	+ " Z";
 }
 

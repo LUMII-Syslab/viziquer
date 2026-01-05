@@ -60,7 +60,7 @@ LinkCompartments.prototype = {
 			}
 
 			var compart_style = compart_in["style"];
-			
+
 			compart_in["x"] = 10;
 			compart_in.y = 20;
 
@@ -77,7 +77,7 @@ LinkCompartments.prototype = {
 			placement.width = Math.max(placement.width, compart.textWidth);
 			placement.height += compart.textHeight;
 		});
-		
+
 
 		compartments.computeGroupsPositions();
 		compartments.computeTextsPositions();
@@ -121,7 +121,7 @@ LinkCompartments.prototype = {
 	computeGroupPosition: function(placement) {
 
 		var compartments = this;
-		
+
 		var line = compartments.element;
 		var points = line.getPoints();
 
@@ -138,7 +138,7 @@ LinkCompartments.prototype = {
 					"start-right": function() {
 		    			var size = compartments.get_end_shape_size("Start");
 						return compartments.compute_start_right_position(width, height, size);
-					},				
+					},
 
 					"middle-left": function() {
 
@@ -168,7 +168,7 @@ LinkCompartments.prototype = {
 						var size = {};
 
 						return compartments.labelLayout(position, width, height, size, point.x, point.y);
-					},	
+					},
 
 					"end-left": function() {
 				    	var size = compartments.get_end_shape_size("End");
@@ -178,10 +178,10 @@ LinkCompartments.prototype = {
 					"end-right": function() {
 				    	var size = compartments.get_end_shape_size("End");
 				    	return compartments.compute_end_right_position(width, height, size);
-					},	
+					},
 
 					"middle": function() {
-					},	
+					},
 
 				};
 
@@ -327,7 +327,7 @@ LinkCompartments.prototype = {
 
 			if (points[y1] < points[y2])
 				position += "-south-";
-	    	else 
+	    	else
 	    		position += "-north-";
 	    }
 
@@ -338,7 +338,7 @@ LinkCompartments.prototype = {
 
 			if (points[x1] < points[x2])
 				position += "-east-";
-	    	else 
+	    	else
 	    		position += "-west-";
 	    }
 
@@ -372,18 +372,18 @@ LinkCompartments.prototype = {
 	},
 
 	horizontal_left_end: function(x, y, width, height, size) {
-		
+
 		var padding = {width: 3, height: 0};
 		if (size["width"] == 0 && size["height"] == 0)
 			padding["height"] = 3;
-		
+
 	    return {x: x - (width + padding["width"]),
 	    		y: y - (height + padding["height"] + size["width"])};
 
 	},
 
 	horizontal_right_end: function(x, y, width, height, size) {
-		
+
 		var padding = {width: 3, height: 0};
 		if (size["width"] == 0 && size["height"] == 0)
 			padding["height"] = 4;
@@ -410,7 +410,7 @@ LinkCompartments.prototype = {
 	// right end   || left end
 
 	vertical_left_start: function(x, y, width, height, size) {
-		
+
 		var padding = {width: 2, height: 3};
 		if (size["width"] == 0 && size["height"] == 0)
 			padding["width"] = 4;
@@ -525,7 +525,7 @@ LinkCompartments.prototype = {
 				var k = y_delta / x_delta;
 				rotation = Math.atan(k) * (180 / Math.PI);
 				if (x1 < x2) {
-					rotation = 180 + rotation; 
+					rotation = 180 + rotation;
 				}
 			}
 		}
@@ -563,7 +563,7 @@ LinkCompartments.prototype = {
 				var points = shape.points();
 
 				var x_middle = (points[0] + points[points.length-2]) / 2;
-				var y_middle = (points[1] + points[points.length-1]) / 4;			
+				var y_middle = (points[1] + points[points.length-1]) / 4;
 
 				//left-right
 				if (rotation == 90) {
@@ -596,7 +596,7 @@ LinkCompartments.prototype = {
 				var points = shape.points();
 
 				var x_middle = (points[0] + points[points.length-2]) / 2;
-				var y_middle = (points[1] + points[points.length-1]) / 4;			
+				var y_middle = (points[1] + points[points.length-1]) / 4;
 
 				//left-right
 				if (rotation == 90) {
@@ -670,7 +670,7 @@ LinkCompartments.prototype = {
 		placment_obj.height = new_height;
 
 		compartments.computeTextsPositions(placement_in);
-		compartments.computeGroupPosition(placement_in);		
+		compartments.computeGroupPosition(placement_in);
 	},
 
 	removeAllRespresentations: function() {
@@ -681,7 +681,7 @@ LinkCompartments.prototype = {
 		_.each(texts_group.getChildren(), function(group) {
 			group.destroyChildren();
 		});
-		
+
 		_.each(compartments.compartments, function(compart) {
 			compart.remove(compart._id, true);
 		})
@@ -741,7 +741,7 @@ LinkCompartments.prototype = {
 				line_length += Math.abs(points[i+1] - points[i+3]);
 
 			else
-				line_length += Math.abs(points[i] - points[i+2]);	
+				line_length += Math.abs(points[i] - points[i+2]);
 		}
 
 		//computing middle point distance form start point
@@ -817,20 +817,20 @@ LinkCompartments.prototype = {
 					},
 
 					"horizontal-east-left": function() {
-						return compartments.horizontal_right_start(x1, y1, width, height, size);			
+						return compartments.horizontal_right_start(x1, y1, width, height, size);
 					},
 
 					"horizontal-east-right": function() {
-						return compartments.horizontal_left_start(x1, y1, width, height, size);	
+						return compartments.horizontal_left_start(x1, y1, width, height, size);
 					},
 
 
 					"horizontal-west-middle-left": function() {
-						return compartments.horizontal_right_middle(x1, y1, width, height, size);		
+						return compartments.horizontal_right_middle(x1, y1, width, height, size);
 					},
 
 					"horizontal-west-middle-right": function() {
-						return compartments.horizontal_left_middle(x1, y1, width, height, size);										
+						return compartments.horizontal_left_middle(x1, y1, width, height, size);
 					},
 
 					"horizontal-east-middle-left": function() {
@@ -848,16 +848,16 @@ LinkCompartments.prototype = {
 					},
 
 					"vertical-north-right": function() {
-						return compartments.vertical_right_end(x1, y1, width, height, size);					
+						return compartments.vertical_right_end(x1, y1, width, height, size);
 					},
 
 
 					"vertical-south-left": function() {
-						return compartments.vertical_right_start(x1, y1, width, height, size);	
+						return compartments.vertical_right_start(x1, y1, width, height, size);
 					},
-				
+
 					"vertical-south-right": function() {
-						return compartments.vertical_left_start(x1, y1, width, height, size);						
+						return compartments.vertical_left_start(x1, y1, width, height, size);
 					},
 
 
@@ -870,11 +870,11 @@ LinkCompartments.prototype = {
 					},
 
 					"vertical-south-middle-left": function() {
-						return compartments.vertical_right_middle(x1, y1, width, height, size);											
+						return compartments.vertical_right_middle(x1, y1, width, height, size);
 					},
 
 					"vertical-south-middle-right": function() {
-						return compartments.vertical_left_middle(x1, y1, width, height, size);											
+						return compartments.vertical_left_middle(x1, y1, width, height, size);
 					},
 
 				},
@@ -887,16 +887,16 @@ LinkCompartments.prototype = {
 					},
 
 					"horizontal-west-right": function() {
-						return compartments.horizontal_left_end(x1, y1, width, height, size);			
+						return compartments.horizontal_left_end(x1, y1, width, height, size);
 					},
 
 
 					"horizontal-east-left": function() {
-						return compartments.horizontal_right_start(x1, y1, width, height, size);												
+						return compartments.horizontal_right_start(x1, y1, width, height, size);
 					},
 
 					"horizontal-east-right": function() {
-						return compartments.horizontal_left_start(x1, y1, width, height, size);		
+						return compartments.horizontal_left_start(x1, y1, width, height, size);
 					},
 
 
@@ -905,7 +905,7 @@ LinkCompartments.prototype = {
 					},
 
 					"horizontal-west-middle-right": function() {
-						return compartments.horizontal_right_middle(x1, y1, width, height, size);											
+						return compartments.horizontal_right_middle(x1, y1, width, height, size);
 					},
 
 
@@ -923,13 +923,13 @@ LinkCompartments.prototype = {
 					},
 
 					"vertical-north-right": function() {
-						return compartments.vertical_right_end(x1, y1, width, height, size);											
+						return compartments.vertical_right_end(x1, y1, width, height, size);
 					},
 
 					"vertical-south-left": function() {
-						return compartments.vertical_left_start(x1, y1, width, height, size);		
+						return compartments.vertical_left_start(x1, y1, width, height, size);
 					},
-				
+
 					"vertical-south-right": function() {
 						return compartments.vertical_right_start(x1, y1, width, height, size);
 					},
@@ -944,11 +944,11 @@ LinkCompartments.prototype = {
 					},
 
 					"vertical-south-middle-left": function() {
-						return compartments.vertical_left_middle(x1, y1, width, height, size);											
+						return compartments.vertical_left_middle(x1, y1, width, height, size);
 					},
 
 					"vertical-south-middle-right": function() {
-						return compartments.vertical_right_middle(x1, y1, width, height, size);											
+						return compartments.vertical_right_middle(x1, y1, width, height, size);
 					},
 
 				},
@@ -962,19 +962,19 @@ LinkCompartments.prototype = {
 					},
 
 					"horizontal-west-right": function() {
-						return compartments.horizontal_right_end(x1, y1, width, height, size);	
-						// return compartments.horizontal_left_end(x1, y1, width, height, size);			
+						return compartments.horizontal_right_end(x1, y1, width, height, size);
+						// return compartments.horizontal_left_end(x1, y1, width, height, size);
 					},
 
 
 					"horizontal-east-left": function() {
 						// return compartments.horizontal_left_start(x1, y1, width, height, size);
-						return compartments.horizontal_right_start(x1, y1, width, height, size);												
+						return compartments.horizontal_right_start(x1, y1, width, height, size);
 					},
 
 					"horizontal-east-right": function() {
-						// return compartments.horizontal_right_start(x1, y1, width, height, size);	
-						return compartments.horizontal_left_start(x1, y1, width, height, size);		
+						// return compartments.horizontal_right_start(x1, y1, width, height, size);
+						return compartments.horizontal_left_start(x1, y1, width, height, size);
 					},
 
 
@@ -983,7 +983,7 @@ LinkCompartments.prototype = {
 					},
 
 					"horizontal-west-middle-right": function() {
-						return compartments.horizontal_right_middle(x1, y1, width, height, size);											
+						return compartments.horizontal_right_middle(x1, y1, width, height, size);
 					},
 
 
@@ -1002,15 +1002,15 @@ LinkCompartments.prototype = {
 					},
 
 					"vertical-north-right": function() {
-						return compartments.vertical_right_end(x1, y1, width, height, size);	
-						// return compartments.vertical_left_end(x1, y1, width, height, size);											
+						return compartments.vertical_right_end(x1, y1, width, height, size);
+						// return compartments.vertical_left_end(x1, y1, width, height, size);
 					},
 
 					"vertical-south-left": function() {
 						return compartments.vertical_right_start(x1, y1, width, height, size);
-						// return compartments.vertical_left_start(x1, y1, width, height, size);		
+						// return compartments.vertical_left_start(x1, y1, width, height, size);
 					},
-				
+
 					"vertical-south-right": function() {
 						return compartments.vertical_left_start(x1, y1, width, height, size);
 						// return compartments.vertical_right_start(x1, y1, width, height, size);
@@ -1026,11 +1026,11 @@ LinkCompartments.prototype = {
 					},
 
 					"vertical-south-middle-left": function() {
-						return compartments.vertical_left_middle(x1, y1, width, height, size);											
+						return compartments.vertical_left_middle(x1, y1, width, height, size);
 					},
 
 					"vertical-south-middle-right": function() {
-						return compartments.vertical_right_middle(x1, y1, width, height, size);											
+						return compartments.vertical_right_middle(x1, y1, width, height, size);
 					},
 
 				},
@@ -1044,19 +1044,19 @@ LinkCompartments.prototype = {
 					},
 
 					"horizontal-west-right": function() {
-						// return compartments.horizontal_right_end(x1, y1, width, height, size);	
-						return compartments.horizontal_left_end(x1, y1, width, height, size);			
+						// return compartments.horizontal_right_end(x1, y1, width, height, size);
+						return compartments.horizontal_left_end(x1, y1, width, height, size);
 					},
 
 
 					"horizontal-east-left": function() {
 						return compartments.horizontal_left_start(x1, y1, width, height, size);
-						// return compartments.horizontal_right_start(x1, y1, width, height, size);												
+						// return compartments.horizontal_right_start(x1, y1, width, height, size);
 					},
 
 					"horizontal-east-right": function() {
-						return compartments.horizontal_right_start(x1, y1, width, height, size);	
-						// return compartments.horizontal_left_start(x1, y1, width, height, size);		
+						return compartments.horizontal_right_start(x1, y1, width, height, size);
+						// return compartments.horizontal_left_start(x1, y1, width, height, size);
 					},
 
 
@@ -1065,7 +1065,7 @@ LinkCompartments.prototype = {
 					},
 
 					"horizontal-west-middle-right": function() {
-						return compartments.horizontal_right_middle(x1, y1, width, height, size);											
+						return compartments.horizontal_right_middle(x1, y1, width, height, size);
 					},
 
 
@@ -1084,15 +1084,15 @@ LinkCompartments.prototype = {
 					},
 
 					"vertical-north-right": function() {
-						// return compartments.vertical_right_end(x1, y1, width, height, size);	
-						return compartments.vertical_left_end(x1, y1, width, height, size);											
+						// return compartments.vertical_right_end(x1, y1, width, height, size);
+						return compartments.vertical_left_end(x1, y1, width, height, size);
 					},
 
 					"vertical-south-left": function() {
 						// return compartments.vertical_right_start(x1, y1, width, height, size);
-						return compartments.vertical_left_start(x1, y1, width, height, size);		
+						return compartments.vertical_left_start(x1, y1, width, height, size);
 					},
-				
+
 					"vertical-south-right": function() {
 						// return compartments.vertical_left_start(x1, y1, width, height, size);
 						return compartments.vertical_right_start(x1, y1, width, height, size);
@@ -1108,11 +1108,11 @@ LinkCompartments.prototype = {
 					},
 
 					"vertical-south-middle-left": function() {
-						return compartments.vertical_left_middle(x1, y1, width, height, size);											
+						return compartments.vertical_left_middle(x1, y1, width, height, size);
 					},
 
 					"vertical-south-middle-right": function() {
-						return compartments.vertical_right_middle(x1, y1, width, height, size);											
+						return compartments.vertical_right_middle(x1, y1, width, height, size);
 					},
 
 				},

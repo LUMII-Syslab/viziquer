@@ -23,7 +23,7 @@ MovingSwimlane.prototype = {
 		var line_parent = line.parent;
 		_.each(line_parent.children, function(tmp_line) {
 
-			if (tmp_line["index"] == index-1) 
+			if (tmp_line["index"] == index-1)
 				prev_line = tmp_line;
 
 			else if (tmp_line["index"] == index + 1)
@@ -67,7 +67,7 @@ MovingSwimlane.prototype = {
 		var next_line = state["nextLine"];
 
 	 	var prev_size = state["prevSize"];
-	 	var next_size = state["newxtSize"];	
+	 	var next_size = state["newxtSize"];
 
 		var element = state["element"];
 		var size = swimlane.getSize();
@@ -97,7 +97,7 @@ MovingSwimlane.prototype = {
 		var prev;
 		if (prev_line) {
 			prev = prev_line.points()[index];
-		
+
 			if (prev_line["name"] == "vertical")
 				prev = prev + prev_size["width"] + PADDING;
 
@@ -149,7 +149,7 @@ MovingSwimlane.prototype = {
 		var moving = this;
 		var swimlane = moving.swimlane;
 		var editor = swimlane.editor;
-		
+
 		new Event(editor, "swimlaneEdited", swimlane);
 
 		moving.state = {};
@@ -163,14 +163,14 @@ MovingSwimlane.prototype = {
 		var new_pos;
 
 		//if mouse is between prev and next line
-		if (prev <= mouse_pos && mouse_pos <= next) 
+		if (prev <= mouse_pos && mouse_pos <= next)
 			new_pos = mouse_pos;
 
 		//if mouse is before prev line
 		else if (prev > mouse_pos)
 			new_pos = prev;
 
-		//if mouse is after next line 
+		//if mouse is after next line
 		else if (next < mouse_pos)
 			new_pos = next;
 
@@ -197,7 +197,7 @@ MovingSwimlane.prototype = {
 
 	   		if (line["name"] == "horizontal")
 	   			moving.move_outer_line_obj(new_points, "VerticalLines", 3);
-	 
+
 	   		else if (line["name"] == "vertical")
 				moving.move_outer_line_obj(new_points, "HorizontalLines", 2);
 	   	}

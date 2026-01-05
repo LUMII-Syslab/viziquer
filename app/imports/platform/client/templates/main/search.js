@@ -62,7 +62,7 @@ function selecting_searches(query, limit) {
 	res["count"] = count;
 	res["style"] = get_display_mode(count);
 
-	return res;	
+	return res;
 }
 
 Template.searchMenu.rendered = function() {
@@ -147,7 +147,7 @@ function search_object(e, text) {
 
 		users: function() {
 
-			//query for users	
+			//query for users
 			var filter = {text: text,
 							projectId: Session.get("activeProject"),
 							versionId: Session.get("versionId")};
@@ -205,7 +205,7 @@ function save_query(collection_type, text) {
 		if (err) {
 			console.log("Error in searchInProject", err);
 		}
-	});	
+	});
 }
 
 function search_keyup(e) {
@@ -213,11 +213,11 @@ function search_keyup(e) {
 	//if enter, then searching
 	if (e.keyCode == 13)
 		search_object(e);
-	
+
 	//arrow down
-	else if (e.keyCode == 40) 
+	else if (e.keyCode == 40)
 		process_arrow_button("down");
-	
+
 	//arrow up
 	else if (e.keyCode == 38) {
 		process_arrow_button("up");
@@ -246,7 +246,7 @@ function search_keyup(e) {
 				contacts: function() {
 					var filter = {text: text,
 									type: collection_type};
-					
+
 				    Session.set(query, filter);
 				},
 
@@ -276,7 +276,7 @@ function exec_search_keyup(query, collection_type, text) {
 	var filter = {text: text,
 					projectId: Session.get("activeProject"),
 					type: collection_type};
-	
+
     Session.set(query, filter);
 }
 
@@ -293,7 +293,7 @@ function get_search_bar(e) {
 }
 
 function process_arrow_button(arrow_type) {
-			
+
 	var count = $("#searchList").attr("count");
 	var index = compute_index(arrow_type, count, function() {
 		var item = get_selected_elem();
@@ -339,7 +339,7 @@ function compute_index(arrow_type, count, compute_index_fn) {
 		var initial_value = 0;
 		var end_index = count-1;
 	}
-	
+
 	var index = compute_index_fn();
 	if (typeof index == "undefined") {
 		index = initial_value;
@@ -357,7 +357,7 @@ function compute_index(arrow_type, count, compute_index_fn) {
 function get_display_mode(count) {
 	if (count && count > 0)
 		return "display:block;";
-	else	
+	else
 		return "display:none;";
 }
 
@@ -373,7 +373,7 @@ function remove_caret_move_on_keyup(e) {
 
 function initalize_search() {
 	var search_bar = $(".search-bar");
-	Session.set("search_type", search_bar.attr("type"));	
+	Session.set("search_type", search_bar.attr("type"));
 }
 
 //Adding search bar properties to the search bars in diagrams, documents, users, chats pages
@@ -385,7 +385,7 @@ function diagrams_search() {
 
 function users_search() {
 	var events = build_search_events_list();
-	Template.usersSearchBar.events(events);	
+	Template.usersSearchBar.events(events);
 }
 
 function contacts_search() {

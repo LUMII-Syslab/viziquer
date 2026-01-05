@@ -9,7 +9,7 @@ import './signup.html'
 Template.signup.events({
 
 	'keyup #email' : function(e) {
-		e.preventDefault();		
+		e.preventDefault();
 		process_email_field(e);
 	},
 
@@ -44,7 +44,7 @@ Template.signup.events({
 			var confirmed_password = $("#confirmPassword").val();
 
 			check_passwords(password, confirmed_password);
-			check_fields_values();			
+			check_fields_values();
 		}
 	},
 
@@ -63,7 +63,7 @@ Template.signup.events({
 		var field = $(e.target);
 
 		process_fields(field, "surname_error", "Surname");
-		check_fields_values();			
+		check_fields_values();
 	},
 
 	// 'keyup #secretPhrase' : function(e) {
@@ -112,7 +112,7 @@ Template.signup.helpers({
 
 	password_error: function() {
 		return Session.get("passwordError");
-	},	
+	},
 
 	confirmed_password_error: function() {
 		return Session.get("confirmedPasswordError");
@@ -230,7 +230,7 @@ function check_fields_values() {
 	//disabling signup button
 	if (Session.get("mail_error") || Session.get("passwordError") ||
 		Session.get("confirmedPasswordError") || Session.get("name_error") ||
-		Session.get("surname_error") || Session.get("secret_phrase_error") || 
+		Session.get("surname_error") || Session.get("secret_phrase_error") ||
 		!email || !password || !confirmed_password || !name || !surname) {
 
 		Session.set("IsSignUpEnabled", reset_variable());
