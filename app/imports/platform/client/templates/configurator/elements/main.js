@@ -34,7 +34,7 @@ Template.elementMain.helpers({
 			return {
 				_id: elem_type["_id"],
 				name: elem_type["name"],
-				
+
 				is_line: function() {
 					if (elem_type["type"] == "Line") {
 						return true;

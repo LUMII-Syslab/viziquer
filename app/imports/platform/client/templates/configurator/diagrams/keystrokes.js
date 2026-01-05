@@ -8,7 +8,7 @@ Template.editCollectionKeyStrokes.helpers({
 		return {
 			collection: "DiagramTypes",
 			array: "collectionKeyStrokes",
-			
+
 			keystrokes: Configurator.getKeystrokesOrItems("collectionKeyStrokes"),
 		};
 	},
@@ -21,7 +21,7 @@ Template.readCollectionKeyStrokes.helpers({
 		return {
 			collection: "DiagramTypes",
 			array: "readModeCollectionKeyStrokes",
-			
+
 			keystrokes: Configurator.getKeystrokesOrItems("readModeCollectionKeyStrokes"),
 		};
 	},
@@ -36,7 +36,7 @@ Template.editNoCollectionKeyStrokes.helpers({
 		return {
 			collection: "DiagramTypes",
 			array: "noCollectionKeyStrokes",
-			
+
 			keystrokes: Configurator.getKeystrokesOrItems("noCollectionKeyStrokes"),
 		};
 	},
@@ -49,7 +49,7 @@ Template.readNoCollectionKeyStrokes.helpers({
 		return {
 			collection: "DiagramTypes",
 			array: "readModeNoCollectionKeyStrokes",
-			
+
 			keystrokes: Configurator.getKeystrokesOrItems("readModeNoCollectionKeyStrokes"),
 		};
 	},

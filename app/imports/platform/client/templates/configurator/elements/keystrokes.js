@@ -9,7 +9,7 @@ Template.editKeystroke.helpers({
 		return {
 			collection: "ElementTypes",
 			array: "keyStrokes",
-			
+
 			keystrokes: Configurator.getKeystrokesOrItems("keyStrokes"),
 		};
 	},
@@ -17,7 +17,7 @@ Template.editKeystroke.helpers({
 });
 
 Template.readKeystroke.helpers({
-	
+
 	data: function() {
 		return {
 			collection: "ElementTypes",

@@ -7,7 +7,7 @@ Template.renameTool.helpers({
 	tool: function() {
 		var tool = Tools.findOne({_id: Session.get("toolId")});
 		if (tool) {
-			
+
 			tool.checked = "";
 			if (tool.isDeprecated) {
 				tool.checked = "checked";
@@ -57,7 +57,7 @@ Template.loadModelForm.events({
 								projectIds: project_ids,
 								data: reader.result,
 							};
-					
+
 					Utilities.callMeteorMethod("loadData", list);
 				}
 	        }
@@ -121,7 +121,7 @@ function get_tool_setting(name) {
 			yes_item["selected"] = "selected";
 		}
 		else {
-			no_item["selected"] = "selected";	
+			no_item["selected"] = "selected";
 		}
 
 		return {yes: yes_item, no: no_item};

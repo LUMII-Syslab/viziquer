@@ -35,7 +35,7 @@ Template.toolRibbon.events({
 	'click #delete' : function(e) {
 		Session.set("confirmationText", "ConfirmDeleteToolType");
 		Session.set("confirmationProcedure", "delete_tool");
-		$("#delete-confirm-form").modal("show");		
+		$("#delete-confirm-form").modal("show");
 	},
 
 //edit tool

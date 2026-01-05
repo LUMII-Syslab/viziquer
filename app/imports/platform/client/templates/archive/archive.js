@@ -60,7 +60,7 @@ Template.archiveTemplate.events({
 						versionId: new_version["_id"],
 						comment: $("#comment").val(),
 					};
-			
+
 			Utilities.callMeteorMethod("publishVersion", list);
 		}
 	},
@@ -84,16 +84,16 @@ Template.archiveTemplate.events({
 Template.archiveTemplate.helpers({
 
 	versions: function() {
-		
+
 		//selects active user's project info
 		var project_user = ProjectsUsers.findOne({projectId: Session.get("activeProject"),
 													userSystemId: Session.get("userSystemId")});
-		
+
 		//selects version in descending order and iterates through versions and sets the active project
 		//and transforms date format
 		return Versions.find({},{sort: {createdAt: -1}}).map(
 			function(version) {
-		
+
 				//transforms the published date in different form
 				var date = version["publishedAt"];
 				if (date)
@@ -136,7 +136,7 @@ Template.archiveTemplate.helpers({
 			}
 			else {
 				res["new_version_disabled"] = false;
-				res["remove_version_disabled"] = true;				
+				res["remove_version_disabled"] = true;
 				res["publish_version_disabled"] = true;
 			}
 
@@ -155,7 +155,7 @@ Template.archiveTemplate.helpers({
 
 //rendering project versions
 Template.publishVersion.helpers({
-	
+
 	//this shows the version number in the publish dialog window
 	version_number: function() {
 		var version = Versions.findOne({status: "New"});

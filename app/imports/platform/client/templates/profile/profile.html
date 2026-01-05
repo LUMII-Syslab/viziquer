@@ -11,7 +11,7 @@
 		<div class="col-sm-12 col-md-8 col-lg-9">
 			{{> editProfileTab}}
 		</div><!-- /.col -->
-	</div><!-- /.row -->		
+	</div><!-- /.row -->
 </template>
 
 <template name="editProfileTab">
@@ -88,7 +88,7 @@
 								<select id="lang" class="form-control dialog-selection">
                     				{{#each langs}}
  		  								<option {{selected}} value="{{value}}">{{title}}</option>
-                    				{{/each}}		
+                    				{{/each}}
  		  						</select>
 							</div>
 					  </div>
@@ -122,14 +122,14 @@
 						{{/if}}
 					{{/with}}
 				</div><!-- /form-group -->
-					
+
 				<div class="row">
 					<div class="col-md-6">
 						<div class="form-group">
 							{{#with new_password_error}}
 								<label class="control-label">{{_ "profile_password"}}</label>
 								<input id="newPassword" type="password" placeholder='{{_ "profile_password"}}' class="form-control password {{validatedClass}} {{errorClass}}">
-							
+
 								{{#if errorClass}}
 								<ul class="parsley-error-list" style="display: block;">
 									<li style="display: list-item;">{{_ "password_error_msg" context=message}}</li>
@@ -143,7 +143,7 @@
 							{{#with confirmed_password_error}}
 								<label class="control-label">{{_ "profile_confirm_password"}}</label>
 								<input id="confirmPassword" type="password" placeholder='{{_ "profile_confirm_password"}}' class="form-control password {{validatedClass}} {{errorClass}}">
-							
+
 								{{#if errorClass}}
 
 								<ul class="parsley-error-list" style="display: block;">

@@ -62,7 +62,7 @@
 			</div>
 			<div id="compartments" class="panel-collapse collapse">
 				<div class="panel-body">
-					{{> diagramCompartments}}	
+					{{> diagramCompartments}}
 				</div>
 			</div>
 		</div><!-- /panel -->
@@ -77,7 +77,7 @@
 			</div>
 			<div id="collection" class="panel-collapse collapse">
 				<div class="panel-body">
-					{{> collectionAccordion}}	
+					{{> collectionAccordion}}
 				</div>
 			</div>
 		</div><!-- /panel -->
@@ -153,9 +153,9 @@
 
 	<div class="panel-tab clearfix">
 		<ul class="nav nav-pills configurator-pills">
-			<li class="active"><a href="#diagram-main" data-toggle="tab">Main</a></li>		
+			<li class="active"><a href="#diagram-main" data-toggle="tab">Main</a></li>
 			<li><a href="#diagram-style" data-toggle="tab">Style</a></li>
-			<li><a href="#diagram-toolbar" data-toggle="tab">Toolbar</a></li>			
+			<li><a href="#diagram-toolbar" data-toggle="tab">Toolbar</a></li>
 			<li><a href="#diagram-extensions" data-toggle="tab">Extensions</a></li>
 		</ul>
 	</div>
@@ -163,7 +163,7 @@
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="diagram-main">
 				{{> diagramMain}}
-			</div>			
+			</div>
 			<div class="tab-pane fade" id="diagram-style">
 				{{> diagramStyle}}
 			</div>
@@ -215,7 +215,7 @@
 
         	<button id="zoomin" class="btn btn-ribbon" data-title="Zoom in"><i class="fa fa-plus"></i></button>
 
-        	<button id="zoomout" class="btn btn-ribbon" data-title="Zoom out"><i class="fa fa-minus"></i></button>        	
+        	<button id="zoomout" class="btn btn-ribbon" data-title="Zoom out"><i class="fa fa-minus"></i></button>
 
         	{{#if editMode}}
         		<button id="delete" class="btn btn-ribbon" data-title="Delete diagram"><i class="fa fa-trash-o"></i></button>
@@ -242,7 +242,7 @@
 <template name="collectionAccordion">
 	<div class="panel-tab clearfix">
 		<ul class="nav nav-pills configurator-pills">
-			<li class="active"><a href="#collection-context-menu" data-toggle="tab">Context menu</a></li>		
+			<li class="active"><a href="#collection-context-menu" data-toggle="tab">Context menu</a></li>
 			<li><a href="#collection-keystrokes" data-toggle="tab">Keystrokes</a></li>
 			<li><a href="#collection-extension-points" data-toggle="tab">Extensions</a></li>
 		</ul>
@@ -251,7 +251,7 @@
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="collection-context-menu">
 				{{> collectionContextMenu}}
-			</div>			
+			</div>
 			<div class="tab-pane fade" id="collection-keystrokes">
 				{{> collectionKeyStrokes}}
 			</div>
@@ -267,7 +267,7 @@
 <template name="noCollectionAccordion">
 	<div class="panel-tab clearfix">
 		<ul class="nav nav-pills configurator-pills">
-			<li class="active"><a href="#noCollection-context-menu" data-toggle="tab">Context menu</a></li>		
+			<li class="active"><a href="#noCollection-context-menu" data-toggle="tab">Context menu</a></li>
 			<li><a href="#noCollection-keystrokes" data-toggle="tab">Keystrokes</a></li>
 		</ul>
 	</div>
@@ -275,7 +275,7 @@
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="noCollection-context-menu">
 				{{> noCollectionContextMenu}}
-			</div>			
+			</div>
 			<div class="tab-pane fade" id="noCollection-keystrokes">
 				{{> noCollectionKeyStrokes}}
 			</div>

@@ -112,7 +112,7 @@ function render_swimlane_compartment(name) {
 		res["_id"] = compart["_id"];
 		res["value"] = compart["input"];
 	}
-	
+
 	return res;
 }
 

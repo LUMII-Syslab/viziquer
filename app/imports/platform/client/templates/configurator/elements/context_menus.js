@@ -76,7 +76,7 @@ Template.contextMenu.events({
 		Configurator.updateKeystrokeOrItem(e, "updateKeystrokeOrContextMenu", collection);
 	},
 
-	//updates dynamic context menu procedure	
+	//updates dynamic context menu procedure
 	'blur .dialog-input' : function(e) {
 		Configurator.updateElementFromInput(e, "updateConfiguratorExtension");
 	},

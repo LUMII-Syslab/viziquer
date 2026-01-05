@@ -55,7 +55,7 @@ Template.diagramMain.helpers({
 Template.diagramMain.events({
 
 	'blur .dialog-input' : function(e) {
-		Configurator.updateObjectType(e);	
+		Configurator.updateObjectType(e);
 	},
 });
 //End of diagram accordion

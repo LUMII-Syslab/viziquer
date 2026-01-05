@@ -24,7 +24,7 @@ Template.compartmentExtensions.helpers({
 				extensions[extension_point["extensionPoint"]] = extension_point["procedure"];
 			});
 
-			return extensions;	
+			return extensions;
 		}
 	},
 });

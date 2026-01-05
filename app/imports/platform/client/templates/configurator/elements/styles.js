@@ -27,7 +27,7 @@ Template.elementStyleDropDown.helpers({
 			var index = Configurator.getActiveElementStyleIndex();
 
 			return _.map(elem_type["styles"], function(style, i) {
-				style["index"] = i;			
+				style["index"] = i;
 				if (index === i) {
 					style["selected"] = "selected";
 				}
@@ -67,20 +67,20 @@ Template.elementTypeStyles.events({
 
 	'click #edit-element-type-style' : function(e) {
 		Session.set("elementStyleEdit", true);
-		$("#element-style-form").modal("show");		
+		$("#element-style-form").modal("show");
 	},
 
 	'click #delete-element-type-style' : function(e) {
 		var elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
 		if (elem_type) {
 			var id = elem_type["_id"];
-			
+
 			var selection = $("#elementStyle");
 			var item = Dialog.getSelectionItem(selection);
 			var index = item.attr("index");
 
 			var styles = elem_type["styles"];
-			styles.splice(index, 1);				
+			styles.splice(index, 1);
 
 			var list = {id: id,
 						toolId: Session.get("toolId"),
@@ -92,7 +92,7 @@ Template.elementTypeStyles.events({
 
 			Session.set("activeStyleIndex", index-1);
 		}
-	},	
+	},
 
 });
 
@@ -130,7 +130,7 @@ Template.elementStyleModal.events({
 			return;
 		}
 
-		var elem_type_id = elem_type["_id"];	
+		var elem_type_id = elem_type["_id"];
 
 		var list = {id: elem_type_id,
 					editorType: Interpreter.getEditorType(),
@@ -150,7 +150,7 @@ Template.elementStyleModal.events({
 
 		//if creating a new style
 		else {
-			if (elem_type["type"] == "Box") {		
+			if (elem_type["type"] == "Box") {
 				list["type"] = "Box";
 			}
 

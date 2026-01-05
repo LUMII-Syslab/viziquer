@@ -53,7 +53,7 @@ Template.diagram_settings.helpers({
 Template.diagramPermissions.helpers({
 
 	groups: function() {
-		
+
 		var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
 		var allowed_groups = {};
 		if (diagram && diagram["allowedGroups"]) {

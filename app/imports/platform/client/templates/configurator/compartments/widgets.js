@@ -41,18 +41,18 @@ Template.compartmentDialog.events({
 		}
 		else if (input_type == "textarea") {
 				input_type_list["type"] = input_type;
-				input_type_list["rows"] = 3;	
+				input_type_list["rows"] = 3;
 		}
 		else if (input_type == "no input") {
 			input_type_list["type"] = input_type;
 			input_type_list["rows"] = reset_variable();
-			input_type_list["inputType"] = reset_variable();				
+			input_type_list["inputType"] = reset_variable();
 		}
 		else if (input_type == "selection") {
 			input_type_list["type"] = input_type;
 			input_type_list["rows"] = reset_variable();
 			input_type_list["inputType"] = reset_variable();
-			input_type_list["values"] = [];	
+			input_type_list["values"] = [];
 		}
 
 		else if (input_type == "combobox") {
@@ -66,7 +66,7 @@ Template.compartmentDialog.events({
 			input_type_list["type"] = input_type;
 			input_type_list["rows"] = reset_variable();
 			input_type_list["inputType"] = reset_variable();
-			input_type_list["values"] = [];	
+			input_type_list["values"] = [];
 		}
 
 		else if (input_type == "checkbox") {
@@ -79,7 +79,7 @@ Template.compartmentDialog.events({
 
 						{value: "true", input: "true",
 						elementStyle: "NoStyle", compartmentStyle: "NoStyle"}
-					];					
+					];
 		}
 
 		else if (input_type == "cloudFiles") {
@@ -115,9 +115,9 @@ Template.inputOptions.helpers({
 				{name: "number"},
 				{name: "url"},
 				{name: "email"},
-				{name: "datetime"},						
-				{name: "password"},	
-				{name: "color"},	
+				{name: "datetime"},
+				{name: "password"},
+				{name: "color"},
 			];
 
 		//selects active option
@@ -147,14 +147,14 @@ Template.inputOptions.helpers({
 				return {input: type == "input",
 						textarea: type == "textarea",
 						selection: type == "selection",
-						combobox: type == "combobox",						
+						combobox: type == "combobox",
 						checkbox: type == "checkbox",
 						radio: type == "radio",
 						custom: type == "custom",
-						cloudFiles: type == "cloudFiles",						
+						cloudFiles: type == "cloudFiles",
 					};
 			}
-		}	
+		}
 	},
 
 	textarea_rows: function() {
@@ -188,14 +188,14 @@ Template.inputOptions.events({
 	'blur #rows' : function(e) {
 		var row_count = get_dialog_input_object(e).val();
 		var list = {attrName: "inputType.rows", attrValue: row_count};
-		
+
 		update_input_type(list);
 	},
 
 	'blur .placeholder' : function(e) {
 		var placeholder_val = get_dialog_input_object(e).val();
 		var list = {attrName: "inputType.placeholder", attrValue: placeholder_val};
-		
+
 		update_input_type(list);
 	},
 
@@ -356,7 +356,7 @@ Template.inputDropDown.helpers({
 		if (compart_type && compart_type["inputType"]) {
 			var compart_input = compart_type["inputType"];
 			if (compart_input) {
-				
+
 				var type_name = compart_input["type"];
 				_.each(input_types, function(input_type) {
 					if (input_type["name"] == type_name) {
@@ -385,7 +385,7 @@ Template.customField.helpers({
 
 Template.tabDropDown.helpers({
 	tabs: function() {
-		
+
 		var tabs;
 		if (Session.get("activeElement")) {
 
@@ -524,7 +524,7 @@ function get_input_type_by_name(name) {
 		if (compart_type["inputType"] && compart_type["inputType"]["type"] == name) {
 			return true;
 		}
-	}	
+	}
 }
 
 function update_selection_table_selection_field(e) {

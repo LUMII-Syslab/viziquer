@@ -1,238 +1,265 @@
-import { ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Elements, Compartments } from '../../../../db/platform/collections.js'
-import { is_system_admin } from '../../../../libs/platform/user_rights.js'
-import { build_initial_box_style, build_initial_line_style } from '../configurator/initialTypes/element_types.js'
-import { error_msg, is_version_not_published } from '../../_global_functions.js'
-import { generate_id, is_ajoo_editor, is_zoom_chart_editor } from '../../../../libs/platform/lib.js'
-import { build_initial_element_type } from './initialTypes/element_types.js'
+import {
+  ElementTypes,
+  CompartmentTypes,
+  DialogTabs,
+  PaletteButtons,
+  Elements,
+  Compartments,
+} from "../../../../db/platform/collections.js";
+import { is_system_admin } from "../../../../libs/platform/user_rights.js";
+import {
+  build_initial_box_style,
+  build_initial_line_style,
+} from "../configurator/initialTypes/element_types.js";
+import {
+  error_msg,
+  is_version_not_published,
+} from "../../_global_functions.js";
+import {
+  generate_id,
+  is_ajoo_editor,
+  is_zoom_chart_editor,
+} from "../../../../libs/platform/lib.js";
+import { build_initial_element_type } from "./initialTypes/element_types.js";
 
-ElementTypes.after.update(async function(user_id, doc, fields, modifier, options) {
+ElementTypes.after.update(
+  async function (user_id, doc, fields, modifier, options) {
+    if (!doc || !modifier || !modifier.$set) {
+      return false;
+    }
 
-	if (!doc || !modifier || !modifier.$set) {
-		return false;
-	}
+    if (fields && fields.length == 1 && fields[0] == "name") {
+      var name = doc["name"];
+      await Compartments.updateAsync(
+        { elementId: doc["elementId"] },
+        { $set: { value: name, input: name } },
+      );
+      await PaletteButtons.updateAsync(
+        { elementTypeIds: doc["_id"] },
+        { $set: { name: name } },
+      );
+    }
 
-	if (fields && fields.length == 1 && fields[0] == "name") {
+    if (modifier.$set["isAbstract"] === false) {
+      await PaletteButtons.insertAsync({
+        toolId: doc["toolId"],
+        versionId: doc["versionId"],
+        diagramTypeId: doc["diagramTypeId"],
+        diagramId: doc["diagramId"],
+        elementTypeIds: [doc["_id"]],
+        name: doc["name"],
+        type: doc["type"],
+        index: 1,
+      });
+    } else if (modifier.$set["isAbstract"] === true) {
+      await PaletteButtons.removeAsync({ elementTypeIds: doc["_id"] });
+    }
+  },
+);
 
-		var name = doc["name"];
-		await Compartments.updateAsync({elementId: doc["elementId"]}, {$set: {value: name, input: name}});
-		await PaletteButtons.updateAsync({elementTypeIds: doc["_id"]}, {$set: {name: name}});
-	}
+ElementTypes.after.remove(async function (user_id, doc) {
+  if (!doc) return false;
 
-	if (modifier.$set["isAbstract"] === false) {
-		await PaletteButtons.insertAsync({toolId: doc["toolId"],
-							versionId: doc["versionId"],
-							diagramTypeId: doc["diagramTypeId"],
-							diagramId: doc["diagramId"],
-							elementTypeIds: [doc["_id"]],
-							name: doc["name"],
-							type: doc["type"],
-							index: 1,
-						});
-	}
+  await CompartmentTypes.removeAsync({ elementTypeId: doc["_id"] });
+  await PaletteButtons.removeAsync({ elementTypeIds: doc["_id"] });
+  await DialogTabs.removeAsync({ elementTypeId: doc["_id"] });
 
-	else if (modifier.$set["isAbstract"] === true) {
-		await PaletteButtons.removeAsync({elementTypeIds: doc["_id"]});
-	}
+  await ElementTypes.updateAsync(
+    { superTypeIds: doc["_id"] },
+    { $pull: { superTypeIds: doc["_id"] } },
+    { multi: true },
+  );
+
+  await Elements.removeAsync({ elementTypeId: doc["_id"] });
 });
-
-
-ElementTypes.after.remove(async function(user_id, doc) {
-	if (!doc)
-		return false;
-
-	await CompartmentTypes.removeAsync({elementTypeId: doc["_id"]});
-	await PaletteButtons.removeAsync({elementTypeIds: doc["_id"]});
-	await DialogTabs.removeAsync({elementTypeId: doc["_id"]});
-
-	await ElementTypes.updateAsync({superTypeIds: doc["_id"]},
-						{$pull: {superTypeIds: doc["_id"]}},
-						{multi: true});
-
-	await Elements.removeAsync({elementTypeId: doc["_id"]});
-});
-
 
 Meteor.methods({
+  makeSpecialization: async function (list) {
+    var system_id = Meteor.userId();
 
-	makeSpecialization: async function(list) {
-		var system_id = Meteor.userId();
+    if ((await is_system_admin(system_id)) && is_version_not_published(list)) {
+      var element_list = get_element_list(list);
+      element_list["data"] = { elementType: "Specialization" };
 
-		if (await is_system_admin(system_id) && is_version_not_published(list)) {
+      var elem_id = await Elements.insertAsync(element_list);
+      await ElementTypes.updateAsync(
+        {
+          _id: list["subTypeId"],
+          toolId: list["toolId"],
+          versionId: list["versionId"],
+        },
+        { $push: { superTypeIds: list["superTypeId"] } },
+      );
+    } else error_msg();
+  },
 
-			var element_list = get_element_list(list);
-			element_list["data"] = {elementType: "Specialization"};
+  addKeystrokeOrItem: async function (list) {
+    var user_id = Meteor.userId();
+    if (await is_system_admin(user_id, list)) {
+      await ElementTypes.updateAsync(
+        { _id: list["id"] },
+        { $push: list["push"] },
+      );
+    }
+  },
 
-			var elem_id = await Elements.insertAsync(element_list);
-			await ElementTypes.updateAsync({_id: list["subTypeId"],
-								toolId: list["toolId"], versionId: list["versionId"]},
-								{$push: {superTypeIds: list["superTypeId"]}});
-		}
-		else
-			error_msg();
-	},
+  deleteKeystrokeOrItem: async function (list) {
+    var user_id = Meteor.userId();
+    if (await is_system_admin(user_id, list)) {
+      var update = {};
+      update[list.array] = list.data;
 
-    addKeystrokeOrItem: async function(list) {
-		var user_id = Meteor.userId();
-		if (await is_system_admin(user_id, list)) {
-			await ElementTypes.updateAsync({_id: list["id"]}, {$push: list["push"]});
-    	}
-    },
+      await ElementTypes.updateAsync({ _id: list["id"] }, { $set: update });
+    }
+  },
 
-    deleteKeystrokeOrItem: async function(list) {
-		var user_id = Meteor.userId();
-		if (await is_system_admin(user_id, list)) {
+  updateKeystrokeOrItem: async function (list) {
+    var user_id = Meteor.userId();
+    if (await is_system_admin(user_id, list)) {
+      await ElementTypes.updateAsync(
+        { _id: list["id"] },
+        { $set: list["field"] },
+      );
+    }
+  },
 
-			var update = {};
-			update[list.array] = list.data;
+  addElementTypeStyle: async function (list) {
+    var user_id = Meteor.userId();
+    if (await is_system_admin(user_id, list)) {
+      var styles;
+      if (list["type"] == "Box") {
+        styles = {
+          id: generate_id(),
+          name: list["name"],
+          elementStyle: build_initial_box_style(list["editorType"]),
+        };
+      } else {
+        var style = build_initial_line_style(list["editorType"]);
+        if (is_ajoo_editor(list["editorType"])) {
+          styles = {
+            id: generate_id(),
+            name: list["name"],
+            elementStyle: style["elementStyle"],
+            startShapeStyle: style["startShapeStyle"],
+            endShapeStyle: style["endShapeStyle"],
+          };
+        } else if (is_zoom_chart_editor(list["editorType"])) {
+          styles = {
+            id: generate_id(),
+            name: list["name"],
+            elementStyle: style,
+          };
+        }
+      }
 
-			await ElementTypes.updateAsync({_id: list["id"]}, {$set: update});
-    	}
-    },
+      await ElementTypes.updateAsync(
+        { _id: list["id"] },
+        { $push: { styles: styles } },
+      );
+    }
+  },
 
-    updateKeystrokeOrItem: async function(list) {
-		var user_id = Meteor.userId();
-		if (await is_system_admin(user_id, list)) {
-			await ElementTypes.updateAsync({_id: list["id"]}, {$set: list["field"]});
-    	}
-    },
+  updateElementType: async function (list) {
+    var user_id = Meteor.userId();
+    if (await is_system_admin(user_id, list)) {
+      var update = {};
+      update[list["attrName"]] = list["attrValue"];
 
-	addElementTypeStyle: async function(list) {
-		var user_id = Meteor.userId();
-		if (await is_system_admin(user_id, list)) {
+      //element type name is required
+      if (update["name"] == "") {
+        return;
+      }
 
-			var styles;
-			if (list["type"] == "Box") {
-				styles = {
-							id: generate_id(),
-							name: list["name"],
-							elementStyle: build_initial_box_style(list["editorType"]),
-						};
-			}
+      await ElementTypes.updateAsync(
+        { _id: list["id"], toolId: list["toolId"] },
+        { $set: update },
+      );
+    }
+  },
 
-			else {
-				var style = build_initial_line_style(list["editorType"])
-				if (is_ajoo_editor(list["editorType"])) {
+  updateElementTypeStyle: async function (list) {
+    var user_id = Meteor.userId();
+    if (await is_system_admin(user_id, list)) {
+      var attr_value = list["attrValue"];
+      if (attr_value == "true") {
+        attr_value = true;
+      } else if (attr_value == "false") {
+        attr_value = false;
+      }
 
-					styles = {
-								id: generate_id(),
-								name: list["name"],
-								elementStyle: style["elementStyle"],
-								startShapeStyle: style["startShapeStyle"],
-								endShapeStyle: style["endShapeStyle"],
-							};
-				}
-				else if (is_zoom_chart_editor(list["editorType"])) {
+      var update = {};
+      update["styles." + list["styleIndex"] + "." + list["attrName"]] =
+        attr_value;
 
-					styles = {
-								id: generate_id(),
-								name: list["name"],
-								elementStyle: style,
-							};
-				}
-			}
+      if (list["attrName"] == "radius") {
+        update["styles." + list["styleIndex"] + "." + "width"] = attr_value;
+        update["styles." + list["styleIndex"] + "." + "height"] = attr_value;
+      }
 
-			await ElementTypes.updateAsync({_id: list["id"]}, {$push: {styles: styles}});
-		}
-	},
+      await ElementTypes.updateAsync({ _id: list["id"] }, { $set: update });
 
-	updateElementType: async function(list) {
-		var user_id = Meteor.userId();
-		if (await is_system_admin(user_id, list)) {
+      //if changing the styles attribute, then changing compartments as well
+      if (list["attrName"] != "name") {
+        var style_update = {};
+        style_update["style." + list["attrName"]] = attr_value;
 
-			var update = {};
-			update[list["attrName"]] = list["attrValue"];
+        var query = {
+          $or: [
+            { elementTypeId: list["id"], styleId: list["styleId"] },
+            { _id: list["elementId"] },
+          ],
+        };
 
-			//element type name is required
-			if (update["name"] == "") {
-				return;
-			}
+        //updating only elements with styleId or configurator element
+        await Elements.updateAsync(
+          query,
+          { $set: style_update },
+          { multi: true },
+        );
+      }
+    }
+  },
 
-			await ElementTypes.updateAsync({_id: list["id"], toolId: list["toolId"]}, {$set: update});
-		}
-	},
+  addNodeWithLink: async function (list) {
+    var user_id = Meteor.userId();
+    if (await is_system_admin(user_id, list)) {
+      //box
+      var box = list["box"];
+      var node_id = await Elements.insertAsync(box);
 
-	updateElementTypeStyle: async function(list) {
+      box["id"] = node_id;
+      add_compartments(box);
 
-		var user_id = Meteor.userId();
-		if (await is_system_admin(user_id, list)) {
+      //line
+      var edge = list["line"];
+      edge["endElement"] = node_id;
 
-			var attr_value = list["attrValue"];
-			if (attr_value == "true") {
-				attr_value = true
-			}
+      var edge_id = await Elements.insertAsync(edge);
 
-			else if (attr_value == "false") {
-				attr_value = false;
-			}
+      // //box type
+      // var node_type_list = list["boxType"];
+      // var node_type = build_initial_element_type(node_type_list, "ZoomChart");
+      // node_type["elementId"] = node_id;
 
-			var update = {};
-			update["styles." + list["styleIndex"] +"." + list["attrName"]] = attr_value;
+      // var node_type_id = ElementTypes.insert(node_type);
 
-			if (list["attrName"] == "radius") {
-				update["styles." + list["styleIndex"] +"." + "width"] = attr_value;
-				update["styles." + list["styleIndex"] +"." + "height"] = attr_value;
-			}
+      // DialogTabs.insert({toolId: node_type["toolId"],
+      // 					versionId: node_type["versionId"],
+      // 					diagramTypeId: node_type["diagramTypeId"],
+      // 					diagramId: node_type["diagramId"],
+      // 					elementTypeId: node_type_id,
+      // 					name: "Main",
+      // 					index: 1,
+      // 				});
 
-			await ElementTypes.updateAsync({_id: list["id"]}, {$set: update});
+      //line type
+      var edge_type_list = list["lineType"];
+      var edge_type = build_initial_element_type(edge_type_list, "ZoomChart");
 
-			//if changing the styles attribute, then changing compartments as well
-			if (list["attrName"] != "name") {
+      edge_type["endElementTypeId"] = box["elementTypeId"];
+      edge_type["elementId"] = edge_id;
 
-				var style_update = {};
-				style_update["style." + list["attrName"]] = attr_value;
-
-				var query = {$or: [{elementTypeId: list["id"], styleId: list["styleId"]},
-									{_id: list["elementId"]}]};
-
-				//updating only elements with styleId or configurator element
-				await Elements.updateAsync(query, {$set: style_update}, {multi: true});
-			}
-		}
-	},
-
-	addNodeWithLink: async function(list) {
-		var user_id = Meteor.userId();
-		if (await is_system_admin(user_id, list)) {
-
-			//box
-			var box = list["box"];
-			var node_id = await Elements.insertAsync(box);
-
-			box["id"] = node_id;
-			add_compartments(box);
-
-			//line
-			var edge = list["line"];
-			edge["endElement"] = node_id;
-
-			var edge_id = await Elements.insertAsync(edge);
-
-			// //box type
-			// var node_type_list = list["boxType"];
-			// var node_type = build_initial_element_type(node_type_list, "ZoomChart");
-			// node_type["elementId"] = node_id;
-
-			// var node_type_id = ElementTypes.insert(node_type);
-
-			// DialogTabs.insert({toolId: node_type["toolId"],
-			// 					versionId: node_type["versionId"],
-			// 					diagramTypeId: node_type["diagramTypeId"],
-			// 					diagramId: node_type["diagramId"],
-			// 					elementTypeId: node_type_id,
-			// 					name: "Main",
-			// 					index: 1,
-			// 				});
-
-			//line type
-			var edge_type_list = list["lineType"];
-			var edge_type = build_initial_element_type(edge_type_list, "ZoomChart");
-
-			edge_type["endElementTypeId"] = box["elementTypeId"];
-			edge_type["elementId"] = edge_id;
-
-			var edge_type_id = await ElementTypes.insertAsync(edge_type);
-		}
-	},
-
+      var edge_type_id = await ElementTypes.insertAsync(edge_type);
+    }
+  },
 });
-
