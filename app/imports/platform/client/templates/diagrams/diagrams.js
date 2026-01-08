@@ -22,7 +22,9 @@ import { joined_date } from "../../js/utilities/time_utilities.js";
 //calculates the view to render
 Template.diagramsTemplate.helpers({
   isDefaultView: function () {
-    var user_diagram = UserVersionSettings.findOne({ versionId: Session.get("versionId") });
+    var user_diagram = UserVersionSettings.findOne({
+      versionId: Session.get("versionId"),
+    });
     if (user_diagram && user_diagram["view"] == "Tree") return false;
     else {
       $(".popover").has(".tree-diagram-image").remove();
@@ -155,7 +157,10 @@ Template.diagramsToolbar.events({
   "click #download-project": function (e) {
     Dialog.destroyTooltip(e);
 
-    var list = { projectId: Session.get("activeProject"), versionId: Session.get("versionId") };
+    var list = {
+      projectId: Session.get("activeProject"),
+      versionId: Session.get("versionId"),
+    };
 
     Utilities.callMeteorMethod("getProjectJson", list, function (resp) {
       if (resp.diagrams) {
@@ -173,7 +178,9 @@ Template.diagramsToolbar.events({
         var link = document.createElement("a");
         link.setAttribute("download", "data.json");
         link.href = URL.createObjectURL(
-          new Blob([JSON.stringify(resp, 0, 4)], { type: "application/json;charset=utf-8;" }),
+          new Blob([JSON.stringify(resp, 0, 4)], {
+            type: "application/json;charset=utf-8;",
+          }),
         );
         document.body.appendChild(link);
         link.click();
@@ -246,7 +253,10 @@ Template.diagramsViewButton.events({
     var view = $(e.target).attr("view");
 
     //switching the views
-    var list = { versionId: Session.get("versionId"), update: { $set: { view: view } } };
+    var list = {
+      versionId: Session.get("versionId"),
+      update: { $set: { view: view } },
+    };
 
     Utilities.callMeteorMethod("updateUserVersionSettings", list);
   },
@@ -384,7 +394,9 @@ Template.defaultDiagramsView.events({
   },
 
   "mouseleave .diagram": function (e) {
-    var drop_down = $(e.target).closest(".diagram").find(".diagram-dropdown-container");
+    var drop_down = $(e.target)
+      .closest(".diagram")
+      .find(".diagram-dropdown-container");
     drop_down.addClass("hidden");
   },
 
@@ -438,7 +450,9 @@ Template.defaultDiagramsView.events({
 
     Utilities.callMeteorMethod("duplicateDiagram", list);
 
-    var drop_down = $(e.target).closest(".diagram").find(".diagram-dropdown-container");
+    var drop_down = $(e.target)
+      .closest(".diagram")
+      .find(".diagram-dropdown-container");
 
     drop_down.addClass("hidden").removeClass("open");
   },
@@ -469,9 +483,18 @@ Template.treeDiagramsView.helpers({
     sort_by = sort_by || { name: 1 };
 
     //selecting diagrams that have no parents
-    return Diagrams.find(parent_query, { $sort: sort_by }).map(function (diagram) {
-      return build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, sort_by);
-    });
+    return Diagrams.find(parent_query, { $sort: sort_by }).map(
+      function (diagram) {
+        return build_diagram_tree(
+          diagram,
+          proj_id,
+          version_id,
+          is_edit_mode,
+          query,
+          sort_by,
+        );
+      },
+    );
   },
 });
 
@@ -504,7 +527,9 @@ Template.treeDiagramsView.events({
       var img_src = diagram["imageUrl"];
       var img = '<img class="tree-diagram-image" src="' + img_src + '">';
 
-      var diagram_obj = diagram_container.find('[diagramId="' + diagram_id + '"]');
+      var diagram_obj = diagram_container.find(
+        '[diagramId="' + diagram_id + '"]',
+      );
       diagram_obj.popover({ content: img, html: true });
       diagram_obj.popover("show");
     }
@@ -589,7 +614,11 @@ Template.uploadProject.helpers({
 
         if (services && services.projects) {
           _.each(services.projects, function (p) {
-            result.push({ caption: "Upload " + p.caption, name: p.name, link: p.link });
+            result.push({
+              caption: "Upload " + p.caption,
+              name: p.name,
+              link: p.link,
+            });
           });
         }
       }
@@ -604,10 +633,15 @@ Template.uploadProject.events({
     //hidding the form
     //$('#upload-project-form').modal("hide");
 
-    var list = { projectId: Session.get("activeProject"), versionId: Session.get("versionId") };
+    var list = {
+      projectId: Session.get("activeProject"),
+      versionId: Session.get("versionId"),
+    };
 
     var url_value = $("#import-projecturl").val();
-    var url_value_from_list = $("input[name=stack-radio]:checked").closest(".schema").attr("link");
+    var url_value_from_list = $("input[name=stack-radio]:checked")
+      .closest(".schema")
+      .attr("link");
 
     if (url_value) {
       list.url = url_value;
@@ -691,23 +725,39 @@ Template.ontologySettings.events({
       schema: $("#dss-schema").val(),
       useStringLiteralConversion: $("#use-string-literal-conversion").val(),
       queryEngineType: $("#query-engine-type").val(),
-      useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(":checked"),
+      useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(
+        ":checked",
+      ),
       defaultGroupingSeparator: $("#default-grouping-separator").val(),
       directClassMembershipRole: $("#direct-class-membership-role").val(),
       indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
       showCardinalities: $("#show-cardinalities").is(":checked"),
-      decorateInstancePositionVariable: $("#decorate-instance-position-variable").is(":checked"),
-      decorateInstancePositionConstants: $("#decorate-instance-position-constants").is(":checked"),
-      simpleConditionImplementation: $("#simple-condition-implementation").is(":checked"),
-      // autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
-      showPrefixesForAllNames: $("#show-prefixes-for-all-names").is(":checked"),
-      showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
-      completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(
+      decorateInstancePositionVariable: $(
+        "#decorate-instance-position-variable",
+      ).is(":checked"),
+      decorateInstancePositionConstants: $(
+        "#decorate-instance-position-constants",
+      ).is(":checked"),
+      simpleConditionImplementation: $("#simple-condition-implementation").is(
         ":checked",
       ),
-      showGraphServiceCompartments: $("#show-graph-service-compartments").is(":checked"),
-      enableWikibaseLabelServices: $("#enable-wikibase-label-services").is(":checked"),
-      allowTopDownNamesInBINDs: $("#allow-top-down-names-in-BINDs").is(":checked"),
+      // autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
+      showPrefixesForAllNames: $("#show-prefixes-for-all-names").is(":checked"),
+      showPrefixesForAllNonLocalNames: $(
+        "#show-prefixes-for-all-non-local-names",
+      ).is(":checked"),
+      completeRDFBoxesInDatetimeFunctions: $(
+        "#complete-RDF-boxes-in-datetime-functions",
+      ).is(":checked"),
+      showGraphServiceCompartments: $("#show-graph-service-compartments").is(
+        ":checked",
+      ),
+      enableWikibaseLabelServices: $("#enable-wikibase-label-services").is(
+        ":checked",
+      ),
+      allowTopDownNamesInBINDs: $("#allow-top-down-names-in-BINDs").is(
+        ":checked",
+      ),
       schemaDiagramDataLanguage: $("#schema-diagram-data-language").val(),
       keepVariableNames: $("#keep-variable-names").is(":checked"),
       endpointUsername: $("#endpoint-username").val(),
@@ -738,15 +788,23 @@ Template.ontologySettings.events({
       $("#dss-schema").val(proj.schema);
       $("#use-string-literal-conversion").val(proj.useStringLiteralConversion);
       $("#query-engine-type").val(proj.queryEngineType);
-      $("#use-default-grouping-separator").prop("checked", proj.useDefaultGroupingSeparator);
+      $("#use-default-grouping-separator").prop(
+        "checked",
+        proj.useDefaultGroupingSeparator,
+      );
       $("#default-grouping-separator").prop(
         "disabled",
         proj.useDefaultGroupingSeparator == "false",
       );
       $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
       $("#direct-class-membership-role").val(proj.directClassMembershipRole);
-      $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
-      $("#show-cardinalities").prop("checked", proj.showCardinalities == "true");
+      $("#indirect-class-membership-role").val(
+        proj.indirectClassMembershipRole,
+      );
+      $("#show-cardinalities").prop(
+        "checked",
+        proj.showCardinalities == "true",
+      );
       $("#decorate-instance-position-variable").prop(
         "checked",
         proj.decorateInstancePositionVariable == "true",
@@ -760,7 +818,10 @@ Template.ontologySettings.events({
         proj.simpleConditionImplementation == "true",
       );
       // $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
-      $("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames == "true");
+      $("#show-prefixes-for-all-names").prop(
+        "checked",
+        proj.showPrefixesForAllNames == "true",
+      );
       $("#show-prefixes-for-all-non-local-names").prop(
         "checked",
         proj.showPrefixesForAllNonLocalNames == "true",
@@ -777,9 +838,18 @@ Template.ontologySettings.events({
         "checked",
         proj.enableWikibaseLabelServices == "true",
       );
-      $("#allow-top-down-names-in-BINDs").prop("checked", proj.allowTopDownNamesInBINDs == "true");
-      $("#schema-diagram-data-language").prop("checked", proj.schemaDiagramDataLanguage);
-      $("#keep-variable-names").prop("checked", proj.keepVariableNames == "true");
+      $("#allow-top-down-names-in-BINDs").prop(
+        "checked",
+        proj.allowTopDownNamesInBINDs == "true",
+      );
+      $("#schema-diagram-data-language").prop(
+        "checked",
+        proj.schemaDiagramDataLanguage,
+      );
+      $("#keep-variable-names").prop(
+        "checked",
+        proj.keepVariableNames == "true",
+      );
       $("#endpoint-username").val(proj.endpointUsername);
       $("#endpoint-password").val(proj.endpointPassword);
     }
@@ -787,8 +857,12 @@ Template.ontologySettings.events({
     Template.ontologySettings.uri.set(proj.uri);
     Template.ontologySettings.endpoint.set(proj.endpoint);
     Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
-    Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
-    Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
+    Template.ontologySettings.directClassMembershipRole.set(
+      proj.directClassMembershipRole,
+    );
+    Template.ontologySettings.indirectClassMembershipRole.set(
+      proj.indirectClassMembershipRole,
+    );
     //Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
     // if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" )
     // Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
@@ -807,7 +881,10 @@ Template.ontologySettings.events({
       // httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
     };
 
-    const res = await Utilities.callMeteorMethodAsync("testProjectEndpoint", list);
+    const res = await Utilities.callMeteorMethodAsync(
+      "testProjectEndpoint",
+      list,
+    );
 
     var class_name = "danger";
     var text = "Connection is not ok";
@@ -830,15 +907,23 @@ Template.ontologySettings.events({
   // 'click #dss-schema' : function(e) {
   "change #dss-schema": function () {
     var schema = $("#dss-schema").val();
-    var schema_info = Template.ontologySettings.schemas.get().filter(function (o) {
-      return o.display_name == schema;
-    });
+    var schema_info = Template.ontologySettings.schemas
+      .get()
+      .filter(function (o) {
+        return o.display_name == schema;
+      });
     if (schema_info.length > 0 && schema_info[0].display_name != "") {
       Template.ontologySettings.endpoint.set(schema_info[0].sparql_url);
       Template.ontologySettings.uri.set(schema_info[0].named_graph);
-      Template.ontologySettings.queryEngineType.set(schema_info[0].endpoint_type);
-      Template.ontologySettings.directClassMembershipRole.set(schema_info[0].direct_class_role);
-      Template.ontologySettings.indirectClassMembershipRole.set(schema_info[0].indirect_class_role);
+      Template.ontologySettings.queryEngineType.set(
+        schema_info[0].endpoint_type,
+      );
+      Template.ontologySettings.directClassMembershipRole.set(
+        schema_info[0].direct_class_role,
+      );
+      Template.ontologySettings.indirectClassMembershipRole.set(
+        schema_info[0].indirect_class_role,
+      );
     }
     if (schema_info.length > 0 && schema_info[0].display_name == "") {
       Template.ontologySettings.endpoint.set("");
@@ -864,7 +949,9 @@ Template.ontologySettings.events({
   "click .remove-graph-menu-item": function (e) {
     var index = e.target.parentElement.parentElement.parentElement.rowIndex;
     if (typeof index === "undefined")
-      index = e.target.parentElement.parentElement.parentElement.parentElement.rowIndex;
+      index =
+        e.target.parentElement.parentElement.parentElement.parentElement
+          .rowIndex;
     index--;
 
     var myRows = [];
@@ -877,7 +964,9 @@ Template.ontologySettings.events({
           $($headers[cellIndex]).html() == "Instruction" ||
           $($headers[cellIndex]).html() == "Graph"
         ) {
-          myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
+          myRows[index][$($headers[cellIndex]).html()] = $(this)
+            .find("div")
+            .text();
         }
       });
       myRows[index]["index"] = index;
@@ -930,8 +1019,12 @@ Template.ontologySettings.rendered = async function () {
     Template.ontologySettings.uri.set(proj.uri);
     Template.ontologySettings.endpoint.set(proj.endpoint);
     Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
-    Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
-    Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
+    Template.ontologySettings.directClassMembershipRole.set(
+      proj.directClassMembershipRole,
+    );
+    Template.ontologySettings.indirectClassMembershipRole.set(
+      proj.indirectClassMembershipRole,
+    );
 
     // if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
     // else Template.ontologySettings.graphs.set([]);
@@ -1174,7 +1267,9 @@ Template.renameDiagramForm.events({
 // End of addDiagram template
 
 function build_diagrams_query() {
-  var found_diagrams = FoundDiagrams.findOne({ _id: Session.get("userSystemId") });
+  var found_diagrams = FoundDiagrams.findOne({
+    _id: Session.get("userSystemId"),
+  });
 
   //if no diagrams found, then displays nothing
   if (found_diagrams && found_diagrams["noDiagrams"] == 1) {
@@ -1220,7 +1315,9 @@ function apply_selected_group_to_query(query) {
 }
 
 function get_user_settings_property(prop_name) {
-  var user_settings = UserVersionSettings.findOne({ versionId: Session.get("versionId") });
+  var user_settings = UserVersionSettings.findOne({
+    versionId: Session.get("versionId"),
+  });
   if (user_settings) {
     if (user_settings[prop_name]) {
       return user_settings[prop_name];
@@ -1262,23 +1359,31 @@ function get_sort_by_object(item_type) {
   return items[item_type];
 }
 
-function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, sort_by) {
+function build_diagram_tree(
+  diagram,
+  proj_id,
+  version_id,
+  is_edit_mode,
+  query,
+  sort_by,
+) {
   var id = diagram["_id"];
 
   //selecting child diagrams
-  diagram["children"] = Diagrams.find({ parentDiagrams: id }, { sort: sort_by }).map(
-    function (child_diagram) {
-      var new_child_diagram = build_diagram_tree(
-        child_diagram,
-        proj_id,
-        version_id,
-        is_edit_mode,
-        query,
-        sort_by,
-      );
-      return new_child_diagram;
-    },
-  );
+  diagram["children"] = Diagrams.find(
+    { parentDiagrams: id },
+    { sort: sort_by },
+  ).map(function (child_diagram) {
+    var new_child_diagram = build_diagram_tree(
+      child_diagram,
+      proj_id,
+      version_id,
+      is_edit_mode,
+      query,
+      sort_by,
+    );
+    return new_child_diagram;
+  });
 
   var is_collapsed = UserVersionSettings.findOne({
     collapsedDiagrams: diagram["_id"],
@@ -1301,7 +1406,9 @@ function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, s
 
   //checks if there was a search
   if (query && query["_id"]) {
-    var is_searched_diagram = Diagrams.findOne({ $and: [{ _id: diagram["_id"] }, query] });
+    var is_searched_diagram = Diagrams.findOne({
+      $and: [{ _id: diagram["_id"] }, query],
+    });
     if (is_searched_diagram) {
       diagram["colorClass"] = "bg-info";
     }
@@ -1326,6 +1433,9 @@ Template.migrateForm.events({
   "click #migrate-to": function () {
     $("#migrate-form").modal("hide");
     var tool_name = $("#migrate-tools").find(":selected").attr("value");
-    Meteor.call("migrate", { projectId: Session.get("activeProject"), toolName: tool_name });
+    Meteor.call("migrate", {
+      projectId: Session.get("activeProject"),
+      toolName: tool_name,
+    });
   },
 });

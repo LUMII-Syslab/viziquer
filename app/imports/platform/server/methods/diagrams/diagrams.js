@@ -4,7 +4,10 @@ import {
   is_project_version_admin,
   is_project_version_reader,
 } from "../../../../libs/platform/user_rights.js";
-import { is_public_diagram, get_unknown_public_user_name } from "../../_helpers.js";
+import {
+  is_public_diagram,
+  get_unknown_public_user_name,
+} from "../../_helpers.js";
 import {
   Tools,
   DiagramTypes,
@@ -62,7 +65,10 @@ Meteor.methods({
       return;
     }
 
-    const schema_server = await Meteor.callAsync("getEnvVariable", "SCHEMA_SERVER_URL");
+    const schema_server = await Meteor.callAsync(
+      "getEnvVariable",
+      "SCHEMA_SERVER_URL",
+    );
     // const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
     let responseData;
     try {
@@ -86,7 +92,9 @@ Meteor.methods({
       });
       if (schemas.length > 1) {
         schema = _.find(responseData, function (item) {
-          return item.sparql_url == list_in.endpoint && item.is_default_for_endpoint;
+          return (
+            item.sparql_url == list_in.endpoint && item.is_default_for_endpoint
+          );
         });
         if (schema == undefined) {
           schema = _.find(responseData, function (item) {
@@ -205,7 +213,10 @@ Meteor.methods({
     var update = {};
     update[list["attrName"]] = list["attrValue"];
 
-    if ((await is_project_version_admin(user_id, list)) || get_unknown_public_user_name()) {
+    if (
+      (await is_project_version_admin(user_id, list)) ||
+      get_unknown_public_user_name()
+    ) {
       await Diagrams.updateAsync(
         {
           _id: list["diagramId"],
@@ -414,7 +425,8 @@ function build_diagram(list, user_id) {
   list["createdAt"] = time;
   list["createdBy"] = user_id;
   list["imageUrl"] = "https://placehold.co/770x347";
-  (list["edit"] = { action: "new", time: time, userId: user_id }), (list["parentDiagrams"] = []);
+  ((list["edit"] = { action: "new", time: time, userId: user_id }),
+    (list["parentDiagrams"] = []));
   list["allowedGroups"] = [];
   //list["editing"] = {},
   list["seenCount"] = 0;

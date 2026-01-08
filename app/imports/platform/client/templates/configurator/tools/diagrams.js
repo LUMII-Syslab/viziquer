@@ -1,7 +1,11 @@
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 
 import { Utilities } from "../../../js/utilities/utils.js";
-import { Tools, Diagrams, DiagramTypes } from "../../../../../db/platform/collections.js";
+import {
+  Tools,
+  Diagrams,
+  DiagramTypes,
+} from "../../../../../db/platform/collections.js";
 import { Dialog } from "../../../js/interpretator/Dialog.js";
 
 import "./diagrams.html";
@@ -53,7 +57,10 @@ Template.migrateProjectForm.events({
     $("#migrate-form").modal("hide");
     var target_tool_id = $("#migrate-tools").find(":selected").attr("value");
 
-    Meteor.call("migrateProject", { toolId: Session.get("toolId"), targetToolId: target_tool_id });
+    Meteor.call("migrateProject", {
+      toolId: Session.get("toolId"),
+      targetToolId: target_tool_id,
+    });
   },
 });
 
@@ -126,14 +133,18 @@ Template.addConfiguratorDiagram.events({
           editorType: editor_type_id,
         };
 
-        Utilities.callMeteorMethod("insertDiagramType", list, function (dgr_obj) {
-          FlowRouter.go("configuratorDiagram", {
-            toolId: list["toolId"],
-            versionId: list["versionId"],
-            _id: dgr_obj["diagramId"],
-            diagramTypeId: diagram_type_id,
-          });
-        });
+        Utilities.callMeteorMethod(
+          "insertDiagramType",
+          list,
+          function (dgr_obj) {
+            FlowRouter.go("configuratorDiagram", {
+              toolId: list["toolId"],
+              versionId: list["versionId"],
+              _id: dgr_obj["diagramId"],
+              diagramTypeId: diagram_type_id,
+            });
+          },
+        );
       }
     }
   },
@@ -158,7 +169,10 @@ Template.toolbarForm.helpers({
 
 Template.toolbarForm.events({
   "click #ok-toolbar-form": function (e) {
-    var list = { toolId: Session.get("toolId"), set: { toolbar: $("#toolbar-form-name").val() } };
+    var list = {
+      toolId: Session.get("toolId"),
+      set: { toolbar: $("#toolbar-form-name").val() },
+    };
 
     Utilities.callMeteorMethod("updateTool", list);
   },
