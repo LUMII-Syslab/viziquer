@@ -11,5 +11,7 @@ import '/imports/custom/owlgred/client/templates/add_property_chain_form_OWLGrEd
 import '/imports/custom/owlgred/client/templates/property_chain_inv_form_OWLGrEd.js'
 import '/imports/custom/owlgred/client/templates/add_property_chain_inv_form_OWLGrEd.js'
 
+import '/imports/custom/owlgred/client/templates/import_diagram_dialogs.html'
+
 // import '/imports/custom/owlgred/client/templates/ajoo_bkus.html'
 // import '/imports/custom/owlgred/client/templates/loginBranding.html'

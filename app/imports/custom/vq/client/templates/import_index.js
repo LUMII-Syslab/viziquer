@@ -17,6 +17,8 @@ import '/imports/custom/vq/client/templates/VQ_DSS_schema.js'
 import '/imports/custom/vq/client/templates/VQ_DSS_custom_sparql.js'
 import '/imports/custom/vq/client/templates/fragments.js'
 
+import '/imports/custom/vq/client/templates/import_diagram_dialogs.html'
+
 // import '/imports/custom/vq/client/templates/add_subquery_form.html'
 import '/imports/custom/vq/client/templates/ajoo_bkus.html'
 // import '/imports/custom/vq/client/templates/loginBranding.html'
