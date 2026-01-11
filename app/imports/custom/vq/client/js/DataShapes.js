@@ -5,11 +5,11 @@ import { createVQ_Element } from './VQ_Element.js'
 import { getSchemaNameForElement } from './transformations.js'
 
 // ***********************************************************************************
-// const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
+// const VQ_SCHEMA_SERVER_URL = 'http://localhost:3344/api';
 //let _schemaServerUrl = null;
 const getSchemaServerUrl = async () => new Promise((resolve, reject) => {
     //if (_schemaServerUrl) return _schemaServerUrl; // TODO šī saglabašana nezin kāpēc nestrādāja
-    Meteor.call('getEnvVariable', 'SCHEMA_SERVER_URL', (error, result) => {
+    Meteor.call('getEnvVariable', 'VQ_SCHEMA_SERVER_URL', (error, result) => {
         if (error) {
             return reject(error);
         }

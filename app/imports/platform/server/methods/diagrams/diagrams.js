@@ -67,7 +67,7 @@ Meteor.methods({
 
     const schema_server = await Meteor.callAsync(
       "getEnvVariable",
-      "SCHEMA_SERVER_URL",
+      "VQ_SCHEMA_SERVER_URL",
     );
     // const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
     let responseData;
