@@ -1,5 +1,5 @@
 import { Projects, Compartments, CompartmentTypes } from '../../../../db/platform/collections.js'
-import { Services } from '../../../../db/custom/vq/collections.js'
+import { Services } from '../../../../db/platform/collections.js'
 import { faas } from './faas.js'
 import { createVQ_Element } from './VQ_Element.js'
 import { getSchemaNameForElement } from './transformations.js'

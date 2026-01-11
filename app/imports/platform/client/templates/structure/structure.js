@@ -1,7 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 
 import { Projects, ProjectsUsers, Tools } from '../../../../db/platform/collections.js'
-import { Services } from '../../../../db/custom/vq/collections.js'
+import { Services } from '../../../../db/platform/collections.js'
 import { Utilities, reset_variable } from '../../js/utilities/utils.js'
 
 import { dataShapes } from '../../../../custom/vq/client/js/DataShapes.js'

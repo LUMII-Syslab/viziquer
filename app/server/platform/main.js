@@ -46,6 +46,7 @@ import "/imports/platform/server/publish/publish_configurator_data";
 import "/imports/platform/server/publish/publish_data_analytics";
 import "/imports/platform/server/publish/publish_project_data";
 import "/imports/platform/server/publish/publish_user_data";
+import "/imports/platform/server/publish/publish_services";
 
 // server custom
 import "/imports/custom/vq/server/convertJson2CSV";
@@ -53,7 +54,6 @@ import "/imports/custom/vq/server/download_upload_project";
 import "/imports/custom/vq/server/execute_sparql";
 import "/imports/custom/vq/server/export_configruation";
 import "/imports/custom/vq/server/generate_query_from_SPARQL";
-import "/imports/custom/vq/server/publish";
 import "/imports/custom/vq/server/version_migration";
 import "/imports/custom/vq/server/ontologyParams";
 import "/imports/custom/vq/server/import_ontology";

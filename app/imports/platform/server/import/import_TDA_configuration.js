@@ -12,7 +12,7 @@ import {
   Elements,
   Compartments,
 } from "../../../db/platform/collections.js";
-import { Services } from "../../../db/custom/vq/collections.js";
+import { Services } from "../../../db/platform/collections.js";
 import {
   build_initial_diagram_type,
   diagram_default_style,

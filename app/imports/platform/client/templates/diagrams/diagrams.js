@@ -10,7 +10,7 @@ import {
   FoundDiagrams,
 } from "../../../../db/platform/collections.js";
 import { Dialog } from "../../js/interpretator/Dialog.js";
-import { Services } from "../../../../db/custom/vq/collections.js";
+import { Services } from "../../../../db/platform/collections.js";
 
 import { dataShapes } from "../../../../custom/vq/client/js/DataShapes.js";
 

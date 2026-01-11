@@ -80,6 +80,8 @@ const Searches = new Mongo.Collection("Searches");
 
 const FoundDiagrams = new Mongo.Collection("FoundDiagrams");
 
+const Services = new Mongo.Collection("Services");
+
 
 export {
 	Users,
@@ -120,4 +122,5 @@ export {
 	Counts,
 	Searches,
 	FoundDiagrams,
+  Services,
 }
