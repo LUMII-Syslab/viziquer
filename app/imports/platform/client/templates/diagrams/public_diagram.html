@@ -78,7 +78,11 @@
               {{> Template.dynamic template=templateId}}
           {{/each}}
 
-          {{> AddLink}}
+          <!-- FIXME-TOOLGROUPS Start -->
+          {{> VQ_diagram_dialogs}}
+          {{> OWLGRED_diagram_dialogs}}
+          <!-- FIXME-TOOLGROUPS End -->
+          {{!-- {{> AddLink}}
           {{> ConnectClasses}}
           {{> ConnectClassesSettings}}
           {{> AggregateWizard}}
@@ -93,7 +97,7 @@
           {{> ExplainLink}}
           {{> ExplainField}}
           {{> VQ_DSS_schema}}
-          {{> VQ_DSS_custom_sparql}}
+          {{> VQ_DSS_custom_sparql}} --}}
 
     {{else}}
         Loading

@@ -64,8 +64,9 @@ Template.dialogTabContent.events({
 				compart_type = find_compart_type_object(parent_compart_type.subCompartmentTypes, compart_type_id);
 			}
 		}
-
-		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
+    if (compart_type) {
+  		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
+    }
 	},
 
 	'change .dialog-selection' : function(e) {
