@@ -28,6 +28,7 @@ const LONG_ANSWER = 3000;
 const MakeLog = false;
 const ConsoleLog = false;
 const isPublic = true;  // Parametrs testu paslēpšanai
+// Testa komitam
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
