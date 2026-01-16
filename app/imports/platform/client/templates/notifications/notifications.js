@@ -133,7 +133,7 @@ function accept_invitation(e) {
 function process_notifications(notifications_cursor) {
     return notifications_cursor.map(
       	function(notification) {
-	        notification["time"] = time_interval_from_given_date(notification["createdAt"]);
+	        notification["time"] = '123' // TODO - šo funkciju neatrod time_interval_from_given_date(notification["createdAt"]);
 
 	        if (notification["type"] == "NewVersion" ||
 				notification["type"] == "DeleteVersion" ||
