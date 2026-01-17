@@ -554,7 +554,7 @@ class OWLGrEd_Element{
         let sc_value = "";
         // const sc = subcompartment_value_list.find(s => s.name === sub_c.name);
 		const scList = subcompartment_value_list.filter(s => s.name === sub_c.name);
-		console.log("sub_c.name", sub_c.name, sub_c, scList)
+		// console.log("sub_c.name", sub_c.name, sub_c, scList)
 		if (scList.length > 1 && typeof sub_c["subCompartmentTypes"] !== "undefined") {
 			c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name] = [];
 		} else c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name] = {};
@@ -601,16 +601,14 @@ class OWLGrEd_Element{
 						const target = sub_compartment[sub_sub_c.name];
 						target["input"] = transformer(scc.value);
 						target["value"] = sc_value;
-						console.log("MMMMMMMMMMM", sc_value)
 						value_array.push(sc_value);
 					  }
 
 				  }
 
-				console.log("c_to_create", c_to_create)
+				// console.log("c_to_create", c_to_create)
 
 				if (scList.length <= 1 && typeof sub_c["subCompartmentTypes"] === "undefined"){
-					console.log("UUUUUUUUUUUUUUUUUUUUUUU", sub_c["subCompartmentTypes"])
 				  if (sc.name && sc.value) {
 					const transformer = sc.transformer || (v => v);
 
@@ -649,7 +647,6 @@ class OWLGrEd_Element{
       }
 
 	  // value_array.pop();
-	  console.log("aaaaaaaaaaaa", value_array)
 	  value_array = value_array.filter(item => item.trim() !== "");
 
       c_to_create["compartment"]["value"] = value_array.join(delimiter);

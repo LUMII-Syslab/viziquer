@@ -269,7 +269,7 @@ function build_compartment(compart_type, list, compart_in) {
       compart["toolId"] = list["toolId"];
     }
 
-    console.log("in new compart", compart);
+    // console.log("in new compart", compart);
 
     return compart;
   }

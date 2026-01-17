@@ -32,7 +32,7 @@
                                     <form class="form-horizontal" role="form">
                                         <div class="form-group">
                                             <div class="col-sm-10">
-                                                <input id="projectfileList" type='file'>
+                                                <input id="ontologyfileList" type='file'>
                                             </div>
                                         </div>
                                     </form>
@@ -63,7 +63,8 @@
                 </div>
                 <div class="modal-footer">
 				    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="ok-load-ontology-owlgred" type="button" class="btn btn-primary">Upload</button>
+                    {{#if fromDiagramm}} <button id="ok-load-ontology-owlgred" type="button" class="btn btn-primary">Upload from diagramm</button>
+                    {{else}}<button id="ok-load-ontology-from-project-owlgred" type="button" class="btn btn-primary">Upload from project</button>{{/if}}
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

@@ -433,16 +433,130 @@ Interpreter.customMethods({
 		}
 	},
 
-	setHorizontalLine: async function(compartment){
-		// const elem = Elements.findOne({_id: Session.get("activeElement")});
-		// const elemOWLGrEd = await Create_OWLGrEd_Element(elem["_id"]);
-		// let only = compartment.input;
+	setHorizontalLine: async function(elemId, compart_type_id){
+		let elem = await Elements.findOneAsync({_id: elemId});
+		let compart_type = CompartmentTypes.findOne({_id: compart_type_id});
 
-		console.log("OOOOOOOOOO", compartment, compartment.input, compartment.value)
+		let compartTypeName = compart_type.name;
 
-		// if(only === "true"){
-			// await elemOWLGrEd.setCompartmentValue("Some", "false", "");
-		// }
+		if(compartTypeName === "EquivalentClasses" || compartTypeName === "SuperClasses" || compartTypeName === "DisjointClasses"
+		|| compartTypeName === "Keys" || compartTypeName === "Attributes" || compartTypeName === "SuperProperties"
+		|| compartTypeName === "NegativeDataPropertyAssertion" || compartTypeName === "DataPropertyAssertion" || compartTypeName === "DifferentIndividuals" || compartTypeName === "SameIndividuals"){
+
+			let horLineNames = {
+				EquivalentClasses: "HorizontalLine2",
+				SuperClasses: "HorizontalLine3",
+				DisjointClasses: "HorizontalLine4",
+				Keys: "HorizontalLine5",
+				Attributes: "HorizontalLine6",
+				SuperProperties: "HorizontalLine7", //8
+				NegativeDataPropertyAssertion: "HorizontalLine9",
+				DataPropertyAssertion: "HorizontalLine10",
+				DifferentIndividuals: "HorizontalLine11",
+				SameIndividuals: "HorizontalLine11"
+			}
+			var elem_type_id = elem["elementTypeId"];
+			var comp_type =  CompartmentTypes.findOne({name: horLineNames[compartTypeName], elementTypeId: elem_type_id});
+
+			if (comp_type) {
+			  var comp_type_id = comp_type["_id"];
+			  var comp =  Compartments.findOne({elementId: elemId, compartmentTypeId: comp_type_id});
+			  if (comp) {
+				  let visible = true
+				  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
+					a["input"] = " ";
+					a["value"] = " ";
+					a["id"] = comp["_id"];
+					a["projectId"] = Session.get("activeProject");
+					a["versionId"] = Session.get("versionId");
+					Utilities.callMeteorMethod("updateCompartment", a);
+			  };
+			};
+
+			if(compartTypeName === "SuperProperties"){
+				var comp_type =  CompartmentTypes.findOne({name: "HorizontalLine8", elementTypeId: elem_type_id});
+
+			if (comp_type) {
+			  var comp_type_id = comp_type["_id"];
+			  var comp =  Compartments.findOne({elementId: elemId, compartmentTypeId: comp_type_id});
+			  if (comp) {
+				  let visible = true
+				  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
+					a["input"] = " ";
+					a["value"] = " ";
+					a["id"] = comp["_id"];
+					a["projectId"] = Session.get("activeProject");
+					a["versionId"] = Session.get("versionId");
+					Utilities.callMeteorMethod("updateCompartment", a);
+			  };
+			};
+			}
+		}
+	},
+
+	removeHorizontalLine: async function(compart_id){
+	  let compart = Compartments.findOne({_id: compart_id});
+	  let compartments = Compartments.find({compartmentTypeId: compart.compartmentTypeId, elementId:compart.elementId}).map(function(c){return c["input"];});
+	  if(compartments.length <= 1){
+
+		let elem = await Elements.findOneAsync({_id: compart.elementId});
+		let compart_type = CompartmentTypes.findOne({_id: compart.compartmentTypeId});
+		let compartTypeName = compart_type.name;
+
+		if(compartTypeName === "EquivalentClasses" || compartTypeName === "SuperClasses" || compartTypeName === "DisjointClasses"
+		|| compartTypeName === "Keys" || compartTypeName === "Attributes" || compartTypeName === "SuperProperties"
+		|| compartTypeName === "NegativeDataPropertyAssertion" || compartTypeName === "DataPropertyAssertion" || compartTypeName === "DifferentIndividuals" || compartTypeName === "SameIndividuals"){
+
+			let horLineNames = {
+				EquivalentClasses: "HorizontalLine2",
+				SuperClasses: "HorizontalLine3",
+				DisjointClasses: "HorizontalLine4",
+				Keys: "HorizontalLine5",
+				Attributes: "HorizontalLine6",
+				SuperProperties: "HorizontalLine7", //8
+				NegativeDataPropertyAssertion: "HorizontalLine9",
+				DataPropertyAssertion: "HorizontalLine10",
+				DifferentIndividuals: "HorizontalLine11",
+				SameIndividuals: "HorizontalLine11"
+			}
+			var elem_type_id = elem["elementTypeId"];
+			var comp_type =  CompartmentTypes.findOne({name: horLineNames[compartTypeName], elementTypeId: elem_type_id});
+
+			if (comp_type) {
+			  var comp_type_id = comp_type["_id"];
+			  var comp =  Compartments.findOne({elementId: compart.elementId, compartmentTypeId: comp_type_id});
+			  if (comp) {
+				  let visible = false
+				  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
+					a["input"] = " ";
+					a["value"] = " ";
+					a["id"] = comp["_id"];
+					a["projectId"] = Session.get("activeProject");
+					a["versionId"] = Session.get("versionId");
+					Utilities.callMeteorMethod("updateCompartment", a);
+			  };
+			};
+
+			if(compartTypeName === "SuperProperties"){
+				var comp_type =  CompartmentTypes.findOne({name: "HorizontalLine8", elementTypeId: elem_type_id});
+
+			if (comp_type) {
+			  var comp_type_id = comp_type["_id"];
+			  var comp =  Compartments.findOne({elementId: compart.elementId, compartmentTypeId: comp_type_id});
+			  if (comp) {
+				  let visible = false
+				  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
+					a["input"] = " ";
+					a["value"] = " ";
+					a["id"] = comp["_id"];
+					a["projectId"] = Session.get("activeProject");
+					a["versionId"] = Session.get("versionId");
+					Utilities.callMeteorMethod("updateCompartment", a);
+			  };
+			};
+			}
+		}
+		}
 	},
 });
 

@@ -30,6 +30,12 @@ Interpreter.loadAjooEditor = function(diagram) {
 
     var container_width = $("#" + container_name).width();
     var container_height = $(window).height() - $("#" + container_name).offset().top - 200;
+	let editor_min_height = diagram_type.editorMinHeight;
+	
+	if (editor_min_height !== undefined && container_height < editor_min_height) {
+	  container_height = editor_min_height;
+	} else container_height = container_height * 0.9;
+	
 
 	var layoutSettings = {"layout": "UNIVERSAL", "arrangeMethod": "arrangeFromScratch"};
 	if ( diagram.layoutSettings != undefined )
@@ -37,11 +43,10 @@ Interpreter.loadAjooEditor = function(diagram) {
 	else if ( diagram_type.layoutSettings != undefined)
 		layoutSettings = diagram_type.layoutSettings;
 
-
 	var settings = {
 			        container: container_name,
 			        width: container_width,
-			        height: container_height * 0.9,
+			        height: container_height,
 
 	                isEditModeEnabled: is_edit_mode,
 	                data: {boxes: [], lines: []},
@@ -63,7 +68,7 @@ Interpreter.loadAjooEditor = function(diagram) {
 
                     isPanningEnabled: false,
 
-	              	palette: {},
+	              	palette: {settings: diagram_type.palette},
 	                selectionStyle: diagram_type["selectionStyle"],
 
 	                events: get_event_functions(),

@@ -119,7 +119,9 @@ Template.multiFieldBody.events({
 					projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 				};
-
+		let compart = Compartments.findOne({_id: compart_id});
+		let compartType = CompartmentTypes.findOne({_id: compart.compartmentTypeId});
+		Interpreter.executeExtensionPoint(compartType, "onDelete", [compart_id]);
 		Utilities.callMeteorMethod("removeCompartment", list);
 	},
 
@@ -232,7 +234,10 @@ Template.show_multi_field_form.events({
 		var elem_style;
 		var compart_style;
 
-		if(typeof src_id === "undefined") Interpreter.executeExtensionPoint(compart_type, "createCompartment", [elem_id]);
+		if(typeof src_id === "undefined") {
+			Interpreter.executeExtensionPoint(compart_type, "createCompartment", [elem_id]);
+			Interpreter.executeExtensionPoint(compart_type, "afterUpdate", [elem_id, compart_type_id]);
+		}
 
 		Dialog.updateCompartmentValue(compart_type, elem_id, input, value, src_id, compart_style, elem_style, sub_compart_tree);
 	},

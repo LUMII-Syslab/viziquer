@@ -1,6 +1,11 @@
 // In server-only code
 import * as $rdf from 'rdflib';
 
+const RDF  = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+const RDFS = "http://www.w3.org/2000/01/rdf-schema#";
+const OWL  = "http://www.w3.org/2002/07/owl#";
+const XSD  = "http://www.w3.org/2001/XMLSchema#";
+
 
 Meteor.methods({
   parseOwlTurtle(turtleText) {
@@ -88,13 +93,9 @@ Meteor.methods({
 	  const addTriple = (s, p, o) => store.add($rdf.sym(s), $rdf.sym(p), $rdf.sym(o));
 	  for (const key of Object.keys(Ontology)) {
 		if(key === "iri"){
-			store.add(
-			  $rdf.namedNode(Ontology[key]),
-			  $rdf.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-			  $rdf.namedNode("http://www.w3.org/2002/07/owl#Ontology")
-			);
-		}
-		for (const onto of Object.keys(Ontology[key])) {
+			addTriple(Ontology[key], ns.rdf('type').uri, ns.owl('Ontology').uri);
+		} else {
+		  for (const onto of Object.keys(Ontology[key])) {
 			const ax = Ontology[key][onto];
 			if(ax.type === "Annotation"){
 				let subj = $rdf.namedNode(namespaceTable[":"])
@@ -115,12 +116,13 @@ Meteor.methods({
 				  }
 				}
 			 }
+		  }
 		}
 	  }
 	  for (const key of Object.keys(Class)) {
 		for (const clazz of Object.keys(Class[key])) {
 		  const ax = Class[key][clazz];
-		  if (ax.type === "Declaration" && ax.axiom.type === "Class") {
+		  if (ax.type === "Declaration" && ax.axiom.type === "Class" && ax.axiom.axiom.IRI) {
 			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('Class').uri);
 		  }else if (ax.type === "Declaration" && ax.axiom.type === "DataProperty") {
 			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('DatatypeProperty').uri);
@@ -131,7 +133,18 @@ Meteor.methods({
 		  } else if (ax.type === "DataPropertyRange") {
 			  const attrIRI = ax.axiom[0].IRI;
 			  const classIRI = ax.axiom[1].IRI;
-			  addTriple(attrIRI, ns.rdfs('range').uri, classIRI);
+			  if(classIRI !== null && attrIRI !== null && typeof classIRI === "string"){
+				 addTriple(attrIRI, ns.rdfs('range').uri, classIRI);
+			  } else if(classIRI !== null && attrIRI !== null && typeof classIRI === "object"){
+
+				  // const quads = buildDataPropertyRangeQuads(
+					  // attrIRI,
+					  // classIRI
+				  // );
+				  // writer.addQuads(quads);
+			  }
+
+
 		  }else if (ax.type === "FunctionalDataProperty") {
 			addTriple(ax.axiom.IRI, ns.rdf('type').uri, ns.owl('FunctionalProperty').uri);
 		  } else if (["EquivalentDataProperties", "DisjointDataProperties", "SubDataPropertyOf"].includes(ax.type)) {
@@ -291,11 +304,55 @@ Meteor.methods({
 				});
 			  }
 		  }else{
+
 			  const subj = ax.axiom[0].IRI;
 			  if(typeof ax.axiom[1].IRI === "undefined"){
-				for (const target of ax.axiom[1]) {
-				  addTriple(subj, typeMap[ax.type], target.IRI);
-				}
+
+				  if(ax.axiom[1].length){
+					for (const target of ax.axiom[1]) {
+					  if(target.IRI){
+						addTriple(subj, typeMap[ax.type], target.IRI);
+					  } else if(target.Expression && subj){
+							const dataPropertySet = new Set(onto.DataProperty);
+							const { term: exprTerm } = classExpressionAstToRdflib(
+							  $rdf,
+							  store,
+							  target.Expression,
+							  {
+								prefixes: namespaceTable,
+								isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+								// doc: $rdf.sym("http://example.com/graph") // optional named graph
+							  }
+							);
+
+							// Now add the axiom triple (example: EquivalentClasses)
+							store.add(
+							  $rdf.sym(subj),
+							  $rdf.sym(typeMap[ax.type]), // e.g. OWL+"equivalentClass" or RDFS+"subClassOf"
+							  exprTerm
+							);
+					  }
+					}
+				  } else if(ax.axiom[1].Expression && subj) {
+					  const dataPropertySet = new Set(onto.DataProperty);
+							const { term: exprTerm } = classExpressionAstToRdflib(
+							  $rdf,
+							  store,
+							  ax.axiom[1].Expression,
+							  {
+								prefixes: namespaceTable,
+								isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+								// doc: $rdf.sym("http://example.com/graph") // optional named graph
+							  }
+							);
+
+							// Now add the axiom triple (example: EquivalentClasses)
+							store.add(
+							  $rdf.sym(subj),
+							  $rdf.sym(typeMap[ax.type]), // e.g. OWL+"equivalentClass" or RDFS+"subClassOf"
+							  exprTerm
+							);
+				  }
 			  } else {
 				addTriple(subj, typeMap[ax.type], ax.axiom[1].IRI);
 			  }
@@ -748,8 +805,495 @@ Meteor.methods({
 		  }
 		}
 	  }
-console.log("store.namespaces", store.namespaces)
 	 return  store.serialize(null, format)
 	  // return $rdf.serialize(null, store, BASE, format);
 	}
 });
+
+
+
+const FACET_MAP = {
+  "<=": XSD + "maxInclusive",
+  "<":  XSD + "maxExclusive",
+  ">=": XSD + "minInclusive",
+  ">":  XSD + "minExclusive",
+  "length":    XSD + "length",
+  "maxLength": XSD + "maxLength",
+  "minLength": XSD + "minLength",
+  "pattern":   XSD + "pattern",
+  "langPattern": RDF + "langRange",
+};
+
+// same as in your N3 code (needed for preferXsdBuiltins mapping)
+const XSD_BUILTINS = new Set([
+  "string","integer","decimal","float",
+  "nonNegativeInteger","nonPositiveInteger",
+  "positiveInteger","negativeInteger",
+  "long","int","short","byte",
+  "unsignedLong","unsignedInt","unsignedShort","unsignedByte",
+  "double","boolean","dateTime","date","time",
+]);
+
+function unquote(astQuoted) {
+  if (typeof astQuoted !== "string") return "";
+  if (astQuoted.length >= 2 && astQuoted[0] === '"' && astQuoted[astQuoted.length - 1] === '"') {
+    return astQuoted.slice(1, -1);
+  }
+  return astQuoted;
+}
+
+// --- Blank node helper (handles rdflib variations) ---
+function BN($rdf) {
+  if (typeof $rdf.blankNode === "function") return $rdf.blankNode();
+  if (typeof $rdf.bnode === "function") return $rdf.bnode();
+  throw new Error("No blank node factory found (blankNode/bnode)");
+}
+
+function blankNodeFromAstBlank($rdf, str) {
+  const s = String(str);
+  if (s.startsWith("_:")) {
+    // rdflib accepts id in blankNode(id) in many builds
+    try { return $rdf.blankNode(s.slice(2)); } catch (e) { /* ignore */ }
+    // fallback: fresh blank node
+  }
+  return BN($rdf);
+}
+
+/**
+ * Create an RDF list in the store.
+ * If store.list exists, prefer it (often serializes as "( ... )").
+ * Else, explicit rdf:first/rest.
+ */
+function makeList($rdf, store, elements) {
+  if (!elements || elements.length === 0) return $rdf.sym(RDF + "nil");
+
+  // Prefer a Collection object (serializes as (...) in Turtle)
+  // Different rdflib builds expose this differently, so we feature-detect.
+  if (typeof $rdf.collection === "function") {
+    return $rdf.collection(elements);
+  }
+  if (typeof $rdf.Collection === "function") {
+    return new $rdf.Collection(elements);
+  }
+  if (store && typeof store.list === "function") {
+    // Some builds provide store.list([...]) which returns a Collection-like list node
+    return store.list(elements);
+  }
+
+  // Last resort: explicit rdf:first/rest
+  const firstPred = $rdf.sym(RDF + "first");
+  const restPred  = $rdf.sym(RDF + "rest");
+  const nil       = $rdf.sym(RDF + "nil");
+
+  let head = (typeof $rdf.blankNode === "function") ? $rdf.blankNode() : $rdf.bnode();
+  let cur = head;
+
+  for (let i = 0; i < elements.length; i++) {
+    store.add(cur, firstPred, elements[i]);
+    if (i === elements.length - 1) {
+      store.add(cur, restPred, nil);
+    } else {
+      const next = (typeof $rdf.blankNode === "function") ? $rdf.blankNode() : $rdf.bnode();
+      store.add(cur, restPred, next);
+      cur = next;
+    }
+  }
+  return head;
+}
+
+function iriAstToNode($rdf, iriAst, prefixes = {}, opts = {}) {
+  const { preferXsdBuiltins = false } = opts;
+  const t = iriAst.IRItype;
+  const v = iriAst.value;
+
+  if (t === "fullIRI") {
+    const s = String(v);
+    const iri = (s.startsWith("<") && s.endsWith(">")) ? s.slice(1, -1) : s;
+    return $rdf.sym(iri);
+  }
+
+  if (t === "simpleIRI") {
+    const name = String(v);
+
+    // ONLY in datatype/data-range context:
+    if (preferXsdBuiltins && XSD_BUILTINS.has(name)) {
+      return $rdf.sym(XSD + name);
+    }
+
+    if (/^[a-z][a-z0-9+.-]*:/.test(name)) return $rdf.sym(name);
+    if (prefixes.base) return $rdf.sym(prefixes.base + name);
+    if (prefixes[":"]) return $rdf.sym(prefixes[":"] + name);
+    return $rdf.sym(name);
+  }
+
+  if (t === "abbreviatedIRI" || t === "fullNamespaceIRI") {
+    const name = v.name;
+    const pref = v.prefix;
+
+    if (prefixes[pref]) return $rdf.sym(prefixes[pref] + name);
+    if (/^https?:\/\//.test(pref) || pref.includes("#") || pref.endsWith("/")) return $rdf.sym(pref + name);
+    return $rdf.sym(pref + ":" + name);
+  }
+
+  throw new Error("Unsupported IRItype: " + t);
+}
+
+function iriAsDatatypeNode($rdf, iriAst, prefixes) {
+  return iriAstToNode($rdf, iriAst, prefixes, { preferXsdBuiltins: true });
+}
+
+/* ----- datatype/literal helpers ----- */
+
+function datatypeToNode($rdf, dtAst, prefixes) {
+  if (dtAst.type === "predefined") return $rdf.sym(XSD + String(dtAst.value));
+  if (dtAst.type === "IRI") return iriAsDatatypeNode($rdf, dtAst.value, prefixes);
+  throw new Error("Unknown datatype.type: " + dtAst.type);
+}
+
+function literalToNode($rdf, litAst, prefixes) {
+  switch (litAst.type) {
+    case "stringNoLang":
+      return $rdf.literal(unquote(litAst.value));
+    case "stringWithLang":
+      // rdflib: lit(value, lang, datatype)
+      return $rdf.lit(unquote(litAst.value), String(litAst.language || ""), undefined);
+    case "typed":
+      return $rdf.lit(unquote(litAst.value), undefined, datatypeToNode($rdf, litAst.datatype, prefixes));
+    case "integer":
+      return $rdf.lit(String(litAst.value), undefined, $rdf.sym(XSD + "integer"));
+    case "decimal":
+      return $rdf.lit(String(litAst.value), undefined, $rdf.sym(XSD + "decimal"));
+    case "float": {
+      const s = String(litAst.value);
+      const lex = /[fF]$/.test(s) ? s.slice(0, -1) : s;
+      return $rdf.lit(lex, undefined, $rdf.sym(XSD + "float"));
+    }
+    default:
+      throw new Error("Unsupported literal type: " + litAst.type);
+  }
+}
+
+function datatypeRestrictionToDataRange($rdf, store, dr, prefixes, doc) {
+  const dt = datatypeToNode($rdf, dr.datatype, prefixes);
+  const restrictionNodes = (dr.restrictions || []).map(r => {
+    const facetIri = FACET_MAP[r.facet];
+    if (!facetIri) throw new Error("Unknown facet token: " + r.facet);
+    const bn = BN($rdf);
+    store.add(bn, $rdf.sym(facetIri), literalToNode($rdf, r.value, prefixes), doc);
+    return bn;
+  });
+
+  const b = BN($rdf);
+  store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(RDFS + "Datatype"), doc);
+  store.add(b, $rdf.sym(OWL + "onDatatype"), dt, doc);
+  store.add(b, $rdf.sym(OWL + "withRestrictions"), makeList($rdf, store, restrictionNodes, doc), doc);
+  return b;
+}
+
+function literalListToDataOneOf($rdf, store, list, prefixes, doc) {
+  const lits = (list || []).map(l => literalToNode($rdf, l, prefixes));
+  const b = BN($rdf);
+  store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(RDFS + "Datatype"), doc);
+  store.add(b, $rdf.sym(OWL + "oneOf"), makeList($rdf, store, lits, doc), doc);
+  return b;
+}
+
+/**
+ * Convert JSON-friendly class-expression AST into rdflib.js structure in a store.
+ *
+ * @param {$rdf.IndexedFormula} store
+ * @param {object} ast
+ * @param {object} options
+ * @param {object} options.prefixes
+ * @param {(propertyIri: string) => boolean} options.isObjectProperty
+ * @param {$rdf.NamedNode|undefined} options.doc  graph/context (optional)
+ * @returns {{ term: any }}  // term is NamedNode or BlankNode
+ */
+function classExpressionAstToRdflib($rdf, store, ast, { prefixes = {}, isObjectProperty, doc = undefined } = {}) {
+  if (typeof isObjectProperty !== "function") {
+    throw new Error("classExpressionAstToRdflib: options.isObjectProperty(propertyIri) is required");
+  }
+
+  function asClassExpr(node) {
+    if (!node) throw new Error("Empty class expression");
+
+    switch (node.grammarProduction) {
+      case "disjunction": return disjunction(node);
+      case "conjunctionNoRestrictions": return conjunctionNoRestrictions(node);
+      case "conjunctionWithRestrictions": return conjunctionWithRestrictions(node);
+      case "unknownDisjunction": return unknownDisjunction(node);
+      case "unknownConjunction": return unknownConjunction(node);
+      default:
+        if (node.primaryType) return primary(node);
+        throw new Error("Unexpected node: " + JSON.stringify(node));
+    }
+  }
+
+  function disjunction(node) {
+    const parts = (node.items || []).map(asClassExpr);
+    if (parts.length === 1) return parts[0];
+
+    const b = BN($rdf);
+    store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+    store.add(b, $rdf.sym(OWL + "unionOf"), makeList($rdf, store, parts, doc), doc);
+    return b;
+  }
+
+  function conjunctionNoRestrictions(node) {
+    const parts = (node.items || []).map(primary);
+    if (parts.length === 1) return parts[0];
+
+    const b = BN($rdf);
+    store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+    store.add(b, $rdf.sym(OWL + "intersectionOf"), makeList($rdf, store, parts, doc), doc);
+    return b;
+  }
+
+  function conjunctionWithRestrictions(node) {
+    const cls = iriAstToNode($rdf, node.class, prefixes);
+    const rs = (node.restrictions || []).map(r => restrictionAsClassExpr(r));
+    const parts = [cls].concat(rs);
+
+    if (parts.length === 1) return parts[0];
+
+    const b = BN($rdf);
+    store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+    store.add(b, $rdf.sym(OWL + "intersectionOf"), makeList($rdf, store, parts, doc), doc);
+    return b;
+  }
+
+  function primary(p) {
+    let inner;
+    if (p.primaryType === "atomic") inner = atomic(p.primary);
+    else if (p.primaryType === "restriction") inner = restrictionAsClassExpr(p.primary);
+    else throw new Error("Unknown primaryType: " + p.primaryType);
+
+    if (p.negation === "true") {
+      const b = BN($rdf);
+      store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+      store.add(b, $rdf.sym(OWL + "complementOf"), inner, doc);
+      return b;
+    }
+    return inner;
+  }
+
+  function atomic(a) {
+    switch (a.atomType) {
+      case "class":
+        return iriAstToNode($rdf, a.class, prefixes);
+
+      case "expression":
+        return asClassExpr(a.expression);
+
+      case "individualList": {
+        const inds = (a.list || []).map(individualToNode);
+        const b = BN($rdf);
+        store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+        store.add(b, $rdf.sym(OWL + "oneOf"), makeList($rdf, store, inds, doc), doc);
+        return b;
+      }
+
+      default:
+        throw new Error("Unknown atomType: " + a.atomType);
+    }
+  }
+
+  function individualToNode(ind) {
+    if (ind.individualType === "IRI") return iriAstToNode($rdf, ind.individual, prefixes);
+    if (ind.individualType === "blank") return blankNodeFromAstBlank($rdf, ind.individual);
+    throw new Error("Unknown individualType: " + ind.individualType);
+  }
+
+  function inversePropertyNode(propertyIriAst, inverseFlag, propIsObject) {
+    const p = iriAstToNode($rdf, propertyIriAst, prefixes);
+    if (inverseFlag !== "true") return p;
+
+    if (!propIsObject) throw new Error("Inverse used with a data property: " + p.value);
+
+    const ip = BN($rdf);
+    store.add(ip, $rdf.sym(OWL + "inverseOf"), p, doc);
+    return ip;
+  }
+
+  function hasValueNode(v, propIsObject) {
+    if (propIsObject) {
+      if (v && typeof v === "object" && v.individualType) return individualToNode(v);
+      throw new Error("ObjectProperty hasValue expects an individual, got: " + JSON.stringify(v));
+    } else {
+      if (v && typeof v === "object" && v.type) return literalToNode($rdf, v, prefixes);
+      throw new Error("DataProperty hasValue expects a literal, got: " + JSON.stringify(v));
+    }
+  }
+
+  function someOnlyFiller(sp, propIsObject) {
+    if (!sp || typeof sp !== "object") throw new Error("Bad somePrimary: " + sp);
+
+    if (propIsObject) {
+      switch (sp.unknownPrimaryType) {
+        case "IRI":
+          return iriAstToNode($rdf, sp.IRI, prefixes);
+        case "restriction":
+          return restrictionAsClassExpr(sp.restriction);
+        case "expression":
+          return asClassExpr(sp.expression);
+        case "individualList": {
+          const inds = (sp.list || []).map(individualToNode);
+          const b = BN($rdf);
+          store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+          store.add(b, $rdf.sym(OWL + "oneOf"), makeList($rdf, store, inds, doc), doc);
+          return b;
+        }
+        default:
+          throw new Error("ObjectProperty filler cannot be " + sp.unknownPrimaryType);
+      }
+    } else {
+      switch (sp.unknownPrimaryType) {
+        case "datatypeRestriction":
+          return datatypeRestrictionToDataRange($rdf, store, sp.restriction, prefixes, doc);
+        case "literalList":
+          return literalListToDataOneOf($rdf, store, sp.list, prefixes, doc);
+        case "IRI":
+          // For data properties: integer -> xsd:integer (datatype context!)
+          return iriAsDatatypeNode($rdf, sp.IRI, prefixes);
+        case "expression":
+          throw new Error("DataProperty filler cannot be an unknownExpression (class expression).");
+        case "restriction":
+          throw new Error("DataProperty filler cannot be an object restriction.");
+        case "individualList":
+          throw new Error("DataProperty filler cannot be an individual list.");
+        default:
+          throw new Error("Unsupported DataProperty filler: " + sp.unknownPrimaryType);
+      }
+    }
+  }
+
+  function restrictionAsClassExpr(r) {
+    const propNode = iriAstToNode($rdf, r.property, prefixes);
+    const propIri = propNode.value;
+    const propIsObject = !!isObjectProperty(propIri);
+
+    const b = BN($rdf);
+    store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Restriction"), doc);
+
+    const onProp = inversePropertyNode(r.property, r.inverse, propIsObject);
+    store.add(b, $rdf.sym(OWL + "onProperty"), onProp, doc);
+
+    const kw = r.keyword;
+
+    if (kw === "some") {
+      const filler = someOnlyFiller(r.value, propIsObject);
+      store.add(b, $rdf.sym(OWL + "someValuesFrom"), filler, doc);
+      return b;
+    }
+
+    if (kw === "only") {
+      const filler = someOnlyFiller(r.value, propIsObject);
+      store.add(b, $rdf.sym(OWL + "allValuesFrom"), filler, doc);
+      return b;
+    }
+
+    if (kw === "value") {
+      const hv = hasValueNode(r.value, propIsObject);
+      store.add(b, $rdf.sym(OWL + "hasValue"), hv, doc);
+      return b;
+    }
+
+    if (kw === "Self") {
+      if (!propIsObject) throw new Error("Self used with a data property: " + propIri);
+      store.add(b, $rdf.sym(OWL + "hasSelf"), $rdf.lit("true", undefined, $rdf.sym(XSD + "boolean")), doc);
+      return b;
+    }
+
+    if (kw === "min" || kw === "max" || kw === "exactly") {
+      const n = String(r.count);
+
+      if (r.value && r.value !== null) {
+        const qPred =
+          (kw === "min") ? OWL + "minQualifiedCardinality" :
+          (kw === "max") ? OWL + "maxQualifiedCardinality" :
+                           OWL + "qualifiedCardinality";
+
+        store.add(b, $rdf.sym(qPred), $rdf.lit(n, undefined, $rdf.sym(XSD + "nonNegativeInteger")), doc);
+
+        const filler = someOnlyFiller(r.value, propIsObject);
+        store.add(b, $rdf.sym(propIsObject ? (OWL + "onClass") : (OWL + "onDataRange")), filler, doc);
+        return b;
+      }
+
+      const unqPred =
+        (kw === "min") ? OWL + "minCardinality" :
+        (kw === "max") ? OWL + "maxCardinality" :
+                         OWL + "cardinality";
+
+      store.add(b, $rdf.sym(unqPred), $rdf.lit(n, undefined, $rdf.sym(XSD + "nonNegativeInteger")), doc);
+      return b;
+    }
+
+    throw new Error("Unknown restriction keyword: " + kw);
+  }
+
+  function unknownDisjunction(node) {
+    const parts = (node.items || []).map(unknownConjunction);
+    if (parts.length === 1) return parts[0];
+
+    const b = BN($rdf);
+    store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+    store.add(b, $rdf.sym(OWL + "unionOf"), makeList($rdf, store, parts, doc), doc);
+    return b;
+  }
+
+  function unknownConjunction(node) {
+    if (node.grammarProduction === "conjunctionWithRestrictions") return conjunctionWithRestrictions(node);
+
+    if (node.grammarProduction !== "unknownConjunction") {
+      throw new Error("Unexpected unknownConjunction node");
+    }
+
+    const parts = (node.items || []).map(unknownPrimaryAsClassExpr);
+    if (parts.length === 1) return parts[0];
+
+    const b = BN($rdf);
+    store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+    store.add(b, $rdf.sym(OWL + "intersectionOf"), makeList($rdf, store, parts, doc), doc);
+    return b;
+  }
+
+  function unknownPrimaryAsClassExpr(p) {
+    let inner;
+
+    switch (p.unknownPrimaryType) {
+      case "IRI":
+        inner = iriAstToNode($rdf, p.IRI, prefixes);
+        break;
+      case "restriction":
+        inner = restrictionAsClassExpr(p.restriction);
+        break;
+      case "expression":
+        inner = asClassExpr(p.expression);
+        break;
+      case "individualList": {
+        const inds = (p.list || []).map(individualToNode);
+        const b = BN($rdf);
+        store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+        store.add(b, $rdf.sym(OWL + "oneOf"), makeList($rdf, store, inds, doc), doc);
+        inner = b;
+        break;
+      }
+      default:
+        throw new Error("Unknown unknownPrimaryType: " + p.unknownPrimaryType);
+    }
+
+    if (p.negation === "true") {
+      const b = BN($rdf);
+      store.add(b, $rdf.sym(RDF + "type"), $rdf.sym(OWL + "Class"), doc);
+      store.add(b, $rdf.sym(OWL + "complementOf"), inner, doc);
+      return b;
+    }
+
+    return inner;
+  }
+
+  const term = asClassExpr(ast);
+  return { term };
+}
+

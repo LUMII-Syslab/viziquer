@@ -1,20 +1,11 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
-import { Projects, Elements, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
+import { Elements, Compartments, CompartmentTypes  } from '/imports/db/platform/collections'
 import { process_sub_compart_types } from '/imports/platform/client/templates/diagrams/dialog/subCompartments'
 import { Dialog } from '/imports/platform/client/js/interpretator/Dialog'
 import { Utilities } from '/imports/platform/client/js/utilities/utils.js'
-import { Create_New_OWLGrEd_Element, Create_OWLGrEd_Element } from '../js/OWLGrEd_Element.js';
+import { Create_OWLGrEd_Element } from '../js/OWLGrEd_Element.js';
 
 import './add_attribute_form_OWLGrEd.html'
-
-// Interpreter.customMethods({
-	// AddAttribute_OWLGrEd: function () {
-		// console.log("rrrrrrrrrrrrrrrrrrr")
-		// $("#add-attribute-form-owlgred").modal("show");
-
-	// }
-// })
-
 
 Template.AddAttribute_OWLGrEd.helpers({
 
@@ -154,7 +145,7 @@ Template.AddAttribute_OWLGrEd.events({
 			equivelentResult.push({
 			  name: "equivalent",
 			  value: propertyValue,
-			  input: "="+propertyValue,
+			  input: "\u2261"+propertyValue,
 			  // subCompartments: [
 				// { name: "Property", value: propertyValue, input: propertyValue }
 			  // ]
@@ -173,7 +164,7 @@ Template.AddAttribute_OWLGrEd.events({
 			superResult.push({
 			  name: "super",
 			  value: propertyValue,
-			  input: "<"+propertyValue,
+			  input: "\u2286"+propertyValue,
 			  // subCompartments: [
 				// { name: "Property", value: propertyValue, input: propertyValue }
 			  // ]
@@ -191,7 +182,7 @@ Template.AddAttribute_OWLGrEd.events({
 			disjointResult.push({
 			  name: "disjoint",
 			  value: propertyValue,
-			  input: "<>"+propertyValue,
+			  input: "\u27C2"+propertyValue,
 			  // subCompartments: [
 				// { name: "Property", value: propertyValue, input: propertyValue }
 			  // ]
@@ -212,7 +203,6 @@ Template.AddAttribute_OWLGrEd.events({
 		  return `${item.annotationType} : "${item.value}"${lang}`;
 		}).join(', ');
 
-		console.log("dddddddddddddddddd", annotations, annotationsResult)
 
 		if(elem.getAttribute("compartmentId") === null){
 

@@ -1,9 +1,10 @@
-
-
 {
   "tool": {
     "name": "OWLGrEd",
-    "toolbar": "diagramsToolbar"
+    "toolbar": "diagramsToolbar",
+	"toolGroup": "OWLGrEd",
+	"extensionPoints": [
+	]	
   },
   "types": [
     {
@@ -19,6 +20,9 @@
           {
             "extensionPoint": "createDiagram",
             "procedure": "CreateDiagram"
+          },
+		  {
+            "extensionPoint": "beforeRenderDiagram"
           },
           {
             "extensionPoint": "beforeDeleteCollection"
@@ -239,6 +243,18 @@
             "procedure": "saveOntologyRDFLibldjsonOwlgred"
           },
 		  {
+            "item": "Layout (default)",
+            "procedure": "ComputeLayout"
+          },
+          {
+            "item": "Layout as Graph",
+            "procedure": "ComputeUniversalLayout"
+          },
+          {
+            "item": "Layout as Flow",
+            "procedure": "ComputeFlowLayout"
+          },
+		  {
             "item": "Load Ontolofy from File",
             "procedure": "loadOntologyOWLGrEd"
           }
@@ -266,11 +282,11 @@
           "strokeWidth": 0.6
         },
         "size": {
-          "diagramSize": 9,
-          "dialogSize": 3
+          "diagramSize": 10,
+          "dialogSize": 2
         },
 		"layoutSettings": {
-          "layout": "HORIZONTAL",
+          "layout": "UNIVERSAL",
           "arrangeMethod": "arrangeFromScratch"
         },
         "versionId": "EtJZ6WzJNMpthfpC3",
@@ -306,10 +322,13 @@
         },
         "name": "Seed",
         "editorType": "ajooEditor",
+		"editorMinHeight": 770,
         "palette": {
+		  "width": 40,
+		  "height": 25,
           "buttonWidth": "",
           "buttonHeight": "",
-          "padding": ""
+          "padding": 3
         },
         "header": "",
         "defaultFixedSize": {
@@ -430,10 +449,9 @@
             "targetDiagramTypeId": "Ca5nHdCHmkBgxxSgd",
             "exportAxioms": [
               "Declaration(Class($getUri(/Name)))",
-			  "EquivalentClasses($getUri(/Name) /EquivalentClasses:$getExpression(/EquivalentClass))",
-			  "DisjointClasses($getUri(/Name) /DisjointClasses:$getExpression(/DisjointClass))",
-			  "SubClassOf($getUri(/Name) /SuperClasses:$getExpression(/SuperClass))",
-			  "AnnotationAssertion(rdfs:comment $getUri(/Name) \"$value(/Comment)\")"
+			  "DisjointClasses($getClassExpr /DisjointClasses:$getExpression(/DisjointClass))",
+			  "SubClassOf($getClassExpr /SuperClasses:$getExpression(/SuperClass))",
+			  "AnnotationAssertion(rdfs:comment $getClassExpr \"$value(/Comment)\")"
 			]
           },
           "compartmentTypes": [
@@ -684,6 +702,10 @@
                     "extensionPoint": "afterUpdate",
 					"procedure": "setHorizontalLine"
                   },
+				  {
+                    "extensionPoint": "onDelete",
+					"procedure": "removeHorizontalLine"
+                  },
                   {
                     "extensionPoint": "dynamicPrefix"
                   },
@@ -844,6 +866,10 @@
                     "extensionPoint": "afterUpdate",
 					"procedure": "setHorizontalLine"
                   },
+				  {
+                    "extensionPoint": "onDelete",
+					"procedure": "removeHorizontalLine"
+                  },
                   {
                     "extensionPoint": "dynamicPrefix"
                   },
@@ -862,7 +888,7 @@
                     "_id": "6edf01q4077gnwg4dfjj5j6q",
                     "name": "SuperClasses",
                     "extensionPoints": [],
-                    "prefix": "\u22B2 ",
+                    "prefix": "\u2286 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -886,7 +912,7 @@
                   }
                 ],
                 "label": "SuperClasses(<)",
-                "prefix": "\u22B2 "
+                "prefix": "\u2286 "
               }
             },
 			{
@@ -1007,6 +1033,10 @@
                     "extensionPoint": "afterUpdate",
 					"procedure": "setHorizontalLine"
                   },
+				  {
+                    "extensionPoint": "onDelete",
+					"procedure": "removeHorizontalLine"
+                  },
                   {
                     "extensionPoint": "dynamicPrefix"
                   },
@@ -1025,7 +1055,7 @@
                     "_id": "p2f69awnt2xm2k2dne5c851k",
                     "name": "DisjointClasses",
                     "extensionPoints": [],
-                    "prefix": "\u2260 ",
+                    "prefix": "\u27C2 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -1045,11 +1075,11 @@
                         "label": "DisjointClass"
                       }
                     ],
-                    "label": "DisjointClasses(<>)"
+                    "label": "DisjointClasses(\u27C2)"
                   }
                 ],
-                "label": "DisjointClasses(<>)",
-                "prefix": "\u2260 "
+                "label": "DisjointClasses(\u27C2)",
+                "prefix": "\u27C2 "
               }
             },
 			{
@@ -1184,7 +1214,7 @@
                     "_id": "2eudnaty3ckgqymqhvkzyfzz",
                     "name": "Keys",
                     "extensionPoints": [],
-                    "prefix": "\u26B7 ",
+                    "prefix": "key = ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -1207,7 +1237,7 @@
                   }
                 ],
                 "label": "Keys",
-                "prefix": "\u26B7 "
+                "prefix": "key = "
               }
             },
 			{
@@ -1691,7 +1721,7 @@
                         "_id": "su465uh97s8gf52uaamk58g9",
                         "index": 9,
                         "name": "DisjointProperties",
-                        "label": "DisjointProperties(<>)",
+                        "label": "DisjointProperties(\u27C2)",
                         "extensionPoints": [],
                         "prefix": "{",
                         "suffix": "}",
@@ -2344,7 +2374,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 16,
+                      "fontSize": 14,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -2407,7 +2437,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 16,
+                      "fontSize": 14,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -2624,7 +2654,12 @@
                     "procedure": "UpdateCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate"
+                    "extensionPoint": "afterUpdate",
+					"procedure": "setHorizontalLine"
+                  },
+				  {
+                    "extensionPoint": "onDelete",
+					"procedure": "removeHorizontalLine"
                   },
                   {
                     "extensionPoint": "dynamicPrefix"
@@ -2718,7 +2753,12 @@
                     "procedure": "UpdateCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate"
+                    "extensionPoint": "afterUpdate",
+					"procedure": "setHorizontalLine"
+                  },
+				  {
+                    "extensionPoint": "onDelete",
+					"procedure": "removeHorizontalLine"
                   },
                   {
                     "extensionPoint": "dynamicPrefix"
@@ -3008,7 +3048,12 @@
                     "procedure": "UpdateCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate"
+                    "extensionPoint": "afterUpdate",
+					"procedure": "setHorizontalLine"
+                  },
+				  {
+                    "extensionPoint": "onDelete",
+					"procedure": "removeHorizontalLine"
                   },
                   {
                     "extensionPoint": "dynamicPrefix"
@@ -3201,7 +3246,12 @@
                     "procedure": "UpdateCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate"
+                    "extensionPoint": "afterUpdate",
+					"procedure": "setHorizontalLine"
+                  },
+				  {
+                    "extensionPoint": "onDelete",
+					"procedure": "removeHorizontalLine"
                   },
                   {
                     "extensionPoint": "dynamicPrefix"
@@ -3245,7 +3295,7 @@
                         "index": 2,
                         "name": "Value",
                         "extensionPoints": [],
-                        "prefix": " \u2260 ",
+                        "prefix": " \u27C2 ",
                         "suffix": null,
                         "defaultValue": null,
                         "inputType": {
@@ -3275,10 +3325,10 @@
                         "label": "Type"
                       }
                     ],
-                    "label": "NegativeDataPropertyAssertion(<>)"
+                    "label": "NegativeDataPropertyAssertion(\u27C2)"
                   }
                 ],
-                "label": "NegativeDataPropertyAssertion(<>)"
+                "label": "NegativeDataPropertyAssertion(\u27C2)"
               }
             },
 			{
@@ -4433,7 +4483,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 15,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -4498,7 +4548,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 14,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -4564,7 +4614,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 14,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -4630,7 +4680,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 14,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -5027,7 +5077,12 @@
                     "procedure": "UpdateCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate"
+                    "extensionPoint": "afterUpdate",
+					"procedure": "setHorizontalLine"
+                  },
+				  {
+                    "extensionPoint": "onDelete",
+					"procedure": "removeHorizontalLine"
                   },
                   {
                     "extensionPoint": "dynamicPrefix"
@@ -5047,7 +5102,7 @@
                     "_id": "6e59dlq4077opej4dfdkejqa",
                     "name": "SuperProperties",
                     "extensionPoints": [],
-                    "prefix": "\u22B2 ",
+                    "prefix": "\u2286 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -5070,7 +5125,7 @@
                     "label": "SuperProperties(<)"
                   }
                 ],
-				"prefix": "\u22B2 ",
+				"prefix": "\u2286 ",
                 "suffix": null,
                 "label": "SuperProperties(<)"
               }
@@ -5847,7 +5902,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 14,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -7204,7 +7259,7 @@
                     "_id": "6e59dlq4077opej4dfjj5jqa",
                     "name": "SuperProperties",
                     "extensionPoints": [],
-                    "prefix": "\u22B2 ",
+                    "prefix": "\u2286 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -7228,7 +7283,7 @@
                   }
                 ],
                 "label": "SuperProperties(<)",
-                "prefix": " {\u22B2 ",
+                "prefix": " {\u2286 ",
                 "suffix": "}"
               }
             },
@@ -7448,7 +7503,7 @@
                     "_id": "ce62d6ba3b333e62def7baqa",
                     "name": "DisjointProperties",
                     "extensionPoints": [],
-                    "prefix": "\u2260 ",
+                    "prefix": "\u27C2 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -7468,11 +7523,11 @@
                         "label": "DisjointProperty"
                       }
                     ],
-                    "label": "DisjointProperties(<>)"
+                    "label": "DisjointProperties(\u27C2)"
                   }
                 ],
                 "type": "text",
-                "label": "DisjointProperties(<>)"
+                "label": "DisjointProperties(\u27C2)"
               }
             },
             {
@@ -10722,7 +10777,7 @@
                 "dialogTabId": "wFZrvqHfYQT98623m",
                 "name": "Dafault Namespace",
                 "description": "",
-                "prefix": "Dafault: <",
+                "prefix": "Default: <",
                 "suffix": ">",
                 "defaultValue": "",
                 "isObjectRepresentation": false,
@@ -11281,7 +11336,7 @@
                       "placement": "end-left",
                       "visible": true,
                       "fontSize": 14,
-                      "fontStyle": "normal",
+                      "fontStyle": "bold",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
                     }
@@ -11345,7 +11400,7 @@
                       "placement": "start-left",
                       "visible": true,
                       "fontSize": 14,
-                      "fontStyle": "normal",
+                      "fontStyle": "bold",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
                     }
@@ -11398,6 +11453,8 @@
                 "inputType": {
                   "type": "combobox"
                 },
+				"prefix":"[",
+				"suffix":"]",
                 "styles": [
                   {
                     "name": "Default",
@@ -11461,6 +11518,8 @@
                 "inputType": {
                   "type": "combobox"
                 },
+				"prefix":"[",
+				"suffix":"]",
                 "styles": [
                   {
                     "name": "Default",
@@ -11775,7 +11834,7 @@
                     "_id": "6edf01q4077opej4dfjj5j6q",
                     "name": "SuperPropertiesInv",
                     "extensionPoints": [],
-                    "prefix": "\u22B2 ",
+                    "prefix": "\u2286 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -11799,7 +11858,7 @@
                   }
                 ],
                 "label": "SuperProperties(<)",
-                "prefix": "\u22B2 ",
+                "prefix": "\u2286 ",
                 "suffix": null,
                 "description": ""
               }
@@ -11869,7 +11928,7 @@
                     "_id": "6e59dlq4077opej4dfjj5j6q",
                     "name": "SuperProperties",
                     "extensionPoints": [],
-                    "prefix": "\u22B2",
+                    "prefix": "\u2286 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -11893,7 +11952,7 @@
                   }
                 ],
                 "label": "SuperProperties(<)",
-                "prefix": "\u22B2 ",
+                "prefix": "\u2286 ",
                 "suffix": null
               }
             },
@@ -11912,7 +11971,7 @@
                 "dialogTabId": "WAKzjAJbhjgmtcSvT",
                 "name": "DisjointProperties",
                 "description": "",
-                "prefix": "\u2260 ",
+                "prefix": "\u27C2 ",
                 "suffix": null,
                 "defaultValue": "",
                 "isObjectRepresentation": false,
@@ -11972,7 +12031,7 @@
                     "_id": "ce62d6ba3b333e62def7baf8",
                     "name": "DisjointProperties",
                     "extensionPoints": [],
-                    "prefix": "\u2260 ",
+                    "prefix": "\u27C2 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -11992,11 +12051,11 @@
                         "label": "DisjointProperty"
                       }
                     ],
-                    "label": "DisjointProperties(<>)"
+                    "label": "DisjointProperties(\u27C2)"
                   }
                 ],
                 "type": "text",
-                "label": "DisjointProperties(<>)"
+                "label": "DisjointProperties(\u27C2)"
               }
             },
             {
@@ -12014,7 +12073,7 @@
                 "dialogTabId": "FPAAkjYTxawuKognq",
                 "name": "DisjointPropertiesInv",
                 "description": "",
-                "prefix": "\u2260 ",
+                "prefix": "\u27C2 ",
                 "suffix": null,
                 "defaultValue": "",
                 "isObjectRepresentation": false,
@@ -12074,7 +12133,7 @@
                     "_id": "7b49b8ff8f3c86f9ceff438e",
                     "name": "DisjointPropertiesInv",
                     "extensionPoints": [],
-                    "prefix": "\u2260 ",
+                    "prefix": "\u27C2 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -12094,11 +12153,11 @@
                         "label": "DisjointProperty"
                       }
                     ],
-                    "label": "DisjointProperties(<>)"
+                    "label": "DisjointProperties(\u27C2)"
                   }
                 ],
                 "type": "text",
-                "label": "DisjointProperties(<>)"
+                "label": "DisjointProperties(\u27C2)"
               }
             },
             {
@@ -13316,7 +13375,7 @@
                 "dialogTabId": "WAKzjAJbhjgmtcSvT",
                 "name": "PropertyChains",
                 "description": "",
-                "prefix": null,
+                "prefix": "\u27A4 ",
                 "suffix": null,
                 "defaultValue": "",
                 "isObjectRepresentation": false,
@@ -13370,7 +13429,7 @@
                     "_id": "2eudnaty3ckgqymqhvkzyfrt",
                     "name": "PropertyChains",
                     "extensionPoints": [],
-                    "prefix": ">",
+                    "prefix": "\u27A4 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -13439,7 +13498,7 @@
                 "dialogTabId": "FPAAkjYTxawuKognq",
                 "name": "PropertyChainsInv",
                 "description": "",
-                "prefix": null,
+                "prefix": "\u27A4 ",
                 "suffix": null,
                 "defaultValue": "",
                 "isObjectRepresentation": false,
@@ -13493,7 +13552,7 @@
                     "_id": "2eudnaty3ckgqymqhvkzy1g5",
                     "name": "PropertyChainsInv",
                     "extensionPoints": [],
-                    "prefix": ">",
+                    "prefix": "\u27A4 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -14087,23 +14146,23 @@
                 "id": "a64c774df0108e7cd4563bdd",
                 "name": "Default",
                 "elementStyle": {
-                  "stroke": "#005826",
-                  "strokeWidth": 2,
+                  "stroke": "black",
+                  "strokeWidth": 1,
                   "shadowColor": "#000000",
                   "shadowBlur": "0",
                   "shadowOpacity": 1,
                   "shadowOffsetX": 0,
                   "shadowOffsetY": 0,
                   "tension": "0",
-                  "opacity": 2,
+                  "opacity": 1,
                   "dash": [
-                    6
+                    5
                   ]
                 },
                 "startShapeStyle": {
                   "fill": "#000000",
                   "fillPriority": "color",
-                  "stroke": "rgb(65,113,156)",
+                  "stroke": "black",
                   "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
@@ -14117,9 +14176,9 @@
                   "shape": "None"
                 },
                 "endShapeStyle": {
-                  "fill": "rgb(65,113,156)",
+                  "fill": "black",
                   "fillPriority": "color",
-                  "stroke": "rgb(65,113,156)",
+                  "stroke": "black",
                   "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
@@ -14173,7 +14232,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 14,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -14275,7 +14334,7 @@
                   "tension": 0,
                   "opacity": 1,
                   "dash": [
-                    6
+                    3
                   ]
                 },
                 "startShapeStyle": {
@@ -14386,7 +14445,7 @@
                   "tension": 0,
                   "opacity": 1,
                   "dash": [
-                    6
+                    3
                   ]
                 },
                 "startShapeStyle": {
@@ -14673,7 +14732,7 @@
                       "align": "left",
                       "fill": "#000000",
                       "padding": 0,
-                      "placement": "start-left",
+                      "placement": "end-left",
                       "visible": true,
                       "fontSize": 14,
                       "fontStyle": "normal",
@@ -14750,7 +14809,7 @@
                       "align": "left",
                       "fill": "#000000",
                       "padding": 0,
-                      "placement": "start-left",
+                      "placement": "end-left",
                       "visible": true,
                       "fontSize": 14,
                       "fontStyle": "normal",
@@ -14827,7 +14886,7 @@
                       "align": "left",
                       "fill": "#000000",
                       "padding": 0,
-                      "placement": "start-left",
+                      "placement": "end-left",
                       "visible": true,
                       "fontSize": 14,
                       "fontStyle": "normal",
@@ -14904,7 +14963,7 @@
                       "align": "left",
                       "fill": "#000000",
                       "padding": 0,
-                      "placement": "start-left",
+                      "placement": "end-left",
                       "visible": true,
                       "fontSize": 14,
                       "fontStyle": "normal",
@@ -14967,7 +15026,7 @@
                       "align": "left",
                       "fill": "#000000",
                       "padding": 0,
-                      "placement": "start-left",
+                      "placement": "end-left",
                       "visible": true,
                       "fontSize": 14,
                       "fontStyle": "normal",
@@ -15257,12 +15316,6 @@
             ],
             "direction": "Directional",
             "isAbstract": false,
-            "layoutSettings": { 
-				"isFlowEdge": false,
-				"startSides": 10,
-				"endSides": 15,
-				"lineType": "ORTHOGONAL"
-			},
             "targetDiagramTypeId": "Gsw45wyRqobBLPAbj",
 			"exportAxioms": [
               ""
@@ -16301,7 +16354,7 @@
                   "tension": 0,
                   "opacity": 1,
                   "dash": [
-                    6
+                    3
                   ]
                 },
                 "startShapeStyle": {
@@ -16411,7 +16464,7 @@
                   "tension": 0,
                   "opacity": 1,
                   "dash": [
-                    6
+                    3
                   ]
                 },
                 "startShapeStyle": {
@@ -18003,19 +18056,6 @@
           "index": 14
         },
         {
-          "_id": "6nzT98vYhQdvNyLJY",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "YmKxYYpQMzPP6GQcw",
-          "elementTypeIds": [
-            "TAkWkofYFoNF6kJuB"
-          ],
-          "name": "ConnectorDataType",
-          "type": "Line",
-          "index": 15
-        },
-        {
           "_id": "YuZsJR8AkgRuvE234",
           "toolId": "cHSidEZPTvZRSFFtZ",
           "versionId": "EtJZ6WzJNMpthfpC3",
@@ -18053,19 +18093,6 @@
           "name": "Restriction",
           "type": "Line",
           "index": 18
-        },
-        {
-          "_id": "jjqcTXKRAPTQ2GAsc",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "YmKxYYpQMzPP6GQcw",
-          "elementTypeIds": [
-            "dfvcXuZRRijHLQFGD"
-          ],
-          "name": "Attribute",
-          "type": "Line",
-          "index": 19
         },
         {
           "_id": "BK5oyXpE7TqzDXsP8",
@@ -18170,97 +18197,6 @@
           "name": "SameAsIndivid",
           "type": "Line",
           "index": 27
-        },
-        {
-          "_id": "aiECRfRCMPJCZh8rT",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "b8QRj5Ye5nBXGtQx5",
-          "elementTypeIds": [
-            "nT9Lq7pDSsKHEdKgu"
-          ],
-          "name": "ObjectProperty",
-          "type": "Box",
-          "index": 36
-        },
-        {
-          "_id": "bYnnzC9Fy5FZ5w29t",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "b8QRj5Ye5nBXGtQx5",
-          "elementTypeIds": [
-            "dRDNsPiTrajpdPpef"
-          ],
-          "name": "DataProperty",
-          "type": "Box",
-          "index": 37
-        },
-        {
-          "_id": "FZRR96MTXMhMzM5Yi",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "b8QRj5Ye5nBXGtQx5",
-          "elementTypeIds": [
-            "wdKArJJ53DEQt58ht"
-          ],
-          "name": "linePropertyClass",
-          "type": "Line",
-          "index": 39
-        },
-        {
-          "_id": "8dZn3yqZrRh9LysXS",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "b8QRj5Ye5nBXGtQx5",
-          "elementTypeIds": [
-            "Rh7erKfchEsyywKa6"
-          ],
-          "name": "ObjectPropertyAssertion",
-          "type": "Box",
-          "index": 40
-        },
-        {
-          "_id": "LsoK8ePdei4Wnesk9",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "b8QRj5Ye5nBXGtQx5",
-          "elementTypeIds": [
-            "JHeLkaixx4Q33KyRR"
-          ],
-          "name": "DataPropertyAssertion",
-          "type": "Box",
-          "index": 41
-        },
-        {
-          "_id": "NqHqJcSbJqHGug2eq",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "b8QRj5Ye5nBXGtQx5",
-          "elementTypeIds": [
-            "hZyaSJM6JWJdQsa7X"
-          ],
-          "name": "linePropertyObject",
-          "type": "Line",
-          "index": 43
-        },
-        {
-          "_id": "A9BDQSH3SCLJboFvZ",
-          "toolId": "cHSidEZPTvZRSFFtZ",
-          "versionId": "EtJZ6WzJNMpthfpC3",
-          "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-          "diagramId": "b8QRj5Ye5nBXGtQx5",
-          "elementTypeIds": [
-            "jByaKr79KeWffZSjb"
-          ],
-          "name": "ObjectList",
-          "type": "Box",
-          "index": 44
         },
         {
           "_id": "c36KBosHZHEFzfEZv",

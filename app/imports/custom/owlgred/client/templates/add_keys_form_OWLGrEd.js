@@ -63,7 +63,7 @@ Template.AddKeys_OWLGrEd.helpers({
 						label: compart_type["label"],
 						fields: fields,
 					};
-		console.log("fields", fields, key_obj)
+
 		return key_obj;
 	},
 

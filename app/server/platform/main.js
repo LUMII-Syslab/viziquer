@@ -58,6 +58,11 @@ import "/imports/custom/vq/server/version_migration";
 import "/imports/custom/vq/server/ontologyParams";
 import "/imports/custom/vq/server/import_ontology";
 
+
+import "/imports/custom/owlgred/server/import_ontology";
+import "/imports/custom/owlgred/server/parseOwl";
+import "/imports/custom/owlgred/server/parseOwlImportOwlgred";
+
 // libs custom
 import "/imports/db/custom/vq/collections";
 import "/imports/libs/custom/mytest";

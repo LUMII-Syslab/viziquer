@@ -1,11 +1,12 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
 import { Utilities } from '/imports/platform/client/js/utilities/utils.js'
-import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes, Diagrams } from '/imports/db/platform/collections'
+import { Elements, ElementTypes, Diagrams } from '/imports/db/platform/collections'
 import { Dialog } from '/imports/platform/client/js/interpretator/Dialog'
+import * as class_expression_grammar_parser_OWLGrEd from '/imports/custom/owlgred/client/js/class_expression_grammar_parser_OWLGrEd.js'
+import * as data_range_grammar_parser_OWLGrEd from '/imports/custom/owlgred/client/js/data_range_grammar_parser_OWLGrEd.js'
 import * as export_grammar_parser_OWLGrEd from '/imports/custom/owlgred/client/js/export_grammar_parser_OWLGrEd.js'
-import { Create_New_OWLGrEd_Element, Create_OWLGrEd_Element } from './OWLGrEd_Element.js';
-import { DataFactory, Writer } from 'n3';
-const { namedNode, literal, quad, blankNode } = DataFactory;
+import { Create_OWLGrEd_Element } from './OWLGrEd_Element.js';
+import {generateN3Syntax} from '/imports/custom/owlgred/client/js/export_N3_OWLGrEd.js'
 
 let generateAxiom = true;
 let source = null;
@@ -14,19 +15,14 @@ let namespaceTable = {}
 
 Interpreter.customMethods({
 
-  saveOntologyOwlgred: async function(){
-	let ontology = saveOntologyInFormatOwlgred();
-	console.log("OOOOOOOOOOOOOOO", ontologyStructure)
-  },
-
   saveOntologyN3TurtleOwlgred: async function(){
 	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateN3Syntax(ontology, "text/turtle");
+	  generateN3Syntax(ontology, "text/turtle", namespaceTable);
 
   },
   saveOntologyN3n3Owlgred: async function(){
 	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateN3Syntax(ontology, "text/n3");
+	  generateN3Syntax(ontology, "text/n3", namespaceTable);
 
   },
   saveOntologyN3ntriplesOwlgred: async function(){
@@ -36,7 +32,7 @@ Interpreter.customMethods({
   },
   saveOntologyN3trigOwlgred: async function(){
 	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateN3Syntax(ontology, "application/trig");
+	  generateN3Syntax(ontology, "application/trig", namespaceTable);
   },
 
   saveOntologyRDFLibTurtleOwlgred: async function(){
@@ -59,85 +55,6 @@ Interpreter.customMethods({
 	  let ontology = await saveOntologyInFormatOwlgred();
 	  generateRDFLibSyntax(ontology, "application/ld+json");
   },
-
-  saveOntologyOwlgred2: async function(){
-		let textInvalid = [
-		'Annotation($getAnnotationProperty(/AnnotationType /Namespace) "$value(/ValueLanguage/Value)" ?(@$value(/Annotation/ValueLanguage/Language)))',
-		"DataPropertyAssertion($getUri(/Property) $getObjectExpr \"$value(/Value)\" ?(^^$getUri(/Type)))",
-		 "NegativeDataPropertyAssertion($getUri(/Property) $getObjectExpr \"$value(/Value)\" ?(^^$getUri(/Type)))",
-"SubClassOf($getClassExpr !(?(ObjectExactCardinality([$getMultiplicity('Exact') > -1][$getAttributeType(/../Type/Type /../isObjectAttribute) == 'ObjectProperty'] $getMultiplicity('Exact') /../Name:$getUri(/Name /Namespace) ?(/../Type:$getTypeExpression(/Type  /Namespace)))) ?(DataExactCardinality([$getMultiplicity('Exact') > -1] [$getAttributeType(/../Type/Type /../isObjectAttribute)  == 'DataProperty'] $getMultiplicity('Exact') /../Name:$getUri(/Name /Namespace) ?(/../Type:$getTypeExpression(/Type /Namespace)))))))",
-    "SubClassOf($getClassExpr !(?(ObjectMinCardinality([$getMultiplicity('Min') > -1][$getAttributeType(/../Type/Type /../isObjectAttribute) == 'ObjectProperty'] $getMultiplicity('Min') /../Name:$getUri(/Name /Namespace) ?(/../Type:$getTypeExpression(/Type /Namespace)))) ?(DataMinCardinality([$getMultiplicity('Min') > -1] [$getAttributeType(/../Type/Type /../isObjectAttribute)  == 'DataProperty'] $getMultiplicity('Min') /../Name:$getUri(/Name /Namespace) ?(/../Type:$getTypeExpression(/Type /Namespace)))))))",
-    "SubClassOf($getClassExpr !(?(ObjectMaxCardinality([$getMultiplicity('Max') > -1][$getAttributeType(/../Type/Type /../isObjectAttribute) == 'ObjectProperty'] $getMultiplicity('Max') /../Name:$getUri(/Name /Namespace) ?(/../Type:$getTypeExpression(/Type /Namespace)))) ?(DataMaxCardinality([$getMultiplicity('Max') > -1] [$getAttributeType(/../Type/Type /../isObjectAttribute)  == 'DataProperty'] $getMultiplicity('Max') /../Name:$getUri(/Name /Namespace) ?(/../Type:$getTypeExpression(/Type /Namespace)))))))",
-		"AnnotationAssertion($getAnnotationProperty(/AnnotationType /Namespace) /../../Name:$getUri(/Name /Namespace) \"$value(/ValueLanguage/Value)\" ?(@$value(/ValueLanguage/Language)))",
-    "AnnotationAssertion($getAnnotationProperty(/AnnotationType /Namespace) $getObjectExpr \"$value(/ValueLanguage/Value)\" ?(@$value(/ValueLanguage/Language)))"
-		]
-		const stringAxioms = [
-    "FunctionalObjectProperty([$getAttributeType(/../Type/Type /../isObjectAttribute) == 'ObjectProperty'][$value == 'true'] /../Name:$getUri(/Name /Namespace))",
-    "FunctionalDataProperty([$getAttributeType(/../Type/Type /../isObjectAttribute) == 'DataProperty'][$value == 'true'] /../Name:$getUri(/Name /Namespace))",
-    "EquivalentDataProperties([$getAttributeType(/../../../Type/Type /../../../isObjectAttribute) == 'DataProperty'] /../../../Name:$getUri(/Name /Namespace) $getExpression(/Expression))",
-    "EquivalentObjectProperties([$getAttributeType(/../../../Type/Type /../../../isObjectAttribute) == 'ObjectProperty'] /../../../Name:$getUri(/Name /Namespace) $getExpression(/Expression))",
-    "SubDataPropertyOf([$getAttributeType(/../../../Type/Type /../../../isObjectAttribute) == 'DataProperty'] /../../../Name:$getUri(/Name /Namespace) $getExpression(/Expression))",
-    "SubObjectPropertyOf([$getAttributeType(/../../../Type/Type /../../../isObjectAttribute)  == 'ObjectProperty'] /../../../Name:$getUri(/Name /Namespace) $getExpression(/Expression))",
-    "DisjointDataProperties([$getAttributeType(/../../../Type/Type /../../../isObjectAttribute) == 'DataProperty'] /../../../Name:$getUri(/Name /Namespace) $getExpression(/Expression))",
-    "DisjointObjectProperties([$getAttributeType(/../../../Type/Type /../../../isObjectAttribute)  == 'ObjectProperty'] /../../../Name:$getUri(/Name /Namespace) $getExpression(/Expression))",
-    "DisjointClasses([$value == 'true'] $getClassExpr(/eEnd/start[$count > 1]))",
-    "EquivalentClasses([$value == 'true'] $getClassExpr(/eStart/end) ObjectUnionOf($getClassExpr(/eEnd/start[$count > 1])))",
-    "AnnotationAssertion([/container:$isEmpty != true]<http://lumii.lv/2011/1.0/owlgred#Container> /Title/Name:$getUri(/Name /Namespace) $getContainer)",
-    "Declaration(NamedIndividual($getObjectExpr))",
-    "ClassAssertion($getExpression($value) $getObjectExpr)",
-    "AnnotationAssertion(rdfs:comment $getObjectExpr \"$value\")",
-    "SameIndividual($getUri($value) $getObjectExpr)",
-    "DifferentIndividuals($getUri($value) $getObjectExpr)",
-];
-
-	for(let stringAxiom = 0; stringAxiom < stringAxioms.length; stringAxiom++){
-		generateAxiom = true;
-		// console.log("stringAxioms",stringAxioms[stringAxiom]);
-		let parsed_exp = export_grammar_parser_OWLGrEd.parse(stringAxioms[stringAxiom], {});
-		// console.log("parsed_exp",parsed_exp);
-		let axiom = await concatAxiom(parsed_exp, "");
-		// console.log("axiom",axiom);
-		// console.log("-------------------------------------------");
-	}
-
-
-		// let parsed_exp = export_grammar_parser_OWLGrEd.parse(text, {});
-		// console.log("parsed_exp",parsed_exp);
-
-		// let axiom = await concatAxiom(parsed_exp, "");
-		// console.log("axiom",axiom);
-
-		var diagramId = Session.get("activeDiagram");
-		 var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
-
-		let elem_type = ElementTypes.find({diagramTypeId:active_diagram_type_id})
-		.map(function(e) {
-		  return {name: e.name, id: e["_id"]}
-		});
-
-		for(let elemType = 0; elemType < elem_type.length; elemType++){
-
-			if(elem_type[elemType]["name"] === "Class"){
-				var elems = Elements.find({diagramId:diagramId, elementTypeId:elem_type[elemType]["id"]}).map(function(e) {
-				  return e["_id"]
-				});
-				for(let elem = 0; elem < elems.length; elem++){
-					const compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: elem_type[elemType]["id"]});
-					const compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: elems[elem]});
-
-					let sub_compart_type = CompartmentTypes.findOne({name: "DisjointProperties"});
-					let ct= CompartmentTypes.find({}).map(function(e) {
-					  return {name: e.name, id: e["_id"]}
-					});
-				}
-			} else if(elem_type[elemType]["name"] === "Association"){
-				var elems = Elements.find({diagramId:diagramId, elementTypeId:elem_type[elemType]["id"]}).map(function(e) {
-				  return {startElement: e.startElement, endElement: e.endElement, id: e["_id"]}
-				});
-			}
-		}
-
-	},
 });
 
 async function saveOntologyInFormatOwlgred(){
@@ -147,6 +64,7 @@ async function saveOntologyInFormatOwlgred(){
 			"Ontology": {},
 			"Class": {},
 			"ObjectProperty": {},
+			"DataProperty": [],
 			"DatatypeProperty": {},
 			"AnnotationProperty": {},
 			"NamedIndividual": {},
@@ -156,8 +74,9 @@ async function saveOntologyInFormatOwlgred(){
 
 
 	var diagramId = Session.get("activeDiagram");
-	var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
-
+	let diagram = Diagrams.findOne({_id:Session.get("activeDiagram")});
+	ontology.name = diagram.name;
+	var active_diagram_type_id = diagram["diagramTypeId"];
     //get prefix - namespace declarations
     const elem_type_namespaces = ElementTypes.findOne({name:"Namespaces", diagramTypeId:active_diagram_type_id});
     const elem_namespace = Elements.find({diagramId:diagramId, elementTypeId: elem_type_namespaces["_id"]}).map(function(e) {
@@ -167,7 +86,7 @@ async function saveOntologyInFormatOwlgred(){
     for(let namespaceElem = 0; namespaceElem < elem_namespace.length; namespaceElem++){
 
       const elemOWLGrEd = await Create_OWLGrEd_Element(elem_namespace[namespaceElem]);
-      const dafaultNamespace = await elemOWLGrEd.getCompartmentValue("Dafault Namespace");
+      const dafaultNamespace = await elemOWLGrEd.getCompartmentValue("Dafault Namespace") || "http://owlgred.lumii.lv/web/2025#";
       if(dafaultNamespace) ontology.Ontology.iri = dafaultNamespace;
       if(typeof dafaultNamespace !== "undefined" && dafaultNamespace !== null && dafaultNamespace !== "")namespaceTable[":"]=dafaultNamespace;
       const namespaces = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Namespaces declarations",  [{title:"Prefix",name:"Prefix"},
@@ -176,7 +95,10 @@ async function saveOntologyInFormatOwlgred(){
          if(namespaces[ns]["Prefix"] !== "" && namespaces[ns]["Namespace"] !== "")namespaceTable[namespaces[ns]["Prefix"]]=namespaces[ns]["Namespace"];
        }
     }
-
+	if(elem_namespace.length === 0){
+		ontology.Ontology.iri = "http://owlgred.lumii.lv/web/2025#";
+		namespaceTable[":"]="http://owlgred.lumii.lv/web/2025#";
+	}
 	let elem_type = ElementTypes.find({diagramTypeId:active_diagram_type_id})
 		.map(function(e) {
 		  return {name: e.name, id: e["_id"], exportAxioms : e["exportAxioms"]}
@@ -206,7 +128,11 @@ async function saveOntologyInFormatOwlgred(){
 				const elemOWLGrEd = await Create_OWLGrEd_Element(elems[elem]);
 				let ontologyObject;
 				if(elem_type[elemType]["name"] === "Class"){
-					const className = await elemOWLGrEd.getCompartmentValue("Name");
+					let className = await elemOWLGrEd.getCompartmentValue("Name");
+					if(!className){
+						const equivalentClasses = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("EquivalentClasses");
+						if(equivalentClasses.length> 0) className = equivalentClasses[0].EquivalentClass;
+					}
 					ontologyObject = createExportStructureElement(ontology, "Class", className);
 				}else if(elem_type[elemType]["name"] === "Generalization") {
 					const subclass = await getElementsFromPath(["start"], elemOWLGrEd);
@@ -292,8 +218,40 @@ async function saveOntologyInFormatOwlgred(){
 				}
 
 				if(elem_type[elemType]["name"] === "Class"){
-					const className = await elemOWLGrEd.getCompartmentValue("Name");
+					let className = await elemOWLGrEd.getCompartmentValue("Name");
+					const equivalentClasses = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("EquivalentClasses", [{title:"EquivalentClass",name:"EquivalentClass"}]);
+					if(!className){
+						if(equivalentClasses.length> 0) className = equivalentClasses[0].EquivalentClass;
+					}
 
+					ontologyObject = createExportStructureElement(ontology, "Class", className);
+
+					let equivalentObject = {type: "EquivalentClasses", axiom : []}
+					let isAnonymousClass = false;
+					let counter = 0;
+
+					if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
+						equivalentObject.axiom.push({IRI: await getFullName(className)});
+					} else if(className){
+						isAnonymousClass = true;
+						counter = 1;
+						let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
+						equivalentObject.axiom.push({"Expression": parsed_exp_data});
+					}
+					let eqClasses = [];
+					if(!isAnonymousClass || equivalentClasses.length > 1){
+						for(let axiom = counter; axiom < equivalentClasses.length; axiom++){
+							let name = equivalentClasses[axiom].EquivalentClass;
+							if (name && /^[a-zA-Z0-9\-_:]+$/.test(name)) {
+								eqClasses.push({IRI: await getFullName(name)});
+							} else if(name){
+								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(name, {});
+								eqClasses.push({"Expression": parsed_exp_data});
+							}
+						}
+					}
+					equivalentObject.axiom.push(eqClasses);
+					ontologyObject.push(equivalentObject);
 					const keys = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Keys");
 
 					for(let axiom = 0; axiom < keys.length; axiom++){
@@ -347,6 +305,7 @@ async function saveOntologyInFormatOwlgred(){
 
 						const attribute = attributes[axiom];
 						const attrName = await getFullName(attribute.Name);
+						ontology.DataProperty.push(attrName);
 						//Name
 						let attributeObject = {};
 						attributeObject.type = "Declaration";
@@ -930,19 +889,6 @@ async function saveOntologyInFormatOwlgred(){
 
 	console.log("OOOOOOOOOOOOOOO", ontology);
 	return ontology;
-	// generateFunctionalSyntax(ontology);
-	// generateN3Syntax(ontology, "text/turtle");
-	// generateN3Syntax(ontology, "text/n3");
-	// generateN3Syntax(ontology, "application/n-triples");
-	// generateN3Syntax(ontology, "application/trig");
-	// const mimeMap = {
-		// 'text/turtle': 'text/turtle;charset=utf-8',
-		// 'application/rdf+xml': 'application/rdf+xml;charset=utf-8',
-		// 'application/n-triples': 'application/n-triples;charset=utf-8',
-		// 'text/n3': 'text/n3;charset=utf-8',
-		// 'application/ld+json': 'application/ld+json;charset=utf-8'
-	// };
-	// generateRDFLibSyntax(ontology, "application/ld+json");
  }
 
 
@@ -960,7 +906,7 @@ function downloadTextAsFile(text, filename, mime = 'text/plain;charset=utf-8') {
 
 function guessFilename(onto, format) {
   // Try to extract ontology IRI or fallback name
-  const iri = (onto && (onto.iri || onto.IRI || onto.ontologyIRI)) || 'ontology';
+  const iri = (onto && (onto.iri || onto.IRI || onto.ontologyIRI || onto.name)) || 'ontology';
   const localName = iri.split(/[\/#]/).filter(Boolean).pop() || 'ontology';
 
   // Pick file extension by RDF serialization format
@@ -988,35 +934,10 @@ function mimeForFormat(format) {
   return mimeMap[format] || 'application/octet-stream';
 }
 
-function guessFilenameN3(onto, format) {
-  const iri = (onto && (onto.iri || onto.IRI || onto.ontologyIRI)) || 'ontology';
-  const localName = iri.split(/[\/#]/).filter(Boolean).pop() || 'ontology';
-
-  const extMap = {
-    'text/turtle': 'ttl',
-    'text/n3': 'n3',
-    'application/n-triples': 'nt',
-    'application/trig': 'trig'
-  };
-
-  const ext = extMap[format] || 'ttl';
-  return `${localName}.${ext}`;
-}
-
-function mimeForFormatN3(format) {
-  const mimeMap = {
-    'text/turtle': 'text/turtle;charset=utf-8',
-    'text/n3': 'text/n3;charset=utf-8',
-    'application/n-triples': 'application/n-triples;charset=utf-8',
-    'application/trig': 'application/trig;charset=utf-8'
-  };
-
-  return mimeMap[format] || 'text/turtle;charset=utf-8';
-}
-
 function generateRDFLibSyntax(onto,format){
 
 	const cleanObject = JSON.parse(JSON.stringify(onto));
+	// Utilities.callMeteorMethod("parseExpressionForCompletions", "");
 	Meteor.call('generateOwlRDFLib', onto, namespaceTable, format, (err, result) => {
 	  if (err) {
 		  console.error('Error generating:', err);
@@ -1030,1035 +951,6 @@ function generateRDFLibSyntax(onto,format){
 		const mime = mimeForFormat(format);
 		downloadTextAsFile(result, filename, mime);
 	});
-}
-
-function generateN3Syntax(onto, format){
-	let ontology = onto.Ontology;
-	let classes = onto.Class;
-	let annotationProperties = onto.AnnotationProperty;
-	let dataTypes = onto.DataType;
-	let objectProperties = onto.ObjectProperty;
-	let datatypeProperty = onto.DatatypeProperty;
-	let namedIndividual = onto.NamedIndividual;
-	let negativePropertyAssertion = onto.NegativePropertyAssertion;
-
-	const annotationPropertyTypes = {
-	  "rdfs:label": "http://www.w3.org/2000/01/rdf-schema#label",
-	  "rdfs:comment": "http://www.w3.org/2000/01/rdf-schema#comment",
-	  "rdfs:seeAlso": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
-	  "rdfs:isDefinedBy": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-
-	  "owl:versionInfo": "http://www.w3.org/2002/07/owl#versionInfo",
-	  "owl:priorVersion": "http://www.w3.org/2002/07/owl#priorVersion",
-	  "owl:backwardCompatibleWith": "http://www.w3.org/2002/07/owl#backwardCompatibleWith",
-	  "owl:incompatibleWith": "http://www.w3.org/2002/07/owl#incompatibleWith",
-
-	  "dc:title": "http://purl.org/dc/elements/1.1/title",
-	  "dc:creator": "http://purl.org/dc/elements/1.1/creator",
-	  "dc:description": "http://purl.org/dc/elements/1.1/description",
-
-	  "skos:definition": "http://www.w3.org/2004/02/skos/core#definition",
-	  "skos:altLabel": "http://www.w3.org/2004/02/skos/core#altLabel",
-	  "skos:prefLabel": "http://www.w3.org/2004/02/skos/core#prefLabel",
-
-	  "owl:annotatedSource": "http://www.w3.org/2002/07/owl#annotatedSource",
-	  "owl:annotatedProperty": "http://www.w3.org/2002/07/owl#annotatedProperty",
-	  "owl:annotatedTarget": "http://www.w3.org/2002/07/owl#annotatedTarget",
-
-	  "rdf:reifies": "http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies"
-	};
-
-
-
-	const { namedNode, quad, blankNode } = DataFactory;
-
-		// Create a Turtle writer
-		const writer = new Writer({ format: format, prefixes: {
-		  owl: 'http://www.w3.org/2002/07/owl#',
-		  rdfs: 'http://www.w3.org/2000/01/rdf-schema#'
-		}});
-
-		// writer.addPrefix('foaf', 'http://xmlns.com/foaf/0.1/');
-    for (const key of Object.keys(namespaceTable)){
-      if(key === ":")  writer.addPrefix("", namespaceTable[key]);
-      else writer.addPrefix(key, namespaceTable[key]);
-    }
-
-
-	for (const key of Object.keys(ontology)) {
-		if(key === "iri"){
-			writer.addQuad(
-				quad(
-				  namedNode(ontology[key]),
-				  namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-				  namedNode("http://www.w3.org/2002/07/owl#Ontology")
-				)
-			);
-		}else{
-		  for (const clazz of Object.keys(ontology[key])) {
-			let axiomObject = ontology[key][clazz];
-
-			if (axiomObject.type === "Annotation") {
-
-			  let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
-			  let annotationValue = axiomObject.axiom[1]?.value;
-			  let annotationLanguage = axiomObject.axiom[2]?.language;
-			  if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
-
-			  if (annotationType && annotationValue) {
-				writer.addQuad(
-				  quad(
-					namedNode(namespaceTable[":"]),
-					namedNode(annotationType),
-					literal(annotationValue)
-				  )
-				);
-			  }
-			}else if (axiomObject.type === "AnnotationAssertion") {
-			  let classIRI = axiomObject.axiom[1]?.IRI;
-			  let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
-			  let annotationValue = axiomObject.axiom[2]?.value;
-			  let annotationLanguage = axiomObject.axiom[3]?.language;
-			  if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
-
-			  if (classIRI && annotationType && annotationValue) {
-				writer.addQuad(
-				  quad(
-					namedNode(classIRI),
-					namedNode(annotationType),
-					literal(annotationValue)
-				  )
-				);
-			  }
-			}
-		  }
-		}
-	}
-
-	for (const key of Object.keys(classes)) {
-	  for (const clazz of Object.keys(classes[key])) {
-		let axiomObject = classes[key][clazz];
-
-		if (axiomObject.type === "Declaration" && axiomObject.axiom.type === "Class") {
-		  const classIRI = axiomObject.axiom.axiom.IRI;
-		  writer.addQuad(
-			quad(
-			  namedNode(classIRI),
-			  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-			  namedNode('http://www.w3.org/2002/07/owl#Class')
-			)
-		  );
-		} else if (axiomObject.type === "Declaration" && axiomObject.axiom.type === "DataProperty") {
-		  const classIRI = axiomObject.axiom.axiom.IRI;
-		  writer.addQuad(
-			quad(
-			  namedNode(classIRI),
-			  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-			  namedNode('http://www.w3.org/2002/07/owl#DatatypeProperty')
-			)
-		  );
-		} else if (axiomObject.type === "DataPropertyDomain") {
-		  const attrIRI = axiomObject.axiom[0].IRI;
-		  const classIRI = axiomObject.axiom[1].IRI;
-		  writer.addQuad(
-			quad(
-			  namedNode(attrIRI),
-			  namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
-			  namedNode(classIRI)
-			)
-		  );
-		} else if (axiomObject.type === "DataPropertyRange") {
-		  const attrIRI = axiomObject.axiom[0].IRI;
-		  const classIRI = axiomObject.axiom[1].IRI;
-		  writer.addQuad(
-			quad(
-			  namedNode(attrIRI),
-			  namedNode('http://www.w3.org/2000/01/rdf-schema#range'),
-			  namedNode(classIRI)
-			)
-		  );
-		} else if (axiomObject.type === "FunctionalDataProperty") {
-		  const classIRI = axiomObject.axiom.IRI;
-		  writer.addQuad(
-			quad(
-			  namedNode(classIRI),
-			  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-			  namedNode('http://www.w3.org/2002/07/owl#FunctionalProperty')
-			)
-		  );
-		}else if(axiomObject.type === "EquivalentDataProperties" || axiomObject.type === "DisjointDataProperties" || axiomObject.type === "SubDataPropertyOf"){
-
-			let typeList = {
-				"EquivalentDataProperties":'http://www.w3.org/2002/07/owl#equivalentProperty',
-				"SubDataPropertyOf":'http://www.w3.org/2000/01/rdf-schema#subPropertyOf',
-				"DisjointDataProperties":'http://www.w3.org/2002/07/owl#propertyDisjointWith'
-
-			}
-			// Base property (the first one)
-			const axiom = axiomObject.axiom;
-			const base = namedNode(axiom[0].IRI);
-			let predicate = typeList[axiomObject.type]
-			// Add owl:equivalentProperty triples for the rest
-			for (let i = 1; i < axiom.length; i++) {
-
-			  writer.addQuad(
-				quad(base, namedNode(predicate), namedNode(axiom[i].IRI))
-			  );
-			}
-
-		}
-		else if (
-		  axiomObject.type === "EquivalentClasses" ||
-		  axiomObject.type === "DisjointClasses" ||
-		  axiomObject.type === "SubClassOf"
-		) {
-
-		  let typeList = {
-			EquivalentClasses: 'http://www.w3.org/2002/07/owl#equivalentClass',
-			SubClassOf: 'http://www.w3.org/2000/01/rdf-schema#subClassOf',
-			DisjointClasses: 'http://www.w3.org/2002/07/owl#disjointWith'
-		  };
-		  // complementOf
-		  if (
-			typeof axiomObject.axiom.type !== "undefined" &&
-			axiomObject.axiom.type === "ObjectComplementOf"
-		  ) {
-			const complement = blankNode();
-
-			writer.addQuad(
-			  quad(
-				complement,
-				namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-				namedNode('http://www.w3.org/2002/07/owl#Class')
-			  )
-			);
-			writer.addQuad(
-			  quad(
-				complement,
-				namedNode('http://www.w3.org/2002/07/owl#complementOf'),
-				namedNode(axiomObject.axiom.axiom.IRI)
-			  )
-			);
-			writer.addQuad(
-			  quad(
-				namedNode(axiomObject.axiom.IRI),
-				namedNode('http://www.w3.org/2002/07/owl#equivalentClass'),
-				complement
-			  )
-			);
-		  } else if(typeof axiomObject.axiom[1] !== "undefined" && typeof axiomObject.axiom[1].type !== "undefined" && axiomObject.axiom[1].type.indexOf("Cardinality") !== -1){
-			  const clsIRI   = axiomObject.axiom[0].IRI;
-			  const part     = axiomObject.axiom[1];
-			  const n        = part.axiom[0].Number;
-			  const propIRI  = part.axiom[1].IRI;
-			  const dtypeIRI = part.axiom[2]?.IRI; // may be undefined
-
-			  // SubClassOf(:Class _:r)
-			  const r = blankNode();
-			  writer.addQuad(quad(namedNode(clsIRI), namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf"), r));
-			  writer.addQuad(quad(r, namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), namedNode("http://www.w3.org/2002/07/owl#Restriction")));
-			  writer.addQuad(quad(r, namedNode("http://www.w3.org/2002/07/owl#onProperty"), namedNode(propIRI)));
-
-			  // number literal must be xsd:nonNegativeInteger
-			  const nLit = literal(String(n), namedNode("http://www.w3.org/2001/XMLSchema#nonNegativeInteger"));
-
-			  // Map FS keywords to RDF predicates (qualified/unqualified)
-			  const predUnq = {
-				DataMinCardinality:  "http://www.w3.org/2002/07/owl#minCardinality",
-				DataMaxCardinality:  "http://www.w3.org/2002/07/owl#maxCardinality",
-				DataExactCardinality: "http://www.w3.org/2002/07/owl#cardinality"
-			  };
-			  const predQ = {
-				DataMinCardinality:  "http://www.w3.org/2002/07/owl#minQualifiedCardinality",
-				DataMaxCardinality:  "http://www.w3.org/2002/07/owl#maxQualifiedCardinality",
-				DataExactCardinality: "http://www.w3.org/2002/07/owl#qualifiedCardinality"
-			  };
-
-			  if (dtypeIRI) {
-				// Qualified cardinality
-				writer.addQuad(quad(r, namedNode(predQ[part.type]), nLit));
-				writer.addQuad(quad(r, namedNode("http://www.w3.org/2002/07/owl#onDataRange"), namedNode(dtypeIRI)));
-			  } else {
-				// Unqualified cardinality
-				writer.addQuad(quad(r, namedNode(predUnq[part.type]), nLit));
-				// no owl:onDataRange
-			  }
-		  } else if(axiomObject.type === "EquivalentClasses" && typeof axiomObject.axiom[1] !== "undefined" && axiomObject.axiom[1].type === "ObjectUnionOf"){
-			  // left side class
-			  const left = namedNode(axiomObject.axiom[0].IRI);
-
-			  // union operands (any count)
-			  const unionPart = axiomObject.axiom[1];
-			  if (unionPart.type !== "ObjectUnionOf") {
-				throw new Error("Expected ObjectUnionOf in axiomObject.axiom[1]");
-			  }
-			  const members = unionPart.axiom.map(x => namedNode(x.IRI));
-
-			  // create a blank node for the class expression (union)
-			  const unionBNode = blankNode();
-
-			  // _:u a owl:Class ; owl:unionOf ( members... )
-			  writer.addQuad(quad(unionBNode, namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), namedNode("http://www.w3.org/2002/07/owl#Class")));
-
-			  const listTerm = rdfList(writer, members); // or: writer.list(members)
-
-			  writer.addQuad(quad(unionBNode, namedNode("http://www.w3.org/2002/07/owl#unionOf"), listTerm));
-
-			  // :C owl:equivalentClass _:u
-			  writer.addQuad(quad(left, namedNode("http://www.w3.org/2002/07/owl#equivalentClass"), unionBNode));
-		  } else {
-			let classIRI = axiomObject.axiom[0].IRI;
-
-			if (typeof axiomObject.axiom[1].IRI === "undefined") {
-			  for (let i = 0; i < axiomObject.axiom[1].length; i++) {
-				writer.addQuad(
-				  quad(
-					namedNode(classIRI),
-					namedNode(typeList[axiomObject.type]),
-					namedNode(axiomObject.axiom[1][i].IRI)
-				  )
-				);
-			  }
-			} else if(axiomObject.axiom.length > 2){
-				// Create a blank node for the disjoint classes collection
-				const disjointCollection = blankNode();
-
-				// 1. Declare AllDisjointClasses
-				writer.addQuad(
-				  disjointCollection,
-				  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-				  namedNode('http://www.w3.org/2002/07/owl#AllDisjointClasses')
-				);
-
-				// 2. Build RDF list of classes
-				const nil = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil');
-				let list = nil;
-
-				// Process in reverse order to build list properly
-				for (let i = axiomObject.axiom.length - 1; i >= 0; i--) {
-				  const listNode = blankNode();
-				  const classIRI = namedNode(axiomObject.axiom[i].IRI);
-
-				  writer.addQuad(listNode, namedNode('rdf:first'), classIRI);
-				  writer.addQuad(listNode, namedNode('rdf:rest'), list);
-				  list = listNode;
-				}
-
-				// 3. Connect list to AllDisjointClasses
-				writer.addQuad(
-				  disjointCollection,
-				  namedNode('http://www.w3.org/2002/07/owl#members'),
-				  list
-				);
-
-			} else {
-			  writer.addQuad(
-				quad(
-				  namedNode(classIRI),
-				  namedNode(typeList[axiomObject.type]),
-				  namedNode(axiomObject.axiom[1].IRI)
-				)
-			  );
-			}
-		  }
-		} else if (axiomObject.type === "AnnotationAssertion") {
-		  let classIRI = axiomObject.axiom[1]?.IRI;
-		  let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
-		  let annotationValue = axiomObject.axiom[2]?.value;
-		  let annotationLanguage = axiomObject.axiom[3]?.language;
-		  if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
-
-		  if (classIRI && annotationType && annotationValue) {
-			writer.addQuad(
-			  quad(
-				namedNode(classIRI),
-				namedNode(annotationType),
-				literal(annotationValue)
-			  )
-			);
-		  }
-		} else if (axiomObject.type === "HasKey") {
-			  const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
-			  const OWL = 'http://www.w3.org/2002/07/owl#';
-			  const [cls, propsBox] = axiomObject.axiom;
-			  if (!cls?.IRI) throw new Error('HasKey: missing class IRI');
-			  if (!propsBox || !Array.isArray(propsBox.axiom) || propsBox.axiom.length === 0) {
-				throw new Error('HasKey: properties list is empty');
-			  }
-
-			  // Build list members
-			  const members = propsBox.axiom.map(p => {
-				if (p.inverseOf) {
-				  const inv = blankNode();
-				  writer.addQuad(inv, namedNode(OWL + 'inverseOf'), namedNode(p.IRI));
-				  return inv;
-				} else {
-				  return namedNode(p.IRI);
-				}
-			  });
-
-			  // Build RDF list in reverse
-			  let listHead = namedNode(RDF + 'nil');
-			  for (let i = members.length - 1; i >= 0; i--) {
-				const cell = blankNode();
-				writer.addQuad(cell, namedNode(RDF + 'first'), members[i]);
-				writer.addQuad(cell, namedNode(RDF + 'rest'), listHead);
-				listHead = cell;
-			  }
-
-			  // <Class> owl:hasKey ( ... )
-			  writer.addQuad(namedNode(cls.IRI), namedNode(OWL + 'hasKey'), listHead);
-		}
-	  }
-	}
-
-	for (const key of Object.keys(dataTypes)) {
-       for (const clazz of Object.keys(dataTypes[key])) {
-		let axiomObject = dataTypes[key][clazz];
-		if (axiomObject.type === "Declaration" && axiomObject.axiom.type === "Datatype") {
-			const subject = axiomObject.axiom.axiom.IRI;
-			writer.addQuad(
-				quad(
-					namedNode(subject),
-					namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-					namedNode('http://www.w3.org/2000/01/rdf-schema#Datatype')
-				)
-			);
-		}else if(axiomObject.type === "AnnotationAssertion"){
-			let classIRI = axiomObject.axiom[1]?.IRI;
-			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
-			let annotationValue = axiomObject.axiom[2]?.value;
-			let annotationLanguage = axiomObject.axiom[3]?.language;
-		    if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
-
-			if (classIRI && annotationType && annotationValue) {
-			 writer.addQuad(
-				quad(
-				  namedNode(classIRI),
-				  namedNode(annotationType),
-				  literal(annotationValue)
-				)
-			  );
-			}
-		} else if (axiomObject.type === "DataTypeDefinition") {
-		  const dt = axiomObject.axiom[0].IRI;
-		  const dtdefinition = axiomObject.axiom[1].type;
-		  writer.addQuad(
-			quad(
-			  namedNode(dt),
-			  namedNode('http://www.w3.org/2002/07/owl#onDatatype'),
-			  namedNode(dtdefinition)
-			)
-		  );
-		}
-	}
- }
-
- for (const key of Object.keys(annotationProperties)) {
-   for (const clazz of Object.keys(annotationProperties[key])) {
-		let axiomObject = annotationProperties[key][clazz];
-		if (axiomObject.type === "Declaration" && axiomObject.axiom.type === "AnnotationProperty") {
-			const classIRI = axiomObject.axiom.axiom.IRI;
-			writer.addQuad(
-				quad(
-					namedNode(classIRI),
-					namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-					namedNode('http://www.w3.org/2002/07/owl#AnnotationProperty')
-				)
-			);
-		} else if(axiomObject.type === "AnnotationPropertyDomain" || axiomObject.type === "AnnotationPropertyRange"){
-        if(typeof axiomObject.axiom[1].IRI !== "undefined"){
-			let typeList = {
-					"AnnotationPropertyDomain":'http://www.w3.org/2000/01/rdf-schema#domain',
-					"AnnotationPropertyRange":'http://www.w3.org/2000/01/rdf-schema#range'
-				 }
-		   writer.addQuad(
-			quad(
-			  namedNode(axiomObject.axiom[0].IRI),
-			  namedNode(typeList[axiomObject.type]),
-			  namedNode(axiomObject.axiom[1].IRI)
-			)
-			);
-		}
-    } else if(axiomObject.type === "SubAnnotationPropertyOf"){
-        let subject = axiomObject.axiom[0].IRI;
-        for (let i = 0; i < axiomObject.axiom[1].length; i++) {
-          let predicate = "http://www.w3.org/2000/01/rdf-schema#subPropertyOf";
-          let object = axiomObject.axiom[1][i].IRI;
-          writer.addQuad(
-          quad(
-            namedNode(subject),
-            namedNode(predicate),
-            namedNode(object)
-          )
-          );
-        }
-
-    } else if(axiomObject.type === "AnnotationAssertion"){
-			let classIRI = axiomObject.axiom[1]?.IRI;
-			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
-			let annotationValue = axiomObject.axiom[2]?.value;
-			let annotationLanguage = axiomObject.axiom[3]?.language;
-		    if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
-
-			if (classIRI && annotationType && annotationValue) {
-			 writer.addQuad(
-				quad(
-				  namedNode(classIRI),
-				  namedNode(annotationType),
-				  literal(annotationValue)
-				)
-			  );
-			}
-		}
-	 }
-  }
-
-  for (const key of Object.keys(namedIndividual)) {
-    for (const clazz of Object.keys(namedIndividual[key])) {
-		  let axiomObject = namedIndividual[key][clazz];
-		  if (axiomObject.type === "Declaration" && axiomObject.axiom.type === "NamedIndividual") {
-        const classIRI = axiomObject.axiom.axiom.IRI;
-        writer.addQuad(
-          quad(
-            namedNode(classIRI),
-            namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            namedNode('http://www.w3.org/2002/07/owl#NamedIndividual')
-          )
-        );
-      } else if (axiomObject.type === "ClassAssertion") {
-        const subject = axiomObject.axiom[0].IRI;
-        const object = axiomObject.axiom[1].IRI;
-		if(typeof subject !== "undefined" && typeof object !== "undefined"){
-			writer.addQuad(
-			  quad(
-				namedNode(object),
-				namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-				namedNode(subject)
-			  )
-			);
-		}
-      } else if(axiomObject.type === "AnnotationAssertion"){
-        let classIRI = axiomObject.axiom[1]?.IRI;
-        let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
-        let annotationValue = axiomObject.axiom[2]?.value;
-		let annotationLanguage = axiomObject.axiom[3]?.language;
-		if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
-
-        if (classIRI && annotationType && annotationValue) {
-         writer.addQuad(
-          quad(
-            namedNode(classIRI),
-            namedNode(annotationType),
-            literal(annotationValue)
-          )
-          );
-        }
-      } else if(axiomObject.type === "SameIndividual" || axiomObject.type === "DifferentIndividuals"){
-        let typeList = {
-          "SameIndividual":'http://www.w3.org/2002/07/owl#sameAs',
-          "DifferentIndividuals":'http://www.w3.org/2002/07/owl#differentFrom'
-        }
-        let subject = axiomObject.axiom[0].IRI;
-		let predicate = typeList[axiomObject.type]
-		if(typeof axiomObject.axiom[1].IRI !== "undefined"){
-			let object = axiomObject.axiom[1].IRI;
-			  writer.addQuad(
-			  quad(
-				namedNode(subject),
-				namedNode(predicate),
-				namedNode(object)
-			  )
-			);
-		} else {
-			for (let i = 0; i < axiomObject.axiom[1].length; i++) {
-			  let object = axiomObject.axiom[1][i].IRI;
-
-			  writer.addQuad(
-			  quad(
-				namedNode(subject),
-				namedNode(predicate),
-				namedNode(object)
-			  )
-			  );
-			}
-		}
-	  } else if(axiomObject.type === "SameAsIndivids" ){
-		// Namespaces
-		const OWL = 'http://www.w3.org/2002/07/owl#';
-
-
-		// Step 1: Convert to NamedNodes
-		const individuals = axiomObject.axiom.map(x => namedNode(x.IRI));
-
-		// Step 2: Add pairwise owl:sameAs triples
-		for (let i = 0; i < individuals.length; i++) {
-		  for (let j = i + 1; j < individuals.length; j++) {
-			writer.addQuad(individuals[i], namedNode(OWL + 'sameAs'), individuals[j]);
-			writer.addQuad(individuals[j], namedNode(OWL + 'sameAs'), individuals[i]);
-		  }
-		}
-
-
-      } else if(axiomObject.type === "DifferentIndivids"){
-		// Namespaces
-		const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
-		const OWL = 'http://www.w3.org/2002/07/owl#';
-
-		// Step 1: Create a blank node for the axiom
-		const differentAxiom = blankNode();
-
-		// Step 2: Declare as owl:AllDifferent
-		writer.addQuad(
-		  differentAxiom,
-		  namedNode(RDF + 'type'),
-		  namedNode(OWL + 'AllDifferent')
-		);
-
-		// Step 3: Build RDF list of individuals (in reverse order)
-		let list = namedNode(RDF + 'nil');
-		for (let i = axiomObject.axiom.length - 1; i >= 0; i--) {
-		  const listNode = blankNode();
-		  const individualIRI = namedNode(axiomObject.axiom[i].IRI);
-
-		  writer.addQuad(listNode, namedNode(RDF + 'first'), individualIRI);
-		  writer.addQuad(listNode, namedNode(RDF + 'rest'), list);
-		  list = listNode;
-		}
-
-		// Step 4: Attach the list with owl:members
-		writer.addQuad(
-		  differentAxiom,
-		  namedNode(OWL + 'members'),
-		  list
-		);
-
-
-      } else if(axiomObject.type === "DataPropertyAssertion"){
-		  let objectLiteral;
-
-		  if (axiomObject.axiom[3] && axiomObject.axiom[3].type) {
-			objectLiteral = literal(axiomObject.axiom[2].value, namedNode(axiomObject.axiom[3].type));
-		  } else {
-			objectLiteral = literal(axiomObject.axiom[2].value);
-		  }
-
-		  writer.addQuad(
-			quad(namedNode(axiomObject.axiom[1].IRI), namedNode(axiomObject.axiom[0].IRI), objectLiteral)
-		  );
-
-
-	  } else if(axiomObject.type === "NegativeDataPropertyAssertion"){
-		const neg = blankNode();
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-								 namedNode("http://www.w3.org/2002/07/owl#NegativePropertyAssertion")));
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#sourceIndividual"),
-								 namedNode(axiomObject.axiom[1].IRI)));
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#assertionProperty"),
-								 namedNode(axiomObject.axiom[0].IRI)));
-
-		// owl:targetValue "value" [^^datatype] — datatype optional
-		let objectLiteral;
-		if (axiomObject.axiom[3] && axiomObject.axiom[3].type) {
-		  objectLiteral = literal(
-			axiomObject.axiom[2].value,
-			namedNode(axiomObject.axiom[3].type)
-		  );
-		} else {
-		  objectLiteral = literal(axiomObject.axiom[2].value);
-		}
-
-		writer.addQuad(
-		  quad(
-			neg,
-			namedNode("http://www.w3.org/2002/07/owl#targetValue"),
-			objectLiteral
-		  )
-		);
-	  } else if(axiomObject.type === "ObjectPropertyAssertion"){
-		  writer.addQuad(
-			quad(namedNode(axiomObject.axiom[1].IRI), namedNode(axiomObject.axiom[0].IRI), namedNode(axiomObject.axiom[2].IRI))
-		  );
-	  } else if(axiomObject.type === "NegativeObjectPropertyAssertion"){
-		  const neg = blankNode();
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-								 namedNode("http://www.w3.org/2002/07/owl#NegativePropertyAssertion")));
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#sourceIndividual"),
-								 namedNode(axiomObject.axiom[1].IRI)));
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#assertionProperty"),
-								 namedNode(axiomObject.axiom[0].IRI)));
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#targetIndividual"),
-								 namedNode(axiomObject.axiom[2].IRI)));
-	  }
-	 }
-  }
-
-
-	for (const key of Object.keys(objectProperties)) {
-       for (const clazz of Object.keys(objectProperties[key])) {
-		let axiomObject = objectProperties[key][clazz];
-
-		if (axiomObject.type === "Declaration" && axiomObject.axiom.type === "ObjectProperty") {
-			const classIRI = axiomObject.axiom.axiom.IRI;
-			if(typeof classIRI !== "undefined"){
-				writer.addQuad(
-					quad(
-						namedNode(classIRI),
-						namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-						namedNode('http://www.w3.org/2002/07/owl#ObjectProperty')
-					)
-				);
-			}
-		} else if(axiomObject.type === "ObjectPropertyDomain" || axiomObject.type === "ObjectPropertyRange" || axiomObject.type === "InverseObjectProperties"){
-			let axiomList = {
-				"ObjectPropertyDomain":'http://www.w3.org/2000/01/rdf-schema#domain',
-				"ObjectPropertyRange":'http://www.w3.org/2000/01/rdf-schema#range',
-				"InverseObjectProperties":'http://www.w3.org/2002/07/owl#inverseOf'
-
-			}
-			let subject = axiomObject.axiom[0].IRI;
-			let predicate = axiomList[axiomObject.type];
-			let object = axiomObject.axiom[1].IRI;
-
-			if(subject && predicate && object && typeof subject !== "undefined"&& typeof predicate !== "undefined"&& typeof object !== "undefined"){
-				writer.addQuad(
-					quad(
-						namedNode(subject),
-						namedNode(predicate),
-						namedNode(object)
-					)
-				);
-			}
-		} else if (typeof axiomObject.type !== "undefined" && axiomObject.type === "SubClassOf"){
-			if(typeof axiomObject.axiom[1] !== "undefined" && axiomObject.axiom[1].type.indexOf("Cardinality") !== -1){
-			 const clsIRI  = axiomObject.axiom[0].IRI;
-				const part    = axiomObject.axiom[1];           // type: ObjectMin/Max/ExactCardinality
-				const n       = part.axiom[0].Number;           // the number
-				const propIRI = part.axiom[1].IRI;              // object property
-				const classIRI = part.axiom[2]?.IRI;            // optional filler class for qualified form
-
-				// _:r restriction node
-				const r = blankNode();
-
-				writer.addQuad(quad(
-				  namedNode(clsIRI),
-				  namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf"),
-				  r
-				));
-
-				writer.addQuad(quad(
-				  r,
-				  namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-				  namedNode("http://www.w3.org/2002/07/owl#Restriction")
-				));
-
-				writer.addQuad(quad(
-				  r,
-				  namedNode("http://www.w3.org/2002/07/owl#onProperty"),
-				  namedNode(propIRI)
-				));
-
-				// "n"^^xsd:nonNegativeInteger
-				const nLit = literal(
-				  String(n),
-				  namedNode("http://www.w3.org/2001/XMLSchema#nonNegativeInteger")
-				);
-
-				// predicate maps for object property cardinalities
-				const predUnq = {
-				  ObjectMinCardinality:   "http://www.w3.org/2002/07/owl#minCardinality",
-				  ObjectMaxCardinality:   "http://www.w3.org/2002/07/owl#maxCardinality",
-				  ObjectExactCardinality: "http://www.w3.org/2002/07/owl#cardinality"
-				};
-
-				const predQ = {
-				  ObjectMinCardinality:   "http://www.w3.org/2002/07/owl#minQualifiedCardinality",
-				  ObjectMaxCardinality:   "http://www.w3.org/2002/07/owl#maxQualifiedCardinality",
-				  ObjectExactCardinality: "http://www.w3.org/2002/07/owl#qualifiedCardinality"
-				};
-
-				if (classIRI) {
-				  // Qualified: add *QualifiedCardinality* and owl:onClass
-				  writer.addQuad(quad(r, namedNode(predQ[part.type]), nLit));
-				  writer.addQuad(quad(
-					r,
-					namedNode("http://www.w3.org/2002/07/owl#onClass"),
-					namedNode(classIRI)
-				  ));
-				} else {
-				  // Unqualified: plain cardinality, no filler
-				  writer.addQuad(quad(r, namedNode(predUnq[part.type]), nLit));
-				}
-			} else {
-			 let axiomList = { "ObjectSomeValuesFrom":'http://www.w3.org/2002/07/owl#someValuesFrom', "ObjectAllValuesFrom":'http://www.w3.org/2002/07/owl#allValuesFrom' }
-			  const r = blankNode();
-
-			  // :A rdfs:subClassOf _:r .
-			  writer.addQuad(quad(
-				namedNode(axiomObject.axiom[0].IRI),
-				namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf"),
-				r
-			  ));
-
-			  // _:r a owl:Restriction .
-			  writer.addQuad(quad(r, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode("http://www.w3.org/2002/07/owl#Restriction")));
-
-			  // figure out onProperty target
-			  // p2 shape: axiom[1].axiom[0] = { IRI: ... }
-			  // p  shape: axiom[1].axiom[0] = { type: "ObjectInverseOf", axiom: { IRI: ... } }
-			  const propPart = axiomObject.axiom[1].axiom[0];
-			  let onPropObject;
-			  if (typeof propPart.axiom !== "undefined" && propPart.axiom.type === "ObjectInverseOf") {
-				// _:pe owl:inverseOf :propRest .
-				const pe = blankNode();
-				writer.addQuad(quad(pe, namedNode("http://www.w3.org/2002/07/owl#inverseOf"), namedNode(propPart.axiom.axiom.IRI)));
-				onPropObject = pe; // owl:onProperty points to the blank node
-
-			  } else {
-				// direct property
-				onPropObject = namedNode(propPart.IRI);
-			  }
-
-			  // _:r owl:onProperty X .
-			  writer.addQuad(quad(r, namedNode("http://www.w3.org/2002/07/owl#onProperty"), onPropObject));
-
-			  // _:r (some|all)ValuesFrom :B .
-			  const restrType = axiomObject.axiom[1].type; // "ObjectSomeValuesFrom" | "ObjectAllValuesFrom"
-			  writer.addQuad(quad(
-				r,
-				namedNode(axiomList[restrType]),
-				namedNode(axiomObject.axiom[1].axiom[1].IRI)
-			  ));
-			}
-		} else if(axiomObject.type === "EquivalentObjectProperties" || axiomObject.type === "DisjointObjectProperties" || axiomObject.type === "SubObjectPropertyOf"){
-			let typeList = {
-				"EquivalentObjectProperties":'http://www.w3.org/2002/07/owl#equivalentProperty',
-				"SubObjectPropertyOf":'http://www.w3.org/2000/01/rdf-schema#subPropertyOf',
-				"DisjointObjectProperties":'http://www.w3.org/2002/07/owl#propertyDisjointWith'
-
-			}
-			let subject = axiomObject.axiom[0].IRI;
-
-			if(typeof axiomObject.axiom[1].axiom !== "undefined" && typeof axiomObject.axiom[1].axiom.type !== "undefined" && axiomObject.axiom[1].axiom.type === "ObjectPropertyChain"){
-				const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
-				const OWL = 'http://www.w3.org/2002/07/owl#';
-
-				// build a term for each item in the chain, wrapping inverses in a bnode
-				function termFor(item) {
-				  if (item.inverseOf) {
-					const inv = blankNode();
-					writer.addQuad(inv, namedNode(OWL + 'inverseOf'), namedNode(item.IRI));
-					return inv;
-				  }
-				  return namedNode(item.IRI);
-				}
-
-				const superProp = namedNode(axiomObject.axiom[0].IRI);
-				const chainItems = axiomObject.axiom[1].axiom.axiom.map(termFor);
-
-				// helper to create an RDF list: _:h rdf:first ... ; rdf:rest ...
-				function addList(elements) {
-				  const head = blankNode();
-				  let cur = head;
-				  for (let i = 0; i < elements.length; i++) {
-					writer.addQuad(cur, namedNode(RDF + 'first'), elements[i]);
-					if (i === elements.length - 1) {
-					  writer.addQuad(cur, namedNode(RDF + 'rest'), namedNode(RDF + 'nil'));
-					} else {
-					  const next = blankNode();
-					  writer.addQuad(cur, namedNode(RDF + 'rest'), next);
-					  cur = next;
-					}
-				  }
-				  return head;
-				}
-
-				const listHead = addList(chainItems);
-				writer.addQuad(superProp, namedNode(OWL + 'propertyChainAxiom'), listHead);
-			} else {
-				for (let i = 0; i < axiomObject.axiom[1].length; i++) {
-				  let predicate = typeList[axiomObject.type]
-				  let object = axiomObject.axiom[1][i].IRI;
-				  writer.addQuad(
-					quad(
-					  namedNode(subject),
-					  namedNode(predicate),
-					  namedNode(object)
-					)
-				  );
-				}
-			}
-		} else if (axiomObject.type === "FunctionalObjectProperty" || axiomObject.type === "InverseFunctionalObjectProperty" || axiomObject.type === "SymmetricObjectProperty" || axiomObject.type === "AsymmetricObjectProperty" || axiomObject.type === "ReflexiveObjectProperty" || axiomObject.type === "IrreflexiveObjectProperty" || axiomObject.type === "TransitiveObjectProperty") {
-			const subject = axiomObject.axiom[1].IRI;
-			if(typeof axiomObject.axiom[1].IRI !== "undefined"){
-				const objectPropertyTypes = {
-				  "FunctionalObjectProperty": "http://www.w3.org/2002/07/owl#FunctionalProperty",
-				  "InverseFunctionalObjectProperty": "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
-				  "SymmetricObjectProperty": "http://www.w3.org/2002/07/owl#SymmetricProperty",
-				  "AsymmetricObjectProperty": "http://www.w3.org/2002/07/owl#AsymmetricProperty",
-				  "ReflexiveObjectProperty": "http://www.w3.org/2002/07/owl#ReflexiveProperty",
-				  "IrreflexiveObjectProperty": "http://www.w3.org/2002/07/owl#IrreflexiveProperty",
-				  "TransitiveObjectProperty": "http://www.w3.org/2002/07/owl#TransitiveProperty"
-				};
-
-				writer.addQuad(
-					quad(
-						namedNode(subject),
-						namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-						namedNode(objectPropertyTypes[axiomObject.type])
-					)
-				);
-			}
-		} else if(axiomObject.type === "AnnotationAssertion"){
-			let classIRI = axiomObject.axiom[1]?.IRI;
-			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
-			let annotationValue = axiomObject.axiom[2]?.value;
-			let annotationLanguage = axiomObject.axiom[3]?.language;
-		    if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
-
-			if (classIRI && annotationType && annotationValue) {
-			 writer.addQuad(
-				quad(
-				  namedNode(classIRI),
-				  namedNode(annotationType),
-				  literal(annotationValue)
-				)
-			  );
-
-			  // Recursive function to add annotations (with support for nesting)
-				function addAnnotationTriple(sourceSubject, sourcePredicate, sourceObject, annotation) {
-				  const axiom = blankNode();
-
-				  writer.addQuad(quad(axiom, namedNode('rdf:type'), namedNode('owl:Axiom')));
-				  writer.addQuad(quad(axiom, namedNode('owl:annotatedSource'), sourceSubject));
-				  writer.addQuad(quad(axiom, namedNode('owl:annotatedProperty'), sourcePredicate));
-				  writer.addQuad(quad(axiom, namedNode('owl:annotatedTarget'), sourceObject));
-
-				  const annotationPredicate = namedNode(annotation.IRI);
-				  const annotationObject = annotation.isIRI
-					? namedNode(annotation.value)
-					: literal(annotation.value);
-
-				  writer.addQuad(quad(axiom, annotationPredicate, annotationObject));
-
-				  // Recursively handle nested annotations
-				  if (Array.isArray(annotation.annotations)) {
-					for (const nested of annotation.annotations) {
-					  addAnnotationTriple(axiom, annotationPredicate, annotationObject, nested);
-					}
-				  }
-				}
-				// Process top-level annotations
-				if(typeof axiomObject.axiom[3].annotations !== "undefined"){
-					for (let annotation = 0; annotation < axiomObject.axiom[3].annotations.length; annotation++) {
-					  addAnnotationTriple(classIRI, annotationType, annotationValue, axiomObject.axiom[3].annotations[annotation]);
-					}
-				}
-			}
-		}
-	   }
-    }
-			// Serialize to Turtle and print
-		// writer.end((error, result) => {
-		  // if (error) console.error(error);
-		  // else console.log(result);
-		// });
-
-		writer.end((error, outputText) => {
-		  if (error) return console.error(error);
-
-		  // Guess filename and MIME based on format
-		  const filename = guessFilenameN3(onto, format);
-		  const mime = mimeForFormatN3(format);
-
-		  // Create a browser download
-		  const blob = new Blob([outputText], { type: mime });
-		  const a = document.createElement('a');
-		  a.href = URL.createObjectURL(blob);
-		  a.download = filename;
-		  document.body.appendChild(a);
-		  a.click();
-		  a.remove();
-		  URL.revokeObjectURL(a.href);
-
-		  console.log(`Download started for ${filename} (${format})`);
-		});
-
-}
-
-function generateFunctionalSyntax(onto){
-	let ontology = onto.Ontology;
-	let classes = onto.Class;
-	let annotationProperties = onto.AnnotationProperty;
-	let dataTypes = onto.DataType;
-	let objectProperties = onto.ObjectProperty;
-	let datatypeProperty = onto.DatatypeProperty;
-	let namedIndividual = onto.NamedIndividual;
-	let negativePropertyAssertion = onto.NegativePropertyAssertion;
-
-	let functionaFyntaxOntology = [];
-
-	for (const key of Object.keys(classes)) {
-       for (const clazz of Object.keys(classes[key])) {
-		   functionaFyntaxOntology.push(createFunctionalAxiom(classes[key][clazz]));
-		}
-    }
-	for (const key of Object.keys(annotationProperties)) {
-       for (const annotationProperty of Object.keys(annotationProperties[key])) {
-		   functionaFyntaxOntology.push(createFunctionalAxiom(annotationProperties[key][annotationProperty]));
-		}
-    }
-	for (const key of Object.keys(dataTypes)) {
-       for (const dt of Object.keys(dataTypes[key])) {
-		   functionaFyntaxOntology.push(createFunctionalAxiom(dataTypes[key][dt]));
-		}
-    }
-	for (const key of Object.keys(objectProperties)) {
-       for (const op of Object.keys(objectProperties[key])) {
-		   functionaFyntaxOntology.push(createFunctionalAxiom(objectProperties[key][op]));
-		}
-    }
-  for (const key of Object.keys(namedIndividual)) {
-       for (const op of Object.keys(namedIndividual[key])) {
-		   functionaFyntaxOntology.push(createFunctionalAxiom(namedIndividual[key][op]));
-		}
-    }
-
-	console.log("functionaFyntaxOntology", functionaFyntaxOntology.join("\n"));
-}
-
-function createFunctionalAxiom(axiomTable){
-	let axiomString ="";
-	let axiomsArray = [];
-	if(typeof axiomTable.axiom !== "undefined"){
-		if(axiomTable.axiom.length> 1){
-			axiomString = axiomString + axiomTable.type  + "(";
-			for(let ax = 0; ax < axiomTable.axiom.length; ax++){
-				if(axiomTable.axiom[ax].length > 1 || typeof axiomTable.axiom[ax][0] !== "undefined"){
-					for(let a = 0; a < axiomTable.axiom[ax].length; a++){
-						axiomsArray.push(axiomString + createFunctionalAxiom(axiomTable.axiom[ax][a]) + " )")
-					}
-				} else axiomString = axiomString + createFunctionalAxiom(axiomTable.axiom[ax]) + " ";
-			}
-			axiomString = axiomString + ")";
-		}
-		else axiomString = axiomString + axiomTable.type  + "(" + createFunctionalAxiom(axiomTable.axiom) + ")";
-
-	} else if(typeof axiomTable.IRI !== "undefined") axiomString = axiomString + "<"+axiomTable.IRI+">";
-	else if(typeof axiomTable.axiomSymbol !== "undefined")  axiomString = axiomString + axiomTable.axiomSymbol +" ";
-	else if(typeof axiomTable.value !== "undefined")  axiomString = axiomString + axiomTable.value;
-	else if(typeof axiomTable.language !== "undefined" && axiomTable.language !== "")  {
-		axiomString = axiomString.trimEnd() + "@" + axiomTable.language +" ";
-	}
-	if(axiomsArray.length>0) return axiomsArray.join("\n");
-	return axiomString;
 }
 
 function createExportStructureElement(object, topLeveName, name) {
@@ -2319,14 +1211,21 @@ async function createFunctionAxiom(value, ontologyObject, elemOWLGrEd, compartme
         } else if (value.functionType === "getClassExpr") {
             if (!value.pathFilter && !value.path) {
                 // ontologyObject = {"IRI": await getFullName(name, namespace)}
-                axiomPart += await getClassExpression();
-                count++;
+                 let classExpr = await getClassExpression(elemOWLGrEd);
+				 if (typeof classExpr === "undefined" || classExpr === null || classExpr === "") generateAxiom = false;
+                 else if(typeof classExpr === "string")ontologyObject = {"IRI": await getFullName(classExpr)};
+				 else {
+					 ontologyObject = {"Expression": classExpr};
+				 }
+                 count++;
             } else if (value.path && !value.path.filter) {
                let clazz = await getElementsFromPath(value.path.path, elemOWLGrEd);
                let classExpr = await getClassExpression(clazz);
-
                 if (typeof classExpr === "undefined" || classExpr === null || classExpr === "") generateAxiom = false;
-                else ontologyObject = {"IRI": await getFullName(classExpr)}
+                else if(typeof classExpr === "string")ontologyObject = {"IRI": await getFullName(classExpr)};
+				 else {
+					 ontologyObject = {"Expression": classExpr};
+				 }
 			} else if(value.path && value.path.filter){
 				let clazz = await getElementsFromPath(value.path.path.path, elemOWLGrEd);
             } else if (value.pathFilter) {
@@ -2425,10 +1324,13 @@ async function createFunctionAxiom(value, ontologyObject, elemOWLGrEd, compartme
             count++;
 		} else if (value.functionType === "getExpression") {
 			let [name, namespace] = await getNameAndNamespace(value, null, compartment, currentComp);
-			if (name) {
+
+			if (name && /^[a-zA-Z0-9\-_:]+$/.test(name)) {
 				ontologyObject = {"IRI": await getFullName(name, namespace)}
-				console.log("EEEEEEEEEEEEEEEE", ontologyObject)
 				count++;
+			} else if(name && !namespace){
+				let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(name, {});
+				ontologyObject = {"Expression": parsed_exp_data}
 			} else {
 				generateAxiom = false;
 			}
@@ -2613,30 +1515,22 @@ async function getAnnotationPropertyName(name, namespace) {
 }
 
 async function getCurrentUri(pathTable, currentComp){
-  return namespaceTable[":"]
+  return namespaceTable[":"] || "http://owlgred.lumii.lv/web/2025#"
 }
 
 async function getClassExpression(elem) {
   const elemName = await elem.getCompartmentValue("Name");
-  return elemName;
-  // get name from class
-    // if (!elem) elem = utilities.getElementFromCompartment(source);
+  if(elemName) return elemName;
+  else {
+	let equivalentClasses = await elem.getMultiCompartmentSubCompartmentValues("EquivalentClasses");
+	if(equivalentClasses.length > 0){
+		let classExpression = equivalentClasses[0].EquivalentClass;
 
-    // if (elem.find("/elemType").attr("id") === "Class") {
-        // let name = elem.find("/compartment/subCompartment:has(/compartType[id='Name'])").attr("value");
+		return class_expression_grammar_parser_OWLGrEd.parse(classExpression, {});
+	}
 
-        // if (name && name !== "") {
-            // let namespace = elem.find("/compartment/subCompartment:has(/compartType[id='Namespace'])").attr("value");
-            // return await getFullName(name, namespace);
-        // } else {
-            // let eqcl = elem.find("/compartment/subCompartment/subCompartment/subCompartment:has(/compartType[id='EquivalentClass'])").first();
-            // if (!eqcl.isEmpty()) {
-                // return MP.parseClassExpression(eqcl.attr("value"), diagram, t, classList, datatypeList);
-            // }
-        // }
-    // } else {
-        // return "";
-    // }
+  }
+
 	return "TO DO getClassExpression";
     generateAxiom = false;
     return "";
@@ -2668,7 +1562,7 @@ async function getDomainOrRange(elem){
 // }
 
 function getMultiplicity(str) {
-  str = str.trim();
+  str = str.toString().trim();
 
   // Case 1: unlimited (*)
   if (str === "*") {
@@ -2741,7 +1635,7 @@ async function getElementsFromPath(pathTable, elemOWLGrEd){
 			elemOWLGrEd = elementFromPath[0]["link"];
 			elementFromPath = elemOWLGrEd;
 		}
-	} else {
+	} else if(v === "end") {
 		if(elemOWLGrEd.obj.type === "Line") {
 			elementFromPath = await elemOWLGrEd.getEndElement();
 			elemOWLGrEd = elementFromPath;
@@ -2750,6 +1644,8 @@ async function getElementsFromPath(pathTable, elemOWLGrEd){
 			elemOWLGrEd = elementFromPath[0]["link"];
 			elementFromPath = elemOWLGrEd;
 		}
+	} else {
+		elementFromPath = null;
 	}
 
   }
@@ -2900,6 +1796,8 @@ function getTypeExpression(dataType) {
 
   if (foundKey) {
 	return builtInDatatypePrefixes[foundKey] + foundKey;
+  } else {
+	 return parsed_exp_data = data_range_grammar_parser_OWLGrEd.parse(dataType, {});
   }
 
   return null; // or just return dataType if you prefer
@@ -2921,39 +1819,6 @@ function removeDuplicatesById(elements) {
 
   return unique;
 }
-
-function rdfList(writer, items) {
-  // If your Writer has writer.list, you can just:
-  // return writer.list(items);
-  // Otherwise build rdf:first/rest chain:
-  if (items.length === 0) return namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
-
-  const RDF_FIRST = "http://www.w3.org/1999/02/22-rdf-syntax-ns#first";
-  const RDF_REST  = "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest";
-  const RDF_NIL   = "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil";
-
-  const head = blankNode();
-  let current = head;
-
-  for (let i = 0; i < items.length; i++) {
-    writer.addQuad(quad(current, namedNode(RDF_FIRST), items[i]));
-    if (i === items.length - 1) {
-      writer.addQuad(quad(current, namedNode(RDF_REST), namedNode(RDF_NIL)));
-    } else {
-      const next = blankNode();
-      writer.addQuad(quad(current, namedNode(RDF_REST), next));
-      current = next;
-    }
-  }
-  return head;
-}
-
-// function URIgrammar() {
-    // const grammar = new RegExp(/^<((ftp|http|https):\/\/[A-Za-z0-9\/._-]+)>$/);
-    // return grammar;
-// }
-
-
 
 export {
 }

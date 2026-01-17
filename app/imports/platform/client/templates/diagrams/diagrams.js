@@ -226,6 +226,10 @@ Template.diagramsToolbar.events({
     await Template.VQ_DSS_schema.rendered("fragment");
     $("#VQ-DSS-schema").modal("show");
   },
+  'click #loadOntologyOWLGrEd' : function(e) {
+		Dialog.destroyTooltip(e);
+		$("#load-ontology-form-owlgred").modal("show");
+  }
 });
 
 //calculates view's drop-down element visibility

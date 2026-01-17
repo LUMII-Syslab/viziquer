@@ -1,9 +1,7 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
-import { Utilities } from '/imports/platform/client/js/utilities/utils.js'
-import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes, Diagrams } from '/imports/db/platform/collections'
-import { Dialog } from '/imports/platform/client/js/interpretator/Dialog'
-import * as export_grammar_parser_OWLGrEd from '/imports/custom/owlgred/client/js/export_grammar_parser_OWLGrEd.js'
-import { Create_New_OWLGrEd_Element, Create_OWLGrEd_Element } from './OWLGrEd_Element.js';
+import { Interpreter } from '../../../../client/lib/interpreter'
+
+import { Elements, ElementTypes } from '/imports/db/platform/collections'
+import { Create_New_OWLGrEd_Element } from './OWLGrEd_Element.js';
 import { DataFactory, Writer, Parser, Store } from 'n3';
 const { namedNode, literal, quad, blankNode } = DataFactory;
 
@@ -21,14 +19,19 @@ Interpreter.customMethods({
 	let ontology = saveOntologyN3();
 	await visualizeOntology(ontology);
   },
-
-
-
 });
 
-async function loadOntololgyN3OWLGrEd(ontologyText){
+async function loadOntololgyN3OWLGrEd(ontologyText, ontologyName){
 	let ontology = saveOntologyN3(ontologyText);
 	await visualizeOntology(ontology);
+}
+
+async function loadOntololgyFromProjectN3OWLGrEd(ontologyText, ontologyName){
+	let ontology = saveOntologyN3(ontologyText);
+	// console.log("loadOntololgyFromProjectN3OWLGrEd", ontology)
+	ontology = await createOntologyStructure(ontology);
+	await Meteor.callAsync("importOntologyOWLGrEd", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, ontology, ontologyName);
+	// await visualizeOntology(ontology);
 }
 
 async function loadOntololgyRDFLibOWLGrEd(ontologyText){
@@ -42,7 +45,7 @@ async function saveOntologyRDFlib(ontologyText){
 		  return;
 		}
 
-		console.log('Output:\n', result);
+		// console.log('Output:\n', result);
 		visualizeOntology(result);
 
 	});
@@ -66,7 +69,7 @@ function saveOntologyN3(ontologyText){
 	const ontologyNode = ontologyQuads[0]?.subject;
 	// if(ontologyNode.value && !prefixes[""]) prefixes[""] = ontologyNode.value;
 	if(ontologyNode) prefixes= useOntologyPrefixAsDefault(prefixes, ontologyNode.value)
-	console.log("TTTTTTTTTTTT", prefixes)
+
 	let ontologyStructure = makeState(prefixes);
 
 	discoverEntitiesN3(store, ontologyStructure, prefixes)
@@ -75,7 +78,7 @@ function saveOntologyN3(ontologyText){
 
 	extendWithAnnotationsN3(store, ontologyStructure)
 
-	console.log("ontologyStructure3", ontologyStructure)
+	// console.log("ontologyStructure3", ontologyStructure)
 
 	return ontologyStructure
 }
@@ -1060,6 +1063,549 @@ function getBuiltInAnnotationShortName(iri, annotationProperties) {
 }
 
 
+async function createOntologyStructure(ontology){
+	let prefixes = ontology.prefixes;
+	let ontologyPrefixes = ontology.prefixes;
+	let classes = ontology.classes;
+	let createdClasses = {};
+	let restrictions = [];
+	let complementOf = [];
+	let superClasses = {};
+	let disjointClasses = [];
+	let equivalentClasses = [];
+	let differentIndivids = [];
+	let sameAsIndivids = [];
+
+	for (const iri in classes) {
+	  const cls = classes[iri];
+
+	  // createdClasses[iri] = cl;
+	  for(let an = 0; an < cls.annotations.length; an++){
+		  let annotation = cls.annotations[an];
+		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
+		  let value = annotation.v;
+		  let language = annotation.lang || "";
+		  if(value !== null && annotationType !== null){
+			cls.annotations[an] = [
+				  {name:"AnnotationType",value:annotationType},
+				  {name:"Value",value:value},
+				  {name:"Language",value:language},
+				]
+		  }
+	  }
+
+	  for(let r = 0; r < cls.restrictions.length; r++){
+		  let restriction = cls.restrictions[r];
+		  // restriction some/only
+		  if(restriction.allValuesFrom !== null || restriction.someValuesFrom !== null){
+			  restriction["subject"] = iri;
+			  restriction["onClass"] = restriction.someValuesFrom || restriction.allValuesFrom;
+			  restrictions.push(restriction);
+		  } else {
+			  //object property cardinality
+			  if(restriction.onClass != null && restriction.onProperty != null
+			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
+			  && iri === ontology.objectProperties[restriction.onProperty].domain[0] && restriction.onClass === ontology.objectProperties[restriction.onProperty].range[0]
+			  ){
+				let multiplicity = formatCardinalityRange(restriction);
+				if(multiplicity !== null){
+					ontology.objectProperties[restriction.onProperty].multiplicity = multiplicity;
+				}
+			  // data property cardinality
+			  // }else if(restriction.onDataRange != null && restriction.onProperty != null
+			  }else if(restriction.onProperty != null
+			  && typeof ontology.dataProperties[restriction.onProperty] !== "undefined"
+			  && iri === ontology.dataProperties[restriction.onProperty].domain[0]
+			  ){
+				let multiplicity = formatCardinalityRange(restriction);
+				if(multiplicity !== null){
+					ontology.dataProperties[restriction.onProperty].multiplicity = multiplicity;
+				}
+			  }
+			  //restriction cardinality
+			  else if(restriction.onClass != null && restriction.onProperty != null
+			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
+			  && iri === ontology.objectProperties[restriction.onProperty].domain[0] && restriction.onClass !== ontology.objectProperties[restriction.onProperty].range[0]
+			  ){
+				  restriction["subject"] = iri;
+			      restrictions.push(restriction);
+			  }
+			  //inverse restriction cardinality
+			  else if(restriction.inverse === true && restriction.onClass != null && restriction.onProperty != null
+			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
+			  && iri === ontology.objectProperties[restriction.onProperty].range[0] && restriction.onClass === ontology.objectProperties[restriction.onProperty].domain[0]
+			  ){
+				  restriction["subject"] = iri;
+			      restrictions.push(restriction);
+			  }
+
+		  }
+	  }
+
+	  for(let r = 0; r < cls.complementOf.length; r++){
+		  let complement = {
+			  subject:iri,
+			  object:cls.complementOf[r]
+		  }
+		 complementOf.push(complement);
+
+	  }
+
+	  ontology.complementOf = complementOf;
+
+	  for(let dp = 0; dp < cls.dataProperties.length; dp++){
+		  let equivelentResult = [];
+		  let superResult = [];
+		  let disjointResult = [];
+		  let dataProperty = ontology.dataProperties[cls.dataProperties[dp]];
+		  for(let sc = 0; sc < dataProperty.superProperties.length; sc++){
+			let superProperty = dataProperty.superProperties[sc];
+			const propertyValue = ontology.dataProperties[superProperty]?.prefixed || iriToPrefixed(superProperty, ontologyPrefixes);
+
+			if (propertyValue) {
+				superResult.push({
+				  name: "super",
+				  value: propertyValue,
+				  input: "\u2286"+propertyValue,
+
+				});
+			}
+
+		  }
+		  for(let dc = 0; dc < dataProperty.disjointProperties.length; dc++){
+			let disjointProperty = dataProperty.disjointProperties[dc];
+			const propertyValue = ontology.dataProperties[disjointProperty]?.prefixed || iriToPrefixed(disjointProperty, ontologyPrefixes);
+
+			if (propertyValue) {
+				disjointResult.push({
+				  name: "disjoint",
+				  value: propertyValue,
+				  input: "\u27C2"+propertyValue,
+
+				});
+			}
+		  }
+		  for(let ec = 0; ec < dataProperty.equivalentProperties.length; ec++){
+			let equivalentProperty = dataProperty.equivalentProperties[ec];
+			const propertyValue = ontology.dataProperties[equivalentProperty]?.prefixed || iriToPrefixed(equivalentProperty, ontologyPrefixes);
+			if (propertyValue) {
+				equivelentResult.push({
+				  name: "equivalent",
+				  value: propertyValue,
+				  input: "\u2261"+propertyValue,
+
+				});
+			}
+		  }
+
+		let equivalentProperties = `${equivelentResult.map(item => item.input).join(', ')}`;
+		let superProperties = `${superResult.map(item => item.input).join(', ')}`;
+		let disjointProperties = `${disjointResult.map(item => item.input).join(', ')}`;
+		let ch = dataProperty.characteristics;
+		let multiplicity = dataProperty.multiplicity || "";
+		let functionalProperty = "false";
+		if(ch.FunctionalProperty) functionalProperty = "true";
+
+		let annotationsResult = [];
+		if(dataProperty.label){
+			let annotationType = "Label";
+			let value = dataProperty.label;
+			let language = "";
+		  annotationsResult.push({
+			  name: "Annotation",
+			  annotationType,
+			  value,
+			  language,
+			  input: value
+			});
+	   }
+		for(let an = 0; an < dataProperty.annotations.length; an++){
+		  let annotation = dataProperty.annotations[an];
+		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
+		  let value = annotation.v;
+		  let language = annotation.lang || "";
+
+		  if (value !== null && annotationType !== null) {
+			annotationsResult.push({
+			  name: "Annotation",
+			  annotationType,
+			  value,
+			  language,
+			  input: value
+			});
+		  }
+	    }
+
+		let annotationsInput = annotationsResult.map(item => {
+		  const lang = item.language ? `@${item.language}` : '';
+		  return `${item.annotationType} : ${item.value}${lang}`;
+		}).join(', ');
+
+		let attrName = dataProperty.prefixed || " ";
+		cls.dataProperties[dp] = [
+				  {name:"Name",value:attrName},
+				  {name:"Type",value:getDatatypeLocalName(dataProperty.range[0]) || " "},
+				  {name:"Multiplicity",value:multiplicity},
+				  {name:"Annotation",input:annotationsInput, value:JSON.stringify(annotationsResult)},
+				  {name:"IsFunctional",value:functionalProperty},
+				  {name:"EquivalentProperties",input:equivalentProperties, value:JSON.stringify(equivelentResult)},
+				  {name:"SuperProperties",input:superProperties, value:JSON.stringify(superResult)},
+				  {name:"DisjointProperties",input:disjointProperties, value:JSON.stringify(disjointResult)}
+				]
+	  }
+
+	  for(let sc = 0; sc < cls.superClasses.length; sc++){
+		  let superClass = cls.superClasses[sc];
+
+		  if(classes[superClass]){
+			  if(!superClasses[superClass])  superClasses[superClass] = [];
+			  superClasses[superClass].push(iri)
+
+			  // cls.superClasses[sc] = [{name:"SuperClass",value:classes[superClass].prefixed}]
+		  }
+
+
+	  }
+	  ontology.superClasses = superClasses;
+	  for(let dc = 0; dc < cls.disjointWith.length; dc++){
+		  let disjointClass = cls.disjointWith[dc];
+		  disjointClasses.push([iri, disjointClass]);
+		  // cls.disjointWith[dc] = [{name:"DisjointClass",value:classes[disjointClass].prefixed}];
+	  }
+
+
+	  for(let ec = 0; ec < cls.equivalentClasses.length; ec++){
+		  let equivalentClass = cls.equivalentClasses[ec];
+		  equivalentClasses.push([iri, equivalentClass]);
+		  // cls.equivalentClasses[ec] = [{name:"EquivalentClass",value:classes[equivalentClass].prefixed}]
+
+	  }
+	//if parameter is graphical
+		cls.disjointWith = [];
+		cls.equivalentClasses = [];
+		cls.superClasses = [];
+
+	  for(let k = 0; k < cls.keys.length; k++){
+		  let key = cls.keys[k];
+		  let result = [];
+		  for(let p = 0; p < key.length; p++){
+			  let chain = key[p];
+			  let chainValue;
+			  if(chain.kind === "data") chainValue = ontology.dataProperties[chain.iri]?.prefixed || null;
+			  else chainValue = ontology.objectProperties[chain.iri]?.prefixed || null;
+			  if(chainValue !== null){
+				  let chainInput = chainValue;
+				  if(chain.inverse === true) chainInput = "inv("+ chainInput+")";
+				  result.push(
+					{
+						name: "Key",
+						value: chainValue,
+						input: chainInput,
+						delimiter: " + ",
+						subCompartments: [
+							{ name: "Property", value: chainValue, input: chainInput },
+							{ name: "Inverse", value: chain.inverse, input: "" }
+						]
+					})
+			  }
+
+		  }
+
+		  let chainProperties = `${result.map(item => item.input).join(' + ')}`;
+		  cls.keys[k] = [{name:"Key",input:chainProperties, value:JSON.stringify(result)}]
+	  }
+	}
+	const createdLinks = {};
+
+
+	let di = groupDisjointClasses(differentIndivids);
+
+	sameAsIndivids = groupDisjointClasses(sameAsIndivids);
+	ontology.sameAsIndivids = sameAsIndivids;
+	equivalentClasses = groupDisjointClasses(equivalentClasses);
+	ontology.equivalentClasses = equivalentClasses;
+	let dc = groupDisjointClasses(disjointClasses);
+	ontology.allDisjointClasses = ontology.allDisjointClasses.concat(dc);
+
+	// before the loop
+	const objectProperties = ontology.objectProperties;
+
+	let allDisjointProperties = ontology.allDisjointProperties;
+
+	for (let dc = 0; dc < allDisjointProperties.length; dc++) {
+	  const disjointProperties = allDisjointProperties[dc];
+	  for (let c = 0; c < disjointProperties.length; c++) {
+		for (let k = 0; k < disjointProperties.length; k++) {
+		  if(k !== c && objectProperties[disjointProperties[c]]){
+			  objectProperties[disjointProperties[c]]["disjointProperties"].push(disjointProperties[k])
+		  }
+		}
+	  }
+	}
+
+	const handled = new Set(); // to skip creating a second link for the inverse partner
+
+
+
+	// main loop
+	for (const iri in objectProperties) {
+	  if (handled.has(iri)) continue;
+
+	  const ob = objectProperties[iri];
+	  if (!(ob.domain?.length === 1 && ob.range?.length === 1)) continue;
+
+	  // Detect an inverse partner with swapped domain/range
+	  const invIri = Array.isArray(ob.inverseOf) && ob.inverseOf.length ? ob.inverseOf[0] : null;
+	  let inv = null, collapseWithInverse = false;
+
+	  if (invIri && objectProperties[invIri]) {
+		inv = objectProperties[invIri];
+
+		const obD = ob.domain[0], obR = ob.range[0];
+		const invHasSingleDR = inv.domain?.length === 1 && inv.range?.length === 1;
+		if (invHasSingleDR) {
+		  const invD = inv.domain[0], invR = inv.range[0];
+		  // same types, swapped positions
+		  collapseWithInverse = (obD === invR) && (obR === invD);
+		}
+	  }
+
+	  // Choose a primary to avoid creating two links (use lexicographic IRI order)
+	  if (collapseWithInverse) {
+		const primary = iri < invIri ? iri : invIri;
+		const secondary = iri < invIri ? invIri : iri;
+
+		if (iri !== primary) {
+		  // The secondary one is skipped; the primary will create the link
+		  handled.add(iri);
+
+		  continue;
+		}
+		// Ensure we don't process secondary later
+		handled.add(secondary);
+		objectProperties[secondary].handled = true;
+	  }
+
+
+	  // createdLinks[iri] = cl;
+	  for(let sp = 0; sp < ob.superProperties.length; sp++){
+		ob.superProperties[sp] = [{ name: "SuperProperty", value: objectProperties[ob.superProperties[sp]]?.prefixed || iriToPrefixed(ob.superProperties[sp], ontologyPrefixes)}];
+	  }
+
+	  for(let dp = 0; dp < ob.disjointProperties.length; dp++){
+		ob.disjointProperties[dp] = [{ name: "DisjointProperty", value: objectProperties[ob.disjointProperties[dp]]?.prefixed || iriToPrefixed(ob.disjointProperties[dp], ontologyPrefixes)}];
+	  }
+
+	  for(let ep = 0; ep < ob.equivalentProperties.length; ep++){
+		ob.equivalentProperties[ep] = [{ name: "EquivalentProperty", value: objectProperties[ob.equivalentProperties[ep]]?.prefixed || iriToPrefixed(ob.equivalentProperties[ep], ontologyPrefixes)}];
+	  }
+
+
+	  for(let an = 0; an < ob.annotations.length; an++){
+		  let annotation = ob.annotations[an];
+		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
+		  let value = annotation.v;
+		  let language = annotation.lang || "";
+		  if(value !== null && annotationType !== null){
+			ob.annotations[an] = [
+				  {name:"AnnotationType",value:annotationType},
+				  {name:"Value",value:value},
+				  {name:"Language",value:language},
+			]
+		  }
+	  }
+
+	  for(let pc = 0; pc < ob.propertyChains.length; pc++){
+		  let propertyChain = ob.propertyChains[pc];
+		  let result = [];
+		  for(let p = 0; p < propertyChain.length; p++){
+			  let chain = propertyChain[p];
+			  let chainValue = objectProperties[chain.iri]?.prefixed || null;
+			  if(chainValue !== null){
+				  let chainInput = chainValue;
+				  if(chain.inverse === true) chainInput = "inv("+ chainInput+")";
+				  result.push(
+					{
+						name: "PropertyChain",
+						value: chainValue,
+						input: chainInput,
+						delimiter: " o ",
+						subCompartments: [
+							{ name: "Property", value: chainValue, input: chainInput },
+							{ name: "Inverse", value: chain.inverse, input: "" }
+						]
+					})
+			  }
+
+		  }
+
+		  let chainProperties = `${result.map(item => item.input).join(' o ')}`;
+		  ob.propertyChains[pc] = [{name:"PropertyChain",input:chainProperties, value:JSON.stringify(result)}]
+	  }
+
+	  // If collapsing with inverse, record its info into *Inv compartments
+	  if (collapseWithInverse && inv) {
+		ob.prefixedInv = inv.prefixed;
+		// CharacteristicsInv
+	  if (inv.characteristics.FunctionalProperty)        ob.FunctionalPropertyInv = true;
+	  if (inv.characteristics.InverseFunctionalProperty) ob.InverseFunctionalPropertyInv = true;
+	  if (inv.characteristics.TransitiveProperty)        ob.TransitivePropertyInv = true;
+	  if (inv.characteristics.SymmetricProperty)         ob.SymmetricPropertyInv = true;
+	  if (inv.characteristics.AsymmetricProperty)        ob.AsymmetricPropertyInv = true;
+	  if (inv.characteristics.ReflexiveProperty)         ob.ReflexivePropertyInv = true;
+	  if (inv.characteristics.IrreflexiveProperty)       ob.IrreflexivePropertyInv = true;
+
+		// MultiplicityInv (if you compute/display inverse multiplicity)
+		if (inv.multiplicity) { ob.multiplicityInv = inv.multiplicity;}
+		ob.superPropertiesInv = [];
+		for (const sp of inv.superProperties || []) {
+			ob.superPropertiesInv[sp] = [ { name: "SuperProperty", value: objectProperties[sp]?.prefixed || iriToPrefixed(sp, ontologyPrefixes) } ]
+		}
+		ob.disjointPropertiesInv = [];
+		for (const sp of inv.disjointProperties || []) {
+			ob.disjointPropertiesInv[sp] = [{ name: "DisjointProperty", value: objectProperties[sp]?.prefixed || iriToPrefixed(sp, ontologyPrefixes)}]
+		}
+		ob.equivalentPropertiesInv = [];
+		for (const sp of inv.equivalentProperties || []) {
+		  ob.equivalentPropertiesInv[sp] = [{ name: "EquivalentProperty", value: objectProperties[sp]?.prefixed || iriToPrefixed(sp, ontologyPrefixes) }]
+		}
+
+		if(inv.label){
+		  ob.labelInv = [
+				  {name:"AnnotationType",value:"Label"},
+				  {name:"Value",value:inv.label},
+				  {name:"Language",value:""},
+		  ]
+	    }
+		ob.annotationsInv = [];
+		for(let an = 0; an < inv.annotations.length; an++){
+		  let annotation = inv.annotations[an];
+		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
+		  let value = annotation.v;
+		  let language = annotation.lang || "";
+		  if(value !== null && annotationType !== null){
+			  ob.annotationsInv[an] = [
+				  {name:"AnnotationType",value:annotationType},
+				  {name:"Value",value:value},
+				  {name:"Language",value:language},
+				]
+		  }
+	    }
+		ob.propertyChainsInv = [];
+		for(let pc = 0; pc < inv.propertyChains.length; pc++){
+		  let propertyChain = inv.propertyChains[pc];
+		  let result = [];
+		  for(let p = 0; p < propertyChain.length; p++){
+			  let chain = propertyChain[p];
+			  let chainValue = objectProperties[chain.iri]?.prefixed || null;
+			  if(chainValue !== null){
+				  let chainInput = chainValue;
+				  if(chain.inverse === true) chainInput = "inv("+ chainInput+")";
+				  result.push(
+					{
+						name: "PropertyChainInv",
+						value: chainValue,
+						input: chainInput,
+						delimiter: " o ",
+						subCompartments: [
+							{ name: "Property", value: chainValue, input: chainInput },
+							{ name: "Inverse", value: chain.inverse, input: "" }
+						]
+					})
+			  }
+
+		  }
+
+		  let chainProperties = `${result.map(item => item.input).join(' o ')}`;
+		  ob.propertyChainsInv[pc] = [{name:"PropertyChain",input:chainProperties, value:JSON.stringify(result)}]
+	  }
+	  }
+
+		// objectProperties[iri] = ob;
+	}
+
+	restrictions = combineRestrictions(restrictions)
+	ontology.restrictions = restrictions;
+
+	let individuals = ontology.individuals;
+	let objectPropertyAssertions = [];
+	for (const iri in individuals) {
+	  const individ = individuals[iri];
+
+	  if(individ.types.length === 1) {
+		const className = ontology.classes[individ.types[0]]?.prefixed || iriToPrefixed(individ.types[0], ontology.prefixes)
+		individ.className = className
+	  }
+
+
+	 for(let an = 0; an < individ.annotations.length; an++){
+		  let annotation = individ.annotations[an];
+		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
+		  let value = annotation.v;
+		  let language = annotation.lang || "";
+		  if(value !== null && annotationType !== null){
+			individ.annotations[an] = [
+				  {name:"AnnotationType",value:annotationType},
+				  {name:"Value",value:value},
+				  {name:"Language",value:language},
+				]
+		  }
+	  }
+	 let dataFacts = individ.dataFacts;
+	 individ.dataPropertyAssertions = [];
+	 individ.negativeDataPropertyAssertions = [];
+	 individ.differentIndividuals = [];
+	 individ.sameIndividuals = [];
+	 for(let df = 0; df < dataFacts.length; df++){
+		let dataFact = dataFacts[df];
+		let dp = ontology.dataProperties[dataFact.p]?.prefixed || iriToPrefixed(dataFact.p, ontologyPrefixes);
+		let t = getDatatypeLocalName(dataFact.dt);
+		let value = dataFact.value;
+		let lang = dataFact.lang;
+		let negative = dataFact.negative
+
+		if(dp || value){
+			if (!negative){
+				individ.dataPropertyAssertions.push([
+			   {name:"Property",value:dp},
+			   {name:"Value",value:value},
+				{name:"Type",value:t}])
+			} else {
+				individ.negativeDataPropertyAssertions.push([
+			   {name:"Property",value:dp},
+			   {name:"Value",value:value},
+				{name:"Type",value:t}])
+			}
+		}
+	 }
+	 let objFacts = individ.objFacts;
+	 for(let df = 0; df < objFacts.length; df++){
+		let objFact = objFacts[df];
+		let op = objFact.p;
+		let ontologyPrefixes = ontology.prefixes;
+		let ob = individuals[objFact.object]?.prefixed || iriToPrefixed(objFact.object, ontologyPrefixes);
+		if(op || ob){
+
+			if(op === "http://www.w3.org/2002/07/owl#differentFrom"){
+				// differentIndivids.push([ob, iri]);
+				individ.differentIndividuals.push([
+					{name:"Individual",value:ob}])
+			} else if(op === "http://www.w3.org/2002/07/owl#sameAs"){
+				// sameAsIndivids.push([ob, iri]);
+				individ.sameIndividuals.push([
+					{name:"Individual",value:ob}])
+					indiv.setHorizontalLine("HorizontalLine11");
+			} else {
+				let prefixedOP = ontology.objectProperties[op]?.prefixed || iriToPrefixed(op, ontologyPrefixes);
+				objectPropertyAssertions.push({iri: op, source:iri, target:objFact.object, prefixed:prefixedOP, negative:objFact.negative})
+			}
+		}
+	 }
+	}
+	ontology.objectPropertyAssertions = objectPropertyAssertions;
+	return ontology;
+}
+
 async function visualizeOntology(ontology){
 	console.log("OOOOOO", ontology)
 	let prefixes = ontology.prefixes;
@@ -1090,10 +1636,18 @@ async function visualizeOntology(ontology){
 	  const cls = classes[iri];
 
 	  newPosition = { height: 150, width: 150, x: x, y: y};
-	  y = y + 200;
+	  y = y + 20;
 	  let cl = await Create_New_OWLGrEd_Element(newPosition, "Class", false)
 	  cl.setCompartmentValue("Name", cls.prefixed, cls.prefixed)
 	  createdClasses[iri] = cl;
+
+	  if(cls.label){
+		  await cl.addCompartmentSubCompartments2("Annotation",[
+				  {name:"AnnotationType",value:"Label"},
+				  {name:"Value",value:cls.label},
+				  {name:"Language",value:""},
+				])
+	  }
 
 	  for(let an = 0; an < cls.annotations.length; an++){
 		  let annotation = cls.annotations[an];
@@ -1112,9 +1666,6 @@ async function visualizeOntology(ontology){
 
 	  for(let r = 0; r < cls.restrictions.length; r++){
 		  let restriction = cls.restrictions[r];
-
-
-
 		  // restriction some/only
 		  if(restriction.allValuesFrom !== null || restriction.someValuesFrom !== null){
 			  restriction["subject"] = iri;
@@ -1131,7 +1682,8 @@ async function visualizeOntology(ontology){
 					ontology.objectProperties[restriction.onProperty].multiplicity = multiplicity;
 				}
 			  // data property cardinality
-			  }else if(restriction.onDataRange != null && restriction.onProperty != null
+			  // }else if(restriction.onDataRange != null && restriction.onProperty != null
+			  }else if(restriction.onProperty != null
 			  && typeof ontology.dataProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.dataProperties[restriction.onProperty].domain[0]
 			  ){
@@ -1144,6 +1696,14 @@ async function visualizeOntology(ontology){
 			  else if(restriction.onClass != null && restriction.onProperty != null
 			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.objectProperties[restriction.onProperty].domain[0] && restriction.onClass !== ontology.objectProperties[restriction.onProperty].range[0]
+			  ){
+				  restriction["subject"] = iri;
+			      restrictions.push(restriction);
+			  }
+			  //inverse restriction cardinality
+			  else if(restriction.inverse === true && restriction.onClass != null && restriction.onProperty != null
+			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
+			  && iri === ontology.objectProperties[restriction.onProperty].range[0] && restriction.onClass === ontology.objectProperties[restriction.onProperty].domain[0]
 			  ){
 				  restriction["subject"] = iri;
 			      restrictions.push(restriction);
@@ -1168,13 +1728,13 @@ async function visualizeOntology(ontology){
 		  let dataProperty = ontology.dataProperties[cls.dataProperties[dp]];
 		  for(let sc = 0; sc < dataProperty.superProperties.length; sc++){
 			let superProperty = dataProperty.superProperties[sc];
-			const propertyValue = ontology.dataProperties[superProperty].prefixed || iriToPrefixed(superProperty, ontologyPrefixes);
+			const propertyValue = ontology.dataProperties[superProperty]?.prefixed || iriToPrefixed(superProperty, ontologyPrefixes);
 
 			if (propertyValue) {
 				superResult.push({
 				  name: "super",
 				  value: propertyValue,
-				  input: "<"+propertyValue,
+				  input: "\u2286"+propertyValue,
 
 				});
 			}
@@ -1182,25 +1742,25 @@ async function visualizeOntology(ontology){
 		  }
 		  for(let dc = 0; dc < dataProperty.disjointProperties.length; dc++){
 			let disjointProperty = dataProperty.disjointProperties[dc];
-			const propertyValue = ontology.dataProperties[disjointProperty].prefixed || iriToPrefixed(disjointProperty, ontologyPrefixes);
+			const propertyValue = ontology.dataProperties[disjointProperty]?.prefixed || iriToPrefixed(disjointProperty, ontologyPrefixes);
 
 			if (propertyValue) {
 				disjointResult.push({
 				  name: "disjoint",
 				  value: propertyValue,
-				  input: "<>"+propertyValue,
+				  input: "\u27C2"+propertyValue,
 
 				});
 			}
 		  }
 		  for(let ec = 0; ec < dataProperty.equivalentProperties.length; ec++){
 			let equivalentProperty = dataProperty.equivalentProperties[ec];
-			const propertyValue = ontology.dataProperties[equivalentProperty].prefixed || iriToPrefixed(equivalentProperty, ontologyPrefixes);
+			const propertyValue = ontology.dataProperties[equivalentProperty]?.prefixed || iriToPrefixed(equivalentProperty, ontologyPrefixes);
 			if (propertyValue) {
 				equivelentResult.push({
 				  name: "equivalent",
 				  value: propertyValue,
-				  input: "="+propertyValue,
+				  input: "\u2261"+propertyValue,
 
 				});
 			}
@@ -1215,6 +1775,18 @@ async function visualizeOntology(ontology){
 		if(ch.FunctionalProperty) functionalProperty = "true";
 
 		let annotationsResult = [];
+		if(dataProperty.label){
+			let annotationType = "Label";
+			let value = dataProperty.label;
+			let language = "";
+		  annotationsResult.push({
+			  name: "Annotation",
+			  annotationType,
+			  value,
+			  language,
+			  input: value
+			});
+	   }
 		for(let an = 0; an < dataProperty.annotations.length; an++){
 		  let annotation = dataProperty.annotations[an];
 		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
@@ -1237,9 +1809,11 @@ async function visualizeOntology(ontology){
 		  return `${item.annotationType} : ${item.value}${lang}`;
 		}).join(', ');
 
+		
+		  let attrName = dataProperty.prefixed || " ";
 		  await cl.addCompartmentSubCompartments2("Attributes",[
-				  {name:"Name",value:dataProperty.prefixed},
-				  {name:"Type",value:getDatatypeLocalName(dataProperty.range[0])},
+				  {name:"Name",value:attrName},
+				  {name:"Type",value:getDatatypeLocalName(dataProperty.range[0]) || " "},
 				  {name:"Multiplicity",value:multiplicity},
 				  {name:"Annotation",input:annotationsInput, value:JSON.stringify(annotationsResult)},
 				  {name:"IsFunctional",value:functionalProperty},
@@ -1247,6 +1821,17 @@ async function visualizeOntology(ontology){
 				  {name:"SuperProperties",input:superProperties, value:JSON.stringify(superResult)},
 				  {name:"DisjointProperties",input:disjointProperties, value:JSON.stringify(disjointResult)}
 				])
+
+		  // await cl.addCompartmentSubCompartments2("Attributes",[
+				  // {name:"Name",value:attrName},
+				  // {name:"Type",value:getDatatypeLocalName(dataProperty.range[0]) || " "},
+				  // {name:"Multiplicity",value:multiplicity},
+				  // {name:"Annotation",input:"", value:"[]"},
+				  // {name:"IsFunctional",value:functionalProperty},
+				  // {name:"EquivalentProperties",input:"", value:"[]"},
+				  // {name:"SuperProperties",input:superProperties, value:superProperties},
+				  // {name:"DisjointProperties",input:"", value:"[]"}
+				// ])
 	  }
 	  if(cls.dataProperties.length>0){
 		 await cl.setHorizontalLine("HorizontalLine6")
@@ -1320,17 +1905,16 @@ async function visualizeOntology(ontology){
 
 	}
 	const createdLinks = {};
-	// console.log("superClasses", superClasses);
 	for (const iri in superClasses) {
 		let subClasses = superClasses[iri];
 		if(subClasses.length > 1){
 		  newPosition = { height: 150, width: 150, x: x, y: y};
-		  y = y + 200;
+		  y = y + 20;
 		  let horizontalFork = await Create_New_OWLGrEd_Element(newPosition, "HorizontalFork", false)
 		  createdClasses[horizontalFork.obj._id] = horizontalFork;
 		  const locLink2 = [x+50, y+150, x+50, y+350];
 		  let genF = await Create_New_OWLGrEd_Element(locLink2, "GeneralizationToFork", true, horizontalFork, createdClasses[iri])
-		  createdLinks[genF._id] = genF;
+		  createdLinks[genF.obj._id] = genF;
 		  for(let sc = 0; sc < subClasses.length; sc++){
 			  const locLink = [x+50, y+150, x+50, y+350];
 			  let cl = await Create_New_OWLGrEd_Element(locLink, "AssocToFork", true, createdClasses[subClasses[sc]], horizontalFork)
@@ -1452,6 +2036,14 @@ async function visualizeOntology(ontology){
 		]);
 	  }
 
+	   if(ob.label){
+		  await cl.addCompartmentSubCompartments2("Annotation",[
+				  {name:"AnnotationType",value:"Label"},
+				  {name:"Value",value:ob.label},
+				  {name:"Language",value:""},
+				])
+	  }
+
 	  for(let an = 0; an < ob.annotations.length; an++){
 		  let annotation = ob.annotations[an];
 		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
@@ -1527,6 +2119,13 @@ async function visualizeOntology(ontology){
 		  ]);
 		}
 
+		if(inv.label){
+		  await cl.addCompartmentSubCompartments2("AnnotationInv",[
+				  {name:"AnnotationType",value:"Label"},
+				  {name:"Value",value:inv.label},
+				  {name:"Language",value:""},
+				])
+	    }
 		for(let an = 0; an < inv.annotations.length; an++){
 		  let annotation = inv.annotations[an];
 		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
@@ -1586,8 +2185,8 @@ async function visualizeOntology(ontology){
 		cl.setCustomStyle(style);
 	}
 
-
 	restrictions = combineRestrictions(restrictions)
+
 	let ontologyPrefixes = ontology.prefixes;
 	for (const iri in restrictions) {
 		if(typeof restrictions[iri] !== "function"){
@@ -1599,20 +2198,29 @@ async function visualizeOntology(ontology){
 		  if(ob.allValuesFrom !== null) {
 			object = ob.allValuesFrom;
 			isAllValuesFrom = true;
-		  } else object = ob.someValuesFrom;
-		  let cl = await Create_New_OWLGrEd_Element(locLink, "Restriction", true, createdClasses[ob.subject], createdClasses[object])
-		  let roleName = objectProperties[ob.onProperty].prefixed || iriToPrefixed(ob.onProperty, ontologyPrefixes)
-		  cl.setCompartmentValue("Role", roleName, roleName)
-		  createdLinks[iri] = cl;
+		  } else if(ob.someValuesFrom !== null) object = ob.someValuesFrom;
+		  else object = ob.onClass;
+		  if( ob.subject && object && createdClasses[ob.subject] && createdClasses[object]){
+			  let cl = await Create_New_OWLGrEd_Element(locLink, "Restriction", true, createdClasses[ob.subject], createdClasses[object]);
 
-		  if(isAllValuesFrom) cl.setCompartmentValueAuto("Only", "true")
-		  else cl.setCompartmentValueAuto("Some", "true")
+			  let roleName = objectProperties[ob.onProperty].prefixed || iriToPrefixed(ob.onProperty, ontologyPrefixes);
+			  let roleNameInput = roleName;
+			  if(ob.inverse) {
+				cl.setCompartmentValueAuto("IsInverse", "true");
+				roleNameInput = "inverse("+ roleNameInput + ")";
+			  }
+			  cl.setCompartmentValue("Role", roleName, roleNameInput);
+			  createdLinks[iri] = cl;
 
-	      if(ob.inverse) cl.setCompartmentValueAuto("IsInverse", "true")
+			  if(ob.allValuesFrom) cl.setCompartmentValueAuto("Only", "true");
+			  if(ob.someValuesFrom) cl.setCompartmentValueAuto("Some", "true")
 
-		  let multiplicity = formatCardinalityRange(ob);
-		  if(multiplicity !== null){
-			cl.setCompartmentValueAuto("Multiplicity", multiplicity)
+
+
+			  let multiplicity = formatCardinalityRange(ob);
+			  if(multiplicity !== null && multiplicity !== "0..*"){
+				cl.setCompartmentValueAuto("Multiplicity", multiplicity);
+			  }
 		  }
 		}
 	}
@@ -1635,13 +2243,21 @@ async function visualizeOntology(ontology){
 	  const individ = individuals[iri];
 
 	  newPosition = { height: 150, width: 150, x: x, y: y};
-	  y = y + 200;
+	  y = y + 20;
 	  let indiv = await Create_New_OWLGrEd_Element(newPosition, "Object", false)
 	  indiv.setCompartmentValue("Name", individ.prefixed, individ.prefixed)
 	  createdClasses[iri] = indiv;
 	  if(individ.types.length === 1) {
 		const className = ontology.classes[individ.types[0]]?.prefixed || iriToPrefixed(individ.types[0], ontology.prefixes)
 		indiv.setCompartmentValue("ClassName", className, ": "+className)
+	  }
+
+	  if(individ.label){
+		  await indiv.addCompartmentSubCompartments2("Annotation",[
+				  {name:"AnnotationType",value:"Label"},
+				  {name:"Value",value:individ.label},
+				  {name:"Language",value:""},
+				])
 	  }
 	 for(let an = 0; an < individ.annotations.length; an++){
 		  let annotation = individ.annotations[an];
@@ -1659,7 +2275,7 @@ async function visualizeOntology(ontology){
 	 let dataFacts = individ.dataFacts;
 	 for(let df = 0; df < dataFacts.length; df++){
 		let dataFact = dataFacts[df];
-		let dp = ontology.dataProperties[dataFact.p].prefixed || iriToPrefixed(dataFact.p, ontologyPrefixes);
+		let dp = ontology.dataProperties[dataFact.p]?.prefixed || iriToPrefixed(dataFact.p, ontologyPrefixes);
 		let t = getDatatypeLocalName(dataFact.dt);
 		let value = dataFact.value;
 		let lang = dataFact.lang;
@@ -1702,7 +2318,7 @@ async function visualizeOntology(ontology){
 			// } else if(typeof ontology.objectProperties[op] !== "undefined"){
 				// objectPropertyAssertions.push({iri: op, source:iri, target:objFact.object, prefixed:ontology.objectProperties[op].prefixed, negative:objFact.negative})
 			} else {
-				let prefixedOP = ontology.objectProperties[op].prefixed || iriToPrefixed(op, ontologyPrefixes);
+				let prefixedOP = ontology.objectProperties[op]?.prefixed || iriToPrefixed(op, ontologyPrefixes);
 				objectPropertyAssertions.push({iri: op, source:iri, target:objFact.object, prefixed:prefixedOP, negative:objFact.negative})
 			}
 		}
@@ -1719,7 +2335,7 @@ async function visualizeOntology(ontology){
 		  let propertyInput = ob.prefixed;
 		  if(ob.negative === true){
 			cl.setCompartmentValueAuto("IsNegativeAssertion", "true");
-			propertyInput = "<>"+propertyInput;
+			propertyInput = "\u27C2"+propertyInput;
 		  }
 
 		  cl.setCompartmentValue("Property", ob.prefixed, propertyInput)
@@ -1741,7 +2357,7 @@ async function visualizeOntology(ontology){
 	  const annotationProperty = annotationProperties[iri];
 
 	  newPosition = { height: 150, width: 150, x: x, y: y};
-	  y = y + 200;
+	  y = y + 20;
 	  let annotProp = await Create_New_OWLGrEd_Element(newPosition, "AnnotationProperty", false)
 	  annotProp.setCompartmentValue("Name", annotationProperty.prefixed, annotationProperty.prefixed)
 	  createdClasses[iri] = annotProp;
@@ -1768,6 +2384,15 @@ async function visualizeOntology(ontology){
 		 await annotProp.setHorizontalLine("HorizontalLine7")
 		 await annotProp.setHorizontalLine("HorizontalLine8")
 	  }
+
+	   if(annotationProperty.label){
+		  await annotProp.addCompartmentSubCompartments2("Annotation",[
+				  {name:"AnnotationType",value:"Label"},
+				  {name:"Value",value:annotationProperty.label},
+				  {name:"Language",value:""},
+				])
+	  }
+
 	  for(let an = 0; an < annotationProperty.annotations.length; an++){
 		  let annotation = annotationProperty.annotations[an];
 		  let annotationType = getBuiltInAnnotationShortName(annotation.p, ontology.annotationProperties);
@@ -1789,7 +2414,7 @@ async function visualizeOntology(ontology){
 	  const dataType = dataTypes[iri];
 
 	  newPosition = { height: 150, width: 150, x: x, y: y};
-	  y = y + 200;
+	  y = y + 20;
 	  let dt = await Create_New_OWLGrEd_Element(newPosition, "DataType", false)
 	  dt.setCompartmentValue("Name", dataType.prefixed, dataType.prefixed)
 	  createdClasses[iri] = dt;
@@ -1817,7 +2442,7 @@ async function visualizeOntology(ontology){
 	  const disjointClasses = allDisjointClasses[dc];
 	  if(disjointClasses.length > 2){
 		  newPosition = { height: 150, width: 150, x: x, y: y};
-		  y = y + 200;
+		  y = y + 20;
 		  let dt = await Create_New_OWLGrEd_Element(newPosition, "DisjointClasses", false)
 		  createdClasses[dt.obj._id] = dt;
 		  for (let c = 0; c < disjointClasses.length; c++) {
@@ -1841,7 +2466,7 @@ async function visualizeOntology(ontology){
 	  const eqClasses = equivalentClasses[dc];
 	  if(eqClasses.length > 2){
 		  newPosition = { height: 150, width: 150, x: x, y: y};
-		  y = y + 200;
+		  y = y + 20;
 		  let dt = await Create_New_OWLGrEd_Element(newPosition, "EquivalentClasses", false)
 		  createdClasses[dt.obj._id] = dt;
 		  for (let c = 0; c < eqClasses.length; c++) {
@@ -1864,7 +2489,7 @@ async function visualizeOntology(ontology){
 	  const differentIndivids = allDifferent[dc];
 	  if(differentIndivids.length > 2){
 		  newPosition = { height: 150, width: 150, x: x, y: y};
-		  y = y + 200;
+		  y = y + 20;
 		  let dt = await Create_New_OWLGrEd_Element(newPosition, "DifferentIndivids", false)
 		  createdClasses[dt.obj._id] = dt;
 		  for (let c = 0; c < differentIndivids.length; c++) {
@@ -1896,7 +2521,7 @@ async function visualizeOntology(ontology){
 			lines.push(element)
 		}
 
-		console.log(boxes, lines)
+		// console.log(boxes, lines)
 		// await delay(1500);
 		Interpreter.execute("ComputeLayout", [200, 200, boxes, lines]);
 
@@ -2279,5 +2904,6 @@ function useOntologyPrefixAsDefault(prefixes, ontologyIRI) {
 
 export {
   loadOntololgyN3OWLGrEd,
+  loadOntololgyFromProjectN3OWLGrEd,
   loadOntololgyRDFLibOWLGrEd,
 }
