@@ -9,7 +9,7 @@ import {
 } from "../../libs/platform/user_rights.js";
 import { load_configurator } from "./load_configuration.js";
 import { Users, Tools, ToolVersions } from "../../db/platform/collections.js";
-import { Services } from "../../db/custom/vq/collections.js";
+import { Services } from "../../db/platform/collections.js";
 import { is_test_user } from "./_global_functions.js";
 import { send_email } from "../../libs/platform/lib.js";
 import { config } from "dotenv";
@@ -49,7 +49,7 @@ Meteor.methods({
         var role = build_power_user_role();
 
         await Roles.createRoleAsync(role, { unlessExists: true });
-        await Roles.addUsersToRolesAsync(user_id, [role]);
+        await Roles.addUsersToRolesAsync(user_id, [ role ]);
 
         //loading configurator data
         await load_configurator(user_id);
@@ -80,13 +80,14 @@ Meteor.methods({
             {
               configurationFile: "vq/VQ_configuration_dss_latest.json",
               toolName: "ViziQuer",
+              toolGroup: "VQ",
               services: "vq/services_dss_ext2.json",
             },
           ];
         }
         console.log("configurations to be loaded:", configList);
 
-        if (!Array.isArray(configList)) configList = [configList];
+        if (!Array.isArray(configList)) configList = [ configList ];
 
         for (const cfg of configList) {
           console.log(`🧰 loading initial configuration`, cfg);
@@ -98,10 +99,11 @@ Meteor.methods({
               "Trying to load configuration from",
               `jsons/${configurationFile}`,
             );
-            const configData = JSON.parse(
+            const configurationData = JSON.parse(
               await Assets.getTextAsync(`jsons/${configurationFile}`),
             );
-            let toolName = configData?.tool?.name;
+
+            let toolName = configurationData?.tool?.name;
             if (typeof cfg === "object" && cfg.toolName) {
               toolName = cfg.toolName;
             }
@@ -116,9 +118,25 @@ Meteor.methods({
               }
             }
 
+            let toolGroup = configurationData?.toolGroup;
+            if (typeof cfg === "object" && cfg.toolGroup) {
+              toolGroup = cfg.toolGroup;
+            }
+            if (!toolGroup) {
+              // FIXME-TOOLGROUPS
+              if (configurationFile.toLowerCase.includes('owl')) {
+                toolGroup = "OWLGrEd";
+              } else if (configurationFile.toLowerCase.includes('viziquer') || configurationFile.toLowerCase.includes('vq')) {
+                toolGroup = "VQ";
+              } else {
+                toolGroup = "Unknown Tool";
+              }
+            }
+
             const new_tool = {
               // name: "Viziquer",
               name: toolName,
+              toolGroup,
               createdAt: new Date(),
               createdBy: user_id,
               documents: true,
@@ -143,7 +161,7 @@ Meteor.methods({
             await Meteor.callAsync("importAjooConfiguration", {
               toolId: tool_id,
               versionId: version_id,
-              data: configData,
+              data: configurationData,
             });
 
             if (typeof cfg === "object" && cfg.services) {
@@ -152,7 +170,7 @@ Meteor.methods({
                 const servicesData = JSON.parse(
                   await Assets.getTextAsync(`jsons/${cfg.services}`),
                 );
-                console.log("servicesData is", servicesData);
+                // console.log("servicesData is", servicesData);
                 servicesData.toolId = tool_id;
 
                 // Services.batchInsert( [ servicesData ] )
