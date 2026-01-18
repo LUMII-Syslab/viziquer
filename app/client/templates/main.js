@@ -18,6 +18,9 @@ Template.nav.helpers({
     skin: function() {
         return 6;
     },
+    toolGroup: function() {
+      return Session.get("toolGroup");
+    }
 });
 
 Template.nav.events({

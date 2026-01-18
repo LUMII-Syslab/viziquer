@@ -1,6 +1,6 @@
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 
-import { Users, DiagramTypes } from "../imports/db/platform/collections.js";
+import { Users, DiagramTypes, Projects, Tools } from "../imports/db/platform/collections.js";
 import { reset_variable } from "../imports/platform/client/js/utilities/utils.js";
 
 import "../imports/platform/client/templates/publicLayout.html";
@@ -62,6 +62,7 @@ FlowRouter.route("/enroll-account/:token", {
   },
 });
 
+// project list
 FlowRouter.route("/structure", {
   name: "structure",
   waitOn() {
@@ -74,6 +75,7 @@ FlowRouter.route("/structure", {
 
   action() {
     Session.set("activePanelItem", "structure");
+    Session.set("toolGroup", "Platform");
     this.render("mainLayout", {
       main: "structureTemplate",
       ribbon: "structureRibbon",
@@ -82,6 +84,7 @@ FlowRouter.route("/structure", {
   },
 });
 
+// diagram list in a project
 FlowRouter.route("/project/:projectId/version/:versionId/diagrams/:phrase?", {
   name: "diagrams",
   waitOn() {
@@ -110,13 +113,13 @@ FlowRouter.route("/project/:projectId/version/:versionId/diagrams/:phrase?", {
   },
 
   action(params, queryParams) {
-    Session.set("activePanelItem", "diagrams");
-    Session.set("sortBy", { name: 1 });
-
     var proj_id = params.projectId;
     var version_id = params.versionId;
-    Session.set("versionId", version_id);
 
+    Session.set("activePanelItem", "diagrams");
+    Session.set("toolGroup", "fn(proj_id)");
+    Session.set("sortBy", { name: 1 });
+    Session.set("versionId", version_id);
     var diagrams_query = build_diagrams_query(params);
     Session.set("diagrams", diagrams_query);
 
@@ -141,6 +144,7 @@ function build_diagrams_query(params) {
   return diagrams_query;
 }
 
+// diagram
 FlowRouter.route(
   "/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId/:editMode?",
   {
@@ -199,6 +203,7 @@ FlowRouter.route(
 
       //sets panel item to activate
       Session.set("activePanelItem", "diagrams");
+      Session.set("toolGroup", "fn(proj_id)");
 
       if (params.editMode) {
         Session.set("editMode", true);
@@ -298,6 +303,7 @@ FlowRouter.route(
   },
 );
 
+// project users
 FlowRouter.route("/project/:projectId/users", {
   name: "users",
   waitOn() {
@@ -338,8 +344,10 @@ FlowRouter.route("/project/:projectId/users", {
     });
   },
 
-  action() {
+  action(params) {
+    const proj_id = params.projectId;
     Session.set("activePanelItem", "users");
+    Session.set("toolGroup", "fn(proj_id)");
     this.render("mainLayout", { main: "usersTemplate", ribbon: "usersRibbon" });
     // BlazeLayout.render('mainLayout', {main: 'usersTemplate', ribbon: 'usersRibbon'});
   },
@@ -397,6 +405,7 @@ FlowRouter.route("/configurator", {
 
   action() {
     Session.set("activePanelItem", "configurator");
+    Session.set("toolGroup", "Platform");
     this.render("mainLayout", {
       main: "configuratorTemplate",
       ribbon: "configuratorRibbon",
@@ -457,6 +466,7 @@ FlowRouter.route(
 
       //sets panel item to activate
       Session.set("activePanelItem", "configurator");
+      Session.set("toolGroup", "Platform");
       Session.set("editMode", true);
       Session.set("edited", true);
       Session.set("activeElement", reset_variable());
@@ -494,6 +504,7 @@ FlowRouter.route("/tool/:_id/:versionId?", {
 
   action(params, queryParams) {
     Session.set("activePanelItem", "configurator");
+    Session.set("toolGroup", "Platform");
 
     var tool_id = params._id;
     Session.set("toolId", tool_id);
@@ -519,6 +530,7 @@ FlowRouter.route("/profile", {
 
   action(params, queryParams) {
     Session.set("activePanelItem", reset_variable());
+    Session.set("toolGroup", "Platform");
     this.render("mainLayoutWithHeader", {
       main: "profile",
       ribbon: "profileRibbon",
@@ -581,3 +593,17 @@ FlowRouter.route("*", {
     // and ReactLayout for React-based apps
   },
 });
+
+async function getToolInfoForProject(project_id) {
+  // console.log('👻', project_id)
+  // // let project = await Projects.find({ _id: project_id}).fetchAsync()
+  // let project = await Projects.findOne({ _id: project_id})
+  // console.log('👻', project)
+  // if (project) {
+  //   // let tool = await Tools.find({ _id: project.toolId }).fetchAsync()
+  //   let tool = await Tools.findOne({ _id: project.toolId })
+  //   console.log('👻', tool)
+  //   return tool.toolGroup;
+  // }
+  return "unk"
+}
