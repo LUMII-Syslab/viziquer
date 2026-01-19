@@ -401,8 +401,9 @@ Interpreter.methods({
 					height = compart_height + 5;
 				}
 			}
+			
 			//min height
-			if(height < 30) height = 30;
+			if(height < 30 && box.name !== "HorizontalLine") height = 30;
 			//min width
 			if(width < 120) width = 120;
 

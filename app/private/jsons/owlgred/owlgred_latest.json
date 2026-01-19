@@ -286,7 +286,7 @@
           "dialogSize": 2
         },
 		"layoutSettings": {
-          "layout": "UNIVERSAL",
+          "layout": "INVERSE_VERTICAL",
           "arrangeMethod": "arrangeFromScratch"
         },
         "versionId": "EtJZ6WzJNMpthfpC3",
@@ -13975,6 +13975,11 @@
                 }
               }
             ],
+			"layoutSettings": {
+              "isFlowEdge": true,
+              "startSides": 1,
+              "endSides": 4
+            },
             "direction": "ReverseDirectional",
             "isAbstract": false,
             "targetDiagramTypeId": "JR8kHJ9Mohz3FAgGC",
@@ -14086,6 +14091,12 @@
               }
             ],
             "direction": "ReverseDirectional",
+			"targetDiagramTypeId": "JR8kHJ9Mohz3FAgGC",
+			"layoutSettings": {
+              "isFlowEdge": true,
+              "startSides": 1,
+              "endSides": 4
+            },
             "isAbstract": false,
             "targetDiagramTypeId": "JR8kHJ9Mohz3FAgGC",
             "lineType": "Orthogonal"
@@ -14594,6 +14605,11 @@
             "exportAxioms": [
               "SubClassOf($getClassExpr(/start) $getClassExpr(/end))"
             ],
+			"layoutSettings": {
+              "isFlowEdge": true,
+              "startSides": 1,
+              "endSides": 4
+            },
             "lineType": "Orthogonal"
           },
           "compartmentTypes": [],
