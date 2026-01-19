@@ -1,4 +1,5 @@
 import { Contacts } from '../../db/platform/collections.js'
+import { build_from_address } from '../../platform/server/_global_functions.js'
 
 async function get_contacts(system_id) {
 	var contacts = Contacts.find({userSystemId: system_id});
