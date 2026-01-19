@@ -1443,3 +1443,41 @@ Template.migrateForm.events({
     });
   },
 });
+
+
+// START of OWLGRED_ontologySettings
+
+Template.OWLGRED_ontologySettings.onCreated(function () {
+  Session.set("msg", undefined);
+});
+
+Template.OWLGRED_ontologySettings.onDestroyed(function () {
+  Session.set("msg", undefined);
+});
+
+Template.OWLGRED_ontologySettings.events({
+  "click #OWLGRED-ok-ontology-settings": async function () {
+
+  },
+
+  "click #OWLGRED-cancel-ontology-settings": function () {
+
+  },
+
+});
+
+Template.ontologySettings.rendered = async function () {
+
+};
+
+Template.OWLGRED_ontologySettings.helpers({
+  msg: function () {
+    return Session.get("msg");
+  },
+
+  project: function () {
+    return Projects.findOne({ _id: Session.get("activeProject") });
+  },
+});
+
+// END of OWLGRED_ontologySettings

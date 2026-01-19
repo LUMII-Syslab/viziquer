@@ -111,7 +111,11 @@
         <!-- end breadcrumb -->
 
         <span class="ribbon-button-alignment pull-right1">
-        	<button id="add" class="btn btn-ribbon" data-title='{{_ "add_project"}}'>New project</button>
+        	<button id="add" class="btn btn-ribbon" data-title='{{_ "add_project"}}'>New ViziQuer project</button>
+        </span>
+		
+		<span class="ribbon-button-alignment pull-right1">
+        	<button id="OWLGRED-add" class="btn btn-ribbon" data-title='{{_ "OWLGRED_add_project"}}'>New OWLGrEd project</button>
         </span>
 
 
@@ -119,7 +123,9 @@
     <!-- END RIBBON -->
 
     {{> createProjectModal}}
-    {{> editProjectModal}}
+    {{> editProjectModal}} 
+	{{> OWLGRED_createProjectModal}}
+    {{> OWLGRED_editProjectModal}}
 
 </template>
 <!-- End of Ribbon -->
@@ -289,6 +295,129 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
                     <button id="project-edited" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+
+<template name="OWLGRED_createProjectModal">
+
+    <!-- Modal to create new project -->
+    <div id="OWLGRED-add-project" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "add_project"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <div class="col-sm-10" id="OWLGRED-project-name-required" style="display: none;">
+                                <p style="color:red;">Project name is required</p>
+                            </div>
+                        </div>
+
+						            <div class="form-group">
+                            <label for="OWLGRED-project-name" class="col-sm-2 control-label">{{_ "project_name"}}</label>
+                            <div class="col-sm-10">
+                                <input id="OWLGRED-project-name" type="text" class="form-control" autocomplete="off" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="OWLGRED-category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
+                            <div class="col-sm-10">
+                                <input id="OWLGRED-category-name" type="text" class="form-control" autocomplete="off" placeholder="" value="OWLGrEd">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="OWLGRED-icon-name" class="col-sm-2 control-label">{{_ "project_icon"}}</label>
+                            <div class="col-sm-10">
+                                <input id="OWLGRED-icon-name" type="text" class="form-control" autocomplete="off" placeholder="">
+                                <ul id="parsley-5828012968413532" class="parsley-error-list" style="display: block;">
+                                  <li class="type" style="display: list-item;">{{{_ "structure_font_awesome"}}}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tool" class="control-label col-sm-2">{{_ "project_tool"}}</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="OWLGRED-tool">
+                                    {{#each tools.tools}}
+                                        <option {{selected}} id="{{_id}}" name={{name}}>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="OWLGRED-create-project" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+<template name="OWLGRED_editProjectModal">
+
+    <!-- Modal to create new project -->
+    <div id="OWLGRED-edit-project-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "project_edit_project"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        {{#with data}}
+
+                            <div class="form-group">
+                                <label for="edit-project-name" class="col-sm-2 control-label">{{_ "project_name"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="OWLGRED-edit-project-name" type="text" class="form-control" value="{{name}}" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="edit-category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="OWLGRED-edit-category-name" type="text" class="form-control" value="{{category}}" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="edit-icon-name" class="col-sm-2 control-label">{{_ "project_icon"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="OWLGRED-edit-icon-name" type="text" class="form-control" value="{{icon}}" autocomplete="off">
+    								<ul id="parsley-5828012968413532" class="parsley-error-list" style="display: block;">
+    									<li class="type" style="display: list-item;">{{{_ "structure_font_awesome"}}}</li>
+    								</ul>
+
+                                </div>
+                            </div>
+                        {{/with}}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="OWLGRED-project-edited" type="button" class="btn btn-primary">{{_ "ok"}}</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
