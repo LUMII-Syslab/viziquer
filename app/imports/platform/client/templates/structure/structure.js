@@ -35,10 +35,17 @@ Template.structureTemplate.helpers({
 
 					category = project["category"] || "";
 				}
-
-				user_proj["styleClass"] = "bg-info";
-				if (proj_id == active_project) {
-					user_proj["styleClass"] = "bg-danger";
+				
+				if(category === "OWLGrEd"){
+					user_proj["styleClass"] = "bg-warning";
+					if (proj_id == active_project) {
+						user_proj["styleClass"] = "bg-success";
+					}
+				} else {
+					user_proj["styleClass"] = "bg-info";
+					if (proj_id == active_project) {
+						user_proj["styleClass"] = "bg-danger";
+					}
 				}
 
 				if (user_proj["role"] == "Admin" && user_proj["status"] == "Member") {
