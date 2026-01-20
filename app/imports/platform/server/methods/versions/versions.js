@@ -353,12 +353,7 @@ async function send_notifications(user_id, list) {
       };
 
       await Notifications.insertAsync(notification);
-
-      await sending_notification_email(
-        list["notificationType"],
-        receiver_id,
-        proj_name,
-      );
+      //await sending_notification_email( list["notificationType"], receiver_id, proj_name, );
     }
   });
 }

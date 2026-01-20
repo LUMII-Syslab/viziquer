@@ -1,5 +1,4 @@
 import { Contacts } from '../../db/platform/collections.js'
-import { build_from_address } from '../../platform/server/_global_functions.js'
 
 async function get_contacts(system_id) {
 	var contacts = Contacts.find({userSystemId: system_id});
@@ -93,7 +92,8 @@ async function send_email(list) {
 			return;
 
 		else {
-
+		console.log('Tiek izsaukts send_email', list)
+		return; // TODO šis man nestrādā
 			var mail_data = {
 					    	to: list["email"],
 					    	from: build_from_address(),

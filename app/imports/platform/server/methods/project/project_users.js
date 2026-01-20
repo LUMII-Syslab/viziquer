@@ -313,12 +313,7 @@ ProjectsUsers.after.remove(async function (user_id, doc) {
     var proj_name = await get_project_name(doc["projectId"]);
     var text = "You have been removed from the project " + proj_name + ".";
 
-    await sending_notification_email(
-      target_user,
-      doc["projectId"],
-      subject,
-      text,
-    );
+    //await sending_notification_email( target_user, doc["projectId"], subject, text,);
   }
 });
 ProjectsUsers.hookOptions.after.remove = { fetchPrevious: false };
