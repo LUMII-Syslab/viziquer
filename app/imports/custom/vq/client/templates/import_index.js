@@ -16,6 +16,7 @@ import '/imports/custom/vq/client/templates/SchemaTree.js'
 import '/imports/custom/vq/client/templates/VQ_DSS_schema.js'
 import '/imports/custom/vq/client/templates/VQ_DSS_custom_sparql.js'
 import '/imports/custom/vq/client/templates/fragments.js'
+import '/imports/custom/vq/client/templates/VQ_top_level_forms.js'
 
 import '/imports/custom/vq/client/templates/import_diagram_dialogs.html'
 

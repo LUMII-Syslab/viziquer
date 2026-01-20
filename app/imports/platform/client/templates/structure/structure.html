@@ -110,145 +110,26 @@
         </ol>
         <!-- end breadcrumb -->
 
-        <span class="ribbon-button-alignment pull-right1">
+        <!--<span class="ribbon-button-alignment pull-right1">
         	<button id="add" class="btn btn-ribbon" data-title='{{_ "add_project"}}'>New ViziQuer project</button>
-        </span>
-		
-		<span class="ribbon-button-alignment pull-right1">
+        </span> -->
+
+		    <span class="ribbon-button-alignment pull-right1">
         	<button id="OWLGRED-add" class="btn btn-ribbon" data-title='{{_ "OWLGRED_add_project"}}'>New OWLGrEd project</button>
         </span>
+
+        {{> VQ_structureRibbon_button}}
 
 
     </div>
     <!-- END RIBBON -->
 
-    {{> createProjectModal}}
-    {{> editProjectModal}} 
+    {{> editProjectModal}}
 	{{> OWLGRED_createProjectModal}}
     {{> OWLGRED_editProjectModal}}
 
 </template>
 <!-- End of Ribbon -->
-
-<template name="createProjectModal">
-
-    <!-- Modal to create new project -->
-    <div id="add-project" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{{_ "add_project"}}</h4>
-                </div>
-                <div class="modal-body">
-				{{#if loading }}
-					<p style="color: black; font-size: 16px;"> Loading ... </p>
-				{{else}}
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <div class="col-sm-10" id="project-name-required" style="display: none;">
-                                <p style="color:red;">Project name is required</p>
-                            </div>
-                        </div>
-
-						            <div class="form-group">
-                            <label for="project-name" class="col-sm-2 control-label">{{_ "project_name"}}</label>
-                            <div class="col-sm-10">
-                                <input id="project-name" type="text" class="form-control" autocomplete="off" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
-                            <div class="col-sm-10">
-                                <input id="category-name" type="text" class="form-control" autocomplete="off" placeholder="" value="ViziQuer">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="icon-name" class="col-sm-2 control-label">{{_ "project_icon"}}</label>
-                            <div class="col-sm-10">
-                                <input id="icon-name" type="text" class="form-control" autocomplete="off" placeholder="" value="sitemap">
-                                <ul id="parsley-5828012968413532" class="parsley-error-list" style="display: block;">
-                                  <li class="type" style="display: list-item;">{{{_ "structure_font_awesome"}}}</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="tool" class="control-label col-sm-2">{{_ "project_tool"}}</label>
-                            <div class="col-sm-10">
-                                <select class="form-control" id="tool">
-                                    {{#each tools.tools}}
-                                        <option {{selected}} id="{{_id}}" name={{name}}>{{name}}</option>
-                                    {{/each}}
-                                </select>
-                            </div>
-                        </div>
-
-                <div class="form-group">
-                  <label for="dss-schema" class="control-label col-sm-2">DSS schema</label>
-                  <div class="col-sm-10">
-                    <input id="schema-selection" type="text" list="SchemaList" class="form-control" value="" autocomplete="off" >
-                    <datalist id="SchemaList" class="datalist" >
-                      {{#each schemas}}
-                        <option mappedValue = "{{display_name}}" input="{{display_name}}" id="{{id}}">{{display_name_full}}</option>
-                      {{/each}}
-                    </datalist>
-                  </div>
-                </div>
-
-            <div class="form-group">
-							<label for="schema-tag" class="control-label col-sm-2">Schema Tag</label>
-							<div class="col-sm-10">
-								<select class="form-control" id="schema-tags" >
-									{{#each schema_tags}}
-										<option value="{{name}}">{{display_name}}</option>
-									{{/each}}
-								</select>
-							</div>
-						</div>
-
-						<div class="form-group">
-								<label for="Init" class="control-label col-sm-2">  </label>
-								<div class="col-lg-10 schema" name="Def" type = "def">
-                                    <label class="label-radio">
-                                        <input type="radio" name="stack-radio" value="Def" checked="checked">
-                                        <span class="custom-radio"></span>
-                                         <span style="{{clr}}">Start empty project (fill schema and connection later)</span>
-                                    </label>
-                                </div>
-					    </div>
-
-                        <div class="form-group">
-                            {{#each services.projects}}
-								<label for="Init" class="control-label col-sm-2">  </label>
-                                <div class="col-lg-10 schema" name="{{name}}" type = "project" link = "{{link}}" >
-                                    <label class="label-radio">
-                                        <input type="radio" name="stack-radio" value="{{name}}" {{name}} >
-                                        <span class="custom-radio"></span>
-                                         <span style="{{clr}}">{{caption}} </span>
-                                    </label>
-                                </div>
-                            {{/each}}
-                        </div>
-
-                    </form>
-					{{/if}}
-                </div>
-				{{#if loading }}
-				{{else}}
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
-                    <button id="create-project" type="button" class="btn btn-primary">{{_ "ok"}}</button>
-                </div>
-				{{/if}}
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- End of modal -->
-
-</template>
 
 <template name="editProjectModal">
 
