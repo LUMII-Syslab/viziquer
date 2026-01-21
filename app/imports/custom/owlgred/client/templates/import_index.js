@@ -10,6 +10,7 @@ import '/imports/custom/owlgred/client/templates/property_chain_form_OWLGrEd.js'
 import '/imports/custom/owlgred/client/templates/add_property_chain_form_OWLGrEd.js'
 import '/imports/custom/owlgred/client/templates/property_chain_inv_form_OWLGrEd.js'
 import '/imports/custom/owlgred/client/templates/add_property_chain_inv_form_OWLGrEd.js'
+import '/imports/custom/owlgred/client/templates/OWLGrEd_top_level_forms.js'
 
 import '/imports/custom/owlgred/client/templates/import_diagram_dialogs.html'
 
