@@ -1,6 +1,11 @@
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 
-import { Users, DiagramTypes, Projects, Tools } from "../imports/db/platform/collections.js";
+import {
+  Users,
+  DiagramTypes,
+  Projects,
+  Tools,
+} from "../imports/db/platform/collections.js";
 import { reset_variable } from "../imports/platform/client/js/utilities/utils.js";
 
 import "../imports/platform/client/templates/publicLayout.html";
@@ -9,6 +14,8 @@ import "../imports/platform/client/templates/structure/projects.js";
 import "../imports/platform/client/templates/structure/structure.js";
 import "../imports/platform/client/templates/notifications/notifications.js";
 import "../imports/platform/client/templates/panel/panel.js";
+
+const PLATFORM_TITLE = "Platform";
 
 // DISABLE QUERY STRING COMPATIBILITY
 // WITH OLDER FlowRouter AND Meteor RELEASES
@@ -75,7 +82,7 @@ FlowRouter.route("/structure", {
 
   action() {
     Session.set("activePanelItem", "structure");
-    Session.set("toolGroup", "Platform");
+    Session.set("toolGroup", PLATFORM_TITLE);
     this.render("mainLayout", {
       main: "structureTemplate",
       ribbon: "structureRibbon",
@@ -112,6 +119,15 @@ FlowRouter.route("/project/:projectId/version/:versionId/diagrams/:phrase?", {
     );
   },
 
+  async data(params) {
+    const project = await Projects.findOneAsync({ _id: params.projectId });
+    if (!project) {
+      console.log("neatradu projektu", params.projectId);
+    }
+    const tool = await Tools.findOneAsync({ _id: project.toolId });
+    return { tool };
+  },
+
   action(params, queryParams) {
     var proj_id = params.projectId;
     var version_id = params.versionId;
@@ -123,10 +139,14 @@ FlowRouter.route("/project/:projectId/version/:versionId/diagrams/:phrase?", {
     var diagrams_query = build_diagrams_query(params);
     Session.set("diagrams", diagrams_query);
 
-    this.render("mainLayout", {
-      main: "diagramsTemplate",
-      ribbon: "diagramsRibbon",
-    });
+    this.render(
+      "mainLayout",
+      {
+        main: "diagramsTemplate",
+        ribbon: "diagramsRibbon",
+      },
+      { toolGroup },
+    );
     // BlazeLayout.render('mainLayout', {main: 'diagramsTemplate', ribbon: 'diagramsRibbon'});
   },
 });
@@ -405,7 +425,7 @@ FlowRouter.route("/configurator", {
 
   action() {
     Session.set("activePanelItem", "configurator");
-    Session.set("toolGroup", "Platform");
+    Session.set("toolGroup", PLATFORM_TITLE);
     this.render("mainLayout", {
       main: "configuratorTemplate",
       ribbon: "configuratorRibbon",
@@ -466,7 +486,7 @@ FlowRouter.route(
 
       //sets panel item to activate
       Session.set("activePanelItem", "configurator");
-      Session.set("toolGroup", "Platform");
+      Session.set("toolGroup", PLATFORM_TITLE);
       Session.set("editMode", true);
       Session.set("edited", true);
       Session.set("activeElement", reset_variable());
@@ -504,7 +524,7 @@ FlowRouter.route("/tool/:_id/:versionId?", {
 
   action(params, queryParams) {
     Session.set("activePanelItem", "configurator");
-    Session.set("toolGroup", "Platform");
+    Session.set("toolGroup", PLATFORM_TITLE);
 
     var tool_id = params._id;
     Session.set("toolId", tool_id);
@@ -530,7 +550,7 @@ FlowRouter.route("/profile", {
 
   action(params, queryParams) {
     Session.set("activePanelItem", reset_variable());
-    Session.set("toolGroup", "Platform");
+    Session.set("toolGroup", PLATFORM_TITLE);
     this.render("mainLayoutWithHeader", {
       main: "profile",
       ribbon: "profileRibbon",
@@ -605,5 +625,5 @@ async function getToolInfoForProject(project_id) {
   //   console.log('👻', tool)
   //   return tool.toolGroup;
   // }
-  return "unk"
+  return "unk";
 }
