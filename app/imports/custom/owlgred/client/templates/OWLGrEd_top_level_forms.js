@@ -5,6 +5,7 @@ import { Services } from '../../../../db/platform/collections.js'
 import { Utilities, reset_variable } from '../../../../platform/client/js/utilities/utils.js'
 
 const OWLGrEdToolGroup = 'OWLGrEd';
+const OWLGrEdToolGroupName = 'OWLGrEd';
 
 Template.OWLGRED_structureRibbon_button.helpers({
   isOWLGRED: function() {
@@ -15,7 +16,9 @@ Template.OWLGRED_structureRibbon_button.helpers({
 	  else
 		  return false;
 	},
-
+  toolGroupName: function() {
+    return OWLGrEdToolGroupName;
+  },
 });
 
 Template.OWLGRED_structureRibbon_button.events({
@@ -31,6 +34,9 @@ Template.OWLGRED_structureRibbon_button.events({
 // }
 
 Template.OWLGRED_createProjectModal.helpers({
+	toolGroupName: function() {
+		return OWLGrEdToolGroupName;
+	},
 	tools: async function() {
     var tools = await Tools.find({ isDeprecated: {$ne: true},}, {$sort: {name: 1}}).fetchAsync();
 

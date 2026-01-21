@@ -2,7 +2,7 @@
 <template name="OWLGRED_structureRibbon_button">
   {{#if isOWLGRED }}
 	 <span class="ribbon-button-alignment pull-right1">
-        	<button id="OWLGRED-add" class="btn btn-ribbon" data-title='{{_ "OWLGRED_add_project"}}'>New OWLGrEd project</button>
+        	<button id="OWLGRED-add" class="btn btn-ribbon" data-title='{{_ "OWLGRED_add_project"}}'>New {{toolGroupName}} project</button>
         </span>
   {{/if}}
   {{> OWLGRED_createProjectModal}}
@@ -36,7 +36,7 @@
                         <div class="form-group">
                             <label for="OWLGRED-category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
                             <div class="col-sm-10">
-                                <input id="OWLGRED-category-name" type="text" class="form-control" autocomplete="off" placeholder="" value="OWLGrEd">
+                                <input id="OWLGRED-category-name" type="text" class="form-control" autocomplete="off" placeholder="" value={{toolGroupName}}>
                             </div>
                         </div>
 
