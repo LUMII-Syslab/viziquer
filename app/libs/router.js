@@ -145,7 +145,7 @@ FlowRouter.route("/project/:projectId/version/:versionId/diagrams/:phrase?", {
         main: "diagramsTemplate",
         ribbon: "diagramsRibbon",
       },
-      { toolGroup },
+      // { toolGroup },
     );
     // BlazeLayout.render('mainLayout', {main: 'diagramsTemplate', ribbon: 'diagramsRibbon'});
   },
