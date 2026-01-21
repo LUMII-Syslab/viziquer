@@ -114,9 +114,6 @@ Interpreter.methods({
 				};
 
 		console.log("list ", list)
-
-		// Utilities.callMeteorMethod("importAjooConfiguration", list);
-
 	},
 
 });

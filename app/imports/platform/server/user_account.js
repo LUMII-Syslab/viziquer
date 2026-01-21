@@ -118,7 +118,7 @@ Meteor.methods({
               }
             }
 
-            let toolGroup = configurationData?.toolGroup;
+            let toolGroup = configurationData?.tool?.toolGroup ?? configurationData?.toolGroup;
             if (typeof cfg === "object" && cfg.toolGroup) {
               toolGroup = cfg.toolGroup;
             }
