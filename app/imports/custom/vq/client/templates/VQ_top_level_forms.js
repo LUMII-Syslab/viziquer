@@ -5,6 +5,7 @@ import { Services } from '../../../../db/platform/collections.js'
 import { Utilities, reset_variable } from '../../../../platform/client/js/utilities/utils.js'
 
 const VQToolGroup = 'VQ';
+const VQToolGroupName = 'ViziQuer';
 
 Template.VQ_structureRibbon_button.helpers({
   isVQ: function() {
@@ -15,53 +16,59 @@ Template.VQ_structureRibbon_button.helpers({
 	  else
 		  return false;
 	},
+  toolGroupName: function() {
+    return VQToolGroupName;
+	},
 
 });
 
 Template.VQ_structureRibbon_button.events({
 	'click #VQ_add': function(e) {
 		e.preventDefault();
-		Template.createProjectModal.loading.set(false);
+		Template.VQcreateProjectModal.loading.set(false);
 		$("#add-project").modal("show");
 		return;
 	},
 });
 
-Template.createProjectModal.loading = new ReactiveVar(false);
-Template.createProjectModal.services = new ReactiveVar("");
-Template.createProjectModal.schemas = new ReactiveVar();
-Template.createProjectModal.allSchemas = new ReactiveVar();
-Template.createProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
+Template.VQcreateProjectModal.loading = new ReactiveVar(false);
+Template.VQcreateProjectModal.services = new ReactiveVar("");
+Template.VQcreateProjectModal.schemas = new ReactiveVar();
+Template.VQcreateProjectModal.allSchemas = new ReactiveVar();
+Template.VQcreateProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
 
-Template.createProjectModal.rendered = async function() {
+Template.VQcreateProjectModal.rendered = async function() {
 	var rr = await dataShapes.getOntologiesAndTags();
 	var tags = rr.tags;
 
 	if (_.size(tags) > 0) {
 		tags.unshift({name:"All", display_name: "All schemas"});
-		Template.createProjectModal.schemaTags.set(tags);
+		Template.VQcreateProjectModal.schemaTags.set(tags);
 	}
-	Template.createProjectModal.loading.set(false);
+	Template.VQcreateProjectModal.loading.set(false);
 
 	var schemas = rr.schemas;
 	if (schemas && schemas.length > 0) {
     for ( const sc of schemas ) {
       sc.display_name_full = `${sc.display_name} (${sc.sparql_url} Class count:${sc.class_count})`;
     }
-		Template.createProjectModal.allSchemas.set(schemas);
+		Template.VQcreateProjectModal.allSchemas.set(schemas);
 	}
-	Template.createProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
+	Template.VQcreateProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
 }
 
-Template.createProjectModal.helpers({
+Template.VQcreateProjectModal.helpers({
+  toolGroupName: function() {
+    return VQToolGroupName;
+	},
 	loading: function() {
-		return Template.createProjectModal.loading.get();
+		return Template.VQcreateProjectModal.loading.get();
 	},
 	schemas: function() {
-		return Template.createProjectModal.schemas.get();
+		return Template.VQcreateProjectModal.schemas.get();
 	},
 	schema_tags:function() {
-		return Template.createProjectModal.schemaTags.get();
+		return Template.VQcreateProjectModal.schemaTags.get();
 	},
 	tools: async function() {
     var tools = await Tools.find({ isDeprecated: {$ne: true},}, {$sort: {name: 1}}).fetchAsync();
@@ -96,12 +103,12 @@ Template.createProjectModal.helpers({
 		return result;
 	},
 	services: function() {
-		return Template.createProjectModal.services.get();
+		return Template.VQcreateProjectModal.services.get();
 	},
 
 });
 
-Template.createProjectModal.events({
+Template.VQcreateProjectModal.events({
 
 	'click #create-project': async function() {
 
@@ -113,7 +120,7 @@ Template.createProjectModal.events({
     const selectSchema = document.getElementById("schema-selection");
     const selection = selectSchema.value;
 
-    const selectedSchema = Template.createProjectModal.schemas.get().filter(function(f){ return f.display_name_full == selection;})
+    const selectedSchema = Template.VQcreateProjectModal.schemas.get().filter(function(f){ return f.display_name_full == selection;})
     if ( selectedSchema.length > 0 )
       schema_name = selectedSchema[0].display_name;
 
@@ -154,7 +161,7 @@ Template.createProjectModal.events({
 			//console.log("Jauna projekta taisīšana");
 
 			if ( schema_name != "" && !isProject) {
-				var schemas = Template.createProjectModal.schemas.get();
+				var schemas = Template.VQcreateProjectModal.schemas.get();
 				var schema_info = _.filter(schemas, function(o){ return o.display_name == schema_name});
 
 				if ( schema_info.length > 0 && schema_info[0].display_name != "") {
@@ -167,10 +174,10 @@ Template.createProjectModal.events({
 				}
 			}
 			//console.log("Jauna projekta taisīšana", list);
-			Template.createProjectModal.loading.set(true);
+			Template.VQcreateProjectModal.loading.set(true);
 			await Utilities.callMeteorMethodAsync("insertProject", list);
 			$("#add-project").modal("hide");
-			Template.createProjectModal.loading.set(false);
+			Template.VQcreateProjectModal.loading.set(false);
 
 		} else {
 
@@ -185,7 +192,7 @@ Template.createProjectModal.events({
 	},
 	'change #schema-tags' : function(){
 		var tag = $("#schema-tags").val();
-		Template.createProjectModal.schemas.set(getSchemas(tag));
+		Template.VQcreateProjectModal.schemas.set(getSchemas(tag));
 	},
 });
 
@@ -214,16 +221,12 @@ async function setServices (tool_id) {
 		}
 	}
 
-	Template.createProjectModal.services.set(result);
+	Template.VQcreateProjectModal.services.set(result);
 }
-
-
-
-
 
 function getSchemas(tag) {
 	let schemas = [];
-	const allSchemas = Template.createProjectModal.allSchemas.get() || [];
+	const allSchemas = Template.VQcreateProjectModal.allSchemas.get() || [];
 
 	for ( const sc of allSchemas ) {
 		if ( tag != 'All' && sc.tags.includes(tag))
@@ -238,7 +241,7 @@ function getSchemas(tag) {
 
 function filterSchemas(filter) {
 	let schemas = [];
-	const allSchemas = Template.createProjectModal.allSchemas.get() || [];
+	const allSchemas = Template.VQcreateProjectModal.allSchemas.get() || [];
 
 	for ( const sc of allSchemas ) {
     if ( sc.display_name_full.toLowerCase().indexOf(filter) > -1)
@@ -249,5 +252,5 @@ function filterSchemas(filter) {
 	return schemas;
 }
 
-//End of createProjectModal
+
 

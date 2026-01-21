@@ -2,13 +2,13 @@
 <template name="VQ_structureRibbon_button">
   {{#if isVQ }}
     <span class="ribbon-button-alignment pull-right1">
-      <button id="VQ_add" class="btn btn-ribbon" data-title='{{_ "add_project"}}'>New ViziQuer project</button>
+      <button id="VQ_add" class="btn btn-ribbon" data-title='{{_ "add_project"}}'>New {{toolGroupName}} project</button>
     </span>
   {{/if}}
-  {{> createProjectModal}}
+  {{> VQcreateProjectModal}}
 </template>
 
-<template name="createProjectModal">
+<template name="VQcreateProjectModal">
 
   <!-- Modal to create new project -->
   <div id="add-project" class="modal fade">
@@ -39,7 +39,7 @@
                       <div class="form-group">
                           <label for="category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
                           <div class="col-sm-10">
-                              <input id="category-name" type="text" class="form-control" autocomplete="off" placeholder="" value="ViziQuer">
+                              <input id="category-name" type="text" class="form-control" autocomplete="off" placeholder="" value={{toolGroupName}}>
                           </div>
                       </div>
 
