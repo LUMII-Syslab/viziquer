@@ -5550,7 +5550,7 @@
           },
 		  {
             "extensionPoint": "beforeRenderDiagram",
-            "procedure": "beforeRenderDiagram"
+            "procedure": ""
           },
           {
             "extensionPoint": "beforeDeleteCollection",
