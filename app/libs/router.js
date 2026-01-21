@@ -123,6 +123,7 @@ FlowRouter.route("/project/:projectId/version/:versionId/diagrams/:phrase?", {
     const project = await Projects.findOneAsync({ _id: params.projectId });
     if (!project) {
       console.log("neatradu projektu", params.projectId);
+      return { }
     }
     const tool = await Tools.findOneAsync({ _id: project.toolId });
     return { tool };
