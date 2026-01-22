@@ -14,10 +14,10 @@ import {
 
 Meteor.methods({
   importAjooConfiguration: async function (list) {
-    var _import = new ImportAjooConfiguration(list.toolId, list.versionId);
+    const _import = new ImportAjooConfiguration(list.toolId, list.versionId);
     await _import.init();
 
-    var data = list.data;
+    const data = list.data;
 
     await _import.importTool(data.tool);
     await _import.importDiagrams(data.presentations);
@@ -25,9 +25,9 @@ Meteor.methods({
   },
 
   addConfiguratorExportButtonInToolbar: async function () {
-    var user_id = Meteor.userId();
+    const user_id = Meteor.userId();
     if (await is_system_admin(user_id)) {
-      var diagram_type = await DiagramTypes.findOneAsync({
+      const diagram_type = await DiagramTypes.findOneAsync({
         name: "_ConfiguratorDiagramType",
       });
       if (!diagram_type) {
@@ -35,9 +35,9 @@ Meteor.methods({
         return;
       }
 
-      var toolbar = diagram_type.toolbar;
+      let toolbar = diagram_type.toolbar;
 
-      var add_export_button = {
+      const add_export_button = {
         id: generate_id(),
         icon: "fa-download",
         name: "Export configuration",
@@ -63,7 +63,7 @@ function ImportAjooConfiguration(tool_id, version_id) {
 
 ImportAjooConfiguration.prototype = {
   init: async function () {
-    var diagram_type = await DiagramTypes.findOneAsync({
+    const diagram_type = await DiagramTypes.findOneAsync({
       name: "_ConfiguratorDiagramType",
     });
     if (!diagram_type) {
@@ -89,14 +89,14 @@ ImportAjooConfiguration.prototype = {
   },
 
   importDiagramTypes: async function (diagram_types) {
-    var self = this;
+    const self = this;
 
     for (const diagram_type_in of diagram_types) {
-      var diagram_type = JSON.parse(JSON.stringify(diagram_type_in));
-      var object = diagram_type.object;
-      var diagram_type_id = object._id;
+      const diagram_type = JSON.parse(JSON.stringify(diagram_type_in));
+      const object = diagram_type.object;
+      const diagram_type_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         diagramId: self.obj_type_map[object.diagramId],
         toolId: self.toolId,
         versionId: self.versionId,
@@ -104,12 +104,12 @@ ImportAjooConfiguration.prototype = {
 
       delete object._id;
 
-      var new_diagram_type_id = await DiagramTypes.insertAsync(object);
+      const new_diagram_type_id = await DiagramTypes.insertAsync(object);
       self.obj_type_map[diagram_type_id] = new_diagram_type_id;
 
       await self.importBoxTypes(diagram_type.boxTypes);
       await self.importLineTypes(diagram_type.lineTypes);
-      await self.importPaletteButtons(diagram_type.paletteButtons); // Note: typo "Palette1uttons" should be "PaletteButtons" if this is correct in your code
+      await self.importPaletteButtons(diagram_type.paletteButtons);
       await self.importDiagramTypeDialogTypes(diagram_type);
       await self.importDiagramTypeCompartmentTypes(
         diagram_type.compartmentTypes,
@@ -120,13 +120,13 @@ ImportAjooConfiguration.prototype = {
   },
 
   importBoxTypes: async function (box_types) {
-    var self = this;
+    const self = this;
 
     for (const box_type of box_types) {
-      var object = box_type.object;
-      var box_type_id = object._id;
+      const object = box_type.object;
+      const box_type_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         diagramTypeId: self.obj_type_map[object.diagramTypeId],
         diagramId: self.obj_type_map[object.diagramId],
         elementId: self.obj_type_map[object.elementId],
@@ -137,7 +137,7 @@ ImportAjooConfiguration.prototype = {
 
       delete object._id;
 
-      var new_box_type_id = await ElementTypes.insertAsync(object);
+      const new_box_type_id = await ElementTypes.insertAsync(object);
       self.obj_type_map[box_type_id] = new_box_type_id;
 
       // If these are async, use await:
@@ -147,13 +147,13 @@ ImportAjooConfiguration.prototype = {
   },
 
   importLineTypes: async function (line_types) {
-    var self = this;
+    const self = this;
 
     for (const line_type of line_types) {
-      var object = line_type.object;
-      var line_type_id = object._id;
+      const object = line_type.object;
+      const line_type_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         diagramTypeId: self.obj_type_map[object.diagramTypeId],
         startElementTypeId: self.obj_type_map[object.startElementTypeId],
         endElementTypeId: self.obj_type_map[object.endElementTypeId],
@@ -167,7 +167,7 @@ ImportAjooConfiguration.prototype = {
 
       delete object._id;
 
-      var new_line_type_id = await ElementTypes.insertAsync(object);
+      const new_line_type_id = await ElementTypes.insertAsync(object);
       self.obj_type_map[line_type_id] = new_line_type_id;
 
       // If these are async, use await:
@@ -177,13 +177,13 @@ ImportAjooConfiguration.prototype = {
   },
 
   importCompartmentTypes: async function (compart_types) {
-    var self = this;
+    const self = this;
 
     for (const compart_type of compart_types) {
-      var object = compart_type.object;
-      var compart_type_id = object._id;
+      const object = compart_type.object;
+      const compart_type_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         diagramTypeId: self.obj_type_map[object.diagramTypeId],
         elementTypeId: self.obj_type_map[object.elementTypeId],
         diagramId: self.obj_type_map[object.diagramId],
@@ -202,20 +202,20 @@ ImportAjooConfiguration.prototype = {
         );
       }
 
-      var new_compart_type_id = await CompartmentTypes.insertAsync(object);
-      // var new_compart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
+      const new_compart_type_id = await CompartmentTypes.insertAsync(object);
+      // const new_compart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
       self.obj_type_map[compart_type_id] = new_compart_type_id;
     }
   },
 
   importDiagramTypeCompartmentTypes: async function (compart_types) {
-    var self = this;
+    const self = this;
 
     for (const compart_type of compart_types) {
-      var object = compart_type.object;
-      var compart_type_id = object._id;
+      const object = compart_type.object;
+      const compart_type_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         diagramTypeId: self.obj_type_map[object.diagramTypeId],
         diagramId: self.obj_type_map[object.diagramId],
         elementId: self.obj_type_map[object.elementId],
@@ -227,16 +227,16 @@ ImportAjooConfiguration.prototype = {
 
       delete object._id;
 
-      var new_compart_type_id = await CompartmentTypes.insertAsync(object);
-      // var new_compart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
+      const new_compart_type_id = await CompartmentTypes.insertAsync(object);
+      // const new_compart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
       self.obj_type_map[compart_type_id] = new_compart_type_id;
     }
   },
 
   recomputeSubCompartmentTypeLabels: function (sub_compart_types) {
-    var self = this;
+    const self = this;
     return _.map(sub_compart_types, function (sub_compart_type) {
-      _.extend(sub_compart_type, {
+      Object.assign(sub_compart_type, {
         label: sub_compart_type.label || sub_compart_type.name,
       });
       if (_.size(sub_compart_type.subCompartmentTypes) > 0) {
@@ -250,10 +250,10 @@ ImportAjooConfiguration.prototype = {
   },
 
   importPaletteButtons: async function (palette_buttons) {
-    var self = this;
+    const self = this;
 
     for (const object of palette_buttons) {
-      _.extend(object, {
+      Object.assign(object, {
         diagramTypeId: self.obj_type_map[object.diagramTypeId],
         toolId: self.toolId,
         versionId: self.versionId,
@@ -268,23 +268,23 @@ ImportAjooConfiguration.prototype = {
         },
       );
 
-      var count = await ElementTypes.find({
+      const count = await ElementTypes.find({
         _id: { $in: object.elementTypeIds },
         isAbstract: true,
       }).countAsync();
 
       if (count === 0) {
-        var new_palette_button_id = await PaletteButtons.insertAsync(object);
+        const new_palette_button_id = await PaletteButtons.insertAsync(object);
       }
     }
   },
 
   importDiagramTypeDialogTypes: async function (diagram_type) {
-    var self = this;
+    const self = this;
 
     for (const dialog of diagram_type.dialog) {
-      var dialog_tab_id = dialog._id;
-      _.extend(dialog, {
+      const dialog_tab_id = dialog._id;
+      Object.assign(dialog, {
         diagramTypeId: self.obj_type_map[dialog.diagramTypeId],
         diagramId: self.obj_type_map[dialog.diagramId],
         toolId: self.toolId,
@@ -293,17 +293,17 @@ ImportAjooConfiguration.prototype = {
 
       delete dialog._id;
 
-      var new_dialog_tab_id = await DialogTabs.insertAsync(dialog);
+      const new_dialog_tab_id = await DialogTabs.insertAsync(dialog);
       self.obj_type_map[dialog_tab_id] = new_dialog_tab_id;
     }
   },
 
   importDialogTypes: async function (box_type) {
-    var self = this;
+    const self = this;
 
     for (const dialog of box_type.dialog) {
-      var dialog_tab_id = dialog._id;
-      _.extend(dialog, {
+      const dialog_tab_id = dialog._id;
+      Object.assign(dialog, {
         elementTypeId: self.obj_type_map[dialog.elementTypeId],
         diagramTypeId: self.obj_type_map[dialog.diagramTypeId],
         diagramId: self.obj_type_map[dialog.diagramId],
@@ -313,7 +313,7 @@ ImportAjooConfiguration.prototype = {
 
       delete dialog._id;
 
-      var new_dialog_tab_id = await DialogTabs.insertAsync(dialog);
+      const new_dialog_tab_id = await DialogTabs.insertAsync(dialog);
       self.obj_type_map[dialog_tab_id] = new_dialog_tab_id;
     }
   },
@@ -322,15 +322,18 @@ ImportAjooConfiguration.prototype = {
   //uses self.obj_type_map dictionary jsonIds to DB Ids
   //et.object.superTypeIds in json are replaced with corresponding element Ids in DB
   importSuperTypes: function (elem_type) {
-    var self = this;
+    const self = this;
     _.each(elem_type, async function (et) {
-      var super_types = _.map(et.object.superTypeIds, function (super_type_id) {
-        return self.obj_type_map[super_type_id];
-      });
+      const super_types = _.map(
+        et.object.superTypeIds,
+        function (super_type_id) {
+          return self.obj_type_map[super_type_id];
+        },
+      );
 
       if (_.size(super_types)) {
-        var elem_id_json = et.object._id;
-        var elem_id = self.obj_type_map[elem_id_json];
+        const elem_id_json = et.object._id;
+        const elem_id = self.obj_type_map[elem_id_json];
         await ElementTypes.updateAsync(
           { _id: elem_id },
           { $set: { superTypeIds: super_types } },
@@ -340,13 +343,13 @@ ImportAjooConfiguration.prototype = {
   },
 
   importDiagrams: async function (diagrams) {
-    var self = this;
+    const self = this;
 
     for (const diagram of diagrams) {
-      var object = diagram.object;
-      var diagram_id = object._id;
+      const object = diagram.object;
+      const diagram_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         toolId: self.toolId,
         versionId: self.versionId,
         diagramTypeId: self.diagram_type._id,
@@ -354,7 +357,7 @@ ImportAjooConfiguration.prototype = {
 
       delete object._id;
 
-      var new_diagram_id = await Diagrams.insertAsync(object);
+      const new_diagram_id = await Diagrams.insertAsync(object);
       self.obj_type_map[diagram_id] = new_diagram_id;
 
       await self.importBoxes(diagram.boxes);
@@ -363,9 +366,9 @@ ImportAjooConfiguration.prototype = {
   },
 
   importBoxes: async function (boxes) {
-    var self = this;
+    const self = this;
 
-    var box_type = await ElementTypes.findOneAsync({
+    const box_type = await ElementTypes.findOneAsync({
       type: "Box",
       diagramTypeId: self.diagram_type._id,
     });
@@ -375,10 +378,10 @@ ImportAjooConfiguration.prototype = {
     }
 
     for (const box of boxes) {
-      var object = box.object;
-      var box_id = object._id;
+      const object = box.object;
+      const box_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         diagramId: self.obj_type_map[object.diagramId],
         toolId: self.toolId,
         versionId: self.versionId,
@@ -388,7 +391,7 @@ ImportAjooConfiguration.prototype = {
 
       delete object._id;
 
-      var new_box_id = await Elements.insertAsync(object);
+      const new_box_id = await Elements.insertAsync(object);
       self.obj_type_map[box_id] = new_box_id;
 
       await self.importCompartments(box.compartments);
@@ -396,9 +399,9 @@ ImportAjooConfiguration.prototype = {
   },
 
   importLines: async function (lines) {
-    var self = this;
+    const self = this;
 
-    var line_type = await ElementTypes.findOneAsync({
+    const line_type = await ElementTypes.findOneAsync({
       type: "Line",
       name: "Line",
       diagramTypeId: self.diagram_type._id,
@@ -409,10 +412,10 @@ ImportAjooConfiguration.prototype = {
     }
 
     for (const line of lines) {
-      var object = line.object;
-      var line_id = object._id;
+      const object = line.object;
+      const line_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         diagramId: self.obj_type_map[object.diagramId],
         startElement: self.obj_type_map[object.startElement],
         endElement: self.obj_type_map[object.endElement],
@@ -424,7 +427,7 @@ ImportAjooConfiguration.prototype = {
 
       delete object._id;
 
-      var new_line_id = await Elements.insertAsync(object);
+      const new_line_id = await Elements.insertAsync(object);
       self.obj_type_map[line_id] = new_line_id;
 
       await self.importCompartments(line.compartments);
@@ -432,13 +435,13 @@ ImportAjooConfiguration.prototype = {
   },
 
   importCompartments: async function (comparts) {
-    var self = this;
+    const self = this;
 
     for (const compart of comparts) {
-      var object = compart.object;
-      var compart_id = object._id;
+      const object = compart.object;
+      const compart_id = object._id;
 
-      _.extend(object, {
+      Object.assign(object, {
         diagramId: self.obj_type_map[object.diagramId],
         elementId: self.obj_type_map[object.elementId],
         toolId: self.toolId,
@@ -448,7 +451,7 @@ ImportAjooConfiguration.prototype = {
 
       delete object._id;
 
-      var new_compart_id = await Compartments.insertAsync(object);
+      const new_compart_id = await Compartments.insertAsync(object);
       self.obj_type_map[compart_id] = new_compart_id;
     }
   },
