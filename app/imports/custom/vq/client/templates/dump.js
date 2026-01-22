@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { Utilities } from '../../../../platform/client/js/utilities/utils.js'
 
 import './dump.html'

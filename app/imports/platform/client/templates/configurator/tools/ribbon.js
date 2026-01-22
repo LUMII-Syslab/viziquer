@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import { Dialog } from '../../../js/interpretator/Dialog.js'
 import { Tools, ToolVersions } from '../../../../../db/platform/collections.js'
 

@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import { Configurator } from '../../../templates/configurator/config_utils.js'
 import { ElementTypes, Diagrams } from '../../../../../db/platform/collections.js'
 

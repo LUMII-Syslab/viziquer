@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import { Dialog } from '../../js/interpretator/Dialog.js'
 import { analytics } from '../../../../client/lib/global_variables.js'
 import { Users } from '../../../../db/platform/collections.js'

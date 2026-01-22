@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import './swimlane.html'
 
 import { Dialog } from '../../../js/interpretator/Dialog.js'

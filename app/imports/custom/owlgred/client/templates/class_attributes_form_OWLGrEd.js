@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { get_multi_fields_obj } from '/imports/platform/client/templates/diagrams/dialog/subCompartments'
 
 import './class_attributes_form_OWLGrEd.html'

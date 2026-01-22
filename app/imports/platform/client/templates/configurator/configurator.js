@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 
 import { Tools, UserTools } from '../../../../db/platform/collections.js'

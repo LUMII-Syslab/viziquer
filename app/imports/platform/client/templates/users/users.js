@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import { Users, ProjectsUsers, ProjectsGroups } from '../../../../db/platform/collections.js'
 import { Utilities, reset_variable } from '../../js/utilities/utils.js'
 

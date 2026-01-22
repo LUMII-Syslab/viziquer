@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import { Interpreter } from "../../../../client/lib/interpreter.js";
 import { Utilities } from "../../js/utilities/utils.js";
 import {

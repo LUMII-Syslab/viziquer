@@ -1,4 +1,5 @@
 // import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Template } from 'meteor/templating';
 import { Interpreter } from '../../../../client/lib/interpreter.js'
 import { Utilities, reset_variable } from '../../../../platform/client/js/utilities/utils.js'
 import { is_system_admin } from '../../../../libs/platform/user_rights.js'

@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import { Interpreter } from '../../../../../client/lib/interpreter.js'
 import { Configurator } from '../config_utils.js'
 import { CompartmentTypes, ElementTypes } from '../../../../../db/platform/collections.js'

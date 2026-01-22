@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { Interpreter } from '../../../../client/lib/interpreter.js'
 import { loadOntololgyN3OWLGrEd, loadOntololgyFromProjectN3OWLGrEd, loadOntololgyRDFLibOWLGrEd } from '../js/import_OWLGrEd.js'
 import './load_ontology_OWLGrEd.html'

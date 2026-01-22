@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { Projects, Tools } from '../../../../db/platform/collections.js'
 import './VQ_top_level_forms.html'
 import { dataShapes } from '../../../../custom/vq/client/js/DataShapes.js'

@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { Interpreter } from '../../../../../client/lib/interpreter.js'
 import { Dialog } from '../Dialog.js'
 

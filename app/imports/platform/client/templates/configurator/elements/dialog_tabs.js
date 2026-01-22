@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '../../../../../db/platform/collections.js'
 import { Utilities, reset_variable } from '../../../js/utilities/utils.js'
 

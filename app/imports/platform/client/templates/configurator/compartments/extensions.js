@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { Configurator } from '../config_utils.js'
 import { Utilities } from '../../../js/utilities/utils.js'
 import { CompartmentTypes } from '../../../../../db/platform/collections.js'

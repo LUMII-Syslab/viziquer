@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import { Tools, Projects, Users } from '../../../../db/platform/collections.js'
 
 import './panel.html'

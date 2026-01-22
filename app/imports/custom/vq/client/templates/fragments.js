@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { dataShapes } from '/imports/custom/vq/client/js/DataShapes.js'
 
 

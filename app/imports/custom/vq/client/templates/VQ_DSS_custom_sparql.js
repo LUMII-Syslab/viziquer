@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { Interpreter } from '../../../../client/lib/interpreter.js'
 import { dataShapes } from '../../../../custom/vq/client/js/DataShapes.js'
 import { createVQ_Element } from '../js/VQ_Element.js'

@@ -53,7 +53,7 @@ export default defineConfig([globalIgnores([
             Meteor: false,
             Npm: false,
             Session: false,
-            Template: false,
+            // Template: false,
             BlazeLayout: false,
             ReactiveVar: false,
             $: false,

@@ -1,6 +1,6 @@
-// import { SpacebarsCompiler } from 'meteor/spacebars-compiler'
-// const { SpacebarsCompiler } = require('meteor/spacebars-compiler');
+import { Template } from 'meteor/templating';
 import { SpacebarsCompiler } from 'meteor/spacebars-compiler';
+
 import { Interpreter } from '../../../../../client/lib/interpreter.js'
 import { ElementTypes, CompartmentTypes, Diagrams, Compartments, DiagramFiles, CloudFiles, DialogTabs } from '../../../../../db/platform/collections.js'
 import { Utilities, reset_variable } from '../../../js/utilities/utils.js'

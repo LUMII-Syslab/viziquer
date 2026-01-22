@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { Interpreter } from '../../../../client/lib/interpreter.js'
 import { Elements, Compartments, CompartmentTypes} from '../../../../db/platform/collections.js'
 import { process_sub_compart_types } from '../../../../platform/client/templates/diagrams/dialog/subCompartments.js'

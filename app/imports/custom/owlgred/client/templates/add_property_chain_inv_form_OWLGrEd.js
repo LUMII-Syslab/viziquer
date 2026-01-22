@@ -1,4 +1,4 @@
-import { Interpreter } from '/imports/client/lib/interpreter'
+import { Template } from 'meteor/templating';
 import { Projects, Elements, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 import { process_sub_compart_types } from '/imports/platform/client/templates/diagrams/dialog/subCompartments'
 import { Dialog } from '/imports/platform/client/js/interpretator/Dialog'

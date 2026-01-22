@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 // import { Interpreter } from '../../../lib/interpreter'
 import { get_multi_fields_obj } from '../../../../platform/client/templates/diagrams/dialog/subCompartments.js'
 

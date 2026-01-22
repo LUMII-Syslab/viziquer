@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 import './noProject.html'
 
 Template.noProject.events({

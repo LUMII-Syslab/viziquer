@@ -1,3 +1,4 @@
+import { Template } from 'meteor/templating';
 import { Utilities } from '../../js/utilities/utils.js'
 import { Versions, ProjectsUsers } from '../../../../db/platform/collections.js'
 
