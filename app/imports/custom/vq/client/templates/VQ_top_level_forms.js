@@ -8,13 +8,13 @@ const VQToolGroup = 'VQ';
 const VQToolGroupName = 'ViziQuer';
 
 Template.VQ_structureRibbon_button.helpers({
-  isVQ: function() {
-  	var tool = Tools.findOne({toolGroup: VQToolGroup,isDeprecated: {$ne: true}});
-    //console.log('Iekš Template.VQ_structureRibbon_button.helpers', tool)
+  isVQ: async function() {
+  	const tool = await Tools.findOneAsync({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
+    console.log('Iekš Template.VQ_structureRibbon_button.helpers', tool, Tools.findOne({isDeprecated: {$ne: true}}))
 	  if ( tool != undefined)
 	   return true;
 	  else
-		  return false;
+		  return true;
 	},
   toolGroupName: function() {
     return VQToolGroupName;
@@ -38,8 +38,10 @@ Template.VQcreateProjectModal.allSchemas = new ReactiveVar();
 Template.VQcreateProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
 
 Template.VQcreateProjectModal.rendered = async function() {
-	var rr = await dataShapes.getOntologiesAndTags();
-	var tags = rr.tags;
+  const tool = await Tools.findOneAsync({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
+  console.log('Template.VQcreateProjectModal.rendered', tool)
+	const rr = await dataShapes.getOntologiesAndTags();
+	const tags = rr.tags;
 
 	if (_.size(tags) > 0) {
 		tags.unshift({name:"All", display_name: "All schemas"});
@@ -47,7 +49,7 @@ Template.VQcreateProjectModal.rendered = async function() {
 	}
 	Template.VQcreateProjectModal.loading.set(false);
 
-	var schemas = rr.schemas;
+	const schemas = rr.schemas;
 	if (schemas && schemas.length > 0) {
     for ( const sc of schemas ) {
       sc.display_name_full = `${sc.display_name} (${sc.sparql_url} Class count:${sc.class_count})`;
@@ -70,14 +72,16 @@ Template.VQcreateProjectModal.helpers({
 	schema_tags:function() {
 		return Template.VQcreateProjectModal.schemaTags.get();
 	},
-	tools: async function() {
-    var tools = await Tools.find({ isDeprecated: {$ne: true},}, {$sort: {name: 1}}).fetchAsync();
+	VQtools: async function() {
+    console.log('Izsaucam... Template.VQcreateProjectModal.helpers VQtools')
+    const tools = await Tools.find({ isDeprecated: {$ne: true},}, {$sort: {name: 1}}).fetchAsync();
 
-		var result = {tools:[]};
-		var tool_id = "";
+		let result = [];
+		let tool_id = "";
 
     for (const t of tools) {
-      var tt = {};
+      console.log(t, t.name, t.toolGroup)
+      let tt = {};
       if ( t.toolGroup && t.toolGroup == VQToolGroup)
         tt = {_id: t._id, name: t.name};
       else if ( t.toolGroup == undefined)
@@ -88,13 +92,13 @@ Template.VQcreateProjectModal.helpers({
           tt["selected"] = "selected";
           tool_id = t._id;
         }
-         result.tools.push(tt);
+        result.push(tt);
       }
     }
 
-		if ( tool_id == "" && result.tools.length > 0) {
-			result.tools[0]["selected"] = "selected";
-			tool_id = result.tools[0]._id;
+		if ( tool_id == "" && result.length > 0) {
+			result[0]["selected"] = "selected";
+			tool_id = result[0]._id;
 		}
 
 		if (tool_id != "")
@@ -112,11 +116,11 @@ Template.VQcreateProjectModal.events({
 
 	'click #create-project': async function() {
 
-		var project_name_obj = $('#project-name');
-		var icon_name_obj = $("#icon-name");
-		var category_obj = $("#category-name");
-		var isProject = false;
-    var schema_name = "";
+		const project_name_obj = $('#project-name');
+		const icon_name_obj = $("#icon-name");
+		const category_obj = $("#category-name");
+		let isProject = false;
+    const schema_name = "";
     const selectSchema = document.getElementById("schema-selection");
     const selection = selectSchema.value;
 
@@ -124,11 +128,11 @@ Template.VQcreateProjectModal.events({
     if ( selectedSchema.length > 0 )
       schema_name = selectedSchema[0].display_name;
 
-		var project_name = project_name_obj.val();
-		var obj = $('input[name=stack-radio]:checked').closest(".schema");
+		let project_name = project_name_obj.val();
+		const o = $('input[name=stack-radio]:checked').closest(".schema");
 
-		if (project_name == "" && obj.attr("name") != undefined && obj.attr("name") != "" && obj.attr("name") != "Def") {
-			project_name = obj.attr("name");
+		if (project_name == "" && o.attr("name") != undefined && o.attr("name") != "" && o.attr("name") != "Def") {
+			project_name = o.attr("name");
 			isProject = true;
 		}
 
@@ -136,19 +140,19 @@ Template.VQcreateProjectModal.events({
 			project_name = schema_name;
 		}
 
-		if(project_name != ""){
+		if(project_name != "") {
 
 			document.getElementById("project-name-required").style.display = "none";
 			document.getElementById("project-name").style.borderColor = "#ccc";
 
-			var tool_id = $("#tool").find(":selected").attr("id");
-			var icon_name = icon_name_obj.val();
-			var category_name = category_obj.val();
+			const tool_id = $("#tool").find(":selected").attr("id");
+			const icon_name = icon_name_obj.val();
+			const category_name = category_obj.val();
 
 			//resets tools query
 			Session.set("tools", reset_variable());
 
-			var list = {name: project_name,
+			let list = {name: project_name,
 						icon: icon_name,
 						category: category_name,
 						toolId: tool_id,
@@ -156,13 +160,13 @@ Template.VQcreateProjectModal.events({
 						decorateInstancePositionConstants: "true",
 					};
 
-			var obj = $('input[name=stack-radio]:checked').closest(".schema");
-			list.project_link = obj.attr("link")
+			const o = $('input[name=stack-radio]:checked').closest(".schema");
+			list.project_link = o.attr("link")
 			//console.log("Jauna projekta taisīšana");
 
 			if ( schema_name != "" && !isProject) {
-				var schemas = Template.VQcreateProjectModal.schemas.get();
-				var schema_info = _.filter(schemas, function(o){ return o.display_name == schema_name});
+				const schemas = Template.VQcreateProjectModal.schemas.get();
+				const schema_info = _.filter(schemas, function(o){ return o.display_name == schema_name});
 
 				if ( schema_info.length > 0 && schema_info[0].display_name != "") {
 					list.schema = schema_name;
@@ -187,25 +191,24 @@ Template.VQcreateProjectModal.events({
 		}
 	},
 	'change #tool' : async function(){
-		var tool_id = $("#tool").find(":selected").attr("id");
+		const tool_id = $("#tool").find(":selected").attr("id");
 		await setServices (tool_id);
 	},
 	'change #schema-tags' : function(){
-		var tag = $("#schema-tags").val();
+		const tag = $("#schema-tags").val();
 		Template.VQcreateProjectModal.schemas.set(getSchemas(tag));
 	},
 });
 
 
 async function setServices (tool_id) {
-	var result = {};
+	let result = {};
 
 	Meteor.subscribe("Services", {}); // TODO bez šī man reizēm neizdevās tikst klāt
 
 	if ( tool_id != 'undefined')
 	{
-		//var services = Services.findOne({toolId: tool_id });
-    var services = await Services.findOneAsync({toolId: tool_id });
+    const services = await Services.findOneAsync({toolId: tool_id });
 
 		if (services && services.projects)
 		{
