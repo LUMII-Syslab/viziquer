@@ -120,7 +120,7 @@ Template.VQcreateProjectModal.events({
 		const icon_name_obj = $("#icon-name");
 		const category_obj = $("#category-name");
 		let isProject = false;
-    const schema_name = "";
+    let schema_name = "";
     const selectSchema = document.getElementById("schema-selection");
     const selection = selectSchema.value;
 
