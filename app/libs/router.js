@@ -134,7 +134,7 @@ FlowRouter.route("/project/:projectId/version/:versionId/diagrams/:phrase?", {
     var version_id = params.versionId;
 
     Session.set("activePanelItem", "diagrams");
-    Session.set("toolGroup", "fn(proj_id)");
+    //Session.set("toolGroup", "fn(proj_id)");
     Session.set("sortBy", { name: 1 });
     Session.set("versionId", version_id);
     var diagrams_query = build_diagrams_query(params);
@@ -224,7 +224,7 @@ FlowRouter.route(
 
       //sets panel item to activate
       Session.set("activePanelItem", "diagrams");
-      Session.set("toolGroup", "fn(proj_id)");
+      //Session.set("toolGroup", "fn(proj_id)");
 
       if (params.editMode) {
         Session.set("editMode", true);
@@ -368,7 +368,7 @@ FlowRouter.route("/project/:projectId/users", {
   action(params) {
     const proj_id = params.projectId;
     Session.set("activePanelItem", "users");
-    Session.set("toolGroup", "fn(proj_id)");
+    //Session.set("toolGroup", "fn(proj_id)");
     this.render("mainLayout", { main: "usersTemplate", ribbon: "usersRibbon" });
     // BlazeLayout.render('mainLayout', {main: 'usersTemplate', ribbon: 'usersRibbon'});
   },

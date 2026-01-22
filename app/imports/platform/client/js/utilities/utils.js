@@ -80,7 +80,14 @@ const Utilities = {
 	        Utilities.editUserProfile({activeProject: proj_id, activeVersion: version_id});
 				if ( proj != undefined ) {
 					const tool = await Tools.findOneAsync({_id: proj.toolId});
-					//console.log('@@@@@@@@  changeUserActiveProject  @@@@@@@@', tool)
+          // TODO šis na līdz galam skaisti
+          let toolGroupName = 'ViziQuer';
+          if ( tool.toolGroup != undefined ) {
+            if ( tool.toolGroup != 'VQ' )
+              toolGroupName = tool.toolGroup;
+          }
+          Session.set("toolGroup", toolGroupName);
+					//console.log('@@@@@@@@  changeUserActiveProject  @@@@@@@@', tool, Session)
 					if ( tool.toolGroup != undefined ) { // Jaunā konfigurācija
 						if ( tool.toolGroup == 'VQ') {
 							Interpreter.executeExtensionPoint(tool, "changeProject", proj_id);
