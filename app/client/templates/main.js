@@ -5,8 +5,6 @@ import { ClientStorage } from 'ClientStorage';
 import { Users } from '../../imports/db/platform/collections.js'
 import { i18n } from 'meteor/universe:i18n';
 
-import { Template } from 'meteor/templating';
-
 i18n.setLocale('en');
 Template.registerHelper('_', function (key, options) {
   const params = (options && options.hash) || {};

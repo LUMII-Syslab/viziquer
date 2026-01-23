@@ -15,7 +15,7 @@ import "../imports/platform/client/templates/structure/structure.js";
 import "../imports/platform/client/templates/notifications/notifications.js";
 import "../imports/platform/client/templates/panel/panel.js";
 
-const PLATFORM_TITLE = "Platform";
+const PLATFORM_TITLE = "ajoo";
 
 // DISABLE QUERY STRING COMPATIBILITY
 // WITH OLDER FlowRouter AND Meteor RELEASES

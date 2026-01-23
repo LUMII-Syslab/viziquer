@@ -271,7 +271,6 @@ Meteor.publish("Diagram_Palette_ElementType", async function (list) {
       isInitialized: 1,
       sparqlText: 1,
       query: 1,
-      isInitialized: 1,
       isVisualizationNeeded: 1,
       endpoint: 1,
       "edit.action": 1,
