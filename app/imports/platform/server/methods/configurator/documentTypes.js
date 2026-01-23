@@ -8,10 +8,10 @@ Meteor.methods({
       await DocumentTypes.insertAsync({
         createdAt: new Date(),
         createdBy: user_id,
-        name: list["name"],
-        toolId: list["toolId"],
-        versionId: list["versionId"],
-        index: list["index"],
+        name: list.name,
+        toolId: list.toolId,
+        versionId: list.versionId,
+        index: list.index,
       });
     }
   },
@@ -21,11 +21,11 @@ Meteor.methods({
     if ((await is_system_admin(user_id)) && list) {
       await DocumentTypes.updateAsync(
         {
-          _id: list["id"],
-          toolId: list["toolId"],
-          versionId: list["versionId"],
+          _id: list.id,
+          toolId: list.toolId,
+          versionId: list.versionId,
         },
-        { $set: { name: list["name"] } },
+        { $set: { name: list.name } },
       );
     }
   },
@@ -33,10 +33,10 @@ Meteor.methods({
   updateDocumentTypeIndex: async function (list) {
     var user_id = Meteor.userId();
     if ((await is_system_admin(user_id)) && list) {
-      var prev_index = list["prevIndex"];
-      var current_index = list["currentIndex"];
-      var doc_type_id = list["documentTypeId"];
-      var query = { toolId: list["toolId"], versionId: list["versionId"] };
+      var prev_index = list.prevIndex;
+      var current_index = list.currentIndex;
+      var doc_type_id = list.documentTypeId;
+      var query = { toolId: list.toolId, versionId: list.versionId };
 
       if (prev_index < current_index) {
         await DocumentTypes.updateAsync(
@@ -68,12 +68,12 @@ Meteor.methods({
   removeDocumentType: async function (list) {
     var user_id = Meteor.userId();
     if ((await is_system_admin(user_id)) && list) {
-      if (!list["id"]) return;
+      if (!list.id) return;
 
       await DocumentTypes.removeAsync({
-        _id: list["id"],
-        toolId: list["toolId"],
-        versionId: list["versionId"],
+        _id: list.id,
+        toolId: list.toolId,
+        versionId: list.versionId,
       });
     }
   },

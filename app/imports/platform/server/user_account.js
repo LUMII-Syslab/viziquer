@@ -32,18 +32,18 @@ Meteor.methods({
 
       //inserting user in accounts
       var user_id = await Accounts.createUser({
-        email: list["email"],
-        password: list["password"],
+        email: list.email,
+        password: list.password,
       });
 
       //inserting user
       var user_data = build_user_data(user_id, list);
-      user_data["isSystemAdmin"] = is_system_admin;
+      user_data.isSystemAdmin = is_system_admin;
 
       var id = await Users.insertAsync(user_data);
 
-      // if (!is_test_user(list["email"]))
-      // Accounts.sendVerificationEmail(user_id, list["email"]);
+      // if (!is_test_user(list.email))
+      // Accounts.sendVerificationEmail(user_id, list.email);
 
       if (is_first_user) {
         var role = build_power_user_role();
@@ -200,14 +200,14 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (user_id) {
       //users cannot set admin property by themselves
-      if (list["isSystemAdmin"]) return;
+      if (list.isSystemAdmin) return;
       //updating user's properties
       else {
         var operation = "$set";
-        if (list["operation"]) operation = list["operation"];
+        if (list.operation) operation = list.operation;
 
         var update = {};
-        update[operation] = list["update"];
+        update[operation] = list.update;
 
         await Users.updateAsync({ systemId: user_id }, update);
       }
@@ -216,12 +216,12 @@ Meteor.methods({
 
   sendResetPasswordLink: async function (list) {
     if (list) {
-      //var secret_phrase = list["secretPhrase"] || "";
+      //var secret_phrase = list.secretPhrase || "";
 
-      var user = await Users.findOneAsync({ email: list["email"] });
+      var user = await Users.findOneAsync({ email: list.email });
       if (user) {
-        var user_id = user["systemId"];
-        if (!is_test_user(list["email"]))
+        var user_id = user.systemId;
+        if (!is_test_user(list.email))
           Accounts.sendResetPasswordEmail(user_id);
 
         //reseting fails count
@@ -234,7 +234,7 @@ Meteor.methods({
   },
 
   isRegisteredUser: async function (list) {
-    var user = await Users.findOneAsync({ email: list["email"] });
+    var user = await Users.findOneAsync({ email: list.email });
 
     //checking if there is a user with a given email
     if (user) return true;
@@ -247,9 +247,9 @@ Meteor.methods({
       var user = await Users.findOneAsync({ systemId: user_id });
       if (user) {
         var email = {
-          email: user["email"],
+          email: user.email,
           subject: "Password changed",
-          //html: list["html"],
+          //html: list.html,
           text: "Your password was recently changed.",
         };
 
@@ -261,17 +261,17 @@ Meteor.methods({
   enrollUser: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_admin(user_id, list)) {
-      if (list["email"]) {
+      if (list.email) {
         var new_user_id;
         var new_user = await Meteor.users.findOneAsync({
-          "emails.address": list["email"],
+          "emails.address": list.email,
         });
 
         //if user is not registred in the system, then sending an invitation email
         if (!new_user) {
           //inserting user in accounts
           new_user_id = await Accounts.createUser({
-            email: list["email"],
+            email: list.email,
             password: "password",
           });
 
@@ -281,14 +281,14 @@ Meteor.methods({
 
           // Accounts.sendEnrollmentEmail(new_user_id);
         } else {
-          new_user_id = new_user["_id"];
+          new_user_id = new_user._id;
         }
 
         //inviting the user
         var invitation = {
           userSystemId: new_user_id,
-          role: list["role"],
-          projectId: list["projectId"],
+          role: list.role,
+          projectId: list.projectId,
         };
 
         await Meteor.callAsync("insertProjectsUsers", invitation);
@@ -302,21 +302,21 @@ Meteor.methods({
     }
 
     var user = await Meteor.users.findOneAsync({
-      "services.password.reset.token": list["token"],
+      "services.password.reset.token": list.token,
     });
     if (user) {
-      if (list["name"] || list["surname"])
+      if (list.name || list.surname)
         await Users.updateAsync(
-          { systemId: user["_id"] },
-          { $set: { name: list["name"], surname: list["surname"] } },
+          { systemId: user._id },
+          { $set: { name: list.name, surname: list.surname } },
         );
 
-      await Accounts.setPasswordAsync(user["_id"], list["password"]);
+      await Accounts.setPasswordAsync(user._id, list.password);
 
-      var email = user["emails"][0]["address"];
+      var email = user.emails[0].address;
 
       await Meteor.users.updateAsync(
-        { _id: user["_id"], "emails.address": email },
+        { _id: user._id, "emails.address": email },
         { $set: { "emails.$.verified": true } },
       );
       return email;
@@ -338,12 +338,12 @@ Meteor.methods({
     // });
 
     var user = await Meteor.users.findOneAsync({
-      "services.email.verificationTokens.token": list["token"],
+      "services.email.verificationTokens.token": list.token,
     });
     if (user) {
-      var email = user["emails"][0]["address"];
+      var email = user.emails[0].address;
       await Meteor.users.updateAsync(
-        { _id: user["_id"], "emails.address": email },
+        { _id: user._id, "emails.address": email },
         { $set: { "emails.$.verified": true } },
       );
     }
@@ -354,7 +354,7 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id)) {
       //number of users to add
-      var count = list["count"];
+      var count = list.count;
 
       //start indexing from users count
       var users_count = await Users.find().countAsync();
@@ -407,11 +407,11 @@ Accounts.validateLoginAttempt(function (obj) {
   }
 
   //checking if the user's mail is verified
-  // if (obj && obj["user"] &&  obj["user"]["emails"] && obj["user"]["emails"][0] && obj["user"]["emails"][0]["verified"]) {
+  // if (obj && obj.user &&  obj.user.emails && obj.user.emails[0] && obj.user.emails[0].verified) {
 
   //This is a tmp solution because the verification is not working as expected
   if (true) {
-    // var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 10}});
+    // var user = Users.findOne({systemId: obj.user._id, loginFailsCount: {$lte: 10}});
 
     // if (user) {
     return true;
@@ -434,13 +434,13 @@ Accounts.validateLoginAttempt(function (obj) {
 // 	if (!fields)
 // 		return;
 
-// 	var item = {connectionId: fields["connectionId"],
-// 				loginTime: fields["loginTime"],
-// 				userAgent: fields["userAgent"],
-// 				ipAddress: fields["ipAddr"]
+// 	var item = {connectionId: fields.connectionId,
+// 				loginTime: fields.loginTime,
+// 				userAgent: fields.userAgent,
+// 				ipAddress: fields.ipAddr
 // 			};
 
-// 	Users.update({systemId: fields["userId"]},
+// 	Users.update({systemId: fields.userId},
 // 				{$push: {logins: item}, $set: {loginFailsCount: 0}});
 
 // });
@@ -450,8 +450,8 @@ Accounts.validateLoginAttempt(function (obj) {
 // 	if (!fields)
 // 		return;
 
-// 	Users.update({systemId: fields["userId"], "logins.connectionId": fields["connectionId"]},
-// 					{$set: {"logins.$.logoutTime": fields["logoutTime"]}});
+// 	Users.update({systemId: fields.userId, "logins.connectionId": fields.connectionId},
+// 					{$set: {"logins.$.logoutTime": fields.logoutTime}});
 
 // });
 
@@ -480,16 +480,16 @@ Accounts.validateLoginAttempt(function (obj) {
 // });
 
 Accounts.onLoginFailure(async function (obj) {
-  if (obj && obj["error"] == "too-many-fails") return;
+  if (obj && obj.error === "too-many-fails") return;
   else {
     var item = {
-      ipAddress: obj["connection"]["clientAddress"],
+      ipAddress: obj.connection.clientAddress,
       time: get_current_time(),
     };
 
-    if (obj && obj["user"] && obj["user"]["_id"]) {
+    if (obj && obj.user && obj.user._id) {
       await Users.updateAsync(
-        { systemId: obj["user"]["_id"] },
+        { systemId: obj.user._id },
         { $push: { loginFails: item }, $inc: { loginFailsCount: 1 } },
       );
     }
@@ -530,7 +530,7 @@ Accounts.emailTemplates.resetPassword.subject = function (user) {
 };
 
 Accounts.emailTemplates.resetPassword.text = async function (user_obj, url) {
-  var user = await Users.findOneAsync({ systemId: user_obj["_id"] });
+  var user = await Users.findOneAsync({ systemId: user_obj._id });
   return (
     "Hello, " +
     user.name +
@@ -553,19 +553,19 @@ function build_user_data(user_id, list) {
     language: "en",
     tags: [],
     activeProject: "no-project",
-    name: list["name"],
-    surname: list["surname"],
-    email: list["email"],
-    //secretPhrase: list["secretPhrase"],
+    name: list.name,
+    surname: list.surname,
+    email: list.email,
+    //secretPhrase: list.secretPhrase,
     logins: [],
     loginFails: [],
     loginFailsCount: 0,
     isSystemAdmin: false,
   };
 
-  if (list["name"]) user["nameLC"] = list["name"].toLowerCase();
+  if (list.name) user.nameLC = list.name.toLowerCase();
 
-  if (list["surname"]) user["surnameLC"] = list["surname"].toLowerCase();
+  if (list.surname) user.surnameLC = list.surname.toLowerCase();
 
   return user;
 }

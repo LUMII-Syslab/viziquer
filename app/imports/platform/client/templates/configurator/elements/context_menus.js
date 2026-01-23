@@ -1,87 +1,100 @@
-import { Template } from 'meteor/templating';
+import { Template } from "meteor/templating";
 
-import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { Configurator } from "../../../templates/configurator/config_utils.js";
 
-import './context_menu.html'
+import "./context_menu.html";
 
 // Start of context menu
 Template.editContextMenu.helpers({
+  menu: function () {
+    return {
+      collection: "ElementTypes",
+      array: "contextMenu",
 
-	menu: function() {
-		return {
-			collection: "ElementTypes",
-			array: "contextMenu",
-
-			items: Configurator.getKeystrokesOrItems("contextMenu"),
-			dynamicContextMenu: {name: "dynamicContextMenu",
-								value: Configurator.getActiveElementExtension("dynamicContextMenu"),
-							}
-		};
-	},
-
+      items: Configurator.getKeystrokesOrItems("contextMenu"),
+      dynamicContextMenu: {
+        name: "dynamicContextMenu",
+        value: Configurator.getActiveElementExtension("dynamicContextMenu"),
+      },
+    };
+  },
 });
 
 // Start of context menu
 Template.readContextMenu.helpers({
+  menu: function () {
+    return {
+      collection: "ElementTypes",
+      array: "readModeContextMenu",
 
-	menu: function() {
-		return {
-			collection: "ElementTypes",
-			array: "readModeContextMenu",
-
-			items: Configurator.getKeystrokesOrItems("readModeContextMenu"),
-			dynamicContextMenu: {name: "dynamicReadModeContextMenu",
-								value: Configurator.getActiveElementExtension("dynamicReadModeContextMenu"),
-							}
-		};
-	},
-
+      items: Configurator.getKeystrokesOrItems("readModeContextMenu"),
+      dynamicContextMenu: {
+        name: "dynamicReadModeContextMenu",
+        value: Configurator.getActiveElementExtension(
+          "dynamicReadModeContextMenu",
+        ),
+      },
+    };
+  },
 });
 
 Template.contextMenu.events({
+  //adds context menu item
+  "click #add-context-menu-item": function (e) {
+    e.preventDefault();
+    var src_parent = $(e.target).closest(".menu");
 
-	//adds context menu item
-	'click #add-context-menu-item': function(e) {
-		e.preventDefault();
-		var src_parent = $(e.target).closest(".menu");
+    var collection_meta_data = {
+      collection: src_parent.attr("collection"),
+      array: src_parent.attr("array"),
+      fields: ["item", "procedure"],
+    };
 
-		var collection_meta_data = {collection: src_parent.attr("collection"),
-									array: src_parent.attr("array"),
-									fields: ["item", "procedure",]
-								};
+    Configurator.addKeystrokeOrItem(
+      e,
+      "addKeystrokeOrContextMenu",
+      collection_meta_data,
+    );
+  },
 
-		Configurator.addKeystrokeOrItem(e, "addKeystrokeOrContextMenu", collection_meta_data);
-	},
+  //removes context menu item
+  "click .remove-context-menu-item": function (e) {
+    e.preventDefault();
+    var src_parent = $(e.target).closest(".menu");
 
-	//removes context menu item
-	'click .remove-context-menu-item': function(e) {
-		e.preventDefault();
-		var src_parent = $(e.target).closest(".menu");
+    var collection = {
+      collection: src_parent.attr("collection"),
+      array: src_parent.attr("array"),
+    };
 
-		var collection = {collection: src_parent.attr("collection"),
-							array: src_parent.attr("array"),
-						};
+    Configurator.deleteKeystrokeOrItem(
+      e,
+      "deleteKeyStrokeOrContextMenu",
+      collection,
+    );
+  },
 
-		Configurator.deleteKeystrokeOrItem(e, "deleteKeyStrokeOrContextMenu", collection);
-	},
+  //update context menu item name
+  "blur .table-item": function (e) {
+    var src = $(e.target).closest(".table-item");
+    var src_parent = src.closest(".menu");
 
-	//update context menu item name
-	'blur .table-item': function(e) {
-		var src = $(e.target).closest(".table-item");
-		var src_parent = src.closest(".menu");
+    var collection = {
+      collection: src_parent.attr("collection"),
+      array: src_parent.attr("array"),
+      field: src.attr("attribute"),
+    };
 
-		var collection = {collection: src_parent.attr("collection"),
-							array: src_parent.attr("array"),
-							field: src.attr("attribute"),
-						};
+    Configurator.updateKeystrokeOrItem(
+      e,
+      "updateKeystrokeOrContextMenu",
+      collection,
+    );
+  },
 
-		Configurator.updateKeystrokeOrItem(e, "updateKeystrokeOrContextMenu", collection);
-	},
-
-	//updates dynamic context menu procedure
-	'blur .dialog-input' : function(e) {
-		Configurator.updateElementFromInput(e, "updateConfiguratorExtension");
-	},
-
+  //updates dynamic context menu procedure
+  "blur .dialog-input": function (e) {
+    Configurator.updateElementFromInput(e, "updateConfiguratorExtension");
+  },
 });
 // End of context menu

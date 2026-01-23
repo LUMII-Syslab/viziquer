@@ -75,7 +75,7 @@ Template.AddCondition.events({
 				let condition = $('#condition-expression').val();
 				if(condition !== ""){
 					let allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
-					if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") allowMultiplication = true;
+					if(typeof allowMultiplication !== "undefined" && allowMultiplication === "on") allowMultiplication = true;
 					else allowMultiplication = false;
 					await vq_obj.addCondition(condition, allowMultiplication);
 				}
@@ -90,7 +90,7 @@ Template.AddCondition.events({
 					let allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
 					var allowMultiplicationInput = "";
 
-					if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") {
+					if(typeof allowMultiplication !== "undefined" && allowMultiplication === "on") {
 						allowMultiplication = "true";
 						// allowMultiplicationInput = "\u269F ";
 						// allowMultiplicationInput = "\u20AD ";
@@ -155,7 +155,7 @@ Template.AddCondition.events({
 	},
 
 	'click #extra-options-attribute-button': function(e) {
-		if(document.getElementById("condition-extra-options").style.display == "none") document.getElementById("condition-extra-options").style.display = "block";
+		if(document.getElementById("condition-extra-options").style.display === "none") document.getElementById("condition-extra-options").style.display = "block";
 		else document.getElementById("condition-extra-options").style.display = "none";
 		return;
 	},

@@ -5,10 +5,7 @@ var _contextMenu = undefined;
 var charts = undefined;
 
 var analytics = {
-	track: function() {
-
-	},
-
+  track: function () {},
 };
 
-export { _EDITED, _contextMenu, charts, analytics }
+export { _EDITED, _contextMenu, charts, analytics };

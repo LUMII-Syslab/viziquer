@@ -352,11 +352,11 @@ class OWLGrEd_Element{
 		if (ct) {
         var value = "";
         var mapped_value = undefined;
-        if (ct["inputType"]["type"] == "checkbox") {
-            mapped_value = _.find(ct["inputType"]["values"], function(s) { return input == s["input"]})["value"];
+        if (ct["inputType"]["type"] === "checkbox") {
+            mapped_value = _.find(ct["inputType"]["values"], function(s) { return input === s["input"]})["value"];
         };
-        if (ct["inputType"]["type"] == "radio") {
-            mapped_value = _.find(ct["inputType"]["values"], function(s) { return input == s["input"]})["value"];
+        if (ct["inputType"]["type"] === "radio") {
+            mapped_value = _.find(ct["inputType"]["values"], function(s) { return input === s["input"]})["value"];
         };
         value = Dialog.buildCompartmentValue(ct,  input, mapped_value);
         await this.setCompartmentValue(comp_name, input, value, insertMode);
@@ -394,8 +394,8 @@ class OWLGrEd_Element{
       c_to_create["compartment"]["subCompartments"][compartment_name] = {};
       c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name] = {};
 
-      if (ct.inputType.type == "custom") {
-      // if (ct.inputType.type == "custom" && ct.inputType.templateName == "multiField") {
+      if (ct.inputType.type === "custom") {
+      // if (ct.inputType.type === "custom" && ct.inputType.templateName === "multiField") {
            var ct_comparts_indexes = Compartments.find({compartmentTypeId: ct._id, elementId: this._id()}, {sort: {index: 1}})
                                     .map(function(c) {return c.index; });
           // search for hole in the array of indexes
@@ -411,7 +411,7 @@ class OWLGrEd_Element{
       _.each(sorted_sub_compart_types, function(sub_c) {
          c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name] = {};
         var sc_value = "";
-        // var sc = _.find(subcompartment_value_list, function(s) {return s.name == sub_c.name});
+        // var sc = _.find(subcompartment_value_list, function(s) {return s.name === sub_c.name});
         const sc = _.find(subcompartment_value_list, s => s.name === sub_c.name);
 
 // Check for nested subCompartments
@@ -533,8 +533,8 @@ class OWLGrEd_Element{
       c_to_create["compartment"]["subCompartments"][compartment_name] = {};
       c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name] = {};
 
-      if (ct.inputType.type == "custom") {
-      // if (ct.inputType.type == "custom" && ct.inputType.templateName == "multiField") {
+      if (ct.inputType.type === "custom") {
+      // if (ct.inputType.type === "custom" && ct.inputType.templateName === "multiField") {
            var ct_comparts_indexes = Compartments.find({compartmentTypeId: ct._id, elementId: this._id()}, {sort: {index: 1}})
                                     .map(function(c) {return c.index; });
           // search for hole in the array of indexes

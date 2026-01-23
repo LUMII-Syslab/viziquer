@@ -12,7 +12,7 @@ import {
 import { is_project_member } from "../../../libs/platform/user_rights.js";
 
 Meteor.publish("Views", async function (list) {
-  if (!list || list["noQuery"]) {
+  if (!list || list.noQuery) {
     return this.stop();
   }
 
@@ -626,11 +626,11 @@ function build_search_query(fields) {
         }
       } else {
         //if (values.length > 0) {
-        query["_values"] = { $in: values };
+        query._values = { $in: values };
         //}
       }
 
-      //query["_values"] = {$in: values};
+      //query._values = {$in: values};
 
       console.log("query ", query);
 

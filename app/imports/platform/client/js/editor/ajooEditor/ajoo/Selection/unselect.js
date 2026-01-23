@@ -1,109 +1,101 @@
 // import { _ } from 'vue-underscore';
 
-var UnSelection = function(selection) {
+var UnSelection = function (selection) {
+  var unselection = this;
+  unselection.selection = selection;
 
-	var unselection = this;
-	unselection.selection = selection;
+  unselection.shapes_layer = selection.editor.getLayer("ShapesLayer");
+  unselection.drag_layer = selection.editor.getLayer("DragLayer");
+  unselection.drag_group = selection.editor.findChild(
+    unselection.drag_layer,
+    "DragGroup",
+  );
 
-	unselection.shapes_layer = selection.editor.getLayer("ShapesLayer");
-	unselection.drag_layer = selection.editor.getLayer("DragLayer");
-	unselection.drag_group = selection.editor.findChild(unselection.drag_layer, "DragGroup");
+  unselection.unselectSpecificElements = function (elem_list) {
+    //udpating style
+    _.each(elem_list, function (elem) {
+      elem.setUnselectedStyle();
+    });
 
-	unselection.unselectSpecificElements = function(elem_list) {
+    //if edit mode, then managing layers
+    if (selection.editor.isEditMode()) {
+      _.each(elem_list, function (elem) {
+        unselection.unselectEditModeElement(elem);
+      });
+    }
+  };
 
-		//udpating style
-		_.each(elem_list, function(elem) {
-			elem.setUnselectedStyle();
-		});
+  unselection.unselectEditModeElement = function (element) {
+    var shape_group = element.presentation;
 
-		//if edit mode, then managing layers
-		if (selection.editor.isEditMode()) {
+    //selection relative position
+    var selection_x = unselection.drag_group.x();
+    var selection_y = unselection.drag_group.y();
 
-			 _.each(elem_list, function(elem) {
-				unselection.unselectEditModeElement(elem);
-			});
-		}
-	}
+    selection.clearSelection([element]);
 
-	unselection.unselectEditModeElement = function(element) {
-		var shape_group = element.presentation;
+    if (element.type === "Box") {
+      //transforms x and y coordinates to be relative to the layer
+      shape_group.x(shape_group.x() + selection_x);
+      shape_group.y(shape_group.y() + selection_y);
 
-		//selection relative position
-		var selection_x = unselection.drag_group.x();
-		var selection_y = unselection.drag_group.y();
+      //moves element to shape layer
+      shape_group.moveTo(unselection.shapes_layer);
+    } else {
+      if (element.type === "Line") {
+        selection.manageLineLayer(element);
+      } else {
+        if (element.type === "Port") {
+          var port_parent = element.parent;
 
-		selection.clearSelection([element]);
+          var port_parent_size = port_parent.getSize();
 
-		if (element["type"] == "Box") {
+          shape_group.x(shape_group.x() + selection_x - port_parent_size.x);
+          shape_group.y(shape_group.y() + selection_y - port_parent_size.y);
 
-			//transforms x and y coordinates to be relative to the layer
-			shape_group.x(shape_group.x() + selection_x);
-			shape_group.y(shape_group.y() + selection_y);
+          shape_group.moveTo(port_parent.presentation);
+        }
+      }
+    }
 
-			//moves element to shape layer
-			shape_group.moveTo(unselection.shapes_layer);
-		}
+    selection.manageLinkedLinesLayer(element);
+  };
 
-		else {
-			if (element["type"] == "Line") {
-				selection.manageLineLayer(element);
-			}
-			else {
-				if (element["type"] == "Port") {
-					var port_parent = element.parent;
+  unselection.unselectDragLayerLines = function (line) {
+    var _id = elem_in.objId;
+    var element_list = selection.editor.getElements();
+    var element = element_list[_id];
 
-					var port_parent_size = port_parent.getSize();
-
-					shape_group.x(shape_group.x() + selection_x - port_parent_size.x);
-					shape_group.y(shape_group.y() + selection_y - port_parent_size.y);
-
-					shape_group.moveTo(port_parent.presentation);
-				}
-			}
-		}
-
-		selection.manageLinkedLinesLayer(element);
-	}
-
-	unselection.unselectDragLayerLines = function(line) {
-
-		var _id = elem_in["objId"];
-		var element_list = selection.editor.getElements();
-		var element = element_list[_id];
-
-		element.moveTo(unselection.shapes_layer);
-		element.setUnselectedStyle();
-	}
-}
+    element.moveTo(unselection.shapes_layer);
+    element.setUnselectedStyle();
+  };
+};
 
 UnSelection.prototype = {
+  unselect: function (elem_list, is_refresh_needed) {
+    var unselection = this;
+    var selection = unselection.selection;
 
-	unselect: function(elem_list, is_refresh_needed) {
+    if (!selection.isEmpty()) {
+      //if element list is specified, then unselecting specific elements
+      if (elem_list) {
+        unselection.unselectSpecificElements(elem_list);
+        selection.clearSelection(elem_list);
+      }
 
-		var unselection = this;
-		var selection = unselection.selection;
+      //if no elements specified, then unselecting all
+      else {
+        unselection.unselectSpecificElements(selection.selected);
+        selection.clearSelection();
+      }
 
-		if (!selection.isEmpty()) {
+      //executes layer's refresh if needed
+      if (is_refresh_needed) {
+        unselection.shapes_layer.draw();
+        unselection.drag_layer.draw();
+      }
+    }
+  },
+};
 
-			//if element list is specified, then unselecting specific elements
-			if (elem_list) {
-				unselection.unselectSpecificElements(elem_list);
-				selection.clearSelection(elem_list);
-			}
-
-			//if no elements specified, then unselecting all
-			else {
-				unselection.unselectSpecificElements(selection.selected);
-				selection.clearSelection();
-			}
-
-			//executes layer's refresh if needed
-			if (is_refresh_needed) {
-				unselection.shapes_layer.draw();
-				unselection.drag_layer.draw();
-			}
-		}
-	},
-}
-
-export default UnSelection
+export default UnSelection;

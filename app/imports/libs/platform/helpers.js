@@ -1,249 +1,226 @@
-import { Tools } from '../../db/platform/collections.js'
+import { Tools } from "../../db/platform/collections.js";
 
 function fill_priorities() {
-	return [
-			{option: "color"},
-			{option: "linear-gradient"},
-			{option: "radial-gradient"},
-			{option: "pattern"}];
+  return [
+    { option: "color" },
+    { option: "linear-gradient" },
+    { option: "radial-gradient" },
+    { option: "pattern" },
+  ];
 }
 
-
 function compute_new_width_height(shape_name, new_width, new_height) {
+  var radius = Math.max(new_width / 2, new_height / 2);
 
-	var radius = Math.max(new_width / 2, new_height / 2);
+  var new_x = radius;
+  var new_y = radius;
+  var new_radius = radius;
 
-	var new_x = radius;
-	var new_y = radius;
-	var new_radius = radius;
+  var res = { width: new_width, height: new_height };
 
-	var res = {width: new_width, height: new_height};
+  var list_of_node_types = {
+    RoundRectangle: function () {
+      return res;
+    },
 
-	var list_of_node_types = {
-		
-		RoundRectangle: function() {
-			return res;
-		},
+    Rectangle: function () {
+      return res;
+    },
 
-		Rectangle: function() {
-			return res;
-		},
+    //ellipse
+    Ellipse: function () {
+      var new_radius = { x: new_width / 2, y: new_height / 2 };
 
-		//ellipse
-		Ellipse: function() {
+      res["centerX"] = new_radius["x"];
+      res["centerY"] = new_radius["y"];
 
-			var new_radius = {x: new_width / 2, y: new_height / 2};
+      res["radiusX"] = new_radius["x"];
+      res["radiusY"] = new_radius["y"];
 
-			res["centerX"] = new_radius["x"];
-			res["centerY"] = new_radius["y"];
+      return res;
+    },
 
-			res["radiusX"] = new_radius["x"]
-			res["radiusY"] = new_radius["y"];			
+    //regular polygons
+    Circle: function () {
+      return circle(res, new_radius);
+    },
 
-			return res;
-		},
+    Triangle: function () {
+      if (new_width > new_height) {
+        new_radius = new_width / Math.sqrt(3);
+        new_height = new_radius * 1.5;
+      } else {
+        new_radius = (new_height * 2) / 3;
+        new_width = new_radius * Math.sqrt(3);
+      }
 
-		//regular polygons	
-		Circle: function() {
-			return circle(res, new_radius);
-		},
+      res["centerX"] = new_width / 2;
+      res["centerY"] = (new_height * 2) / 3;
 
-		Triangle: function() {
+      res["radius"] = new_radius;
 
-			if (new_width > new_height) {
-				new_radius = new_width / Math.sqrt(3);
-				new_height = new_radius * 1.5;
-			}
+      res["width"] = new_width;
+      res["height"] = new_height;
 
-			else {
-				new_radius = new_height * 2 / 3;
-				new_width = new_radius * Math.sqrt(3);
-			}
+      return res;
+    },
 
-			res["centerX"] = new_width / 2;
-			res["centerY"] = new_height * 2 / 3;
+    Diamond: function () {
+      var new_side = new_radius * 2;
 
-			res["radius"] = new_radius;
+      res["centerX"] = new_side / 2;
+      res["centerY"] = new_side / 2;
 
-			res["width"] = new_width;
-			res["height"] = new_height;
+      res["radius"] = new_radius;
 
-			return res;
-		},
+      res["width"] = new_side;
+      res["height"] = new_side;
 
-		Diamond: function() {
+      return res;
+    },
 
-			var new_side = new_radius * 2;
+    Square: function (prop_list) {
+      new_radius = (radius * 1) / (Math.sqrt(2) / 2);
 
-			res["centerX"] = new_side / 2;
-			res["centerY"] = new_side / 2;
+      var new_side = new_radius * Math.sqrt(2);
 
-			res["radius"] = new_radius;
+      res["centerX"] = new_side / 2;
+      res["centerY"] = new_side / 2;
 
-			res["width"] = new_side;
-			res["height"] = new_side;
+      res["radius"] = new_radius;
 
-			return res;
-		},
+      res["width"] = new_side;
+      res["height"] = new_side;
 
-		Square: function(prop_list) {
-			new_radius = radius * 1 / (Math.sqrt(2) / 2);
+      return res;
+    },
 
-			var new_side = new_radius * Math.sqrt(2);
+    Pentagon: function () {
+      if (new_width > new_height) {
+        new_radius = new_width / (2 * Math.sin((72 * Math.PI) / 180));
+        new_height = new_radius * (1 + Math.sin((54 * Math.PI) / 180));
+      } else {
+        new_radius = new_height / (1 + Math.sin((54 * Math.PI) / 180));
+        new_width = new_radius * (2 * Math.sin((72 * Math.PI) / 180));
+      }
 
-			res["centerX"] = new_side / 2;
-			res["centerY"] = new_side / 2;	
+      res["centerX"] = new_width / 2;
+      res["centerY"] = new_radius;
 
-			res["radius"] = new_radius;
+      res["radius"] = new_radius;
 
-			res["width"] = new_side;
-			res["height"] = new_side;
+      res["width"] = new_width;
+      res["height"] = new_height;
 
-			return res;
-		},
+      return res;
+    },
 
-		Pentagon: function() {
+    Hexagon: function () {
+      if (new_width > new_height) {
+        new_radius = new_width / 2;
+        new_height = new_radius * Math.sqrt(3);
+      } else {
+        new_radius = (radius * 1) / (Math.sqrt(3) / 2);
+        new_width = new_radius * 2;
+      }
 
-			if (new_width > new_height) {
-				new_radius = new_width / (2 * Math.sin(72 * Math.PI / 180));
-				new_height = new_radius * (1 + Math.sin(54 * Math.PI / 180));
-			}
+      res["centerX"] = new_width / 2;
+      res["centerY"] = new_height / 2;
 
-			else {
-				new_radius = new_height / (1 + Math.sin(54 * Math.PI / 180));
-				new_width = new_radius * (2 * Math.sin(72 * Math.PI / 180));
-			}
+      res["radius"] = new_radius;
 
-			res["centerX"] = new_width / 2;
-			res["centerY"] = new_radius;
+      res["width"] = new_width;
+      res["height"] = new_height;
 
-			res["radius"] = new_radius;
+      return res;
+    },
 
-			res["width"] = new_width;
-			res["height"] = new_height;
+    Octagon: function () {
+      var new_side = new_radius * 2;
 
-			return res;
-		},
+      res["centerX"] = new_side / 2;
+      res["centerY"] = new_side / 2;
 
-		Hexagon: function() {
-			if (new_width > new_height) {
-				new_radius = new_width / 2;
-				new_height = new_radius * Math.sqrt(3);
-			}
+      res["radius"] = new_radius;
 
-			else {
-				new_radius = radius * 1 / (Math.sqrt(3) / 2);
-				new_width = new_radius * 2;
-			}				
+      res["width"] = new_side;
+      res["height"] = new_side;
 
-			res["centerX"] = new_width / 2;
-			res["centerY"] = new_height / 2;
+      return res;
+    },
 
-			res["radius"] = new_radius;
+    BPMNTerminate: function () {
+      return circle(res, new_radius);
+    },
 
-			res["width"] = new_width;
-			res["height"] = new_height;
+    BPMNCancel: function () {
+      return circle(res, new_radius);
+    },
 
-			return res;
-		},
+    BPMNMultiple: function () {
+      return circle(res, new_radius);
+    },
 
-		Octagon: function() {
+    BPMNDiamondPlus: function () {
+      return circle(res, new_radius);
+    },
 
-			var new_side = new_radius * 2;
+    BPMNDiamondX: function () {
+      return circle(res, new_radius);
+    },
 
-			res["centerX"] = new_side / 2;
-			res["centerY"] = new_side / 2;
+    Arrow: function () {
+      return res;
+    },
+  };
 
-			res["radius"] = new_radius;
-
-			res["width"] = new_side;
-			res["height"] = new_side;
-
-			return res;
-		},
-
-		BPMNTerminate: function() {
-			return circle(res, new_radius);
-		},
-
-		BPMNCancel: function() {
-			return circle(res, new_radius);
-		},
-
-		BPMNMultiple: function() {
-			return circle(res, new_radius);
-		},
-
-		BPMNDiamondPlus: function() {
-			return circle(res, new_radius);	
-		},
-
-		BPMNDiamondX: function() {
-			return circle(res, new_radius);	
-		},
-
-		Arrow: function() {
-			return res;
-		},
-
-	}
-
-	if (list_of_node_types[shape_name])
-		return list_of_node_types[shape_name]();
-
-	else
-		return res;
+  if (list_of_node_types[shape_name]) return list_of_node_types[shape_name]();
+  else return res;
 }
 
 function circle(res, new_radius) {
+  var new_width = new_radius * 2;
+  var new_height = new_radius * 2;
 
-	var new_width = new_radius * 2;
-	var new_height = new_radius * 2;
+  res["centerX"] = new_width / 2;
+  res["centerY"] = new_height / 2;
 
-	res["centerX"] = new_width / 2;
-	res["centerY"] = new_height / 2;
+  res["radius"] = new_radius;
 
-	res["radius"] = new_radius;
+  res["width"] = new_width;
+  res["height"] = new_height;
 
-	res["width"] = new_width;
-	res["height"] = new_height;
-
-	return res;
+  return res;
 }
 
- function get_diagram_edit_state(user_id, type, is_configurator) {
-	var item = {userId: user_id,
-				action: type,
-				time: new Date()};
-				
-	if (is_configurator)
-		item["configurator"] = is_configurator;
+function get_diagram_edit_state(user_id, type, is_configurator) {
+  var item = { userId: user_id, action: type, time: new Date() };
 
-	return item;
+  if (is_configurator) item["configurator"] = is_configurator;
+
+  return item;
 }
 
 async function get_configurator_tool_id() {
-	var configurator = await Tools.findOneAsync({isConfigurator: true});
-	if (configurator) {
-		return configurator["_id"];
-	}
+  var configurator = await Tools.findOneAsync({ isConfigurator: true });
+  if (configurator) {
+    return configurator["_id"];
+  }
 }
-
 
 function convert_assoc_array_to_array(assoc_array) {
-	var array = [];
-	for (var key in assoc_array) {
-		array.push(key);
-	}
-	return array;
+  var array = [];
+  for (var key in assoc_array) {
+    array.push(key);
+  }
+  return array;
 }
-
 
 export {
-	fill_priorities,
-	compute_new_width_height,
-	circle,
-	get_diagram_edit_state,
-	get_configurator_tool_id,
-	convert_assoc_array_to_array,
-}
+  fill_priorities,
+  compute_new_width_height,
+  circle,
+  get_diagram_edit_state,
+  get_configurator_tool_id,
+  convert_assoc_array_to_array,
+};

@@ -23,8 +23,8 @@ import { fetch, Headers } from "meteor/fetch";
 Diagrams.after.remove(async function (user_id, doc) {
   if (!doc) return false;
 
-  await Elements.removeAsync({ diagramId: doc["_id"] });
-  await DiagramTypes.removeAsync({ diagramId: doc["_id"] });
+  await Elements.removeAsync({ diagramId: doc._id });
+  await DiagramTypes.removeAsync({ diagramId: doc._id });
 });
 Diagrams.hookOptions.after.remove = { fetchPrevious: false };
 
@@ -33,8 +33,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
       build_diagram(list, user_id);
-      list["editingUserId"] = user_id;
-      list["editingStartedAt"] = new Date();
+      list.editingUserId = user_id;
+      list.editingStartedAt = new Date();
 
       var id = await Diagrams.insertAsync(list);
 
@@ -43,15 +43,15 @@ Meteor.methods({
   },
 
   addPublicDiagram: async function (list_in) {
-    if (!list_in["query"]) {
-      list_in["query"] =
+    if (!list_in.query) {
+      list_in.query =
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX dbo: <http://dbpedia.org/ontology/>\nPREFIX dbr: <http://dbpedia.org/resource/>\nSELECT ?areaCode ?City WHERE{\n  ?City rdf:type dbo:City.\n  OPTIONAL{?City dbo:areaCode ?areaCode.}\n  FILTER(?City = dbr:Riga)\n}";
     }
 
-    //list_in["isVisualizationNeeded"] = true;
+    //list_in.isVisualizationNeeded = true;
 
-    if (!list_in["endpoint"]) {
-      list_in["endpoint"] = "https://dbpedia.org/sparql";
+    if (!list_in.endpoint) {
+      list_in.endpoint = "https://dbpedia.org/sparql";
     }
 
     // ******************************
@@ -84,24 +84,24 @@ Meteor.methods({
 
     if (list_in.schema !== undefined && list_in.schema !== "") {
       schema = _.find(responseData, function (item) {
-        return item.display_name == list_in.schema;
+        return item.display_name === list_in.schema;
       });
     } else if (list_in.endpoint !== undefined && list_in.endpoint !== "") {
       let schemas = _.filter(responseData, function (item) {
-        return item.sparql_url == list_in.endpoint;
+        return item.sparql_url === list_in.endpoint;
       });
       if (schemas.length > 1) {
         schema = _.find(responseData, function (item) {
           return (
-            item.sparql_url == list_in.endpoint && item.is_default_for_endpoint
+            item.sparql_url === list_in.endpoint && item.is_default_for_endpoint
           );
         });
-        if (schema == undefined) {
+        if (schema === undefined) {
           schema = _.find(responseData, function (item) {
-            return item.sparql_url == list_in.endpoint;
+            return item.sparql_url === list_in.endpoint;
           });
         }
-      } else if (schemas.length == 1) {
+      } else if (schemas.length === 1) {
         schema = schemas[0];
       }
     }
@@ -170,8 +170,8 @@ Meteor.methods({
 
     let list = {};
     build_diagram(list, user_id);
-    list["editingUserId"] = user_id;
-    list["editingStartedAt"] = new Date();
+    list.editingUserId = user_id;
+    list.editingStartedAt = new Date();
 
     _.extend(list, schema_obj);
     _.extend(list, query_obj);
@@ -209,9 +209,9 @@ Meteor.methods({
   },
 
   updateDiagram: async function (list) {
-    var user_id = Meteor.userId() || is_public_diagram(list["diagramId"]);
+    var user_id = Meteor.userId() || is_public_diagram(list.diagramId);
     var update = {};
-    update[list["attrName"]] = list["attrValue"];
+    update[list.attrName] = list.attrValue;
 
     if (
       (await is_project_version_admin(user_id, list)) ||
@@ -219,18 +219,18 @@ Meteor.methods({
     ) {
       await Diagrams.updateAsync(
         {
-          _id: list["diagramId"],
-          projectId: list["projectId"],
-          versionId: list["versionId"],
+          _id: list.diagramId,
+          projectId: list.projectId,
+          versionId: list.versionId,
         },
         { $set: update },
       );
     } else if (await is_system_admin(user_id, list)) {
       await Diagrams.updateAsync(
         {
-          _id: list["diagramId"],
-          toolId: list["toolId"],
-          versionId: list["versionId"],
+          _id: list.diagramId,
+          toolId: list.toolId,
+          versionId: list.versionId,
         },
         { $set: update },
       );
@@ -241,15 +241,15 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
       await Diagrams.removeAsync({
-        _id: list["id"],
-        projectId: list["projectId"],
-        versionId: list["versionId"],
+        _id: list.id,
+        projectId: list.projectId,
+        versionId: list.versionId,
       });
     } else if (await is_system_admin(user_id, list)) {
       await Diagrams.removeAsync({
-        _id: list["id"],
-        toolId: list["toolId"],
-        versionId: list["versionId"],
+        _id: list.id,
+        toolId: list.toolId,
+        versionId: list.versionId,
       });
     }
   },
@@ -257,21 +257,21 @@ Meteor.methods({
   addTargetDiagram: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
-      var diagram = list["diagram"];
+      var diagram = list.diagram;
       build_diagram(diagram, user_id);
 
       //overriding the default values
-      diagram["parentDiagrams"] = [list["parentDiagram"]];
+      diagram.parentDiagrams = [list.parentDiagram];
 
       //selecting the element
-      var elem = list["element"];
+      var elem = list.element;
 
       var id = await Diagrams.insertAsync(diagram);
       await Elements.updateAsync(
         {
-          _id: element["id"],
-          projectId: elem["projectId"],
-          versionId: elem["versionId"],
+          _id: element.id,
+          projectId: elem.projectId,
+          versionId: elem.versionId,
         },
         { $set: { targetId: id } },
       );
@@ -282,8 +282,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_admin(user_id, list)) {
       await Diagrams.updateAsync(
-        { _id: list["diagramId"], projectId: list["projectId"] },
-        { $push: { allowedGroups: list["groupId"] } },
+        { _id: list.diagramId, projectId: list.projectId },
+        { $push: { allowedGroups: list.groupId } },
       );
     }
   },
@@ -292,8 +292,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_admin(user_id, list)) {
       await Diagrams.updateAsync(
-        { _id: list["diagramId"], projectId: list["projectId"] },
-        { $pull: { allowedGroups: list["groupId"] } },
+        { _id: list.diagramId, projectId: list.projectId },
+        { $pull: { allowedGroups: list.groupId } },
       );
     }
   },
@@ -302,7 +302,7 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_version_reader(user_id, list)) {
       await Diagrams.updateAsync(
-        { _id: list["diagramId"], projectId: list["projectId"] },
+        { _id: list.diagramId, projectId: list.projectId },
         { $inc: { seenCount: 1 } },
       );
     }
@@ -310,21 +310,21 @@ Meteor.methods({
 
   lockingDiagram: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
-    if (list["toolId"] && (await is_system_admin(user_id))) {
+    if (list.toolId && (await is_system_admin(user_id))) {
       await Diagrams.updateAsync(
-        { _id: list["diagramId"], toolId: list["toolId"] },
+        { _id: list.diagramId, toolId: list.toolId },
 
         { $set: { editingUserId: user_id, editingStartedAt: new Date() } },
       );
     } else if (
       (await is_project_version_admin(user_id, list)) ||
-      is_public_diagram(list["diagramId"])
+      is_public_diagram(list.diagramId)
     ) {
       await Diagrams.updateAsync(
         {
-          _id: list["diagramId"],
-          projectId: list["projectId"],
-          versionId: list["versionId"],
+          _id: list.diagramId,
+          projectId: list.projectId,
+          versionId: list.versionId,
         },
 
         { $set: { editingUserId: user_id, editingStartedAt: new Date() } },
@@ -334,20 +334,20 @@ Meteor.methods({
 
   removeLocking: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
-    if (list["toolId"] && (await is_system_admin(user_id))) {
+    if (list.toolId && (await is_system_admin(user_id))) {
       await Diagrams.updateAsync(
-        { _id: list["diagramId"], toolId: list["toolId"] },
+        { _id: list.diagramId, toolId: list.toolId },
         { $unset: { editingUserId: "", editingStartedAt: "" } },
       );
     } else if (
       (await is_project_version_admin(user_id, list)) ||
-      is_public_diagram(list["diagramId"])
+      is_public_diagram(list.diagramId)
     ) {
       await Diagrams.updateAsync(
         {
-          _id: list["diagramId"],
-          projectId: list["projectId"],
-          versionId: list["versionId"],
+          _id: list.diagramId,
+          projectId: list.projectId,
+          versionId: list.versionId,
         },
         { $unset: { editingUserId: "", editingStartedAt: "" } },
       );
@@ -422,12 +422,12 @@ Meteor.methods({
 
 function build_diagram(list, user_id) {
   var time = new Date();
-  list["createdAt"] = time;
-  list["createdBy"] = user_id;
-  list["imageUrl"] = "https://placehold.co/770x347";
-  ((list["edit"] = { action: "new", time: time, userId: user_id }),
-    (list["parentDiagrams"] = []));
-  list["allowedGroups"] = [];
-  //list["editing"] = {},
-  list["seenCount"] = 0;
+  list.createdAt = time;
+  list.createdBy = user_id;
+  list.imageUrl = "https://placehold.co/770x347";
+  ((list.edit = { action: "new", time: time, userId: user_id }),
+    (list.parentDiagrams = []));
+  list.allowedGroups = [];
+  //list.editing = {},
+  list.seenCount = 0;
 }

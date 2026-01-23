@@ -25,11 +25,11 @@ Versions.before.insert(async function (user_id, doc) {
   if (!doc) return false;
 
   //if this is not the first version, then perform some checking
-  var version = await Versions.findOneAsync({ projectId: doc["projectId"] });
+  var version = await Versions.findOneAsync({ projectId: doc.projectId });
   if (version) {
     //prevents from adding multiple versions with the status New
     var new_version = await Versions.findOneAsync({
-      projectId: doc["projectId"],
+      projectId: doc.projectId,
       status: "New",
     });
     if (new_version) return false;
@@ -40,8 +40,8 @@ Versions.hookOptions.before.insert = { fetchPrevious: false };
 Versions.after.insert(async function (user_id, doc) {
   if (!doc) return false;
 
-  var project_id = doc["projectId"];
-  var new_version_id = doc["_id"];
+  var project_id = doc.projectId;
+  var new_version_id = doc._id;
 
   //the creator's current version is updated to the new one
   await ProjectsUsers.updateAsync(
@@ -61,7 +61,7 @@ Versions.after.insert(async function (user_id, doc) {
   //adding admin role in the new version to the project admins
   await add_admin_role(project_id, new_version_id);
 
-  var last_version_id = last_version["_id"];
+  var last_version_id = last_version._id;
 
   //copies of diagram things
   var diagrams = Diagrams.find({
@@ -84,12 +84,12 @@ Versions.after.insert(async function (user_id, doc) {
   //diagram things
   var diagram_list = {};
   for (const diagram of await diagrams.fetchAsync()) {
-    diagram["versionId"] = new_version_id;
+    diagram.versionId = new_version_id;
 
-    var old_id = diagram["_id"];
-    delete diagram["_id"];
+    var old_id = diagram._id;
+    delete diagram._id;
 
-    if (!diagram["seenCount"]) diagram["seenCount"] = 0;
+    if (!diagram.seenCount) diagram.seenCount = 0;
 
     var new_id = await Diagrams.insertAsync(diagram, {
       removeEmptyStrings: false,
@@ -98,23 +98,23 @@ Versions.after.insert(async function (user_id, doc) {
   }
 
   for (const user_settings of await users_settings.fetchAsync()) {
-    user_settings["versionId"] = new_version_id;
-    user_settings["diagramId"] = diagram_list[user_settings["diagramId"]];
+    user_settings.versionId = new_version_id;
+    user_settings.diagramId = diagram_list[user_settings.diagramId];
 
-    var old_user_diagram_id = user_settings["_id"];
-    delete user_settings["_id"];
+    var old_user_diagram_id = user_settings._id;
+    delete user_settings._id;
 
-    if (!user_settings["diagramsSortBy"])
-      user_settings["diagramsSortBy"] = "alphabetTopDown";
+    if (!user_settings.diagramsSortBy)
+      user_settings.diagramsSortBy = "alphabetTopDown";
 
-    if (!user_settings["diagramsSelectedGroup"])
-      user_settings["diagramsSelectedGroup"] = "none";
+    if (!user_settings.diagramsSelectedGroup)
+      user_settings.diagramsSelectedGroup = "none";
 
-    if (!user_settings["documentsSortBy"])
-      user_settings["documentsSortBy"] = "alphabetTopDown";
+    if (!user_settings.documentsSortBy)
+      user_settings.documentsSortBy = "alphabetTopDown";
 
-    if (!user_settings["documentsSelectedGroup"])
-      user_settings["documentsSelectedGroup"] = "none";
+    if (!user_settings.documentsSelectedGroup)
+      user_settings.documentsSelectedGroup = "none";
 
     var new_user_diagram_id =
       await UserVersionSettings.insertAsync(user_settings);
@@ -122,31 +122,31 @@ Versions.after.insert(async function (user_id, doc) {
 
   var element_list = {};
   for (const element of await elements.fetchAsync()) {
-    element["versionId"] = new_version_id;
-    element["diagramId"] = diagram_list[element["diagramId"]];
+    element.versionId = new_version_id;
+    element.diagramId = diagram_list[element.diagramId];
 
-    var old_elem_id = element["_id"];
-    delete element["_id"];
+    var old_elem_id = element._id;
+    delete element._id;
 
-    if (element["startElement"])
-      element["startElement"] = element_list[element["startElement"]];
+    if (element.startElement)
+      element.startElement = element_list[element.startElement];
 
-    if (element["endElement"])
-      element["endElement"] = element_list[element["endElement"]];
+    if (element.endElement)
+      element.endElement = element_list[element.endElement];
 
     var new_elem_id = await Elements.insertAsync(element);
     element_list[old_elem_id] = new_elem_id;
   }
 
   for (const compartment of await compartments.fetchAsync()) {
-    compartment["versionId"] = new_version_id;
+    compartment.versionId = new_version_id;
 
-    compartment["diagramId"] = diagram_list[compartment["diagramId"]];
+    compartment.diagramId = diagram_list[compartment.diagramId];
 
-    //if (compartment["elementId"])
-    compartment["elementId"] = element_list[compartment["elementId"]];
+    //if (compartment.elementId)
+    compartment.elementId = element_list[compartment.elementId];
 
-    delete compartment["_id"];
+    delete compartment._id;
     await Compartments.insertAsync(compartment, { removeEmptyStrings: false });
   }
 
@@ -164,8 +164,8 @@ Versions.hookOptions.after.insert = { fetchPrevious: false };
 
 // Versions.after.update(function (user_id, doc) {
 
-// 	var version_id = doc["_id"];
-// 	var project_id = doc["projectId"];
+// 	var version_id = doc._id;
+// 	var project_id = doc.projectId;
 
 // 	//sending the notification to the project members that a new version is published
 // 	var notification = {projectId: project_id,
@@ -185,8 +185,8 @@ Versions.hookOptions.after.insert = { fetchPrevious: false };
 // Versions.hookOptions.after.update = {fetchPrevious: false};
 
 Versions.after.remove(async function (user_id, doc) {
-  var new_version_id = doc["_id"];
-  var project_id = doc["projectId"];
+  var new_version_id = doc._id;
+  var project_id = doc.projectId;
 
   //values for the notifictions
   var notification = {
@@ -203,7 +203,7 @@ Versions.after.remove(async function (user_id, doc) {
     { sort: { publishedAt: -1 } },
   );
   var last_version_id;
-  if (last_version) last_version_id = last_version["_id"];
+  if (last_version) last_version_id = last_version._id;
 
   //a transaction needed
   if (last_version_id)
@@ -234,9 +234,9 @@ Meteor.methods({
   insertVersion: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_admin(user_id, list)) {
-      list["createdAt"] = new Date();
-      list["createdBy"] = user_id;
-      list["status"] = "New";
+      list.createdAt = new Date();
+      list.createdBy = user_id;
+      list.status = "New";
 
       await Versions.insertAsync(list);
     }
@@ -246,12 +246,12 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
       await Versions.updateAsync(
-        { _id: list["versionId"], projectId: list["projectId"], status: "New" },
+        { _id: list.versionId, projectId: list.projectId, status: "New" },
         {
           $set: {
             publishedAt: new Date(),
             publishedBy: user_id,
-            comment: list["comment"],
+            comment: list.comment,
             status: "Published",
           },
         },
@@ -262,11 +262,11 @@ Meteor.methods({
   removeVersion: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
-      if (!list["versionId"]) return;
+      if (!list.versionId) return;
 
       await Versions.removeAsync({
-        _id: list["versionId"],
-        projectId: list["projectId"],
+        _id: list.versionId,
+        projectId: list.projectId,
         status: "New",
       });
     }
@@ -295,8 +295,8 @@ async function add_read_role(proj_id, version_id) {
   //selecting project users and classifying them by their roles
   await ProjectsUsers.find({ projectId: proj_id }).forEachAsync(
     function (proj_user) {
-      var role = proj_user["role"];
-      var user_id = proj_user["userSystemId"];
+      var role = proj_user.role;
+      var user_id = proj_user.userSystemId;
       if (users_by_roles[role]) users_by_roles[role].push(user_id);
       else users_by_roles[role] = [user_id];
     },
@@ -328,32 +328,32 @@ async function remove_from_admin_role(proj_id, version_id, is_remove_role) {
 }
 
 async function send_notifications(user_id, list) {
-  var proj_id = list["projectId"];
+  var proj_id = list.projectId;
   var query = { projectId: proj_id, status: "Member" };
 
-  if (list["isAdminsOnly"]) query["role"] = "Admin";
+  if (list.isAdminsOnly) query.role = "Admin";
 
   var date = new Date();
 
   var proj_name = "";
   var project = await Projects.findOneAsync({ _id: proj_id });
-  if (project) proj_name = project["name"];
+  if (project) proj_name = project.name;
 
   await ProjectsUsers.find(query).forEachAsync(async function (project_user) {
-    var receiver_id = project_user["userSystemId"];
+    var receiver_id = project_user.userSystemId;
     if (receiver_id !== user_id) {
       var notification = {
         projectId: proj_id,
-        createdBy: list["userId"],
+        createdBy: list.userId,
         status: "new",
         receiver: receiver_id,
-        type: list["notificationType"],
+        type: list.notificationType,
         createdAt: date,
-        data: { versionId: list["versionId"] },
+        data: { versionId: list.versionId },
       };
 
       await Notifications.insertAsync(notification);
-      //await sending_notification_email( list["notificationType"], receiver_id, proj_name, );
+      //await sending_notification_email( list.notificationType, receiver_id, proj_name, );
     }
   });
 }
@@ -367,19 +367,19 @@ async function sending_notification_email(
   if (receiver_user) {
     var subject = "";
     var text = "";
-    if (notification_type == "NewVersion") {
+    if (notification_type === "NewVersion") {
       subject = "New version";
       text = "A new version in project " + proj_name + " was created.";
-    } else if (notification_type == "PublishVersion") {
+    } else if (notification_type === "PublishVersion") {
       subject = "Published version";
       text = "The latest version in project " + proj_name + " was published.";
-    } else if (notification_type == "DeleteVersion") {
+    } else if (notification_type === "DeleteVersion") {
       subject = "Deleted version";
       text = "The latest version in project " + proj_name + " was deleted.";
     }
 
     var email = {
-      email: receiver_user["email"],
+      email: receiver_user.email,
       subject: subject,
       text: text,
       //html: '<body></body>'

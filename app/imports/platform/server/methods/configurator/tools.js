@@ -8,7 +8,7 @@ import {
 import { is_system_admin } from "../../../../libs/platform/user_rights.js";
 
 Tools.after.remove(async function (user_id, doc) {
-  var tool_id = doc["_id"];
+  var tool_id = doc._id;
 
   await Projects.removeAsync({ toolId: tool_id });
 
@@ -21,17 +21,17 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if ((await is_system_admin(user_id)) && list) {
       var time = new Date();
-      list["createdAt"] = time;
-      list["createdBy"] = user_id;
+      list.createdAt = time;
+      list.createdBy = user_id;
 
-      list["documents"] = true;
-      list["archive"] = true;
-      list["analytics"] = true;
-      list["users"] = true;
-      // list["forum"] = true;
+      list.documents = true;
+      list.archive = true;
+      list.analytics = true;
+      list.users = true;
+      // list.forum = true;
 
-      list["tasks"] = false;
-      list["training"] = false;
+      list.tasks = false;
+      list.training = false;
 
       var id = await Tools.insertAsync(list);
 
@@ -49,7 +49,7 @@ Meteor.methods({
   updateTool: async function (list) {
     var user_id = Meteor.userId();
     if ((await is_system_admin(user_id)) && list) {
-      await Tools.updateAsync({ _id: list["toolId"] }, { $set: list["set"] });
+      await Tools.updateAsync({ _id: list.toolId }, { $set: list.set });
     }
   },
 
@@ -62,7 +62,7 @@ Meteor.methods({
         return 0;
       }
 
-      await Tools.removeAsync({ _id: list["toolId"] });
+      await Tools.removeAsync({ _id: list.toolId });
 
       return 1;
     }
@@ -72,8 +72,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if ((await is_system_admin(user_id)) && list) {
       await UserTools.updateAsync(
-        { toolId: list["toolId"], userSystemId: user_id },
-        { $set: { versionId: list["versionId"] } },
+        { toolId: list.toolId, userSystemId: user_id },
+        { $set: { versionId: list.versionId } },
         { upsert: true },
       );
     }
@@ -83,7 +83,7 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if ((await is_system_admin(user_id)) && list) {
       var version_id = await ToolVersions.insertAsync({
-        toolId: list["toolId"],
+        toolId: list.toolId,
         status: "New",
         createdAt: new Date(),
         createdBy: user_id,
@@ -97,11 +97,11 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if ((await is_system_admin(user_id)) && list) {
       await ToolVersions.updateAsync(
-        { _id: list["versionId"], status: "New", toolId: list["toolId"] },
+        { _id: list.versionId, status: "New", toolId: list.toolId },
         {
           $set: {
             status: "Published",
-            comment: list["comment"],
+            comment: list.comment,
             publishedAt: new Date(),
             publishedBy: user_id,
           },
@@ -109,8 +109,8 @@ Meteor.methods({
       );
 
       await UserTools.updateAsync(
-        { userSystemId: user_id, toolId: list["toolId"] },
-        { $set: { versionId: list["versionId"] } },
+        { userSystemId: user_id, toolId: list.toolId },
+        { $set: { versionId: list.versionId } },
       );
     }
   },
@@ -119,8 +119,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if ((await is_system_admin(user_id)) && list) {
       await ToolVersions.removeAsync({
-        toolId: list["toolId"],
-        versionId: list["versionId"],
+        toolId: list.toolId,
+        versionId: list.versionId,
         status: "New",
       });
 

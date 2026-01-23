@@ -95,8 +95,8 @@ Meteor.methods({
 			}
 
             let class_style = class_type["styles"][0];
-            let class_style_old = class_type["styles"].find(function(s){ return s.name == item.TypeOld});
-            let class_style_new = class_type["styles"].find(function(s){ return s.name == item.TypeNew});
+            let class_style_old = class_type["styles"].find(function(s){ return s.name === item.TypeOld});
+            let class_style_new = class_type["styles"].find(function(s){ return s.name === item.TypeNew});
             if ( class_style_old !== undefined )
                 class_style = class_style_old;
             if ( class_style_new !== undefined )
@@ -128,8 +128,8 @@ Meteor.methods({
 			}
 
             let class_style = class_type["styles"][0];
-            let class_style_old = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeOld});
-            let class_style_new = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeNew});
+            let class_style_old = class_type["styles"].find(function(s){ return s.name === item.compartments.TypeOld});
+            let class_style_new = class_type["styles"].find(function(s){ return s.name === item.compartments.TypeNew});
             if ( class_style_old !== undefined )
                 class_style = class_style_old;
             if ( class_style_new !== undefined )
@@ -403,7 +403,7 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const length = value_list.length;
     let max_count = value_list.length;
-    if ( compartmentName == 'ClassList' ||  compartmentName == 'Name' ) {
+    if ( compartmentName === 'ClassList' ||  compartmentName === 'Name' ) {
       const nList = value_list.map(a => a.shortName)
       await add_one_compartment(list, 'SchemaInformation', JSON.stringify(nList), JSON.stringify(nList));
     }
@@ -432,7 +432,7 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
     let value = ( sort ) ? replace_newline(value_list.map(a => `${pref}${a.name}`).sort().join('\n')) : replace_newline(value_list.map(a => `${pref}${a.name}`).join('\n'));
     if ( max_count < length )  value = `${value}\n...(${length-max_count})...`;
 
-    if ( compartmentName == 'ClassList' && !isGroup ) { // ( compartmentName == 'ClassList' && value_list.length == 1 ) {
+    if ( compartmentName === 'ClassList' && !isGroup ) { // ( compartmentName === 'ClassList' && value_list.length === 1 ) {
       value = '';
     }
     await add_one_compartment(list, compartmentName, input, value);
@@ -443,7 +443,7 @@ function add_one_compartment_from_list(list, compartmentName, value_list, pref, 
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const max_count = Math.round(value_list.length*proc/100);
     const length = value_list.length;
-    if ( value_list.length < 3 || length-max_count == 1) proc = 100; // TODO šis ir lai nesanāk dīvaini
+    if ( value_list.length < 3 || length-max_count === 1) proc = 100; // TODO šis ir lai nesanāk dīvaini
     if ( proc < 100 ) {
         value_list = value_list.slice(0, max_count);
     }

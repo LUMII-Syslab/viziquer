@@ -1,171 +1,163 @@
-import SelectionDragging from '../Selection/selection_dragging.js'
-import {OrthogonalRerouting} from '../Elements/Lines/routing/orthogonal_rerouting.js'
+import SelectionDragging from "../Selection/selection_dragging.js";
+import { OrthogonalRerouting } from "../Elements/Lines/routing/orthogonal_rerouting.js";
 
-var Grid = function(editor) {
+var Grid = function (editor) {
+  var grid = this;
+  grid.editor = editor;
+  grid.isGridEnabled = false;
 
-	var grid = this;
-	grid.editor = editor;
-	grid.isGridEnabled = false;
+  grid.layer = editor.getLayer("GridLayer");
 
-	grid.layer = editor.getLayer("GridLayer");
-
-	grid.initialStep = 16;
-	grid.step = grid.initialStep;
-	grid.buildGrid();
-}
+  grid.initialStep = 16;
+  grid.step = grid.initialStep;
+  grid.buildGrid();
+};
 
 Grid.prototype = {
+  buildGrid: function (params) {
+    var grid = this;
+    var editor = grid.editor;
 
-	buildGrid: function(params) {
+    if (!params) {
+      params = {};
+    }
 
-		var grid = this;
-		var editor = grid.editor;
+    if (params.step) {
+      grid.step = params.step;
+    }
 
-	    if (!params) {
-	        params = {};
-	    }
+    var step = grid.step;
 
-	    if (params["step"]) {
-	        grid.step = params["step"];
-	    }
+    var stage = editor.stage;
+    var height = stage.height();
+    var width = stage.width();
 
-	    var step = grid.step;
+    var layer = grid.layer;
 
-	    var stage = editor.stage;
-	    var height = stage.height();
-	    var width = stage.width();
+    var line_props = {
+      stroke: "grey",
+      strokeWidth: 0.3,
+      //dash: [2, 7],
+      perfectDrawEnabled: false,
+    };
 
-		var layer = grid.layer;
+    for (var i = 0; i < width; i = i + step) {
+      line_props.points = [i, 0, i, height];
+      var line = new Konva.Line(line_props);
 
-	    var line_props = {
-	                    stroke: 'grey',
-	                    strokeWidth: 0.3,
-	                    //dash: [2, 7],
-	                    perfectDrawEnabled: false,
-	                };
+      layer.add(line);
+    }
 
-	    for (var i=0;i<width;i=i+step) {
+    for (var i = 0; i < height; i = i + step) {
+      line_props.points = [0, i, width, i];
+      var line = new Konva.Line(line_props);
 
-	        line_props["points"] = [i, 0, i, height];
-	        var line = new Konva.Line(line_props);
+      layer.add(line);
+    }
 
-	        layer.add(line);
-	    }
+    layer.draw();
+  },
 
-	    for (var i=0;i<height;i=i+step) {
+  showGrid: function (is_refresh_not_needed) {
+    var grid = this;
+    var editor = grid.editor;
 
-	        line_props["points"] = [0, i, width, i];
-	        var line = new Konva.Line(line_props);
+    //if grid is already enabled, then no building
+    if (grid.isGridEnabled) return;
 
-	        layer.add(line);
-	    }
+    grid.isGridEnabled = true;
 
-	    layer.draw();
-	},
+    grid.layer.destroyChildren();
+    grid.buildGrid();
 
-	showGrid: function(is_refresh_not_needed) {
+    grid.layer.visible(true);
 
-		var grid = this;
-		var editor = grid.editor;
+    if (!is_refresh_not_needed) {
+      grid.layer.draw();
+    }
 
-        //if grid is already enabled, then no building
-        if (grid["isGridEnabled"])
-            return;
+    //grid.alignElements();
+  },
 
-        grid["isGridEnabled"] = true;
+  removeGrid: function () {
+    var grid = this;
+    var editor = grid.editor;
 
-        grid.layer.destroyChildren();
-        grid.buildGrid();
+    //if grid is enabled, then removing it
+    if (grid.isGridEnabled) {
+      grid.isGridEnabled = false;
+      grid.layer.visible(false);
+    }
+  },
 
-        grid.layer.visible(true);
+  alignElements: function () {
+    var grid = this;
+    var editor = grid.editor;
 
-        if (!is_refresh_not_needed) {
-        	grid.layer.draw();
-        }
+    var selected_elems = _.map(editor.getSelectedElements(), function (elem) {
+      return elem;
+    });
 
-        //grid.alignElements();
+    editor.unSelectElements();
 
-	},
+    var graphInfo = new GraphInfo();
+    var initial_pos = {
+      deltaX: 0,
+      deltaY: 0,
+      stageX: 0,
+      stageY: 0,
+    };
 
-	removeGrid: function() {
+    var self = { editor: editor };
 
-        var grid = this;
-        var editor = grid.editor;
+    var lines = [];
 
-        //if grid is enabled, then removing it
-        if (grid["isGridEnabled"]) {
-            grid["isGridEnabled"] = false;
-        	grid.layer.visible(false);
-        }
+    var elements = editor.getElements();
+    _.each(elements, function (element) {
+      if (element.type === "Box") {
+        initial_pos.object = element.presentation;
+        initial_pos.newX = element.presentation.x();
+        initial_pos.newY = element.presentation.y();
 
-	},
+        SelectionDragging.prototype.adjustGridPosition.call(self, initial_pos);
 
-	alignElements: function() {
+        var new_box = SelectionDragging.prototype.addBoxToGraphInfo(
+          element,
+          graphInfo,
+          0,
+          0,
+        );
+        graphInfo.dragObjects.push(new_box);
+      } else {
+        lines.push(element);
+      }
+    });
 
-		var grid = this;
-		var editor = grid.editor;
+    _.each(lines, function (line) {
+      OrthogonalRerouting.prototype.addPathToGraphInfo(
+        line,
+        line.getPoints(),
+        graphInfo,
+      );
+    });
 
-		var selected_elems = _.map(editor.getSelectedElements(), function(elem) {
-			return elem;
-		});
+    //recomputing lines
+    graphInfo.onDragBoxes();
+    SelectionDragging.prototype.updateMovedDraggedLines.call(self, graphInfo);
 
-		editor.unSelectElements();
+    var list = { movedBoxes: [], lines: [] };
+    _.each(elements, function (element) {
+      if (element.type === "Box")
+        list.movedBoxes.push({ id: element._id, location: element.getSize() });
+      else list.lines.push({ id: element._id, points: element.getPoints() });
+    });
 
-	    var graphInfo = new GraphInfo();
-		var initial_pos = {
-							deltaX: 0,
-							deltaY: 0,
-							stageX: 0,
-							stageY: 0,
-						};
+    //updating the state
+    new Event(editor, "collectionPositionChanged", list);
 
-		var self = {editor: editor};
+    //reselecting elements
+    editor.selectElements(selected_elems);
+  },
+};
 
-		var lines = [];
-
-		var elements = editor.getElements();
-		_.each(elements, function(element) {
-
-			if (element.type == "Box") {
-				initial_pos.object = element.presentation;
-				initial_pos.newX = element.presentation.x();
-				initial_pos.newY = element.presentation.y();
-
-				SelectionDragging.prototype.adjustGridPosition.call(self, initial_pos);
-
-		    	var new_box = SelectionDragging.prototype.addBoxToGraphInfo(element, graphInfo, 0, 0);
-		    	graphInfo.dragObjects.push(new_box);
-			}
-			else {
-				lines.push(element);
-			}
-		});
-
-		_.each(lines, function(line) {
-			OrthogonalRerouting.prototype.addPathToGraphInfo(line, line.getPoints(), graphInfo);
-		});
-
-		//recomputing lines
-	   	graphInfo.onDragBoxes();
-	   	SelectionDragging.prototype.updateMovedDraggedLines.call(self, graphInfo);
-
-
-		var list = {movedBoxes: [], lines: [],};
-		_.each(elements, function(element) {
-
-			if (element.type == "Box")
-				list.movedBoxes.push({id: element._id, location: element.getSize()});
-			else
-				list.lines.push({id: element._id, points: element.getPoints()});
-		});
-
-		//updating the state
-		new Event(editor, "collectionPositionChanged", list);
-
-	   	//reselecting elements
-		editor.selectElements(selected_elems);
-	},
-
-}
-
-export default Grid
+export default Grid;

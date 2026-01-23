@@ -1,115 +1,110 @@
-import { Template } from 'meteor/templating';
+import { Template } from "meteor/templating";
 
-import { Configurator } from '../../../templates/configurator/config_utils.js'
-import { ElementTypes, Diagrams } from '../../../../../db/platform/collections.js'
+import { Configurator } from "../../../templates/configurator/config_utils.js";
+import {
+  ElementTypes,
+  Diagrams,
+} from "../../../../../db/platform/collections.js";
 
-import './main.html'
+import "./main.html";
 
 // Start of element accordion
 Template.elementAccordion.helpers({
+  activeElement: function () {
+    if (Session.get("activeElement")) {
+      return true;
+    }
+  },
 
-	activeElement: function() {
-		if (Session.get("activeElement")) {
-			return true;
-		}
-	},
-
-	diagramName: function() {
-		var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
-		if (diagram) {
-			return diagram["name"];
-		}
-	},
+  diagramName: function () {
+    var diagram = Diagrams.findOne({ _id: Session.get("activeDiagram") });
+    if (diagram) {
+      return diagram.name;
+    }
+  },
 });
 // End of element accordion
 
 // Start of element main
 Template.elementMain.helpers({
+  active_elem_type: function () {
+    var elem_type = ElementTypes.findOne({
+      elementId: Session.get("activeElement"),
+    });
+    if (!elem_type) {
+      return;
+    } else {
+      return {
+        _id: elem_type._id,
+        name: elem_type.name,
 
-	active_elem_type: function() {
-		var elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
-		if (!elem_type) {
-			return;
-		}
+        is_line: function () {
+          if (elem_type.type === "Line") {
+            return true;
+          }
+        },
 
-		else {
-			return {
-				_id: elem_type["_id"],
-				name: elem_type["name"],
+        directions: function () {
+          var options = [
+            { option: "Directional" },
+            { option: "BiDirectional" },
+            { option: "ReverseDirectional" },
+          ];
 
-				is_line: function() {
-					if (elem_type["type"] == "Line") {
-						return true;
-					}
-				},
+          //sets which option is selected
+          for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            if (option.option === elem_type.direction) {
+              option.selected = "selected";
+              break;
+            }
+          }
 
-				directions: function() {
-					var options = [{option: "Directional"},
-									{option: "BiDirectional"},
-									{option: "ReverseDirectional"}];
+          return options;
+        },
 
-					//sets which option is selected
-					for (var i=0;i<options.length;i++) {
-						var option = options[i];
-						if (option["option"] == elem_type["direction"]) {
-							option["selected"] = "selected";
-							break;
-						}
-					}
+        lineTypes: function () {
+          var options = [{ option: "Orthogonal" }, { option: "Direct" }];
 
-					return options;
-				},
+          //sets which option is selected
+          for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            if (option.option === elem_type.lineType) {
+              option.selected = "selected";
+              break;
+            }
+          }
 
-				lineTypes: function() {
-					var options = [{option: "Orthogonal"},
-									{option: "Direct"},];
+          return options;
+        },
 
-					//sets which option is selected
-					for (var i=0;i<options.length;i++) {
-						var option = options[i];
-						if (option["option"] == elem_type["lineType"]) {
-							option["selected"] = "selected";
-							break;
-						}
-					}
+        checked: function () {
+          if (elem_type.isAbstract) return "checked";
+          else return "";
+        },
 
-					return options;
-				},
-
-				checked: function() {
-					if (elem_type["isAbstract"])
-						return "checked";
-					else
-						return "";
-				},
-
-				defaultFixedSize: function() {
-					return elem_type.defaultFixedSize
-
-				},
-
-			}
-		}
-	},
+        defaultFixedSize: function () {
+          return elem_type.defaultFixedSize;
+        },
+      };
+    }
+  },
 });
 
 Template.elementMain.events({
+  //updates element fields
+  "blur .dialog-input": function (e) {
+    Configurator.updateObjectType(e);
+  },
 
-	//updates element fields
-	'blur .dialog-input' : function(e) {
-		Configurator.updateObjectType(e);
-	},
+  "change .dialog-selection": function (e) {
+    var pair = Configurator.selectSelectionValue(e);
+    Configurator.updateObjectTypeObj(pair._attr, pair._value);
+  },
 
-	'change .dialog-selection' : function(e) {
-		var pair = Configurator.selectSelectionValue(e);
-		Configurator.updateObjectTypeObj(pair["_attr"], pair["_value"]);
-	},
-
-	'change .dialog-checkbox' : function(e) {
-		var src = $(e.target);
-		Configurator.updateObjectTypeObj(src.attr("id"), src.prop('checked'));
-	},
-
+  "change .dialog-checkbox": function (e) {
+    var src = $(e.target);
+    Configurator.updateObjectTypeObj(src.attr("id"), src.prop("checked"));
+  },
 });
 // End of element main
-

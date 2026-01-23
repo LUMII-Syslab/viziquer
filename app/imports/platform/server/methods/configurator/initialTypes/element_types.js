@@ -7,15 +7,15 @@ function build_initial_element_type(list, editor_type) {
   if (!editor_type) editor_type = "ajooEditor";
 
   var res = {};
-  res["toolId"] = list["toolId"];
-  res["versionId"] = list["versionId"];
-  res["diagramTypeId"] = list["diagramTypeId"];
-  res["diagramId"] = list["diagramId"];
-  res["elementId"] = list["_id"];
-  res["superTypeIds"] = [];
-  res["type"] = list["type"];
+  res.toolId = list.toolId;
+  res.versionId = list.versionId;
+  res.diagramTypeId = list.diagramTypeId;
+  res.diagramId = list.diagramId;
+  res.elementId = list._id;
+  res.superTypeIds = [];
+  res.type = list.type;
 
-  res["extensionPoints"] = [
+  res.extensionPoints = [
     { extensionPoint: "createElement", procedure: "MakeElement" },
     { extensionPoint: "resizeElement", procedure: "ResizeElement" },
     //{extensionPoint: "beforeCreateElement", procedure: ""},
@@ -25,16 +25,16 @@ function build_initial_element_type(list, editor_type) {
   ];
 
   //adds keystrokes and context menu depending on element type
-  if (res["type"] == "Box") {
+  if (res.type === "Box") {
     if (is_ajoo_editor(editor_type)) {
       var keyStrokes = [
         { keyStroke: "Ctrl C", procedure: "Copy" },
         { keyStroke: "Ctrl X", procedure: "Cut" },
         { keyStroke: "Delete", procedure: "Delete" },
       ];
-      res["keyStrokes"] = keyStrokes;
+      res.keyStrokes = keyStrokes;
 
-      res["readModeKeyStrokes"] = [];
+      res.readModeKeyStrokes = [];
 
       var contextMenu = [
         { item: "Cut", procedure: "Cut" },
@@ -42,12 +42,12 @@ function build_initial_element_type(list, editor_type) {
         { item: "Delete", procedure: "Delete" },
       ];
 
-      res["contextMenu"] = contextMenu;
+      res.contextMenu = contextMenu;
 
-      res["readModeContextMenu"] = [];
+      res.readModeContextMenu = [];
     }
 
-    res["styles"] = [
+    res.styles = [
       {
         id: generate_id(),
         name: "Default",
@@ -55,45 +55,45 @@ function build_initial_element_type(list, editor_type) {
       },
     ];
 
-    res["name"] = "Box";
+    res.name = "Box";
   }
 
   //line
   else {
     var keyStrokes = [{ keyStroke: "Delete", procedure: "Delete" }];
-    res["keyStrokes"] = keyStrokes;
+    res.keyStrokes = keyStrokes;
 
-    res["readModeKeyStrokes"] = [];
+    res.readModeKeyStrokes = [];
 
     var contextMenu = [{ item: "Delete", procedure: "Delete" }];
-    res["contextMenu"] = contextMenu;
+    res.contextMenu = contextMenu;
 
-    res["readModeContextMenu"] = [];
+    res.readModeContextMenu = [];
 
-    res["name"] = "Line";
+    res.name = "Line";
 
-    res["startElementTypeId"] = list["startElementTypeId"];
-    res["endElementTypeId"] = list["endElementTypeId"];
+    res.startElementTypeId = list.startElementTypeId;
+    res.endElementTypeId = list.endElementTypeId;
 
     var style = build_initial_line_style(editor_type);
     if (is_ajoo_editor(editor_type)) {
-      res["styles"] = [
+      res.styles = [
         {
           id: generate_id(),
           name: "Default",
-          elementStyle: style["elementStyle"],
-          startShapeStyle: style["startShapeStyle"],
-          endShapeStyle: style["endShapeStyle"],
+          elementStyle: style.elementStyle,
+          startShapeStyle: style.startShapeStyle,
+          endShapeStyle: style.endShapeStyle,
         },
       ];
     }
 
     //by default line is directional
-    res["direction"] = "Directional";
+    res.direction = "Directional";
   }
 
-  res["isAbstract"] = false;
-  res["layoutSettings"] = {};
+  res.isAbstract = false;
+  res.layoutSettings = {};
 
   return res;
 }

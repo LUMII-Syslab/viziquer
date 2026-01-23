@@ -4,27 +4,27 @@ import {
 } from "../../../../../libs/platform/lib.js";
 
 function get_default_compartment_style(type, editor_type) {
-  if (type == "Box") {
+  if (type === "Box") {
     return build_box_compartment_style(editor_type);
-  } else if (type == "Line") return build_line_compartment_style(editor_type);
+  } else if (type === "Line") return build_line_compartment_style(editor_type);
 }
 
 function build_initial_compartment_type(list, elem_type, editor_type) {
-  list["name"] = "NewCompartment";
-  list["description"] = "";
-  list["prefix"] = "";
-  list["suffix"] = "";
-  list["defaultValue"] = "";
+  list.name = "NewCompartment";
+  list.description = "";
+  list.prefix = "";
+  list.suffix = "";
+  list.defaultValue = "";
 
-  if (!list["isObjectRepresentation"]) list["isObjectRepresentation"] = false;
+  if (!list.isObjectRepresentation) list.isObjectRepresentation = false;
 
-  if (!list["noRepresentation"]) list["noRepresentation"] = false;
+  if (!list.noRepresentation) list.noRepresentation = false;
 
-  list["inputType"] = { type: "input", inputType: "text", placeholder: "" };
+  list.inputType = { type: "input", inputType: "text", placeholder: "" };
 
   //compartment styles are added only for elements (not diagrams)
-  if (list["elementTypeId"]) {
-    list["styles"] = [
+  if (list.elementTypeId) {
+    list.styles = [
       {
         name: "Default",
         id: generate_id(),
@@ -33,7 +33,7 @@ function build_initial_compartment_type(list, elem_type, editor_type) {
     ];
   }
 
-  list["extensionPoints"] = [
+  list.extensionPoints = [
     { extensionPoint: "beforeUpdate", procedure: "" },
     { extensionPoint: "update", procedure: "UpdateCompartment" },
     { extensionPoint: "afterUpdate", procedure: "" },
@@ -43,7 +43,7 @@ function build_initial_compartment_type(list, elem_type, editor_type) {
     { extensionPoint: "dynamicDropDown", procedure: "" },
   ];
 
-  list["type"] = "text";
+  list.type = "text";
 
   console.log("initial type ", list);
 }

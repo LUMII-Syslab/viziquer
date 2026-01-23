@@ -877,7 +877,7 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const length = value_list.length;
     let max_count = value_list.length;
-    if ( compartmentName == 'ClassList' ||  compartmentName == 'Name' ) {
+    if ( compartmentName === 'ClassList' ||  compartmentName === 'Name' ) {
       const nList = value_list.map(a => a.shortName)
       await add_one_compartment(list, 'SchemaInformation', JSON.stringify(nList), JSON.stringify(nList));
     }
@@ -906,7 +906,7 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
     let value = ( sort ) ? replace_newline(value_list.map(a => `${pref}${a.name}`).sort().join('\n')) : replace_newline(value_list.map(a => `${pref}${a.name}`).join('\n'));
     if ( max_count < length )  value = `${value}\n...(${length-max_count})...`;
 
-    if ( compartmentName == 'ClassList' && !isGroup ) { // ( compartmentName == 'ClassList' && value_list.length == 1 ) {
+    if ( compartmentName === 'ClassList' && !isGroup ) { // ( compartmentName === 'ClassList' && value_list.length === 1 ) {
       value = '';
     }
     await add_one_compartment(list, compartmentName, input, value);
@@ -917,7 +917,7 @@ function add_one_compartment_from_list(list, compartmentName, value_list, pref, 
     const input = ( sort ) ? replace_newline(value_list.map(a => a.name).sort().join('\n')) : replace_newline(value_list.map(a => a.name).join('\n'));
     const max_count = Math.round(value_list.length*proc/100);
     const length = value_list.length;
-    if ( value_list.length < 3 || length-max_count == 1) proc = 100; // TODO šis ir lai nesanāk dīvaini
+    if ( value_list.length < 3 || length-max_count === 1) proc = 100; // TODO šis ir lai nesanāk dīvaini
     if ( proc < 100 ) {
         value_list = value_list.slice(0, max_count);
     }
@@ -988,8 +988,8 @@ async function addCompartmentSubCompartments2(list, compartment_name, subcompart
       c_to_create["compartment"]["subCompartments"][compartment_name] = {};
       c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name] = {};
 
-      if (ct.inputType.type == "custom") {
-      // if (ct.inputType.type == "custom" && ct.inputType.templateName == "multiField") {
+      if (ct.inputType.type === "custom") {
+      // if (ct.inputType.type === "custom" && ct.inputType.templateName === "multiField") {
            var ct_comparts_indexes = await Compartments.find({compartmentTypeId: ct._id, elementId: list.element_id}, {sort: {index: 1}})
                                     .map(function(c) {return c.index; });
 			// search for hole in the array of indexes
@@ -1005,7 +1005,7 @@ async function addCompartmentSubCompartments2(list, compartment_name, subcompart
       _.each(sorted_sub_compart_types, function(sub_c) {
          c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name] = {};
         var sc_value = "";
-        // var sc = _.find(subcompartment_value_list, function(s) {return s.name == sub_c.name});
+        // var sc = _.find(subcompartment_value_list, function(s) {return s.name === sub_c.name});
         const sc = _.find(subcompartment_value_list, s => s.name === sub_c.name);
 
 // Check for nested subCompartments
@@ -1235,7 +1235,7 @@ function buildCompartmentValue(compart_type, input, mapped_value, elemStyleId, c
 
 		//if there is no mapped values, then value <== input
 		var value;
-		if (mapped_value || mapped_value == "") {
+		if (mapped_value || mapped_value === "") {
 			value = mapped_value;
 		}
 

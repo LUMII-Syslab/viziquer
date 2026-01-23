@@ -42,7 +42,7 @@ Template.AddAttribute_OWLGrEd.helpers({
 		let require = false;
 		for (let field = 0; field < fields.length; field++) {
 			fields[field][fields[field]["name"].replace(/\s/g, '').replace(/-/g, '')] = true;
-			// if(fields[field]["name"] == "Annotation") fields[field]["next_level_form"] = "show_sub_multi_field_form";
+			// if(fields[field]["name"] === "Annotation") fields[field]["next_level_form"] = "show_sub_multi_field_form";
 			const fieldValue = fields[field]["field_value"];
 
 			const fieldName = fields[field]["name"];

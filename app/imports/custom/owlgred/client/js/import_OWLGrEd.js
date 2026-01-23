@@ -564,7 +564,7 @@ function routeTriplesN3(store, state, prefixes = {}) {
 
 		// Light ensure: create buckets for mentioned properties so later code can enrich them
 		for (const it of parsed) {
-		  if (it.kind === 'object' || (it.kind == null && !state.dataProperties[it.iri])) {
+		  if (it.kind === 'object' || (it.kind === null && !state.dataProperties[it.iri])) {
 			// assume object if unknown; make OP bucket if missing
 			if (!state.objectProperties[it.iri]) {
 			  state.objectProperties[it.iri] = {

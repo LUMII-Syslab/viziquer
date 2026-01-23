@@ -19,7 +19,7 @@ Notifications.after.update(
   async function (user_id, doc, fieldNames, modifier, options) {
     if (!doc || !modifier || !modifier.$set) return false;
 
-    var proj_id = doc["projectId"];
+    var proj_id = doc.projectId;
 
     if (modifier.$set.status === "confirmed") {
       var role = doc.data.role;
@@ -48,7 +48,7 @@ Notifications.after.update(
         //generating role names for all the project versions
         return build_project_version_reader_role(
           proj_id,
-          version["_id"],
+          version._id,
           tmp_role,
         );
       });
@@ -63,16 +63,16 @@ Notifications.after.update(
         var version_fetch = await versions.fetchAsync();
         if (versions && version_fetch) {
           var last_version = version_fetch[0];
-          if (last_version && last_version["status"] === "New")
+          if (last_version && last_version.status === "New")
             roles.push(
-              build_project_version_admin_role(proj_id, last_version["_id"]),
+              build_project_version_admin_role(proj_id, last_version._id),
             );
         }
       }
 
       //selecting the first version's id
       if (versions && (await versions.countAsync()) > 0) {
-        var active_version = (await versions.fetchAsync())[0]["_id"];
+        var active_version = (await versions.fetchAsync())[0]._id;
 
         //adding the user to the project
         await ProjectsUsers.updateAsync(
@@ -120,7 +120,7 @@ Notifications.after.update(
       await Roles.addUsersToRolesAsync(user_id, roles);
     } else if (modifier.$set.status === "rejected") {
       await ProjectsUsers.removeAsync({
-        projectId: doc["projectId"],
+        projectId: doc.projectId,
         userSystemId: user_id,
       });
     }
@@ -146,8 +146,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (user_id) {
       await Notifications.updateAsync(
-        { _id: list["id"], receiver: user_id },
-        list["update"],
+        { _id: list.id, receiver: user_id },
+        list.update,
       );
     }
   },
@@ -155,11 +155,11 @@ Meteor.methods({
   removeNotification: async function (list) {
     var user_id = Meteor.userId();
     if (user_id) {
-      if (!list["id"]) {
+      if (!list.id) {
         return;
       }
 
-      await Notifications.removeAsync({ _id: list["id"], receiver: user_id });
+      await Notifications.removeAsync({ _id: list.id, receiver: user_id });
     }
   },
 });

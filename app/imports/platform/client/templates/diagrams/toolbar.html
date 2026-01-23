@@ -1,16 +1,13 @@
 <template name="diagramRibbon">
-
     <!-- RIBBON -->
     <div id="ribbon">
-
         <ol class="breadcrumb">
             <li><i class="fa fa-picture-o"></i> {{diagramName}}</li>
         </ol>
 
         {{#if is_toolbar_buttons }}
-            {{> diagram_toolbar}}
+          {{> diagram_toolbar}}
         {{/if}}
-
     </div>
     <!-- END RIBBON -->
 
@@ -20,26 +17,41 @@
     {{> diagram_log}}
     {{> diagramPermissions}}
     {{> ImportedTranslets}}
-
 </template>
 
 <template name="diagram_toolbar">
     <span class="ribbon-button-alignment pull-right">
         {{#each toolbar_buttons}}
-            <button id="{{id}}" class="btn btn-ribbon toolbar-button" data-title='{{_ "toolbar_name" name=name context=name}}' procedure="{{procedure}}" data-toggle="tooltip" data-placement="bottom" data-trigger="hover focus"><i class="fa {{icon}}"></i></button>
+        <button
+            id="{{id}}"
+            class="btn btn-ribbon toolbar-button"
+            data-title='{{_ "toolbar_name" name=name context=name}}'
+            procedure="{{procedure}}"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            data-trigger="hover focus"
+        >
+            <i class="fa {{icon}}"></i>
+        </button>
         {{/each}}
     </span>
 </template>
 
-
 <template name="diagram_settings">
-
     <!-- Add form-->
     <div id="diagram-settings-form" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button
+                        id="modalCloseButton"
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
                     <h4 class="modal-title">Diagram Info</h4>
                 </div>
                 <div class="modal-body">
@@ -76,90 +88,120 @@
                         </tbody>
                     </table>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
     <!-- End of add form-->
 </template>
 
-<template name="diagramPermissions">
-    {{> permissions groups=groups}}
-</template>
+<template name="diagramPermissions"> {{> permissions groups=groups}} </template>
 
 <template name="permissions">
-
     <!-- Add form-->
     <div id="permissions-form" class="modal fade">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button
+                        id="modalCloseButton"
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
                     <h4 class="modal-title">{{_ "permissions"}}</h4>
                 </div>
 
                 <div class="modal-body">
                     <ul class="list-group task-list no-margin collapse in">
-
                         {{#each groups}}
-                            <li class="list-group-item group-container" id="{{_id}}">
-                                <label class="label-checkbox inline">
-                                     <input type="checkbox" class="task-finish permission-checkbox" {{checked}} {{disabled}}>
-                                     <span class="custom-checkbox"></span>
-                                </label>
+                        <li
+                            class="list-group-item group-container"
+                            id="{{_id}}"
+                        >
+                            <label class="label-checkbox inline">
+                                <input
+                                    type="checkbox"
+                                    class="task-finish permission-checkbox"
+                                    {{checked}}
+                                    {{disabled}}
+                                />
+                                <span class="custom-checkbox"></span>
+                            </label>
 
-                                {{#if isDefault}}
-                                    <span class="m-left-xs">{{_ "user_role" context=name}}</span>
-                                {{else}}
-                                    {{name}}
-                                {{/if}}
-
-
-                            </li>
+                            {{#if isDefault}}
+                            <span class="m-left-xs"
+                                >{{_ "user_role" context=name}}</span
+                            >
+                            {{else}}
+                              {{name}}
+                            {{/if}}
+                        </li>
                         {{/each}}
                     </ul>
-
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
     <!-- End of add form-->
-
 </template>
 
-
 <template name="diagram_log">
-
     <!-- Add form-->
     <div id="diagram-log-form" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button id="diagram-log-modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button
+                        id="diagram-log-modalCloseButton"
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
                     <h4 class="modal-title">Action history</h4>
                 </div>
                 <div class="modal-body">
-
                     <ul class="chat">
                         {{#each logs}}
-                            <li class="left clearfix">
-                                <span class="chat-img pull-left">
-                                    <img src="{{image}}" alt="User Avatar">
-                                </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <strong class="primary-font">{{fullName}}</strong>
-                                        <small class="pull-right text-muted">{{time}}</small>
-                                    </div>
-                                    <p>{{{text}}}</p>
+                        <li class="left clearfix">
+                            <span class="chat-img pull-left">
+                                <img src="{{image}}" alt="User Avatar" />
+                            </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font"
+                                        >{{fullName}}</strong
+                                    >
+                                    <small class="pull-right text-muted"
+                                        >{{time}}</small
+                                    >
                                 </div>
-                            </li>
+                                <p>{{{text}}}</p>
+                            </div>
+                        </li>
                         {{/each}}
                     </ul>
 
                     <center class="list-group">
-                        <button id="load-more-logs" type="button" class="btn btn-info">Load more</button>
+                        <button
+                            id="load-more-logs"
+                            type="button"
+                            class="btn btn-info"
+                        >
+                            Load more
+                        </button>
                     </center>
-
                 </div>
             </div>
         </div>
@@ -167,29 +209,47 @@
 </template>
 
 <template name="downloadAsFile">
-
     <!-- Add form-->
     <div id="download-file-form" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
                     <h4 class="modal-title">Download</h4>
                 </div>
 
                 <div class="modal-body">
-
                     <form class="form-horizontal" role="form">
-
                         <div class="form-group">
-                            <label for="file-name" class="col-sm-2 control-label">Name</label>
+                            <label
+                                for="file-name"
+                                class="col-sm-2 control-label"
+                                >Name</label
+                            >
                             <div class="col-sm-10">
-                                <input id="file-name" type="text" class="form-control" placeholder="File name" value="{{fileName}}">
+                                <input
+                                    id="file-name"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="File name"
+                                    value="{{fileName}}"
+                                />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="file-type" class="control-label col-sm-2">Type</label>
+                            <label
+                                for="file-type"
+                                class="control-label col-sm-2"
+                                >Type</label
+                            >
                             <div class="col-sm-10">
                                 <select class="form-control" id="file-type">
                                     <option id="pdf">PDF</option>
@@ -197,7 +257,7 @@
                             </div>
                         </div>
 
- <!--                       <hr>
+                        <!--                       <hr>
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Page nr</label>
@@ -248,20 +308,26 @@
                             </div>
                         </div>
      -->
-
                     </form>
-
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button id="create-file" type="button" class="btn btn-primary">OK</button>
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        id="create-file"
+                        type="button"
+                        class="btn btn-primary"
+                    >
+                        OK
+                    </button>
                 </div>
-
             </div>
         </div>
     </div>
-
 </template>
-
-

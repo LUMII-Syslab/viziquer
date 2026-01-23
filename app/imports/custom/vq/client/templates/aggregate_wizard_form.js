@@ -56,7 +56,7 @@ Template.AggregateWizard.helpers({
 	},
 
 	selectedCount: function() {
-		if(Template.AggregateWizard.aggregation.get() == "count") return "checked";
+		if(Template.AggregateWizard.aggregation.get() === "count") return "checked";
 		return "";
 	},
 
@@ -73,37 +73,37 @@ Template.AggregateWizard.helpers({
 	},
 
 	selectedDistinct: function() {
-		if(Template.AggregateWizard.aggregation.get() == "count_distinct") return "checked";
+		if(Template.AggregateWizard.aggregation.get() === "count_distinct") return "checked";
 		return "";
 	},
 
 	selectedSum: function() {
-		if(Template.AggregateWizard.aggregation.get() == "sum") return "checked";
+		if(Template.AggregateWizard.aggregation.get() === "sum") return "checked";
 		return "";
 	},
 
 	selectedAvg: function() {
-		if(Template.AggregateWizard.aggregation.get() == "avg") return "checked";
+		if(Template.AggregateWizard.aggregation.get() === "avg") return "checked";
 		return "";
 	},
 
 	selectedMax: function() {
-		if(Template.AggregateWizard.aggregation.get() == "max") return "checked";
+		if(Template.AggregateWizard.aggregation.get() === "max") return "checked";
 		return "";
 	},
 
 	selectedMin: function() {
-		if(Template.AggregateWizard.aggregation.get() == "min") return "checked";
+		if(Template.AggregateWizard.aggregation.get() === "min") return "checked";
 		return "";
 	},
 
 	selectedSample: function() {
-		if(Template.AggregateWizard.aggregation.get() == "sample") return "checked";
+		if(Template.AggregateWizard.aggregation.get() === "sample") return "checked";
 		return "";
 	},
 
 	selectedConcat: function() {
-		if(Template.AggregateWizard.aggregation.get() == "group_concat") return "checked";
+		if(Template.AggregateWizard.aggregation.get() === "group_concat") return "checked";
 		return "";
 	},
 });
@@ -126,27 +126,27 @@ Template.AggregateWizard.events({
 		var distinct = $('input[id=distinct-aggr-check-box]:checked').val();
 		var required = $('input[id=require-aggr-check-box]:checked').val();
 
-		if(typeof required !== "undefined" && required == "on") required = true;
+		if(typeof required !== "undefined" && required === "on") required = true;
 		else required = false;
 
 		// var fld = $('option[name=field-name]:selected').val();
 		var fld = document.getElementById('field-list').value;
-		if (fld == "") {
-			if(typeof distinct !== "undefined" && distinct == "on") expr = expr.concat("(DISTINCT .)");
+		if (fld === "") {
+			if(typeof distinct !== "undefined" && distinct === "on") expr = expr.concat("(DISTINCT .)");
 			else expr = expr.concat("(.)");
 		} else {
-			if(typeof distinct !== "undefined" && distinct == "on") expr = expr.concat("(DISTINCT ", fld, ")");
+			if(typeof distinct !== "undefined" && distinct === "on") expr = expr.concat("(DISTINCT ", fld, ")");
 			else expr = expr.concat("(", fld, ")");
 		}
 
-		if(Template.AggregateWizard.fromAddLink.get() == true){
+		if(Template.AggregateWizard.fromAddLink.get() === true){
 
 			var vq_end_obj = await createVQ_Element(Template.AggregateWizard.endClassId.curValue);
 			var displayCase = document.getElementById("display-results").checked;
 			var minValue = $('input[id=results_least]').val();
 			var maxValue = $('input[id=results-most]').val();
 
-			if ((displayCase || (minValue !== "") || (maxValue !== "")) && (alias == null || alias == "")) {
+			if ((displayCase || (minValue !== "") || (maxValue !== "")) && (alias === null || alias === "")) {
 				let cName = await vq_end_obj.getName();
 				let newFunction = $('input[name=aggregate-list-radio]:checked').val()
 				alias = cName.charAt(0) + "_" + newFunction;
@@ -162,7 +162,7 @@ Template.AggregateWizard.events({
 			if (displayCase || (minValue !== "") || (maxValue !== "")) {
 				// console.log("display or min/max");
 				var vq_start_obj = await createVQ_Element(Template.AggregateWizard.startClassId.curValue);
-				if (alias == null || alias == "") {
+				if (alias === null || alias === "") {
 					let cName = await vq_start_obj.getName();
 					// var newFunction = $('option[name=function-name]:selected').val();
 					let newFunction = $('input[name=aggregate-list-radio]:checked').val()
@@ -238,7 +238,7 @@ Template.AggregateWizard.events({
     const newFunction = $('input[name=aggregate-list-radio]:checked').val();
     const fieldName = document.getElementById('field-list').value;
     let cName = await vq_start_obj.getName();
-    if (cName == null) cName = "";
+    if (cName === null) cName = "";
 
     const functionArray = Template.AggregateWizard.attList.curValue;
 
@@ -262,15 +262,15 @@ Template.AggregateWizard.events({
 
 
 	'click #extra-options-button': function(e) {
-		if(document.getElementById("extra-options").style.display == "none") document.getElementById("extra-options").style.display = "block";
+		if(document.getElementById("extra-options").style.display === "none") document.getElementById("extra-options").style.display = "block";
 		else document.getElementById("extra-options").style.display = "none";
 		return;
 	},
 	'click #add-conditions-button': function(e) {
-		if(document.getElementById("result-at-most").style.display == "none") document.getElementById("result-at-most").style.display = "block";
+		if(document.getElementById("result-at-most").style.display === "none") document.getElementById("result-at-most").style.display = "block";
 		else document.getElementById("result-at-most").style.display = "none";
 
-		if(document.getElementById("result-at-least").style.display == "none") document.getElementById("result-at-least").style.display = "block";
+		if(document.getElementById("result-at-least").style.display === "none") document.getElementById("result-at-least").style.display = "block";
 		else document.getElementById("result-at-least").style.display = "none";
 		return;
 	},
@@ -329,7 +329,7 @@ async function onAggregationChange(){
 		defaultFieldList();
 		var attrArray = Template.AggregateWizard.attList.curValue;
 		var newAttrList = [];
-		if (newFunction == "count" || newFunction == "count_distinct" || newFunction == "sample") {
+		if (newFunction === "count" || newFunction === "count_distinct" || newFunction === "sample") {
 			newAttrList.push({attribute: ""});
 		}
 
@@ -337,11 +337,11 @@ async function onAggregationChange(){
 		var symbolTable = tempSymbolTable["symbolTable"];
 		for (var  key in symbolTable) {
 			for (var symbol in symbolTable[key]) {
-				if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){
+				if (symbolTable[key][symbol]["upBySubQuery"] === 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] === "CLASS_ALIAS")){
 					newAttrList.push({attribute: key});
 				} else{
 					var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
-					if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true){
+					if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] === true){
 						newAttrList.push({attribute: key});
 					}
 				}
@@ -380,7 +380,7 @@ async function onAggregationChange(){
 
 
 		//Set at least/at most
-		if (newFunction == "count" || newFunction == "sum" || newFunction == "avg" || newFunction == "count_distinct"){
+		if (newFunction === "count" || newFunction === "sum" || newFunction === "avg" || newFunction === "count_distinct"){
 			$('input[id=results_least]').attr('disabled', false);
 			$('input[id=results-most]').attr('disabled', false);
 		} else {

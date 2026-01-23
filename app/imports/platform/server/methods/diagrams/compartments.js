@@ -19,16 +19,16 @@ Compartments.after.update(
     await update_compartment(user_id, doc);
 
     //if element compartment was updated
-    if (doc["elementId"]) {
+    if (doc.elementId) {
       var prev_doc = this.previous;
 
       var edit = {
         action: "updated",
         time: new Date(),
         actionData: {
-          oldValue: prev_doc["value"],
-          newValue: doc["value"],
-          elementId: doc["elementId"],
+          oldValue: prev_doc.value,
+          newValue: doc.value,
+          elementId: doc.elementId,
         },
       };
 
@@ -43,7 +43,7 @@ Compartments.hookOptions.after.insert = { fetchPrevious: false };
 Compartments.after.insert(async function (user_id, doc) {
   if (!doc) return;
 
-  if (doc["isObjectRepresentation"]) await update_compartment(user_id, doc);
+  if (doc.isObjectRepresentation) await update_compartment(user_id, doc);
 });
 
 Meteor.methods({
@@ -52,13 +52,13 @@ Meteor.methods({
     var compart_in = list.compartment;
     if (
       (await is_project_member(user_id, compart_in)) ||
-      is_public_diagram(compart_in["diagramId"])
+      is_public_diagram(compart_in.diagramId)
     ) {
       if (
-        !_.isUndefined(compart_in["value"]) &&
-        !_.isUndefined(compart_in["input"] && compart_in.input !== "")
+        !_.isUndefined(compart_in.value) &&
+        !_.isUndefined(compart_in.input && compart_in.input !== "")
       ) {
-        compart_in["valueLC"] = compart_in["value"].toLowerCase();
+        compart_in.valueLC = compart_in.value.toLowerCase();
 
         var compart_type = await CompartmentTypes.findOneAsync({
           _id: compart_in.compartmentTypeId,
@@ -69,14 +69,14 @@ Meteor.methods({
         await Compartments.insertAsync(compart_in);
         // Compartments.insert(compart_in, {trimStrings: false});
 
-        if (list["elementStyleUpdate"]) {
+        if (list.elementStyleUpdate) {
           await Elements.updateAsync(
             {
               _id: compart_in.elementId,
               projectId: compart_in.projectId,
               versionId: compart_in.versionId,
             },
-            { $set: list["elementStyleUpdate"] },
+            { $set: list.elementStyleUpdate },
           );
         }
       }
@@ -87,44 +87,44 @@ Meteor.methods({
     var user_id = Meteor.userId() || get_unknown_public_user_name();
     if (
       (await is_project_member(user_id, list)) ||
-      is_public_diagram(list["diagramId"])
+      is_public_diagram(list.diagramId)
     ) {
-      if (list["value"] || list["value"] == "") {
+      if (list.value || list.value === "") {
         var update = {};
-        if (list["compartmentStyleUpdate"]) {
-          update = list["compartmentStyleUpdate"];
+        if (list.compartmentStyleUpdate) {
+          update = list.compartmentStyleUpdate;
         }
 
-        if (list["subCompartments"]) {
-          update["subCompartments"] = list["subCompartments"];
+        if (list.subCompartments) {
+          update.subCompartments = list.subCompartments;
         }
 
-        update["value"] = list["value"];
-        update["input"] = list["input"];
-        update["valueLC"] = list["value"].toLowerCase();
+        update.value = list.value;
+        update.input = list.input;
+        update.valueLC = list.value.toLowerCase();
 
-        if (list["value"] == "" && list["input"] == "") {
+        if (list.value === "" && list.input === "") {
           await Compartments.removeAsync({
-            _id: list["id"],
-            projectId: list["projectId"],
-            versionId: list["versionId"],
+            _id: list.id,
+            projectId: list.projectId,
+            versionId: list.versionId,
           });
         } else {
           await Compartments.updateAsync(
             {
-              _id: list["id"],
-              projectId: list["projectId"],
-              versionId: list["versionId"],
+              _id: list.id,
+              projectId: list.projectId,
+              versionId: list.versionId,
             },
             { $set: update },
           );
           // {$set: update}, {trimStrings: false, removeEmptyStrings: false,});
         }
 
-        if (list["elementStyleUpdate"]) {
-          var elem_update = list["elementStyleUpdate"];
+        if (list.elementStyleUpdate) {
+          var elem_update = list.elementStyleUpdate;
           await Elements.updateAsync(
-            { _id: list["elementId"] },
+            { _id: list.elementId },
             { $set: elem_update },
           );
         }
@@ -136,14 +136,14 @@ Meteor.methods({
     var user_id = Meteor.userId() || get_unknown_public_user_name();
     if (
       (await is_project_member(user_id, list)) ||
-      is_public_diagram(list["diagramId"])
+      is_public_diagram(list.diagramId)
     ) {
-      if (!list["compartmentId"]) return;
+      if (!list.compartmentId) return;
 
       await Compartments.removeAsync({
-        _id: list["compartmentId"],
-        projectId: list["projectId"],
-        versionId: list["versionId"],
+        _id: list.compartmentId,
+        projectId: list.projectId,
+        versionId: list.versionId,
       });
     }
   },
@@ -152,7 +152,7 @@ Meteor.methods({
     var user_id = Meteor.userId() || get_unknown_public_user_name();
     if (
       (await is_project_member(user_id, list)) ||
-      is_public_diagram(list["diagramId"])
+      is_public_diagram(list.diagramId)
     ) {
       var prev_compart = list.prevCompartment;
       var current_compart = list.currentCompartment;
@@ -172,10 +172,10 @@ Meteor.methods({
 async function update_compartment(user_id, doc) {
   var update = {};
 
-  if (!doc["elementId"] && doc["isObjectRepresentation"]) {
-    update["name"] = doc["value"];
+  if (!doc.elementId && doc.isObjectRepresentation) {
+    update.name = doc.value;
 
-    await Diagrams.updateAsync({ _id: doc["diagramId"] }, { $set: update });
+    await Diagrams.updateAsync({ _id: doc.diagramId }, { $set: update });
   }
 }
 
@@ -192,7 +192,7 @@ async function add_compartments_by_values(list, compartments) {
       compart_type,
       list,
       _.find(compartments, function (c) {
-        return c.compartmentTypeId == compart_type._id;
+        return c.compartmentTypeId === compart_type._id;
       }),
     );
   });
@@ -201,15 +201,15 @@ async function add_compartments_by_values(list, compartments) {
 //adding compartments in the DB
 async function add_compartments(list) {
   await CompartmentTypes.find(
-    { elementTypeId: list["elementTypeId"] },
+    { elementTypeId: list.elementTypeId },
     { $sort: { index: 1 } },
   ).forEachAsync(async function (compart_type) {
     if (
-      compart_type["inputType"] &&
-      compart_type["inputType"]["templateName"] == "multiField"
+      compart_type.inputType &&
+      compart_type.inputType.templateName === "multiField"
     ) {
       return;
-    } else if (compart_type["defaultValue"]) {
+    } else if (compart_type.defaultValue) {
       await add_compartment(compart_type, list);
     }
   });
@@ -221,7 +221,7 @@ async function add_compartment(compart_type, list, compart_in) {
 }
 
 function build_compartment(compart_type, list, compart_in) {
-  if (compart_type["styles"] && compart_type["styles"][0]) {
+  if (compart_type.styles && compart_type.styles[0]) {
     var input = "";
     var value = "";
     if (compart_in) {
@@ -237,36 +237,36 @@ function build_compartment(compart_type, list, compart_in) {
       }
     }
 
-    var style_obj = compart_type["styles"][0];
-    var style = style_obj["style"];
+    var style_obj = compart_type.styles[0];
+    var style = style_obj.style;
 
     var compart = {
-      elementId: list["id"],
-      diagramId: list["diagramId"],
-      diagramTypeId: list["diagramTypeId"],
-      elementTypeId: list["elementTypeId"],
-      versionId: list["versionId"],
-      compartmentTypeId: compart_type["_id"],
+      elementId: list.id,
+      diagramId: list.diagramId,
+      diagramTypeId: list.diagramTypeId,
+      elementTypeId: list.elementTypeId,
+      versionId: list.versionId,
+      compartmentTypeId: compart_type._id,
 
       input: input,
-      index: compart_type["index"],
+      index: compart_type.index,
 
-      type: compart_type["type"] || "text",
+      type: compart_type.type || "text",
 
-      styleId: style_obj["id"],
+      styleId: style_obj.id,
       style: style,
 
-      isObjectRepresentation: compart_type["isObjectRepresentation"],
+      isObjectRepresentation: compart_type.isObjectRepresentation,
     };
 
-    if (value || value == "") {
-      compart["value"] = value;
-      compart["valueLC"] = value.toLowerCase();
+    if (value || value === "") {
+      compart.value = value;
+      compart.valueLC = value.toLowerCase();
     }
-    if (list["projectId"]) {
-      compart["projectId"] = list["projectId"];
-    } else if (list["toolId"]) {
-      compart["toolId"] = list["toolId"];
+    if (list.projectId) {
+      compart.projectId = list.projectId;
+    } else if (list.toolId) {
+      compart.toolId = list.toolId;
     }
 
     // console.log("in new compart", compart);
@@ -278,15 +278,15 @@ function build_compartment(compart_type, list, compart_in) {
 //TODO: Needs extension points executions
 function get_default_value(compart_type) {
   //
-  return compart_type["defaultValue"];
+  return compart_type.defaultValue;
 }
 
 function get_prefix(compart_type, default_value) {
-  return compart_type["prefix"] || "";
+  return compart_type.prefix || "";
 }
 
 function get_suffix(compart_type, default_value) {
-  return compart_type["suffix"] || "";
+  return compart_type.suffix || "";
 }
 
 export { add_compartments_by_values, build_compartment };

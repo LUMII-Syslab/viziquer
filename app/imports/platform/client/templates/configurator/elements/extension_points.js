@@ -1,33 +1,30 @@
-import { Template } from 'meteor/templating';
+import { Template } from "meteor/templating";
 
-import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { Configurator } from "../../../templates/configurator/config_utils.js";
 
-import './extension_points.html'
+import "./extension_points.html";
 
 // Start of element extensions
 Template.elementExtensions.helpers({
-	beforeCreateElement: function() {
-		return Configurator.getActiveElementExtension("beforeCreateElement");
-	},
+  beforeCreateElement: function () {
+    return Configurator.getActiveElementExtension("beforeCreateElement");
+  },
 
-	afterCreateElement: function() {
-		return Configurator.getActiveElementExtension("afterCreateElement");
-	},
+  afterCreateElement: function () {
+    return Configurator.getActiveElementExtension("afterCreateElement");
+  },
 
-	createElement: function() {
-		return Configurator.getActiveElementExtension("createElement");
-	},
+  createElement: function () {
+    return Configurator.getActiveElementExtension("createElement");
+  },
 
-	resizeElement: function() {
-		return Configurator.getActiveElementExtension("resizeElement");
-	},
+  resizeElement: function () {
+    return Configurator.getActiveElementExtension("resizeElement");
+  },
 });
 
 Template.elementExtensions.events({
-
-	'blur .dialog-input': function(e) {
-		Configurator.updateElementFromInput(e, "updateConfiguratorExtension");
-	},
-
+  "blur .dialog-input": function (e) {
+    Configurator.updateElementFromInput(e, "updateConfiguratorExtension");
+  },
 });
-

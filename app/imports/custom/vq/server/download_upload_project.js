@@ -246,7 +246,7 @@ async function uploadProject(list) {
 											toolId: tool_id,
 										});
 
-						if (element.type == "Line") {
+						if (element.type === "Line") {
 							_.extend(element, {startElement: elem_map[element.startElement],
 												endElement: elem_map[element.endElement],
 											});
@@ -369,7 +369,7 @@ async function uploadProject(list) {
 											toolId: tool_id,
 										});
 
-						if (element.type == "Line") {
+						if (element.type === "Line") {
 							_.extend(element, {startElement: elem_map[element.startElement],
 												endElement: elem_map[element.endElement],
 											});
@@ -504,7 +504,7 @@ async function uploadProject(list) {
 										toolId: tool_id,
 									});
 
-					if (element.type == "Line") {
+					if (element.type === "Line") {
 						_.extend(element, {startElement: elem_map[element.startElement],
 											endElement: elem_map[element.endElement],
 										});

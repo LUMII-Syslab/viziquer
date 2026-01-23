@@ -1,4 +1,4 @@
-import { Template } from 'meteor/templating';
+import { Template } from "meteor/templating";
 
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 
@@ -124,7 +124,7 @@ Template.addConfiguratorDiagram.events({
       });
 
       if (diagram_type) {
-        var diagram_type_id = diagram_type["_id"];
+        var diagram_type_id = diagram_type._id;
         //create_diagram(diagram_name, diagram_type_id);
 
         var list = {
@@ -140,9 +140,9 @@ Template.addConfiguratorDiagram.events({
           list,
           function (dgr_obj) {
             FlowRouter.go("configuratorDiagram", {
-              toolId: list["toolId"],
-              versionId: list["versionId"],
-              _id: dgr_obj["diagramId"],
+              toolId: list.toolId,
+              versionId: list.versionId,
+              _id: dgr_obj.diagramId,
               diagramTypeId: diagram_type_id,
             });
           },

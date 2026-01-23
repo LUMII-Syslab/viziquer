@@ -1,179 +1,168 @@
-import { Template } from 'meteor/templating';
+import { Template } from "meteor/templating";
 
-import './swimlane.html'
+import "./swimlane.html";
 
-import { Dialog } from '../../../js/interpretator/Dialog.js'
+import { Dialog } from "../../../js/interpretator/Dialog.js";
 
 import {
   CompartmentTypes,
   Compartments,
-} from '../../../../../db/platform/collections.js'
-import { Utilities } from '../../../js/utilities/utils.js'
+} from "../../../../../db/platform/collections.js";
+import { Utilities } from "../../../js/utilities/utils.js";
 
 Template.swimlane_TopLine.helpers({
-
-	compartment: function() {
-		return render_swimlane_compartment("TopLine");
-	},
-
+  compartment: function () {
+    return render_swimlane_compartment("TopLine");
+  },
 });
 
 Template.swimlane_LeftLine.helpers({
-
-	compartment: function() {
-		return render_swimlane_compartment("LeftLine");
-	},
-
+  compartment: function () {
+    return render_swimlane_compartment("LeftLine");
+  },
 });
 
 Template.swimlane_Middle.helpers({
-
-	compartment: function() {
-		return render_swimlane_compartment("Middle");
-	},
-
+  compartment: function () {
+    return render_swimlane_compartment("Middle");
+  },
 });
 
 //events
 Template.swimlane_TopLine.events({
-
-	'blur .dialog-input': function(e) {
-		update_swimlane_compartment(e);
-	},
-
+  "blur .dialog-input": function (e) {
+    update_swimlane_compartment(e);
+  },
 });
 
 Template.swimlane_LeftLine.events({
-
-	'blur .dialog-input': function(e) {
-		update_swimlane_compartment(e);
-	},
-
+  "blur .dialog-input": function (e) {
+    update_swimlane_compartment(e);
+  },
 });
 
 Template.swimlane_Middle.events({
-
-	'blur .dialog-input': function(e) {
-		update_swimlane_compartment(e);
-	},
-
+  "blur .dialog-input": function (e) {
+    update_swimlane_compartment(e);
+  },
 });
 
-
 function render_swimlane_compartment(name) {
+  var cell = Session.get("swimlaneCell");
+  if (!cell) {
+    return;
+  }
 
-	var cell = Session.get("swimlaneCell");
-	if (!cell) {
-		return;
-	}
+  var elem_id = Session.get("activeElement");
+  if (!elem_id) {
+    return;
+  }
 
-	var elem_id = Session.get("activeElement");
-	if (!elem_id) {
-		return;
-	}
+  var res = { name: "Value", _rows: 3 };
 
-	var res = {name: "Value", _rows: 3,};
+  if (!Session.get("editMode")) {
+    res.disabled = "disabled";
+  }
 
-	if (!Session.get("editMode")) {
-		res["disabled"] = "disabled";
-	}
+  var row = cell.row;
+  var column = cell.column;
 
-	var row = cell["row"];
-	var column = cell["column"];
+  var elem_type_id = Session.get("activeElementType");
 
-	var elem_type_id = Session.get("activeElementType");
+  var tmp_name;
 
-	var tmp_name;
+  if (column === 0) {
+    tmp_name = "LeftLine";
+  } else if (row === 0) {
+    tmp_name = "TopLine";
+  } else if (column !== 0 && row !== 0) {
+    tmp_name = "Middle";
+  }
 
-	if (column == 0) {
-		tmp_name = "LeftLine";
-	}
+  if (name !== tmp_name) {
+    return;
+  }
 
-	else if (row == 0) {
-		tmp_name = "TopLine";
-	}
+  var compart_type = CompartmentTypes.findOne({
+    elementTypeId: elem_type_id,
+    name: name,
+  });
+  if (!compart_type) {
+    return;
+  }
 
-	else if (column !== 0 && row !== 0) {
-		tmp_name = "Middle";
-	}
+  res.compartment_type_id = compart_type._id;
+  var compart = Compartments.findOne({
+    elementId: elem_id,
+    "swimlane.row": row,
+    "swimlane.column": column,
+  });
 
-	if (name !== tmp_name) {
-		return;
-	}
+  if (compart) {
+    res._id = compart._id;
+    res.value = compart.input;
+  }
 
-	var compart_type = CompartmentTypes.findOne({elementTypeId: elem_type_id, name: name});
-	if (!compart_type) {
-		return;
-	}
-
-	res["compartment_type_id"] = compart_type["_id"];
-	var compart = Compartments.findOne({elementId: elem_id,
-										"swimlane.row": row, "swimlane.column": column});
-
-	if (compart) {
-		res["_id"] = compart["_id"];
-		res["value"] = compart["input"];
-	}
-
-	return res;
+  return res;
 }
 
 function update_swimlane_compartment(e) {
+  e.stopPropagation();
 
-	e.stopPropagation();
+  var src = $(e.target);
 
-	var src = $(e.target);
+  var src_id = src.attr("id");
+  var src_val = src.val();
 
-	var src_id = src.attr("id");
-	var src_val = src.val();
+  var name;
 
-	var name;
+  var cell = Session.get("swimlaneCell");
+  if (!cell) {
+    return;
+  }
 
-	var cell = Session.get("swimlaneCell");
-	if (!cell) {
-		return;
-	}
+  var compart_type_id = src.attr("compartment-type-id");
 
-	var compart_type_id = src.attr("compartment-type-id")
+  var compart_type = CompartmentTypes.findOne({
+    _id: compart_type_id,
+    elementTypeId: Session.get("activeElementType"),
+  });
+  if (!compart_type) {
+    return;
+  }
 
-	var compart_type = CompartmentTypes.findOne({_id: compart_type_id, elementTypeId: Session.get("activeElementType")});
-	if (!compart_type) {
-		return;
-	}
+  //computing the value
+  var value = Dialog.buildCompartmentValue(compart_type, src_val);
 
-	//computing the value
-	var value = Dialog.buildCompartmentValue(compart_type, src_val);
+  //making the compartment object
+  var list = Dialog.buildCompartmentList(compart_type, src_val, value);
 
-	//making the compartment object
-	var list = Dialog.buildCompartmentList(compart_type, src_val, value);
+  //if no compartment, then inserting
+  if (!src_id) {
+    //adding style to the compartment object
+    var compart_style_obj = compart_type.styles[0];
 
-	//if no compartment, then inserting
-	if (!src_id) {
+    list.styleId = compart_style_obj.id;
+    list.style = compart_style_obj.style;
 
-		//adding style to the compartment object
-		var compart_style_obj = compart_type["styles"][0];
+    list.swimlane = cell;
 
-		list["styleId"] = compart_style_obj["id"];
-		list["style"] = compart_style_obj["style"];
+    Utilities.callMeteorMethod("insertCompartment", list);
+  }
 
-		list["swimlane"] = cell;
+  //if compartment exists, then updating it
+  else {
+    var compart = Compartments.findOne({
+      compartmentTypeId: compart_type_id,
+      elementId: Session.get("activeElement"),
+      "swimlane.row": cell.row,
+      "swimlane.column": cell.column,
+    });
 
-		Utilities.callMeteorMethod("insertCompartment", list);
-	}
+    list.id = compart._id;
 
-	//if compartment exists, then updating it
-	else {
+    Utilities.callMeteorMethod("updateCompartment", list);
+  }
 
-		var compart = Compartments.findOne({compartmentTypeId: compart_type_id,
-											elementId: Session.get("activeElement"),
-											"swimlane.row": cell["row"],
-											"swimlane.column": cell["column"]});
-
-		list["id"] = compart["_id"];
-
-		Utilities.callMeteorMethod("updateCompartment", list);
-	}
-
-	return false;
+  return false;
 }
-

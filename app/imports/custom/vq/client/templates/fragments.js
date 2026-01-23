@@ -197,7 +197,7 @@ export async function fragmentsHeuristic(mainClasses, fragmentClassCount, adj) {
 	// Try to add classes to the fragment until the desired size is achieved
 	while (currClassCount < fragmentClassCount) {
 		// If it is not possible to get a fragment of required size, return fragment of maximum possible size
-		if (candidates.length == 0) {break;}
+		if (candidates.length === 0) {break;}
 
 		// Sort candidates in increasing order of relevance and add the most relevant candidate to the fragment
 		candidates.sort((a, b) => classRelevance.get(a) - classRelevance.get(b));
@@ -303,7 +303,7 @@ export async function fragmentsLimitedPPR(mainClasses, fragmentClassCount, alpha
 		rank = PPR(adjFragment, mainClasses, alpha, tol);
 
 		// If there are no new candidates, return fragment as is
-		if (rank.length == currClassCount) {break;}
+		if (rank.length === currClassCount) {break;}
 
 		// Add the best candidate to the fragment (sort in decreasing order of rank and choose the first class that is not yet chosen as part of the fragment)
 		const sortedRank = [...rank.entries()].sort((a, b) => b[1] - a[1]);
@@ -347,7 +347,7 @@ export async function runFragmentAlgorithm(algorithm, edgeWeightContext, mainCla
 	// Create an adjacency list (a list of relevant cpc_rels for each class) if not given as a parameter
 	if (adj === undefined) {
 		adj = await getCPCAdj(weightByCPCsum, useBothClasses);
-		if (adj.size == 0) {adj = await getAdjFromCP(weightByCPCsum, useBothClasses);}
+		if (adj.size === 0) {adj = await getAdjFromCP(weightByCPCsum, useBothClasses);}
 	}
 
 	let fragmentClasses, rank;
@@ -402,7 +402,7 @@ export async function compareFragmentAlgorithmsSizeIncrease(weightByCPCsum) {
 	for (let a1 = 0; a1 < algorithms.length; a1++) {
 		const alg1 = algorithms[a1];
 		for (let a2 = 0; a2 < algorithms.length; a2++) {
-			if (a1 == a2) {continue;}
+			if (a1 === a2) {continue;}
 			const alg2 = algorithms[a2];
 			const similarities = new Map();
 			for (let fragSize = 10; fragSize <= 30; fragSize += 5) {
@@ -416,7 +416,7 @@ export async function compareFragmentAlgorithmsSizeIncrease(weightByCPCsum) {
 						let size = Math.floor((minSize + maxSize) / 2);
 						const [frag2, ] = await runFragmentAlgorithm(alg1, undefined, [mainClass], fragSize, adj);
 						const commonClasses = frag1.filter(c => frag2.includes(c));
-						if (commonClasses.length == frag1.length) {
+						if (commonClasses.length === frag1.length) {
 							maxSize = size;
 						}
 						else {

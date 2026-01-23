@@ -18,91 +18,101 @@
 
 <!-- Start of diagram template -->
 <template name="publicDiagramTemplate">
-
-<!--     <script src='//cdn.jsdelivr.net/yasr/2.4/yasr.bundled.min.js'></script>
+    <!--     <script src='//cdn.jsdelivr.net/yasr/2.4/yasr.bundled.min.js'></script>
     <script src='//cdn.jsdelivr.net/yasqe/2.2/yasqe.bundled.min.js'></script>
 
     <link href='//cdn.jsdelivr.net/g/yasqe@2.2(yasqe.min.css),yasr@2.4(yasr.min.css)' rel='stylesheet' type='text/css'/> -->
 
+  {{#if isReady}}
 
-    {{#if isReady}}
+    <!-- RIBBON -->
+    <div id="ribbon">
+        <!-- <button id="export" class="btn btn-ribbon" data-title="Export Ontology"><i class="fa fa-download"></i></button> -->
+        <button
+            id="settings"
+            class="btn btn-ribbon toolbar-button"
+            data-title="Settings"
+            data-toggle="tooltip"
+            data-placement="bottom"
+        >
+            <i class="fa fa-gear"></i>
+        </button>
 
-          <!-- RIBBON -->
-          <div id="ribbon">
+        <a
+            id="download-project"
+            class="btn btn-ribbon toolbar-button"
+            data-title="Download Project"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            ><i class="fa fa-cloud-download"></i
+        ></a>
+    </div>
+    <!-- END RIBBON -->
 
-              <!-- <button id="export" class="btn btn-ribbon" data-title="Export Ontology"><i class="fa fa-download"></i></button> -->
-              <button id="settings" class="btn btn-ribbon toolbar-button" data-title="Settings" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-gear" ></i></button>
+    {{> ontologySettings}}
 
-              <a id="download-project" class="btn btn-ribbon toolbar-button" data-title="Download Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-download"></i></a>
+    <div style="display:{{plain.showPlain}}">{{> noDiagramTemplate}}</div>
 
-          </div>
-          <!-- END RIBBON -->
+    <div class="row" style="display:{{plain.showDiagram}}">
+      {{#with diagram_type}}
+        <div
+            id="diagram_and_sparql"
+            class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10"
+            style="padding-left: 2px; padding-right: 2px"
+        >
+            <div class="row">
+                <div
+                    id="diagram"
+                    class="col-sm-12 col-md-12 col-lg-12 col-xl-12"
+                    style="padding-left: 2px"
+                >
+                    {{> diagramEditor}}
+                </div>
+            </div>
+            <div class="row">{{> sparqlForm}}</div>
+        </div>
 
-          {{> ontologySettings}}
+        <div
+            id="compartment-forms"
+            class="col-sm-2 col-md-2 col-lg-{{dialog_size}} col-xl-2"
+            style="padding-left: 8px; padding-right: 1px"
+        >
+            <!-- {{> editingMessage editing=editing}} -->
+            {{> errorMessages}}
 
+            <div class="panel-group" id="dialog">{{> dialog}}</div>
+        </div>
+      {{/with}}
+    </div>
 
-          <div style="display:{{plain.showPlain}}" >
+    {{#each templates}}
+      {{> Template.dynamic template=templateId}}
+    {{/each}}
 
-            {{> noDiagramTemplate}}
+    <!-- FIXME-TOOLGROUPS Start -->
+    {{> VQ_diagram_dialogs}}
+    {{> OWLGRED_diagram_dialogs}}
+    <!-- FIXME-TOOLGROUPS End -->
 
-          </div>
+    {{!--
+      {{> AddLink}}
+      {{> ConnectClasses}}
+      {{> ConnectClassesSettings}}
+      {{> AggregateWizard}}
+      {{> AddAttribute}}
+      {{> AddNewAttribute}}
+      {{> BuildLinkPath}}
+      {{> SelectTargetClass}}
+      {{> AddCondition}}
+      {{> AddUri}}
+      {{> AddClassName}}
+      {{> AddMergeValues}}
+      {{> ExplainLink}}
+      {{> ExplainField}}
+      {{> VQ_DSS_schema}}
+      {{> VQ_DSS_custom_sparql}}
+    --}}
 
-          <div class="row" style="display:{{plain.showDiagram}}" >
-
-              {{#with diagram_type}}
-                  <div id="diagram_and_sparql" class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10" style="padding-left:2px;padding-right:2px;">
-                      <div class="row">
-                        <div id="diagram" class="col-sm-12 col-md-12 col-lg-12 col-xl-12" style="padding-left:2px;">
-                            {{> diagramEditor}}
-                        </div>
-                      </div>
-                      <div class="row">
-                          {{> sparqlForm}}
-                      </div>
-                  </div>
-
-
-                  <div id="compartment-forms" class="col-sm-2 col-md-2 col-lg-{{dialog_size}} col-xl-2" style="padding-left: 8px;padding-right: 1px;">
-
-                      <!-- {{> editingMessage editing=editing}} -->
-                      {{> errorMessages}}
-
-                      <div class="panel-group" id="dialog">
-                          {{> dialog}}
-                      </div>
-                  </div>
-              {{/with}}
-          </div>
-
-          {{#each templates}}
-              {{> Template.dynamic template=templateId}}
-          {{/each}}
-
-          <!-- FIXME-TOOLGROUPS Start -->
-          {{> VQ_diagram_dialogs}}
-          {{> OWLGRED_diagram_dialogs}}
-          <!-- FIXME-TOOLGROUPS End -->
-          {{!-- {{> AddLink}}
-          {{> ConnectClasses}}
-          {{> ConnectClassesSettings}}
-          {{> AggregateWizard}}
-          {{> AddAttribute}}
-          {{> AddNewAttribute}}
-          {{> BuildLinkPath}}
-          {{> SelectTargetClass}}
-          {{> AddCondition}}
-          {{> AddUri}}
-          {{> AddClassName}}
-          {{> AddMergeValues}}
-          {{> ExplainLink}}
-          {{> ExplainField}}
-          {{> VQ_DSS_schema}}
-          {{> VQ_DSS_custom_sparql}} --}}
-
-    {{else}}
-        Loading
-    {{/if}}
-
+  {{else}} Loading {{/if}}
 </template>
 <!-- End of diagram template -->
-

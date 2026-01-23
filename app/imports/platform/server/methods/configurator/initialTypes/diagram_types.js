@@ -1,7 +1,7 @@
 import { generate_id } from "../../../../../libs/platform/lib.js";
 
 function build_initial_diagram_type(list, editor_type) {
-  list["extensionPoints"] = [
+  list.extensionPoints = [
     { extensionPoint: "beforeRenderDiagram", procedure: "" },
     { extensionPoint: "beforeCreateDiagram", procedure: "" },
     { extensionPoint: "afterCreateDiagram", procedure: "" },
@@ -39,7 +39,7 @@ function build_initial_diagram_type(list, editor_type) {
     { extensionPoint: "canvasToImage", procedure: "CanvasToImage" },
   ];
 
-  list["toolbar"] = [
+  list.toolbar = [
     {
       id: generate_id(),
       name: "Toggle Grid",
@@ -88,7 +88,7 @@ function build_initial_diagram_type(list, editor_type) {
     },
   ];
 
-  list["readModeToolbar"] = [
+  list.readModeToolbar = [
     {
       id: generate_id(),
       name: "Zoom out",
@@ -135,21 +135,21 @@ function build_initial_diagram_type(list, editor_type) {
     },
   ];
 
-  list["newLineStyle"] = {
+  list.newLineStyle = {
     stroke: "black",
     strokeWidth: 1.5,
     opacity: 1,
   };
 
-  list["globalKeyStrokes"] = [{ keyStroke: "Ctrl A", procedure: "SelectAll" }];
+  list.globalKeyStrokes = [{ keyStroke: "Ctrl A", procedure: "SelectAll" }];
 
-  list["noCollectionKeyStrokes"] = [
+  list.noCollectionKeyStrokes = [
     { keyStroke: "Ctrl V", procedure: "Paste" },
   ];
 
-  list["readModeNoCollectionKeyStrokes"] = [];
+  list.readModeNoCollectionKeyStrokes = [];
 
-  list["collectionKeyStrokes"] = [
+  list.collectionKeyStrokes = [
     { keyStroke: "Ctrl X", procedure: "Cut" },
 
     { keyStroke: "Ctrl C", procedure: "Copy" },
@@ -157,13 +157,13 @@ function build_initial_diagram_type(list, editor_type) {
     { keyStroke: "Delete", procedure: "DeleteCollection" },
   ];
 
-  list["readModeCollectionKeyStrokes"] = [];
+  list.readModeCollectionKeyStrokes = [];
 
-  list["noCollectionContextMenu"] = [{ item: "Paste", procedure: "Paste" }];
+  list.noCollectionContextMenu = [{ item: "Paste", procedure: "Paste" }];
 
-  list["readModeNoCollectionContextMenu"] = [];
+  list.readModeNoCollectionContextMenu = [];
 
-  list["collectionContextMenu"] = [
+  list.collectionContextMenu = [
     { item: "Cut", procedure: "Cut" },
 
     { item: "Copy", procedure: "Copy" },
@@ -171,18 +171,18 @@ function build_initial_diagram_type(list, editor_type) {
     { item: "Delete", procedure: "DeleteCollection" },
   ];
 
-  list["readModeCollectionContextMenu"] = [];
+  list.readModeCollectionContextMenu = [];
 
-  list["selectionStyle"] = {
+  list.selectionStyle = {
     fill: "grey",
     opacity: 0.4,
     stroke: "black",
     strokeWidth: 0.6,
   };
 
-  list["size"] = { diagramSize: 8, dialogSize: 4 };
+  list.size = { diagramSize: 8, dialogSize: 4 };
 
-  list["layoutSettings"] = {
+  list.layoutSettings = {
     layout: "UNIVERSAL",
     arrangeMethod: "arrangeFromScratch",
   };

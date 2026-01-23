@@ -23,8 +23,8 @@ ProjectsUsers.before.insert(async function (user_id, doc) {
 
   //cheking if the user is already attached to the project
   var proj_user = await ProjectsUsers.findOneAsync({
-    userSystemId: doc["userSystemId"],
-    projectId: doc["projectId"],
+    userSystemId: doc.userSystemId,
+    projectId: doc.projectId,
   });
   if (proj_user) {
     console.log(
@@ -39,26 +39,26 @@ ProjectsUsers.after.insert(async function (user_id, doc) {
   if (!doc) return false;
 
   //not sending notifications to the user himself
-  if (doc["userSystemId"] !== user_id) {
+  if (doc.userSystemId !== user_id) {
     //adding notification to the user that was invited
     await Notifications.insertAsync({
       createdBy: user_id,
-      receiver: doc["userSystemId"],
+      receiver: doc.userSystemId,
       createdAt: new Date(),
       type: "Invitation",
       status: "new",
-      projectId: doc["projectId"],
+      projectId: doc.projectId,
       data: {
-        role: doc["role"],
+        role: doc.role,
       },
     });
 
     //sending email
     var subject = "Invitation";
-    var proj_name = await get_project_name(doc["projectId"]);
+    var proj_name = await get_project_name(doc.projectId);
     var text = "You have a new invitation for the project " + proj_name + ".";
 
-    // sending_notification_email(doc["userSystemId"], doc["projectId"], subject, text);
+    // sending_notification_email(doc.userSystemId, doc.projectId, subject, text);
   }
 });
 ProjectsUsers.hookOptions.after.insert = { fetchPrevious: false };
@@ -79,7 +79,7 @@ ProjectsUsers.hookOptions.after.insert = { fetchPrevious: false };
 // 	}
 
 // 	//if role is not changed, then stop the update (prevents sending the notification)
-// 	else if (modifier.$set.role === doc["role"]) {
+// 	else if (modifier.$set.role === doc.role) {
 // 		if (!modifier.$set.status) {
 // 			console.log("Update stoped: Changing role value to the same value");
 // 			return false;
@@ -94,16 +94,16 @@ ProjectsUsers.after.update(
     //if not changing the role, then no notifications are sent
     if (!doc || !modifier.$set) return false;
 
-    var proj_id = doc["projectId"];
-    var version_id = doc["versionId"];
-    var target_user = doc["userSystemId"];
+    var proj_id = doc.projectId;
+    var version_id = doc.versionId;
+    var target_user = doc.userSystemId;
 
     if (modifier.$set.role) {
       var role = modifier.$set.role;
 
       var old_doc = this.previous;
       var prev_role;
-      if (old_doc) prev_role = old_doc["role"];
+      if (old_doc) prev_role = old_doc.role;
 
       if (prev_role === role) return;
 
@@ -116,12 +116,12 @@ ProjectsUsers.after.update(
         //removing admins rights from any project version
         await proj_versions.forEachAsync(function (version) {
           old_roles.push(
-            build_project_version_admin_role(proj_id, version["_id"]),
+            build_project_version_admin_role(proj_id, version._id),
           );
           old_roles.push(
             build_project_version_reader_role(
               proj_id,
-              version["_id"],
+              version._id,
               prev_role,
             ),
           );
@@ -147,7 +147,7 @@ ProjectsUsers.after.update(
       //adding reading rights
       await proj_versions.forEachAsync(function (version) {
         roles.push(
-          build_project_version_reader_role(proj_id, version["_id"], role),
+          build_project_version_reader_role(proj_id, version._id, role),
         );
       });
 
@@ -183,29 +183,29 @@ ProjectsUsers.after.update(
     }
 
     //prevent sending notifications to the user himself
-    if (doc && doc["userSystemId"] === user_id) return false;
+    if (doc && doc.userSystemId === user_id) return false;
 
-    var role = doc["role"];
+    var role = doc.role;
     var date = new Date();
 
     var notification = await Notifications.findOneAsync({
-      receiver: doc["userSystemId"],
-      projectId: doc["projectId"],
+      receiver: doc.userSystemId,
+      projectId: doc.projectId,
       type: "Invitation",
     });
 
     //if there is an invitation that is confirmed or there is no notification, then creates one
     if (
       !notification ||
-      (notification && notification["status"] === "confirmed")
+      (notification && notification.status === "confirmed")
     ) {
       await Notifications.insertAsync({
         createdBy: user_id,
-        receiver: doc["userSystemId"],
+        receiver: doc.userSystemId,
         createdAt: date,
         type: "ChangeRole",
         status: "new",
-        projectId: doc["projectId"],
+        projectId: doc.projectId,
         data: {
           role: role,
         },
@@ -213,7 +213,7 @@ ProjectsUsers.after.update(
 
       //sending email
       var subject = "Role changed";
-      var proj_name = await get_project_name(doc["projectId"]);
+      var proj_name = await get_project_name(doc.projectId);
       var text =
         "Your role in project " +
         proj_name +
@@ -221,18 +221,18 @@ ProjectsUsers.after.update(
         role +
         ".";
 
-      // sending_notification_email(doc["userSystemId"], doc["projectId"], subject, text);
+      // sending_notification_email(doc.userSystemId, doc.projectId, subject, text);
     }
 
     //if there is an invitation that is new or seen, then updates it
     else if (
-      notification["status"] === "seen" ||
-      notification["status"] === "new"
+      notification.status === "seen" ||
+      notification.status === "new"
     ) {
       await Notifications.updateAsync(
         {
-          receiver: doc["userSystemId"],
-          projectId: doc["projectId"],
+          receiver: doc.userSystemId,
+          projectId: doc.projectId,
           type: "Invitation",
         },
         { $set: { "data.role": role, sender: user_id, status: "new" } },
@@ -247,25 +247,25 @@ ProjectsUsers.after.remove(async function (user_id, doc) {
 
   var user_id = user_id || get_unknown_public_user_name();
 
-  var target_user = doc["userSystemId"];
-  var role = doc["role"];
+  var target_user = doc.userSystemId;
+  var role = doc.role;
 
   //removing all the project related notifications
   await Notifications.removeAsync({
     receiver: target_user,
-    projectId: doc["projectId"],
+    projectId: doc.projectId,
     status: { $ne: "rejected" },
   });
 
   //remove any user rights from the project
-  var proj_id = doc["projectId"];
+  var proj_id = doc.projectId;
   var roles = [build_project_admin_role(proj_id), build_project_role(proj_id)];
 
   //removing admin and reader rights from any project version
   await Versions.find({ projectId: proj_id }).forEachAsync(function (version) {
-    roles.push(build_project_version_admin_role(proj_id, version["_id"]));
+    roles.push(build_project_version_admin_role(proj_id, version._id));
     roles.push(
-      build_project_version_reader_role(proj_id, version["_id"], role),
+      build_project_version_reader_role(proj_id, version._id, role),
     );
   });
 
@@ -291,17 +291,17 @@ ProjectsUsers.after.remove(async function (user_id, doc) {
       createdAt: new Date(),
       type: "Removed",
       status: "new",
-      projectId: doc["projectId"],
+      projectId: doc.projectId,
       data: {},
     });
 
     var receiver_user = await Users.findOneAsync({
-      systemId: doc["userSystemId"],
+      systemId: doc.userSystemId,
     });
     if (receiver_user) {
       var proj_name = await get_project_name(proj_id);
       var email = {
-        email: receiver_user["email"],
+        email: receiver_user.email,
         subject: "Deletion",
         text: "You have been removed from the project " + proj_name,
         //html: '<body></body>'
@@ -310,10 +310,10 @@ ProjectsUsers.after.remove(async function (user_id, doc) {
 
     //sending email
     var subject = "Deletion";
-    var proj_name = await get_project_name(doc["projectId"]);
+    var proj_name = await get_project_name(doc.projectId);
     var text = "You have been removed from the project " + proj_name + ".";
 
-    //await sending_notification_email( target_user, doc["projectId"], subject, text,);
+    //await sending_notification_email( target_user, doc.projectId, subject, text,);
   }
 });
 ProjectsUsers.hookOptions.after.remove = { fetchPrevious: false };
@@ -324,11 +324,11 @@ Meteor.methods({
     if (await is_project_admin(user_id, list)) {
       var date = new Date();
 
-      list["status"] = "Invited";
-      list["invitedBy"] = user_id;
+      list.status = "Invited";
+      list.invitedBy = user_id;
 
-      list["createdAt"] = date;
-      list["modifiedAt"] = date;
+      list.createdAt = date;
+      list.modifiedAt = date;
 
       await ProjectsUsers.insertAsync(list);
     }
@@ -338,11 +338,11 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (
       (await is_project_admin(user_id, list)) ||
-      list["userSystemId"] === user_id
+      list.userSystemId === user_id
     ) {
       await ProjectsUsers.updateAsync(
-        { projectId: list["projectId"], userSystemId: list["userSystemId"] },
-        list["update"],
+        { projectId: list.projectId, userSystemId: list.userSystemId },
+        list.update,
       );
     }
   },
@@ -351,7 +351,7 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (
       (await is_project_admin(user_id, list)) ||
-      list["userSystemId"] === user_id
+      list.userSystemId === user_id
     ) {
       await ProjectsUsers.removeAsync(list);
     }
@@ -361,7 +361,7 @@ Meteor.methods({
 async function get_project_name(proj_id) {
   var project = await Projects.findOneAsync({ _id: proj_id });
   var proj_name = "";
-  if (project) proj_name = project["name"];
+  if (project) proj_name = project.name;
 
   return proj_name;
 }
@@ -371,7 +371,7 @@ async function sending_notification_email(user_id, proj_id, subject, text) {
   if (receiver_user) {
     var proj_name = await get_project_name(proj_id);
     var email = {
-      email: receiver_user["email"],
+      email: receiver_user.email,
       subject: subject,
       text: text,
       //html: '<body></body>'

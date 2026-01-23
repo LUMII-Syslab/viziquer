@@ -8,7 +8,7 @@ import {
 //checks whether user is allowed to access the project
 async function get_user_rights_to_access_project(list, user_system_id) {
   if (list) {
-    var proj_id = list["projectId"];
+    var proj_id = list.projectId;
 
     //checks if user has logged in
     if (user_system_id) {
@@ -19,14 +19,14 @@ async function get_user_rights_to_access_project(list, user_system_id) {
       if (user) {
         //if version is specified,
         //then checks if the user has rights to access the specified version
-        if (list["versionId"]) {
+        if (list.versionId) {
           var version_query;
-          if (list["projectId"]) {
+          if (list.projectId) {
             //selects the project version
-            var version_id = list["versionId"];
+            var version_id = list.versionId;
             version_query = { _id: version_id, projectId: proj_id };
-          } else if (list["toolId"]) {
-            var tool_id = list["toolId"];
+          } else if (list.toolId) {
+            var tool_id = list.toolId;
 
             //checking if the project uses the specified too
             var project = await Projects.findOneAsync({
@@ -35,7 +35,7 @@ async function get_user_rights_to_access_project(list, user_system_id) {
             });
             if (project) {
               //selects the tool version
-              var version_id = list["versionId"];
+              var version_id = list.versionId;
               version_query = { toolVersionId: version_id, projectId: proj_id };
             } else {
               return {
@@ -48,13 +48,13 @@ async function get_user_rights_to_access_project(list, user_system_id) {
           var version = await Versions.findOneAsync(version_query);
           if (version) {
             //Only the published versions are available for every project member
-            if (version["status"] == "Published" && user["status"] == "Member")
-              return { isValidUser: true, role: user["role"] };
+            if (version.status === "Published" && user.status === "Member")
+              return { isValidUser: true, role: user.role };
             //New versions are availabe only for the admins and system admins
             //TODO: If user is a system admin,
             //then he also has rights to access the project
-            else if (version["status"] == "New" && user["role"] == "Admin") {
-              return { isValidUser: true, role: user["role"] };
+            else if (version.status === "New" && user.role === "Admin") {
+              return { isValidUser: true, role: user.role };
             } else
               return {
                 isValidUser: false,
@@ -70,8 +70,8 @@ async function get_user_rights_to_access_project(list, user_system_id) {
         }
 
         //if no version is specified, then user has to be the member of the project
-        else if (user["status"] == "Member") {
-          return { isValidUser: true, role: user["role"] };
+        else if (user.status === "Member") {
+          return { isValidUser: true, role: user.role };
         } else
           return {
             isValidUser: false,
@@ -87,9 +87,9 @@ async function get_user_rights_to_access_project(list, user_system_id) {
 }
 
 function check_user_rights(user_rights, privacy_level) {
-  if (user_rights["isValidUser"]) {
-    if (privacy_level == "All") return true;
-    else if (privacy_level == user_rights["role"]) return true;
+  if (user_rights.isValidUser) {
+    if (privacy_level === "All") return true;
+    else if (privacy_level === user_rights.role) return true;
     else return false;
   } else {
     return false;
@@ -99,24 +99,24 @@ function check_user_rights(user_rights, privacy_level) {
 //checks if the project version is in the state that can be edited
 async function is_allowed_version(list) {
   var version = await Versions.findOneAsync({
-    _id: list["versionId"],
-    projectId: list["projectId"],
+    _id: list.versionId,
+    projectId: list.projectId,
     status: "New",
   });
 
-  if (version && list["versionId"] == version["_id"]) return true;
+  if (version && list.versionId === version._id) return true;
   else return false;
 }
 
 function error_msg(err) {
-  if (err) console.log(err["error"]);
+  if (err) console.log(err.error);
   else console.log("Unspecified error");
 }
 
 async function is_version_not_published(list) {
   var tool_version = await ToolVersions.findOneAsync({
-    _id: list["versionId"],
-    toolId: list["toolId"],
+    _id: list.versionId,
+    toolId: list.toolId,
     status: "New",
   });
   if (tool_version) return true;
@@ -127,10 +127,10 @@ function build_user_search_query(text) {
   var search_entered = text.toLowerCase();
   var search_items = search_entered.split(" ");
   var query = {};
-  if (search_items.length == 0) return;
+  if (search_items.length === 0) return;
   else {
     //filters by name, surname or email
-    if (search_items.length == 1) {
+    if (search_items.length === 1) {
       query = {
         $or: [
           { nameLC: { $regex: "^" + search_items[0] } },
@@ -138,7 +138,7 @@ function build_user_search_query(text) {
           { email: { $regex: "^" + search_items[0] } },
         ],
       };
-    } else if (search_items.length == 2) {
+    } else if (search_items.length === 2) {
       query = {
         $or: [
           {
@@ -180,9 +180,9 @@ function get_user_query_limit() {
 
 function get_maximal_user_query_limit() {
   var limit = get_user_query_limit();
-  var fields = limit["fields"];
-  fields["tags"] = 0;
-  //fields["email"] = 0;
+  var fields = limit.fields;
+  fields.tags = 0;
+  //fields.email = 0;
 
   return limit;
 }
@@ -203,7 +203,7 @@ function is_test_user(email) {
     var email_len = email.length;
 
     //if email ends with the test email, then this is test email
-    if (email.substring(email_len - test_email_len) == test_email) return true;
+    if (email.substring(email_len - test_email_len) === test_email) return true;
   }
 }
 

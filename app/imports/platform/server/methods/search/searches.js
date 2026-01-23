@@ -7,16 +7,16 @@ Meteor.methods({
   searchInProject: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_member(user_id, list)) {
-      if (list["phrase"] && list["phrase"] !== "") {
+      if (list.phrase && list.phrase !== "") {
         var update = {};
-        update["counter"] = 1;
+        update.counter = 1;
         update["users." + user_id] = 1;
-        if (list["versionId"]) update["versions." + list["versionId"]] = 1;
+        if (list.versionId) update["versions." + list.versionId] = 1;
 
-        if (list["projectId"]) update["projects." + list["projectId"]] = 1;
+        if (list.projectId) update["projects." + list.projectId] = 1;
 
         await Searches.updateAsync(
-          { type: list["type"], phrase: list["phrase"].toLowerCase() },
+          { type: list.type, phrase: list.phrase.toLowerCase() },
           { $inc: update },
           { upsert: true },
         );
@@ -27,13 +27,13 @@ Meteor.methods({
   searchInContacts: async function (list) {
     var user_id = Meteor.userId();
     if (user_id) {
-      if (list["phrase"] && list["phrase"] !== "") {
+      if (list.phrase && list.phrase !== "") {
         var update = {};
-        update["counter"] = 1;
+        update.counter = 1;
         update["users." + user_id] = 1;
 
         await Searches.updateAsync(
-          { type: list["type"], phrase: list["phrase"].toLowerCase() },
+          { type: list.type, phrase: list.phrase.toLowerCase() },
           { $inc: update },
           { upsert: true },
         );

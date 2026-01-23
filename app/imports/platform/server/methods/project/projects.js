@@ -33,8 +33,8 @@ Projects.after.insert(async function (user_id, doc) {
 
   await afterInsert(user_id, doc);
 
-  // var proj_id = doc["_id"];
-  // var tool_id = doc["toolId"];
+  // var proj_id = doc._id;
+  // var tool_id = doc.toolId;
   // var date = new Date();
 
   // //selects the last tool version
@@ -49,7 +49,7 @@ Projects.after.insert(async function (user_id, doc) {
   // 								createdAt: date,
   // 								createdBy: user_id,
   // 								status: "New",
-  // 								toolVersionId: tool_version["_id"],
+  // 								toolVersionId: tool_version._id,
   // 								toolId: tool_id,
   // 							});
 
@@ -94,11 +94,11 @@ Projects.hookOptions.after.insert = { fetchPrevious: false };
 Projects.before.remove(function (user_id, doc) {
   if (!doc) return false;
 
-  //var dgr = Diagrams.findOne({projectId: doc["_id"]});
+  //var dgr = Diagrams.findOne({projectId: doc._id});
   //if (dgr)
   //	return false;
 
-  //var proj_doc = Documents.findOne({projectId: doc["_id"]});
+  //var proj_doc = Documents.findOne({projectId: doc._id});
   //if (proj_doc)
   //	return false;
 });
@@ -106,7 +106,7 @@ Projects.hookOptions.before.remove = { fetchPrevious: false };
 
 //TODO: needs some cheking if this ok
 Projects.after.remove(async function (user_id, doc) {
-  var proj_id = doc["_id"];
+  var proj_id = doc._id;
 
   //a transaction is needed
   await ProjectsUsers.removeAsync({ projectId: proj_id });
@@ -125,8 +125,8 @@ Meteor.methods({
     var versionId = null;
     var user_id = Meteor.userId();
     if (user_id) {
-      list["createdAt"] = new Date();
-      list["createdBy"] = user_id;
+      list.createdAt = new Date();
+      list.createdBy = user_id;
 
       if (list.project_link) {
         project_link = list.project_link;
@@ -136,9 +136,9 @@ Meteor.methods({
       await Projects.insertAsync(list);
 
       var project = await Projects.findOneAsync({
-        createdAt: list["createdAt"],
+        createdAt: list.createdAt,
         createdBy: user_id,
-        name: list["name"],
+        name: list.name,
       });
       var projectsUsers = await ProjectsUsers.findOneAsync({
         projectId: project._id,
@@ -170,8 +170,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_admin(user_id, list)) {
       await Projects.updateAsync(
-        { _id: list["projectId"] },
-        { $set: list["set"] },
+        { _id: list.projectId },
+        { $set: list.set },
       );
     }
   },
@@ -179,7 +179,7 @@ Meteor.methods({
   removeProject: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_admin(user_id, list)) {
-      await Projects.removeAsync({ _id: list["projectId"] });
+      await Projects.removeAsync({ _id: list.projectId });
     }
   },
 
@@ -187,8 +187,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (user_id) {
       await UserVersionSettings.updateAsync(
-        { userSystemId: user_id, versionId: list["versionId"] },
-        list["update"],
+        { userSystemId: user_id, versionId: list.versionId },
+        list.update,
       );
     }
   },
@@ -299,13 +299,13 @@ async function duplicateDiagram(diagram, new_project_id, new_version_id) {
 }
 
 async function afterInsert(user_id_in, doc) {
-  var user_id = doc["createdBy"];
+  var user_id = doc.createdBy;
   if (!user_id) {
     user_id = user_id_in;
   }
 
-  var proj_id = doc["_id"];
-  var tool_id = doc["toolId"];
+  var proj_id = doc._id;
+  var tool_id = doc.toolId;
   var date = new Date();
 
   //selects the last tool version
@@ -324,7 +324,7 @@ async function afterInsert(user_id_in, doc) {
     createdAt: date,
     createdBy: user_id,
     status: "New",
-    toolVersionId: tool_version["_id"],
+    toolVersionId: tool_version._id,
     toolId: tool_id,
   });
 

@@ -284,7 +284,7 @@ async function build_box_type(
   );
   var box_id = await ElementTypes.insertAsync(box_type_obj);
 
-  var box_name = box_type_obj["name"];
+  var box_name = box_type_obj.name;
 
   await PaletteButtons.insertAsync({
     toolId: tool_id,
@@ -361,7 +361,7 @@ async function build_line_type(
   );
   var edge_id = await ElementTypes.insertAsync(edge_type_obj);
 
-  var edge_name = edge_type_obj["name"];
+  var edge_name = edge_type_obj.name;
 
   await PaletteButtons.insertAsync({
     toolId: tool_id,
@@ -601,7 +601,7 @@ async function build_swimlane(tool_id, version_id, diagram_type_id) {
     diagram_type_id,
     box_id,
   );
-  compart_type_obj2["styles"][0]["style"]["rotation"] = 270;
+  compart_type_obj2["styles"][0].style.rotation = 270;
 
   await CompartmentTypes.insertAsync(compart_type_obj2);
   // CompartmentTypes.insert(compart_type_obj2, {removeEmptyStrings: false});
@@ -688,9 +688,9 @@ function build_line_type_obj(
   var style = { id: generate_id(), name: "Default" };
 
   var edge_style = build_initial_line_style(editor_type);
-  style["elementStyle"] = edge_style["elementStyle"];
-  style["startShapeStyle"] = edge_style["startShapeStyle"];
-  style["endShapeStyle"] = edge_style["endShapeStyle"];
+  style.elementStyle = edge_style.elementStyle;
+  style.startShapeStyle = edge_style.startShapeStyle;
+  style.endShapeStyle = edge_style.endShapeStyle;
 
   var styles = [style];
 
@@ -740,8 +740,8 @@ function build_swimlane_compart_type_obj(
   elem_type_id,
 ) {
   var compart_style = build_box_compartment_style("ajooEditor");
-  compart_style["fill"] = "black";
-  compart_style["fontSize"] = 17;
+  compart_style.fill = "black";
+  compart_style.fontSize = 17;
 
   return {
     toolId: tool_id,

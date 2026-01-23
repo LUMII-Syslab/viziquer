@@ -1,260 +1,230 @@
+var MouseState = function (editor) {
+  var mouseState = this;
+  mouseState.editor = editor;
 
-var MouseState = function(editor) {
-
-	var mouseState = this;
-	mouseState.editor = editor;
-
-	mouseState.state = {};
-}
+  mouseState.state = {};
+};
 
 MouseState.prototype = {
+  mouseDown: function (e) {
+    var mouseState = this;
+    var editor = mouseState.editor;
 
-	mouseDown: function(e) {
-		var mouseState = this;
-		var editor = mouseState.editor;
+    var mouse_pos = mouseState.mouseAbsolutePosition(e);
+    mouseState.state = {
+      mouseDown: true,
+      mouseX: mouse_pos.x,
+      mouseY: mouse_pos.y,
+      mouseStartX: mouse_pos.x,
+      mouseStartY: mouse_pos.y,
 
-		var mouse_pos = mouseState.mouseAbsolutePosition(e);
-        mouseState.state = {mouseDown: true,
-			                mouseX: mouse_pos.x,
-			                mouseY: mouse_pos.y,
-			                mouseStartX: mouse_pos.x,
-			                mouseStartY: mouse_pos.y,
+      originalX: mouse_pos.originalX,
+      originalY: mouse_pos.originalY,
 
-			                originalX: mouse_pos.originalX,
-			                originalY: mouse_pos.originalY,
+      originalStartX: mouse_pos.originalX,
+      originalStartY: mouse_pos.originalY,
+    };
+  },
 
-			                originalStartX: mouse_pos.originalX,
-			                originalStartY: mouse_pos.originalY,
-			            };
-	},
+  mouseMove: function (e) {
+    var mouseState = this;
+    var state = mouseState.state;
+    var editor = mouseState.editor;
 
-	mouseMove: function(e) {
-		var mouseState = this;
-		var state = mouseState.state;
-		var editor = mouseState.editor;
+    if (mouseState.state.mouseDown) {
+      var mouse_pos = mouseState.mouseAbsolutePosition(e);
+      state.mouseX = mouse_pos.x;
+      state.mouseY = mouse_pos.y;
 
-		if (mouseState.state.mouseDown) {
+      state.originalX = mouse_pos.originalX;
+      state.originalY = mouse_pos.originalY;
+    }
+  },
 
-			var mouse_pos = mouseState.mouseAbsolutePosition(e);
-	        state["mouseX"] = mouse_pos.x;
-	        state["mouseY"] = mouse_pos.y;
+  mouseAbsolutePosition: function (e) {
+    var mouseState = this;
+    var editor = mouseState.editor;
+    var stage = editor.stage;
+    var zoom = editor.getZoom();
 
-	        state["originalX"] = mouse_pos.originalX;
-	        state["originalY"] = mouse_pos.originalY;
-	    }
+    var original_mouse_x = mouseState.getEditorMouseX(e);
+    var original_mouse_y = mouseState.getEditorMouseY(e);
 
-	},
+    var mouse_x, mouse_y;
+    if (e.evt) {
+      mouse_x = (original_mouse_x - stage.x()) / zoom.x;
+      mouse_y = (original_mouse_y - stage.y()) / zoom.y;
+    } else {
+      mouse_x = (original_mouse_x - stage.x()) / zoom.x;
+      mouse_y = (original_mouse_y - stage.y()) / zoom.y;
+    }
 
-	mouseAbsolutePosition: function(e) {
+    return {
+      x: mouse_x,
+      y: mouse_y,
+      originalX: original_mouse_x,
+      originalY: original_mouse_y,
+    };
+  },
 
-		var mouseState = this;
-		var editor = mouseState.editor;
-		var stage = editor.stage;
-		var zoom = editor.getZoom();
+  reset: function () {
+    var mouseState = this;
+    mouseState.state = {};
+  },
 
-		var original_mouse_x = mouseState.getEditorMouseX(e);
-		var original_mouse_y = mouseState.getEditorMouseY(e);
+  getCursorPosition: function (e) {
+    var mouseState = this;
 
-		var mouse_x, mouse_y;
-		if (e.evt) {
+    if (mouseState.isTouchEvent(e)) {
+      return mouseState.getTouchPosition(e);
+    } else {
+      return mouseState.getMousePosition(e);
+    }
+  },
 
-			mouse_x = (original_mouse_x - stage.x()) / zoom.x;
-			mouse_y = (original_mouse_y - stage.y()) / zoom.y;
-		}
+  getTouchPosition: function (ev) {
+    var mouseState = this;
+    var touch = mouseState.getEvent(ev);
 
-		else {
-			mouse_x = (original_mouse_x - stage.x()) / zoom.x;
-			mouse_y = (original_mouse_y - stage.y()) / zoom.y;
-		}
+    return { x: touch.clientX, y: touch.clientY };
+  },
 
-		return {x: mouse_x, y: mouse_y, originalX: original_mouse_x, originalY: original_mouse_y};
-	},
+  getMousePosition: function (e) {
+    var x, y;
+    if (e.originalEvent) {
+      var ev = e.originalEvent;
 
-	reset: function() {
-		var mouseState = this;
-		mouseState.state = {};
-	},
+      x = ev.offsetX;
+      y = ev.offsetY;
+    } else {
+      if (e.evt) {
+        // x = e.evt.layerX;
+        // y = e.evt.layerY;
 
-	getCursorPosition: function(e) {
-		var mouseState = this;
+        x = e.evt.offsetX;
+        y = e.evt.offsetY;
+      } else if (e.offsetX) {
+        x = e.offsetX;
+        y = e.offsetY;
+      } else {
+        x = e.x;
+        y = e.y;
+      }
+    }
 
-		if (mouseState.isTouchEvent(e)) {
-			return mouseState.getTouchPosition(e);
-		}
-		else {
-			return mouseState.getMousePosition(e);
-		}
-	},
+    return { x: x, y: y };
+  },
 
-	getTouchPosition: function(ev) {
+  getEditorMouseX: function (e) {
+    return this.getCursorPosition(e)["x"];
+  },
 
-		var mouseState = this;
-		var touch = mouseState.getEvent(ev);
+  getEditorMouseY: function (e) {
+    return this.getCursorPosition(e)["y"];
+  },
 
-		return {x: touch.clientX, y: touch.clientY};
-	},
+  getEvent: function (e) {
+    var mouseState = this;
 
-	getMousePosition: function(e) {
+    if (mouseState.isTouchEvent(e)) {
+      var ev;
+      if (e.evt) {
+        ev = e.evt;
+      } else {
+        ev = e;
+      }
 
-		var x, y;
-		if (e.originalEvent) {
-			var ev = e.originalEvent;
+      if (ev.originalEvent) {
+        return ev.originalEvent.targetTouches[0];
+      } else if (ev.targetTouches) {
+        return ev.targetTouches[0];
+      }
+    } else {
+      if (e.evt) {
+        return e.evt;
+      } else {
+        return e;
+      }
+    }
+  },
 
-			x = ev.offsetX;
-			y = ev.offsetY;
-		}
+  //get_page_mouse_position: function(ev) {
+  getPageMousePosition: function (ev) {
+    var mouseState = this;
+    var editor = mouseState.editor;
 
-		else {
-			if (e["evt"]) {
-				// x = e["evt"]["layerX"];
-				// y = e["evt"]["layerY"];
+    var editor_position = editor.getSceneContainer().parent().parent().offset();
 
-				x = e["evt"]["offsetX"];
-				y = e["evt"]["offsetY"];
-			}
+    if (mouseState.isTouchEvent(ev)) {
+      var e = mouseState.getEvent(ev);
+      return {
+        x: $(e).attr("pageX") - editor_position.left,
+        y: $(e).attr("pageY") - editor_position.top,
+      };
+    } else {
+      var e = mouseState.getEvent(ev);
+      return {
+        x: $(e).attr("pageX") - editor_position.left,
+        y: $(e).attr("pageY") - editor_position.top,
+      };
+    }
+  },
 
-			else if (e["offsetX"]) {
-				x = e["offsetX"];
-				y = e["offsetY"];
-			}
+  isLeftClick: function (e) {
+    var mouseState = this;
 
-			else {
-				x = e["x"];
-				y = e["y"];
-			}
-		}
+    if (mouseState.isTouchEvent(e)) {
+      if (e.evt) {
+        return e.evt.which === 0;
+      } else {
+        return e.which === 0;
+      }
+    } else {
+      var ev = mouseState.getEvent(e);
+      return ev.which === 1;
+    }
+  },
 
-		return {x: x, y: y};
-	},
+  isRightClick: function (e) {
+    var mouseState = this;
 
-	getEditorMouseX: function(e) {
-		return this.getCursorPosition(e)["x"];
-	},
+    var ev = mouseState.getEvent(e);
+    if (mouseState.isTouchEvent(e))
+      if (e.evt) {
+        return e.evt.which === 1;
+      } else {
+        return e.which === 1;
+      }
+    else {
+      return ev.which === 3;
+    }
+  },
 
-	getEditorMouseY: function(e) {
-		return this.getCursorPosition(e)["y"];
-	},
+  getTarget: function (e) {
+    var mouseState = this;
 
-	getEvent: function(e) {
+    if (mouseState.isTouchEvent(e)) {
+      if (e.evt) {
+        return e.evt.which === 0;
+      } else {
+        return e.which === 0;
+      }
+    } else {
+      var ev = mouseState.getEvent(e);
+      return ev.target;
+    }
+  },
 
-		var mouseState = this;
+  isTouchEvent: function (e) {
+    return (
+      e.type === "touchstart" ||
+      e.type === "touchmove" ||
+      e.type === "touchend" ||
+      e.type === "contentTouchstart" ||
+      e.type === "contentTouchmove" ||
+      e.type === "contentTouchend"
+    );
+  },
+};
 
-		if (mouseState.isTouchEvent(e)) {
-
-			var ev;
-			if (e.evt) {
-				ev = e.evt;
-			}
-			else {
-				ev = e;
-			}
-
-			if (ev.originalEvent) {
-				return ev.originalEvent.targetTouches[0];
-			}
-
-			else if (ev.targetTouches) {
-				return ev.targetTouches[0];
-			}
-		}
-
-		else {
-			if (e["evt"]) {
-				return e["evt"];
-			}
-			else {
-				return e;
-			}
-		}
-	},
-
-	//get_page_mouse_position: function(ev) {
-	getPageMousePosition: function(ev) {
-		var mouseState = this;
-		var editor = mouseState.editor;
-
-		var editor_position = editor.getSceneContainer().parent().parent().offset();
-
-		if (mouseState.isTouchEvent(ev)) {
-
-			var e = mouseState.getEvent(ev);
-			return {x: $(e).attr("pageX") - editor_position["left"],
-					y: $(e).attr("pageY") - editor_position["top"]};
-
-		}
-
-		else {
-			var e = mouseState.getEvent(ev);
-			return {x: $(e).attr("pageX") - editor_position["left"],
-					y: $(e).attr("pageY") - editor_position["top"]};
-		}
-
-	},
-
-	isLeftClick: function(e) {
-
-		var mouseState = this;
-
-		if (mouseState.isTouchEvent(e)) {
-			if (e.evt) {
-				return e.evt.which === 0;
-			}
-			else {
-				return e.which === 0;
-			}
-		}
-		else {
-			var ev = mouseState.getEvent(e);
-			return ev.which === 1;
-		}
-	},
-
-	isRightClick: function(e) {
-
-		var mouseState = this;
-
-		var ev = mouseState.getEvent(e);
-		if (mouseState.isTouchEvent(e))
-			if (e.evt) {
-				return e.evt.which === 1;
-			}
-			else {
-				return e.which === 1;
-			}
-		else {
-			return ev.which === 3;
-		}
-	},
-
-	getTarget: function(e) {
-
-		var mouseState = this;
-
-		if (mouseState.isTouchEvent(e)) {
-			if (e.evt) {
-				return e.evt.which === 0;
-			}
-			else {
-				return e.which === 0;
-			}
-		}
-		else {
-			var ev = mouseState.getEvent(e);
-			return ev.target;
-		}
-	},
-
-	isTouchEvent: function(e) {
-		return e.type == "touchstart" ||
-				e.type == "touchmove" ||
-				e.type == "touchend" ||
-
-				e.type == "contentTouchstart" ||
-				e.type == "contentTouchmove" ||
-				e.type == "contentTouchend";
-	},
-
-}
-
-
-export default MouseState
+export default MouseState;

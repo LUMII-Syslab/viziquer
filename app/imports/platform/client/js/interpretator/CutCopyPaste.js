@@ -1,168 +1,176 @@
-import { Interpreter } from '../../../../client/lib/interpreter.js'
-import { Utilities } from '../utilities/utils.js'
-import { Projects, Diagrams, DiagramTypes } from '../../../../db/platform/collections.js'
-import { is_ajoo_editor } from '../../../../libs/platform/lib.js'
-
+import { Interpreter } from "../../../../client/lib/interpreter.js";
+import { Utilities } from "../utilities/utils.js";
+import {
+  Projects,
+  Diagrams,
+  DiagramTypes,
+} from "../../../../db/platform/collections.js";
+import { is_ajoo_editor } from "../../../../libs/platform/lib.js";
 
 Interpreter.methods({
+  Cut: function () {
+    if (Interpreter.editor.isEditMode()) {
+      // Interpreter.Copy();
+      Interpreter.execute("Copy");
+      Interpreter.execute("Delete");
+      //Delete();
+    }
+  },
 
-	Cut: function() {
+  Copy: function () {
+    var diagram_id = Session.get("activeDiagram");
+    var diagram = Diagrams.findOne({ _id: diagram_id });
+    var project = Projects.findOne({ _id: Session.get("activeProject") });
 
-		if (Interpreter.editor.isEditMode()) {
-			// Interpreter.Copy();
-			Interpreter.execute("Copy");
-			Interpreter.execute("Delete");
-			//Delete();
-		}
-	},
+    var diagram_type_id = diagram.diagramTypeId;
+    var diagram_type = DiagramTypes.findOne({ _id: diagram_type_id });
 
-	Copy: function() {
-		var diagram_id = Session.get("activeDiagram");
-		var diagram = Diagrams.findOne({_id: diagram_id});
-		var project = Projects.findOne({_id: Session.get("activeProject")});
+    if (!diagram || !project || !diagram_type) {
+      return;
+    }
 
-		var diagram_type_id = diagram["diagramTypeId"];
-		var diagram_type = DiagramTypes.findOne({_id: diagram_type_id});
+    var selected_elements;
+    var editor = Interpreter.editor;
 
-		if (!diagram || !project || !diagram_type) {
-			return;
-		}
+    var editor_type = Interpreter.getEditorType();
 
-		var selected_elements;
-		var editor = Interpreter.editor;
+    if (is_ajoo_editor(editor_type)) {
+      selected_elements = editor.getSelectedElements();
 
-		var editor_type = Interpreter.getEditorType();
+      var left_point = { x: Infinity, y: Infinity };
+      _.each(selected_elements, function (elem) {
+        if (elem.type === "Box") {
+          var size = elem.getSize();
+          var x = size.x;
+          var y = size.y;
 
-		if (is_ajoo_editor(editor_type)) {
-			selected_elements = editor.getSelectedElements();
+          if (x < left_point.x && y < left_point.y) {
+            left_point.x = x;
+            left_point.y = y;
+          }
+        }
+      });
 
-			var left_point = {x: Infinity, y: Infinity};
-			_.each(selected_elements, function(elem) {
+      var drag_layer = editor.getLayer("DragLayer");
+      var drag_group = editor.findChild(drag_layer, "DragGroup");
+      left_point.x = left_point.x + drag_group.x();
+      left_point.y = left_point.y + drag_group.y();
 
-				if (elem["type"] == "Box") {
-					var size = elem.getSize();
-					var x = size.x;
-					var y = size.y;
+      var selected_elem_list = _.keys(selected_elements);
 
-					if (x < left_point["x"] && y < left_point["y"]) {
-						left_point["x"] = x;
-						left_point["y"] = y;
-					}
-				}
-			});
+      var res = Interpreter.executeExtensionPoint(
+        diagram_type,
+        "beforeCopyCollection",
+        selected_elements,
+      );
+      if (res !== false) {
+        var list = {
+          diagramTypeId: diagram_type._id,
+          toolId: project.toolId,
+          diagramId: diagram_id,
+          elements: selected_elem_list,
+          leftPoint: left_point,
+        };
 
-			var drag_layer = editor.getLayer("DragLayer");
-			var drag_group = editor.findChild(drag_layer, "DragGroup");
-			left_point["x"] = left_point["x"] + drag_group.x();
-			left_point["y"] = left_point["y"] + drag_group.y();
+        Interpreter.executeExtensionPoint(diagram_type, "copyCollection", list);
+      }
+    } else {
+      selected_elem_list = _.map(editor.selection(), function (elem) {
+        return elem.id;
+      });
 
-			var selected_elem_list = _.keys(selected_elements);
+      var res = Interpreter.executeExtensionPoint(
+        diagram_type,
+        "beforeCopyCollection",
+        selected_elements,
+      );
+      if (res !== false) {
+        var list = {
+          diagramId: diagram_id,
+          elements: selected_elem_list,
+        };
 
-			var res = Interpreter.executeExtensionPoint(diagram_type, "beforeCopyCollection", selected_elements);
-			if (res !== false) {
-				var list = {
-							diagramTypeId: diagram_type._id,
-							toolId: project.toolId,
-							diagramId: diagram_id,
-							elements: selected_elem_list,
-							leftPoint: left_point,
-						};
+        Interpreter.executeExtensionPoint(diagram_type, "copyCollection", list);
+      }
+    }
+  },
 
-				Interpreter.executeExtensionPoint(diagram_type, "copyCollection", list);
-			}
-		}
+  Paste: function (ev_obj) {
+    var editor = Interpreter.editor;
 
-		else {
-			selected_elem_list = _.map(editor.selection(), function(elem) {
-				return elem.id;
-			});
+    var diagram_id = Session.get("activeDiagram");
+    var diagram = Diagrams.findOne({ _id: diagram_id });
 
-			var res = Interpreter.executeExtensionPoint(diagram_type, "beforeCopyCollection", selected_elements);
-			if (res !== false) {
-				var list = {
-							diagramId: diagram_id,
-							elements: selected_elem_list,
-						};
+    var project = Projects.findOne({ _id: Session.get("activeProject") });
+    var diagram_type = DiagramTypes.findOne({ _id: diagram.diagramTypeId });
 
-				Interpreter.executeExtensionPoint(diagram_type, "copyCollection", list);
-			}
-		}
-	},
+    if (!diagram || !project || !diagram_type) {
+      return;
+    }
 
-	Paste: function(ev_obj) {
+    var editor_type = Interpreter.getEditorType();
+    if (is_ajoo_editor(editor_type)) {
+      var e;
+      if (editor.data.ev) {
+        e = editor.data.ev;
+      }
 
-		var editor = Interpreter.editor;
+      var x, y;
+      if (e) {
+        var mouse_state_obj = editor.getMouseStateObject();
+        var mouse_pos = mouse_state_obj.getMousePosition(e);
+        x = mouse_pos.x;
+        y = mouse_pos.y;
+      }
 
-		var diagram_id = Session.get("activeDiagram");
-		var diagram = Diagrams.findOne({_id: diagram_id});
+      var list = {
+        diagramTypeId: diagram_type._id,
+        toolId: project.toolId,
+        diagramId: diagram_id,
+        x: x,
+        y: y,
+      };
 
-		var project = Projects.findOne({_id: Session.get("activeProject")});
-		var diagram_type = DiagramTypes.findOne({_id: diagram["diagramTypeId"]});
+      var res = Interpreter.executeExtensionPoint(
+        diagram_type,
+        "pasteCollection",
+        list,
+      );
+      editor.data = {};
+    } else {
+      var list = { diagramId: diagram_id };
+      var res = Interpreter.executeExtensionPoint(
+        diagram_type,
+        "pasteCollection",
+        list,
+      );
+    }
+  },
 
-		if (!diagram || !project || !diagram_type) {
-			return;
-		}
+  CopyCollection: function (list) {
+    list.projectId = Session.get("activeProject");
+    list.versionId = Session.get("versionId");
 
-		var editor_type = Interpreter.getEditorType();
-		if (is_ajoo_editor(editor_type)) {
+    Utilities.callMeteorMethod("copyElements", list);
+  },
 
-			var e;
-			if (editor.data.ev) {
-				e = editor.data.ev;
-			}
+  PasteCollection: function (list) {
+    list.projectId = Session.get("activeProject");
+    list.versionId = Session.get("versionId");
 
-			var x, y;
-			if (e) {
-				var mouse_state_obj = editor.getMouseStateObject();
-				var mouse_pos = mouse_state_obj.getMousePosition(e);
-				x = mouse_pos["x"];
-				y = mouse_pos["y"];
-			}
+    Utilities.callMeteorMethod("pasteElements", list, function (res) {
+      var editor = Interpreter.editor;
 
-			var list = {
-						diagramTypeId: diagram_type._id,
-						toolId: project.toolId,
-						diagramId: diagram_id,
-						x: x,
-						y: y,
-					};
+      var editor_elems = editor.getElements();
+      var pasted_elems = _.map(
+        _.union(res.boxes, res.lines),
+        function (pasted_elem_id) {
+          return editor_elems[pasted_elem_id];
+        },
+      );
 
-			var res = Interpreter.executeExtensionPoint(diagram_type, "pasteCollection", list);
-			editor.data = {};
-		}
-
-		else {
-			var list = {diagramId: diagram_id,};
-			var res = Interpreter.executeExtensionPoint(diagram_type, "pasteCollection", list);
-		}
-
-	},
-
-	CopyCollection: function(list) {
-
-		list["projectId"] = Session.get("activeProject");
-		list["versionId"] = Session.get("versionId");
-
-		Utilities.callMeteorMethod("copyElements", list);
-	},
-
-	PasteCollection: function(list) {
-		list["projectId"] = Session.get("activeProject");
-		list["versionId"] = Session.get("versionId");
-
-		Utilities.callMeteorMethod("pasteElements", list, function(res) {
-
-			var editor = Interpreter.editor;
-
-			var editor_elems = editor.getElements();
-			var pasted_elems = _.map(_.union(res.boxes, res.lines), function(pasted_elem_id) {
-									return editor_elems[pasted_elem_id];
-								});
-
-			editor.selection.clearSelection();
-			editor.selectElements(pasted_elems);
-		});
-	},
-
+      editor.selection.clearSelection();
+      editor.selectElements(pasted_elems);
+    });
+  },
 });
-

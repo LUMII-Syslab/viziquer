@@ -39,7 +39,7 @@ Meteor.methods({
 				var elem_type = ElementTypes.findOne({_id: elem.elementTypeId,});
 				CompartmentTypes.find({elementTypeId:elem_type._id}).forEach(function(compType){
 					compartments = Compartments.find({projectId:projectId, elementId:elem._id, compartmentTypeId:compType._id });
-					if (compartments.count() == 1 ){
+					if (compartments.count() === 1 ){
 					    compartments.forEach(function(c){
 							Compartments.update({_id: c._id, projectId:projectId,},{$set: { index: compType.index,}});
 						})

@@ -1,69 +1,61 @@
 // import { _ } from 'vue-underscore';
 
-var Mode = function(editor) {
+var Mode = function (editor) {
+  var mode = this;
+  mode.editor = editor;
 
-	var mode = this;
-	mode.editor = editor;
+  mode.isEditMode = false;
 
-	mode.isEditMode = false;
+  mode.switchMode = function (mode_type, is_refresh_not_needed) {
+    var shapes_layer = editor.getLayer("ShapesLayer");
 
-	mode.switchMode = function(mode_type, is_refresh_not_needed) {
+    //collecting selected elements
+    var selected = _.map(editor.getSelectedElements(), function (elem) {
+      return elem;
+    });
 
-        var shapes_layer = editor.getLayer("ShapesLayer");
+    //unselecting to manage layers and remove selected style
+    editor.unSelectElements();
 
-        //collecting selected elements
-        var selected = _.map(editor.getSelectedElements(), function(elem) {
-            return elem;
-        });
+    var palette = editor.palette;
 
-        //unselecting to manage layers and remove selected style
-        editor.unSelectElements();
+    //edit mode
+    if (mode_type === "editMode") {
+      if (palette) palette.show();
 
-        var palette = editor.palette;
+      //switching to the read mode
+      mode.isEditMode = true;
+    }
 
-        //edit mode
-        if (mode_type == "editMode") {
+    //read mode
+    else {
+      if (palette) palette.hide();
 
-            if (palette)
-                palette.show();
+      //switching to the read mode
+      mode.isEditMode = false;
 
-            //switching to the read mode
-            mode["isEditMode"] = true;
-        }
+      editor.selectionPosition = { x: 0, y: 0 };
+    }
 
-        //read mode
-        else {
+    //reselecting elements to update style
+    editor.selectElements(selected);
 
-            if (palette)
-                palette.hide();
-
-            //switching to the read mode
-            mode["isEditMode"] = false;
-
-            editor.selectionPosition = {x: 0, y: 0};
-        }
-
-        //reselecting elements to update style
-        editor.selectElements(selected);
-
-        if (!is_refresh_not_needed) {
-            shapes_layer.draw();
-        }
-	}
-}
+    if (!is_refresh_not_needed) {
+      shapes_layer.draw();
+    }
+  };
+};
 
 Mode.prototype = {
+  switchEditMode: function (is_refresh_not_needed) {
+    var mode = this;
+    mode.switchMode("editMode", is_refresh_not_needed);
+  },
 
-	switchEditMode: function(is_refresh_not_needed) {
-		var mode = this;
-		mode.switchMode("editMode", is_refresh_not_needed);
-	},
+  switchReadMode: function (is_refresh_not_needed) {
+    var mode = this;
+    mode.switchMode("readMode", is_refresh_not_needed);
+  },
+};
 
-	switchReadMode: function(is_refresh_not_needed) {
-		var mode = this;
-		mode.switchMode("readMode", is_refresh_not_needed);
-	},
-
-}
-
-export default Mode
+export default Mode;

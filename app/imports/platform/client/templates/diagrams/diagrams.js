@@ -1,4 +1,4 @@
-import { Template } from 'meteor/templating';
+import { Template } from "meteor/templating";
 
 import { Interpreter } from "../../../../client/lib/interpreter.js";
 import { Utilities } from "../../js/utilities/utils.js";
@@ -27,7 +27,7 @@ Template.diagramsTemplate.helpers({
     var user_diagram = UserVersionSettings.findOne({
       versionId: Session.get("versionId"),
     });
-    if (user_diagram && user_diagram["view"] == "Tree") return false;
+    if (user_diagram && user_diagram.view === "Tree") return false;
     else {
       $(".popover").has(".tree-diagram-image").remove();
       return true;
@@ -69,7 +69,7 @@ Template.diagramsRibbon.events({
     let dt = [];
     for (const d of DiagramTypes.find({}, { $sort: { name: 1 } })) {
       let e = { _id: d._id, name: d.name };
-      if (d.name == "Query") e.selected = "selected";
+      if (d.name === "Query") e.selected = "selected";
       dt.push(e);
     }
     Template.configuratorDiagramOptions.configuratorDiagrams.set(dt);
@@ -228,10 +228,10 @@ Template.diagramsToolbar.events({
     await Template.VQ_DSS_schema.rendered("fragment");
     $("#VQ-DSS-schema").modal("show");
   },
-  'click #loadOntologyOWLGrEd' : function(e) {
-		Dialog.destroyTooltip(e);
-		$("#load-ontology-form-owlgred").modal("show");
-  }
+  "click #loadOntologyOWLGrEd": function (e) {
+    Dialog.destroyTooltip(e);
+    $("#load-ontology-form-owlgred").modal("show");
+  },
 });
 
 //calculates view's drop-down element visibility
@@ -241,12 +241,12 @@ Template.diagramsViewButton.helpers({
     var user_version_settings = UserVersionSettings.findOne({
       versionId: Session.get("versionId"),
     });
-    if (user_version_settings && user_version_settings["view"] == "Tree") {
-      style["defaultStyle"] = "visibility:hidden;";
-      style["treeStyle"] = "";
+    if (user_version_settings && user_version_settings.view === "Tree") {
+      style.defaultStyle = "visibility:hidden;";
+      style.treeStyle = "";
     } else {
-      style["defaultStyle"] = "";
-      style["treeStyle"] = "visibility:hidden;";
+      style.defaultStyle = "";
+      style.treeStyle = "visibility:hidden;";
     }
 
     return style;
@@ -283,8 +283,8 @@ Template.diagramsSortButton.helpers({
 
     if (sort_by) {
       _.each(items, function (item) {
-        if (item["type"] == sort_by) {
-          item["active"] = true;
+        if (item.type === sort_by) {
+          item.active = true;
         }
       });
     }
@@ -317,8 +317,8 @@ Template.diagramsGroupsButton.helpers({
 
     //adding default group
     var item = { name: "Admin/Reader", _id: "Admin", defaultRole: true };
-    if (group_id == "Admin") {
-      item["active"] = true;
+    if (group_id === "Admin") {
+      item.active = true;
     }
 
     //array containing project groups
@@ -326,8 +326,8 @@ Template.diagramsGroupsButton.helpers({
 
     //selecting custom groups
     ProjectsGroups.find().forEach(function (proj_group) {
-      if (proj_group["_id"] == group_id) {
-        proj_group["active"] = true;
+      if (proj_group._id === group_id) {
+        proj_group.active = true;
       }
 
       items.push(proj_group);
@@ -358,7 +358,7 @@ Template.defaultDiagramsView.helpers({
     var user_version_settings = UserVersionSettings.findOne({
       versionId: Session.get("versionId"),
     });
-    if (user_version_settings && user_version_settings["view"] == "Default") {
+    if (user_version_settings && user_version_settings.view === "Default") {
       var query = build_diagrams_query();
       if (!query) {
         return;
@@ -368,17 +368,17 @@ Template.defaultDiagramsView.helpers({
       var version_id = Session.get("versionId");
       var is_edit_mode = is_toolbar_enabled();
 
-      var sort_by_str = user_version_settings["diagramsSortBy"];
+      var sort_by_str = user_version_settings.diagramsSortBy;
       var sort_by = get_sort_by_object(sort_by_str);
 
       return Diagrams.find(query, { $sort: sort_by }).map(function (diagram) {
-        diagram["projectId"] = proj_id;
-        diagram["versionId"] = version_id;
+        diagram.projectId = proj_id;
+        diagram.versionId = version_id;
 
-        diagram["date"] = joined_date(diagram["createdAt"]);
+        diagram.date = joined_date(diagram.createdAt);
 
         if (is_edit_mode) {
-          diagram["isEditMode"] = true;
+          diagram.isEditMode = true;
         }
 
         return diagram;
@@ -451,8 +451,8 @@ Template.defaultDiagramsView.events({
 
     var list = { diagramId: diagram_id };
 
-    list["projectId"] = Session.get("activeProject");
-    list["versionId"] = Session.get("versionId");
+    list.projectId = Session.get("activeProject");
+    list.versionId = Session.get("versionId");
 
     Utilities.callMeteorMethod("duplicateDiagram", list);
 
@@ -481,8 +481,8 @@ Template.treeDiagramsView.helpers({
     var user_version_settings = UserVersionSettings.findOne({
       versionId: Session.get("versionId"),
     });
-    if (user_version_settings && user_version_settings["view"] == "Tree") {
-      var sort_by_str = user_version_settings["diagramsSortBy"];
+    if (user_version_settings && user_version_settings.view === "Tree") {
+      var sort_by_str = user_version_settings.diagramsSortBy;
       sort_by = get_sort_by_object(sort_by_str);
     }
 
@@ -530,7 +530,7 @@ Template.treeDiagramsView.events({
     var diagram_id = diagram_container.attr("id");
     var diagram = Diagrams.findOne({ _id: diagram_id });
     if (diagram) {
-      var img_src = diagram["imageUrl"];
+      var img_src = diagram.imageUrl;
       var img = '<img class="tree-diagram-image" src="' + img_src + '">';
 
       var diagram_obj = diagram_container.find(
@@ -560,7 +560,7 @@ Template.diagramsSearchBar.helpers({
   search_phrase: function () {
     var list = Session.get("diagrams");
     if (list) {
-      return list["text"];
+      return list.text;
     }
   },
 });
@@ -715,11 +715,11 @@ Template.ontologySettings.events({
     // let $cells = $(this).find("td");
     // myRows[index] = {};
     // $cells.each(function(cellIndex) {
-    // if($($headers[cellIndex]).html() == "Graph/Service shorthand" || $($headers[cellIndex]).html() == "Expansion (e.g., URI)"){
+    // if($($headers[cellIndex]).html() === "Graph/Service shorthand" || $($headers[cellIndex]).html() === "Expansion (e.g., URI)"){
     // myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
     // }
     // });
-    // myRows[index]["index"] = index;
+    // myRows[index].index = index;
     // });
 
     var list = {
@@ -800,7 +800,7 @@ Template.ontologySettings.events({
       );
       $("#default-grouping-separator").prop(
         "disabled",
-        proj.useDefaultGroupingSeparator == "false",
+        proj.useDefaultGroupingSeparator === "false",
       );
       $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
       $("#direct-class-membership-role").val(proj.directClassMembershipRole);
@@ -809,44 +809,44 @@ Template.ontologySettings.events({
       );
       $("#show-cardinalities").prop(
         "checked",
-        proj.showCardinalities == "true",
+        proj.showCardinalities === "true",
       );
       $("#decorate-instance-position-variable").prop(
         "checked",
-        proj.decorateInstancePositionVariable == "true",
+        proj.decorateInstancePositionVariable === "true",
       );
       $("#decorate-instance-position-constants").prop(
         "checked",
-        proj.decorateInstancePositionConstants == "true",
+        proj.decorateInstancePositionConstants === "true",
       );
       $("#simple-condition-implementation").prop(
         "checked",
-        proj.simpleConditionImplementation == "true",
+        proj.simpleConditionImplementation === "true",
       );
       // $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
       $("#show-prefixes-for-all-names").prop(
         "checked",
-        proj.showPrefixesForAllNames == "true",
+        proj.showPrefixesForAllNames === "true",
       );
       $("#show-prefixes-for-all-non-local-names").prop(
         "checked",
-        proj.showPrefixesForAllNonLocalNames == "true",
+        proj.showPrefixesForAllNonLocalNames === "true",
       );
       $("#complete-RDF-boxes-in-datetime-functions").prop(
         "checked",
-        proj.completeRDFBoxesInDatetimeFunctions == "true",
+        proj.completeRDFBoxesInDatetimeFunctions === "true",
       );
       $("#show-graph-service-compartments").prop(
         "checked",
-        proj.showGraphServiceCompartments == "true",
+        proj.showGraphServiceCompartments === "true",
       );
       $("#enable-wikibase-label-services").prop(
         "checked",
-        proj.enableWikibaseLabelServices == "true",
+        proj.enableWikibaseLabelServices === "true",
       );
       $("#allow-top-down-names-in-BINDs").prop(
         "checked",
-        proj.allowTopDownNamesInBINDs == "true",
+        proj.allowTopDownNamesInBINDs === "true",
       );
       $("#schema-diagram-data-language").prop(
         "checked",
@@ -854,7 +854,7 @@ Template.ontologySettings.events({
       );
       $("#keep-variable-names").prop(
         "checked",
-        proj.keepVariableNames == "true",
+        proj.keepVariableNames === "true",
       );
       $("#endpoint-username").val(proj.endpointUsername);
       $("#endpoint-password").val(proj.endpointPassword);
@@ -895,7 +895,7 @@ Template.ontologySettings.events({
     var class_name = "danger";
     var text = "Connection is not ok";
 
-    if (res.status == 200) {
+    if (res.status === 200) {
       class_name = "success";
       text = "Connection is ok";
     } else if (res.status === 401) {
@@ -916,7 +916,7 @@ Template.ontologySettings.events({
     var schema_info = Template.ontologySettings.schemas
       .get()
       .filter(function (o) {
-        return o.display_name == schema;
+        return o.display_name === schema;
       });
     if (schema_info.length > 0 && schema_info[0].display_name !== "") {
       Template.ontologySettings.endpoint.set(schema_info[0].sparql_url);
@@ -931,7 +931,7 @@ Template.ontologySettings.events({
         schema_info[0].indirect_class_role,
       );
     }
-    if (schema_info.length > 0 && schema_info[0].display_name == "") {
+    if (schema_info.length > 0 && schema_info[0].display_name === "") {
       Template.ontologySettings.endpoint.set("");
       Template.ontologySettings.uri.set("");
       Template.ontologySettings.queryEngineType.set("");
@@ -967,25 +967,25 @@ Template.ontologySettings.events({
       myRows[index] = {};
       $cells.each(function (cellIndex) {
         if (
-          $($headers[cellIndex]).html() == "Instruction" ||
-          $($headers[cellIndex]).html() == "Graph"
+          $($headers[cellIndex]).html() === "Instruction" ||
+          $($headers[cellIndex]).html() === "Graph"
         ) {
           myRows[index][$($headers[cellIndex]).html()] = $(this)
             .find("div")
             .text();
         }
       });
-      myRows[index]["index"] = index;
+      myRows[index].index = index;
     });
 
     var graphsT = [];
     var i = 0;
     for (var graph in myRows) {
-      if (myRows[graph]["index"] !== index) {
+      if (myRows[graph].index !== index) {
         graphsT.push({
           index: i,
-          Instruction: myRows[graph]["Instruction"],
-          Graph: myRows[graph]["Graph"],
+          Instruction: myRows[graph].Instruction,
+          Graph: myRows[graph].Graph,
         });
         i++;
       }
@@ -1001,7 +1001,7 @@ function getSchemas(tag) {
 
   for (const sc of allSchemas) {
     if (tag !== "All" && sc.tags.includes(tag)) schemas.push(sc);
-    else if (tag == "All") schemas.push(sc);
+    else if (tag === "All") schemas.push(sc);
   }
 
   schemas.unshift({ display_name: "" });
@@ -1037,10 +1037,10 @@ Template.ontologySettings.rendered = async function () {
 
     if (proj.schema !== undefined && proj.schema !== "") {
       var selected = schemas.filter(function (o) {
-        return o.display_name == proj.schema;
+        return o.display_name === proj.schema;
       });
       if (selected.length > 0) {
-        selected[0]["selected"] = "selected";
+        selected[0].selected = "selected";
       }
     }
   }
@@ -1092,10 +1092,10 @@ Template.ontologySettings.helpers({
     }
     var list = [{ name: "SIMPLE" }, { name: "TYPED" }, { name: "OFF" }];
     var selected = list.filter(function (o) {
-      return o.name == act;
+      return o.name === act;
     });
     if (selected.length > 0) {
-      selected[0]["selected"] = "selected";
+      selected[0].selected = "selected";
     }
 
     return list;
@@ -1108,7 +1108,7 @@ Template.ontologySettings.helpers({
     //	act = proj.queryEngineType;
     //}
     var list = [];
-    if (act == "virtuoso" || act == "VIRTUOSO") {
+    if (act === "virtuoso" || act === "VIRTUOSO") {
       list.push({ name: "VIRTUOSO", selected: "selected" });
       list.push({ name: "GENERAL" });
     } else {
@@ -1278,13 +1278,13 @@ function build_diagrams_query() {
   });
 
   //if no diagrams found, then displays nothing
-  if (found_diagrams && found_diagrams["noDiagrams"] == 1) {
+  if (found_diagrams && found_diagrams.noDiagrams === 1) {
     return;
   } else {
     //selecting diagram ids in array
     var diagrams = [];
     for (var key in found_diagrams) {
-      if (key == "_id" || found_diagrams[key] == 0) {
+      if (key === "_id" || found_diagrams[key] === 0) {
         continue;
       } else {
         diagrams.push(key);
@@ -1315,8 +1315,12 @@ function is_toolbar_enabled() {
 
 function apply_selected_group_to_query(query) {
   var selected_group = get_user_settings_property("diagramsSelectedGroup");
-  if (selected_group && selected_group !== "Admin" && selected_group !== "none") {
-    query["allowedGroups"] = selected_group;
+  if (
+    selected_group &&
+    selected_group !== "Admin" &&
+    selected_group !== "none"
+  ) {
+    query.allowedGroups = selected_group;
   }
 }
 
@@ -1346,9 +1350,9 @@ function set_update_doc_dgr_settings(prop_name, prop_value) {
 }
 
 function get_panel_type() {
-  if (Session.get("activePanelItem") == "documents") {
+  if (Session.get("activePanelItem") === "documents") {
     return "documents";
-  } else if (Session.get("activePanelItem") == "diagrams") {
+  } else if (Session.get("activePanelItem") === "diagrams") {
     return "diagrams";
   } else {
     return "";
@@ -1373,10 +1377,10 @@ function build_diagram_tree(
   query,
   sort_by,
 ) {
-  var id = diagram["_id"];
+  var id = diagram._id;
 
   //selecting child diagrams
-  diagram["children"] = Diagrams.find(
+  diagram.children = Diagrams.find(
     { parentDiagrams: id },
     { sort: sort_by },
   ).map(function (child_diagram) {
@@ -1392,38 +1396,38 @@ function build_diagram_tree(
   });
 
   var is_collapsed = UserVersionSettings.findOne({
-    collapsedDiagrams: diagram["_id"],
+    collapsedDiagrams: diagram._id,
     versionId: Session.get("versionId"),
   });
 
   //collapsed
   if (is_collapsed) {
-    diagram["collapsed"] = "display: none; visibility: visible;";
-    diagram["expanded"] = "display: block; visibility: visible;";
-    diagram["childrenList"] = "display: none;";
+    diagram.collapsed = "display: none; visibility: visible;";
+    diagram.expanded = "display: block; visibility: visible;";
+    diagram.childrenList = "display: none;";
   }
 
   //expanded
   else {
-    diagram["collapsed"] = "display: block; visibility: visible;";
-    diagram["expanded"] = "display: none; visibility: visible;";
-    diagram["childrenList"] = "";
+    diagram.collapsed = "display: block; visibility: visible;";
+    diagram.expanded = "display: none; visibility: visible;";
+    diagram.childrenList = "";
   }
 
   //checks if there was a search
-  if (query && query["_id"]) {
+  if (query && query._id) {
     var is_searched_diagram = Diagrams.findOne({
-      $and: [{ _id: diagram["_id"] }, query],
+      $and: [{ _id: diagram._id }, query],
     });
     if (is_searched_diagram) {
-      diagram["colorClass"] = "bg-info";
+      diagram.colorClass = "bg-info";
     }
   }
 
-  diagram["projectId"] = proj_id;
-  diagram["versionId"] = version_id;
+  diagram.projectId = proj_id;
+  diagram.versionId = version_id;
   if (is_edit_mode) {
-    diagram["editMode"] = "edit";
+    diagram.editMode = "edit";
   }
 
   return diagram;
@@ -1446,7 +1450,6 @@ Template.migrateForm.events({
   },
 });
 
-
 // START of OWLGRED_ontologySettings
 
 Template.OWLGRED_ontologySettings.onCreated(function () {
@@ -1458,19 +1461,12 @@ Template.OWLGRED_ontologySettings.onDestroyed(function () {
 });
 
 Template.OWLGRED_ontologySettings.events({
-  "click #OWLGRED-ok-ontology-settings": async function () {
+  "click #OWLGRED-ok-ontology-settings": async function () {},
 
-  },
-
-  "click #OWLGRED-cancel-ontology-settings": function () {
-
-  },
-
+  "click #OWLGRED-cancel-ontology-settings": function () {},
 });
 
-Template.ontologySettings.rendered = async function () {
-
-};
+Template.ontologySettings.rendered = async function () {};
 
 Template.OWLGRED_ontologySettings.helpers({
   msg: function () {

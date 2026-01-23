@@ -1,419 +1,391 @@
-import Event from './events.js'
-import {Panning, PanningDrag} from './panning.js'
-import SelectionDragging from '../Selection/selection_dragging.js'
-import SelectionRect from '../Selection/selection_rect.js'
-import ResizingShape from '../Elements/Boxes/resizing.js'
-import LineRerouting  from '../Elements/Lines/routing/line_dragging';
-import ANewBox from '../Elements/Boxes/draw_new_box.js'
-import {ANewLine} from '../Elements/Lines/draw_new_line.js'
+import Event from "./events.js";
+import { Panning, PanningDrag } from "./panning.js";
+import SelectionDragging from "../Selection/selection_dragging.js";
+import SelectionRect from "../Selection/selection_rect.js";
+import ResizingShape from "../Elements/Boxes/resizing.js";
+import LineRerouting from "../Elements/Lines/routing/line_dragging";
+import ANewBox from "../Elements/Boxes/draw_new_box.js";
+import { ANewLine } from "../Elements/Lines/draw_new_line.js";
 
+var Actions = function (editor, action_name) {
+  var actions = this;
+  actions.editor = editor;
 
-var Actions = function(editor, action_name) {
-	var actions = this;
-	actions.editor = editor;
+  actions.state = {};
 
-    actions.state = {};
+  actions.options = {
+    Resizing: {
+      start: function (param) {
+        var resizing_shape = new ResizingShape(editor);
 
-    actions.options = {
+        var element = param.element;
+        var resizer_name = param.resizerName;
+        resizing_shape.startDragging(element, resizer_name);
 
-                Resizing: {
-                    start: function(param) {
-                        var resizing_shape = new ResizingShape(editor);
+        actions.state.object = resizing_shape;
+      },
 
-                        var element = param["element"];
-                        var resizer_name = param["resizerName"];
-                        resizing_shape.startDragging(element, resizer_name);
+      move: function () {
+        var object = actions.state.object;
+        object.dragging();
+      },
 
-                        actions.state["object"] = resizing_shape;
-                    },
+      finish: function () {
+        var object = actions.state.object;
+        object.finishDragging();
+      },
+    },
 
-                    move: function() {
-                        var object = actions.state["object"];
-                        object.dragging();
-                    },
+    NewElement: {
+      start: function (target) {
+        var palette = actions.editor.getPalette();
+        var palette_button = palette.getPressedButton();
 
-                    finish: function() {
-                        var object = actions.state["object"];
-                        object.finishDragging();
-                    },
-                },
+        if (palette_button.type === "Box") {
+          //adding box with fixed default size
+          if (
+            palette_button.defaultSize &&
+            palette_button.defaultSize.width &&
+            palette_button.defaultSize.height
+          ) {
+            var new_box = new ANewBox(editor);
+            new_box.startDragging(palette_button);
 
-                NewElement: {
-                    start: function(target) {
-                        var palette = actions.editor.getPalette();
-                        var palette_button = palette.getPressedButton();
+            var default_size = palette_button.defaultSize;
 
-                        if (palette_button["type"] == "Box") {
+            var box = new_box.state.object;
+            box.updateSize(default_size.width, default_size.height);
+            box.compartments.recomputeCompartmentsPosition();
 
-                            //adding box with fixed default size
-                            if (palette_button.defaultSize && palette_button.defaultSize.width && palette_button.defaultSize.height) {
+            new_box.finishDragging();
+            actions.finish();
+          }
 
-                                var new_box = new ANewBox(editor);
-                                new_box.startDragging(palette_button);
+          //adding box by dragging
+          else {
+            var new_box = new ANewBox(editor);
+            new_box.startDragging(palette_button);
 
-                                var default_size = palette_button.defaultSize;
+            actions.state.object = new_box;
+          }
+        } else if (palette_button.type === "Line") {
+          var new_line = new ANewLine(editor);
+          new_line.startDragging(palette_button, target);
+          actions.state.object = new_line;
+        }
+      },
 
-                                var box = new_box.state.object;
-                                box.updateSize(default_size.width, default_size.height);
-                                box.compartments.recomputeCompartmentsPosition();
+      move: function () {
+        var object = actions.state.object;
+        var target = actions.state.target;
+        object.dragging(target);
+      },
 
-                                new_box.finishDragging();
-                                actions.finish();
-                            }
+      finish: function () {
+        var object = actions.state.object;
+        var target = actions.state.target;
 
-                            //adding box by dragging
-                            else {
+        object.finishDragging(target);
+      },
+    },
 
-                                var new_box = new ANewBox(editor);
-                                new_box.startDragging(palette_button);
+    Selecting: {
+      start: function (e) {
+        new Event(editor, "clickedOnDiagram", e);
 
-                                actions.state["object"] = new_box;
-                            }
-                        }
+        var selection_rect = new SelectionRect(editor);
+        actions.state.object = selection_rect;
+      },
 
-                        else if (palette_button["type"] == "Line") {
-                            var new_line = new ANewLine(editor);
-                            new_line.startDragging(palette_button, target);
-                            actions.state["object"] = new_line;
-                        }
+      move: function () {
+        var selection_rect = actions.state.object;
+        selection_rect.dragging();
+      },
 
-                    },
+      finish: function () {
+        var selection_rect = actions.state.object;
+        selection_rect.finishDragging();
+      },
+    },
 
-                    move: function() {
-                        var object = actions.state["object"];
-                        var target = actions.state.target;
-                        object.dragging(target);
-                    },
+    Dragging: {
+      start: function () {
+        var selection_dragging = new SelectionDragging(editor);
+        selection_dragging.startDragging();
+        actions.state.object = selection_dragging;
+      },
 
-                    finish: function() {
-                        var object = actions.state["object"];
-                        var target = actions.state.target;
+      move: function () {
+        var selection_dragging = actions.state.object;
+        selection_dragging.dragging();
+      },
 
-                        object.finishDragging(target);
-                    },
-                },
+      finish: function () {
+        var selection_dragging = actions.state.object;
+        selection_dragging.finishDragging();
+      },
+    },
 
-                Selecting: {
-                    start: function(e) {
+    ReRouting: {
+      start: function (target) {
+        if (target.lineType === "Direct") {
+          return;
+        }
 
-                        new Event(editor, "clickedOnDiagram", e);
+        var line_rerouting = new LineRerouting(target);
+        line_rerouting.startDragging();
+        actions.state.object = line_rerouting;
+      },
 
-                        var selection_rect = new SelectionRect(editor);
-                        actions.state["object"] = selection_rect;
-                    },
+      move: function () {
+        var object = actions.state.object;
+        if (object) {
+          object.dragging();
+        }
+      },
 
-                    move: function() {
-                        var selection_rect = actions.state["object"];
-                        selection_rect.dragging();
-                    },
+      finish: function () {
+        var object = actions.state.object;
+        if (object) {
+          object.finishDragging();
+        }
+      },
+    },
 
-                    finish: function() {
-                        var selection_rect = actions.state["object"];
-                        selection_rect.finishDragging();
-                    },
-                },
+    PanningDrag: {
+      start: function (e) {
+        new Event(editor, "clickedOnDiagram", e);
 
-                Dragging: {
-                    start: function() {
-                        var selection_dragging = new SelectionDragging(editor);
-                        selection_dragging.startDragging();
-                        actions.state["object"] = selection_dragging;
-                    },
+        var panning_drag = new PanningDrag(editor);
+        panning_drag.startDragging();
+        actions.state.object = panning_drag;
+      },
 
-                    move: function() {
-                        var selection_dragging = actions.state["object"];
-                        selection_dragging.dragging();
-                    },
+      finish: function () {
+        var object = actions.state.object;
+        object.finishDragging();
+      },
+    },
 
-                    finish: function() {
-                        var selection_dragging = actions.state["object"];
-                        selection_dragging.finishDragging();
-                    },
-                },
+    // EditingSwimlane: {
+    //     start: function(params) {
 
-                ReRouting: {
-                    start: function(target) {
+    //         var moving = new MovingSwimlane(params.line, params.swimlane);
+    //         moving.startDragging();
+    //         actions.state.object = moving;
+    //     },
 
-                        if (target.lineType === "Direct") {
-                            return;
-                        }
+    //     move: function() {
+    //         var object = actions.state.object;
+    //         object.dragging();
+    //     },
 
-                        var line_rerouting = new LineRerouting(target);
-                        line_rerouting.startDragging();
-                        actions.state["object"] = line_rerouting;
-                    },
+    //     finish: function() {
+    //         var object = actions.state.object;
+    //         object.finishDragging();
+    //     },
+    // },
 
-                    move: function() {
-                        var object = actions.state["object"];
-                        if (object) {
-                            object.dragging();
-                        }
-                    },
+    // SwimlaneTextEditing: {
+    //     start: function(text) {
+    //         new Event(editor, "dbClickOnSwimlaneText", text);
+    //     },
+    // },
 
-                    finish: function() {
-                        var object = actions.state["object"];
-                        if (object) {
-                            object.finishDragging();
-                        }
-                    },
-                },
+    // SwimlaneDbClick: {
+    //     start: function(params) {
+    //         new Event(editor, "dbClickOnSwimlane", params);
+    //     },
+    // },
 
-                PanningDrag: {
-                    start: function(e) {
-                        new Event(editor, "clickedOnDiagram", e);
+    ShowConnectionPoints: {
+      start: function (element) {
+        var is_refresh_needed = true;
+        editor.connectionPoints.addStartPoint(element, is_refresh_needed);
+      },
 
-                        var panning_drag = new PanningDrag(editor);
-                        panning_drag.startDragging();
-                        actions.state["object"] = panning_drag;
-                    },
+      move: function () {
+        var target = editor.actions.state.target;
+        if (target) {
+          return;
+        } else {
+          var active_point = editor.connectionPoints.state.activePoint;
+          if (active_point) {
+            return;
+          } else {
+            editor.connectionPoints.removeStartPoints(true);
+            actions.finish();
+          }
+        }
+      },
+    },
+  };
 
-                    finish: function() {
-                        var object = actions.state["object"];
-                        object.finishDragging();
-                    },
-                },
-
-
-                // EditingSwimlane: {
-                //     start: function(params) {
-
-                //         var moving = new MovingSwimlane(params.line, params.swimlane);
-                //         moving.startDragging();
-                //         actions.state["object"] = moving;
-                //     },
-
-                //     move: function() {
-                //         var object = actions.state["object"];
-                //         object.dragging();
-                //     },
-
-                //     finish: function() {
-                //         var object = actions.state["object"];
-                //         object.finishDragging();
-                //     },
-                // },
-
-                // SwimlaneTextEditing: {
-                //     start: function(text) {
-                //         new Event(editor, "dbClickOnSwimlaneText", text);
-                //     },
-                // },
-
-                // SwimlaneDbClick: {
-                //     start: function(params) {
-                //         new Event(editor, "dbClickOnSwimlane", params);
-                //     },
-                // },
-
-                ShowConnectionPoints: {
-                    start: function(element) {
-                        var is_refresh_needed = true;
-                        editor.connectionPoints.addStartPoint(element, is_refresh_needed)
-                    },
-
-                    move: function() {
-
-                        var target = editor.actions.state.target
-                        if (target) {
-                            return;
-                        }
-
-                        else {
-                            var active_point = editor.connectionPoints.state.activePoint;
-                            if (active_point) {
-                                return;
-                            }
-
-                            else {
-                                editor.connectionPoints.removeStartPoints(true);
-                                actions.finish();
-                            }
-                        }
-                    },
-
-                },
-
-            };
-
-    actions.handlers = new EditorHandlers(actions);
-}
+  actions.handlers = new EditorHandlers(actions);
+};
 
 Actions.prototype = {
+  isAction: function () {
+    var actions = this;
+    if (actions.state.name) {
+      return true;
+    }
+  },
 
-    isAction: function() {
-        var actions = this;
-        if (actions["state"]["name"]) {
-            return true;
-        }
-    },
+  startAction: function (action_name, param) {
+    var actions = this;
 
-    startAction: function(action_name, param) {
-        var actions = this;
+    //reseting actions sate
+    actions.state = {};
 
-        //reseting actions sate
-        actions["state"] = {};
+    actions.state.name = action_name;
+    actions.options[action_name].start(param);
+  },
 
-        actions["state"]["name"] = action_name;
-        actions.options[action_name]["start"](param);
-    },
-
-    start: function(ev) {
-        var actions = this;
-        var editor = actions.editor;
-
-        editor.unSelectElements(undefined, true);
-
-        //if the mouse left button is clicked
-        var mouse_state_obj = editor.getMouseStateObject();
-        if (mouse_state_obj.isLeftClick(ev)) {
-
-            //saves mouse state
-            mouse_state_obj.mouseDown(ev);
-
-            //if palette button is pressed, then starts creating a new element
-            var palette = editor.getPalette();
-            if (palette.isPressed()) {
-
-                var pressed_button = palette.getPressedButton();
-                if (pressed_button.type == "Box") {
-                    var target = mouse_state_obj.getTarget(ev);
-                    actions.startAction("NewElement", target);
-                }
-            }
-
-            //starts creating the selection rect
-            else if (!editor.isAction()) {
-
-                if (editor.isSelectionEmpty()) {
-
-                    if (editor.isPanningEnabled()) {
-                        actions.startAction("PanningDrag", ev);
-                    }
-                    else {
-                        actions.startAction("Selecting", ev);
-                    }
-                }
-            }
-        }
-
-    },
-
-    move: function(params) {
-        var actions = this;
-
-        if (actions.isAction()) {
-            var action_name = actions["state"]["name"];
-            var func = actions.options[action_name]["move"];
-            if (func) {
-                func();
-            }
-        }
-    },
-
-    finish: function(e) {
-
-        var actions = this;
-        var editor = actions.editor;
-
-        var mouse_state_obj = editor.getMouseStateObject();
-        if (e) {
-
-            //if mouse left button is clicked
-            if (mouse_state_obj.isLeftClick(e)) {
-
-                var mouse_state = editor.getMouseState();
-                if (mouse_state.mouseDown) {
-
-                    var action_name = actions["state"]["name"];
-                    if (action_name) {
-                        var func = actions.options[action_name]["finish"];
-                        if (func) {
-                            func();
-                        }
-                    }
-                }
-            }
-
-            //if mouse right button is clicked
-            else {
-
-                if (mouse_state_obj.isRightClick(e) && !actions.state.mouseUp) {
-                    if (editor.isSelectionEmpty()) {
-                        editor.unSelectElements(undefined, true);
-                        new Event(editor, "rClickedOnDiagram", {ev: e});
-                    }
-                }
-            }
-        }
-
-        mouse_state_obj.reset();
-        actions.reset();
-        editor.setCursorStyle('default');
-    },
-
-    reset: function() {
-        var actions = this;
-        actions.state = {};
-    },
-}
-
-
-var EditorHandlers = function(actions) {
-
+  start: function (ev) {
+    var actions = this;
     var editor = actions.editor;
-    var stage = editor.getStage();
 
-    stage.on("mousedown touchstart contentMousedown contentTouchstart", function(ev) {
+    editor.unSelectElements(undefined, true);
 
+    //if the mouse left button is clicked
+    var mouse_state_obj = editor.getMouseStateObject();
+    if (mouse_state_obj.isLeftClick(ev)) {
+      //saves mouse state
+      mouse_state_obj.mouseDown(ev);
+
+      //if palette button is pressed, then starts creating a new element
+      var palette = editor.getPalette();
+      if (palette.isPressed()) {
+        var pressed_button = palette.getPressedButton();
+        if (pressed_button.type === "Box") {
+          var target = mouse_state_obj.getTarget(ev);
+          actions.startAction("NewElement", target);
+        }
+      }
+
+      //starts creating the selection rect
+      else if (!editor.isAction()) {
+        if (editor.isSelectionEmpty()) {
+          if (editor.isPanningEnabled()) {
+            actions.startAction("PanningDrag", ev);
+          } else {
+            actions.startAction("Selecting", ev);
+          }
+        }
+      }
+    }
+  },
+
+  move: function (params) {
+    var actions = this;
+
+    if (actions.isAction()) {
+      var action_name = actions.state.name;
+      var func = actions.options[action_name].move;
+      if (func) {
+        func();
+      }
+    }
+  },
+
+  finish: function (e) {
+    var actions = this;
+    var editor = actions.editor;
+
+    var mouse_state_obj = editor.getMouseStateObject();
+    if (e) {
+      //if mouse left button is clicked
+      if (mouse_state_obj.isLeftClick(e)) {
         var mouse_state = editor.getMouseState();
-
-        //if there was a click on element, then don't start a new action
         if (mouse_state.mouseDown) {
-            return;
+          var action_name = actions.state.name;
+          if (action_name) {
+            var func = actions.options[action_name].finish;
+            if (func) {
+              func();
+            }
+          }
         }
+      }
 
-        actions.start(ev);
-    });
-
-    //stage.on("contentMousemove", function(e) {
-    editor.getSceneContainer().on("mousemove touchmove", function(e) {
-
-        editor.mouseState.mouseMove(e);
-
-        if (editor.actions.state.cancelMove) {
-            return;
+      //if mouse right button is clicked
+      else {
+        if (mouse_state_obj.isRightClick(e) && !actions.state.mouseUp) {
+          if (editor.isSelectionEmpty()) {
+            editor.unSelectElements(undefined, true);
+            new Event(editor, "rClickedOnDiagram", { ev: e });
+          }
         }
+      }
+    }
 
-        editor.actions.state.target = editor.resetVariable();
-        editor.actions.move();
-    });
+    mouse_state_obj.reset();
+    actions.reset();
+    editor.setCursorStyle("default");
+  },
 
-    //finishes on mouse down and mouse move started actions
-    stage.on("mouseup touchend contentMouseup contentTouchend", function(e) {
+  reset: function () {
+    var actions = this;
+    actions.state = {};
+  },
+};
 
-        // if (actions.state.name !== "SwimlaneTextEditing") {
-            actions.finish(e);
-        // }
-    });
+var EditorHandlers = function (actions) {
+  var editor = actions.editor;
+  var stage = editor.getStage();
 
-    //if mouse leaves the editor and the selection was started
-    stage.on("mouseleave touchend contentMouseleave", function(e) {
-        editor.setCursorStyle("default");
-        if (editor["action"] && editor["action"]["name"] == "Selecting") {
-            actions.finish(e);
-            return;
-        }
-    });
+  stage.on(
+    "mousedown touchstart contentMousedown contentTouchstart",
+    function (ev) {
+      var mouse_state = editor.getMouseState();
 
-    // stage.on("dblclick dbltap contentDblclick contentDblTap", function(ev) {
+      //if there was a click on element, then don't start a new action
+      if (mouse_state.mouseDown) {
+        return;
+      }
 
-    //     if (actions.state.name !== "SwimlaneTextEditing") {
-    //         editor.mouseState.mouseDown(ev);
-    //         actions.startAction("SwimlaneDbClick");
-    //     }
+      actions.start(ev);
+    },
+  );
 
-    //     actions.finish();
-    // });
-}
+  //stage.on("contentMousemove", function(e) {
+  editor.getSceneContainer().on("mousemove touchmove", function (e) {
+    editor.mouseState.mouseMove(e);
 
-export default Actions
+    if (editor.actions.state.cancelMove) {
+      return;
+    }
+
+    editor.actions.state.target = editor.resetVariable();
+    editor.actions.move();
+  });
+
+  //finishes on mouse down and mouse move started actions
+  stage.on("mouseup touchend contentMouseup contentTouchend", function (e) {
+    // if (actions.state.name !== "SwimlaneTextEditing") {
+    actions.finish(e);
+    // }
+  });
+
+  //if mouse leaves the editor and the selection was started
+  stage.on("mouseleave touchend contentMouseleave", function (e) {
+    editor.setCursorStyle("default");
+    if (editor.action && editor.action.name === "Selecting") {
+      actions.finish(e);
+      return;
+    }
+  });
+
+  // stage.on("dblclick dbltap contentDblclick contentDblTap", function(ev) {
+
+  //     if (actions.state.name !== "SwimlaneTextEditing") {
+  //         editor.mouseState.mouseDown(ev);
+  //         actions.startAction("SwimlaneDbClick");
+  //     }
+
+  //     actions.finish();
+  // });
+};
+
+export default Actions;

@@ -1,7 +1,7 @@
 {
   // Build a Lua-table-like value: an Array with extra named fields.
   function tbl(items, props) {
-    const a = Array.isArray(items) ? items : (items == null ? [] : [items]);
+    const a = Array.isArray(items) ? items : (items === null ? [] : [items]);
     if (props) Object.assign(a, props);
     return a;
   }

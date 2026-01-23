@@ -1043,7 +1043,7 @@ async function getFilterItem(filterItemTable,elemOWLGrEd) {
             }
 			// TO DO
 			return "";
-            // return elements == null || elements.attr("value") === "" ? "true" : "false";
+            // return elements === null || elements.attr("value") === "" ? "true" : "false";
         } else if (
             filterItemTable.pathFunction.function !== undefined &&
             filterItemTable.pathFunction.function === "isURI"

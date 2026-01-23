@@ -9,8 +9,8 @@ import {
 ProjectsGroups.after.remove(async function (user_id, doc) {
   if (!doc) return;
 
-  var group_id = doc["_id"];
-  var proj_id = doc["projectId"];
+  var group_id = doc._id;
+  var proj_id = doc.projectId;
 
   //removing the group from the allowed groups
   await Diagrams.updateAsync(
@@ -30,8 +30,8 @@ Meteor.methods({
     if (await is_project_admin(user_id, list)) {
       var date = new Date();
       var group_id = await ProjectsGroups.insertAsync({
-        name: list["name"],
-        projectId: list["projectId"],
+        name: list.name,
+        projectId: list.projectId,
         createdBy: user_id,
         createdAt: date,
         modifiedAt: date,
@@ -39,27 +39,27 @@ Meteor.methods({
 
       if (group_id) {
         //diagrams
-        if (list["allProjectDiagrams"]) {
+        if (list.allProjectDiagrams) {
           await Diagrams.updateAsync(
-            { projectId: list["projectId"] },
+            { projectId: list.projectId },
             { $push: { allowedGroups: group_id } },
           );
-        } else if (list["currentProjectDiagrams"]) {
+        } else if (list.currentProjectDiagrams) {
           await Diagrams.updateAsync(
-            { projectId: list["projectId"], versionId: list["versionId"] },
+            { projectId: list.projectId, versionId: list.versionId },
             { $push: { allowedGroups: group_id } },
           );
         }
 
         //documents
-        if (list["allProjectDocuments"]) {
+        if (list.allProjectDocuments) {
           await Documents.updateAsync(
-            { projectId: list["projectId"] },
+            { projectId: list.projectId },
             { $push: { allowedGroups: group_id } },
           );
-        } else if (list["currentProjectDocuments"]) {
+        } else if (list.currentProjectDocuments) {
           await Documents.updateAsync(
-            { projectId: list["projectId"], versionId: list["versionId"] },
+            { projectId: list.projectId, versionId: list.versionId },
             { $push: { allowedGroups: group_id } },
           );
         }
@@ -71,8 +71,8 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_admin(user_id, list)) {
       await ProjectsGroups.updateAsync(
-        { _id: list["id"], projectId: list["projectId"] },
-        { $set: { name: list["name"] } },
+        { _id: list.id, projectId: list.projectId },
+        { $set: { name: list.name } },
       );
     }
   },
@@ -82,16 +82,16 @@ Meteor.methods({
     if (await is_project_admin(user_id, list)) {
       //if there is atleast one project member with the specified group, then no remove
       var proj_users = await ProjectsUsers.findOneAsync({
-        role: list["id"],
-        projectId: list["projectId"],
+        role: list.id,
+        projectId: list.projectId,
       });
       if (proj_users) return;
 
-      if (!list["id"]) return;
+      if (!list.id) return;
 
       await ProjectsGroups.removeAsync({
-        _id: list["id"],
-        projectId: list["projectId"],
+        _id: list.id,
+        projectId: list.projectId,
       });
     }
   },

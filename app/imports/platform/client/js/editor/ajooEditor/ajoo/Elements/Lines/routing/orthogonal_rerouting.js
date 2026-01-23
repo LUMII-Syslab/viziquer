@@ -1,375 +1,407 @@
-import GraphInfo from './line_routing_graphInfo.js'
-import LineRerouting from './line_dragging.js'
+import GraphInfo from "./line_routing_graphInfo.js";
+import LineRerouting from "./line_dragging.js";
 
 var OrthogonalRerouting = {
+  recompute: function (line, state) {
+    var rerouting = OrthogonalRerouting;
+    var editor = line.editor;
+    var elem_list = editor.getElements();
 
-	recompute: function(line, state) {
-		var rerouting = OrthogonalRerouting;
-		var editor = line.editor;
-		var elem_list = editor.getElements();
+    var start_elem = elem_list[line.startElementId];
+    var end_elem = elem_list[line.endElementId];
 
-		var start_elem = elem_list[line.startElementId];
-		var end_elem = elem_list[line.endElementId];
+    //selecting lines
+    var lines = { linkedLines: [], draggedLines: [], allLines: [] };
+    var linked_ports = editor.selection.getLinkedPorts();
 
-	    //selecting lines
-		var lines = {linkedLines: [], draggedLines: [], allLines: []};
-		var linked_ports = editor.selection.getLinkedPorts();
+    start_elem.collectLinkedLines(lines, linked_ports);
+    end_elem.collectLinkedLines(lines, linked_ports);
 
-		start_elem.collectLinkedLines(lines, linked_ports);
-		end_elem.collectLinkedLines(lines, linked_ports);
+    //selecting boxes
+    var boxes = [start_elem, end_elem];
 
-		//selecting boxes
-		var boxes = [start_elem, end_elem];
+    //building graph
+    var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(
+      editor,
+      [],
+      [],
+      lines.linkedLines,
+      lines.draggedLines,
+    );
+    // var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, boxes, [], lines.linkedLines, lines.draggedLines);
 
-		//building graph
-		var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, [], [], lines.linkedLines, lines.draggedLines);
-		// var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, boxes, [], lines.linkedLines, lines.draggedLines);
+    var path = graphInfo.infoDataMap[line._id];
 
+    var index = state.index;
+    graphInfo.onDragSegm(path, index / 2);
 
-	    var path = graphInfo.infoDataMap[line._id];
+    var new_points = rerouting.transformFromLevToPoints(path);
+    line.setPoints(new_points);
+  },
 
-		var index = state.index;
-	    graphInfo.onDragSegm(path, index / 2);
+  testOrthogonalPoints: function (points, text) {
+    var rerouting = OrthogonalRerouting;
 
-	    var new_points = rerouting.transformFromLevToPoints(path);
-	    line.setPoints(new_points);
-	},
+    if (rerouting.has_NaN_value(points)) {
+      console.error(
+        "### test_points_orthogonal ###",
+        text,
+        " points has NaN value",
+        points,
+      );
+      return false;
+    }
 
-	testOrthogonalPoints: function(points, text) {
+    var len = points.length - 2;
+    var i = 0;
 
-		var rerouting = OrthogonalRerouting;
+    while (
+      i < len &&
+      rerouting.isSegmentVertical(points, i) &&
+      rerouting.isSegementHorizontal(points, i)
+    )
+      i += 2;
 
-	    if (rerouting.has_NaN_value(points)) {
-	        console.error("### test_points_orthogonal ###", text, " points has NaN value", points);
-	        return false;
-	    }
+    if (i >= len) {
+      return true;
+    }
 
-	    var len = points.length - 2;
-	    var i = 0;
+    var dir = rerouting.isSegmentVertical(points, i) ? 1 : 0;
 
-	    while (i < len && (rerouting.isSegmentVertical(points, i) && rerouting.isSegementHorizontal(points, i)))
-	        i += 2;
+    for (i = i; i < len; i += 2) {
+      if (points[i + dir] !== points[i + 2 + dir]) {
+        return false;
+      }
+      dir = 1 - dir;
+    }
 
-	    if (i >= len) {
-	        return true;
-	    }
+    return true;
+  },
 
-	    var dir = (rerouting.isSegmentVertical(points, i)) ? 1 : 0;
+  isSegementHorizontal: function (points, i) {
+    return points[i + 1] === points[i + 3];
+  },
 
-	    for (i = i; i < len; i += 2) {
-	        if (points[i + dir] !== points[i + 2 + dir]) {
-	            return false;
-	        }
-	        dir = 1 - dir;
-	    }
+  isSegmentVertical: function (points, i) {
+    return points[i] === points[i + 2];
+  },
 
-	    return true;
-	},
+  has_NaN_value: function (points) {
+    for (var i = 0; i < points.length; i++) if (isNaN(points[i])) return true;
 
-	isSegementHorizontal: function(points, i) {
-	    return points[i + 1] === points[i + 3];
-	},
+    return false;
+  },
 
-	isSegmentVertical: function(points, i) {
-	    return points[i] === points[i + 2];
-	},
+  transformFromLevToPoints: function (path) {
+    var rerouting = OrthogonalRerouting;
 
-	has_NaN_value: function(points) {
-	    for (var i = 0; i < points.length; i++)
-	        if (isNaN(points[i]))
-	            return true;
+    var new_points = [];
 
-	    return false;
-	},
+    var dir = path.dir;
+    var len = path.lev.length;
 
-	transformFromLevToPoints: function(path) {
+    for (var i = 1; i < len; i++) {
+      new_points.push(path.lev[i - 1 + dir], path.lev[i - dir]);
+      dir = 1 - dir;
+    }
 
-		var rerouting = OrthogonalRerouting;
+    rerouting.testOrthogonalPoints(new_points, "transform_from_lev_to_points");
+    return new_points;
+  },
 
-	    var new_points = [];
+  transformPointsToLev: function (points_in) {
+    var rerouting = OrthogonalRerouting;
 
-	    var dir = path.dir;
-	    var len = path.lev.length;
+    rerouting.testOrthogonalPoints(points_in, "transform_points_to_lev");
+    var direction;
 
-	    for (var i = 1; i < len; i++) {
-	        new_points.push(path.lev[i - 1 + dir], path.lev[i - dir]);
-	        dir = 1 - dir;
-	    }
+    //if line is horizontal
+    if (rerouting.isSegementHorizontal(points_in, 0)) {
+      direction = 0;
+    }
 
-	    rerouting.testOrthogonalPoints(new_points, "transform_from_lev_to_points");
-	    return new_points;
-	},
+    //if line is vertical
+    else if (rerouting.isSegmentVertical(points_in, 0)) {
+      direction = 1;
+    }
 
-	transformPointsToLev: function(points_in) {
+    var lev = [];
+    var dir = direction;
+    lev.push(points_in[dir]);
 
-		var rerouting = OrthogonalRerouting;
+    for (var i = 0; i < points_in.length; i = i + 2) {
+      dir = 1 - dir;
 
-	    rerouting.testOrthogonalPoints(points_in, "transform_points_to_lev");
-	    var direction;
+      lev.push(points_in[i + dir]);
+    }
 
-	    //if line is horizontal
-	    if (rerouting.isSegementHorizontal(points_in, 0)) {
-	        direction = 0;
-	    }
+    return { points: lev, direction: direction };
+  },
 
-	    //if line is vertical
-	    else if (rerouting.isSegmentVertical(points_in, 0)) {
-	        direction = 1;
-	    }
+  addBoxToGraphInfo: function (box_in, graphInfo) {
+    var box;
+    if (box_in.resizedElement) {
+      box = box_in.resizedElement;
+    } else {
+      box = box_in;
+    }
 
-	    var lev = [];
-	    var dir = direction;
-	    lev.push(points_in[dir]);
+    var size = box.getElementPosition();
 
-	    for (var i=0;i<points_in.length;i=i+2) {
+    var start_width = size.width;
+    var start_height = size.height;
+    var start_center_x = start_width / 2 + size.x;
+    var start_center_y = start_height / 2 + size.y;
 
-	        dir = 1 - dir;
+    var type_name = "";
+    if (box.elementTypeId) {
+      var splited_arr = box.elementTypeId.split(".");
+      type_name = splited_arr[splited_arr.length - 1];
+    }
 
-	        lev.push(points_in[i + dir]);
-	    }
+    return graphInfo.addBox({
+      id: box._id,
+      element: box,
+      typeName: type_name,
+      center: [start_center_x, start_center_y],
+      size: [start_width, start_height],
 
-	    return {points: lev, direction: direction};
-	},
+      minX: box_in.minX,
+      minY: box_in.minY,
+      maxX: box_in.maxX,
+      maxY: box_in.maxY,
+    });
+  },
 
-	addBoxToGraphInfo: function(box_in, graphInfo) {
+  addPathToGraphInfo: function (line, line_points, graphInfo, is_linked_line) {
+    var rerouting = OrthogonalRerouting;
 
-		var box;
-		if (box_in.resizedElement) {
-			box = box_in.resizedElement;
-		}
-		else {
-			box = box_in;
-		}
+    var elem_list = line.editor.getElements();
 
-    	var size = box.getElementPosition();
+    var start_elem_id = line.startElementId;
+    var end_elem_id = line.endElementId;
 
-    	var start_width = size["width"];
-    	var start_height = size["height"];
-    	var start_center_x = start_width / 2 + size["x"];
-    	var start_center_y = start_height / 2 + size["y"];
+    var start_elem = elem_list[start_elem_id];
+    var end_elem = elem_list[end_elem_id];
 
-    	var type_name = "";
-    	if (box.elementTypeId) {
-    		var splited_arr = box.elementTypeId.split(".");
-    		type_name = splited_arr[splited_arr.length - 1];
-    	}
+    //selecting start and end elements
+    rerouting.addBoxToGraphInfo(start_elem, graphInfo);
+    rerouting.addBoxToGraphInfo(end_elem, graphInfo);
 
-    	return graphInfo.addBox({id: box._id,
-								element: box,
-								typeName: type_name,
-								center: [start_center_x, start_center_y],
-								size: [start_width, start_height],
+    line.convertToAbsolutePoints(line_points);
+    var lev = rerouting.transformPointsToLev(line_points);
 
-								minX: box_in.minX, minY: box_in.minY,
-								maxX: box_in.maxX, maxY: box_in.maxY,
-							});
-	},
-
-	addPathToGraphInfo: function(line, line_points, graphInfo, is_linked_line) {
-
-		var rerouting = OrthogonalRerouting;
-
-		var elem_list = line.editor.getElements();
-
-    	var start_elem_id = line.startElementId;
-    	var end_elem_id = line.endElementId;
-
-    	var start_elem = elem_list[start_elem_id];
-    	var end_elem = elem_list[end_elem_id];
-
-    	//selecting start and end elements
-    	rerouting.addBoxToGraphInfo(start_elem, graphInfo);
-    	rerouting.addBoxToGraphInfo(end_elem, graphInfo);
-
-    	line.convertToAbsolutePoints(line_points);
-	    var lev = rerouting.transformPointsToLev(line_points);
-
-	    graphInfo.addPath({id: line._id,
-	    					fromObject: start_elem,
-	    					toObject: end_elem,
-	    					from: line["startElementId"],
-	    					to: line["endElementId"],
-	    					dir: lev["direction"],
-	    					lev: lev["points"],
-	    					isLinkedLine: is_linked_line,
-	    				});
-	},
-
-}
+    graphInfo.addPath({
+      id: line._id,
+      fromObject: start_elem,
+      toObject: end_elem,
+      from: line.startElementId,
+      to: line.endElementId,
+      dir: lev.direction,
+      lev: lev.points,
+      isLinkedLine: is_linked_line,
+    });
+  },
+};
 
 var OrthogonalCollectionRerouting = {
+  recomputeLines: function (
+    editor,
+    boxes,
+    ports,
+    linkedPorts,
+    linkedLines,
+    draggedLines,
+    delta_x,
+    delta_y,
+  ) {
+    var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(
+      editor,
+      boxes,
+      ports,
+      linkedPorts,
+      linkedLines,
+      draggedLines,
+      delta_x,
+      delta_y,
+    );
+    graphInfo.onDragBoxes();
+    OrthogonalCollectionRerouting.updateMovedDraggedLines(graphInfo, editor);
+  },
 
-	recomputeLines: function(editor, boxes, ports, linkedPorts, linkedLines, draggedLines, delta_x, delta_y) {
-		var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, boxes, ports, linkedPorts, linkedLines, draggedLines, delta_x, delta_y);
-	    graphInfo.onDragBoxes();
-		OrthogonalCollectionRerouting.updateMovedDraggedLines(graphInfo, editor);
-	},
+  buildGraphInfo: function (
+    editor,
+    boxes,
+    ports,
+    linkedPorts,
+    linkedLines,
+    draggedLines,
+    delta_x,
+    delta_y,
+  ) {
+    var rerouting = OrthogonalCollectionRerouting;
+    var graphInfo = new GraphInfo();
 
-	buildGraphInfo: function(editor, boxes, ports, linkedPorts, linkedLines, draggedLines, delta_x, delta_y) {
+    //selecting boxes
+    _.each(boxes, function (box) {
+      var new_box = rerouting.addBoxToGraphInfo(box, graphInfo);
+      graphInfo.dragObjects.push(new_box);
+    });
 
-		var rerouting = OrthogonalCollectionRerouting;
-	    var graphInfo = new GraphInfo();
+    _.each(ports, function (port) {
+      var new_port = rerouting.addBoxToGraphInfo(port, graphInfo);
+      graphInfo.dragObjects.push(new_port);
+    });
 
-	    //selecting boxes
-	    _.each(boxes, function(box) {
-	    	var new_box = rerouting.addBoxToGraphInfo(box, graphInfo);
-	    	graphInfo.dragObjects.push(new_box);
-	    });
+    _.each(linkedPorts, function (port) {
+      var new_port = rerouting.addBoxToGraphInfo(port, graphInfo);
+      graphInfo.dragObjects.push(new_port);
+    });
 
-	    _.each(ports, function(port) {
-	    	var new_port = rerouting.addBoxToGraphInfo(port, graphInfo);
-	    	graphInfo.dragObjects.push(new_port);
-	    });
+    rerouting.updateMovedLines(linkedLines, draggedLines, delta_x, delta_y);
 
-	    _.each(linkedPorts, function(port) {
-	    	var new_port = rerouting.addBoxToGraphInfo(port, graphInfo);
-	    	graphInfo.dragObjects.push(new_port);
-	    });
+    //recoumputes points for the lines, iterates through all lines
+    var is_linked_line = true;
+    _.each(linkedLines, function (line_obj) {
+      var line = line_obj.line;
 
+      //adding line to the graph
+      rerouting.addPathToGraphInfo(
+        line,
+        line.getPoints().slice(),
+        graphInfo,
+        is_linked_line,
+      );
+    });
 
-	    rerouting.updateMovedLines(linkedLines, draggedLines, delta_x, delta_y);
+    //selecting dragged element lines
+    _.each(draggedLines, function (line_obj) {
+      var line = line_obj.line;
 
-		//recoumputes points for the lines, iterates through all lines
-		var is_linked_line = true;
-		_.each(linkedLines, function(line_obj) {
+      //adding line to the graph
+      rerouting.addPathToGraphInfo(line, line.getPoints().slice(), graphInfo);
+    });
 
-			var line = line_obj.line;
+    //selected elements
+    var selected = editor.getSelectedElements();
+    var elem_list = editor.getElements();
 
-	    	//adding line to the graph
-	    	rerouting.addPathToGraphInfo(line, line.getPoints().slice(), graphInfo, is_linked_line);
-	    });
+    //selecting next-level
+    _.each(linkedLines, function (line_obj) {
+      var link = line_obj.line;
 
-		//selecting dragged element lines
-	    _.each(draggedLines, function(line_obj) {
+      //selecting the start and end element
+      var start_elem_id = link.startElementId;
+      var end_elem_id = link.endElementId;
 
-	    	var line = line_obj.line;
+      var not_selected_box;
+      if (selected[start_elem_id]) {
+        not_selected_box = elem_list[end_elem_id];
+      } else {
+        not_selected_box = elem_list[start_elem_id];
+      }
 
-	    	//adding line to the graph
-	    	rerouting.addPathToGraphInfo(line, line.getPoints().slice(), graphInfo);
-	    });
+      //adding not selected box to the graph
+      rerouting.addBoxToGraphInfo(not_selected_box, graphInfo);
 
-	    //selected elements
-	    var selected = editor.getSelectedElements();
-	    var elem_list = editor.getElements();
+      //selecting inLines
+      _.each(not_selected_box.inLines, function (line) {
+        rerouting.addPathToGraphInfo(line, line.getPoints().slice(), graphInfo);
+      });
 
-	    //selecting next-level
-	    _.each(linkedLines, function(line_obj) {
-	    	var link = line_obj.line;
+      //selecting outLines
+      _.each(not_selected_box.outLines, function (line) {
+        rerouting.addPathToGraphInfo(line, line.getPoints().slice(), graphInfo);
+      });
+    });
 
-		   	//selecting the start and end element
-		   	var start_elem_id = link.startElementId;
-		   	var end_elem_id = link.endElementId;
+    return graphInfo;
+  },
 
-		    var not_selected_box;
-		    if (selected[start_elem_id]) {
-		    	not_selected_box = elem_list[end_elem_id];
-		    }
-		    else {
-		    	not_selected_box = elem_list[start_elem_id];
-		    }
+  updateMovedDraggedLines: function (graphInfo, editor) {
+    var elem_list = editor.getElements();
+    _.each(graphInfo.infoDataMap, function (graph_elem) {
+      if (graph_elem.ntype === "path") {
+        var new_points =
+          OrthogonalRerouting.transformFromLevToPoints(graph_elem);
+        var link = elem_list[graph_elem.id];
 
-		    //adding not selected box to the graph
-		    rerouting.addBoxToGraphInfo(not_selected_box, graphInfo);
+        if (!graph_elem.isLinkedLine) {
+          link.transformLinePointsToUnselected(new_points);
+        }
 
-		   	//selecting inLines
-		    _.each(not_selected_box.inLines, function(line) {
-		    	rerouting.addPathToGraphInfo(line, line.getPoints().slice(), graphInfo);
-		    });
+        link.setPoints(new_points);
+      }
+    });
+  },
 
-		    //selecting outLines
-		    _.each(not_selected_box.outLines, function(line) {
-		    	rerouting.addPathToGraphInfo(line, line.getPoints().slice(), graphInfo);
-		    });
+  addBoxToGraphInfo: function (box, graphInfo) {
+    return OrthogonalRerouting.addBoxToGraphInfo(box, graphInfo);
+  },
 
-	    });
+  addPathToGraphInfo: function (line, line_points, graphInfo, is_linked_line) {
+    return OrthogonalRerouting.addPathToGraphInfo(
+      line,
+      line_points,
+      graphInfo,
+      is_linked_line,
+    );
+  },
 
-	    return graphInfo;
-	},
+  updateMovedLines: function (linkedLines, draggedLines, delta_x, delta_y) {
+    if (!delta_x) {
+      delta_x = 0;
+    }
 
-	updateMovedDraggedLines: function(graphInfo, editor) {
+    if (!delta_y) {
+      delta_y = 0;
+    }
 
-	    var elem_list = editor.getElements();
-	    _.each(graphInfo.infoDataMap, function(graph_elem) {
+    _.each(linkedLines, function (line_obj) {
+      //lines graphical represenation
+      var line = line_obj.line;
 
-	    	if (graph_elem.ntype == "path") {
+      //selecting the line points
+      var new_points = line_obj.points.slice();
 
-	    		var new_points = OrthogonalRerouting.transformFromLevToPoints(graph_elem);
-	    		var link = elem_list[graph_elem.id];
+      if (delta_x !== 0 || delta_y !== 0) {
+        var index = line_obj.index;
 
-	    		if (!graph_elem.isLinkedLine) {
-		    		link.transformLinePointsToUnselected(new_points);
-		    	}
+        var new_x = new_points[index] + delta_x;
+        var new_y = new_points[index + 1] + delta_y;
 
-		    	link.setPoints(new_points);
-	    	}
+        //updating segment points by delta
+        LineRerouting.prototype.setNewSegmentPoints(
+          new_points,
+          index,
+          new_x,
+          new_y,
+        );
+      }
 
-	    });
+      line.setPoints(new_points);
+    });
 
-	},
+    _.each(draggedLines, function (line_obj) {
+      //lines graphical represenation
+      var line = line_obj.line;
 
-	addBoxToGraphInfo: function(box, graphInfo) {
-		return OrthogonalRerouting.addBoxToGraphInfo(box, graphInfo);
-	},
+      //selecting the line points
+      var new_points = line_obj.points.slice();
 
-	addPathToGraphInfo: function(line, line_points, graphInfo, is_linked_line) {
-		return OrthogonalRerouting.addPathToGraphInfo(line, line_points, graphInfo, is_linked_line);
-	},
+      if (delta_x !== 0 || delta_y !== 0) {
+        var index = line_obj.index;
 
-	updateMovedLines: function(linkedLines, draggedLines, delta_x, delta_y) {
+        var new_x = new_points[index] + delta_x;
+        var new_y = new_points[index + 1] + delta_y;
 
-		if (!delta_x) {
-			delta_x = 0;
-		}
+        //updating segment points by delta
+        //LineRerouting.prototype.setNewSegmentPoints(new_points, index, new_x, new_y);
+      }
 
-		if (!delta_y) {
-			delta_y = 0;
-		}
+      line.setPoints(new_points);
+    });
+  },
+};
 
-		_.each(linkedLines, function(line_obj) {
-
-			//lines graphical represenation
-			var line = line_obj.line;
-
-			//selecting the line points
-			var new_points = line_obj.points.slice();
-
-			if (delta_x !== 0 || delta_y !== 0) {
-
-				var index = line_obj["index"];
-
-				var new_x = new_points[index] + delta_x;
-				var new_y = new_points[index + 1] + delta_y;
-
-				//updating segment points by delta
-				LineRerouting.prototype.setNewSegmentPoints(new_points, index, new_x, new_y);
-			}
-
-			line.setPoints(new_points);
-	    });
-
-		_.each(draggedLines, function(line_obj) {
-
-			//lines graphical represenation
-			var line = line_obj.line;
-
-			//selecting the line points
-			var new_points = line_obj.points.slice();
-
-			if (delta_x !== 0 || delta_y !== 0) {
-
-				var index = line_obj["index"];
-
-				var new_x = new_points[index] + delta_x;
-				var new_y = new_points[index + 1] + delta_y;
-
-				//updating segment points by delta
-				//LineRerouting.prototype.setNewSegmentPoints(new_points, index, new_x, new_y);
-			}
-
-			line.setPoints(new_points);
-	    });
-	},
-
-}
-
-export {OrthogonalCollectionRerouting, OrthogonalRerouting}
+export { OrthogonalCollectionRerouting, OrthogonalRerouting };

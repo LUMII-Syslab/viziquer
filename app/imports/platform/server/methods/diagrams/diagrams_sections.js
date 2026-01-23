@@ -5,7 +5,7 @@ Meteor.methods({
   attachFileToElement: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
-      list["createdAt"] = new Date();
+      list.createdAt = new Date();
       await DiagramFiles.insertAsync(list);
     }
   },
@@ -14,9 +14,9 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
       await DiagramFiles.removeAsync({
-        _id: list["diagramFileId"],
-        projectId: list["projectId"],
-        versionId: list["versionId"],
+        _id: list.diagramFileId,
+        projectId: list.projectId,
+        versionId: list.versionId,
       });
     }
   },

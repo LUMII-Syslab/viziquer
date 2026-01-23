@@ -14,9 +14,9 @@ Meteor.methods({
   insertFile: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_admin(user_id, list)) {
-      list["createdAt"] = new Date();
-      list["authorId"] = user_id;
-      list["allowedGroups"] = [];
+      list.createdAt = new Date();
+      list.authorId = user_id;
+      list.allowedGroups = [];
 
       if (!list.fullName) {
         console.error("No fullName specified");
@@ -29,10 +29,10 @@ Meteor.methods({
         return;
       }
 
-      list["name"] = res[0];
-      list["extension"] = res[1];
-      list["fullName"] = list.fullName;
-      list["initialName"] = list.fullName;
+      list.name = res[0];
+      list.extension = res[1];
+      list.fullName = list.fullName;
+      list.initialName = list.fullName;
 
       var file_id = await CloudFiles.insertAsync(list);
 
@@ -44,23 +44,23 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
       var cloud_file = await CloudFiles.findOneAsync({
-        projectId: list["projectId"],
-        versionId: list["versionId"],
-        _id: list["fileId"],
+        projectId: list.projectId,
+        versionId: list.versionId,
+        _id: list.fileId,
       });
 
       if (cloud_file) {
         var file_obj_id = cloud_file.fileId;
 
         await CloudFiles.removeAsync({
-          projectId: list["projectId"],
-          versionId: list["versionId"],
-          _id: list["fileId"],
+          projectId: list.projectId,
+          versionId: list.versionId,
+          _id: list.fileId,
         });
 
         await FileObjects.removeAsync({
-          projectId: list["projectId"],
-          versionId: list["versionId"],
+          projectId: list.projectId,
+          versionId: list.versionId,
           _id: file_obj_id,
         });
       }
@@ -72,16 +72,16 @@ Meteor.methods({
     if (await is_project_admin(user_id, list)) {
       await CloudFiles.updateAsync(
         {
-          _id: list["fileId"],
-          projectId: list["projectId"],
-          versionId: list["versionId"],
+          _id: list.fileId,
+          projectId: list.projectId,
+          versionId: list.versionId,
         },
-        { $set: { name: list["name"], fullName: list["fullName"] } },
+        { $set: { name: list.name, fullName: list.fullName } },
       );
     }
   },
 });
 
 function build_file_key(list, file_name) {
-  return list["projectId"] + "/" + list["versionId"] + "/" + file_name;
+  return list.projectId + "/" + list.versionId + "/" + file_name;
 }

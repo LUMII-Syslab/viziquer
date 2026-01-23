@@ -1,8 +1,7 @@
-
 //TODO: Need some defaults
-var SelectionStyle = function(style) {
-	var selectionStyle = this;
-	selectionStyle.style = style;
-}
+var SelectionStyle = function (style) {
+  var selectionStyle = this;
+  selectionStyle.style = style;
+};
 
-export default SelectionStyle
+export default SelectionStyle;

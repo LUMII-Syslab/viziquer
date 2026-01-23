@@ -31,7 +31,7 @@ Meteor.publish("LoginUser", function (list) {
 });
 
 Meteor.publish("navbar_user", function (list) {
-  if (!list || list["noQuery"]) {
+  if (!list || list.noQuery) {
     return this.stop();
   }
 
@@ -47,7 +47,7 @@ Meteor.publish("navbar_user", function (list) {
 });
 
 publishComposite("navbar_projects", function (list) {
-  if (!list || list["noQuery"]) {
+  if (!list || list.noQuery) {
     return this.ready();
   }
 
@@ -85,7 +85,7 @@ publishComposite("navbar_projects", function (list) {
 
 // Meteor.publish("navbar_projects", function(list) {
 
-// 	if (!list || list["noQuery"])
+// 	if (!list || list.noQuery)
 // 		return this.stop();
 
 // 	//gets user's id
@@ -118,7 +118,7 @@ publishComposite("navbar_projects", function (list) {
 // });
 
 // Meteor.publish("Notifications", function(list) {
-// 	if (!list || list["noQuery"])
+// 	if (!list || list.noQuery)
 // 		return this.stop();
 
 // 	var user_id = this.userId;

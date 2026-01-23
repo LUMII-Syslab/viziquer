@@ -35,7 +35,7 @@ Elements.after.insert(async function (user_id, doc) {
     userId: user_id,
     action: "added",
     time: new Date(),
-    actionData: { elementTypeId: doc["elementTypeId"] },
+    actionData: { elementTypeId: doc.elementTypeId },
   };
 
   var action = build_diagram_notification(user_id, doc, edit);
@@ -48,32 +48,32 @@ Elements.after.remove(async function (user_id, doc) {
   if (!doc) return false;
 
   ///removing compartments
-  await Compartments.removeAsync({ elementId: doc["_id"] });
+  await Compartments.removeAsync({ elementId: doc._id });
 
   //removing linked lines
   await Elements.removeAsync({
-    $or: [{ startElement: doc["_id"] }, { endElement: doc["_id"] }],
+    $or: [{ startElement: doc._id }, { endElement: doc._id }],
   });
 
   //removing mappings to selections
-  await ElementsSections.removeAsync({ elementId: doc["_id"] });
+  await ElementsSections.removeAsync({ elementId: doc._id });
 
   //remove mappings to files
-  await DiagramFiles.removeAsync({ elementId: doc["_id"] });
+  await DiagramFiles.removeAsync({ elementId: doc._id });
 
   //removing target element type
-  await ElementTypes.removeAsync({ elementId: doc["_id"] });
+  await ElementTypes.removeAsync({ elementId: doc._id });
 
   //if specialization line was deleted
   if (
-    doc["data"] &&
-    doc["data"]["type"] == "Specialization" &&
-    doc["data"]["data"]
+    doc.data &&
+    doc.data.type === "Specialization" &&
+    doc.data.data
   ) {
-    var data = doc["data"]["data"];
+    var data = doc.data.data;
     await ElementTypes.updateAsync(
-      { superTypeIds: data["endElementTypeId"] },
-      { $pull: { superTypeIds: data["endElementTypeId"] } },
+      { superTypeIds: data.endElementTypeId },
+      { $pull: { superTypeIds: data.endElementTypeId } },
       { multi: true },
     );
   }
@@ -85,24 +85,24 @@ Meteor.methods({
     var user_id = Meteor.userId() || get_unknown_public_user_name();
     if (
       (await is_project_version_admin(user_id, list)) ||
-      is_public_diagram(list["diagramId"])
+      is_public_diagram(list.diagramId)
     ) {
       var compartments = list.initialCompartments;
 
       var id = await Elements.insertAsync(list);
-      var domain = list["data"];
+      var domain = list.data;
 
-      list["id"] = id;
+      list.id = id;
       add_compartments_by_values(list, compartments);
 
       //inserting element target type, if neccesary
       if (domain) {
-        var data = domain["data"];
+        var data = domain.data;
 
         //inserting specialization
-        if (domain["type"] == "Specialization") {
-          var sub_type_id = data["startElementTypeId"];
-          var super_type_id = data["endElementTypeId"];
+        if (domain.type === "Specialization") {
+          var sub_type_id = data.startElementTypeId;
+          var super_type_id = data.endElementTypeId;
 
           await ElementTypes.updateAsync(
             { _id: sub_type_id },
@@ -112,82 +112,82 @@ Meteor.methods({
 
         //inserting box or line target type
         else {
-          var editor_type = domain["editorType"];
+          var editor_type = domain.editorType;
 
           var new_list = build_initial_element_type(list, editor_type);
-          new_list["elementId"] = id;
-          new_list["diagramTypeId"] = data["diagramTypeId"];
+          new_list.elementId = id;
+          new_list.diagramTypeId = data.diagramTypeId;
 
           //This is a hack to add id while there is no UI for this
-          new_list["targetDiagramTypeId"] = data["diagramTypeId"];
+          new_list.targetDiagramTypeId = data.diagramTypeId;
 
-          if (domain["type"] == "NewLine") {
-            new_list["startElementTypeId"] = data["startElementTypeId"];
-            new_list["endElementTypeId"] = data["endElementTypeId"];
-            new_list["styles"][0]["startShapeStyle"] =
-              list["style"]["startShapeStyle"];
-            new_list["styles"][0]["endShapeStyle"] =
-              list["style"]["endShapeStyle"];
+          if (domain.type === "NewLine") {
+            new_list.startElementTypeId = data.startElementTypeId;
+            new_list.endElementTypeId = data.endElementTypeId;
+            new_list.styles[0].startShapeStyle =
+              list.style.startShapeStyle;
+            new_list.styles[0].endShapeStyle =
+              list.style.endShapeStyle;
 
             //by default line is directional and otrhogonal
-            new_list["direction"] = "Directional";
-            new_list["lineType"] = "Orthogonal";
+            new_list.direction = "Directional";
+            new_list.lineType = "Orthogonal";
           }
 
-          if (list["swimlane"]) {
-            new_list["swimlane"] = list["swimlane"];
-            new_list["name"] = "Swimlane";
-            new_list["styles"][0]["elementStyle"] =
-              list["style"]["elementStyle"];
+          if (list.swimlane) {
+            new_list.swimlane = list.swimlane;
+            new_list.name = "Swimlane";
+            new_list.styles[0].elementStyle =
+              list.style.elementStyle;
 
             var extension_point = {
               extensionPoint: "dynamicContextMenu",
               procedure: "SwimlaneContextMenu",
             };
 
-            new_list["extensionPoints"].push(extension_point);
+            new_list.extensionPoints.push(extension_point);
           }
 
           var elem_type_id = await ElementTypes.insertAsync(new_list);
 
           var tab_id = await DialogTabs.insertAsync({
-            toolId: new_list["toolId"],
-            versionId: new_list["versionId"],
-            diagramTypeId: new_list["diagramTypeId"],
-            diagramId: new_list["diagramId"],
+            toolId: new_list.toolId,
+            versionId: new_list.versionId,
+            diagramTypeId: new_list.diagramTypeId,
+            diagramId: new_list.diagramId,
             elementTypeId: elem_type_id,
             name: "Main",
             index: 1,
           });
 
-          if (!(list["isAbstract"] || list["swimlane"])) {
+          if (!(list.isAbstract || list.swimlane)) {
             await PaletteButtons.insertAsync({
-              toolId: new_list["toolId"],
-              versionId: new_list["versionId"],
-              diagramTypeId: new_list["diagramTypeId"],
-              diagramId: new_list["diagramId"],
+              toolId: new_list.toolId,
+              versionId: new_list.versionId,
+              diagramTypeId: new_list.diagramTypeId,
+              diagramId: new_list.diagramId,
               elementTypeIds: [elem_type_id],
-              name: new_list["name"],
-              type: new_list["type"],
-              index: domain["index"],
+              name: new_list.name,
+              type: new_list.type,
+              index: domain.index,
             });
           }
 
-          if (list["swimlane"]) {
+          if (list.swimlane) {
             await CompartmentTypes.find({
-              elementTypeId: list["elementTypeId"],
+              elementTypeId: list.elementTypeId,
             }).forEachAsync(async function (compart_type) {
-              delete compart_type["_id"];
+              delete compart_type._id;
 
-              compart_type["elementTypeId"] = elem_type_id;
-              compart_type["diagramTypeId"] = new_list["diagramTypeId"];
-              compart_type["versionId"] = new_list["versionId"];
-              compart_type["toolId"] = new_list["toolId"];
+              compart_type.elementTypeId = elem_type_id;
+              compart_type.diagramTypeId = new_list.diagramTypeId;
+              compart_type.versionId = new_list.versionId;
+              compart_type.toolId = new_list.toolId;
 
-              compart_type["elementId"] = id;
-              compart_type["diagramId"] = list["diagramId"];
+              compart_type.elementId = id;
+              compart_type.diagramId = list.diagramId;
 
-              compart_type["dialogTabId"] = tab_id;
+              compart_type.dialogTabId = tab_id;
 
               await CompartmentTypes.insertAsync(compart_type);
             });
@@ -201,24 +201,24 @@ Meteor.methods({
 
   resizeElement: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
-    if (list["projectId"]) {
+    if (list.projectId) {
       if (
         (await is_project_version_admin(user_id, list)) ||
-        is_public_diagram(list["diagramId"])
+        is_public_diagram(list.diagramId)
       ) {
         var query = {
-          projectId: list["projectId"],
-          versionId: list["versionId"],
-          diagramId: list["diagramId"],
+          projectId: list.projectId,
+          versionId: list.versionId,
+          diagramId: list.diagramId,
         };
 
         await resize_element(list, query, user_id);
       }
     } else if (await is_system_admin(user_id, list)) {
       var query = {
-        toolId: list["toolId"],
-        versionId: list["versionId"],
-        diagramId: list["diagramId"],
+        toolId: list.toolId,
+        versionId: list.versionId,
+        diagramId: list.diagramId,
       };
 
       await resize_element(list, query, user_id);
@@ -230,17 +230,17 @@ Meteor.methods({
 
     if (
       (await is_project_version_admin(user_id, list)) ||
-      is_public_diagram(list["diagramId"])
+      is_public_diagram(list.diagramId)
     ) {
       //update for element
       var update_element = {};
-      update_element["style." + list["attrName"]] = list["attrValue"];
+      update_element["style." + list.attrName] = list.attrValue;
 
       await Elements.updateAsync(
         {
-          _id: list["elementId"],
-          diagramId: list["diagramId"],
-          projectId: list["projectId"],
+          _id: list.elementId,
+          diagramId: list.diagramId,
+          projectId: list.projectId,
         },
         { $set: update_element },
       );
@@ -249,7 +249,7 @@ Meteor.methods({
         userId: user_id,
         action: "updated",
         time: new Date(),
-        actionData: { elementId: list["elementId"] },
+        actionData: { elementId: list.elementId },
       };
 
       var notification = build_diagram_notification(user_id, list, edit);
@@ -259,12 +259,12 @@ Meteor.methods({
 
   copyElements: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
-    if (list["projectId"]) {
+    if (list.projectId) {
       if (
         (await is_project_version_admin(user_id, list)) ||
-        is_public_diagram(list["diagramId"])
+        is_public_diagram(list.diagramId)
       ) {
-        if (list["elements"]) {
+        if (list.elements) {
           await Clipboard.updateAsync(
             {
               userId: user_id,
@@ -274,12 +274,12 @@ Meteor.methods({
 
             {
               $set: {
-                elements: list["elements"],
+                elements: list.elements,
                 projectId: list.projectId,
                 versionId: list.versionId,
                 diagramId: list.diagramId,
 
-                leftPoint: list["leftPoint"] || 0,
+                leftPoint: list.leftPoint || 0,
                 count: 1,
               },
             },
@@ -297,10 +297,10 @@ Meteor.methods({
 
   pasteElements: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
-    if (list["projectId"]) {
+    if (list.projectId) {
       if (
         (await is_project_version_admin(user_id, list)) ||
-        is_public_diagram(list["diagramId"])
+        is_public_diagram(list.diagramId)
       ) {
         var clipboard = await Clipboard.findOneAsync({
           userId: user_id,
@@ -315,23 +315,23 @@ Meteor.methods({
             versionId: list.versionId,
           };
 
-          var x = list["x"];
-          var y = list["y"];
+          var x = list.x;
+          var y = list.y;
 
           var offset_x, offset_y;
           if (x && y) {
-            var left_most = clipboard["leftPoint"];
+            var left_most = clipboard.leftPoint;
 
-            offset_x = x - (left_most["x"] || 0);
-            offset_y = y - (left_most["y"] || 0);
+            offset_x = x - (left_most.x || 0);
+            offset_y = y - (left_most.y || 0);
           } else {
-            var count = clipboard["count"];
+            var count = clipboard.count;
             var offset = count * 10;
             offset_x = offset;
             offset_y = offset;
           }
 
-          var element_ids = clipboard["elements"];
+          var element_ids = clipboard.elements;
 
           var elements = await Elements.find({
             _id: { $in: element_ids },
@@ -343,9 +343,9 @@ Meteor.methods({
             elementId: { $in: element_ids },
           }).fetchAsync();
 
-          //var elements = clipboard["elements"];
-          //var compartments = clipboard["compartments"];
-          //var elements_sections = clipboard["elementsSections"];
+          //var elements = clipboard.elements;
+          //var compartments = clipboard.compartments;
+          //var elements_sections = clipboard.elementsSections;
 
           //mappings from old ids to new ids
           var old_new_id_list = {};
@@ -355,15 +355,15 @@ Meteor.methods({
 
           //iterates over boxes
           for (const element of elements) {
-            if (element["type"] == "Box") {
-              var old_id = element["_id"];
+            if (element.type === "Box") {
+              var old_id = element._id;
 
               //removes element id to have new one
-              delete element["_id"];
+              delete element._id;
 
-              var location = element["location"];
-              location["x"] = location["x"] + offset_x;
-              location["y"] = location["y"] + offset_y;
+              var location = element.location;
+              location.x = location.x + offset_x;
+              location.y = location.y + offset_y;
 
               _.extend(element, new_ids);
 
@@ -378,29 +378,29 @@ Meteor.methods({
 
           //iterates over lines
           for (const element of elements) {
-            if (element["type"] == "Line") {
-              var old_id = element["_id"];
+            if (element.type === "Line") {
+              var old_id = element._id;
 
-              delete element["_id"];
+              delete element._id;
 
               //sets a new start element id for line
-              var start_elem_id = element["startElement"];
+              var start_elem_id = element.startElement;
               var new_start_elem_id = old_new_id_list[start_elem_id];
-              element["startElement"] = new_start_elem_id;
+              element.startElement = new_start_elem_id;
 
               //sets a new end element id for line
-              var end_elem_id = element["endElement"];
+              var end_elem_id = element.endElement;
               var new_end_elem_id = old_new_id_list[end_elem_id];
-              element["endElement"] = new_end_elem_id;
+              element.endElement = new_end_elem_id;
 
               if (new_start_elem_id && new_end_elem_id) {
-                var points = element["points"];
+                var points = element.points;
                 var new_points = _.map(points, function (point, i) {
-                  if (i % 2 == 0) return point + offset_x;
+                  if (i % 2 === 0) return point + offset_x;
                   else return point + offset_y;
                 });
 
-                element["points"] = new_points;
+                element.points = new_points;
 
                 _.extend(element, new_ids);
 
@@ -415,9 +415,9 @@ Meteor.methods({
           }
 
           for (const compartment of compartments) {
-            delete compartment["_id"];
-            compartment["elementId"] =
-              old_new_id_list[compartment["elementId"]];
+            delete compartment._id;
+            compartment.elementId =
+              old_new_id_list[compartment.elementId];
 
             _.extend(compartment, new_ids);
 
@@ -425,9 +425,9 @@ Meteor.methods({
           }
 
           for (const element_section of elements_sections) {
-            delete element_section["_id"];
-            element_section["elementId"] =
-              old_new_id_list[element_section["elementId"]];
+            delete element_section._id;
+            element_section.elementId =
+              old_new_id_list[element_section.elementId];
 
             _.extend(element_section, new_ids);
 
@@ -436,13 +436,13 @@ Meteor.methods({
 
           if (!x && !y) {
             await Clipboard.updateAsync(
-              { _id: clipboard["_id"] },
+              { _id: clipboard._id },
               { $inc: { count: 1 } },
             );
           }
 
           //var edit = {userId: user_id, action: "pasted", time: new Date()};
-          //Diagrams.update({_id: list["diagramId"]}, {$set: {edit: edit}});
+          //Diagrams.update({_id: list.diagramId}, {$set: {edit: edit}});
 
           return { boxes: boxes, lines: lines };
         }
@@ -457,22 +457,22 @@ Meteor.methods({
 
   changeCollectionPosition: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
-    if (list["projectId"]) {
+    if (list.projectId) {
       if (
         (await is_project_version_admin(user_id, list)) ||
-        is_public_diagram(list["diagramId"])
+        is_public_diagram(list.diagramId)
       ) {
         var query = {
-          projectId: list["projectId"],
-          versionId: list["versionId"],
-          diagramId: list["diagramId"],
+          projectId: list.projectId,
+          versionId: list.versionId,
+          diagramId: list.diagramId,
         };
 
         await change_position(list, query, user_id);
 
         if (list.isLayoutComputationNeededOnLoad !== undefined) {
           await Diagrams.updateAsync(
-            { _id: list.diagramId, projectId: list["projectId"] },
+            { _id: list.diagramId, projectId: list.projectId },
             {
               $set: {
                 isLayoutComputationNeededOnLoad:
@@ -484,9 +484,9 @@ Meteor.methods({
       }
     } else if (await is_system_admin(user_id, list)) {
       var query = {
-        toolId: list["toolId"],
-        versionId: list["versionId"],
-        diagramId: list["diagramId"],
+        toolId: list.toolId,
+        versionId: list.versionId,
+        diagramId: list.diagramId,
       };
 
       await change_position(list, query, user_id);
@@ -495,10 +495,10 @@ Meteor.methods({
 
   deleteElements: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
-    if (list["projectId"]) {
+    if (list.projectId) {
       if (
         (await is_project_version_admin(user_id, list)) ||
-        is_public_diagram(list["diagramId"])
+        is_public_diagram(list.diagramId)
       ) {
         await delete_elements(user_id, list);
       }
@@ -509,22 +509,22 @@ Meteor.methods({
 
   updateSwimlaneLines: async function (list) {
     var user_id = Meteor.userId() || get_unknown_public_user_name();
-    if (list["projectId"]) {
+    if (list.projectId) {
       if (
         (await is_project_version_admin(user_id, list)) ||
-        is_public_diagram(list["diagramId"])
+        is_public_diagram(list.diagramId)
       ) {
         var query = {
-          _id: list["elementId"],
-          projectId: list["projectId"],
-          versionId: list["versionId"],
-          diagramId: list["diagramId"],
+          _id: list.elementId,
+          projectId: list.projectId,
+          versionId: list.versionId,
+          diagramId: list.diagramId,
         };
 
         var update = {
           $set: {
-            "swimlane.horizontalLines": list["horizontalLines"],
-            "swimlane.verticalLines": list["verticalLines"],
+            "swimlane.horizontalLines": list.horizontalLines,
+            "swimlane.verticalLines": list.verticalLines,
           },
         };
 
@@ -532,30 +532,30 @@ Meteor.methods({
 
         var compart_update = {};
         var query2 = {
-          elementId: list["elementId"],
-          projectId: list["projectId"],
-          versionId: list["versionId"],
-          diagramId: list["diagramId"],
+          elementId: list.elementId,
+          projectId: list.projectId,
+          versionId: list.versionId,
+          diagramId: list.diagramId,
         };
 
         var query3 = {
-          elementId: list["elementId"],
-          projectId: list["projectId"],
-          versionId: list["versionId"],
-          diagramId: list["diagramId"],
+          elementId: list.elementId,
+          projectId: list.projectId,
+          versionId: list.versionId,
+          diagramId: list.diagramId,
         };
 
-        var inc = list["increment"];
-        if (list["horizontalIndex"] || list["horizontalIndex"] === 0) {
-          query2["swimlane.row"] = { $gte: list["horizontalIndex"] };
+        var inc = list.increment;
+        if (list.horizontalIndex || list.horizontalIndex === 0) {
+          query2["swimlane.row"] = { $gte: list.horizontalIndex };
           compart_update = { $inc: { "swimlane.row": inc } };
 
-          query3["swimlane.row"] = list["horizontalIndex"];
-        } else if (list["verticalIndex"] || list["verticalIndex"] === 0) {
-          query2["swimlane.column"] = { $gte: list["verticalIndex"] };
+          query3["swimlane.row"] = list.horizontalIndex;
+        } else if (list.verticalIndex || list.verticalIndex === 0) {
+          query2["swimlane.column"] = { $gte: list.verticalIndex };
           compart_update = { $inc: { "swimlane.column": inc } };
 
-          query3["swimlane.column"] = list["verticalIndex"];
+          query3["swimlane.column"] = list.verticalIndex;
         } else return;
 
         //if removing
@@ -568,27 +568,27 @@ Meteor.methods({
     } else if (await is_system_admin(user_id, list)) {
       var update = {
         $set: {
-          "swimlane.horizontalLines": list["horizontalLines"],
-          "swimlane.verticalLines": list["verticalLines"],
+          "swimlane.horizontalLines": list.horizontalLines,
+          "swimlane.verticalLines": list.verticalLines,
         },
       };
 
       await Elements.updateAsync(
         {
-          _id: list["elementId"],
-          toolId: list["toolId"],
-          versionId: list["versionId"],
-          diagramId: list["diagramId"],
+          _id: list.elementId,
+          toolId: list.toolId,
+          versionId: list.versionId,
+          diagramId: list.diagramId,
         },
         update,
       );
 
       await ElementTypes.updateAsync(
         {
-          elementId: list["elementId"],
-          toolId: list["toolId"],
-          versionId: list["versionId"],
-          diagramId: list["diagramId"],
+          elementId: list.elementId,
+          toolId: list.toolId,
+          versionId: list.versionId,
+          diagramId: list.diagramId,
         },
         update,
       );
@@ -597,35 +597,35 @@ Meteor.methods({
 });
 
 async function resize_element(list, query, system_id) {
-  // var element_list = convert_assoc_array_to_array(list["elements"]);
+  // var element_list = convert_assoc_array_to_array(list.elements);
 
   //a transaction is needed
-  var elem_query = { _id: list["elementId"] };
+  var elem_query = { _id: list.elementId };
   _.extend(elem_query, query);
 
   var edit = {
     userId: system_id,
     action: "resized",
     time: new Date(),
-    actionData: { elementId: list["elementId"] },
+    actionData: { elementId: list.elementId },
   };
   var notification = build_diagram_notification(system_id, list, edit);
   await DiagramLogs.insertAsync(notification);
 
   var elem_update = {
-    "location.x": list["x"],
-    "location.y": list["y"],
-    "location.width": list["width"],
-    "location.height": list["height"],
+    "location.x": list.x,
+    "location.y": list.y,
+    "location.width": list.width,
+    "location.height": list.height,
   };
 
   await Elements.updateAsync(elem_query, { $set: elem_update });
 
-  for (const line of list["lines"]) {
-    var line_query = { _id: line["_id"] };
+  for (const line of list.lines) {
+    var line_query = { _id: line._id };
     _.extend(line_query, query);
     await Elements.updateAsync(line_query, {
-      $set: { points: line["points"] },
+      $set: { points: line.points },
     });
   }
 }
@@ -634,9 +634,9 @@ async function change_position(list, query, system_id) {
   //selecting edges
   var edge_points = {};
 
-  var edge_list = _.map(list["lines"], function (line) {
-    edge_points[line["id"]] = line["points"];
-    return line["id"];
+  var edge_list = _.map(list.lines, function (line) {
+    edge_points[line.id] = line.points;
+    return line.id;
   });
 
   //a transaction is needed
@@ -647,7 +647,7 @@ async function change_position(list, query, system_id) {
     userId: system_id,
     action: "moved",
     time: new Date(),
-    actionData: { boxes: list["boxes"], lines: edge_list },
+    actionData: { boxes: list.boxes, lines: edge_list },
   };
 
   var notification = build_diagram_notification(system_id, list, edit);
@@ -655,7 +655,7 @@ async function change_position(list, query, system_id) {
 
   //updating edges
   await Elements.find(lines_query).forEachAsync(async function (edge) {
-    var id = edge["_id"];
+    var id = edge._id;
     await Elements.updateAsync(
       { _id: id },
       { $set: { points: edge_points[id] } },
@@ -664,19 +664,19 @@ async function change_position(list, query, system_id) {
 
   //updating boxes
 
-  if (list["boxes"]) {
-    var box_query = { _id: { $in: list["boxes"] }, type: "Box" };
+  if (list.boxes) {
+    var box_query = { _id: { $in: list.boxes }, type: "Box" };
     _.extend(box_query, query);
 
     await Elements.updateAsync(
       box_query,
-      { $inc: { "location.x": list["deltaX"], "location.y": list["deltaY"] } },
+      { $inc: { "location.x": list.deltaX, "location.y": list.deltaY } },
       { multi: true },
     );
   }
 
-  if (list["movedBoxes"]) {
-    for (const box of list["movedBoxes"]) {
+  if (list.movedBoxes) {
+    for (const box of list.movedBoxes) {
       var box_query = { _id: box.id, type: "Box" };
       _.extend(box_query, query);
 
@@ -703,14 +703,14 @@ async function change_position(list, query, system_id) {
 }
 
 async function delete_elements(system_id, list) {
-  var element_list = list["elements"];
+  var element_list = list.elements;
 
   //a transaction is needed
   var edit = {
     userId: system_id,
     action: "deleted",
     time: new Date(),
-    actionData: { elementNames: list["elementNames"] },
+    actionData: { elementNames: list.elementNames },
   };
 
   var notification = build_diagram_notification(system_id, list, edit);
@@ -724,15 +724,15 @@ async function delete_elements(system_id, list) {
     ],
   };
 
-  if (list["projectId"])
+  if (list.projectId)
     // _.each(query["$or"], function(or_query) {
     for (const or_query of query["$or"]) {
-      or_query["projectId"] = list["projectId"];
+      or_query.projectId = list.projectId;
     }
-  else if (list["toolId"]) {
+  else if (list.toolId) {
     // _.each(query["$or"], function(or_query) {
     for (const or_query of query["$or"]) {
-      or_query["toolId"] = list["toolId"];
+      or_query.toolId = list.toolId;
     }
   } else return;
 
@@ -742,18 +742,18 @@ async function delete_elements(system_id, list) {
 function build_diagram_notification(system_id, list, edit) {
   var notification = {
     authorId: system_id,
-    diagramId: list["diagramId"],
-    createdAt: edit["time"],
-    action: edit["action"],
-    actionData: edit["actionData"],
+    diagramId: list.diagramId,
+    createdAt: edit.time,
+    action: edit.action,
+    actionData: edit.actionData,
   };
 
-  if (list["projectId"]) {
-    notification["projectId"] = list["projectId"];
-    notification["versionId"] = list["versionId"];
-  } else if (list["toolId"]) {
-    notification["toolId"] = list["toolId"];
-    notification["versionId"] = list["versionId"];
+  if (list.projectId) {
+    notification.projectId = list.projectId;
+    notification.versionId = list.versionId;
+  } else if (list.toolId) {
+    notification.toolId = list.toolId;
+    notification.versionId = list.versionId;
   }
 
   return notification;

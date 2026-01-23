@@ -131,7 +131,7 @@ const callFAASFindProperties = async (faasPParams) => {
 const faas = {
     isEnabled : async function() {
         // .env variables are set once at the startup, thus it is ok to call FAAS url just once
-        if (_faasEnabled == undefined) {
+        if (_faasEnabled === undefined) {
             _faasEnabled = ((await getFaasServerUrl())?true:false);
         }
         return _faasEnabled;
@@ -171,7 +171,7 @@ const faas = {
             rr = [{id:"Q0", label: "Noting Found"}];
         } else {
             rr = await callFAASFindClasses(faasParam);
-            if (rr.length == 0) rr = [{id:"Q0", label: "Noting Found"}];
+            if (rr.length === 0) rr = [{id:"Q0", label: "Noting Found"}];
         }
         //console.log(`rr=${JSON.stringify(rr)}`);
         if (rr.error !== undefined)
@@ -199,7 +199,7 @@ const faas = {
         }
         //console.log(`instIds=${JSON.stringify(instIds)}`)
         // only unique class IDs
-        instIds = instIds.filter((i,p) => instIds.indexOf(i) == p).map(i => { return `Q${i}` } );
+        instIds = instIds.filter((i,p) => instIds.indexOf(i) === p).map(i => { return `Q${i}` } );
         //console.log(`instIds fo;ter=${JSON.stringify(instIds)}`)
 
         var faasIParam = {
@@ -263,7 +263,7 @@ const faas = {
             // buildPropArray(["P1"],[{id:"P1",label="test"}],"in")
             // buildPropArray(["P1"],[{id:"P1",label="test"}],"out")
             return faasPropsId.map(pid => {
-                let s = faasPropsArr.find(x => x.id == pid);
+                let s = faasPropsArr.find(x => x.id === pid);
                 if (!s) return {};
 
                 let label=s.label;

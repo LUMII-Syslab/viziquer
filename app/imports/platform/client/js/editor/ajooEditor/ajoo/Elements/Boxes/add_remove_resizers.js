@@ -1,247 +1,285 @@
 // import { _ } from 'vue-underscore';
 
-var Resizers = function(element) {
-	var resizers = this;
-	resizers.element = element;
+var Resizers = function (element) {
+  var resizers = this;
+  resizers.element = element;
 
-	//resizer's edge length
-	resizers.edge = 6;
-	resizers.array = [];
+  //resizer's edge length
+  resizers.edge = 6;
+  resizers.array = [];
 
-	resizers.cursorEntered = "default";
-}
+  resizers.cursorEntered = "default";
+};
 
 Resizers.prototype = {
+  addDefaultResizers: function () {
+    var resizers = this;
+    var excluded = {};
+    resizers.addCustomResizers(excluded);
+  },
 
-	addDefaultResizers: function() {
-		var resizers = this;
-		var excluded = {};
-		resizers.addCustomResizers(excluded);
-	},
+  addRegularShapeResizers: function () {
+    var resizers = this;
+    var excluded = {
+      TopMiddle: true,
+      BottomMiddle: true,
+      LeftMiddle: true,
+      RightMiddle: true,
+    };
 
-	addRegularShapeResizers: function() {
-		var resizers = this;
-		var excluded = {TopMiddle: true, BottomMiddle: true,
-							LeftMiddle: true, RightMiddle: true};
+    resizers.addCustomResizers(excluded);
+  },
 
-		resizers.addCustomResizers(excluded);
-	},
+  addCustomResizers: function (excluded) {
+    var resizers = this;
+    var element = resizers.element;
+    var editor = element.editor;
 
-	addCustomResizers: function(excluded) {
+    if (!editor.isEditMode()) {
+      return;
+    }
 
-		var resizers = this;
-		var element = resizers.element;
-		var editor = element.editor;
+    var shape_group = element.presentation;
+    var edge = resizers.edge;
 
-		if (!editor.isEditMode()) {
-			return;
-		}
+    //stores resizers positions
+    var resizers_positions = {};
 
-		var shape_group = element.presentation;
-		var edge = resizers.edge;
+    //selection rectangles width and height
+    var size = element.getSize();
 
-		//stores resizers positions
-		var resizers_positions = {};
+    var shape_width = size.width;
+    var shape_height = size.height;
 
-		//selection rectangles width and height
-		var size = element.getSize();
+    resizers_positions.TopLeftX = -edge / 2;
+    resizers_positions.TopLeftY = -edge / 2;
 
-		var shape_width = size["width"];
-		var shape_height = size["height"];
+    resizers_positions.TopMiddleX = shape_width / 2 - edge / 2;
+    resizers_positions.TopMiddleY = -edge / 2;
 
-		resizers_positions["TopLeftX"] = -edge/2;
-		resizers_positions["TopLeftY"] = -edge/2;
+    resizers_positions.TopRightX = shape_width - edge / 2;
+    resizers_positions.TopRightY = -edge / 2;
 
-		resizers_positions["TopMiddleX"] = shape_width / 2 - edge / 2;
-		resizers_positions["TopMiddleY"] = - edge/2;
+    resizers_positions.BottomLeftX = -edge / 2;
+    resizers_positions.BottomLeftY = shape_height - edge / 2;
 
-		resizers_positions["TopRightX"] = shape_width - edge / 2;
-		resizers_positions["TopRightY"] = -edge/2;
+    resizers_positions.BottomMiddleX = shape_width / 2 - edge / 2;
+    resizers_positions.BottomMiddleY = shape_height - edge / 2;
 
-		resizers_positions["BottomLeftX"] = -edge/2;
-		resizers_positions["BottomLeftY"] = shape_height - edge / 2;
+    resizers_positions.BottomRightX = shape_width - edge / 2;
+    resizers_positions.BottomRightY = shape_height - edge / 2;
 
-		resizers_positions["BottomMiddleX"] = shape_width / 2 - edge / 2;
-		resizers_positions["BottomMiddleY"] = shape_height - edge / 2;
+    resizers_positions.LeftMiddleX = -edge / 2;
+    resizers_positions.LeftMiddleY = shape_height / 2 - edge / 2;
 
-		resizers_positions["BottomRightX"] = shape_width - edge / 2;
-		resizers_positions["BottomRightY"] = shape_height - edge / 2;
+    resizers_positions.RightMiddleX = shape_width - edge / 2;
+    resizers_positions.RightMiddleY = shape_height / 2 - edge / 2;
 
-		resizers_positions["LeftMiddleX"] = -edge/2;
-		resizers_positions["LeftMiddleY"] = shape_height / 2 - edge / 2;	
+    //adding resizers group
+    var resizers_group = new Konva.Group({});
+    resizers_group.name = "Resizers";
 
-		resizers_positions["RightMiddleX"] = shape_width - edge / 2;
-		resizers_positions["RightMiddleY"] = shape_height / 2 - edge / 2;
+    shape_group.add(resizers_group);
+    resizers.presentation = resizers_group;
 
-		//adding resizers group
-		var resizers_group = new Konva.Group({});
-		resizers_group["name"] = "Resizers";
+    //top left
+    if (!excluded.TopLeft)
+      resizers.array.push(
+        new Resizer(
+          {
+            name: "TopLeft",
+            mouseStyle: "nw-resize",
+            x: resizers_positions.TopLeftX,
+            y: resizers_positions.TopLeftY,
+          },
+          resizers,
+        ),
+      );
 
-		shape_group.add(resizers_group);
-		resizers.presentation = resizers_group;
+    //top middle
+    if (!excluded.TopMiddle)
+      resizers.array.push(
+        new Resizer(
+          {
+            name: "TopMiddle",
+            mouseStyle: "n-resize",
+            x: resizers_positions.TopMiddleX,
+            y: resizers_positions.TopMiddleY,
+          },
+          resizers,
+        ),
+      );
 
-		//top left
-		if (!excluded["TopLeft"])
-			resizers.array.push(new Resizer({
-											name: "TopLeft",
-											mouseStyle:'nw-resize',
-											x: resizers_positions["TopLeftX"],
-											y: resizers_positions["TopLeftY"],
-										}, resizers));
+    //top right
+    if (!excluded.TopRight)
+      resizers.array.push(
+        new Resizer(
+          {
+            name: "TopRight",
+            mouseStyle: "ne-resize",
+            x: resizers_positions.TopRightX,
+            y: resizers_positions.TopRightY,
+          },
+          resizers,
+        ),
+      );
 
-		//top middle
-		if (!excluded["TopMiddle"])
-			resizers.array.push(new Resizer({
-											name: "TopMiddle",
-											mouseStyle:'n-resize',
-											x: resizers_positions["TopMiddleX"],
-											y: resizers_positions["TopMiddleY"],
-										}, resizers));
+    //bottom left
+    if (!excluded.BottomLeft)
+      resizers.array.push(
+        new Resizer(
+          {
+            name: "BottomLeft",
+            mouseStyle: "sw-resize",
+            x: resizers_positions.BottomLeftX,
+            y: resizers_positions.BottomLeftY,
+          },
+          resizers,
+        ),
+      );
 
-		//top right
-		if (!excluded["TopRight"])	
-			resizers.array.push(new Resizer({
-											name: "TopRight",
-											mouseStyle:'ne-resize',
-											x: resizers_positions["TopRightX"],
-											y: resizers_positions["TopRightY"],
-										}, resizers));
+    //bottom middle
+    if (!excluded.BottomMiddle)
+      resizers.array.push(
+        new Resizer(
+          {
+            name: "BottomMiddle",
+            mouseStyle: "s-resize",
+            x: resizers_positions.BottomMiddleX,
+            y: resizers_positions.BottomMiddleY,
+          },
+          resizers,
+        ),
+      );
 
-		//bottom left
-		if (!excluded["BottomLeft"])	
-			resizers.array.push(new Resizer({
-											name: "BottomLeft",
-											mouseStyle:'sw-resize',
-											x: resizers_positions["BottomLeftX"],
-											y: resizers_positions["BottomLeftY"],
-										}, resizers));
+    //bottom right
+    if (!excluded.BottomRight)
+      resizers.array.push(
+        new Resizer(
+          {
+            name: "BottomRight",
+            mouseStyle: "se-resize",
+            x: resizers_positions.BottomRightX,
+            y: resizers_positions.BottomRightY,
+          },
+          resizers,
+        ),
+      );
 
-		//bottom middle
-		if (!excluded["BottomMiddle"])
-			resizers.array.push(new Resizer({
-											name: "BottomMiddle",
-											mouseStyle:'s-resize',
-											x: resizers_positions["BottomMiddleX"],
-											y: resizers_positions["BottomMiddleY"],
-										}, resizers));
+    //left middle
+    if (!excluded.LeftMiddle)
+      resizers.array.push(
+        new Resizer(
+          {
+            name: "LeftMiddle",
+            mouseStyle: "w-resize",
+            x: resizers_positions.LeftMiddleX,
+            y: resizers_positions.LeftMiddleY,
+          },
+          resizers,
+        ),
+      );
 
-		//bottom right
-		if (!excluded["BottomRight"])	
-			resizers.array.push(new Resizer({
-											name: "BottomRight",
-											mouseStyle:'se-resize',
-											x: resizers_positions["BottomRightX"],
-											y: resizers_positions["BottomRightY"],
-										}, resizers));
+    //right middle
+    if (!excluded.RightMiddle)
+      resizers.array.push(
+        new Resizer(
+          {
+            name: "RightMiddle",
+            mouseStyle: "e-resize",
+            x: resizers_positions.RightMiddleX,
+            y: resizers_positions.RightMiddleY,
+          },
+          resizers,
+        ),
+      );
+  },
 
-		//left middle
-		if (!excluded["LeftMiddle"])
-			resizers.array.push(new Resizer({
-											name: "LeftMiddle",
-											mouseStyle:'w-resize',
-											x: resizers_positions["LeftMiddleX"],
-											y: resizers_positions["LeftMiddleY"],
-										}, resizers));
+  remove: function (is_refresh_needed) {
+    var resizers = this;
+    var resizers_group = resizers.presentation;
+    if (resizers_group) {
+      var layer = resizers_group.getLayer();
 
-		//right middle
-		if (!excluded["RightMiddle"])
-			resizers.array.push(new Resizer({
-											name: "RightMiddle",
-											mouseStyle:'e-resize',
-											x: resizers_positions["RightMiddleX"],
-											y: resizers_positions["RightMiddleY"],
-										}, resizers));
-	},
+      // resizers_group.destroy();
+      // this is a hack because for some reason destroy does not work
+      resizers_group.visible(false);
 
-	remove: function(is_refresh_needed) {
-	
-		var resizers = this;
-		var resizers_group = resizers.presentation;
-		if (resizers_group) {
+      if (is_refresh_needed) {
+        layer.draw();
+      }
+    }
 
-			var layer = resizers_group.getLayer();
+    resizers.array = [];
+  },
+};
 
-			// resizers_group.destroy();
-			// this is a hack because for some reason destroy does not work
-			resizers_group.visible(false);
+var Resizer = function (list, resizers) {
+  var resizer = this;
+  resizer.resizers = resizers;
+  resizer.mouseStyle = list.mouseStyle;
 
-			if (is_refresh_needed) {
-				layer.draw();	
-			}
-		}
+  var resizers_group = resizers.presentation;
+  var edge = resizers.edge;
 
-		resizers.array = [];
-	},
-}
+  //resizer's properties
+  var properties = {
+    width: edge,
+    height: edge,
+    fill: "white",
+    stroke: "black",
+    strokeWidth: 0.4,
+    perfectDrawEnabled: false,
+  };
 
+  properties.x = list.x;
+  properties.y = list.y;
 
-var Resizer = function(list, resizers) {
+  //creates resizer rect
+  var resizer_presentation = new Konva.Rect(properties);
+  resizer_presentation.name = list.name;
+  resizer_presentation.class = "Resizer";
 
-	var resizer = this;
-	resizer.resizers = resizers;
-	resizer.mouseStyle = list["mouseStyle"];
+  resizers_group.add(resizer_presentation);
 
-	var resizers_group = resizers.presentation;
-	var edge = resizers.edge;
-
-	//resizer's properties	
-	var properties = {
-				width: edge,
-				height: edge,
-				fill: 'white',
-				stroke: 'black',
-				strokeWidth: 0.4,
-				perfectDrawEnabled: false,
-			};
-
-	properties["x"] = list["x"];
-	properties["y"] = list["y"];
-
-	//creates resizer rect
-	var resizer_presentation = new Konva.Rect(properties);
-		resizer_presentation["name"] = list["name"];
-		resizer_presentation["class"] = "Resizer";
-
-	resizers_group.add(resizer_presentation);
-
-	resizer.presentation = resizer_presentation;
-	resizer.handlers = new ResizerHanlders(resizer);
-}
+  resizer.presentation = resizer_presentation;
+  resizer.handlers = new ResizerHanlders(resizer);
+};
 
 function ResizerHanlders(resizer) {
+  var resizer_presentation = resizer.presentation;
+  var element = resizer.resizers.element;
+  var editor = element.editor;
 
-	var resizer_presentation = resizer.presentation;
-	var element = resizer.resizers.element
-	var editor = element.editor;
+  resizer_presentation.on("mouseenter", function (e) {
+    editor.setCursorStyle(resizer.mouseStyle);
+    e.cancelBubble = true;
+  });
 
-	resizer_presentation.on('mouseenter', function(e) {
-		editor.setCursorStyle(resizer.mouseStyle);
-		e.cancelBubble = true;
-	});
+  resizer_presentation.on("mouseleave", function (e) {
+    editor.setCursorStyle("default");
+  });
 
-	resizer_presentation.on('mouseleave', function(e) {
-		editor.setCursorStyle("default");
-	});
+  resizer_presentation.on("mousedown touchstart", function (e) {
+    e.cancelBubble = true;
 
-	resizer_presentation.on('mousedown touchstart', function(e) {
+    var mouse_state_obj = editor.getMouseStateObject();
+    if (!mouse_state_obj.isLeftClick(e)) {
+      return;
+    }
 
-		e.cancelBubble = true;	
+    //if the diagram is not in the edit mode, then resizing is not allowed
+    if (!editor.isEditMode()) return;
 
-		var mouse_state_obj = editor.getMouseStateObject();
-		if (!mouse_state_obj.isLeftClick(e)) {
-			return;
-		}
+    editor.mouseState.mouseDown(e);
 
-		//if the diagram is not in the edit mode, then resizing is not allowed
-		if (!editor.isEditMode())
-			return;
+    var resizer_name = resizer_presentation.name;
 
-		editor.mouseState.mouseDown(e);
-
-		var resizer_name = resizer_presentation.name;
-
-		editor.actions.startAction("Resizing", {element: element, resizerName: resizer_name});
-	});
+    editor.actions.startAction("Resizing", {
+      element: element,
+      resizerName: resizer_name,
+    });
+  });
 }
 
-export default Resizers
+export default Resizers;

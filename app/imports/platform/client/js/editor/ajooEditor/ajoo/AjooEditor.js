@@ -1,405 +1,401 @@
-import Mode from './Editor/mode.js'
-import Palette from './Editor/palette.js'
-import SelectionStyle from './Editor/selectionStyle.js'
-import Layers from './Editor/layers.js'
-import Actions from './Editor/actions.js'
-import ConnectionPoints from './Editor/connectionPoints.js'
-import MouseState from './Editor/mouseState.js'
-import Zoom from './Editor/zooming.js'
-import Grid from './Editor/grid.js'
-import Size from './Editor/size.js'
-import {Panning} from './Editor/panning.js'
+import Mode from "./Editor/mode.js";
+import Palette from "./Editor/palette.js";
+import SelectionStyle from "./Editor/selectionStyle.js";
+import Layers from "./Editor/layers.js";
+import Actions from "./Editor/actions.js";
+import ConnectionPoints from "./Editor/connectionPoints.js";
+import MouseState from "./Editor/mouseState.js";
+import Zoom from "./Editor/zooming.js";
+import Grid from "./Editor/grid.js";
+import Size from "./Editor/size.js";
+import { Panning } from "./Editor/panning.js";
 
+import AElements from "./Elements/elements.js";
 
-import AElements from './Elements/elements.js'
+import Selection from "./Selection/select.js";
+import UnSelection from "./Selection/unselect.js";
 
-import Selection from './Selection/select.js'
-import UnSelection from './Selection/unselect.js'
+import { IMCSDiagramLayout } from "./layoutEngine.js"; //FIXME: saskaņot eksportu un importu
 
-import { IMCSDiagramLayout } from './layoutEngine.js' //FIXME: saskaņot eksportu un importu
+var AjooEditor = function (settings) {
+  var editor = this;
 
+  editor._id = $.now();
+  editor.containerName = settings.container;
+  editor.paletteContainerName = "ajoo_palette";
+  editor.sceneContainerName = "ajoo_scene";
 
-var AjooEditor = function(settings) {
-    var editor = this;
+  editor.width = settings.width;
+  editor.height = settings.height;
 
-    editor._id = $.now();
-    editor.containerName = settings["container"];
-    editor.paletteContainerName = "ajoo_palette";
-    editor.sceneContainerName = "ajoo_scene";
+  editor.boxSettings = settings.boxSettings;
+  if (!editor.boxSettings) {
+    editor.boxSettings = {};
+  }
 
-    editor.width = settings["width"];
-    editor.height = settings["height"];
+  editor.lineSettings = settings.lineSettings;
+  if (!editor.lineSettings) {
+    editor.lineSettings = {};
+  }
 
-    editor.boxSettings = settings.boxSettings;
-    if (!editor.boxSettings) {
-        editor.boxSettings = {};
-    }
+  editor.portSettings = settings.portSettings;
+  if (!editor.portSettings) {
+    editor.portSettings = { width: 10, height: 10 };
+  }
 
-    editor.lineSettings = settings.lineSettings;
-    if (!editor.lineSettings) {
-        editor.lineSettings = {};
-    }
+  //mode
+  editor.mode = new Mode(editor);
 
+  //palette
+  editor.palette = new Palette(editor, settings.palette);
 
-    editor.portSettings = settings.portSettings;
-    if (!editor.portSettings) {
-        editor.portSettings = {width: 10, height: 10,};
-    }
+  //adding scene
+  var scene_width = settings.width - editor.palette.width;
+  var scene_height = editor.height;
 
-    //mode
-    editor.mode = new Mode(editor);
+  //adding scene container
+  var scene_html = "<div id=" + editor.sceneContainerName;
+  scene_html += " style='float: left";
+  scene_html += "width:" + scene_width + "px; height:" + scene_height + "px;";
+  scene_html += "overflow-x: hidden;overflow-y: hidden";
+  scene_html += "'></div>";
+  $("#" + settings.container).append(scene_html);
 
+  var stage = new Konva.Stage({
+    container: editor.sceneContainerName,
+    width: scene_width,
+    height: editor.height,
+  });
 
-    //palette
-    editor.palette = new Palette(editor, settings.palette);
+  editor.getSceneContainer().on("mouseleave", function () {
+    editor.actions.finish({ evt: { which: 1 } });
+  });
 
-    //adding scene
-    var scene_width = settings["width"] - editor.palette.width;
-    var scene_height = editor.height;
+  stage.name = "Stage";
+  editor.stage = stage;
 
-    //adding scene container
-    var scene_html = "<div id=" + editor.sceneContainerName;
-    scene_html += " style='float: left";
-    scene_html += "width:" + scene_width + "px; height:" + scene_height + "px;";
-    scene_html += "overflow-x: hidden;overflow-y: hidden";
-    scene_html += "'></div>";
-    $("#" + settings["container"]).append(scene_html);
+  editor.compartmentList = {};
 
-    var stage = new Konva.Stage({container: editor.sceneContainerName,
-                                  width: scene_width,
-                                  height: editor.height,
-                                });
+  editor.paletteState = {};
 
-    editor.getSceneContainer().on("mouseleave", function() {
-        editor.actions.finish({evt: {which: 1}});
-    });
+  editor.selectionPosition = { x: 0, y: 0 };
 
-    stage.name = "Stage";
-    editor.stage = stage;
+  editor.selectionStyle = new SelectionStyle(settings.selectionStyle);
 
-    editor.compartmentList = {};
+  //specifying event handlers
+  editor.events = settings.events || {};
 
-    editor.paletteState = {};
+  //specifying logging functions
+  editor.eventLogging = settings.eventLogging || {};
 
-    editor.selectionPosition = {x: 0, y: 0};
+  editor.layers = new Layers(editor, settings.area);
 
-    editor.selectionStyle = new SelectionStyle(settings["selectionStyle"]);
+  //add event handlers to the stage
+  editor.actions = new Actions(editor);
 
-    //specifying event handlers
-    editor.events = settings.events || {};
+  //elements
+  editor.elements = new AElements(editor);
 
-    //specifying logging functions
-    editor.eventLogging = settings.eventLogging || {};
+  //selection
+  editor.selection = new Selection(editor);
 
-    editor.layers = new Layers(editor, settings["area"]);
+  //connection points
+  editor.connectionPoints = new ConnectionPoints(editor);
 
-    //add event handlers to the stage
-    editor.actions = new Actions(editor);
+  //mouseState
+  editor.mouseState = new MouseState(editor);
 
-    //elements
-    editor.elements = new AElements(editor);
+  //zoom
+  editor.zoom = new Zoom(editor);
 
-    //selection
-    editor.selection = new Selection(editor);
+  //grid
+  editor.grid = new Grid(editor);
 
-    //connection points
-    editor.connectionPoints = new ConnectionPoints(editor);
+  var is_refresh_not_needed = true;
 
-    //mouseState
-    editor.mouseState = new MouseState(editor);
+  //size
+  editor.size = new Size(editor);
 
-    //zoom
-    editor.zoom = new Zoom(editor);
+  //adding elements to the scene
+  var data = settings.data;
 
-    //grid
-    editor.grid = new Grid(editor);
+  editor.addElements(data, is_refresh_not_needed);
 
-    var is_refresh_not_needed = true;
+  if (settings.isEditModeEnabled) {
+    editor.switchEditMode(is_refresh_not_needed);
+  }
 
-    //size
-    editor.size = new Size(editor);
+  //grid
+  if (settings.isGridEnabled) {
+    editor.showGrid(is_refresh_not_needed);
+  }
 
-    //adding elements to the scene
-    var data = settings["data"];
+  //rendering palette elements
+  if (settings.palette && settings.palette.elements) {
+    editor.palette.add(settings.palette.elements);
+  }
 
-    editor.addElements(data, is_refresh_not_needed);
-
-    if (settings["isEditModeEnabled"]) {
-        editor.switchEditMode(is_refresh_not_needed);
-    }
-
-    //grid
-    if (settings["isGridEnabled"]) {
-        editor.showGrid(is_refresh_not_needed);
-    }
-
-    //rendering palette elements
-    if (settings["palette"] && settings["palette"]["elements"]) {
-        editor.palette.add(settings["palette"]["elements"]);
-    }
-
-    //panning
-    editor.panning = new Panning(editor);
-    if (settings["isPanningEnabled"]) {
-        editor.enablePanning();
-    }
-
-    editor.getSceneContainer().on("contextmenu", function(){
-        return false;
-    });
-
-    editor.data = {};
-
-    editor.layoutSettings = settings.layoutSettings;
-    editor.layoutEngine = function(layoutType, fastAdd) {
-        return new IMCSDiagramLayout(layoutType ?? 'UNIVERSAL', fastAdd);
-    }
-
-    editor.isLayoutComputationNeededOnLoad = settings.isLayoutComputationNeededOnLoad || 0;
-
-    //this is a hack to refresh a palette layer when images are present in the scene
-    setTimeout(function() {
-        editor.palette.refresh();
-    }, 500);
-
-    editor.stage.draw();
-
-    return editor;
-}
-
-AjooEditor.prototype = {
-
-//helpers
-    getStage: function() {
-        var editor = this;
-        return editor.stage;
-    },
-
-    getLayer: function(layer_name) {
-        var editor = this;
-        var layers = editor.layers;
-        return layers.getLayer(layer_name);
-    },
-
-    getPaletteContainer: function() {
-        var editor = this;
-        return $("#" + editor.containerName).find("#" + editor.paletteContainerName);
-    },
-
-    getSceneContainer: function() {
-        var editor = this;
-        return $("#" + editor.containerName).find("#" + editor.sceneContainerName);
-    },
-
-    getPalette: function() {
-        var editor = this;
-        return editor.palette;
-    },
-
-//selection
-    getSelectedElements: function() {
-        var editor = this;
-        return editor.selection.selected;
-    },
-
-    selectElements: function(selection_list, is_refresh_not_needed) {
-        var editor = this;
-        var selection = editor.selection;
-        selection.select(selection_list, is_refresh_not_needed);
-    },
-
-    unSelectElements: function(selection_list, is_refresh_needed) {
-        var editor = this;
-        var selection = editor.selection;
-        selection.unselect(selection_list, is_refresh_needed);
-    },
-
-    isSelectionEmpty: function() {
-        var editor = this;
-        return editor.selection.isEmpty();
-    },
-
-    alignSelection: function(h_align, v_align) {
-        var editor = this;
-        return editor.selection.align(h_align, v_align);
-    },
-
-//elements
-    getElements: function() {
-        var editor = this;
-        return editor.elements.elementList;
-    },
-
-    addElements: function(data, is_refresh_not_needed) {
-        var editor = this;
-        var elements = editor.elements;
-        elements.addElements(data, is_refresh_not_needed);
-    },
-
-    removeElements: function(data, is_refresh_needed) {
-        var editor = this;
-        var elements = editor.elements;
-        elements.removeElements(data, is_refresh_needed);
-    },
-
-//grid
-    isGridEnabled: function() {
-        var editor = this;
-        return editor.grid.isGridEnabled;
-    },
-
-    showGrid: function(is_refresh_not_needed) {
-        var editor = this;
-        var grid = editor.grid;
-        grid.showGrid(is_refresh_not_needed);
-    },
-
-    removeGrid: function() {
-        var editor = this;
-        var grid = editor.grid;
-        grid.removeGrid();
-    },
-
-//mode
-    isEditMode: function() {
-        var editor = this;
-        var mode = editor.mode;
-        return mode.isEditMode;
-    },
-
-    switchEditMode: function(is_refresh_not_needed) {
-        var editor = this;
-        var mode = editor.mode;
-        mode.switchEditMode(is_refresh_not_needed);
-    },
-
-    switchReadMode: function(is_refresh_not_needed) {
-        var editor = this;
-        var mode = editor.mode;
-        mode.switchReadMode(is_refresh_not_needed);
-    },
-
-//zoom
-    getZoom: function() {
-        var editor = this;
-        return editor.zoom;
-    },
-
-    zoomIn: function() {
-        var editor = this;
-        var zoom = editor.zoom;
-        zoom.zoomIn();
-    },
-
-    zoomOut: function() {
-        var editor = this;
-        var zoom = editor.zoom;
-        zoom.zoomOut();
-    },
-
-//actions
-    isAction: function() {
-        var editor = this;
-        var actions = editor.actions;
-        return actions.isAction();
-    },
-
-    getActionName: function() {
-        var editor = this;
-        var actions = editor.actions;
-        return actions.state.name;
-    },
-
-//mouse
-    getMouseStateObject: function() {
-        var editor = this;
-        return editor.mouseState;
-    },
-
-    getMouseState: function() {
-        var editor = this;
-        return editor.mouseState.state;
-    },
-
-//selection style
-    getSelectionStyle: function() {
-        var editor = this;
-        var selection_style = editor.selectionStyle;
-        return selection_style.style;
-    },
-
-//size
-    getSize: function() {
-        var editor = this;
-        return editor.size.state;
-    },
-
-//panning
-    isPanningEnabled: function() {
-        var editor = this;
-        return editor.panning.isPanningEnabled();
-    },
-
-    enablePanning: function() {
-        var editor = this;
-        editor.panning.enablePanning();
-    },
-
-    disablePanning: function() {
-        var editor = this;
-        editor.panning.disablePanning();
-    },
-
-    getSwimlane: function() {
-        var editor = this;
-
-        return _.find(editor.getElements(), function(elem) {
-            if (elem.type === "Swimlane") {
-                return elem;
-            }
-        });
-    },
-
-    findChild: function(parent, name) {
-        var self = this;
-        if (parent) {
-            if (parent.name == name) {
-                return parent;
-            }
-            else {
-                if (parent.getChildren) {
-                    var children = parent.getChildren()
-                    if (children) {
-                        for (var i=0;i<children.length;i++) {
-                            var child = self.findChild(children[i], name);
-                            if (child) {
-                                return child;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-
-    resetVariable: function() {
-        return undefined;
-    },
-
-    setCursorStyle: function(name) {
-        document.body.style.cursor = name;
-    },
-
-    getCursorStyle: function() {
-        var cursor = document.body.style.cursor;
-        if (cursor) {
-            return cursor;
-        }
-        else {
-            return "default";
-        }
-    },
+  //panning
+  editor.panning = new Panning(editor);
+  if (settings.isPanningEnabled) {
+    editor.enablePanning();
+  }
 
+  editor.getSceneContainer().on("contextmenu", function () {
+    return false;
+  });
+
+  editor.data = {};
+
+  editor.layoutSettings = settings.layoutSettings;
+  editor.layoutEngine = function (layoutType, fastAdd) {
+    return new IMCSDiagramLayout(layoutType ?? "UNIVERSAL", fastAdd);
+  };
+
+  editor.isLayoutComputationNeededOnLoad =
+    settings.isLayoutComputationNeededOnLoad || 0;
+
+  //this is a hack to refresh a palette layer when images are present in the scene
+  setTimeout(function () {
+    editor.palette.refresh();
+  }, 500);
+
+  editor.stage.draw();
+
+  return editor;
 };
 
-export default AjooEditor
+AjooEditor.prototype = {
+  //helpers
+  getStage: function () {
+    var editor = this;
+    return editor.stage;
+  },
+
+  getLayer: function (layer_name) {
+    var editor = this;
+    var layers = editor.layers;
+    return layers.getLayer(layer_name);
+  },
+
+  getPaletteContainer: function () {
+    var editor = this;
+    return $("#" + editor.containerName).find(
+      "#" + editor.paletteContainerName,
+    );
+  },
+
+  getSceneContainer: function () {
+    var editor = this;
+    return $("#" + editor.containerName).find("#" + editor.sceneContainerName);
+  },
+
+  getPalette: function () {
+    var editor = this;
+    return editor.palette;
+  },
+
+  //selection
+  getSelectedElements: function () {
+    var editor = this;
+    return editor.selection.selected;
+  },
+
+  selectElements: function (selection_list, is_refresh_not_needed) {
+    var editor = this;
+    var selection = editor.selection;
+    selection.select(selection_list, is_refresh_not_needed);
+  },
+
+  unSelectElements: function (selection_list, is_refresh_needed) {
+    var editor = this;
+    var selection = editor.selection;
+    selection.unselect(selection_list, is_refresh_needed);
+  },
+
+  isSelectionEmpty: function () {
+    var editor = this;
+    return editor.selection.isEmpty();
+  },
+
+  alignSelection: function (h_align, v_align) {
+    var editor = this;
+    return editor.selection.align(h_align, v_align);
+  },
+
+  //elements
+  getElements: function () {
+    var editor = this;
+    return editor.elements.elementList;
+  },
+
+  addElements: function (data, is_refresh_not_needed) {
+    var editor = this;
+    var elements = editor.elements;
+    elements.addElements(data, is_refresh_not_needed);
+  },
+
+  removeElements: function (data, is_refresh_needed) {
+    var editor = this;
+    var elements = editor.elements;
+    elements.removeElements(data, is_refresh_needed);
+  },
+
+  //grid
+  isGridEnabled: function () {
+    var editor = this;
+    return editor.grid.isGridEnabled;
+  },
+
+  showGrid: function (is_refresh_not_needed) {
+    var editor = this;
+    var grid = editor.grid;
+    grid.showGrid(is_refresh_not_needed);
+  },
+
+  removeGrid: function () {
+    var editor = this;
+    var grid = editor.grid;
+    grid.removeGrid();
+  },
+
+  //mode
+  isEditMode: function () {
+    var editor = this;
+    var mode = editor.mode;
+    return mode.isEditMode;
+  },
+
+  switchEditMode: function (is_refresh_not_needed) {
+    var editor = this;
+    var mode = editor.mode;
+    mode.switchEditMode(is_refresh_not_needed);
+  },
+
+  switchReadMode: function (is_refresh_not_needed) {
+    var editor = this;
+    var mode = editor.mode;
+    mode.switchReadMode(is_refresh_not_needed);
+  },
+
+  //zoom
+  getZoom: function () {
+    var editor = this;
+    return editor.zoom;
+  },
+
+  zoomIn: function () {
+    var editor = this;
+    var zoom = editor.zoom;
+    zoom.zoomIn();
+  },
+
+  zoomOut: function () {
+    var editor = this;
+    var zoom = editor.zoom;
+    zoom.zoomOut();
+  },
+
+  //actions
+  isAction: function () {
+    var editor = this;
+    var actions = editor.actions;
+    return actions.isAction();
+  },
+
+  getActionName: function () {
+    var editor = this;
+    var actions = editor.actions;
+    return actions.state.name;
+  },
+
+  //mouse
+  getMouseStateObject: function () {
+    var editor = this;
+    return editor.mouseState;
+  },
+
+  getMouseState: function () {
+    var editor = this;
+    return editor.mouseState.state;
+  },
+
+  //selection style
+  getSelectionStyle: function () {
+    var editor = this;
+    var selection_style = editor.selectionStyle;
+    return selection_style.style;
+  },
+
+  //size
+  getSize: function () {
+    var editor = this;
+    return editor.size.state;
+  },
+
+  //panning
+  isPanningEnabled: function () {
+    var editor = this;
+    return editor.panning.isPanningEnabled();
+  },
+
+  enablePanning: function () {
+    var editor = this;
+    editor.panning.enablePanning();
+  },
+
+  disablePanning: function () {
+    var editor = this;
+    editor.panning.disablePanning();
+  },
+
+  getSwimlane: function () {
+    var editor = this;
+
+    return _.find(editor.getElements(), function (elem) {
+      if (elem.type === "Swimlane") {
+        return elem;
+      }
+    });
+  },
+
+  findChild: function (parent, name) {
+    var self = this;
+    if (parent) {
+      if (parent.name === name) {
+        return parent;
+      } else {
+        if (parent.getChildren) {
+          var children = parent.getChildren();
+          if (children) {
+            for (var i = 0; i < children.length; i++) {
+              var child = self.findChild(children[i], name);
+              if (child) {
+                return child;
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  resetVariable: function () {
+    return undefined;
+  },
+
+  setCursorStyle: function (name) {
+    document.body.style.cursor = name;
+  },
+
+  getCursorStyle: function () {
+    var cursor = document.body.style.cursor;
+    if (cursor) {
+      return cursor;
+    } else {
+      return "default";
+    }
+  },
+};
+
+export default AjooEditor;

@@ -18,7 +18,7 @@ CompartmentTypes.before.insert(function (user_id, doc) {
     return false;
   }
 
-  //if (!doc["dialogTabId"] && doc["toolId"] !== get_configurator_tool_id()) {
+  //if (!doc.dialogTabId && doc.toolId !== get_configurator_tool_id()) {
   //	console.log("There is no dialogTabId or toolId is equal to configurator's id.");
   //	return false;
   //}
@@ -32,14 +32,14 @@ CompartmentTypes.after.update(
     if (
       modifier &&
       modifier.$set &&
-      modifier.$set["isObjectRepresentation"] == true
+      modifier.$set.isObjectRepresentation === true
     ) {
       //selecting compartment type ids
       var ids = await CompartmentTypes.find({
-        elementTypeId: doc["elementTypeId"],
-        _id: { $ne: doc["_id"] },
+        elementTypeId: doc.elementTypeId,
+        _id: { $ne: doc._id },
       }).mapAsync(function (compart_type) {
-        return compart_type["_id"];
+        return compart_type._id;
       });
 
       //unsetting the property from any compartment type
@@ -58,16 +58,16 @@ CompartmentTypes.after.update(
 
       //setting the property for the compartments that correspond to the compart type
       await Compartments.updateAsync(
-        { compartmentTypeId: doc["_id"] },
+        { compartmentTypeId: doc._id },
         { $set: { isObjectRepresentation: true } },
         { multi: true },
       );
     }
 
-    if (modifier && modifier.$inc && modifier.$inc["index"]) {
-      var index = doc["index"];
+    if (modifier && modifier.$inc && modifier.$inc.index) {
+      var index = doc.index;
       await Compartments.updateAsync(
-        { compartmentTypeId: doc["_id"] },
+        { compartmentTypeId: doc._id },
         { $set: { index: index } },
         { multi: true },
       );
@@ -79,9 +79,9 @@ Meteor.methods({
   insertCompartmentType: async function (list) {
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
-      var compart_type_obj = list["compartmentType"];
-      var type = list["type"];
-      var editor_type = list["editorType"];
+      var compart_type_obj = list.compartmentType;
+      var type = list.type;
+      var editor_type = list.editorType;
 
       build_initial_compartment_type(compart_type_obj, type, editor_type);
       var id = await CompartmentTypes.insertAsync(compart_type_obj);
@@ -93,10 +93,10 @@ Meteor.methods({
   removeCompartmentType: async function (list) {
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
-      if (!list["id"]) return;
+      if (!list.id) return;
 
-      await CompartmentTypes.removeAsync({ _id: list["id"] });
-      await Compartments.removeAsync({ compartmentTypeId: list["id"] });
+      await CompartmentTypes.removeAsync({ _id: list.id });
+      await Compartments.removeAsync({ compartmentTypeId: list.id });
     }
   },
 
@@ -104,16 +104,16 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
       var style = get_default_compartment_style(
-        list["elementType"],
-        list["editorType"],
+        list.elementType,
+        list.editorType,
       );
       await CompartmentTypes.updateAsync(
-        { _id: list["id"] },
+        { _id: list.id },
         {
           $push: {
             styles: {
               id: generate_id(),
-              name: list["attrValue"],
+              name: list.attrValue,
               style: style,
             },
           },
@@ -126,19 +126,19 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
       var update = {};
-      update["styles." + list["styleIndex"] + "." + list["attrName"]] =
-        list["attrValue"];
+      update["styles." + list.styleIndex + "." + list.attrName] =
+        list.attrValue;
 
-      await CompartmentTypes.updateAsync({ _id: list["id"] }, { $set: update });
+      await CompartmentTypes.updateAsync({ _id: list.id }, { $set: update });
 
       //if changing the styles attribute, then changing compartments as well
-      if (list["attrName"] !== "name") {
+      if (list.attrName !== "name") {
         var compart_update = {};
-        compart_update[list["attrName"]] = list["attrValue"];
+        compart_update[list.attrName] = list.attrValue;
 
         //updating only compartments with styleId
         await Compartments.updateAsync(
-          { compartmentTypeId: list["id"], styleId: list["styleId"] },
+          { compartmentTypeId: list.id, styleId: list.styleId },
           { $set: compart_update },
           { multi: true },
         );
@@ -150,10 +150,10 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
       var update = {};
-      update[list["attrName"]] = list["attrValue"];
+      update[list.attrName] = list.attrValue;
 
       await CompartmentTypes.updateAsync(
-        { _id: list["id"] },
+        { _id: list.id },
         { $set: update },
         { trimStrings: false },
       );
@@ -165,18 +165,18 @@ Meteor.methods({
     if (await is_system_admin(user_id, list)) {
       var update = {};
 
-      update[list["attrName"]] = list["attrValue"];
+      update[list.attrName] = list.attrValue;
 
-      await CompartmentTypes.updateAsync({ _id: list["id"] }, { $set: update });
+      await CompartmentTypes.updateAsync({ _id: list.id }, { $set: update });
     }
   },
 
   insertTabWIthCompartmentType: async function (list) {
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
-      var tab_id = await DialogTabs.insertAsync(list["tab"]);
+      var tab_id = await DialogTabs.insertAsync(list.tab);
       await CompartmentTypes.updateAsync(
-        { _id: list["compartmentTypeId"] },
+        { _id: list.compartmentTypeId },
         { $set: { dialogTabId: tab_id } },
       );
     }
@@ -185,14 +185,14 @@ Meteor.methods({
   reorderCompartmentTypeTabIndexes: async function (list) {
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
-      var prev_index = list["prevIndex"];
-      var current_index = list["currentIndex"];
-      var compart_type_id = list["compartmentTypeId"];
-      var tab_id = list["newTabId"];
-      var tool_id = list["toolId"];
+      var prev_index = list.prevIndex;
+      var current_index = list.currentIndex;
+      var compart_type_id = list.compartmentTypeId;
+      var tab_id = list.newTabId;
+      var tool_id = list.toolId;
 
       //if tabs changed
-      if (tab_id !== list["oldTabId"]) {
+      if (tab_id !== list.oldTabId) {
         await CompartmentTypes.updateAsync(
           { _id: compart_type_id, toolId: tool_id },
           { $set: { dialogTabId: tab_id } },
@@ -235,7 +235,7 @@ Meteor.methods({
       //	var compart_type = CompartmentTypes.findOne({toolId: tool_id, dialogTabId: tab_id},
       //							{sort: {tabIndex: 1}});
       //	if (compart_type) {
-      //		var min_tab_index = compart_type["tabIndex"];
+      //		var min_tab_index = compart_type.tabIndex;
       //		CompartmentTypes.update({toolId: tool_id, dialogTabId: tab_id},
       //								{$inc: {tabIndex: 1-min_tab_index}},
       //								{multi: true});
@@ -248,9 +248,9 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
       var push = {};
-      push[list["attrName"]] = list["attrValue"];
+      push[list.attrName] = list.attrValue;
 
-      await CompartmentTypes.updateAsync({ _id: list["id"] }, { $push: push });
+      await CompartmentTypes.updateAsync({ _id: list.id }, { $push: push });
     }
   },
 
@@ -258,34 +258,34 @@ Meteor.methods({
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
       var update = {};
-      update["inputType.values." + list["index"] + "." + list["attrName"]] =
-        list["attrValue"];
+      update["inputType.values." + list.index + "." + list.attrName] =
+        list.attrValue;
 
-      await CompartmentTypes.updateAsync({ _id: list["id"] }, { $set: update });
+      await CompartmentTypes.updateAsync({ _id: list.id }, { $set: update });
 
-      if (list["attrName"] == "elementStyle") {
-        var style_id = list["attrValue"];
+      if (list.attrName === "elementStyle") {
+        var style_id = list.attrValue;
         if (style_id === "NoStyle") return;
 
         //getting the base style
         var elem_type = await ElementTypes.findOneAsync({
-          elementId: list["elementId"],
+          elementId: list.elementId,
         });
-        if (!elem_type || !elem_type["styles"]) return;
+        if (!elem_type || !elem_type.styles) return;
 
         //setting the new style id
         var style_update = {};
-        style_update["styleId"] = style_id;
+        style_update.styleId = style_id;
 
         //new style
-        build_element_style_update(style_update, elem_type["styles"], style_id);
+        build_element_style_update(style_update, elem_type.styles, style_id);
 
         //selecting element ids that need update
-        var query = { input: list["input"], compartmentTypeId: list["id"] };
+        var query = { input: list.input, compartmentTypeId: list.id };
 
         var elem_ids = await Compartments.find(query).mapAsync(
           function (compart) {
-            return compart["elementId"];
+            return compart.elementId;
           },
         );
 
@@ -295,25 +295,25 @@ Meteor.methods({
           { $set: style_update },
           { multi: true },
         );
-      } else if (list["attrName"] == "compartmentStyle") {
-        var style_id = list["attrValue"];
+      } else if (list.attrName === "compartmentStyle") {
+        var style_id = list.attrValue;
         if (style_id === "NoStyle") return false;
 
         //setting the base style
         var compart_type = await CompartmentTypes.findOneAsync({
-          _id: list["id"],
+          _id: list.id,
         });
-        if (!compart_type || !compart_type["styles"]) return;
+        if (!compart_type || !compart_type.styles) return;
 
         var style_update = {};
-        style_update["styleId"] = style_id;
+        style_update.styleId = style_id;
 
-        var styles = compart_type["styles"];
+        var styles = compart_type.styles;
         if (!styles) return false;
 
         build_compartment_style_update(style_update, styles, style_id);
 
-        var query = { input: list["input"], compartmentTypeId: list["id"] };
+        var query = { input: list.input, compartmentTypeId: list.id };
 
         //updating only compartments with styleId
         await Compartments.updateAsync(
@@ -324,11 +324,11 @@ Meteor.methods({
       }
 
       //updating compartment values or inputs
-      else if (list["attrName"] == "value" || list["attrName"] == "input") {
-        var query = { input: list["input"], compartmentTypeId: list["id"] };
+      else if (list.attrName === "value" || list.attrName === "input") {
+        var query = { input: list.input, compartmentTypeId: list.id };
 
         var compart_update = {};
-        compart_update[list["attrName"]] = list["attrValue"];
+        compart_update[list.attrName] = list.attrValue;
 
         //updating compartments
         await Compartments.updateAsync(
@@ -343,15 +343,15 @@ Meteor.methods({
   reorderCompartmentTypeIndexes: async function (list) {
     var user_id = Meteor.userId();
     if (await is_system_admin(user_id, list)) {
-      var prev_index = list["prevIndex"];
-      var current_index = list["currentIndex"];
-      var compart_type_id = list["compartmentTypeId"];
+      var prev_index = list.prevIndex;
+      var current_index = list.currentIndex;
+      var compart_type_id = list.compartmentTypeId;
       var query = {
-        toolId: list["toolId"],
-        diagramTypeId: list["diagramTypeId"],
+        toolId: list.toolId,
+        diagramTypeId: list.diagramTypeId,
       };
-      if (list["elementTypeId"]) query["elementTypeId"] = list["elementTypeId"];
-      else query["elementTypeId"] = { $exists: false };
+      if (list.elementTypeId) query.elementTypeId = list.elementTypeId;
+      else query.elementTypeId = { $exists: false };
 
       var index;
       if (prev_index < current_index) {
@@ -397,7 +397,7 @@ function get_compartment_style_by_id(styles, id) {
 
   for (let i = 0; i < styles.length; i++) {
     var tmp_style = styles[i];
-    if (tmp_style["id"] === id) {
+    if (tmp_style.id === id) {
       return tmp_style;
     }
   }
@@ -405,14 +405,14 @@ function get_compartment_style_by_id(styles, id) {
 
 function build_compartment_style_update(update, styles, style_id) {
   var base_style_obj = styles[0];
-  if (base_style_obj && base_style_obj["style"])
-    for (let key in base_style_obj["style"])
-      update["style." + key] = base_style_obj["style"][key];
+  if (base_style_obj && base_style_obj.style)
+    for (let key in base_style_obj.style)
+      update["style." + key] = base_style_obj.style[key];
 
   //selecting the new style
   var new_style_obj = get_compartment_style_by_id(styles, style_id);
 
-  var new_style = new_style_obj["style"];
+  var new_style = new_style_obj.style;
 
   //overraiding the base style
   for (let key in new_style) update["style." + key] = new_style[key];
@@ -420,33 +420,33 @@ function build_compartment_style_update(update, styles, style_id) {
 
 function build_element_style_update(update, styles, style_id) {
   var base_style_obj = styles[0];
-  if (base_style_obj && base_style_obj["style"]) {
-    for (let key in base_style_obj["style"]["elementStyle"])
+  if (base_style_obj && base_style_obj.style) {
+    for (let key in base_style_obj.style.elementStyle)
       update["style.elementStyle." + key] =
-        base_style_obj["style"]["elementStyle"][key];
+        base_style_obj.style.elementStyle[key];
 
-    for (let key in base_style_obj["style"]["startShapeStyle"])
+    for (let key in base_style_obj.style.startShapeStyle)
       update["style.startShapeStyle." + key] =
-        base_style_obj["style"]["startShapeStyle"][key];
+        base_style_obj.style.startShapeStyle[key];
 
-    for (let key in base_style_obj["style"]["endShapeStyle"])
+    for (let key in base_style_obj.style.endShapeStyle)
       update["style.endShapeStyle." + key] =
-        base_style_obj["style"]["endShapeStyle"][key];
+        base_style_obj.style.endShapeStyle[key];
   }
 
   //selecting the new style
   var new_style_obj = get_element_style_by_id(styles, style_id);
 
   //overraiding the base style
-  for (let key in new_style_obj["elementStyle"])
-    update["style.elementStyle." + key] = new_style_obj["elementStyle"][key];
+  for (let key in new_style_obj.elementStyle)
+    update["style.elementStyle." + key] = new_style_obj.elementStyle[key];
 
-  for (let key in new_style_obj["startShapeStyle"])
+  for (let key in new_style_obj.startShapeStyle)
     update["style.startShapeStyle." + key] =
-      new_style_obj["startShapeStyle"][key];
+      new_style_obj.startShapeStyle[key];
 
-  for (let key in new_style_obj["endShapeStyle"])
-    update["style.endShapeStyle." + key] = new_style_obj["endShapeStyle"][key];
+  for (let key in new_style_obj.endShapeStyle)
+    update["style.endShapeStyle." + key] = new_style_obj.endShapeStyle[key];
 }
 
 function get_element_style_by_id(styles, id) {
@@ -454,7 +454,7 @@ function get_element_style_by_id(styles, id) {
 
   for (let i = 0; i < styles.length; i++) {
     var tmp_style = styles[i];
-    if (tmp_style["id"] === id) {
+    if (tmp_style.id === id) {
       return tmp_style;
     }
   }

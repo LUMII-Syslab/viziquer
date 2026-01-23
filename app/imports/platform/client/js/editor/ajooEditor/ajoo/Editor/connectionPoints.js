@@ -1,230 +1,229 @@
 // import { _ } from 'vue-underscore';
 
-var ConnectionPoints = function(editor) {
-	var connectionPoints = this;
-	connectionPoints.editor = editor;
+var ConnectionPoints = function (editor) {
+  var connectionPoints = this;
+  connectionPoints.editor = editor;
 
-	var layer = editor.getLayer("DrawingLayer");
-	layer.listening();
-	// layer.hitGraphEnabled(true);
+  var layer = editor.getLayer("DrawingLayer");
+  layer.listening();
+  // layer.hitGraphEnabled(true);
 
-	connectionPoints.layer = layer;
+  connectionPoints.layer = layer;
 
-	//adding start connection points parent
-	var start_parent = new Konva.Group();
-	layer.add(start_parent);
-	connectionPoints.startParent = start_parent;
+  //adding start connection points parent
+  var start_parent = new Konva.Group();
+  layer.add(start_parent);
+  connectionPoints.startParent = start_parent;
 
-	//adding end connection points parent
-	var end_parent = new Konva.Group();
-	layer.add(end_parent);
-	connectionPoints.endParent = end_parent;
+  //adding end connection points parent
+  var end_parent = new Konva.Group();
+  layer.add(end_parent);
+  connectionPoints.endParent = end_parent;
 
-	//connection points state
-	connectionPoints.state = {};
-}
+  //connection points state
+  connectionPoints.state = {};
+};
 
 ConnectionPoints.prototype = {
+  addStartPoint: function (element) {
+    var connectionPoints = this;
+    var state = connectionPoints.state;
 
-	addStartPoint: function(element) {
-		var connectionPoints = this;
-		var state = connectionPoints.state;
+    if (element.type !== "Box") return;
 
-		if (element.type !== "Box")
-			return;
+    if (state.fixedStartElement) return;
 
-		if (state.fixedStartElement)
-			return;
+    if (
+      state.start &&
+      state.start.element &&
+      state.start.element._id === element._id
+    )
+      return;
 
-		if (state.start && state.start.element && state.start.element._id == element._id)
-			return;
+    var points = connectionPoints.addConnectionPoints(
+      element,
+      connectionPoints.startParent,
+    );
+    state.start = { element: element, points: points };
+  },
 
-		var points = connectionPoints.addConnectionPoints(element, connectionPoints.startParent);
-		state.start = {element: element, points: points};
-	},
+  fixStartElement: function () {
+    var connectionPoints = this;
+    var state = connectionPoints.state;
 
-	fixStartElement: function() {
-		var connectionPoints = this;
-		var state = connectionPoints.state;
+    if (_.isEmpty(state)) {
+      return;
+    }
 
-		if (_.isEmpty(state)) {
-			return;
-		}
+    state.fixedStartElement = state.start.element;
+    state.activePoint = undefined;
 
-		state.fixedStartElement = state.start.element;
-		state.activePoint = undefined;
+    connectionPoints.removeStartPoints(true);
+  },
 
-		connectionPoints.removeStartPoints(true);
-	},
+  addEndPoint: function (element) {
+    var connectionPoints = this;
+    var state = connectionPoints.state;
 
-	addEndPoint: function(element) {
-		var connectionPoints = this;
-		var state = connectionPoints.state;
+    if (element.type !== "Box") return;
 
-		if (element.type !== "Box")
-			return;
+    var fixed_start_elem = state.fixedStartElement;
+    if (fixed_start_elem && fixed_start_elem._id === element._id) return;
 
-		var fixed_start_elem = state.fixedStartElement;
-		if (fixed_start_elem && fixed_start_elem._id == element._id)
-			return;
+    if (state.end && state.end.element && state.end.element._id === element._id)
+      return;
 
-		if (state.end && state.end.element && state.end.element._id == element._id)
-			return;
+    var points = connectionPoints.addConnectionPoints(
+      element,
+      connectionPoints.endParent,
+    );
+    state.end = { element: element, points: points };
+  },
 
-		var points = connectionPoints.addConnectionPoints(element, connectionPoints.endParent);
-		state.end = {element: element, points: points};
-	},
+  getEndElement: function () {
+    var connectionPoints = this;
+    if (connectionPoints.state && connectionPoints.state.end)
+      return connectionPoints.state.end.element;
+  },
 
-	getEndElement: function() {
-		var connectionPoints = this;
-		if (connectionPoints.state && connectionPoints.state.end)
-			return connectionPoints.state.end.element;
-	},
+  removeStartPoints: function (is_refresh_neeeded) {
+    var connectionPoints = this;
+    var state = connectionPoints.state;
 
-	removeStartPoints: function(is_refresh_neeeded) {
-		var connectionPoints = this;
-		var state = connectionPoints.state;
+    var direction = "start";
+    connectionPoints.removeConnectionPoints(direction, is_refresh_neeeded);
+  },
 
-		var direction = "start";
-		connectionPoints.removeConnectionPoints(direction, is_refresh_neeeded);
-	},
+  removeEndPoints: function (is_refresh_neeeded) {
+    var connectionPoints = this;
+    var state = connectionPoints.state;
 
-	removeEndPoints: function(is_refresh_neeeded) {
-		var connectionPoints = this;
-		var state = connectionPoints.state;
+    var direction = "end";
+    connectionPoints.removeConnectionPoints(direction, is_refresh_neeeded);
+  },
 
-		var direction = "end";
-		connectionPoints.removeConnectionPoints(direction, is_refresh_neeeded);
-	},
+  removeConnectionPoints: function (direction, is_refresh_neeeded) {
+    var connectionPoints = this;
+    var state = connectionPoints.state;
 
-	removeConnectionPoints: function(direction, is_refresh_neeeded) {
+    if (!state[direction]) return;
 
-		var connectionPoints = this;
-		var state = connectionPoints.state;
+    //if mouse overed on one of the connection points
+    if (connectionPoints.state.activePoint) return;
 
-		if (!state[direction])
-			return;
+    connectionPoints[direction + "Parent"].destroyChildren();
+    connectionPoints[direction + "Parent"].draw();
 
-		//if mouse overed on one of the connection points
-		if (connectionPoints.state.activePoint)
-			return;
+    if (state[direction]) state[direction] = {};
 
-		connectionPoints[direction + "Parent"].destroyChildren();
-		connectionPoints[direction + "Parent"].draw();
+    if (is_refresh_neeeded) connectionPoints.layer.batchDraw();
+  },
 
-		if (state[direction])
-			state[direction] = {};
+  reset: function () {
+    var connectionPoints = this;
+    var state = connectionPoints.state;
 
-		if (is_refresh_neeeded)
-			connectionPoints.layer.batchDraw();
-	},
+    //removing all connection points
+    connectionPoints.startParent.destroyChildren();
+    connectionPoints.endParent.destroyChildren();
 
-	reset: function() {
-		var connectionPoints = this;
-		var state = connectionPoints.state;
+    connectionPoints.state = {};
+  },
 
-		//removing all connection points
-		connectionPoints.startParent.destroyChildren();
-		connectionPoints.endParent.destroyChildren();
+  addConnectionPoints: function (box, parent) {
+    var connectionPoints = this;
+    var connection_point_positions = box.computeConnectionPointPositions();
 
-		connectionPoints.state = {};
-	},
+    return connectionPoints.addConnectionPointsFromList(
+      box,
+      connection_point_positions,
+      parent,
+    );
+  },
 
-	addConnectionPoints: function(box, parent) {
-		var connectionPoints = this;
-		var connection_point_positions = box.computeConnectionPointPositions();
+  addConnectionPointsFromList: function (box, positions, parent) {
+    var connectionPoints = this;
 
-		return connectionPoints.addConnectionPointsFromList(box, connection_point_positions, parent);
-	},
+    return _.map(positions, function (position) {
+      return connectionPoints.addConnectionPoint(position, parent);
+    });
+  },
 
-	addConnectionPointsFromList: function(box, positions, parent) {
-		var connectionPoints = this;
+  addConnectionPoint: function (list, parent) {
+    var connectionPoints = this;
 
-		return _.map(positions, function(position) {
-			return connectionPoints.addConnectionPoint(position, parent);
-		});
-	},
+    //creates resizer rect
+    var connection_point = new Konva.Circle({
+      x: list.x,
+      y: list.y,
+      radius: list.radius,
 
-	addConnectionPoint: function(list, parent) {
+      fill: list.defaultFill,
+      stroke: list.defaultStroke,
+      strokeWidth: 0.4,
+      perfectDrawEnabled: false,
+    });
+    parent.add(connection_point);
 
-		var connectionPoints = this;
+    connection_point.moveToTop();
 
-		//creates resizer rect
-		var connection_point = new Konva.Circle({
-												x: list["x"],
-												y: list["y"],
-												radius: list["radius"],
+    connection_point.on("mouseover", function (e) {
+      connectionPoints.editor.setCursorStyle("move");
 
-												fill: list["defaultFill"],
-												stroke: list["defaultStroke"],
-												strokeWidth: 0.4,
-												perfectDrawEnabled: false,
-											});
-		parent.add(connection_point);
+      var editor = connectionPoints.editor;
+      connectionPoints.state.activePoint = connection_point;
 
-		connection_point.moveToTop();
+      connection_point.fill(list.activeFill);
+      connection_point.stroke(list.activeStroke);
 
-		connection_point.on('mouseover', function(e) {
+      connectionPoints.layer.batchDraw();
+    });
 
-			connectionPoints.editor.setCursorStyle("move");
+    connection_point.on("mouseleave", function (e) {
+      connectionPoints.state.activePoint = undefined;
 
-			var editor = connectionPoints.editor;
-			connectionPoints.state.activePoint = connection_point;
+      connection_point.fill(list.defaultFill);
+      connection_point.stroke(list.defaultStroke);
 
-			connection_point.fill(list["activeFill"]);
-			connection_point.stroke(list["activeStroke"]);
+      connectionPoints.layer.batchDraw();
 
-			connectionPoints.layer.batchDraw();
-		});
+      var editor = connectionPoints.editor;
+      editor.actions.state.cancelMove = false;
+    });
 
-		connection_point.on('mouseleave', function(e) {
+    connection_point.on("mousedown", function (e) {
+      var editor = connectionPoints.editor;
 
-			connectionPoints.state.activePoint = undefined;
+      editor.setCursorStyle("crosshair");
 
-			connection_point.fill(list["defaultFill"]);
-			connection_point.stroke(list["defaultStroke"]);
+      editor.actions.reset();
+      editor.mouseState.mouseDown(e);
 
-			connectionPoints.layer.batchDraw();
+      var mouse_state = editor.getMouseState();
+      mouse_state.mouseX = connection_point.x();
+      mouse_state.mouseY = connection_point.y();
 
-			var editor = connectionPoints.editor;
-			editor.actions.state.cancelMove = false;
-		});
+      var element = connectionPoints.state.start.element;
+      editor.actions.startAction("NewElement", element);
+    });
 
-		connection_point.on('mousedown', function(e) {
+    parent.draw();
 
-			var editor = connectionPoints.editor;
+    return connection_point;
+  },
 
-			editor.setCursorStyle('crosshair');
+  getActiveConnectionPoint: function () {
+    var connectionPoints = this;
 
-			editor.actions.reset();
-			editor.mouseState.mouseDown(e);
+    var state = connectionPoints.state;
+    var end_elem = state.end;
 
-			var mouse_state = editor.getMouseState();
-			mouse_state.mouseX = connection_point.x();
-			mouse_state.mouseY = connection_point.y();
+    //if (end_elem && end_elem.element) {
+    return state.activePoint;
+    //}
 
-			var element = connectionPoints.state.start.element;
-			editor.actions.startAction("NewElement", element);
-		});
+    return;
+  },
+};
 
-		parent.draw();
-
-		return connection_point;
-	},
-
-	getActiveConnectionPoint: function() {
-		var connectionPoints = this;
-
-		var state = connectionPoints.state;
-		var end_elem = state.end;
-
-		//if (end_elem && end_elem.element) {
-			return state.activePoint;
-		//}
-
-		return;
-	},
-
-}
-
-export default ConnectionPoints
+export default ConnectionPoints;

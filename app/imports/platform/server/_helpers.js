@@ -17,8 +17,8 @@ function user_not_logged_in() {
 
 function add_date_to_list(list) {
   var date = get_current_time();
-  list["createdAt"] = date;
-  list["lastModified"] = date;
+  list.createdAt = date;
+  list.lastModified = date;
 }
 
 function no_rights_to_access_msg() {
@@ -58,21 +58,21 @@ function get_attr_name(list_item) {
 
 function create_compartment_list(compart_type, list) {
   // computes compartment value
-  var value = compart_type["defaultValue"];
+  var value = compart_type.defaultValue;
   //var default_value_procedure = get_translet_by_name("defaultValue", compart_type);
   //if (default_value_procedure) {
   //vajag execute un ielikt value
   //}
 
   // computes compartment prefix
-  var prefix = compart_type["prefix"];
+  var prefix = compart_type.prefix;
   //var prefix_value_procedure = get_translet_by_name("prefix", compart_type);
   //if (prefix_value_procedure) {
   //vajag execute un ielikt value
   //}
 
   // computes compartment suffix
-  var suffix = compart_type["suffix"];
+  var suffix = compart_type.suffix;
   //var suffix_value_procedure = get_translet_by_name("suffix", compart_type);
   //if (suffix_value_procedure) {
   //vajag execute un ielikt value
@@ -85,16 +85,16 @@ function create_compartment_list(compart_type, list) {
 
   var compart_type_list = {
     value: full_value,
-    input: compart_type["defaultValue"],
-    style: compart_type["styles"][0],
-    compartmentTypeId: compart_type["_id"],
-    elementId: list["elementId"],
-    diagramId: list["diagramId"],
-    elementTypeId: list["elementTypeId"],
-    diagramTypeId: list["diagramTypeId"],
-    projectId: list["projectId"],
-    toolId: list["toolId"],
-    versionId: list["versionId"],
+    input: compart_type.defaultValue,
+    style: compart_type.styles[0],
+    compartmentTypeId: compart_type._id,
+    elementId: list.elementId,
+    diagramId: list.diagramId,
+    elementTypeId: list.elementTypeId,
+    diagramTypeId: list.diagramTypeId,
+    projectId: list.projectId,
+    toolId: list.toolId,
+    versionId: list.versionId,
   };
 
   return compart_type_list;

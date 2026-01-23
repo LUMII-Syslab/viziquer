@@ -360,8 +360,8 @@ Template.ConnectClasses.events({
 
 
 
-		var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number == number)[0]["array"];
-		// var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number == number)["array"];
+		var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number === number)[0]["array"];
+		// var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number === number)["array"];
 		// chain = _.rest(chain);
 		if (!Template.ConnectClasses.addLongLink.get().data){
 			firstId = Template.ConnectClasses.elements.curValue[0].id;
@@ -666,11 +666,11 @@ Template.ConnectClassesSettings.events({
 			var startElemID = $('input[name=path-radio]:checked').val();
 			var elementList = Template.ConnectClassesSettings.fromToClass.curValue; //console.log("inside direction", elementList, startElemID);
 
-			if (elementList.fromID == startElemID){
+			if (elementList.fromID === startElemID){
 				//console.log("original order");
 				Template.ConnectClasses.elements.set([{name: elementList.fromName, id: elementList.fromID}, {name: elementList.toName, id: elementList.toID}]);
 				list = await GetChains([{text: elementList.fromID}, {text: elementList.toID}], Template.ConnectClassesSettings.pathLength.curValue);
-			} else if (elementList.toID == startElemID) {
+			} else if (elementList.toID === startElemID) {
 				//console.log("oposite order");
 				Template.ConnectClasses.elements.set([{name: elementList.toName, id: elementList.toID}, {name: elementList.fromName, id: elementList.fromID}]);
 				list = await GetChains([{text: elementList.toID}, {text: elementList.fromID}], Template.ConnectClassesSettings.pathLength.curValue);
@@ -870,22 +870,22 @@ async function GetChains(ids, maxLength) {
 
 async function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryFromElement, longLink){
 
-	if (chain.length == 0)  {
+	if (chain.length === 0)  {
 		return;
 	}
 
-	if (currentElement == null) {
+	if (currentElement === null) {
 		console.log("Unknown error - starting element does not exist.");
 		return;
 	}
 
-	if (chain[0].link == null || chain[0].class == null || chain[0].direction == null) {
+	if (chain[0].link === null || chain[0].class === null || chain[0].direction === null) {
 		console.log("Unknown error - link data doesn't exist.");
 		return;
 	}
 
 	var nesting = "";
-	if (needSubquery && await currentElement.getName() == await subqueryFromElement.getName()){
+	if (needSubquery && await currentElement.getName() === await subqueryFromElement.getName()){
 		nesting = "SUBQUERY";
 		needSubquery = false;
 	} else {
@@ -894,14 +894,14 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 
     let oldPosition = await currentElement.getCoordinates(); //Old class coordinates and size
     let locLink = [];
-	if (chain[0].class == lastElement.name && !longLink) {
+	if (chain[0].class === lastElement.name && !longLink) {
 		var lastVQElement = await createVQ_Element(lastElement.id);
 		var proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 		let newPosition = await lastVQElement.getCoordinates();
 		var coordinates = GetLinkCoordinates(oldPosition, newPosition);
 		await lastVQElement.setClassStyle("condition");
 
-		if (chain[0].direction == "=>") {
+		if (chain[0].direction === "=>") {
         	if (coordinates.bind) {
         		locLink = [coordinates.x1, coordinates.y1, coordinates.x2, coordinates.y1, coordinates.x2, coordinates.y2];
         	} else {
@@ -1022,7 +1022,7 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 	        // var proj = Projects.findOne({_id: Session.get("activeProject")});
 	        // if(typeof chain[0] !== "undefined" && chain[0] !== null && chain[0] !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
 	        // cl.setClassStyle("condition");
-	        // if (chain[0].direction == "=>") {
+	        // if (chain[0].direction === "=>") {
 	        	// locLink = [coordX, coordY, coordX, newPosition.y];
 	            // Create_VQ_Element(function(lnk) {
 	                // lnk.setName(chain[0].link);

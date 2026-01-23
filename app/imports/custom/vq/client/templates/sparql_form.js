@@ -331,12 +331,12 @@ async function getTokenClassesFromTriples(token, extractedTriples) {
 	let classes;
 	for (const triple of extractedTriples) {
 		// If there is a triple that reveals the exact class of previous token, use that class
-		if (triple.subject == token.string && (triple.predicate == "rdf:type" || triple.predicate == "a")) {
+		if (triple.subject === token.string && (triple.predicate === "rdf:type" || triple.predicate === "a")) {
 			className = triple.object;
 			break;
 		}
 		// Otherwise if previous token is a subject or an object in a triple, find possible classes based on the predicate of the triple
-		if (triple.subject == token.string) {
+		if (triple.subject === token.string) {
 			let classesOut = await dataShapes.getClassesFull({
 				main: { onlyPropsInSchema: true },
 				element: { pList: { out: [{ name: triple.predicate, type: 'out' }] } }
@@ -350,7 +350,7 @@ async function getTokenClassesFromTriples(token, extractedTriples) {
 				classes = classesOut;
 			}
 		}
-		if (triple.object == token.string) {
+		if (triple.object === token.string) {
 			let classesIn = await dataShapes.getClassesFull({
 				main: { onlyPropsInSchema: true },
 				element: { pList: { in: [{ name: triple.predicate, type: 'in' }] }
@@ -403,7 +403,7 @@ function customClassCompleter(yasqe_doc) {
 			const predicateToken = yasqe_doc.getPreviousNonWsToken(cur.line, token);	// Non-whitespace token before the current token (predicate)
 			const subjectToken = yasqe_doc.getPreviousNonWsToken(cur.line, predicateToken);	// Non-whitespace token before the predicate token (subject)
 
-			if (predicateToken.string == "a" || predicateToken.string == "rdf:type") {
+			if (predicateToken.string === "a" || predicateToken.string === "rdf:type") {
 				let classes = await getTokenClassesFromTriples(subjectToken, extractTriplePatternsFromQuery(yasqe_doc.getValue()));
 				// Suggest all classes if no classes were found using existing triples
 				if (!classes) {

@@ -46,13 +46,13 @@ Template.OWLGRED_createProjectModal.helpers({
 
     for (const t of tools) {
       var tt = {};
-      if ( t.toolGroup && t.toolGroup == OWLGrEdToolGroup)
+      if ( t.toolGroup && t.toolGroup === OWLGrEdToolGroup)
         tt = {_id: t._id, name: t.name};
-      else if ( t.toolGroup == undefined)
+      else if ( t.toolGroup === undefined)
         tt = {_id: t._id, name: t.name};
 
       if ( tt._id !== undefined) {
-        if ( t.name == "OWLGrEd" || t.name == "OWLGRED") {
+        if ( t.name === "OWLGrEd" || t.name === "OWLGRED") {
           tt["selected"] = "selected";
           tool_id = t._id;
         }
@@ -60,7 +60,7 @@ Template.OWLGRED_createProjectModal.helpers({
       }
     }
 
-		if ( tool_id == "" && result.tools.length > 0) {
+		if ( tool_id === "" && result.tools.length > 0) {
 			result.tools[0]["selected"] = "selected";
 			tool_id = result.tools[0]._id;
 		}
@@ -82,7 +82,7 @@ Template.OWLGRED_createProjectModal.events({
 
 		var project_name = project_name_obj.val();
 
-		if (project_name == "") {
+		if (project_name === "") {
 			project_name = "OWLGRED project";
 		}
 

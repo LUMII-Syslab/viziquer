@@ -19,7 +19,7 @@ import { is_system_admin } from "../../../libs/platform/user_rights.js";
 import { error_msg } from "../_global_functions.js";
 
 Meteor.publish("Structure_Tools", async function (list) {
-  if (!list || list["noQuery"]) return this.stop();
+  if (!list || list.noQuery) return this.stop();
 
   var user_id = this.userId;
   if (user_id) {
@@ -37,7 +37,7 @@ Meteor.publish("Structure_Tools", async function (list) {
 });
 
 Meteor.publish("Tools", async function (list) {
-  if (!list || list["noQuery"]) {
+  if (!list || list.noQuery) {
     return this.stop();
   }
 
@@ -69,37 +69,37 @@ Meteor.publish("Tools", async function (list) {
 });
 
 Meteor.publish("ToolVersions_Diagrams_DiagramTypes", async function (list) {
-  if (!list || list["noQuery"]) return this.stop();
+  if (!list || list.noQuery) return this.stop();
 
   //gets user's id
   var user_id = this.userId;
   if (await is_system_admin(user_id)) {
-    var version_id = list["versionId"];
+    var version_id = list.versionId;
 
     //if no version is specified, then selects the last version
     if (!version_id) {
       var version = await ToolVersions.findOneAsync(
-        { toolId: list["toolId"] },
+        { toolId: list.toolId },
         { sort: { startDate: -1 } },
       );
-      if (version) version_id = version["_id"];
+      if (version) version_id = version._id;
     }
 
     var tools_query = { _id: { $ne: await get_configurator_tool_id() } };
 
-    //var diagram_type_query1 = {toolId: list["toolId"], versionId: version_id};
+    //var diagram_type_query1 = {toolId: list.toolId, versionId: version_id};
     var diagram_type_query2 = { toolId: await get_configurator_tool_id() };
 
     return [
-      // Tools.find({_id: list["toolId"]}),
+      // Tools.find({_id: list.toolId}),
       Tools.find(tools_query, { sort: { name: 1 } }),
 
       ToolVersions.find(
-        { toolId: list["toolId"] },
+        { toolId: list.toolId },
         { fields: { toolId: 0, createdBy: 0 } },
       ),
 
-      // DocumentTypes.find({toolId: list["toolId"], versionId: version_id},
+      // DocumentTypes.find({toolId: list.toolId, versionId: version_id},
       // 					{fields: {toolId: 0, createdBy: 0, createdAt: 0}}),
 
       //selecting the cofigurator diagram type
@@ -113,12 +113,12 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", async function (list) {
       }),
 
       UserTools.find(
-        { userSystemId: user_id, toolId: list["toolId"] },
+        { userSystemId: user_id, toolId: list.toolId },
         { fields: { userSystemId: 0 } },
       ),
 
       Diagrams.find(
-        { toolId: list["toolId"], versionId: version_id },
+        { toolId: list.toolId, versionId: version_id },
         {
           fields: {
             _id: 1,
@@ -139,46 +139,46 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", async function (list) {
 });
 
 Meteor.publish("ConfiguratorDiagram", async function (list) {
-  if (!list || list["noQuery"]) return this.stop();
+  if (!list || list.noQuery) return this.stop();
 
   if (await is_system_admin(this.userId)) {
     var diagram_query = {
-      _id: list["diagramId"],
-      toolId: list["toolId"],
-      versionId: list["versionId"],
+      _id: list.diagramId,
+      toolId: list.toolId,
+      versionId: list.versionId,
     };
 
     var diagram_elems_query = {
-      diagramId: list["diagramId"],
-      toolId: list["toolId"],
-      versionId: list["versionId"],
+      diagramId: list.diagramId,
+      toolId: list.toolId,
+      versionId: list.versionId,
     };
 
     var diagram_type_query = {
-      toolId: list["toolId"],
-      versionId: list["versionId"],
-      diagramId: list["diagramId"],
+      toolId: list.toolId,
+      versionId: list.versionId,
+      diagramId: list.diagramId,
     };
 
     var diagram_type_query2 = {
       toolId: await get_configurator_tool_id(),
-      _id: list["diagramTypeId"],
+      _id: list.diagramTypeId,
     };
 
     //selecting the current tool types
-    //var query1 = {toolId: list["toolId"],
-    //				versionId: list["versionId"],
-    //				diagramId: list["diagramId"]};
+    //var query1 = {toolId: list.toolId,
+    //				versionId: list.versionId,
+    //				diagramId: list.diagramId};
 
     //selecting the configurator tool's types
     var query2 = {
       toolId: await get_configurator_tool_id(),
-      diagramTypeId: list["diagramTypeId"],
+      diagramTypeId: list.diagramTypeId,
     };
 
     var diagram_type_query2 = {
       toolId: await get_configurator_tool_id(),
-      _id: list["diagramTypeId"],
+      _id: list.diagramTypeId,
     };
 
     return [
@@ -196,8 +196,8 @@ Meteor.publish("ConfiguratorDiagram", async function (list) {
       ElementTypes.find(query2),
       PaletteButtons.find(query2),
 
-      // ImportedTranslets.find({toolId: list["toolId"], versionId: list["versionId"],
-      // 						//diagramTypeId: list["diagramTypeId"]}),
+      // ImportedTranslets.find({toolId: list.toolId, versionId: list.versionId,
+      // 						//diagramTypeId: list.diagramTypeId}),
       // }),
     ];
   } else {
@@ -207,36 +207,36 @@ Meteor.publish("ConfiguratorDiagram", async function (list) {
 });
 
 Meteor.publish("ConfiguratorDiagramTypes", async function (list) {
-  if (!list || list["noQuery"]) return this.stop();
+  if (!list || list.noQuery) return this.stop();
 
   if (await is_system_admin(this.userId)) {
     var diagram_query = {
-      _id: list["diagramId"],
-      toolId: list["toolId"],
-      versionId: list["versionId"],
+      _id: list.diagramId,
+      toolId: list.toolId,
+      versionId: list.versionId,
     };
 
     var diagram_elems_query = {
-      diagramId: list["diagramId"],
-      toolId: list["toolId"],
-      versionId: list["versionId"],
+      diagramId: list.diagramId,
+      toolId: list.toolId,
+      versionId: list.versionId,
     };
 
-    // var diagram_type_query = {toolId: list["toolId"],
-    // 							versionId: list["versionId"],
-    // 							diagramId: list["diagramId"]};
+    // var diagram_type_query = {toolId: list.toolId,
+    // 							versionId: list.versionId,
+    // 							diagramId: list.diagramId};
 
     //selecting the current tool types
     var query1 = {
-      toolId: list["toolId"],
-      versionId: list["versionId"],
-      diagramId: list["diagramId"],
+      toolId: list.toolId,
+      versionId: list.versionId,
+      diagramId: list.diagramId,
     };
 
     //selecting the configurator tool's types
     var query2 = {
       toolId: await get_configurator_tool_id(),
-      diagramTypeId: list["diagramTypeId"],
+      diagramTypeId: list.diagramTypeId,
     };
 
     return [
@@ -260,9 +260,9 @@ Meteor.publish("ConfiguratorDiagramTypes", async function (list) {
       // {fields: {toolId: 0, versionId: 0, diagramId: 0}}),
 
       ImportedTranslets.find({
-        toolId: list["toolId"],
-        versionId: list["versionId"],
-        //diagramTypeId: list["diagramTypeId"]}),
+        toolId: list.toolId,
+        versionId: list.versionId,
+        //diagramTypeId: list.diagramTypeId}),
       }),
     ];
   } else {

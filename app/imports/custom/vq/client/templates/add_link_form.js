@@ -298,9 +298,9 @@ Template.SelectTargetClass.events({
 		var startElementName = await startElement.getName();
 		var startElementAlias = await startElement.getInstanceAlias();
 
-		if(schemaName.toLowerCase() == "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") == -1)) startElementName = "wd:"+startElementName;
-		if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
-			if(line_direct == "=>") {
+		if(schemaName.toLowerCase() === "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") === -1)) startElementName = "wd:"+startElementName;
+		if(schemaName.toLowerCase() === "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") === -1)) name = "wdt:"+name;
+			if(line_direct === "=>") {
 				let elementParams = [{"name": name, "type": "in",}]
 				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
 				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
@@ -361,7 +361,7 @@ Template.SelectTargetClass.events({
 		if(typeof clazz !== "undefined"){
 
 			var obj = $('input[name=link-list-radio]:checked').closest(".association");
-			if(clazz == "(no_class)"){
+			if(clazz === "(no_class)"){
 				obj.attr("className", "");
 				obj.find('#targetClass')[0].innerHTML= "";
 			}else {
@@ -422,7 +422,7 @@ Template.AddLink.events({
 
 		$("div[id=errorField]").remove();
 
-        if (!name || name == "") {
+        if (!name || name === "") {
         	var value = $("#mySearch").val();
         	if (!value){
 	            console.log("Choose valid link");
@@ -438,7 +438,7 @@ Template.AddLink.events({
 			// var elem_start = Elements.findOne({_id: start_elem_id});
 
 			var currentElement = await createVQ_Element(start_elem_id);
-			if (currentElement == null) {
+			if (currentElement === null) {
 				console.log("Unknown error - active element does not exist.");
 				return;
 			}
@@ -524,15 +524,15 @@ Template.AddLink.events({
 					// cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 				// }
                 // cl.setClassStyle("condition");
-                // if (line_direct == "=>") {
+                // if (line_direct === "=>") {
                 	// locLink = [coordX, coordY, coordX, newPosition.y];
 	                // Create_VQ_Element(function(lnk) {
 	                    // lnk.setName(name);
-						// if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
+						// if(document.getElementById("linked-instance-exists").checked === true)  lnk.setLinkType("FILTER_EXISTS");
 						// else lnk.setLinkType("REQUIRED");
 
-	                    // if (linkType == "JOIN") lnk.setNestingType("PLAIN");
-						// else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
+	                    // if (linkType === "JOIN") lnk.setNestingType("PLAIN");
+						// else if (linkType === "NESTED") lnk.setNestingType("SUBQUERY");
 						// if (proj && proj.autoHideDefaultPropertyName==true) {
 							// lnk.hideDefaultLinkName(true);
 							// lnk.setHideDefaultLinkName("true");
@@ -542,11 +542,11 @@ Template.AddLink.events({
 	            	// locLink = [coordX, newPosition.y, coordX, coordY];
 	            	// Create_VQ_Element(function(lnk) {
 	                    // lnk.setName(name);
-	                    // if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
+	                    // if(document.getElementById("linked-instance-exists").checked === true)  lnk.setLinkType("FILTER_EXISTS");
 						// else lnk.setLinkType("REQUIRED");
 
-						// if (linkType == "JOIN") lnk.setNestingType("PLAIN");
-						// else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
+						// if (linkType === "JOIN") lnk.setNestingType("PLAIN");
+						// else if (linkType === "NESTED") lnk.setNestingType("SUBQUERY");
 						// if (proj && proj.autoHideDefaultPropertyName==true) {
 							// lnk.hideDefaultLinkName(true);
 							// lnk.setHideDefaultLinkName("true");
@@ -557,7 +557,7 @@ Template.AddLink.events({
 				// Session.set("activeElement", cl.obj._id);
             // }, newPosition);
 
-			if (document.getElementById("goto-wizard").checked == true ){
+			if (document.getElementById("goto-wizard").checked === true ){
 
 				//Fields
 				var attr_list = [{attribute: ""}];
@@ -611,7 +611,7 @@ Template.AddLink.events({
 		// if(typeof name === "undefined")
 		var name = $(e.target).closest(".association").attr("name");
 		var line_direct = $(e.target).closest(".association").attr("line_direct");
-		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
+		// if(line_direct === "<=") line_direct = "out"; else line_direct = "in";
 		var class_name = $(e.target).closest(".association").attr("className");
 
 		let scName = await getSchemaNameForElement();
@@ -633,7 +633,7 @@ Template.AddLink.events({
 		$("#select-class-form").modal("show");
 
 		var classes;
-		if(name == "==" || name == "++") {
+		if(name === "==" || name === "++") {
 			classes = await dataShapes.getClasses(param);
 		}
 		else {
@@ -643,10 +643,10 @@ Template.AddLink.events({
 			var startElementName = await startElement.getName();
 			var startElementAlias = await startElement.getInstanceAlias();
 
-			if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
-			if(schemaName.toLowerCase() == "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") == -1)) startElementName = "wd:"+startElementName;
+			if(schemaName.toLowerCase() === "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") === -1)) name = "wdt:"+name;
+			if(schemaName.toLowerCase() === "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") === -1)) startElementName = "wd:"+startElementName;
 
-			if(line_direct == "=>") {
+			if(line_direct === "=>") {
 				let elementParams = [{"name": name, "type": "in",}]
 				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
 				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
@@ -740,7 +740,7 @@ Template.AddLink.events({
 		Template.ConnectClassesSettings.pathLength.set(3);
 
 		var subquerySettings = {};
-		if ($('input[name=type-radio]').filter(':checked').val() == "NESTED") {
+		if ($('input[name=type-radio]').filter(':checked').val() === "NESTED") {
 			subquerySettings.isChecked = true;
 		} else {
 			subquerySettings.isChecked = false;
@@ -777,7 +777,7 @@ Template.AddLink.events({
             $('#linked-instance-exists').prop('disabled',"disabled");
         } else {
         	var cardValue = $('input[name=link-list-radio]:checked').attr("card"); //console.log("changed", cardValue);
-        	if (cardValue == "") {
+        	if (cardValue === "") {
         		await confirmSubquery();
         	} else {
         		$('#goto-wizard').removeAttr("disabled");
@@ -788,11 +788,11 @@ Template.AddLink.events({
 	},
 
 	"click #goto-wizard": function() {
-		if(document.getElementById("goto-wizard").checked == true) $('#linked-instance-exists').prop('checked', false);
+		if(document.getElementById("goto-wizard").checked === true) $('#linked-instance-exists').prop('checked', false);
 	},
 
 	"click #linked-instance-exists": function() {
-		if(document.getElementById("linked-instance-exists").checked == true) $('#goto-wizard').prop('checked', false);
+		if(document.getElementById("linked-instance-exists").checked === true) $('#goto-wizard').prop('checked', false);
 	},
 
 	"click #link-list-form": async function() {
@@ -802,7 +802,7 @@ Template.AddLink.events({
 		var currentElement = await createVQ_Element(start_elem_id);
 		var joinLinkDesc = "";
 		var subqueryLinkDesc = "";
-		if(checkedName.attr("value") == "++" || checkedName.attr("value") == "=="){
+		if(checkedName.attr("value") === "++" || checkedName.attr("value") === "=="){
 			joinLinkDesc = "join information from the host node and the linked node";
 			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
 			const elemName = await currentElement.getName();
@@ -821,7 +821,7 @@ Template.AddLink.events({
 
 			const elemName = await currentElement.getName();
 			var line_direct = obj.attr("line_direct");
-			if(line_direct == "=>"){
+			if(line_direct === "=>"){
 				if(className != null && className != "") {
 					targetClassText = " (that is a " + className + ")";
 					targetClassTextS = " to" + className;
@@ -847,7 +847,7 @@ Template.AddLink.events({
 	"change #link-list-form": function() {
 		// var typeName = $('input[name=type-radio]').filter(':checked').val();
 		// var cardValue = $('input[name=link-list-radio]:checked').attr("card");
-		// if (typeName == "NESTED" && cardValue == "") {
+		// if (typeName === "NESTED" && cardValue === "") {
 			// confirmSubquery();
 		// }
 	},
@@ -1101,7 +1101,7 @@ async function getAllAssociations(){
                 colorLetters += "color: purple";
               } else {
                 const maxCard = e.x_max_cardinality;
-                if (maxCard == null || !maxCard || maxCard === -1 || maxCard > 1) {
+                if (maxCard === null || !maxCard || maxCard === -1 || maxCard > 1) {
                   cardinality += "[*]";
                   colorLetters += "color: purple";
                 }
@@ -1170,18 +1170,18 @@ async function getAllAssociations(){
 
       		if (proj){
       			var selfName = "";
-      			if (className != null && className.indexOf("[") == -1) {
+      			if (className != null && className.indexOf("[") === -1) {
       				selfName = className;
       			} else {
 					var linkUp = await startElement.getLinkToRoot();
-					if (!linkUp || linkUp == undefined) {
+					if (!linkUp || linkUp === undefined) {
 						selfName = "";
 					} else {
 						linkUp = linkUp.link.obj;
 						var previousClassId = "";
-						if (linkUp.startElement == start_elem_id) {
+						if (linkUp.startElement === start_elem_id) {
 							previousClassId = linkUp.endElement;
-						} else if (linkUp.endElement == start_elem_id) {
+						} else if (linkUp.endElement === start_elem_id) {
 							previousClassId = linkUp.startElement;
 						} else {
 							console.log(73, ": error with previous element");

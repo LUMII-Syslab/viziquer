@@ -121,13 +121,13 @@ var ImportTDAConfiguration = {
 
     //building diagram style
     var target_diagram_style = self.buildDiagramDefaultStyle();
-    var style_overriding = { fill: diagram_type_in["style"]["bkgColor"] };
+    var style_overriding = { fill: diagram_type_in.style.bkgColor };
 
     _.extend(target_diagram_style, style_overriding);
 
     //adding diagram
     var target_diagram = {
-      name: diagram_type_in.attributes["id"],
+      name: diagram_type_in.attributes.id,
       diagramTypeId: self.configuratorDiagramType._id,
       style: target_diagram_style,
 
@@ -160,7 +160,7 @@ var ImportTDAConfiguration = {
       createdAt: self.time,
       createdBy: self.userId,
       diagramId: self.newDiagramId,
-      name: diagram_type_in.attributes["id"],
+      name: diagram_type_in.attributes.id,
       editorType: "ajooEditor",
       style: target_diagram.style,
     };
@@ -212,8 +212,8 @@ var ImportTDAConfiguration = {
     );
 
     //adding elements and element types
-    self.addElementTypes(diagram_type_in["elementTypes"]);
-    self.addSpecializations(diagram_type_in["specializations"]);
+    self.addElementTypes(diagram_type_in.elementTypes);
+    self.addSpecializations(diagram_type_in.specializations);
 
     return self.newDiagramTypeId;
   },
@@ -230,7 +230,7 @@ var ImportTDAConfiguration = {
 
     var items = [];
     _.each(obj_type[name], function (menu) {
-      var procedure_name = menu["procedureName"];
+      var procedure_name = menu.procedureName;
 
       if (not_needed_items[procedure_name]) {
         return;
@@ -241,8 +241,8 @@ var ImportTDAConfiguration = {
       procedure_name = procedure_name || "";
       var new_proc_name = _.last(procedure_name.split("."));
 
-      //context_menu_list.push({item: menu["caption"], procedure: procedure_name});
-      items.push({ item: menu["caption"], procedure: new_proc_name });
+      //context_menu_list.push({item: menu.caption, procedure: procedure_name});
+      items.push({ item: menu.caption, procedure: new_proc_name });
     });
 
     obj_type_obj[name] = items;
@@ -261,13 +261,13 @@ var ImportTDAConfiguration = {
       //dialog
       self.addDialog(target_type, elem_type_in);
 
-      if (!target_type["isAbstract"]) {
+      if (!target_type.isAbstract) {
         //palette button
         var palette_button = {
           diagramTypeId: self.newDiagramTypeId,
           diagramId: self.newDiagramId,
           elementTypeIds: [self.newElementTypeId],
-          name: elem_type_in["attributes"]["caption"],
+          name: elem_type_in.attributes.caption,
           type: target_type.type,
           index: i,
         };
@@ -290,16 +290,16 @@ var ImportTDAConfiguration = {
     var target_element = {};
 
     if (
-      elem_type_in["className"] == "NodeType" ||
-      elem_type_in["className"] == "FreeBoxType"
+      elem_type_in.className === "NodeType" ||
+      elem_type_in.className === "FreeBoxType"
     ) {
       target_element = self.loadNode(elem_type_in.presentation);
       self.addBoxCompartment(elem_type_in, target_element);
-    } else if (elem_type_in["className"] == "EdgeType") {
+    } else if (elem_type_in.className === "EdgeType") {
       //load_edge(elem, elem_type_id, element_mappings, element_list, config_dgr_type_id, refs, target_refs);
       target_element = self.loadEdge(elem_type_in.presentation);
     } else {
-      console.error("Not supported className: ", elem_type_in["className"]);
+      console.error("Not supported className: ", elem_type_in.className);
       return;
     }
 
@@ -324,7 +324,7 @@ var ImportTDAConfiguration = {
     _.extend(target_type, overriding);
     _.extend(target_type, self.toolData);
 
-    if (target_element.type == "Line") {
+    if (target_element.type === "Line") {
       //by default line is directional and orthogonal
       var direction_list = {
         UniDirectional: "Directional",
@@ -335,12 +335,12 @@ var ImportTDAConfiguration = {
       var element_type_mapping = self.mappings;
 
       var line_overriding = {
-        direction: direction_list[elem_type_in.attributes["direction"]],
+        direction: direction_list[elem_type_in.attributes.direction],
         lineType: "Orthogonal",
         startElementTypeId:
-          element_type_mapping[elem_type_in["startElementTypeId"]],
+          element_type_mapping[elem_type_in.startElementTypeId],
         endElementTypeId:
-          element_type_mapping[elem_type_in["endElementTypeId"]],
+          element_type_mapping[elem_type_in.endElementTypeId],
       };
 
       _.extend(target_type, line_overriding);
@@ -388,11 +388,11 @@ var ImportTDAConfiguration = {
       return;
     }
 
-    var specialization_id = elem_type["_id"];
+    var specialization_id = elem_type._id;
     var list = {};
     _.each(specializations, function (specialization) {
-      var sub_type_id_in = specialization["subTypeId"];
-      var super_type_id_in = specialization["superTypeId"];
+      var sub_type_id_in = specialization.subTypeId;
+      var super_type_id_in = specialization.superTypeId;
 
       var sub_type_id = element_type_mapping[sub_type_id_in];
       var super_type_id = element_type_mapping[super_type_id_in];
@@ -403,9 +403,9 @@ var ImportTDAConfiguration = {
         list[sub_type_id] = [super_type_id];
       }
 
-      var edge = specialization["edge"];
+      var edge = specialization.edge;
 
-      edge["style"] = undefined;
+      edge.style = undefined;
 
       var element_list = { diagramId: diagram_id };
 
@@ -425,10 +425,10 @@ var ImportTDAConfiguration = {
   addDialog: function (target_type, elem_type_in) {
     var self = this;
 
-    var prop_diagram = elem_type_in["propertyDiagram"];
+    var prop_diagram = elem_type_in.propertyDiagram;
 
-    var tabs = prop_diagram["propertyTabs"];
-    var rows = prop_diagram["rows"];
+    var tabs = prop_diagram.propertyTabs;
+    var rows = prop_diagram.rows;
 
     //if there is no tabs or there are rows on the main tab
     if (!tabs || rows) {
@@ -436,7 +436,7 @@ var ImportTDAConfiguration = {
         tabs = {};
       }
 
-      tabs["noTab"] = { id: "Main" };
+      tabs.noTab = { id: "Main" };
     }
 
     var i = 0;
@@ -446,7 +446,7 @@ var ImportTDAConfiguration = {
         diagramId: self.newDiagramId,
         diagramTypeId: self.newDiagramTypeId,
         elementTypeId: self.newElementTypeId,
-        name: tab["id"],
+        name: tab.id,
         index: i++,
       };
 
@@ -461,24 +461,24 @@ var ImportTDAConfiguration = {
   },
 
   addToolbar: function (type_in, target_type) {
-    var toolbar_list = _.map(type_in["toolbar"], function (item) {
-      var proc_name = item["procedureName"] || "";
+    var toolbar_list = _.map(type_in.toolbar, function (item) {
+      var proc_name = item.procedureName || "";
       var new_proc_name = _.last(proc_name.split("."));
 
       return {
-        name: item["caption"],
+        name: item.caption,
         id: generate_id(),
         icon: item.icon || "fa-gear",
         procedure: new_proc_name,
-        template: item["template"],
+        template: item.template,
       };
     });
 
-    _.each(target_type["toolbar"], function (item) {
+    _.each(target_type.toolbar, function (item) {
       toolbar_list.push(item);
     });
 
-    target_type["toolbar"] = toolbar_list;
+    target_type.toolbar = toolbar_list;
   },
 
   addKeystrokes: function (target_type, type_in, name) {
@@ -489,7 +489,7 @@ var ImportTDAConfiguration = {
 
     var key_strokes_list = [];
     _.each(type_in[name], function (key_stroke, key) {
-      let procedure_name = key_stroke["procedureName"];
+      let procedure_name = key_stroke.procedureName;
 
       if (not_needed_items[procedure_name]) {
         return;
@@ -501,7 +501,7 @@ var ImportTDAConfiguration = {
       const new_proc_name = _.last(procedure_name.split("."));
 
       key_strokes_list.push({
-        keyStroke: key_stroke["key"],
+        keyStroke: key_stroke.key,
         procedure: new_proc_name,
       });
     });
@@ -531,7 +531,7 @@ var ImportTDAConfiguration = {
 
     var rows2 = {};
 
-    var prop_diagram = elem_type_in["propertyDiagram"];
+    var prop_diagram = elem_type_in.propertyDiagram;
     self.collectPropTabsAndRows(prop_diagram);
 
     var old_new_rows_map = self.getOldNewRowsMap();
@@ -539,12 +539,12 @@ var ImportTDAConfiguration = {
     var dialog_tab_id;
 
     var is_edge;
-    if (target_type["type"] == "Line") {
+    if (target_type.type === "Line") {
       is_edge = true;
     }
 
     _.each(
-      elem_type_in["compartmentTypes"],
+      elem_type_in.compartmentTypes,
       async function (compart_type_in, i) {
         //selecting the compartment type properties
         var translets_collection = [];
@@ -562,28 +562,28 @@ var ImportTDAConfiguration = {
 
         build_initial_compartment_type(
           target_compart_type,
-          target_type["type"],
+          target_type.type,
           "ajooEditor",
         );
 
         //overriding the initial compart type
-        var attributes_json = compart_type_in["attributes"];
-        target_compart_type["name"] = attributes_json["caption"];
+        var attributes_json = compart_type_in.attributes;
+        target_compart_type.name = attributes_json.caption;
 
-        if (attributes_json["startValue"]) {
-          target_compart_type["defaultValue"] = attributes_json["startValue"];
+        if (attributes_json.startValue) {
+          target_compart_type.defaultValue = attributes_json.startValue;
         }
 
-        if (attributes_json["adornmentPrefix"]) {
-          target_compart_type["prefix"] = attributes_json["adornmentPrefix"];
+        if (attributes_json.adornmentPrefix) {
+          target_compart_type.prefix = attributes_json.adornmentPrefix;
         }
 
-        if (attributes_json["adornmentSuffix"]) {
-          target_compart_type["suffix"] = attributes_json["adornmentSuffix"];
+        if (attributes_json.adornmentSuffix) {
+          target_compart_type.suffix = attributes_json.adornmentSuffix;
         }
 
-        if (attributes_json["concatStyle"]) {
-          target_compart_type["concatStyle"] = attributes_json["concatStyle"];
+        if (attributes_json.concatStyle) {
+          target_compart_type.concatStyle = attributes_json.concatStyle;
         }
 
         //styles
@@ -594,8 +594,8 @@ var ImportTDAConfiguration = {
         );
 
         //row
-        var old_row_id = compart_type_in["rowId"];
-        var old_tab_id = compart_type_in["tabId"];
+        var old_row_id = compart_type_in.rowId;
+        var old_tab_id = compart_type_in.tabId;
 
         //if the compartment was linked with a row
         if (old_row_id) {
@@ -603,9 +603,9 @@ var ImportTDAConfiguration = {
 
           //if there is such a row (should be always true)
           if (row) {
-            var row_type = row["rowType"];
+            var row_type = row.rowType;
             var new_row_type;
-            if (row_type == "ComboBox" && row.isEditable == "true") {
+            if (row_type === "ComboBox" && row.isEditable === "true") {
               new_row_type = "combobox";
             } else {
               var old_new_rows_map = self.getOldNewRowsMap();
@@ -619,18 +619,18 @@ var ImportTDAConfiguration = {
 
             //if there is inputType and type (this should always be true)
             if (
-              target_compart_type["inputType"] &&
-              target_compart_type["inputType"]["type"]
+              target_compart_type.inputType &&
+              target_compart_type.inputType.type
             ) {
-              target_compart_type["inputType"]["type"] = new_row_type;
+              target_compart_type.inputType.type = new_row_type;
 
               //if textarea, then setting the area size
-              if (new_row_type == "textarea")
-                target_compart_type["inputType"]["rows"] = 3;
+              if (new_row_type === "textarea")
+                target_compart_type.inputType.rows = 3;
 
               if (
-                new_row_type == "selection" ||
-                new_row_type == "checkbox" ||
+                new_row_type === "selection" ||
+                new_row_type === "checkbox" ||
                 new_row_type === "combobox" ||
                 new_row_type === "radio"
               ) {
@@ -638,11 +638,11 @@ var ImportTDAConfiguration = {
                   compart_type_in,
                   target_compart_type,
                 );
-                target_compart_type["inputType"]["values"] = values;
+                target_compart_type.inputType.values = values;
               }
 
-              if (row_type == "TextArea+Button") {
-                target_compart_type["inputType"]["templateName"] = "multiField";
+              if (row_type === "TextArea+Button") {
+                target_compart_type.inputType.templateName = "multiField";
 
                 dialog_tab_id = self.addSubCompartmentTypes(
                   target_compart_type,
@@ -655,12 +655,12 @@ var ImportTDAConfiguration = {
             console.error("ERROR: No new row id");
           }
         } else {
-          target_compart_type["inputType"]["type"] = "custom";
-          target_compart_type["inputType"]["templateName"] =
+          target_compart_type.inputType.type = "custom";
+          target_compart_type.inputType.templateName =
             "value_from_subcompartments";
 
-          target_compart_type["data"] = {
-            subCompartmentTypes: compart_type_in["subCompartments"],
+          target_compart_type.data = {
+            subCompartmentTypes: compart_type_in.subCompartments,
           };
 
           dialog_tab_id = self.addSubCompartmentTypes(
@@ -671,13 +671,13 @@ var ImportTDAConfiguration = {
         }
 
         //adding dialog tab
-        var old_tab_id = compart_type_in["tabId"];
+        var old_tab_id = compart_type_in.tabId;
         if (old_tab_id || dialog_tab_id) {
           var new_tab_id = self.mappings[old_tab_id];
           if (!new_tab_id) {
-            target_compart_type["dialogTabId"] = dialog_tab_id;
+            target_compart_type.dialogTabId = dialog_tab_id;
           } else if (new_tab_id) {
-            target_compart_type["dialogTabId"] = new_tab_id; //tab["_id"];
+            target_compart_type.dialogTabId = new_tab_id; //tab._id;
           }
         }
 
@@ -686,13 +686,13 @@ var ImportTDAConfiguration = {
           if (old_row_id) {
             var tab = await DialogTabs.findOneAsync(
               {
-                toolId: target_compart_type["toolId"],
-                elementTypeId: target_compart_type["elementTypeId"],
+                toolId: target_compart_type.toolId,
+                elementTypeId: target_compart_type.elementTypeId,
               },
               { sort: { index: -1 } },
             );
 
-            target_compart_type["dialogTabId"] = tab["_id"];
+            target_compart_type.dialogTabId = tab._id;
           }
         }
 
@@ -720,10 +720,10 @@ var ImportTDAConfiguration = {
         //subcompartment translets
         _.each(translets_collection, function (item) {
           self.insertTranslets(
-            item["translets"],
+            item.translets,
             target_compart_type,
             new_compart_type_id,
-            item["id"],
+            item.id,
           );
         });
       },
@@ -733,12 +733,12 @@ var ImportTDAConfiguration = {
   addElementStyle: function (target_type, elem_type_in) {
     var self = this;
 
-    _.each(elem_type_in["styles"], function (style_in, i) {
+    _.each(elem_type_in.styles, function (style_in, i) {
       //if there is a style obj, overriding the default properties
-      if (i == 0) {
-        var style_out = target_type["styles"][0];
+      if (i === 0) {
+        var style_out = target_type.styles[0];
 
-        var new_style_obj = target_type["styles"][i];
+        var new_style_obj = target_type.styles[i];
 
         self.mappings[style_in.repId] = new_style_obj.id;
 
@@ -746,25 +746,25 @@ var ImportTDAConfiguration = {
       } else {
         //creating a new style obj
 
-        var style_name = style_in["id"];
+        var style_name = style_in.id;
 
         var new_style_obj = { id: generate_id(), name: style_name };
 
         self.mappings[style_in.repId] = new_style_obj.id;
 
-        if (target_type["type"] == "Box") {
+        if (target_type.type === "Box") {
           new_style_obj.elementStyle = {};
           _.extend(
             new_style_obj.elementStyle,
             build_initial_box_style("ajooEditor"),
           );
-        } else if (target_type["type"] == "Line") {
+        } else if (target_type.type === "Line") {
           _.extend(new_style_obj, build_initial_line_style("ajooEditor"));
         }
 
         ImportTDAData.transformElementStyle(style_in, new_style_obj);
 
-        target_type["styles"].push(new_style_obj);
+        target_type.styles.push(new_style_obj);
       }
     });
   },
@@ -776,12 +776,12 @@ var ImportTDAConfiguration = {
   ) {
     var self = this;
 
-    _.each(compart_type_in["styles"], function (style_in, i) {
+    _.each(compart_type_in.styles, function (style_in, i) {
       //selecting the style object
-      if (i == 0) {
-        var style_out = target_compart_type["styles"][0].style;
+      if (i === 0) {
+        var style_out = target_compart_type.styles[0].style;
 
-        var new_style_obj = target_compart_type["styles"][i];
+        var new_style_obj = target_compart_type.styles[i];
         self.mappings[style_in.repId] = new_style_obj.id;
 
         self.transformCompartmentStyle(style_in, style_out, is_edge);
@@ -789,7 +789,7 @@ var ImportTDAConfiguration = {
 
       //creating a new style obj
       else {
-        var style_name = style_in["id"];
+        var style_name = style_in.id;
 
         var new_style_obj = { id: generate_id(), name: style_name, style: {} };
 
@@ -807,7 +807,7 @@ var ImportTDAConfiguration = {
 
         self.transformCompartmentStyle(style_in, new_style_obj.style, is_edge);
 
-        target_compart_type["styles"].push(new_style_obj);
+        target_compart_type.styles.push(new_style_obj);
       }
     });
   },
@@ -816,15 +816,15 @@ var ImportTDAConfiguration = {
     var self = this;
     var elem_type = self.configuratorBoxType;
 
-    var style_out = elem_type["styles"][0];
-    ImportTDAData.transformBoxStyle(presentation["style"], style_out);
+    var style_out = elem_type.styles[0];
+    ImportTDAData.transformBoxStyle(presentation.style, style_out);
 
     var target_element = {
       diagramId: self.newDiagramId,
 
       type: "Box",
       location: ImportTDAData.transformNodeLocation(presentation.location),
-      styleId: elem_type["styles"][0]["id"],
+      styleId: elem_type.styles[0].id,
 
       elementTypeId: elem_type._id,
       diagramTypeId: self.configuratorDiagramType._id,
@@ -836,7 +836,7 @@ var ImportTDAConfiguration = {
 
     var id = await Elements.insertAsync(target_element);
 
-    self.mappings[presentation["id"]] = id;
+    self.mappings[presentation.id] = id;
     self.newElementId = id;
 
     return target_element;
@@ -852,9 +852,9 @@ var ImportTDAConfiguration = {
 
     //overriding the defaults
     var overriding = {
-      value: elem_type_in["attributes"]["caption"],
-      valueLC: compart["value"].toLowerCase(),
-      input: compart["value"],
+      value: elem_type_in.attributes.caption,
+      valueLC: compart.value.toLowerCase(),
+      input: compart.value,
 
       elementId: self.newElementId,
     };
@@ -870,9 +870,9 @@ var ImportTDAConfiguration = {
 
     //transforming points
     var points = [];
-    _.each(edge["location"], function (point) {
-      var x = Number(point["xPos"]);
-      var y = Number(point["yPos"]);
+    _.each(edge.location, function (point) {
+      var x = Number(point.xPos);
+      var y = Number(point.yPos);
 
       if (x && y) {
         points.push(x);
@@ -881,12 +881,12 @@ var ImportTDAConfiguration = {
     });
 
     //selecting style
-    var style_in = edge["style"];
-    var style_obj = elem_type["styles"][0];
+    var style_in = edge.style;
+    var style_obj = elem_type.styles[0];
     var style_out = {
-      elementStyle: style_obj["elementStyle"] || {},
-      startShapeStyle: style_obj["startShapeStyle"] || {},
-      endShapeStyle: style_obj["endShapeStyle"] || {},
+      elementStyle: style_obj.elementStyle || {},
+      startShapeStyle: style_obj.startShapeStyle || {},
+      endShapeStyle: style_obj.endShapeStyle || {},
     };
 
     ImportTDAData.transformLineStyle(style_in, style_out);
@@ -899,10 +899,10 @@ var ImportTDAConfiguration = {
       type: "Line",
       //location: transform_node_location(presentation.location),
       points: points,
-      startElement: element_mappings[edge["start_elem_id"]],
-      endElement: element_mappings[edge["end_elem_id"]],
+      startElement: element_mappings[edge.start_elem_id],
+      endElement: element_mappings[edge.end_elem_id],
 
-      styleId: elem_type["styles"][0]["id"],
+      styleId: elem_type.styles[0].id,
 
       elementTypeId: elem_type._id,
       diagramTypeId: self.configuratorDiagramType._id,
@@ -914,7 +914,7 @@ var ImportTDAConfiguration = {
 
     var id = await Elements.insertAsync(target_element);
 
-    self.mappings[edge["id"]] = id;
+    self.mappings[edge.id] = id;
     self.newElementId = id;
 
     return target_element;
@@ -992,10 +992,10 @@ var ImportTDAConfiguration = {
       //setClassTypeValue
     };
 
-    var translets_list = obj_type_type["extensionPoints"];
+    var translets_list = obj_type_type.extensionPoints;
 
-    _.each(obj_type_in["translets"], function (translet) {
-      var extension_point = translet["extensionPoint"];
+    _.each(obj_type_in.translets, function (translet) {
+      var extension_point = translet.extensionPoint;
       if (remove_translets[extension_point]) {
         return;
       }
@@ -1004,14 +1004,14 @@ var ImportTDAConfiguration = {
         extension_point = transform_translet[extension_point];
       }
 
-      var proc_name = translet["procedureName"];
-      var tmp_proc_name = transformed_proc_names[translet["procedureName"]];
+      var proc_name = translet.procedureName;
+      var tmp_proc_name = transformed_proc_names[translet.procedureName];
       if (!_.isUndefined(tmp_proc_name)) {
         proc_name = tmp_proc_name;
       }
 
       var found_translet = _.find(translets_list, function (tmp_translet) {
-        if (tmp_translet["extensionPoint"] == extension_point) {
+        if (tmp_translet.extensionPoint === extension_point) {
           return true;
         }
       });
@@ -1025,8 +1025,8 @@ var ImportTDAConfiguration = {
         });
       }
 
-      if (translet["procedureName"] !== proc_name) {
-        proc_name = translet["procedureName"] || "";
+      if (translet.procedureName !== proc_name) {
+        proc_name = translet.procedureName || "";
         var new_proc_name = _.last(proc_name.split("."));
 
         translet_collection.push({
@@ -1036,7 +1036,7 @@ var ImportTDAConfiguration = {
       }
     });
 
-    obj_type_type["extensionPoints"] = translets_list;
+    obj_type_type.extensionPoints = translets_list;
   },
 
   //add_sub_compartment_types
@@ -1049,17 +1049,17 @@ var ImportTDAConfiguration = {
 
     var dialog_tab_id;
 
-    target_compart_type["subCompartmentTypes"] = _.map(
-      compart_type_in["subCompartments"],
+    target_compart_type.subCompartmentTypes = _.map(
+      compart_type_in.subCompartments,
       function (sub_compart_in) {
-        var attrs_in = sub_compart_in["attributes"];
+        var attrs_in = sub_compart_in.attributes;
         var sub_compart_type = {
           _id: generate_id(),
-          name: attrs_in["caption"],
+          name: attrs_in.caption,
           extensionPoints: [],
-          prefix: attrs_in["adornmentPrefix"],
-          suffix: attrs_in["adornmentSuffix"],
-          defaultValue: attrs_in["startValue"],
+          prefix: attrs_in.adornmentPrefix,
+          suffix: attrs_in.adornmentSuffix,
+          defaultValue: attrs_in.startValue,
         };
 
         var translet_collection = [];
@@ -1071,56 +1071,56 @@ var ImportTDAConfiguration = {
 
         if (translet_collection.length > 0) {
           translets_collection.push({
-            id: sub_compart_type["_id"],
+            id: sub_compart_type._id,
             translets: translet_collection,
           });
         }
 
-        //insert_translets(translet_collection, base_compart_type, base_compart_type["_id"], sub_compart_type["_id"]);
+        //insert_translets(translet_collection, base_compart_type, base_compart_type._id, sub_compart_type._id);
 
-        if (sub_compart_in["rowId"]) {
-          var row = self.mappings[sub_compart_in["rowId"]];
+        if (sub_compart_in.rowId) {
+          var row = self.mappings[sub_compart_in.rowId];
           if (row) {
-            sub_compart_type["inputType"] = {};
+            sub_compart_type.inputType = {};
 
             var old_new_rows_map = self.getOldNewRowsMap();
-            var new_row_type = old_new_rows_map[row["rowType"]];
+            var new_row_type = old_new_rows_map[row.rowType];
 
-            if (row["rowType"] == "ComboBox" && row.isEditable == "true") {
+            if (row.rowType === "ComboBox" && row.isEditable === "true") {
               new_row_type = "combobox";
             }
 
-            sub_compart_type["inputType"]["type"] = new_row_type;
+            sub_compart_type.inputType.type = new_row_type;
 
-            if (new_row_type == "textarea") {
-              sub_compart_type["inputType"]["rows"] = 3;
+            if (new_row_type === "textarea") {
+              sub_compart_type.inputType.rows = 3;
             }
 
-            if (new_row_type == "checkbox") {
+            if (new_row_type === "checkbox") {
               var values = self.transformChoiceItems(
                 sub_compart_in,
                 target_compart_type,
               );
-              sub_compart_type["inputType"]["values"] = values;
+              sub_compart_type.inputType.values = values;
             }
 
-            if (row["rowType"] == "TextArea+Button") {
-              sub_compart_type["inputType"]["type"] = "custom";
-              sub_compart_type["inputType"]["templateName"] = "multiField";
+            if (row.rowType === "TextArea+Button") {
+              sub_compart_type.inputType.type = "custom";
+              sub_compart_type.inputType.templateName = "multiField";
             }
 
             //adding dialog tab
-            var old_tab_id = sub_compart_in["tabId"];
+            var old_tab_id = sub_compart_in.tabId;
             if (old_tab_id) {
               var new_tab_id = self.mappings[old_tab_id];
               if (new_tab_id) {
-                sub_compart_type["dialogTabId"] = new_tab_id;
+                sub_compart_type.dialogTabId = new_tab_id;
                 dialog_tab_id = new_tab_id;
               }
             }
           } else {
-            sub_compart_type["inputType"] = {};
-            sub_compart_type["inputType"]["type"] = "input";
+            sub_compart_type.inputType = {};
+            sub_compart_type.inputType.type = "input";
           }
         }
 
@@ -1140,11 +1140,11 @@ var ImportTDAConfiguration = {
 
   transformCompartmentStyle: function (style, style_out, is_edge) {
     //overriding style properties
-    style_out["fontFamily"] = style["fontTypeFace"];
-    style_out["fill"] = style["fontColor"];
+    style_out.fontFamily = style.fontTypeFace;
+    style_out.fill = style.fontColor;
 
-    if (Math.abs(Number(style["fontSize"]))) {
-      style_out["fontSize"] = Math.abs(Number(style["fontSize"])) + 3;
+    if (Math.abs(Number(style.fontSize))) {
+      style_out.fontSize = Math.abs(Number(style.fontSize)) + 3;
     }
 
     var aligns = {
@@ -1153,10 +1153,10 @@ var ImportTDAConfiguration = {
       2: "right",
     };
 
-    style_out["align"] = aligns[style["alignment"]] || "left";
+    style_out.align = aligns[style.alignment] || "left";
 
     //visibility
-    style_out["visible"] = Number(style["isVisible"]) == 1 ? true : false;
+    style_out.visible = Number(style.isVisible) === 1 ? true : false;
 
     //fonts
     var font_styles = {
@@ -1165,7 +1165,7 @@ var ImportTDAConfiguration = {
       2: "italic",
     };
 
-    style_out["fontStyle"] = font_styles[style["alignment"]] || "normal";
+    style_out.fontStyle = font_styles[style.alignment] || "normal";
 
     //	 lc_Start = 1,
     //   lc_End = 2,
@@ -1187,10 +1187,10 @@ var ImportTDAConfiguration = {
         24: "middle-right",
       };
 
-      style_out["placement"] = placements[style["adjustment"]] || "start-left";
+      style_out.placement = placements[style.adjustment] || "start-left";
     }
 
-    style_out["strokeWidth"] = style["lineWidth"] || style_out["strokeWidth"];
+    style_out.strokeWidth = style.lineWidth || style_out.strokeWidth;
 
     return style_out;
   },
@@ -1204,31 +1204,31 @@ var ImportTDAConfiguration = {
   ) {
     var translets_out = _.map(translet_collection, function (translet) {
       var item = {
-        extensionPoint: translet["extensionPoint"],
-        procedureName: translet["procedureName"],
-        toolId: obj_type["toolId"],
-        versionId: obj_type["versionId"],
+        extensionPoint: translet.extensionPoint,
+        procedureName: translet.procedureName,
+        toolId: obj_type.toolId,
+        versionId: obj_type.versionId,
       };
 
       //if compartment type
-      if (obj_type["diagramTypeId"] && obj_type["elementTypeId"]) {
+      if (obj_type.diagramTypeId && obj_type.elementTypeId) {
         var tmp = {
-          diagramTypeId: obj_type["diagramTypeId"],
-          elementTypeId: obj_type["elementTypeId"],
+          diagramTypeId: obj_type.diagramTypeId,
+          elementTypeId: obj_type.elementTypeId,
           compartmentTypeId: obj_type_id,
         };
 
         if (sub_compart_type_id) {
-          tmp["subCompartmentTypeId"] = sub_compart_type_id;
+          tmp.subCompartmentTypeId = sub_compart_type_id;
         }
 
         _.extend(item, tmp);
       }
 
       //if element type
-      else if (obj_type["diagramTypeId"]) {
+      else if (obj_type.diagramTypeId) {
         var tmp = {
-          diagramTypeId: obj_type["diagramTypeId"],
+          diagramTypeId: obj_type.diagramTypeId,
           elementTypeId: obj_type_id,
         };
 
@@ -1269,37 +1269,37 @@ var ImportTDAConfiguration = {
     var self = this;
     var elem_type_id = self.newElementTypeId;
 
-    return _.map(compart_type_in["choiceItems"], async function (item_obj) {
+    return _.map(compart_type_in.choiceItems, async function (item_obj) {
       var compart_style = "NoStyle";
-      if (item_obj["compartmentStyle"]) {
-        var compart_style_name = item_obj["compartmentStyle"];
+      if (item_obj.compartmentStyle) {
+        var compart_style_name = item_obj.compartmentStyle;
 
         compart_style = self.mappings[compart_style_name];
       }
 
       var elem_style = "NoStyle";
-      if (item_obj["elementStyle"]) {
-        var elem_style_name = item_obj["elementStyle"];
+      if (item_obj.elementStyle) {
+        var elem_style_name = item_obj.elementStyle;
 
         var tmp_elem_type = await ElementTypes.findOneAsync({
           _id: elem_type_id,
         });
         if (tmp_elem_type) {
-          var elem_styles = tmp_elem_type["styles"];
+          var elem_styles = tmp_elem_type.styles;
 
           elem_style = self.mappings[elem_style_name];
         }
       }
 
       var val = "";
-      if (item_obj["notation"]) {
-        val = item_obj["notation"];
+      if (item_obj.notation) {
+        val = item_obj.notation;
       }
 
       return {
         compartmentStyle: compart_style,
         elementStyle: elem_style,
-        input: item_obj["value"],
+        input: item_obj.value,
         value: val,
       };
     });
@@ -1313,14 +1313,14 @@ var ImportTDAConfiguration = {
     }
 
     //collecting rows that are on the diagram
-    var rows = prop_diagram["rows"];
+    var rows = prop_diagram.rows;
     self.collectRows(rows);
 
     //collecting tabs and its rows
-    var tabs = prop_diagram["propertyTabs"];
+    var tabs = prop_diagram.propertyTabs;
     if (tabs) {
       _.each(tabs, function (tab) {
-        var tab_rows = tab["rows"];
+        var tab_rows = tab.rows;
         self.collectRows(tab_rows);
       });
     }
@@ -1332,7 +1332,7 @@ var ImportTDAConfiguration = {
     _.each(rows, function (row) {
       self.mappings[row.repId] = row;
 
-      var prop_dgr = row["propertyDiagram"];
+      var prop_dgr = row.propertyDiagram;
       self.collectPropTabsAndRows(prop_dgr);
     });
   },
@@ -1360,7 +1360,7 @@ var ImportTDAConfiguration = {
 
     var no_collection_menu = diagram_type.noCollectionContextMenu;
     var no_menu_item = _.find(no_collection_menu, function (menu) {
-      return menu.item == "Generate SPARQL";
+      return menu.item === "Generate SPARQL";
     });
 
     if (no_menu_item) {
@@ -1369,7 +1369,7 @@ var ImportTDAConfiguration = {
 
     var collection_menu = diagram_type.collectionContextMenu;
     var menu_item = _.find(collection_menu, function (menu) {
-      return menu.item == "Generate SPARQL from selection";
+      return menu.item === "Generate SPARQL from selection";
     });
 
     if (menu_item) {
@@ -1394,7 +1394,7 @@ var ImportTDAConfiguration = {
       async function (elem_type) {
         var name = elem_type.name;
 
-        if (name == "Class") {
+        if (name === "Class") {
           var class_type_id = elem_type._id;
 
           var menu = elem_type.contextMenu;
@@ -1415,31 +1415,31 @@ var ImportTDAConfiguration = {
           await CompartmentTypes.find({
             elementTypeId: class_type_id,
           }).forEachAsync(async function (compart_type) {
-            if (compart_type.name == "ClassType") {
+            if (compart_type.name === "ClassType") {
               await CompartmentTypes.updateAsync(
                 { _id: compart_type._id },
                 { $set: { defaultValue: "" } },
               );
             }
 
-            if (compart_type.name == "Distinct") {
+            if (compart_type.name === "Distinct") {
               await CompartmentTypes.updateAsync(
                 { _id: compart_type._id },
                 { $set: { defaultValue: "" } },
               );
             }
 
-            if (compart_type.name == "OrderBy") {
+            if (compart_type.name === "OrderBy") {
               await CompartmentTypes.updateAsync(
                 { _id: compart_type._id },
                 { $set: { defaultValue: "" } },
               );
             }
 
-            if (compart_type.name == "Name") {
+            if (compart_type.name === "Name") {
               var extension_points = compart_type.extensionPoints;
               var item = _.find(extension_points, function (extension_point) {
-                return extension_point.extensionPoint == "dynamicDropDown";
+                return extension_point.extensionPoint === "dynamicDropDown";
               });
 
               if (item) {
@@ -1451,13 +1451,13 @@ var ImportTDAConfiguration = {
               }
             }
 
-            if (compart_type.name == "Attributes") {
+            if (compart_type.name === "Attributes") {
               var sub_compart_types = compart_type.subCompartmentTypes;
 
               var attr_sub_compart_type_first = _.find(
                 sub_compart_types,
                 function (sub_compart_type) {
-                  return sub_compart_type.name == "Attributes";
+                  return sub_compart_type.name === "Attributes";
                 },
               );
 
@@ -1465,13 +1465,13 @@ var ImportTDAConfiguration = {
                 var attr_sub_compart_type = _.find(
                   attr_sub_compart_type_first.subCompartmentTypes,
                   function (sub_compart_type) {
-                    return sub_compart_type.name == "Name";
+                    return sub_compart_type.name === "Name";
                   },
                 );
 
                 var extension_points = attr_sub_compart_type.extensionPoints;
                 var item = _.find(extension_points, function (extension_point) {
-                  return extension_point.extensionPoint == "dynamicDropDown";
+                  return extension_point.extensionPoint === "dynamicDropDown";
                 });
 
                 if (item) {
@@ -1484,7 +1484,7 @@ var ImportTDAConfiguration = {
                 }
 
                 var item = _.find(extension_points, function (extension_point) {
-                  return extension_point.extensionPoint == "dynamicDropDown";
+                  return extension_point.extensionPoint === "dynamicDropDown";
                 });
 
                 await CompartmentTypes.updateAsync(
@@ -1496,14 +1496,14 @@ var ImportTDAConfiguration = {
           });
         }
 
-        if (name == "Link") {
+        if (name === "Link") {
           await CompartmentTypes.find({
             elementTypeId: elem_type._id,
           }).forEachAsync(async function (compart_type) {
-            if (compart_type.name == "Name") {
+            if (compart_type.name === "Name") {
               var extension_points = compart_type.extensionPoints;
               var item = _.find(extension_points, function (extension_point) {
-                return extension_point.extensionPoint == "dynamicDropDown";
+                return extension_point.extensionPoint === "dynamicDropDown";
               });
 
               if (item) {
@@ -1515,10 +1515,10 @@ var ImportTDAConfiguration = {
               }
             }
 
-            if (compart_type.name == "Subquery Link") {
+            if (compart_type.name === "Subquery Link") {
               var extension_points = compart_type.extensionPoints;
               var item = _.find(extension_points, function (extension_point) {
-                return extension_point.extensionPoint == "afterUpdate";
+                return extension_point.extensionPoint === "afterUpdate";
               });
 
               if (item) {

@@ -1,80 +1,84 @@
-import { Template } from 'meteor/templating';
+import { Template } from "meteor/templating";
 
-import { Configurator } from '../../../templates/configurator/config_utils.js'
+import { Configurator } from "../../../templates/configurator/config_utils.js";
 
-import './keystrokes.html'
+import "./keystrokes.html";
 
 // Start of keystrokes tab
 Template.editKeystroke.helpers({
+  data: function () {
+    return {
+      collection: "ElementTypes",
+      array: "keyStrokes",
 
-	data: function() {
-		return {
-			collection: "ElementTypes",
-			array: "keyStrokes",
-
-			keystrokes: Configurator.getKeystrokesOrItems("keyStrokes"),
-		};
-	},
-
+      keystrokes: Configurator.getKeystrokesOrItems("keyStrokes"),
+    };
+  },
 });
 
 Template.readKeystroke.helpers({
+  data: function () {
+    return {
+      collection: "ElementTypes",
+      array: "readModeKeyStrokes",
 
-	data: function() {
-		return {
-			collection: "ElementTypes",
-			array: "readModeKeyStrokes",
-
-			keystrokes: Configurator.getKeystrokesOrItems("readModeKeyStrokes"),
-		};
-	},
-
+      keystrokes: Configurator.getKeystrokesOrItems("readModeKeyStrokes"),
+    };
+  },
 });
-
 
 Template.keystroke.events({
+  //adds key stroke
+  "click #add-keystroke": function (e) {
+    e.preventDefault();
+    var src_parent = $(e.target).closest(".menu");
 
-	//adds key stroke
-	'click #add-keystroke': function(e) {
+    var collection_meta_data = {
+      collection: src_parent.attr("collection"),
+      array: src_parent.attr("array"),
+      fields: ["keyStroke", "procedure"],
+    };
 
-		e.preventDefault();
-		var src_parent = $(e.target).closest(".menu");
+    Configurator.addKeystrokeOrItem(
+      e,
+      "addKeystrokeOrContextMenu",
+      collection_meta_data,
+    );
+  },
 
-		var collection_meta_data = {collection: src_parent.attr("collection"),
-									array: src_parent.attr("array"),
-									fields: ["keyStroke", "procedure"],
-								};
+  //removes key stroke
+  "click .remove-keystroke": function (e) {
+    e.preventDefault();
+    var src_parent = $(e.target).closest(".menu");
 
-		Configurator.addKeystrokeOrItem(e, "addKeystrokeOrContextMenu", collection_meta_data);
-	},
+    var collection = {
+      collection: src_parent.attr("collection"),
+      array: src_parent.attr("array"),
+    };
 
-	//removes key stroke
-	'click .remove-keystroke': function(e) {
+    Configurator.deleteKeystrokeOrItem(
+      e,
+      "deleteKeyStrokeOrContextMenu",
+      collection,
+    );
+  },
 
-		e.preventDefault();
-		var src_parent = $(e.target).closest(".menu");
+  //updates key stroke
+  "blur .table-item": function (e) {
+    var src = $(e.target).closest(".table-item");
+    var src_parent = src.closest(".menu");
 
-		var collection = {collection: src_parent.attr("collection"),
-							array: src_parent.attr("array"),
-						};
+    var collection = {
+      collection: src_parent.attr("collection"),
+      array: src_parent.attr("array"),
+      field: src.attr("attribute"),
+    };
 
-		Configurator.deleteKeystrokeOrItem(e, "deleteKeyStrokeOrContextMenu", collection);
-	},
-
-	//updates key stroke
-	'blur .table-item': function(e) {
-
-		var src = $(e.target).closest(".table-item");
-		var src_parent = src.closest(".menu");
-
-		var collection = {collection: src_parent.attr("collection"),
-							array: src_parent.attr("array"),
-							field: src.attr("attribute"),
-						};
-
-		Configurator.updateKeystrokeOrItem(e, "updateKeystrokeOrContextMenu", collection);
-	},
+    Configurator.updateKeystrokeOrItem(
+      e,
+      "updateKeystrokeOrContextMenu",
+      collection,
+    );
+  },
 });
 // End of keystrokes tab
-
-

@@ -1,20 +1,14 @@
-
 <!-- Diagram content templates -->
 
 <template name="diagramsTemplate">
-
     <div class="row diagrams-margin">
-
         <!-- Views switch buttons -->
         <div class="col-xs-5 col-sm-5 col-md-7 col-lg-8">
             {{> diagramsViewButton}}
-
             {{#if isAdmin}}
-                {{> diagramsGroupsButton}}
+              {{> diagramsGroupsButton}}
             {{/if}}
-
             {{> diagramsSortButton}}
-
         </div>
         <!-- End of views switch buttons -->
 
@@ -23,25 +17,20 @@
             {{> diagramsSearchBar}}
         </div>
         <!-- End of search bar -->
-
     </div>
 
-	<div class="row">
-
+    <div class="row">
         {{#if isDefaultView}}
-            {{> defaultDiagramsView}}
+          {{> defaultDiagramsView}}
         {{else}}
-            {{> treeDiagramsView}}
+          {{> treeDiagramsView}}
         {{/if}}
-
-	</div>
+    </div>
 
     {{> renameDiagramForm}}
-
 </template>
 
 <template name="diagramsViewButton">
-
     <div id="viewButtons" class="btn-group">
         <a href="#" class="btn btn-default btn-sm" data-toggle="dropdown">
             <i class="fa fa-gear fa-lg"></i>
@@ -49,79 +38,98 @@
         </a>
         <ul class="dropdown-menu text-left">
             {{#with diagramViews}}
-                <li>
-                    <a class="view-switch" view="Default" href="#">
-                        <i class="fa fa-check" style="{{defaultStyle}}"></i>
-                        {{_ "default_view"}}
-                    </a>
-                </li>
-                <li>
-                    <a class="view-switch" view="Tree" href="#">
-                        <i class="fa fa-check" style="{{treeStyle}}"></i>
-                        {{_ "tree_view"}}
-                    </a>
-                </li>
+              <li>
+                  <a class="view-switch" view="Default" href="#">
+                      <i class="fa fa-check" style="{{defaultStyle}}"></i>
+                      {{_ "default_view"}}
+                  </a>
+              </li>
+              <li>
+                  <a class="view-switch" view="Tree" href="#">
+                      <i class="fa fa-check" style="{{treeStyle}}"></i>
+                      {{_ "tree_view"}}
+                  </a>
+              </li>
             {{/with}}
         </ul>
     </div>
-<!--visibility:hidden; -->
+    <!--visibility:hidden; -->
 </template>
 
 <template name="diagramsSortButton">
-
     <div id="sortButtons" class="btn-group hover-dropdown">
-        <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">{{_ "sort"}} <span class="caret"></span></button>
+        <button
+            class="btn btn-sm btn-default dropdown-toggle"
+            data-toggle="dropdown"
+        >
+            {{_ "sort"}} <span class="caret"></span>
+        </button>
         <ul class="dropdown-menu slidedown">
             {{#each items}}
-                <li class="sort-by-item" type="{{type}}"><a href="#">
-                {{#if active}}
+            <li class="sort-by-item" type="{{type}}">
+                <a href="#">
+                    {{#if active}}
                     <i class="fa fa-check"></i>
-                {{else}}
-                    <i class="fa fa-check" style="visibility:hidden;"></i>
-                {{/if}}
-                 {{_ "sort_by" context=name}}</a></li>
+                    {{else}}
+                    <i class="fa fa-check" style="visibility: hidden"></i>
+                    {{/if}}
+
+                    {{_ "sort_by" context=name}}</a
+                >
+            </li>
             {{/each}}
         </ul>
     </div>
-
 </template>
 
-
 <template name="diagramsGroupsButton">
-
     <div id="groupsButtons" class="btn-group hover-dropdown">
-        <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">{{_ "select_group"}} <span class="caret"></span></button>
+        <button
+            class="btn btn-sm btn-default dropdown-toggle"
+            data-toggle="dropdown"
+        >
+            {{_ "select_group"}} <span class="caret"></span>
+        </button>
         <ul class="dropdown-menu slidedown">
-
             {{#each items}}
-                <li class="select-group-item" value="{{_id}}">
-                    <a href="#">
-                        {{#if active}}
-                            <i class="fa fa-check"></i>
-                        {{else}}
-                            <i class="fa fa-check" style="visibility:hidden;"></i>
-                        {{/if}}
-
-                        {{#if defaultRole}}
-                            {{_ "selected_group" context=name}}
-                        {{else}}
-                            {{name}}
-                        {{/if}}
-                    </a>
-                </li>
+            <li class="select-group-item" value="{{_id}}">
+                <a href="#">
+                    {{#if active}}
+                    <i class="fa fa-check"></i>
+                    {{else}}
+                    <i class="fa fa-check" style="visibility: hidden"></i>
+                    {{/if}}
+                    {{#if defaultRole}}
+                      {{_ "selected_group" context=name}}
+                    {{else}}
+                      {{name}}
+                    {{/if}}
+                </a>
+            </li>
             {{/each}}
 
             <li class="divider"></li>
-            <li class="select-group-item" value="none"><a href="#">{{_ "reset"}}</a></li>
+            <li class="select-group-item" value="none">
+                <a href="#">{{_ "reset"}}</a>
+            </li>
         </ul>
     </div>
-
 </template>
 
-
 <template name="diagramsSearchBar">
-    <div class="input-group input-group search-bar" suggestionsQuery="diagramsSearch" collectionType="Diagrams" type="diagrams">
-        <input class="form-control input input-sm" value="{{search_phrase}}" type="text" placeholder='{{_ "search_here"}}' id="searchField">
+    <div
+        class="input-group input-group search-bar"
+        suggestionsQuery="diagramsSearch"
+        collectionType="Diagrams"
+        type="diagrams"
+    >
+        <input
+            class="form-control input input-sm"
+            value="{{search_phrase}}"
+            type="text"
+            placeholder='{{_ "search_here"}}'
+            id="searchField"
+        />
         <div class="input-group-btn">
             <button id="searchButton" class="btn btn-default btn-sm">
                 <i class="fa fa-fw fa-search fa-lg"></i>
@@ -129,126 +137,175 @@
         </div>
 
         {{> searchMenu}}
-
     </div>
 </template>
 
-
 <template name="defaultDiagramsView">
     {{#each diagrams}}
-        <div class="col-sm-12 col-md-6 col-lg-3">
-            <div class="thumbnail diagram clearfix" diagramId="{{_id}}">
-                <a class="reference" href="{{pathFor 'diagram' projectId=this.projectId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId editMode='editMode'}}" >
-
-                    <img src="{{imageUrl}}" class="diagram-image">
-                </a>
-                <div class="caption">
-                    <center>
-                        <a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram' projectId=this.projectId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId editMode='editMode'}}"><h4 class="diagram-name">{{name}}</h4></a>
-                    </center>
-                </div>
-
-                <div class="image-like pull-right1">
-					<div>{{description}}</div>
-                    <div>{{seenCount}} {{_ "views"}}</div>
-                    <div>{{date}}</div>
-                </div>
-
-                {{#if isEditMode}}
-                    <div class="diagram-dropdown-container hidden" style="position: absolute; top: 3px;">
-                        <a class="edit-project" href="#" data-toggle="dropdown">
-                            <i class="fa fa-angle-down fa-lg"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;">
-                            <li>
-                                <a class="duplicate-diagram" href="#">
-                                    <i class="fa fa-files-o fa-lg"></i>
-                                    Duplicate
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="rename-diagram" href="#">
-                                    <i class="fa fa-pencil fa-lg"></i>
-                                    Rename
-                                </a>
-                            </li>
-                            <li>
-                                <a class="remove-diagram" href="#">
-                                    <i class="fa fa-trash-o fa-lg"></i>
-                                    {{_ "delete"}}
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                {{/if}}
-
+    <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="thumbnail diagram clearfix" diagramId="{{_id}}">
+            <a
+                class="reference"
+                href="{{pathFor 'diagram' projectId=this.projectId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId editMode='editMode'}}"
+            >
+                <img src="{{imageUrl}}" class="diagram-image" />
+            </a>
+            <div class="caption">
+                <center>
+                    <a
+                        class="reference"
+                        diagramId="{{_id}}"
+                        href="{{pathFor 'diagram' projectId=this.projectId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId editMode='editMode'}}"
+                        ><h4 class="diagram-name">{{name}}</h4></a
+                    >
+                </center>
             </div>
+
+            <div class="image-like pull-right1">
+                <div>{{description}}</div>
+                <div>{{seenCount}}
+                  {{_ "views"}}</div>
+                <div>{{date}}</div>
+            </div>
+
+            {{#if isEditMode}}
+            <div
+                class="diagram-dropdown-container hidden"
+                style="position: absolute; top: 3px"
+            >
+                <a class="edit-project" href="#" data-toggle="dropdown">
+                    <i class="fa fa-angle-down fa-lg"></i>
+                </a>
+                <ul
+                    class="dropdown-menu"
+                    role="menu"
+                    aria-labelledby="edit-project"
+                    style="left: -140px"
+                >
+                    <li>
+                        <a class="duplicate-diagram" href="#">
+                            <i class="fa fa-files-o fa-lg"></i>
+                            Duplicate
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="rename-diagram" href="#">
+                            <i class="fa fa-pencil fa-lg"></i>
+                            Rename
+                        </a>
+                    </li>
+                    <li>
+                        <a class="remove-diagram" href="#">
+                            <i class="fa fa-trash-o fa-lg"></i>
+                            {{_ "delete"}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            {{/if}}
         </div>
+    </div>
     {{/each}}
 </template>
 
 <template name="treeDiagramsView">
-
     <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="dd" id="nestable3" style="max-width: none;">
+        <div class="dd" id="nestable3" style="max-width: none">
             <ol class="dd-list">
-
                 {{#each diagrams}}
-
-                    {{> treeDiagrams}}
-
+                  {{> treeDiagrams}}
                 {{/each}}
-
             </ol>
         </div>
     </div>
-
 </template>
 
 <template name="treeDiagrams">
     <li id="{{_id}}" class="dd-item diagram" typeId="{{diagramTypeId}}">
         {{#if children}}
-            <button class="collapse treeNodeButton" data-action="collapse" type="button" style="{{collapsed}}">Collapse</button>
-            <button class="expand treeNodeButton" data-action="expand" type="button" style="{{expanded}}">Expand</button>
+        <button
+            class="collapse treeNodeButton"
+            data-action="collapse"
+            type="button"
+            style="{{collapsed}}"
+        >
+            Collapse
+        </button>
+        <button
+            class="expand treeNodeButton"
+            data-action="expand"
+            type="button"
+            style="{{expanded}}"
+        >
+            Expand
+        </button>
         {{/if}}
 
-
-        <a href="{{pathFor 'diagram'}}" style="text-decoration:none;" class="diagram-title" diagramId="{{_id}}"  data-container="body" data-toggle="popover" data-placement="right" data-content="">
+        <a
+            href="{{pathFor 'diagram'}}"
+            style="text-decoration: none"
+            class="diagram-title"
+            diagramId="{{_id}}"
+            data-container="body"
+            data-toggle="popover"
+            data-placement="right"
+            data-content=""
+        >
             <div class="dd-handle {{colorClass}}">{{name}}</div>
         </a>
 
         {{#if children}}
-            <ol class="dd-list" style="{{childrenList}}">
-                {{#each children}}
-                    {{> treeDiagrams}}
-                {{/each}}
-            </ol>
+        <ol class="dd-list" style="{{childrenList}}">
+            {{#each children}}
+              {{> treeDiagrams}}
+            {{/each}}
+        </ol>
         {{/if}}
     </li>
-
 </template>
 
 <template name="addDiagram">
-<!-- Modal for new diagram -->
+    <!-- Modal for new diagram -->
     <div id="add-diagram" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
                     <h4 class="modal-title">{{_ "new_diagram"}}</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label for="diagram-name" class="col-sm-2 control-label">{{_ "new_diagram_name"}}</label>
+                            <label
+                                for="diagram-name"
+                                class="col-sm-2 control-label"
+                                >{{_ "new_diagram_name"}}</label
+                            >
                             <div class="col-sm-10">
-                                <input id="diagram-name" type="text" class="form-control" autocomplete="off" placeholder="">
+                                <input
+                                    id="diagram-name"
+                                    type="text"
+                                    class="form-control"
+                                    autocomplete="off"
+                                    placeholder=""
+                                />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="diagramType" class="control-label col-sm-2">{{_ "new_diagram_type"}}</label>
+                            <label
+                                for="diagramType"
+                                class="control-label col-sm-2"
+                                >{{_ "new_diagram_type"}}</label
+                            >
                             <div class="col-sm-10">
                                 <select class="form-control" id="diagramType">
                                     {{> configuratorDiagramOptions}}
@@ -258,446 +315,790 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
-                    <button id="create-diagram" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        {{_ "cancel"}}
+                    </button>
+                    <button
+                        id="create-diagram"
+                        type="button"
+                        class="btn btn-primary"
+                    >
+                        {{_ "ok"}}
+                    </button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-<!-- End of modal -->
-
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
 </template>
 
-
 <template name="uploadProject">
-
     <!-- Modal for new document -->
     <div id="upload-project-form" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
                     <h4 class="modal-title">Upload</h4>
                 </div>
                 <div class="modal-body">
-				{{#if loading }}
-					<p style="color: black; font-size: 16px;"> Loading ... </p>
-				{{else}}
+                    {{#if loading }}
+                    <p style="color: black; font-size: 16px">Loading ...</p>
+                    {{else}}
                     <div class="panel panel-default">
                         <div class="panel-tab clearfix">
                             <ul class="tab-bar">
-                                <li class="active" id="project-members"><a href="#projectfile" data-toggle="tab">File</a></li>
-                                <li id="find-people"><a href="#projecturl" data-toggle="tab">URL</a></li>
-								{{#if projects}}
-								<li id="project-list"><a href="#projectlist" data-toggle="tab">List</a></li>
-								{{/if}}
+                                <li class="active" id="project-members">
+                                    <a href="#projectfile" data-toggle="tab"
+                                        >File</a
+                                    >
+                                </li>
+                                <li id="find-people">
+                                    <a href="#projecturl" data-toggle="tab"
+                                        >URL</a
+                                    >
+                                </li>
+                                {{#if projects}}
+                                <li id="project-list">
+                                    <a href="#projectlist" data-toggle="tab"
+                                        >List</a
+                                    >
+                                </li>
+                                {{/if}}
                             </ul>
                         </div>
                         <div class="panel-body">
                             <div class="tab-content user-tab-content">
-
                                 <!-- tab1 -->
-                                <div class="tab-pane fade in active" id="projectfile">
-
+                                <div
+                                    class="tab-pane fade in active"
+                                    id="projectfile"
+                                >
                                     <form class="form-horizontal" role="form">
                                         <div class="form-group">
                                             <div class="col-sm-10">
-                                                <input id="projectfileList" type='file' multiple/>
+                                                <input
+                                                    id="projectfileList"
+                                                    type="file"
+                                                    multiple
+                                                />
                                             </div>
                                         </div>
                                     </form>
-
                                 </div>
                                 <!-- end of tab1 -->
 
                                 <!-- tab2 -->
-                                <div class="tab-pane fade padding-10" id="projecturl">
-
+                                <div
+                                    class="tab-pane fade padding-10"
+                                    id="projecturl"
+                                >
                                     <form class="form-horizontal" role="form">
                                         <div class="form-group">
-                                            <label for="import-url" class="col-sm-1 control-label">URL</label>
+                                            <label
+                                                for="import-url"
+                                                class="col-sm-1 control-label"
+                                                >URL</label
+                                            >
                                             <div class="col-sm-11">
-                                                <input id="import-projecturl" type="text" class="form-control" value="" autocomplete="off" >
+                                                <input
+                                                    id="import-projecturl"
+                                                    type="text"
+                                                    class="form-control"
+                                                    value=""
+                                                    autocomplete="off"
+                                                />
                                             </div>
                                         </div>
                                     </form>
-
                                 </div>
 
                                 <!-- end of tab2 -->
 
-								<!-- tab3 -->
-								{{#if projects}}
-								<div class="tab-pane fade padding-10" id="projectlist">
-									<div class="form-group">
-										{{#each projects}}
-											<div class="col-lg-10 schema" name="{{name}}" type = "project" link = "{{link}}" >
-												<label class="label-radio">
-													<input type="radio" name="stack-radio" value="{{name}}" {{name}}>
-													<span class="custom-radio"></span>
-													 <span style="{{clr}}">{{caption}} </span>
-												</label>
-											</div>
-										{{/each}}
-									</div>
-								</div>
-								{{/if}}
+                                <!-- tab3 -->
+                                {{#if projects}}
+                                <div
+                                    class="tab-pane fade padding-10"
+                                    id="projectlist"
+                                >
+                                    <div class="form-group">
+                                        {{#each projects}}
+                                        <div
+                                            class="col-lg-10 schema"
+                                            name="{{name}}"
+                                            type="project"
+                                            link="{{link}}"
+                                        >
+                                            <label class="label-radio">
+                                                <input
+                                                    type="radio"
+                                                    name="stack-radio"
+                                                    value="{{name}}"
+                                                    {{name}}
+                                                />
+                                                <span
+                                                    class="custom-radio"
+                                                ></span>
+                                                <span style="{{clr}}"
+                                                    >{{caption}}
+                                                </span>
+                                            </label>
+                                        </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                                {{/if}}
 
                                 <!-- end of tab3 -->
-
                             </div>
                         </div>
                     </div>
-				{{/if}}
+                    {{/if}}
                 </div>
-				{{#if loading }}
-				{{else}}
-                <div class="modal-footer">
-				    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "close"}}</button>
-                    <button id="ok-upload-project" type="button" class="btn btn-primary">Upload</button>
-                </div>
-				{{/if}}
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+                {{#if loading }}
+                {{else}}
+                  <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        {{_ "close"}}
+                    </button>
+                    <button
+                        id="ok-upload-project"
+                        type="button"
+                        class="btn btn-primary"
+                    >
+                        Upload
+                    </button>
+                  </div>
+                {{/if}}
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
     <!-- End of modal -->
-
 </template>
-
-
 
 <template name="configuratorDiagramOptions">
     {{#each configuratorDiagrams}}
-        <option {{selected}} id="{{_id}}" >{{name}}</option>
+    <option {{selected}} id="{{_id}}">{{name}}</option>
     {{/each}}
 </template>
 
 <template name="renameDiagramForm">
-
-<!-- Modal for new document -->
+    <!-- Modal for new document -->
     <div id="rename-diagram-form" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
                     <h4 class="modal-title">Rename</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
-
                         <div class="form-group">
-                            <label for="diagram-name-field" class="col-sm-2 control-label">Name</label>
+                            <label
+                                for="diagram-name-field"
+                                class="col-sm-2 control-label"
+                                >Name</label
+                            >
                             <div class="col-sm-10">
-                                <input id="diagram-name-field" type="text" class="form-control" value="" autocomplete="off" >
+                                <input
+                                    id="diagram-name-field"
+                                    type="text"
+                                    class="form-control"
+                                    value=""
+                                    autocomplete="off"
+                                />
                             </div>
                         </div>
-
                     </form>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
-                    <button id="rename-diagram-form-ok" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        {{_ "cancel"}}
+                    </button>
+                    <button
+                        id="rename-diagram-form-ok"
+                        type="button"
+                        class="btn btn-primary"
+                    >
+                        {{_ "ok"}}
+                    </button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-<!-- End of modal -->
-
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
 </template>
 
 <!-- Ribbons -->
 <template name="diagramsRibbon">
-
     <!-- RIBBON -->
     <div id="ribbon">
-
         <!-- breadcrumb -->
         <ol class="breadcrumb">
-            <li><i class="fa fa-picture-o"></i> Diagrams ({{tool.name}}){{tool.schema}}</li>
+            <li>
+                <i class="fa fa-picture-o"></i> Diagrams
+                ({{tool.name}}){{tool.schema}}
+            </li>
         </ol>
         <!-- end breadcrumb -->
 
         {{#if is_toolbar_enabled}}
-            <span class="ribbon-button-alignment pull-right1">
-                <button id="add" class="btn btn-ribbon toolbar-button" data-title="New Diagram" data-toggle="tooltip" data-placement="bottom">New diagram</button>
-                {{> Template.dynamic template=tool.toolbar }}
-            </span>
+        <span class="ribbon-button-alignment pull-right1">
+            <button
+                id="add"
+                class="btn btn-ribbon toolbar-button"
+                data-title="New Diagram"
+                data-toggle="tooltip"
+                data-placement="bottom"
+            >
+                New diagram
+            </button>
+            {{> Template.dynamic template=tool.toolbar }}
+        </span>
         {{/if}}
-
     </div>
     <!-- END RIBBON -->
 
     {{> addDiagram}}
 
+    <!--     <a id="download-hack" style="display:none;">project-data</a> -->
 
-<!--     <a id="download-hack" style="display:none;">project-data</a> -->
-
-    <div id="download-hack" style="display:none;"></div>
-
+    <div id="download-hack" style="display: none"></div>
 </template>
 
-
 <template name="diagramsToolbar">
+    <button
+        id="settings"
+        class="btn btn-ribbon toolbar-button"
+        data-title="Settings"
+        data-toggle="tooltip"
+        data-placement="bottom"
+    >
+        <i class="fa fa-gear"></i>
+    </button>
+    <a
+        id="download-project"
+        class="btn btn-ribbon toolbar-button"
+        data-title="Download Project"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        ><i class="fa fa-cloud-download"></i
+    ></a>
 
-    <button id="settings" class="btn btn-ribbon toolbar-button" data-title="Settings" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-gear" ></i></button>
-    <a id="download-project" class="btn btn-ribbon toolbar-button" data-title="Download Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-download"></i></a>
+    <a
+        id="upload-project"
+        class="btn btn-ribbon toolbar-button"
+        data-title="Upload Project"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        ><i class="fa fa-cloud-upload"></i
+    ></a>
 
-    <a id="upload-project" class="btn btn-ribbon toolbar-button" data-title="Upload Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-upload"></i></a>
+    <button
+        id="migrate"
+        class="btn btn-ribbon toolbar-button"
+        data-title="Migrate"
+        data-toggle="tooltip"
+        data-placement="bottom"
+    >
+        <i class="fa fa-wrench"></i>
+    </button>
+    {{#if hasSchema }}
+      <button
+        id="saveSchema"
+        class="btn btn-ribbon toolbar-button"
+        data-title="Data Schema"
+        data-toggle="tooltip"
+        data-placement="bottom"
+      >
+        Data Schema
+      </button>
+      {{#if isPublic}}
+      {{else}}
+        <button
+          id="schemaFragment"
+          class="btn btn-ribbon toolbar-button"
+          data-title="Schema Fragment"
+          data-toggle="tooltip"
+          data-placement="bottom"
+        >
+          Schema Fragment
+        </button>
+      {{/if}}
+    {{else}}
+      <button
+        id="loadOntologyOWLGrEd"
+        class="btn btn-ribbon toolbar-button"
+        data-title="Load Ontology"
+        data-toggle="tooltip"
+        data-placement="bottom"
+      >
+        Load Ontology
+      </button>
+    {{/if}}
 
-    <button id="migrate" class="btn btn-ribbon toolbar-button" data-title="Migrate" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-wrench"></i></button>
-	{{#if hasSchema }}
-		<button id="saveSchema" class="btn btn-ribbon toolbar-button" data-title="Data Schema" data-toggle="tooltip" data-placement="bottom">Data Schema</button>
-		{{#if isPublic}}
-		{{else}}
-		  <button id="schemaFragment" class="btn btn-ribbon toolbar-button" data-title="Schema Fragment" data-toggle="tooltip" data-placement="bottom">Schema Fragment</button>
-		{{/if}}
-	
-	{{else}}
-		<button id="loadOntologyOWLGrEd" class="btn btn-ribbon toolbar-button" data-title="Load Ontology" data-toggle="tooltip" data-placement="bottom">Load Ontology</button>
-	{{/if}}
     {{> uploadProject}}
     {{> ontologySettings}}
     {{> OWLGRED_ontologySettings}}
     {{> migrateForm}}
     {{> VQ_DSS_schema}}
-	{{> loadOntologyOWLGrEd}}
-
+    {{> loadOntologyOWLGrEd}}
 </template>
 
-
-
 <template name="ontologySettings">
-<style>
-    .help-tip{
-        position: relative;
-        display:inline;
-        padding-right: 5px;
-        padding-left: 5px;
-        text-align: center;
-        background-color: #8A2BE2;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        font-size: 12px;
-        cursor: help;
-    }
+    <style>
+        .help-tip {
+            position: relative;
+            display: inline;
+            padding-right: 5px;
+            padding-left: 5px;
+            text-align: center;
+            background-color: #8a2be2;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: help;
+        }
 
-    .help-tip:before{
-        content:'?';
-        font-weight: bold;
-        color:#fff;
-    }
+        .help-tip:before {
+            content: "?";
+            font-weight: bold;
+            color: #fff;
+        }
 
-    .help-tip:hover p{
-        display: block;
-    }
+        .help-tip:hover p {
+            display: block;
+        }
 
-    .help-tip p{
-        display: none;
-        text-align: left;
-        font-size: 12px;
-        line-height: 16px;
-        color: white;
-        border: 1px solid #7F7F7F;
-        background-color: slategrey;
-        border-radius: 5px;
-        padding: 10px;
-        width: 200px;
-        position: absolute;
-        right: 105%;
-        z-index: 1000;
-    }
+        .help-tip p {
+            display: none;
+            text-align: left;
+            font-size: 12px;
+            line-height: 16px;
+            color: white;
+            border: 1px solid #7f7f7f;
+            background-color: slategrey;
+            border-radius: 5px;
+            padding: 10px;
+            width: 200px;
+            position: absolute;
+            right: 105%;
+            z-index: 1000;
+        }
+    </style>
 
-</style>
+    <!-- Modal for new document -->
+    <div id="ontology-settings-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
+                    <h4 class="modal-title">Project Settings</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-default">
+                        <div class="panel-tab clearfix">
+                            <ul class="tab-bar">
+                                <li class="active" id="project-settings">
+                                    <a href="#main" data-toggle="tab">Main</a>
+                                </li>
+                                <li id="project-security">
+                                    <a href="#sec" data-toggle="tab"
+                                        >Security</a
+                                    >
+                                </li>
+                                <li id="project-extra">
+                                    <a href="#extra" data-toggle="tab">Extra</a>
+                                </li>
+                                <li id="project-visualization">
+                                    <a href="#visualization" data-toggle="tab"
+                                        >SPARQL Visualization</a
+                                    >
+                                </li>
+                            </ul>
+                        </div>
 
-        <!-- Modal for new document -->
-        <div id="ontology-settings-form" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">Project Settings</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="panel panel-default">
-                            <div class="panel-tab clearfix">
-                                <ul class="tab-bar">
-                                    <li class="active" id="project-settings"><a href="#main" data-toggle="tab">Main</a></li>
-                                    <li id="project-security"><a href="#sec" data-toggle="tab">Security</a></li>
-    								<li id="project-extra"><a href="#extra" data-toggle="tab">Extra</a></li>
-    								<li id="project-visualization"><a href="#visualization" data-toggle="tab">SPARQL Visualization</a></li>
-                                </ul>
-                            </div>
+                        <div class="panel-body">
+                            <div class="tab-content user-tab-content">
+                                <!-- tab1 -->
+                                <div class="tab-pane fade in active" id="main">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="form-group">
+                                            <label
+                                                for="dss-schema"
+                                                class="col-sm-3 control-label"
+                                                >DSS schema</label
+                                            >
+                                            <div class="col-sm-9">
+                                                <select
+                                                    class="form-control"
+                                                    id="dss-schema"
+                                                >
+                                                    {{#each schemas}}
+                                                    <option
+                                                        {{selected}}
+                                                        value="{{display_name}}"
+                                                    >
+                                                        {{display_name}}
+                                                    </option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                        </div>
 
-                            <div class="panel-body">
-                                <div class="tab-content user-tab-content">
+                                        <div class="form-group">
+                                            <label
+                                                for="schema-tag"
+                                                class="col-sm-3 control-label"
+                                                >Schema Tag</label
+                                            >
+                                            <div class="col-sm-9">
+                                                <select
+                                                    class="form-control"
+                                                    id="schema-tags"
+                                                >
+                                                    {{#each schema_tags}}
+                                                    <option value="{{name}}">
+                                                        {{display_name}}
+                                                    </option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                        </div>
 
-                                    <!-- tab1 -->
-                                    <div class="tab-pane fade in active" id="main">
-    									<form class="form-horizontal" role="form">
+                                        <div class="form-group">
+                                            <label
+                                                for="ontology-endpoint"
+                                                class="col-sm-3 control-label"
+                                                >SPARQL Endpoint</label
+                                            >
+                                            <div class="col-sm-9">
+                                                <input
+                                                    id="ontology-endpoint"
+                                                    type="text"
+                                                    class="form-control"
+                                                    value="{{endpoint}}"
+                                                    autocomplete="off"
+                                                />
+                                            </div>
+                                        </div>
 
-    										<div class="form-group">
-    											<label for="dss-schema" class="col-sm-3 control-label">DSS schema</label>
-    											<div class="col-sm-9">
-    												<select class="form-control" id="dss-schema" >
-    													{{#each schemas}}
-    														<option {{selected}} value="{{display_name}}">{{display_name}}</option>
-    													{{/each}}
-    												</select>
-    											</div>
-    										</div>
+                                        <div class="form-group">
+                                            <label
+                                                for="ontology-uri"
+                                                class="col-sm-3 control-label"
+                                                >Named Graph</label
+                                            >
+                                            <div class="col-sm-9">
+                                                <input
+                                                    id="ontology-uri"
+                                                    type="text"
+                                                    class="form-control"
+                                                    value="{{uri}}"
+                                                    autocomplete="off"
+                                                />
+                                            </div>
+                                        </div>
 
-                                            <div class="form-group">
-                                                <label for="schema-tag" class="col-sm-3 control-label">Schema Tag</label>
-                                                <div class="col-sm-9">
-                                                    <select class="form-control" id="schema-tags" >
-                                                        {{#each schema_tags}}
-                                                            <option value="{{name}}">{{display_name}}</option>
-                                                        {{/each}}
-                                                    </select>
+                                        <div class="form-group">
+                                            <label
+                                                for="use-string-literal-conversion"
+                                                class="col-sm-3 control-label"
+                                                >Use String Literal
+                                                Conversion</label
+                                            >
+                                            <div class="col-sm-9">
+                                                <select
+                                                    class="form-control"
+                                                    id="use-string-literal-conversion"
+                                                >
+                                                    {{#each
+                                                    useStringLiteralConversionList}}
+                                                    <option
+                                                        {{selected}}
+                                                        value="{{name}}"
+                                                    >
+                                                        {{name}}
+                                                    </option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label
+                                                for="query-engine-type"
+                                                class="col-sm-3 control-label"
+                                                >Query Engine Type</label
+                                            >
+                                            <div class="col-sm-9">
+                                                <select
+                                                    class="form-control"
+                                                    id="query-engine-type"
+                                                >
+                                                    {{#each
+                                                    queryEngineTypeList}}
+                                                    <option
+                                                        {{selected}}
+                                                        value="{{name}}"
+                                                    >
+                                                        {{name}}
+                                                    </option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-5">
+                                                <label class="form-check-label">
+                                                    <input
+                                                        class="form-check-input"
+                                                        id="use-default-grouping-separator"
+                                                        type="checkbox"
+                                                        checked="{{project.useDefaultGroupingSeparator}}"
+                                                    />
+                                                    <span
+                                                        class="custom-checkbox"
+                                                    ></span>
+                                                    Use Default Grouping
+                                                    Separator
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <input
+                                                    id="default-grouping-separator"
+                                                    type="text"
+                                                    class="form-control"
+                                                    value="{{project.defaultGroupingSeparator}}"
+                                                    disabled="{{project.NOTuseDefaultGroupingSeparator}}"
+                                                    autocomplete="off"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-5">
+                                                <label class="form-check-label">
+                                                    <input
+                                                        class="form-check-input"
+                                                        id="show-cardinalities"
+                                                        type="checkbox"
+                                                        checked="{{project.showCardinalities}}"
+                                                    />
+                                                    <span
+                                                        class="custom-checkbox"
+                                                    ></span>
+                                                    Show Cardinalities
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- end of tab1 -->
+
+                                <!-- tab2 -->
+                                <div class="tab-pane fade padding-10" id="sec">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="form-group">
+                                            <label
+                                                for="endpoint-username"
+                                                class="col-sm-3 control-label"
+                                                >Username</label
+                                            >
+                                            <div class="col-sm-9">
+                                                <input
+                                                    id="endpoint-username"
+                                                    type="text"
+                                                    class="form-control"
+                                                    value="{{project.endpointUsername}}"
+                                                    autocomplete="off"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label
+                                                for="endpoint-password"
+                                                class="col-sm-3 control-label"
+                                                >Password</label
+                                            >
+                                            <div class="col-sm-9">
+                                                <input
+                                                    id="endpoint-password"
+                                                    type="password"
+                                                    autocomplete="new-password"
+                                                    class="form-control"
+                                                    value="{{project.endpointPassword}}"
+                                                />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- end of tab2 -->
+
+                                <!-- tab3 -->
+                                <div
+                                    class="tab-pane fade padding-10"
+                                    id="extra"
+                                >
+                                    <form class="form-horizontal" role="form">
+                                        <div class="form-group">
+                                            <label
+                                                for="direct-class-membership-role"
+                                                class="col-sm-3 control-label"
+                                                >Direct Class Membership
+                                                Role</label
+                                            >
+                                            <div
+                                                class="col-sm-9"
+                                                style="width: 70%"
+                                            >
+                                                <input
+                                                    id="direct-class-membership-role"
+                                                    type="text"
+                                                    class="form-control"
+                                                    value="{{directClassMembershipRole}}"
+                                                    autocomplete="off"
+                                                />
+                                            </div>
+                                            <div class="help-tip">
+                                                <p>
+                                                    Role for
+                                                    instance-to-classifier
+                                                    relation (leave blank to
+                                                    have 'a' notation in SPARQL
+                                                    queries, corresponding to
+                                                    rdf:type)
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label
+                                                for="indirect-class-membership-role"
+                                                class="col-sm-3 control-label"
+                                                >Indirect Class Membership
+                                                Role</label
+                                            >
+                                            <div
+                                                class="col-sm-9"
+                                                style="width: 70%"
+                                            >
+                                                <input
+                                                    id="indirect-class-membership-role"
+                                                    type="text"
+                                                    class="form-control"
+                                                    value="{{indirectClassMembershipRole}}"
+                                                    autocomplete="off"
+                                                />
+                                            </div>
+                                            <div class="help-tip">
+                                                <p>
+                                                    Role (or path) for indirect
+                                                    instance-to-classifier
+                                                    relation. To be used in
+                                                    SPARQL query generation, if
+                                                    indirect class membership is
+                                                    specified for a node.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="form-group"> -->
+                                        <!-- <div class="col-sm-10"> -->
+                                        <!-- <label class="form-check-label"> -->
+                                        <!-- <input class="form-check-input" id="simple-condition-implementation" type="checkbox" checked="{{project.simpleConditionImplementation}}"> -->
+                                        <!-- <span class="custom-checkbox"></span> -->
+                                        <!-- Simple condition implementation -->
+                                        <!-- </label> -->
+                                        <!-- <div class="help-tip"> -->
+                                        <!-- <p>Do not use 'Filter exists' to implement conditions that refer to instance properties. This simplifies the queries, although it might lead to result row duplication, if the used property is multi-valued.</p> -->
+                                        <!-- </div> -->
+                                        <!-- </div>	 -->
+                                        <!-- </div> -->
+
+                                        <div class="form-group">
+                                            <div class="col-sm-10">
+                                                <label class="form-check-label">
+                                                    <input
+                                                        class="form-check-input"
+                                                        id="show-prefixes-for-all-names"
+                                                        type="checkbox"
+                                                        checked="{{project.showPrefixesForAllNames}}"
+                                                    />
+                                                    <span
+                                                        class="custom-checkbox"
+                                                    ></span>
+                                                    Show local namespace
+                                                    prefixes
+                                                </label>
+                                                <div class="help-tip">
+                                                    <p>
+                                                        Show names from the
+                                                        local namespace (if one
+                                                        is specified) in full
+                                                        prefix:display_name
+                                                        form. Unchecking the
+                                                        checkbox shall show
+                                                        names from the local
+                                                        namespace simply as
+                                                        display_name, without
+                                                        the prefix. For query
+                                                        generation, each of the
+                                                        forms (with prefix or
+                                                        without prefix) are
+                                                        accepted regardless of
+                                                        the parameter value.
+                                                    </p>
                                                 </div>
                                             </div>
+                                        </div>
 
-    									    <div class="form-group">
-    										    <label for="ontology-endpoint" class="col-sm-3 control-label">SPARQL Endpoint</label>
-    										    <div class="col-sm-9">
-    											    <input id="ontology-endpoint" type="text" class="form-control" value="{{endpoint}}" autocomplete="off" >
-    										    </div>
-    									    </div>
-
-    										<div class="form-group">
-    											<label for="ontology-uri" class="col-sm-3 control-label">Named Graph</label>
-    											<div class="col-sm-9">
-    												<input id="ontology-uri" type="text" class="form-control" value="{{uri}}" autocomplete="off" >
-    											</div>
-    										</div>
-
-    										<div class="form-group">
-    											<label for="use-string-literal-conversion" class="col-sm-3 control-label">Use String Literal Conversion</label>
-    											<div class="col-sm-9">
-    												<select class="form-control" id="use-string-literal-conversion" >
-    												    {{#each useStringLiteralConversionList}}
-    														<option {{selected}} value="{{name}}">{{name}}</option>
-    													{{/each}}
-    												</select>
-    											</div>
-    										</div>
-
-    										<div class="form-group">
-    											<label for="query-engine-type" class="col-sm-3 control-label">Query Engine Type</label>
-    											<div class="col-sm-9">
-    												<select class="form-control" id="query-engine-type">
-    												  {{#each queryEngineTypeList}}
-    													 <option {{selected}} value="{{name}}">{{name}}</option>
-    												  {{/each}}
-    												</select>
-    											</div>
-    										</div>
-
-    										<div class="form-group">
-    											<div class="col-sm-5">
-    												<label class="form-check-label">
-    												 <input class="form-check-input" id="use-default-grouping-separator" type="checkbox" checked="{{project.useDefaultGroupingSeparator}}">
-    												 <span class="custom-checkbox"></span>
-    												 Use Default Grouping Separator
-    											  </label>
-    											</div>
-    											<div class="col-sm-5">
-    												<input id="default-grouping-separator" type="text" class="form-control" value="{{project.defaultGroupingSeparator}}" disabled="{{project.NOTuseDefaultGroupingSeparator}}" autocomplete="off" >
-    											</div>
-    										</div>
-
-    										<div class="form-group">
-    											<div class="col-sm-5">
-    												<label class="form-check-label">
-    												 <input class="form-check-input" id="show-cardinalities" type="checkbox" checked="{{project.showCardinalities}}">
-    												 <span class="custom-checkbox"></span>
-    												 Show Cardinalities
-    											  </label>
-    											</div>
-    										</div>
-
-
-
-                                        </form>
-                                    </div>
-                                    <!-- end of tab1 -->
-
-                                    <!-- tab2 -->
-                                    <div class="tab-pane fade padding-10" id="sec">
-    									<form class="form-horizontal" role="form">
-
-    									<div class="form-group">
-    										<label for="endpoint-username" class="col-sm-3 control-label">Username</label>
-    										<div class="col-sm-9">
-    											<input id="endpoint-username" type="text" class="form-control" value="{{project.endpointUsername}}" autocomplete="off" >
-    										</div>
-    									</div>
-    									<div class="form-group">
-    										<label for="endpoint-password" class="col-sm-3 control-label">Password</label>
-    										<div class="col-sm-9">
-    											<input id="endpoint-password" type="password" autocomplete= "new-password" class="form-control" value="{{project.endpointPassword}}">
-    										</div>
-    									</div>
-
-                                        </form>
-                                    </div>
-                                    <!-- end of tab2 -->
-
-    								<!-- tab3 -->
-                                    <div class="tab-pane fade padding-10" id="extra">
-    									<form class="form-horizontal" role="form">
-
-    										<div class="form-group">
-    											<label for="direct-class-membership-role" class="col-sm-3 control-label">Direct Class Membership Role</label>
-    											<div class="col-sm-9" style="width: 70%;">
-    												<input id="direct-class-membership-role" type="text" class="form-control" value="{{directClassMembershipRole}}" autocomplete="off" >
-    											</div>
-    											<div class="help-tip">
-    											  <p>Role for instance-to-classifier relation (leave blank to have 'a' notation in SPARQL queries, corresponding to rdf:type)</p>
-    											</div>
-    										</div>
-
-    										<div class="form-group">
-    											<label for="indirect-class-membership-role" class="col-sm-3 control-label">Indirect Class Membership Role</label>
-    											<div class="col-sm-9" style="width: 70%;">
-    												<input id="indirect-class-membership-role" type="text" class="form-control" value="{{indirectClassMembershipRole}}" autocomplete="off" >
-    											</div>
-    											<div class="help-tip">
-    											  <p>Role (or path) for indirect instance-to-classifier relation. To be used in SPARQL query generation, if indirect class membership is specified for a node.</p>
-    											</div>
-    										</div>
-
-    										<!-- <div class="form-group"> -->
-    											<!-- <div class="col-sm-10"> -->
-    												<!-- <label class="form-check-label"> -->
-    												 <!-- <input class="form-check-input" id="simple-condition-implementation" type="checkbox" checked="{{project.simpleConditionImplementation}}"> -->
-    												 <!-- <span class="custom-checkbox"></span> -->
-    												 <!-- Simple condition implementation -->
-    											  <!-- </label> -->
-    											  <!-- <div class="help-tip"> -->
-    												<!-- <p>Do not use 'Filter exists' to implement conditions that refer to instance properties. This simplifies the queries, although it might lead to result row duplication, if the used property is multi-valued.</p> -->
-    											  <!-- </div> -->
-    											<!-- </div>	 -->
-    										<!-- </div> -->
-
-    										<div class="form-group">
-    											<div class="col-sm-10">
-    												<label class="form-check-label">
-    												 <input class="form-check-input" id="show-prefixes-for-all-names" type="checkbox" checked="{{project.showPrefixesForAllNames}}">
-    												 <span class="custom-checkbox"></span>
-    												 Show local namespace prefixes
-    											  </label>
-    											  <div class="help-tip">
-    												<p>Show names from the local namespace (if one is specified) in full prefix:display_name form. Unchecking the checkbox
-    												shall show names from the local namespace simply as display_name, without the prefix.
-    												For query generation, each of the forms (with prefix or without prefix) are accepted regardless of the parameter value.</p>
-    											  </div>
-    											</div>
-    										</div>
-
-    										<!--
+                                        <!--
     										<div class="form-group">
     											<div class="col-sm-10">
     												<label class="form-check-label">
@@ -709,333 +1110,510 @@
     										</div>
     										-->
 
-    										<!-- <div class="form-group"> -->
-    											<!-- <div class="col-sm-10"> -->
-    												<!-- <label class="form-check-label"> -->
-    												 <!-- <input class="form-check-input" id="auto-hide-default-property-name" type="checkbox" checked="{{autoHideDefaultPropertyName}}"> -->
-    												 <!-- <span class="custom-checkbox"></span> -->
-    												 <!-- Auto-hide default property name -->
-    											  <!-- </label> -->
-    											<!-- </div> -->
-    										<!-- </div> -->
+                                        <!-- <div class="form-group"> -->
+                                        <!-- <div class="col-sm-10"> -->
+                                        <!-- <label class="form-check-label"> -->
+                                        <!-- <input class="form-check-input" id="auto-hide-default-property-name" type="checkbox" checked="{{autoHideDefaultPropertyName}}"> -->
+                                        <!-- <span class="custom-checkbox"></span> -->
+                                        <!-- Auto-hide default property name -->
+                                        <!-- </label> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
 
-    										<!-- <div class="form-group"> -->
-    											<!-- <div class="col-sm-10"> -->
-    												<!-- <label class="form-check-label"> -->
-    												 <!-- <input class="form-check-input" id="complete-RDF-boxes-in-datetime-functions" type="checkbox" checked="{{completeRDFBoxesInDatetimeFunctions}}"> -->
-    												 <!-- <span class="custom-checkbox"></span> -->
-    												 <!-- Complete RDF boxes in datetime functions -->
-    											  <!-- </label> -->
-    											<!-- </div> -->
-    										<!-- </div> -->
+                                        <!-- <div class="form-group"> -->
+                                        <!-- <div class="col-sm-10"> -->
+                                        <!-- <label class="form-check-label"> -->
+                                        <!-- <input class="form-check-input" id="complete-RDF-boxes-in-datetime-functions" type="checkbox" checked="{{completeRDFBoxesInDatetimeFunctions}}"> -->
+                                        <!-- <span class="custom-checkbox"></span> -->
+                                        <!-- Complete RDF boxes in datetime functions -->
+                                        <!-- </label> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
 
-    										<!-- <div class="form-group"> -->
-    											<!-- <div class="col-sm-10"> -->
-    												<!-- <label class="form-check-label"> -->
-    												 <!-- <input class="form-check-input" id="show-graph-service-compartments" type="checkbox" checked="{{project.showGraphServiceCompartments}}"> -->
-    												 <!-- <span class="custom-checkbox"></span> -->
-    												 <!-- Show Graph/Service compartments -->
-    											  <!-- </label> -->
-    											  <!-- <div class="help-tip"> -->
-    												<!-- <p>Show Graph/Service compartments to allow specifying named graph and federated service information in query parts.  -->
-    												<!-- Uncheck, if the graph/service information is not not needed, to have a cleaner interface</p> -->
-    											  <!-- </div> -->
-    											<!-- </div> -->
-    										<!-- </div> -->
+                                        <!-- <div class="form-group"> -->
+                                        <!-- <div class="col-sm-10"> -->
+                                        <!-- <label class="form-check-label"> -->
+                                        <!-- <input class="form-check-input" id="show-graph-service-compartments" type="checkbox" checked="{{project.showGraphServiceCompartments}}"> -->
+                                        <!-- <span class="custom-checkbox"></span> -->
+                                        <!-- Show Graph/Service compartments -->
+                                        <!-- </label> -->
+                                        <!-- <div class="help-tip"> -->
+                                        <!-- <p>Show Graph/Service compartments to allow specifying named graph and federated service information in query parts.  -->
+                                        <!-- Uncheck, if the graph/service information is not not needed, to have a cleaner interface</p> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
 
+                                        <div class="form-group">
+                                            <div class="col-sm-10">
+                                                <label class="form-check-label">
+                                                    <input
+                                                        class="form-check-input"
+                                                        id="enable-wikibase-label-services"
+                                                        type="checkbox"
+                                                        checked="{{project.enableWikibaseLabelServices}}"
+                                                    />
+                                                    <span
+                                                        class="custom-checkbox"
+                                                    ></span>
+                                                    Enable Wikibase Label
+                                                    Services
+                                                </label>
+                                                <div class="help-tip">
+                                                    <p>
+                                                        Enable Wikibase Label
+                                                        Services (special
+                                                        compartments for
+                                                        selecting labels and
+                                                        descriptions along with
+                                                        attributes in wikidata
+                                                        queries)
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
 
-    										<div class="form-group">
-    											<div class="col-sm-10">
-    												<label class="form-check-label">
-    												 <input class="form-check-input" id="enable-wikibase-label-services" type="checkbox" checked="{{project.enableWikibaseLabelServices}}">
-    												 <span class="custom-checkbox"></span>
-    												 Enable Wikibase Label Services
-    											  </label>
-    											  <div class="help-tip">
-    												<p>Enable Wikibase Label Services (special compartments for selecting labels and descriptions along with attributes in wikidata queries)</p>
-    											  </div>
-    											</div>
-    										</div>
+                                        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+                                        <!-- <div class="form-group" > -->
+                                        <!-- <div class="col-sm-10" style="width: 100%;"> -->
+                                        <!-- <table style="width: 100%;" class="table table-bordered table-condensed table-hover table-striped"> -->
+                                        <!-- <thead> -->
+                                        <!-- <tr> -->
+                                        <!-- <th>Graph/Service shorthand</th> -->
+                                        <!-- <th>Expansion (e.g., URI)</th> -->
+                                        <!-- <th></th> -->
+                                        <!-- </tr> -->
+                                        <!-- </thead> -->
+                                        <!-- <tbody class="table-body"> -->
+                                        <!-- {{#each graphs}} -->
+                                        <!-- <tr index="{{index}}"> -->
+                                        <!-- <td><div class="table-item" attribute="item" contentEditable="true">{{Instruction}}</div></td> -->
+                                        <!-- <td><div class="table-item" attribute="procedure" contentEditable="true">{{Graph}}</div></td>			 -->
+                                        <!-- <td> -->
+                                        <!-- <center> -->
+                                        <!-- <a class="btn btn-xs btn-danger remove-graph-menu-item"><i class="fa fa-trash-o"></i></a> -->
+                                        <!-- </center> -->
+                                        <!-- </td> -->
+                                        <!-- </tr> -->
+                                        <!-- {{/each}} -->
+                                        <!-- </tbody> -->
+                                        <!-- </table> -->
+                                        <!-- <a class="btn btn-success pull-right" id="add-graph-menu-item"><i class="fa fa-plus"></i> Add</a> -->
+                                        <!-- <div class="help-tip"> -->
+                                        <!-- <p>Specify shorthands for introducing graph/service information in queries. Can use then a shorthand in the place of its expansion.</p> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
 
-    										<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-    										<!-- <div class="form-group" > -->
-    											<!-- <div class="col-sm-10" style="width: 100%;"> -->
-    												<!-- <table style="width: 100%;" class="table table-bordered table-condensed table-hover table-striped"> -->
-    													<!-- <thead> -->
-    														<!-- <tr> -->
-    															<!-- <th>Graph/Service shorthand</th> -->
-    															<!-- <th>Expansion (e.g., URI)</th> -->
-    															<!-- <th></th> -->
-    														<!-- </tr> -->
-    													<!-- </thead> -->
-    													<!-- <tbody class="table-body"> -->
-    														<!-- {{#each graphs}} -->
-    															<!-- <tr index="{{index}}"> -->
-    																<!-- <td><div class="table-item" attribute="item" contentEditable="true">{{Instruction}}</div></td> -->
-    																<!-- <td><div class="table-item" attribute="procedure" contentEditable="true">{{Graph}}</div></td>			 -->
-    																<!-- <td> -->
-    																	<!-- <center> -->
-    																			<!-- <a class="btn btn-xs btn-danger remove-graph-menu-item"><i class="fa fa-trash-o"></i></a> -->
-    																	<!-- </center> -->
-    																<!-- </td> -->
-    															<!-- </tr> -->
-    														<!-- {{/each}} -->
-    													<!-- </tbody> -->
-    												<!-- </table> -->
-    												<!-- <a class="btn btn-success pull-right" id="add-graph-menu-item"><i class="fa fa-plus"></i> Add</a> -->
-    												<!-- <div class="help-tip"> -->
-    													<!-- <p>Specify shorthands for introducing graph/service information in queries. Can use then a shorthand in the place of its expansion.</p> -->
-    											    <!-- </div> -->
-    											<!-- </div> -->
-    										<!-- </div> -->
+                                        <!-- <div class="form-group"> -->
+                                        <!-- <div class="col-sm-10"> -->
+                                        <!-- <label class="form-check-label"> -->
+                                        <!-- <input class="form-check-input" id="allow-top-down-names-in-BINDs" type="text" checked="{{project.allowTopDownNamesInBINDs}}"> -->
+                                        <!-- <span class="custom-checkbox"></span> -->
+                                        <!-- Allow top-down names in BINDs -->
+                                        <!-- </label> -->
+                                        <!-- <div class="help-tip"> -->
+                                        <!-- <p>Allow top-down names in BINDs</p> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
 
-											<!-- <div class="form-group"> -->
-    											<!-- <div class="col-sm-10"> -->
-    												<!-- <label class="form-check-label"> -->
-    												 <!-- <input class="form-check-input" id="allow-top-down-names-in-BINDs" type="text" checked="{{project.allowTopDownNamesInBINDs}}"> -->
-    												 <!-- <span class="custom-checkbox"></span> -->
-    												 <!-- Allow top-down names in BINDs -->
-    											  <!-- </label> -->
-    											  <!-- <div class="help-tip"> -->
-    												<!-- <p>Allow top-down names in BINDs</p> -->
-    											  <!-- </div> -->
-    											<!-- </div> -->
-    										<!-- </div> -->
+                                        <div class="form-group">
+                                            <label
+                                                for="indirect-class-membership-role"
+                                                class="col-sm-3 control-label"
+                                                >Schema Diagram Data
+                                                Language</label
+                                            >
+                                            <div
+                                                class="col-sm-9"
+                                                style="width: 70%"
+                                            >
+                                                <input
+                                                    id="schema-diagram-data-language"
+                                                    type="text"
+                                                    list="LanguageList"
+                                                    class="form-control"
+                                                    value="{{project.schemaDiagramDataLanguage}}"
+                                                    autocomplete="off"
+                                                />
+                                                <datalist
+                                                    id="LanguageList"
+                                                    class="datalist"
+                                                >
+                                                    <option
+                                                        mappedValue="en"
+                                                        input="en"
+                                                    >
+                                                        en
+                                                    </option>
+                                                    <option
+                                                        mappedValue="fr"
+                                                        input="fr"
+                                                    >
+                                                        fr
+                                                    </option>
+                                                    <option
+                                                        mappedValue="de"
+                                                        input="de"
+                                                    >
+                                                        de
+                                                    </option>
+                                                    <option
+                                                        mappedValue="es"
+                                                        input="es"
+                                                    >
+                                                        es
+                                                    </option>
+                                                    <option
+                                                        mappedValue="it"
+                                                        input="it"
+                                                    >
+                                                        it
+                                                    </option>
+                                                    <option
+                                                        mappedValue="ru"
+                                                        input="ru"
+                                                    >
+                                                        ru
+                                                    </option>
+                                                    <option
+                                                        mappedValue="zh"
+                                                        input="zh"
+                                                    >
+                                                        zh
+                                                    </option>
+                                                    <option
+                                                        mappedValue="ja"
+                                                        input="ja"
+                                                    >
+                                                        ja
+                                                    </option>
+                                                    <option
+                                                        mappedValue="pt"
+                                                        input="pt"
+                                                    >
+                                                        pt
+                                                    </option>
+                                                    <option
+                                                        mappedValue="nl"
+                                                        input="nl"
+                                                    >
+                                                        nl
+                                                    </option>
+                                                    <option
+                                                        mappedValue="sv"
+                                                        input="sv"
+                                                    >
+                                                        sv
+                                                    </option>
+                                                    <option
+                                                        mappedValue="pl"
+                                                        input="pl"
+                                                    >
+                                                        pl
+                                                    </option>
+                                                    <option
+                                                        mappedValue="fi"
+                                                        input="fi"
+                                                    >
+                                                        fi
+                                                    </option>
+                                                    <option
+                                                        mappedValue="cs"
+                                                        input="cs"
+                                                    >
+                                                        cs
+                                                    </option>
+                                                    <option
+                                                        mappedValue="hu"
+                                                        input="hu"
+                                                    >
+                                                        hu
+                                                    </option>
+                                                    <option
+                                                        mappedValue="lt"
+                                                        input="lt"
+                                                    >
+                                                        lt
+                                                    </option>
+                                                    <option
+                                                        mappedValue="lv"
+                                                        input="lv"
+                                                    >
+                                                        lv
+                                                    </option>
+                                                    <option
+                                                        mappedValue="et"
+                                                        input="et"
+                                                    >
+                                                        et
+                                                    </option>
+                                                </datalist>
+                                            </div>
+                                            <div class="help-tip">
+                                                <p>
+                                                    Schema Diagram Data Language
+                                                </p>
+                                            </div>
+                                        </div>
 
-											<div class="form-group">
-    											<label for="indirect-class-membership-role" class="col-sm-3 control-label">Schema Diagram Data Language</label>
-    											<div class="col-sm-9" style="width: 70%;">
-    												<input id="schema-diagram-data-language" type="text" list="LanguageList" class="form-control" value="{{project.schemaDiagramDataLanguage}}" autocomplete="off" >
-													<datalist id="LanguageList" class="datalist">
-														<option mappedValue="en" input="en">en</option>
-														<option mappedValue="fr" input="fr">fr</option>
-														<option mappedValue="de" input="de">de</option>
-														<option mappedValue="es" input="es">es</option>
-														<option mappedValue="it" input="it">it</option>
-														<option mappedValue="ru" input="ru">ru</option>
-														<option mappedValue="zh" input="zh">zh</option>
-														<option mappedValue="ja" input="ja">ja</option>
-														<option mappedValue="pt" input="pt">pt</option>
-														<option mappedValue="nl" input="nl">nl</option>
-														<option mappedValue="sv" input="sv">sv</option>
-														<option mappedValue="pl" input="pl">pl</option>
-														<option mappedValue="fi" input="fi">fi</option>
-														<option mappedValue="cs" input="cs">cs</option>
-														<option mappedValue="hu" input="hu">hu</option>
-														<option mappedValue="lt" input="lt">lt</option>
-														<option mappedValue="lv" input="lv">lv</option>
-														<option mappedValue="et" input="et">et</option>
-													</datalist>
-												</div>
-    											<div class="help-tip">
-    											  <p>Schema Diagram Data Language</p>
-    											</div>
-    										</div>
+                                        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
-    										<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+                                        <!-- <div class="form-group"> -->
+                                        <!-- <div class="col-sm-10" style="width: 62%;"> -->
+                                        <!-- <label class="form-check-label"> -->
+                                        <!-- <input class="form-check-input" id="decorate-instance-position-variable" type="checkbox" checked="{{project.decorateInstancePositionVariable}}"> -->
+                                        <!-- <span class="custom-checkbox"></span> -->
+                                        <!-- Decorate instance position variable names with '?' -->
+                                        <!-- </label> -->
+                                        <!-- </div> -->
+                                        <!-- <div class="help-tip"> -->
+                                        <!-- <p>Use '?' notation to emphasize that non-constant names in instance positions are variables.  -->
+                                        <!-- Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics  -->
+                                        <!-- (shall not be used with constants). </p> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
 
-    										<!-- <div class="form-group"> -->
-    											<!-- <div class="col-sm-10" style="width: 62%;"> -->
-    												<!-- <label class="form-check-label"> -->
-    												 <!-- <input class="form-check-input" id="decorate-instance-position-variable" type="checkbox" checked="{{project.decorateInstancePositionVariable}}"> -->
-    												 <!-- <span class="custom-checkbox"></span> -->
-    												 <!-- Decorate instance position variable names with '?' -->
-    											  <!-- </label> -->
-    											<!-- </div> -->
-    											<!-- <div class="help-tip"> -->
-    												<!-- <p>Use '?' notation to emphasize that non-constant names in instance positions are variables.  -->
-    												<!-- Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics  -->
-    												<!-- (shall not be used with constants). </p> -->
-    											  <!-- </div> -->
-    										<!-- </div> -->
-
-    										<!-- <div class="form-group"> -->
-    											<!-- <div class="col-sm-10" style="width: 58%;"> -->
-    												<!-- <label class="form-check-label"> -->
-    												 <!-- <input class="form-check-input" id="decorate-instance-position-constants" type="checkbox" checked="{{project.decorateInstancePositionConstants}}"> -->
-    												 <!-- <span class="custom-checkbox"></span> -->
-    												 <!-- Decorate instance position constants with '=' -->
-    											  <!-- </label> -->
-    											<!-- </div> -->
-    											<!-- <div class="help-tip"> -->
-    												<!-- <p>Use '=' notation to emphasize that the expression in the instance description is a constant. -->
-    												<!-- Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics -->
-    												<!-- (shall not be used with variables).</p> -->
-    											  <!-- </div> -->
-    										<!-- </div> -->
-
-
-                                        </form>
-                                    </div>
-                                    <!-- end of tab3 -->
-
-    								 <!-- tab4 -->
-                                    <div class="tab-pane fade padding-10" id="visualization">
-    									<form class="form-horizontal" role="form">
-
-    										<div class="form-group">
-    											<div class="col-sm-10">
-    												<label class="form-check-label">
-    												 <input class="form-check-input" id="keep-variable-names" type="checkbox" checked="{{project.keepVariableNames}}">
-    												 <span class="custom-checkbox"></span>
-    												 Keep Variable Names
-    											  </label>
-    											  <div class="help-tip">
-    												<p>Keep Variable Names</p>
-    											  </div>
-    											</div>
-    										</div>
-
-                                        </form>
-                                    </div>
-                                    <!-- end of tab4 -->
-
+                                        <!-- <div class="form-group"> -->
+                                        <!-- <div class="col-sm-10" style="width: 58%;"> -->
+                                        <!-- <label class="form-check-label"> -->
+                                        <!-- <input class="form-check-input" id="decorate-instance-position-constants" type="checkbox" checked="{{project.decorateInstancePositionConstants}}"> -->
+                                        <!-- <span class="custom-checkbox"></span> -->
+                                        <!-- Decorate instance position constants with '=' -->
+                                        <!-- </label> -->
+                                        <!-- </div> -->
+                                        <!-- <div class="help-tip"> -->
+                                        <!-- <p>Use '=' notation to emphasize that the expression in the instance description is a constant. -->
+                                        <!-- Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics -->
+                                        <!-- (shall not be used with variables).</p> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
+                                    </form>
                                 </div>
+                                <!-- end of tab3 -->
+
+                                <!-- tab4 -->
+                                <div
+                                    class="tab-pane fade padding-10"
+                                    id="visualization"
+                                >
+                                    <form class="form-horizontal" role="form">
+                                        <div class="form-group">
+                                            <div class="col-sm-10">
+                                                <label class="form-check-label">
+                                                    <input
+                                                        class="form-check-input"
+                                                        id="keep-variable-names"
+                                                        type="checkbox"
+                                                        checked="{{project.keepVariableNames}}"
+                                                    />
+                                                    <span
+                                                        class="custom-checkbox"
+                                                    ></span>
+                                                    Keep Variable Names
+                                                </label>
+                                                <div class="help-tip">
+                                                    <p>Keep Variable Names</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- end of tab4 -->
                             </div>
                         </div>
-
-
                     </div>
+                </div>
 
-                    <div class="modal-footer">
+                <div class="modal-footer">
+                    <button
+                        id="test-endpoint"
+                        type="button"
+                        class="btn btn-danger"
+                    >
+                        Test endpoint
+                    </button>
+                    <button
+                        id="cancel-ontology-settings"
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        {{_ "cancel"}}
+                    </button>
+                    <button
+                        id="ok-ontology-settings"
+                        type="button"
+                        data-dismiss="modal"
+                        class="btn btn-primary"
+                    >
+                        {{_ "ok"}}
+                    </button>
 
-                        <button id="test-endpoint" type="button" class="btn btn-danger">Test endpoint</button>
-                        <button id="cancel-ontology-settings" type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
-                        <button id="ok-ontology-settings" type="button" data-dismiss="modal" class="btn btn-primary">{{_ "ok"}}</button>
-
-                        {{#if msg.text}}
-                            <ul class="parsley-error-list" style="display: block;">
-                                <li style="display: list-item;">{{msg.text}}</li>
-                            </ul>
-                        {{/if}}
-
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-        <!-- End of modal -->
-
-
-
+                    {{#if msg.text}}
+                    <ul class="parsley-error-list" style="display: block">
+                        <li style="display: list-item">{{msg.text}}</li>
+                    </ul>
+                    {{/if}}
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
 </template>
 
 <template name="OWLGRED_ontologySettings">
-<style>
-    .help-tip{
-        position: relative;
-        display:inline;
-        padding-right: 5px;
-        padding-left: 5px;
-        text-align: center;
-        background-color: #8A2BE2;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        font-size: 12px;
-        cursor: help;
-    }
+    <style>
+        .help-tip {
+            position: relative;
+            display: inline;
+            padding-right: 5px;
+            padding-left: 5px;
+            text-align: center;
+            background-color: #8a2be2;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: help;
+        }
 
-    .help-tip:before{
-        content:'?';
-        font-weight: bold;
-        color:#fff;
-    }
+        .help-tip:before {
+            content: "?";
+            font-weight: bold;
+            color: #fff;
+        }
 
-    .help-tip:hover p{
-        display: block;
-    }
+        .help-tip:hover p {
+            display: block;
+        }
 
-    .help-tip p{
-        display: none;
-        text-align: left;
-        font-size: 12px;
-        line-height: 16px;
-        color: white;
-        border: 1px solid #7F7F7F;
-        background-color: slategrey;
-        border-radius: 5px;
-        padding: 10px;
-        width: 200px;
-        position: absolute;
-        right: 105%;
-        z-index: 1000;
-    }
+        .help-tip p {
+            display: none;
+            text-align: left;
+            font-size: 12px;
+            line-height: 16px;
+            color: white;
+            border: 1px solid #7f7f7f;
+            background-color: slategrey;
+            border-radius: 5px;
+            padding: 10px;
+            width: 200px;
+            position: absolute;
+            right: 105%;
+            z-index: 1000;
+        }
+    </style>
 
-</style>
-
-        <!-- Modal for new document -->
-        <div id="OWLGRED-ontology-settings-form" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">Project Settings</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="panel panel-default">
-                            <div class="panel-tab clearfix">
-                                <ul class="tab-bar">
-                                    <li class="active" id="OWLGRED-project-settings"><a href="#main" data-toggle="tab">Main</a></li>
-                                </ul>
-                            </div>
-
-                            <div class="panel-body">
-                                <div class="tab-content user-tab-content">
-
-                                    <!-- tab1 -->
-                                    <div class="tab-pane fade in active" id="main">
-    									<form class="form-horizontal" role="form">
-
-                                        </form>
-                                    </div>
-                                    <!-- end of tab1 -->
-                                </div>
-                            </div>
+    <!-- Modal for new document -->
+    <div id="OWLGRED-ontology-settings-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
+                    <h4 class="modal-title">Project Settings</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-default">
+                        <div class="panel-tab clearfix">
+                            <ul class="tab-bar">
+                                <li
+                                    class="active"
+                                    id="OWLGRED-project-settings"
+                                >
+                                    <a href="#main" data-toggle="tab">Main</a>
+                                </li>
+                            </ul>
                         </div>
 
-
+                        <div class="panel-body">
+                            <div class="tab-content user-tab-content">
+                                <!-- tab1 -->
+                                <div class="tab-pane fade in active" id="main">
+                                    <form
+                                        class="form-horizontal"
+                                        role="form"
+                                    ></form>
+                                </div>
+                                <!-- end of tab1 -->
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="modal-footer">
+                <div class="modal-footer">
+                    <button
+                        id="OWLGRED-cancel-ontology-settings"
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        {{_ "cancel"}}
+                    </button>
+                    <button
+                        id="OWLGRED-ok-ontology-settings"
+                        type="button"
+                        data-dismiss="modal"
+                        class="btn btn-primary"
+                    >
+                        {{_ "ok"}}
+                    </button>
 
-                        <button id="OWLGRED-cancel-ontology-settings" type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
-                        <button id="OWLGRED-ok-ontology-settings" type="button" data-dismiss="modal" class="btn btn-primary">{{_ "ok"}}</button>
-
-                        {{#if msg.text}}
-                            <ul class="parsley-error-list" style="display: block;">
-                                <li style="display: list-item;">{{msg.text}}</li>
-                            </ul>
-                        {{/if}}
-
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-        <!-- End of modal -->
-
-
-
+                    {{#if msg.text}}
+                    <ul class="parsley-error-list" style="display: block">
+                        <li style="display: list-item">{{msg.text}}</li>
+                    </ul>
+                    {{/if}}
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
 </template>
 
-
 <template name="migrateForm">
-
     <div id="migrate-form" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
                     <h4 class="modal-title">Migrate</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
-
                         <div class="form-group">
-                            <label for="diagramType" class="control-label col-sm-2">Migrate To</label>
+                            <label
+                                for="diagramType"
+                                class="control-label col-sm-2"
+                                >Migrate To</label
+                            >
                             <div class="col-sm-10">
                                 <select class="form-control" id="migrate-tools">
                                     {{#each tools}}
-                                        <option id="{{_id}}" value={{name}}>{{name}}</option>
+                                    <option id="{{_id}}" value="{{name}}">
+                                        {{name}}
+                                    </option>
                                     {{/each}}
                                 </select>
                             </div>
@@ -1043,11 +1621,26 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
-                    <button id="migrate-to" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        {{_ "cancel"}}
+                    </button>
+                    <button
+                        id="migrate-to"
+                        type="button"
+                        class="btn btn-primary"
+                    >
+                        {{_ "ok"}}
+                    </button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-<!-- End of modal -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
 </template>

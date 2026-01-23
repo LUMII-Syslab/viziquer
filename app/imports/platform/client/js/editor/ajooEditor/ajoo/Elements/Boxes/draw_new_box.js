@@ -1,130 +1,127 @@
-import Event from '../../Editor/events.js'
-import ElementHandlers from '../element_handlers.js'
+import Event from "../../Editor/events.js";
+import ElementHandlers from "../element_handlers.js";
 
-var ANewBox = function(editor) {
+var ANewBox = function (editor) {
+  var newBox = this;
+  newBox.editor = editor;
 
-	var newBox = this;
-	newBox.editor = editor;
-
-	newBox.state = {};
-}
+  newBox.state = {};
+};
 
 ANewBox.prototype = {
+  startDragging: function (palette_button) {
+    var newBox = this;
+    var editor = newBox.editor;
 
-	startDragging: function(palette_button) {
+    var mouse_state = editor.getMouseState();
+    var mouse_x = mouse_state.mouseX;
+    var mouse_y = mouse_state.mouseY;
 
-		var newBox = this;
-		var editor = newBox.editor;
+    editor.unSelectElements(undefined, true);
 
-		var mouse_state = editor.getMouseState();
-		var mouse_x = mouse_state["mouseX"]
-		var mouse_y = mouse_state["mouseY"]
+    var drawing_layer = editor.getLayer("DrawingLayer");
 
-		editor.unSelectElements(undefined, true);
+    var elem_type_id = palette_button.data.elementTypeId;
 
-		var drawing_layer = editor.getLayer("DrawingLayer");
+    var elem = {
+      style: palette_button.style,
+      location: {
+        x: mouse_x,
+        y: mouse_y,
+        width: 2,
+        height: 2,
+        radius: 1,
+      },
+      compartments: [],
+      elementTypeId: elem_type_id,
+      type: "Box",
+      _id: $.now(),
+    };
 
-		var elem_type_id = palette_button["data"]["elementTypeId"];
+    new Event(editor, "newElementStarted", {
+      paletteButton: palette_button,
+      element: elem,
+    });
 
-		var elem = {style: palette_button.style,
-					location: {
-						x: mouse_x,
-						y: mouse_y,
-						width: 2,
-						height: 2,
-						radius: 1,
-					},
-					compartments: [],
-					elementTypeId: elem_type_id,
-					type: "Box",
-					_id: $.now(),
-				};
+    //creating a new box object
+    var shape_name = palette_button.style.elementStyle.shape;
+    var new_box = editor.elements.createShape(shape_name);
+    new_box.render(drawing_layer, elem);
 
+    new_box.presentation.opacity(0.6);
 
-		new Event(editor, "newElementStarted", {paletteButton: palette_button, element: elem});
+    drawing_layer.draw();
+    drawing_layer.moveToTop();
 
-		//creating a new box object
-		var shape_name = palette_button["style"]["elementStyle"]["shape"];
-		var new_box = editor.elements.createShape(shape_name);
-		new_box.render(drawing_layer, elem);
+    //saves new box action state
+    newBox.state = { object: new_box, drawingLayer: drawing_layer };
+  },
 
-		new_box.presentation.opacity(0.6);
+  dragging: function () {
+    var newBox = this;
+    var editor = newBox.editor;
 
-		drawing_layer.draw();
-		drawing_layer.moveToTop();
+    //changing the cursor style
+    editor.setCursorStyle("crosshair");
 
-		//saves new box action state
-		newBox["state"] = {object: new_box,
-							drawingLayer: drawing_layer,
-						};
-	},
+    //selects mouse state and its position
+    var mouse_state = editor.getMouseState();
+    var mouse_x = mouse_state.mouseX;
+    var mouse_y = mouse_state.mouseY;
 
-	dragging: function() {
-		var newBox = this;
-		var editor = newBox.editor;
+    var zoom = editor.getZoom();
+    var zoom_x = zoom.x;
+    var zoom_y = zoom.y;
 
-		//changing the cursor style
-		editor.setCursorStyle('crosshair');
+    //computes delta on mouse move
+    var new_width = mouse_x - mouse_state.mouseStartX;
+    var new_height = mouse_y - mouse_state.mouseStartY;
 
-		//selects mouse state and its position
-		var mouse_state = editor.getMouseState();
-		var mouse_x = mouse_state["mouseX"];
-		var mouse_y = mouse_state["mouseY"];
+    //selects the new box object and applies the new size
+    var new_box = newBox.state.object;
 
-		var zoom = editor.getZoom();
-		var zoom_x = zoom["x"];
-		var zoom_y = zoom["y"];
+    var size = new_box.updateSize(new_width, new_height);
+    new_box.compartments.recomputeCompartmentsPosition();
 
-		//computes delta on mouse move
-		var new_width = (mouse_x - mouse_state["mouseStartX"]);
-		var new_height = (mouse_y - mouse_state["mouseStartY"]);
+    var drawing_layer = newBox.state.drawingLayer;
+    drawing_layer.batchDraw();
+  },
 
-		//selects the new box object and applies the new size
-		var new_box = newBox["state"]["object"];
+  finishDragging: function () {
+    var newBox = this;
+    var editor = newBox.editor;
 
-		var size = new_box.updateSize(new_width, new_height);
-		new_box.compartments.recomputeCompartmentsPosition();
+    var new_box = newBox.state.object;
+    new_box._id = $.now();
+    var new_id = new_box._id;
+    new_box.presentation.objId = new_id;
 
-		var drawing_layer = newBox["state"]["drawingLayer"];
-		drawing_layer.batchDraw();
-	},
+    // var element_list = editor.getElements();
+    // element_list[new_id] = new_box;
 
-	finishDragging: function() {
-		var newBox = this;
-		var editor = newBox.editor;
+    new_box.handlers = new ElementHandlers(new_box);
 
-		var new_box = newBox["state"]["object"];
-		new_box._id = $.now();
-		var new_id = new_box._id;
-		new_box.presentation.objId = new_id;
+    //creates a new box in database
+    var new_box_event = new Event(editor, "newBoxCreated", new_box);
 
-		// var element_list = editor.getElements();
-		// element_list[new_id] = new_box;
+    if (!new_box_event.result) {
+      // new_box.presentation.opacity(1);
+      new_box.presentation.destroy();
 
-		new_box.handlers = new ElementHandlers(new_box);
+      // editor.selectElements([new_box]);
 
-		//creates a new box in database
-		var new_box_event = new Event(editor, "newBoxCreated", new_box);
+      var drawing_layer = newBox.state.drawingLayer;
 
-		if (!new_box_event.result) {
+      // console.log("drawing_layer ", drawing_layer)
 
-			// new_box.presentation.opacity(1);
-			new_box.presentation.destroy();
+      drawing_layer.draw();
+    }
 
-			// editor.selectElements([new_box]);
+    var palette_button = editor.palette.getPressedButton();
+    palette_button.unPressPaletteButton();
 
-			var drawing_layer = newBox["state"]["drawingLayer"];
+    newBox.state = {};
+  },
+};
 
-			// console.log("drawing_layer ", drawing_layer)
-
-			drawing_layer.draw();
-		}
-
-		var palette_button = editor.palette.getPressedButton();
-		palette_button.unPressPaletteButton();
-
-		newBox.state = {};
-	},
-}
-
-export default ANewBox
+export default ANewBox;
