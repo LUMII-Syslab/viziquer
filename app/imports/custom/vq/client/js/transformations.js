@@ -64,7 +64,7 @@ Interpreter.customMethods({
 			// if(!classObj.isRoot()){
 				// var classUp = classObj.getLinkToRoot();
 				// var vq_link_obj = new VQ_Element(classUp.link.obj._id);
-				// if(vq_link_obj.isLink() && vq_link_obj.getNestingType() != "GLOBAL_SUBQUERY" && vq_link_obj.getNestingType() != "SUBQUERY" && vq_link_obj.getNestingType() != "CONDITION"){
+				// if(vq_link_obj.isLink() && vq_link_obj.getNestingType() !== "GLOBAL_SUBQUERY" && vq_link_obj.getNestingType() !== "SUBQUERY" && vq_link_obj.getNestingType() !== "CONDITION"){
 					// vq_link_obj.setNestingType("SUBQUERY");
 				// }
 			// }
@@ -80,7 +80,7 @@ Interpreter.customMethods({
 		let elem = await createVQ_Element(Session.get("activeElement"));
 		let group_by_value = elem.getCompartmentValue("Group by this");
 
-		if (input != "" && input != null) {
+		if (input !== "" && input !== null) {
 			let proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
 			if (proj) {
 				let comp_val_inst = value;
@@ -137,7 +137,7 @@ Interpreter.customMethods({
 
 		// if (instance_input == "") {
 			// value = "";
-			// if (input != "true") {
+			// if (input !== "true") {
 				// value = "";
 			// }
 		// }
@@ -170,7 +170,7 @@ Interpreter.customMethods({
 
 	// 	 // let compartments = Compartments.find({elementId: act_elem}).fetch()
 
-	// 	 if(comp_val_inst != null && comp_val_inst != ""){
+	// 	 if(comp_val_inst !== null && comp_val_inst !== ""){
 	// 		 var proj = Projects.findOne({_id: Session.get("activeProject")});
 	// 		 if (proj) {
 	// 			Interpreter.destroyErrorMsg();
@@ -216,7 +216,7 @@ Interpreter.customMethods({
 	// 	   if (typeof comp_val_inst === "undefined") {
 	// 	     elem.setCompartmentValue("Instance", "", "", false);
 	// 	   }
-	// 	   else if ( comp_val_inst != null && comp_val_group == "false") {
+	// 	   else if ( comp_val_inst !== null && comp_val_group == "false") {
 	// 	     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
 	// 	   }
 	// 	 }
@@ -308,7 +308,7 @@ Interpreter.customMethods({
  		}
 
  		var elem_type = ElementTypes.findOne({name: "Class"});
- 		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+ 		if (elem_type && act_comp["elementTypeId"] !== elem_type._id) {
  			return [];
  		}*/
 
@@ -518,7 +518,7 @@ Interpreter.customMethods({
 		} else if (!(await startLink.isRoot()) && !(await endLink.isRoot()) &&
 			 !(await startLink.getLinkToRoot() === undefined) && !(await endLink.getLinkToRoot() === undefined)) {
 			//If both condition classes are connected to different query classes
-			if (startRootId != endRootId){
+			if (startRootId !== endRootId){
 				Interpreter.showErrorMsg("Condition (violet) classes of two queries can not be linked (to avoid two main classes in a query).", -3);
 				// To merge two queries, use a query class (orange) at least at one link end.", -3);
 				return false;
@@ -878,7 +878,7 @@ Interpreter.customMethods({
 
 		var aggregations = {count:1, count_distinct:1, min:1, max:1, avg:1, sum:1, sample:1, group_concat:1}
 
-		if(expression_value !== null && expression_value != "" &&
+		if(expression_value !== null && expression_value !== "" &&
 		expression_value.slice(-1) == ")" && expression_value.indexOf("(") !=-1
 		&& typeof aggregations[expression_value.substring(0, expression_value.indexOf("(")).toLowerCase()] !== "undefined"){
 
@@ -970,7 +970,7 @@ Interpreter.customMethods({
                   	if (typeof userAlias !== "undefined" && userAlias !="") {
                     	Template.AggregateWizard.defaultAlias.set(userAlias);
                  	} else {
-						if(Template.AggregateWizard.expression.get() != "")Template.AggregateWizard.defaultAlias.set("");
+						if(Template.AggregateWizard.expression.get() !== "")Template.AggregateWizard.defaultAlias.set("");
 						else {
 							let defaultAlias = class_name.charAt(0);
 							if(class_name.indexOf(":") !== -1) defaultAlias = class_name.charAt(class_name.indexOf(":")+1);
@@ -1089,7 +1089,7 @@ Interpreter.customMethods({
                   	if (typeof userAlias !== "undefined" && userAlias !="") {
                     	Template.AggregateWizard.defaultAlias.set(userAlias);
                  	} else {
-						if(Template.AggregateWizard.expression.get() != "")Template.AggregateWizard.defaultAlias.set("");
+						if(Template.AggregateWizard.expression.get() !== "")Template.AggregateWizard.defaultAlias.set("");
 						else {
 							let defaultAlias = class_name.charAt(0);
 							if(class_name.indexOf(":") !== -1) defaultAlias = class_name.charAt(class_name.indexOf(":")+1);
@@ -1503,7 +1503,7 @@ async function generateSymbolTable(notResolveTable) {
     }
 
 	// console.log(abstractQueryTable);
-	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
+	if(Session.get("activeElement") !== null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
     return {symbolTable:{}, rootSymbolTable:{}, abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
   }
 
@@ -1511,10 +1511,10 @@ async function generateSymbolTable(notResolveTable) {
 // function checks if the text is uri
 // 0 - not URI, 3 - full form, 4 - short form
  function isURI(text) {
-  if(text.indexOf("://") != -1)
+  if(text.indexOf("://") !== -1)
     return 3;
   else
-    if(text.indexOf(":") != -1) return 4;
+    if(text.indexOf(":") !== -1) return 4;
   return 0;
 };
 

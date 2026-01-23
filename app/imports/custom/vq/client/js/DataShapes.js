@@ -109,15 +109,15 @@ const callWithGetWD = async (filter, limit) => {
 // function checks if the text is uri
 // 0 - not URI, 3 - full form, 4 - short form
 function isURI(text) {
-  if(text.indexOf("://") != -1)
+  if(text.indexOf("://") !== -1)
     return 3;
   else
-    if(text.indexOf(":") != -1 || text.indexOf("[") != -1 ) return 4;
+    if(text.indexOf(":") !== -1 || text.indexOf("[") !== -1 ) return 4;
   return 0;
 }
 
 function isIndividual(individual) {
-	if (individual !== null && individual !== undefined && isURI(individual) != 0 && !individual.startsWith("?"))
+	if (individual !== null && individual !== undefined && isURI(individual) !== 0 && !individual.startsWith("?"))
 		return true;
 }
 
@@ -177,7 +177,7 @@ const getPList = async (vq_obj) => {
 	const field_list_full = await vq_obj.getFields();
 	const field_list = field_list_full.filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
 	_.each(field_list, function(link) {
-		if (link.name !== null && link.name !== undefined && link.name.indexOf('@') != -1)
+		if (link.name !== null && link.name !== undefined && link.name.indexOf('@') !== -1)
 			link.name = link.name.substring(0,link.name.indexOf('@'));
 	})
 	if (field_list.length > 0) pList.out = field_list;
@@ -310,7 +310,7 @@ const findElementDataForProperty = async (vq_obj) => {
 
 	//if (dataShapes.schema.schemaType !== 'wikidata') { // Ir uztaisīts, bet strādā drusku palēni
 	//	const pListI = getPListI(vq_obj);
-	//	if ( pListI.type != undefined) params.pListI = pListI;
+	//	if ( pListI.type !== undefined) params.pListI = pListI;
 	// }
 	return params;
 }
@@ -330,7 +330,7 @@ const findElementDataForIndividual = async (vq_obj) => {
 
 	//if (dataShapes.schema.schemaType !== 'wikidata') {
 		const pListI = await getPListI(vq_obj);
-		if ( pListI.type != undefined) params.pListI = pListI;
+		if ( pListI.type !== undefined) params.pListI = pListI;
 	// }
 
 	return params;
@@ -340,7 +340,7 @@ const findElementDataForIndividual = async (vq_obj) => {
 const findPropertiesIds = async (direct_class_role, indirect_class_role, prop_list = []) => {
 	let id_list = [];
 	async function addProperty(propertyName) {
-		if (propertyName != '' && propertyName != undefined && propertyName != null ) {
+		if (propertyName !== '' && propertyName !== undefined && propertyName !== null ) {
 			const prop = await dataShapes.resolvePropertyByName({name: propertyName});
 			if (prop.data.length > 0)
 				id_list.push(prop.data[0].id);
@@ -493,7 +493,7 @@ const dataShapes = {
 				projectId_in_process = this.schema.projectId_in_process;
 			}
 		}
-		else if (proj !== undefined && ( this.schema.projectId != proj._id || this.schema.filling === 0 )) {
+		else if (proj !== undefined && ( this.schema.projectId !== proj._id || this.schema.filling === 0 )) {
       console.log('--- !!!!!!------- Tiek mainīts projekts -------!!!!!!---------', proj._id)
 			this.schema = getEmptySchema();
 			if ( proj.schema !== undefined && proj.schema !== "") {
@@ -503,7 +503,7 @@ const dataShapes = {
 				this.schema.showPrefixes = proj.showPrefixesForAllNames.toString();
 				//this.schema.empty = false;
 				this.schema.endpoint =  proj.endpoint;
-				if ( proj.uri != undefined && proj.uri !== '' )
+				if ( proj.uri !== undefined && proj.uri !== '' )
 					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`;
 
 				const info = await callWithGet('info/');
@@ -578,7 +578,7 @@ const dataShapes = {
 					await this.getPublicNamespaces();
 					if (proj.endpoint !== undefined && proj.endpoint !== "") {
 						this.schema.endpoint =  proj.endpoint;
-						if ( proj.uri != undefined && proj.uri !== '' )
+						if ( proj.uri !== undefined && proj.uri !== '' )
 							this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`;
 
 						this.schema.filling = 2;
@@ -593,7 +593,7 @@ const dataShapes = {
 				await this.getPublicNamespaces();
 				if (proj.endpoint !== undefined && proj.endpoint !== "") {
 					this.schema.endpoint =  proj.endpoint;
-					if ( proj.uri != undefined && proj.uri !== '' )
+					if ( proj.uri !== undefined && proj.uri !== '' )
 						this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`;
 
 					this.schema.filling = 2;
@@ -606,16 +606,16 @@ const dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		if ( ConsoleLog &&  funcName != 'resolvePropertyByName' && funcName.substring(0,2) != 'xx' ) {
+		if ( ConsoleLog &&  funcName !== 'resolvePropertyByName' && funcName.substring(0,2) !== 'xx' ) {
 			console.log("---------callServerFunction--------------" + funcName)
 			console.log(params)
 		}
 		const startTime = Date.now();
 		let s = this.schema.schema;
 		let new_schema;
-		if ( params.main.schema != undefined) {
+		if ( params.main.schema !== undefined) {
 			new_schema = this.getOntologiesSync().find(function(o) { return o.db_schema_name == params.main.schema});
-			if ( new_schema != undefined )
+			if ( new_schema !== undefined )
 				s = params.main.schema;
 		}
 
@@ -638,7 +638,7 @@ const dataShapes = {
 			}
 			else {
 				params.main.endpointUrl = new_schema.sparql_url;
-				if ( new_schema.named_graph != null	)
+				if ( new_schema.named_graph !== null	)
 					params.main.endpointUrl = `${new_schema.sparql_url}?default-graph-uri=${new_schema.named_graph}`;
 				params.main.use_pp_rels = new_schema.use_pp_rels;
 				params.main.simple_prompt = new_schema.simple_prompt;
@@ -657,7 +657,7 @@ const dataShapes = {
 
 		const time = Date.now() - startTime
 
-		if ( ConsoleLog &&  funcName != 'resolvePropertyByName' && funcName.substring(0,2) != 'xx') {
+		if ( ConsoleLog &&  funcName !== 'resolvePropertyByName' && funcName.substring(0,2) !== 'xx') {
 			if ( rr.data ) {
 				console.log(rr)
 				//console.log(rr.data.map(v => v.prefix + ':' + v.display_name))
@@ -792,7 +792,7 @@ const dataShapes = {
 		if ( params.main.treeMode === 'Top' && ( params.main.filter === undefined || params.main.filter === '' )) {
 			const nsString = makeTreeName(params);
 			//console.log(`in_${params.namespaces.in.join('_')}_notIn_${params.namespaces.notIn.join('_')}`)
-			if (this.schema.treeTopsC[nsString] !== undefined && this.schema.treeTopsC[nsString].error != undefined) {
+			if (this.schema.treeTopsC[nsString] !== undefined && this.schema.treeTopsC[nsString].error !== undefined) {
 				rr = this.schema.treeTopsC[nsString];
 			}
 			else {
@@ -908,7 +908,7 @@ const dataShapes = {
 		let rr;
 		if ( params.filter === undefined || params.filter === '' ) {
 			const tName = makeTreeName(params);
-			if (this.schema.treeTopsP[tName] !== undefined && this.schema.treeTopsP[tName].error != undefined ) {
+			if (this.schema.treeTopsP[tName] !== undefined && this.schema.treeTopsP[tName].error !== undefined ) {
 				rr = this.schema.treeTopsP[tName];
 			}
 			else {
@@ -927,7 +927,7 @@ const dataShapes = {
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		let rr;
 
-		if (this.schema.schemaType == 'wikidata' && params.filter != undefined && faasEnabled == false)
+		if (this.schema.schemaType == 'wikidata' && params.filter !== undefined && faasEnabled == false)
 			return await this.getIndividualsWD(params.filter);
 
 		//if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
@@ -942,10 +942,10 @@ const dataShapes = {
 			return await faas.getIndividuals(allParams);
 		}
 
-		if ( allParams.element != undefined && (allParams.element.className !== undefined || allParams.element.pList !== undefined )) {
+		if ( allParams.element !== undefined && (allParams.element.className !== undefined || allParams.element.pList !== undefined )) {
 			rr = await this.callServerFunction("getIndividuals", allParams);
 
-			if (rr.error != undefined)
+			if (rr.error !== undefined)
 				rr = []
 		}
 		else
@@ -960,13 +960,13 @@ const dataShapes = {
 
 		let rr;
 
-		//if (this.schema.schemaType == 'wikidata' && params.filter != undefined )
+		//if (this.schema.schemaType == 'wikidata' && params.filter !== undefined )
 		//	return await this.getIndividualsWD(params.filter);
 
 		let allParams = {main: params, element: {className:className}};
 		rr = await this.callServerFunction("getIndividuals", allParams);
 
-		if (rr.error != undefined)
+		if (rr.error !== undefined)
 			rr = []
 
 		return rr;
@@ -999,7 +999,7 @@ const dataShapes = {
 			}
 		}
 
-		if (rr.error != undefined)
+		if (rr.error !== undefined)
 			rr = [];
 
 		return rr;
@@ -1093,7 +1093,7 @@ const dataShapes = {
 		//dataShapes.resolveIndividualByName({name: 'dbr:Aaron_Cox'}) // dbpedia
 		//dataShapes.resolveIndividualByName({name: "wd:[first (Q19269277)]"})
 
-		if (params.name.indexOf('<') != -1)
+		if (params.name.indexOf('<') !== -1)
 			params.name = params.name.substring(1, params.name.length-1);
 
 		params.name = this.getIndividualName(params.name);
@@ -1122,7 +1122,7 @@ const dataShapes = {
 						if (i.iri == iri)
 							rez = {name: params.name, localName: i.localName, label: i.label};
 					});
-					if ( rez.name != undefined)
+					if ( rez.name !== undefined)
 						rr = {complete: true, data:[rez]};
 					else
 						rr = await this.callServerFunction("resolveIndividualByName", {main: params});  // TODO - vai tā darīt
@@ -1276,18 +1276,18 @@ const dataShapes = {
 			}
 			return r;
 		}
-		if ( localName.indexOf(')]') != -1){
+		if ( localName.indexOf(')]') !== -1){
 			prefix = localName.substring(0,localName.indexOf(':'));
 			//const name = localName.substring(localName.indexOf('(')+1,localName.length-2);
 			const name = localName.substring(getLastB(localName)+1,localName.length-2);
 			rez = `${prefix}:${name}`;
 		}
-		else if (localName.indexOf(']') != -1) {
+		else if (localName.indexOf(']') !== -1) {
 			prefix = localName.substring(0,localName.indexOf(':'));
 			const name = localName.substring(localName.indexOf(':')+2,localName.length-1);
 			rez = `${prefix}:${name}`;
 		}
-		else if (localName.indexOf('//') != -1) {
+		else if (localName.indexOf('//') !== -1) {
 			let name = '';
 			_.each(this.schema.namespaces, function(ns) {
 				if (localName.indexOf(ns.value) == 0 && localName.length > ns.value.length) {
@@ -1296,7 +1296,7 @@ const dataShapes = {
 				}
 			});
 
-			if (name != '')
+			if (name !== '')
 				rez = name;
 			else
 				rez = localName;
@@ -1307,7 +1307,7 @@ const dataShapes = {
 		if ( prefix == '')
 			prefix = rez.substring(0,localName.indexOf(':'));
 
-		if ( gen && rez.indexOf('/') != -1) {
+		if ( gen && rez.indexOf('/') !== -1) {
 			_.each(this.schema.namespaces, function(ns) {
 				if ( prefix == ns.name )
 					rez = `<${ns.value}${rez.replace(ns.name,'').replace(':','')}>`;

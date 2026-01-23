@@ -127,7 +127,7 @@ function new_element(konva_obj_id, elem_type, points, start_elem, end_elem) {
 		var elem_type_id = elem_type["_id"];
 		var res = Interpreter.executeExtensionPoint(elem_type, "beforeCreateElement", list);
 
-		if (res != false) {
+		if (res !== false) {
 			var elem_style = elem_type["styles"][0];
 			if (!elem_style) {
 				Interpreter.showErrorMsg("Internal error: No element style");

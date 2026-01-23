@@ -210,9 +210,9 @@ Template.show_multi_field_form.events({
 			var prefixesValue = "";
 			var graphPrefixes = "";
 
-			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] != "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"];
-			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] != "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] + ": " + graphPrefixes;
-			if(graphPrefixes != "") graphPrefixes = "{" + graphPrefixes + "} ";
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] !== "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"];
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] !== "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] + ": " + graphPrefixes;
+			if(graphPrefixes !== "") graphPrefixes = "{" + graphPrefixes + "} ";
 
 			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] !== "undefined")value = value.substring((sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"]+sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"]).length)
 
@@ -221,7 +221,7 @@ Template.show_multi_field_form.events({
 
 			if(typeof sub_compart_tree["Attributes"]["Attributes"]["IsInternal"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["IsInternal"]["input"] == "true") prefixesValue = "h";
 			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Require Values"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["Require Values"]["input"] == "true") prefixesValue = prefixesValue + "+";
-			if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+			if(prefixesValue !== "") prefixesValue = "{" + prefixesValue + "} ";
 			prefixesValue = graphPrefixes + prefixesValue;
 			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Prefixes"] !== "undefined"){
 				sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;

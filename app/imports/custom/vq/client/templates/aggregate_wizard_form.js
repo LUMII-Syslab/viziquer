@@ -146,7 +146,7 @@ Template.AggregateWizard.events({
 			var minValue = $('input[id=results_least]').val();
 			var maxValue = $('input[id=results-most]').val();
 
-			if ((displayCase || (minValue != "") || (maxValue != "")) && (alias == null || alias == "")) {
+			if ((displayCase || (minValue !== "") || (maxValue !== "")) && (alias == null || alias == "")) {
 				let cName = await vq_end_obj.getName();
 				let newFunction = $('input[name=aggregate-list-radio]:checked').val()
 				alias = cName.charAt(0) + "_" + newFunction;
@@ -154,12 +154,12 @@ Template.AggregateWizard.events({
 			//console.log(alias + " " + expr);
 			await vq_end_obj.addAggregateField(expr,alias,required);
 
-			if (Template.AggregateWizard.linkId.curValue != "No link") {
+			if (Template.AggregateWizard.linkId.curValue !== "No link") {
 				var vq_link_obj = await createVQ_Element(Template.AggregateWizard.linkId.curValue);
 			}
 
 			// console.log(displayCase, minValue, maxValue);
-			if (displayCase || (minValue != "") || (maxValue != "")) {
+			if (displayCase || (minValue !== "") || (maxValue !== "")) {
 				// console.log("display or min/max");
 				var vq_start_obj = await createVQ_Element(Template.AggregateWizard.startClassId.curValue);
 				if (alias == null || alias == "") {
@@ -170,8 +170,8 @@ Template.AggregateWizard.events({
 				}
 				//addField: function(exp,alias,requireValues,groupValues,isInternal)
 				if (displayCase) await vq_start_obj.addField(alias,);
-				if (minValue != "") await vq_start_obj.addCondition(alias + ">=" + minValue, false);
-				if (maxValue != "") await vq_start_obj.addCondition(alias + "<=" + maxValue, false);
+				if (minValue !== "") await vq_start_obj.addCondition(alias + ">=" + minValue, false);
+				if (maxValue !== "") await vq_start_obj.addCondition(alias + "<=" + maxValue, false);
 			} else {
 				//console.log("no display or min/max");
 			}

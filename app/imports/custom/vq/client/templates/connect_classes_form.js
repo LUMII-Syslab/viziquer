@@ -31,7 +31,7 @@ Interpreter.customMethods({
 
 
 				//Check if there are directly 2 classes to link
-				if (ids.length != 2) {
+				if (ids.length !== 2) {
 					console.log("Too many classes selected");
 					Interpreter.showErrorMsg("Too many classes selected, only 2 classes can be connected.", -3);
 					return;
@@ -72,7 +72,7 @@ Interpreter.customMethods({
 		    			} else {
 		    				newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
-		    			if (newStartClass.obj["_id"] != endClass.obj["_id"]) {
+		    			if (newStartClass.obj["_id"] !== endClass.obj["_id"]) {
 			    			usedClasses[0].name = await newStartClass.getName();
 			    		} else {
 			    			console.log("[ + ] connection to root");
@@ -91,7 +91,7 @@ Interpreter.customMethods({
 		    			} else {
 		    				newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
-		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
+		    			if (newStartClass.obj["_id"] !== startClass.obj["_id"]) {
 		    				usedClasses[1].name = await newStartClass.getName();
 		    			} else {
 			    			console.log("[ + ] connection to root");
@@ -148,7 +148,7 @@ Interpreter.customMethods({
 		    			} else {
 		    				var newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
-		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
+		    			if (newStartClass.obj["_id"] !== startClass.obj["_id"]) {
 		    				usedClasses[0].name = await newStartClass.getName();
 		    			} else {
 			    			console.log("[ + ] connection to root");
@@ -167,7 +167,7 @@ Interpreter.customMethods({
 		    			} else {
 		    				var newStartClass = await createVQ_Element(element.end.obj._id);
 		    			}
-		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
+		    			if (newStartClass.obj["_id"] !== startClass.obj["_id"]) {
 		    				usedClasses[1].name = await newStartClass.getName();
 		    			} else {
 			    			console.log("[ + ] connection to root");
@@ -365,7 +365,7 @@ Template.ConnectClasses.events({
 		// chain = _.rest(chain);
 		if (!Template.ConnectClasses.addLongLink.get().data){
 			firstId = Template.ConnectClasses.elements.curValue[0].id;
-			lastElement = Template.ConnectClasses.elements.curValue.filter(e => e.id != firstId)[0];
+			lastElement = Template.ConnectClasses.elements.curValue.filter(e => e.id !== firstId)[0];
 		} else {
 			firstId = Session.get("activeElement");
 			lastElement = {name: chain[chain.length-1].class, id: "no_class_exists"};
@@ -439,7 +439,7 @@ Template.ConnectClasses.events({
 	            // Create_VQ_Element(function(cl){
 	                // cl.setName(class_name);
 	                // var proj = Projects.findOne({_id: Session.get("activeProject")});
-	                // if(typeof class_name !== "undefined" && class_name != null && class_name !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
+	                // if(typeof class_name !== "undefined" && class_name !== null && class_name !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
 	                // cl.setClassStyle("condition");
                 	// locLink = [coordX, coordY, coordX, newPosition.y];
 	                // Create_VQ_Element(function(lnk) {
@@ -1020,7 +1020,7 @@ async function AddNextLink(currentElement, chain, lastElement, needSubquery, sub
 	    // Create_VQ_Element(function(cl){
 	        // cl.setName(chain[0].class);
 	        // var proj = Projects.findOne({_id: Session.get("activeProject")});
-	        // if(typeof chain[0] !== "undefined" && chain[0] != null && chain[0] !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
+	        // if(typeof chain[0] !== "undefined" && chain[0] !== null && chain[0] !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
 	        // cl.setClassStyle("condition");
 	        // if (chain[0].direction == "=>") {
 	        	// locLink = [coordX, coordY, coordX, newPosition.y];

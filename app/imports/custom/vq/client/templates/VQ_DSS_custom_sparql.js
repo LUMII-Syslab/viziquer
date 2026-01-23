@@ -81,7 +81,7 @@ Template.VQ_DSS_custom_sparql.helpers({
 
 Template.VQ_DSS_custom_sparql.events({
 	'click #addPropertyToSelection': async function() {
-		if ($("#unSelectedProperties").val() != undefined) {
+		if ($("#unSelectedProperties").val() !== undefined) {
 
 			const toSelection = $("#unSelectedProperties").val()//.map(v => Number(v));
 			const Properties = await Template.VQ_DSS_custom_sparql.Properties.get();
@@ -114,7 +114,7 @@ Template.VQ_DSS_custom_sparql.events({
 		}
 	},
 	'click #removePropertyFromSelection': async function() {
-		if ($("#selectedProperties2").val() != undefined) {
+		if ($("#selectedProperties2").val() !== undefined) {
 			const toSelection = $("#selectedProperties2").val()//.map(v => Number(v));
 			const Properties = await Template.VQ_DSS_custom_sparql.Properties.get();
 			const SelectedProperties = await Template.VQ_DSS_custom_sparql.SelectedProperties.get();

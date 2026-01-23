@@ -97,9 +97,9 @@ Meteor.methods({
             let class_style = class_type["styles"][0];
             let class_style_old = class_type["styles"].find(function(s){ return s.name == item.TypeOld});
             let class_style_new = class_type["styles"].find(function(s){ return s.name == item.TypeNew});
-            if ( class_style_old != undefined )
+            if ( class_style_old !== undefined )
                 class_style = class_style_old;
-            if ( class_style_new != undefined )
+            if ( class_style_new !== undefined )
                 class_style = class_style_new;
 
 			let object = {diagramId: new_diagram_id,
@@ -130,9 +130,9 @@ Meteor.methods({
             let class_style = class_type["styles"][0];
             let class_style_old = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeOld});
             let class_style_new = class_type["styles"].find(function(s){ return s.name == item.compartments.TypeNew});
-            if ( class_style_old != undefined )
+            if ( class_style_old !== undefined )
                 class_style = class_style_old;
-            if ( class_style_new != undefined )
+            if ( class_style_new !== undefined )
                 class_style = class_style_new;
 
 			let object = {diagramId: new_diagram_id,
@@ -162,7 +162,7 @@ Meteor.methods({
 		}
 
 		let gen_style = gen_type["styles"][0];
-        let gen_layoutSettings = ( gen_type.layoutSettings != undefined) ?  gen_type.layoutSettings : {};
+        let gen_layoutSettings = ( gen_type.layoutSettings !== undefined) ?  gen_type.layoutSettings : {};
 
 		for (const key of Object.keys(ontology.Generalization)) {
 			const item = ontology.Generalization[key];
@@ -228,7 +228,7 @@ Meteor.methods({
         list.element_type_id = line_type._id;
 
 		let line_style = line_type["styles"][0];
-        let line_layoutSettings = ( line_type.layoutSettings != undefined) ?  line_type.layoutSettings : {};
+        let line_layoutSettings = ( line_type.layoutSettings !== undefined) ?  line_type.layoutSettings : {};
         let cut_info = {cut:false, class_cnt:0, max:5};
 
 		for (const key of Object.keys(ontology.ObjectProperty)) {
@@ -302,7 +302,7 @@ Meteor.methods({
         list.element_type_id = iline_type._id;
 
 		let iline_style = iline_type["styles"][0];
-        let iline_layoutSettings = ( iline_type.layoutSettings != undefined) ?  iline_type.layoutSettings : {};
+        let iline_layoutSettings = ( iline_type.layoutSettings !== undefined) ?  iline_type.layoutSettings : {};
 
 		for (const key of Object.keys(ontology.Intersect)) {
 			const item = ontology.Intersect[key];
@@ -407,7 +407,7 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
       const nList = value_list.map(a => a.shortName)
       await add_one_compartment(list, 'SchemaInformation', JSON.stringify(nList), JSON.stringify(nList));
     }
-    if ( !list.compactClassView && compartmentName != 'ClassList')
+    if ( !list.compactClassView && compartmentName !== 'ClassList')
         cut_info.cut = false;
     if ( cut_info.cut ) {
         const values75 = value_list.filter(function(v){ return v.cnt > 0.75*cut_info.class_cnt; });

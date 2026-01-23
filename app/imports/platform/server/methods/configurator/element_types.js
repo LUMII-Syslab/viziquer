@@ -199,7 +199,7 @@ Meteor.methods({
       await ElementTypes.updateAsync({ _id: list["id"] }, { $set: update });
 
       //if changing the styles attribute, then changing compartments as well
-      if (list["attrName"] != "name") {
+      if (list["attrName"] !== "name") {
         var style_update = {};
         style_update["style." + list["attrName"]] = attr_value;
 

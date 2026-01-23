@@ -21,7 +21,7 @@ Template.compartmentDialog.events({
 	'change #tab' : function(e) {
 
 		var compartment_type_id = get_selected_compartment_type_id();
-		if (compartment_type_id != "noSelection") {
+		if (compartment_type_id !== "noSelection") {
 
 			var list = {id: Session.get("compartmentTargetTypeId"),
 						attrName: "dialogTabId",
@@ -213,12 +213,12 @@ Template.checkboxTable.helpers({
 		}
 
 		var input_type = compart_type["inputType"];
-		if (!input_type || input_type["type"] != "checkbox") {
+		if (!input_type || input_type["type"] !== "checkbox") {
 			return;
 		}
 
 		var values = input_type["values"];
-		if (!values || values.length != 2) {
+		if (!values || values.length !== 2) {
 			return;
 		}
 
@@ -468,7 +468,7 @@ Template.compartmentDialogTab.events({
 
 		var field = $("#newTab");
 		var tab_name = field.val();
-		if (tab_name && tab_name != "") {
+		if (tab_name && tab_name !== "") {
 			field.val("");
 
 			var list = {name: tab_name,

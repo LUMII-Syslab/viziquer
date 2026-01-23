@@ -73,7 +73,7 @@ Template.AddCondition.events({
 			//Read user's choise
 			  var vq_obj = await createVQ_Element(selected_elem_id);
 				let condition = $('#condition-expression').val();
-				if(condition != ""){
+				if(condition !== ""){
 					let allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
 					if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") allowMultiplication = true;
 					else allowMultiplication = false;
@@ -85,7 +85,7 @@ Template.AddCondition.events({
 			var compart = await Compartments.findOneAsync({compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
 			if(typeof compart !== "undefined"){
 				let condition = $('#condition-expression').val();
-				if(condition != ""){
+				if(condition !== ""){
 					var fullText = condition;
 					let allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
 					var allowMultiplicationInput = "";

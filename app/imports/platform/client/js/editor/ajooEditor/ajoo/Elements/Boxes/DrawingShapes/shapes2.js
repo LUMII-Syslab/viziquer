@@ -25,7 +25,7 @@ BPMNShape.prototype.updateShapesStyle = function(style) {
 
 			//if inner shape, then updating only its fill or stroke
 			if (style["fill"]) {
-				
+
 				var new_style = {};
 
 				//if shape is a line, then fill has to be trnasformed to stroke
@@ -40,7 +40,7 @@ BPMNShape.prototype.updateShapesStyle = function(style) {
 				shape.setAttrs(new_style);
 
 				//if shape has gradient
-				if (shape.fillPriority() != "color") {
+				if (shape.fillPriority() !== "color") {
 					//resize_gradient(shape_group);
 				}
 			}
@@ -55,7 +55,7 @@ BPMNShape.prototype.updateShapesStyle = function(style) {
 			shape.setAttrs(style);
 
 			//if shape has gradient
-			if (shape["attrs"]["fillPriority"] != "color") {
+			if (shape["attrs"]["fillPriority"] !== "color") {
 				//resize_gradient(shape_group);
 			}
 
@@ -241,7 +241,7 @@ BPMNDiamondPlus.prototype.updateShapeSize = function(res) {
 	outer_shape.x(res["centerX"]);
 	outer_shape.y(res["centerY"]);
 
-	var padding = 0.3;	
+	var padding = 0.3;
 	var radius = res["radius"];
 
 	var horizontal_line = shapes[1];
@@ -296,7 +296,7 @@ BPMNCancel.prototype.createShape = function(prop_list) {
 
 	var stroke_width = 2;
 
-	var horizontal_line = new Konva.Line({								
+	var horizontal_line = new Konva.Line({
 										strokeWidth: stroke_width,
 										stroke: prop_list["fill"],
 									});
@@ -316,7 +316,7 @@ BPMNCancel.prototype.createShape = function(prop_list) {
 BPMNCancel.prototype.updateShapeSize = function(res) {
 
 	var box = this;
-	var padding = box.padding;	
+	var padding = box.padding;
 	var shapes = box.shapes;
 
 	//outer circle

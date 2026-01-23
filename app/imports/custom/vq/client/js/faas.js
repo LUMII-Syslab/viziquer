@@ -158,7 +158,7 @@ const faas = {
         var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
 
         // get info about instance first
-        if (faasParam.id.length != 0) {
+        if (faasParam.id.length !== 0) {
             var inst = await callFAASFindInstances(faasParam);
             var cls = [];
             inst.forEach(i => {
@@ -174,7 +174,7 @@ const faas = {
             if (rr.length == 0) rr = [{id:"Q0", label: "Noting Found"}];
         }
         //console.log(`rr=${JSON.stringify(rr)}`);
-        if (rr.error != undefined)
+        if (rr.error !== undefined)
             rr = [];
 
 		// output text formated hopefully same way as other autocompletion data providers
@@ -218,7 +218,7 @@ const faas = {
         var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
         rr = await callFAASFindIndividuals(faasParam);
         //console.log(`rr=${JSON.stringify(rr)}`);
-        if (rr.error != undefined)
+        if (rr.error !== undefined)
             rr = [];
 
 		// output text formated hopefully same way as other autocompletion data providers

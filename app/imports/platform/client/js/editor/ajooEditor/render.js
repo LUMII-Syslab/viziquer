@@ -110,7 +110,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 					var style_obj = fields.style.elementStyle;
 
 					//if style shape changed, then removing and creating a new element
-					if (style_obj["shape"] && element.name != style_obj["shape"]) {
+					if (style_obj["shape"] && element.name !== style_obj["shape"]) {
 
 						var new_style = style_obj;
 
@@ -574,7 +574,7 @@ function get_shape_group_from_text(text) {
 		return;
 
 	var texts_group
-	if (text_parent["name"] != "TextsGroup")
+	if (text_parent["name"] !== "TextsGroup")
 		texts_group = get_parent(text_parent);
 	else
 		texts_group = text_parent;

@@ -315,7 +315,7 @@ SelectionDragging.prototype = {
 
 			var divider = editor.grid.step;
 
-			if (drag_obj.x() != new_point.x || drag_obj.y() != new_point.y) {
+			if (drag_obj.x() !== new_point.x || drag_obj.y() !== new_point.y) {
 
 				new_delta_x = param.deltaX - param.newX + new_point.x - param.deltaX;
 				drag_obj.x(new_point.x);

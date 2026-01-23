@@ -221,7 +221,7 @@ var requestAndProcessContinuationsDebounced = _.debounce(requestAndProcessContin
 function keyUpHandler(e){
 	if (e.keyCode === 8){
 		var m = document.getElementById("message");
-		if(m != null) {
+		if(m !== null) {
 			removeMessage();
 			const text = e.target.value;
 			let textBefore = text.substring(0, e.target.selectionStart);
@@ -414,7 +414,7 @@ function closeAllLists(elmnt) {
     var x = document.getElementsByClassName("autocomplete-items");
 
     for(let i = 0; i < x.length; i++) {
-      if (elmnt != x[i] && elmnt != document.activeElement) {
+      if (elmnt !== x[i] && elmnt !== document.activeElement) {
         x[i].parentNode.removeChild(x[i]);
 	  }
 	}
@@ -462,10 +462,10 @@ async function updateInputValue(input, prefix, suggestion) {
 }
 
 function isURI(text) {
-  if(text.indexOf("://") != -1)
+  if(text.indexOf("://") !== -1)
     return 3;
   else
-    if(text.indexOf(":") != -1) return 4;
+    if(text.indexOf(":") !== -1) return 4;
   return 0;
 };
 
@@ -480,7 +480,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 
 			let params = {};
 			var vq_obj;
-			if(fullText != "") params.filter = fullText;
+			if(fullText !== "") params.filter = fullText;
 			params.limit = dataShapes.schema.limit;
 			if(typeof schemaNameFromABS !== "undefined" && schemaNameFromABS !== null && schemaNameFromABS !== "" && dataShapes.schema.schema !== schemaNameFromABS){
 				params.schema = schemaNameFromABS;
@@ -491,7 +491,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 
 				vq_obj = await createVQ_Element(selected_elem_id);
 				var individual =  await vq_obj.getInstanceAlias();
-				if (individual !== null && individual !== undefined && isURI(individual) != 0)
+				if (individual !== null && individual !== undefined && isURI(individual) !== 0)
 					params.uriIndividual = dataShapes.getIndividualName(individual);
 				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
 			}
@@ -535,7 +535,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		}
 
 		const elem_type = await ElementTypes.findOneAsync({name: "Class"});
-		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+		if (elem_type && act_comp["elementTypeId"] !== elem_type._id) {
 			return [];
 		}
 
@@ -600,7 +600,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		}
 
 		const elem_type = await ElementTypes.findOneAsync({name: "Class"});
-		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+		if (elem_type && act_comp["elementTypeId"] !== elem_type._id) {
 			return [];
 		}
 
@@ -655,7 +655,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		c["suggestions"] = [];
 		let params = {limit: dataShapes.schema.tree.countI};
 		fullText = fullText.trimStart();
-		if (fullText != "") params.filter = fullText;
+		if (fullText !== "") params.filter = fullText;
 
 		const selected_elem_id = Session.get("activeElement");
 		let act_el;
@@ -669,17 +669,17 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 
 		const elName =  await act_el.getName();
 		let inst;
-		if ( elName != '' )
+		if ( elName !== '' )
 			inst = await dataShapes.getClassIndividuals(params, elName);
 		else
 			inst = await dataShapes.getIndividuals(params, act_el);
 
-		//if (dataShapes.schema.schemaType == 'wikidata' && fullText != "")
+		//if (dataShapes.schema.schemaType == 'wikidata' && fullText !== "")
 		//	inst = await dataShapes.getIndividualsWD(fullText);
 		//else
 		//	inst = await dataShapes.getIndividuals(params, act_el);
 
-		if (fullText != "" ){
+		if (fullText !== "" ){
 			let scName = dataShapes.schema.schema;
 			if(typeof schemaNameFromABS !== "undefined" && schemaNameFromABS !== null && schemaNameFromABS !== "")scName = schemaNameFromABS;
 			if ( inst.length === 0 && scName == 'dbpedia' || inst.length > 0 && inst[0] !== "dbr:"+fullText && dataShapes.schema.schema == 'dbpedia')
@@ -769,8 +769,8 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 function getCompletionTableNew(continuations_to_report, text) {
 	var sortable = [];
 	for(let key in continuations_to_report) {
-		if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
-			if(continuations_to_report[key]["spaceBefore"] == true && text.length != 0 && text.substring(text.length-1) != " ") sortable.push({"name":" "+continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
+		if(continuations_to_report[key]["name"] !== "" && continuations_to_report[key]["name"] !== " "){
+			if(continuations_to_report[key]["spaceBefore"] == true && text.length !== 0 && text.substring(text.length-1) !== " ") sortable.push({"name":" "+continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
 			else sortable.push({"name":continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
 		}// sortable.push(continuations_to_report[key]);
 	}
@@ -804,7 +804,7 @@ function getContinuationsNew(text, length, continuations) {
 
 
 	for(let pos in continuations) {
-		if (farthest_pos != -1) {
+		if (farthest_pos !== -1) {
 			farthest_pos_prev = farthest_pos
 		}
 		if (parseInt(pos) > farthest_pos) {
@@ -813,9 +813,9 @@ function getContinuationsNew(text, length, continuations) {
 		}
 	}
 
-	if (farthest_pos_prev != -1) {
+	if (farthest_pos_prev !== -1) {
 		for (let i = farthest_pos; i >=0; i--) {
-			if (continuations[i] != null) {
+			if (continuations[i] !== null) {
 				var varrible = text.substring(i, farthest_pos);
 
 				var startedContinuations = [];
@@ -827,14 +827,14 @@ function getContinuationsNew(text, length, continuations) {
 
 				for(let pos in continuations[i]) {
 					//if contuniation contains sub string
-					if (isNaN(varrible.substring(0, 1)) != false && wholeWordMatch!= true && pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
+					if (isNaN(varrible.substring(0, 1)) !== false && wholeWordMatch!= true && pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() !== pos.toLowerCase() && varrible !== "") {
 						prefix = text.substring(0, i);
 						continuations_to_report[pos] = continuations[i][pos];
 						startedContinuations["'"+pos+"'"] = continuations[i][pos];
 					}
 					else {
 						//if starts with
-						if (pos.substring(0, varrible.length).toLowerCase() == varrible.toLowerCase() && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
+						if (pos.substring(0, varrible.length).toLowerCase() == varrible.toLowerCase() && varrible.toLowerCase() !== pos.toLowerCase() && varrible !== "") {
 							var suggestions = pos.substring(varrible.length);
 
 							continuations_to_report[pos] = {"name":suggestions, "priority":100, "type":continuations[i][pos]["type"], "spaceBefore":false}
@@ -844,7 +844,7 @@ function getContinuationsNew(text, length, continuations) {
 					}
 				}
 
-				if(Object.keys(startedContinuations).length > 0 && wholeWordMatch != true) continuations_to_report = startedContinuations;
+				if(Object.keys(startedContinuations).length > 0 && wholeWordMatch !== true) continuations_to_report = startedContinuations;
 			}
 		}
 	}
@@ -904,7 +904,7 @@ function errorMessage(message, elem){
 
 function removeMessage(){
 	var m = document.getElementById("message");
-	if(m != null) m.parentNode.removeChild(m);
+	if(m !== null) m.parentNode.removeChild(m);
 }
 
 function findClassInAbstractQueryTable(elemId, abstractQueryTable){

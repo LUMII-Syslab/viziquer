@@ -24,7 +24,7 @@ var Palette = function(editor, palette_obj) {
 	//buttons size should be atleast default_width x default_height
 	// palette.width = Math.max(width, default_width);
 	// palette.height = Math.max(height, default_height);
-	
+
 	palette.width = width;
 	palette.height = height;
 
@@ -623,7 +623,7 @@ function PaletteButtonHandlers(paletteButton) {
 
 			//if the pressed button is not the same with the current button,
 			//then sets the default fill
-			if (pressed_button._id != paletteButton._id) {
+			if (pressed_button._id !== paletteButton._id) {
 				paletteButton.setDefaultStyle();
 			}
 		}

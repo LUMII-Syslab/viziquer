@@ -204,7 +204,7 @@ Template.passwordPanel.events({
 												message: new_password_status["message"]});
 
 			//if typed and re-typed passwords do not match
-			if (new_password != confirmed_password)
+			if (new_password !== confirmed_password)
 				Session.set("confirmedPasswordError", {errorClass: error_class,
 														message: "ValueShouldBeTheSame"});
 		}
@@ -250,7 +250,7 @@ Template.passwordPanel.events({
 				else {
 					//if the re-typed password is differnent
 					var confirmed_password = $("#confirmPassword").val();
-					if (new_password != confirmed_password) {
+					if (new_password !== confirmed_password) {
 						Session.set("confirmedPasswordError", {errorClass: get_error_class(),
 																message: "ValueShouldBeTheSame"});
 					}
@@ -278,7 +278,7 @@ Template.passwordPanel.events({
 				}
 				else {
 					var new_password = $("#newPassword").val();
-					if (new_password != confirmed_password) {
+					if (new_password !== confirmed_password) {
 						Session.set("confirmedPasswordError", {errorClass: get_error_class(),
 													message: "ValueShouldBeTheSame"});
 					}

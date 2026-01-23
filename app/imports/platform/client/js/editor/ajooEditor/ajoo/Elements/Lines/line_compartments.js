@@ -510,7 +510,7 @@ LinkCompartments.prototype = {
 		var y_delta = (y2 - y1);
 
 		var rotation;
-		if (x_delta != 0) {
+		if (x_delta !== 0) {
 
 			//if horizontal line
 			if (y_delta == 0) {
@@ -711,7 +711,7 @@ LinkCompartments.prototype = {
 		//compartments.compartments.splice(x,1);
 		delete comparts_list[compart_id];
 		compartments.compartments = _.filter(compartments.compartments, function(compart) {
-			if (compart._id != compart_id)
+			if (compart._id !== compart_id)
 				return true;
 		});
 

@@ -93,11 +93,11 @@ function render_swimlane_compartment(name) {
 		tmp_name = "TopLine";
 	}
 
-	else if (column != 0 && row != 0) {
+	else if (column !== 0 && row !== 0) {
 		tmp_name = "Middle";
 	}
 
-	if (name != tmp_name) {
+	if (name !== tmp_name) {
 		return;
 	}
 

@@ -66,7 +66,7 @@ function login(e, name, password) {
 	password = password || $('#password').val();
 
 	//checks if user has entered login and password
-	if (name != "" && password != "") {
+	if (name !== "" && password !== "") {
 
 		//checks if the user is already logged in, then opens the active project
 		var meteor_user = Meteor.user();

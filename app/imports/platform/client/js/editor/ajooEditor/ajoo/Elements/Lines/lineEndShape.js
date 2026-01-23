@@ -14,7 +14,7 @@ LineEndShape.prototype.create = function(style) {
 	var line_end = this;
 
 	var shape_name = style["shape"]
-	if (shape_name && shape_name != "None") {
+	if (shape_name && shape_name !== "None") {
 
 		//regular shapes, circle and arrow
 		if (!style["width"])
@@ -153,7 +153,7 @@ LineEndShape.prototype.computeRotation = function(points, x1_index, y1_index, x2
 	var y_delta = (y2 - y1);
 
 	var rotation;
-	if (x_delta != 0) {
+	if (x_delta !== 0) {
 
 		//if horizontal line
 		if (y_delta == 0) {
@@ -285,7 +285,7 @@ LineEndShape.prototype.updateEndShape = function(style) {
 	}
 
 	//if shape was changed
-	else if (style["shape"] && style["shape"] != "None") {
+	else if (style["shape"] && style["shape"] !== "None") {
 
 		var shapes = line_end.presentation;
 

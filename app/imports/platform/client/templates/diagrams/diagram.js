@@ -258,7 +258,7 @@ Template.editingMessage.helpers({
 			if (diagram && diagram["editingUserId"] && !diagram.isPublic) {
 
 				//diagram is being edited by someone else
-				if (diagram["editingUserId"] != user_id) {
+				if (diagram["editingUserId"] !== user_id) {
 
 					var res = {isEdited: true};
 

@@ -7,7 +7,7 @@ Meteor.methods({
   searchInProject: async function (list) {
     var user_id = Meteor.userId();
     if (await is_project_member(user_id, list)) {
-      if (list["phrase"] && list["phrase"] != "") {
+      if (list["phrase"] && list["phrase"] !== "") {
         var update = {};
         update["counter"] = 1;
         update["users." + user_id] = 1;
@@ -27,7 +27,7 @@ Meteor.methods({
   searchInContacts: async function (list) {
     var user_id = Meteor.userId();
     if (user_id) {
-      if (list["phrase"] && list["phrase"] != "") {
+      if (list["phrase"] && list["phrase"] !== "") {
         var update = {};
         update["counter"] = 1;
         update["users." + user_id] = 1;

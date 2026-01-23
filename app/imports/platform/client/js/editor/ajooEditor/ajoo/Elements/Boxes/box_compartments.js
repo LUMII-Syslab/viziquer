@@ -233,7 +233,7 @@ BoxCompartments.prototype = {
 		//delete comparts_list[compart_id];
 		delete editor.compartmentList[compart_id];
 		compartments.compartments = _.filter(compartments.compartments, function(compart) {
-			if (compart._id != compart_id) {
+			if (compart._id !== compart_id) {
 				return true;
 			}
 		});

@@ -48,7 +48,7 @@ Template.membersFilter.events({
     	//building the query that filters the project members by the text in the search bar
     	var search_entered = $('#findUser').val();
     	var query;
-    	if (search_entered != "")
+    	if (search_entered !== "")
     		query = build_user_search_query(search_entered);
 
 		Session.set("membersFilter", query);
@@ -159,7 +159,7 @@ Template.userGroups.events({
 
 		var group = ProjectsGroups.findOne({_id: group_id});
 		if (group) {
-			if (group["name"] != value)
+			if (group["name"] !== value)
 				input.text("");
 		}
 
@@ -224,7 +224,7 @@ Template.foundUsers.helpers({
 		var search = Session.get("searchUsers");
 		var query1 = {noQuery: -1};
 		if (search) {
-			if (search["text"] && search["text"] != "")
+			if (search["text"] && search["text"] !== "")
 				query1 = build_user_search_query(search["text"]);
 			else
 				query1 = {noQuery: -1};

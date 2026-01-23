@@ -391,7 +391,7 @@ var EditorHandlers = function(actions) {
     //finishes on mouse down and mouse move started actions
     stage.on("mouseup touchend contentMouseup contentTouchend", function(e) {
 
-        // if (actions.state.name != "SwimlaneTextEditing") {
+        // if (actions.state.name !== "SwimlaneTextEditing") {
             actions.finish(e);
         // }
     });
@@ -407,7 +407,7 @@ var EditorHandlers = function(actions) {
 
     // stage.on("dblclick dbltap contentDblclick contentDblTap", function(ev) {
 
-    //     if (actions.state.name != "SwimlaneTextEditing") {
+    //     if (actions.state.name !== "SwimlaneTextEditing") {
     //         editor.mouseState.mouseDown(ev);
     //         actions.startAction("SwimlaneDbClick");
     //     }

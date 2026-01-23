@@ -57,7 +57,7 @@ var OrthogonalRerouting = {
 	    var dir = (rerouting.isSegmentVertical(points, i)) ? 1 : 0;
 
 	    for (i = i; i < len; i += 2) {
-	        if (points[i + dir] != points[i + 2 + dir]) {
+	        if (points[i + dir] !== points[i + 2 + dir]) {
 	            return false;
 	        }
 	        dir = 1 - dir;
@@ -333,7 +333,7 @@ var OrthogonalCollectionRerouting = {
 			//selecting the line points
 			var new_points = line_obj.points.slice();
 
-			if (delta_x != 0 || delta_y != 0) {
+			if (delta_x !== 0 || delta_y !== 0) {
 
 				var index = line_obj["index"];
 
@@ -355,7 +355,7 @@ var OrthogonalCollectionRerouting = {
 			//selecting the line points
 			var new_points = line_obj.points.slice();
 
-			if (delta_x != 0 || delta_y != 0) {
+			if (delta_x !== 0 || delta_y !== 0) {
 
 				var index = line_obj["index"];
 

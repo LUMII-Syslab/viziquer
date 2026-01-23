@@ -341,7 +341,7 @@ async function send_notifications(user_id, list) {
 
   await ProjectsUsers.find(query).forEachAsync(async function (project_user) {
     var receiver_id = project_user["userSystemId"];
-    if (receiver_id != user_id) {
+    if (receiver_id !== user_id) {
       var notification = {
         projectId: proj_id,
         createdBy: list["userId"],

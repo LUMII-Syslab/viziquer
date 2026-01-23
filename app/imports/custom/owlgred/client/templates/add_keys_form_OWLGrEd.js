@@ -43,7 +43,7 @@ Template.AddKeys_OWLGrEd.helpers({
 
 			const fieldName = fields[field]["name"];
 			if (
-			  fieldValue != null &&                            // not null and not undefined
+			  fieldValue !== null &&                            // not null and not undefined
 			  fieldValue !== ""                             // not empty string
 			) {
 			  try {
@@ -54,7 +54,7 @@ Template.AddKeys_OWLGrEd.helpers({
 			}
 		}
 
-		if(typeof fields[0] !== "undefined" && typeof fields[0]["field_value"] !== "undefined" && fields[0]["field_value"] != "")	fields = transformFields(fields[0]["field_value"]);
+		if(typeof fields[0] !== "undefined" && typeof fields[0]["field_value"] !== "undefined" && fields[0]["field_value"] !== "")	fields = transformFields(fields[0]["field_value"]);
 		else fields = [];
 
 

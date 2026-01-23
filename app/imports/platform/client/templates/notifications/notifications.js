@@ -153,7 +153,7 @@ function process_notifications(notifications_cursor) {
 			else {
 
 				if (notification["type"] == "Invitation" &&
-					notification["status"] != "rejected" && notification["status"] != "confirmed")
+					notification["status"] !== "rejected" && notification["status"] !== "confirmed")
 					notification["invited"] = true;
 				else if (notification["type"] == "Removed")
 					notification["removed"] = true;

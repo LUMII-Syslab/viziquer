@@ -18,7 +18,7 @@ CompartmentTypes.before.insert(function (user_id, doc) {
     return false;
   }
 
-  //if (!doc["dialogTabId"] && doc["toolId"] != get_configurator_tool_id()) {
+  //if (!doc["dialogTabId"] && doc["toolId"] !== get_configurator_tool_id()) {
   //	console.log("There is no dialogTabId or toolId is equal to configurator's id.");
   //	return false;
   //}
@@ -132,7 +132,7 @@ Meteor.methods({
       await CompartmentTypes.updateAsync({ _id: list["id"] }, { $set: update });
 
       //if changing the styles attribute, then changing compartments as well
-      if (list["attrName"] != "name") {
+      if (list["attrName"] !== "name") {
         var compart_update = {};
         compart_update[list["attrName"]] = list["attrValue"];
 
@@ -192,7 +192,7 @@ Meteor.methods({
       var tool_id = list["toolId"];
 
       //if tabs changed
-      if (tab_id != list["oldTabId"]) {
+      if (tab_id !== list["oldTabId"]) {
         await CompartmentTypes.updateAsync(
           { _id: compart_type_id, toolId: tool_id },
           { $set: { dialogTabId: tab_id } },

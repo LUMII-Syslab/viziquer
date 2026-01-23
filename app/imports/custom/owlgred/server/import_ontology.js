@@ -198,7 +198,7 @@ Meteor.methods({
 			  }
 
 			  elemStyle = elemType["styles"][0];
-			  let line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+			  let line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 			  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[horizontalFork_box_id], element_map[iri], line_layoutSettings);
 
@@ -213,7 +213,7 @@ Meteor.methods({
 					return;
 			  }
 			  elemStyle = elemType["styles"][0];
-			  line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+			  line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 			  for(let sc = 0; sc < subClasses.length; sc++){
 				  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[subClasses[sc]], element_map[horizontalFork_box_id], line_layoutSettings);
@@ -230,7 +230,7 @@ Meteor.methods({
 			  }
 
 			  let elemStyle = elemType["styles"][0];
-			  let line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+			  let line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 			  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[subClasses[0]], element_map[iri], line_layoutSettings);
 
@@ -250,7 +250,7 @@ Meteor.methods({
 		let assocStyles = elemType["styles"];
 		let elemStyle = assocStyles.find(s => s.name === 'Association_direct');
 
-        let line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+        let line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 		for (const key of Object.keys(ontology.objectProperties)) {
 			const item = ontology.objectProperties[key];
@@ -365,7 +365,7 @@ Meteor.methods({
 		}
 
 		elemStyle = elemType["styles"][0];
-        line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+        line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 		for (const key of Object.keys(ontology.restrictions)) {
 		  const item = ontology.restrictions[key];
@@ -419,7 +419,7 @@ Meteor.methods({
 		}
 
 		elemStyle = elemType["styles"][0];
-        line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+        line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 		for (const key of Object.keys(ontology.complementOf)) {
 		  const item = ontology.complementOf[key];
@@ -523,7 +523,7 @@ Meteor.methods({
 
 		assocStyles = elemType.styles;
 		elemStyle= assocStyles.find(s => s.name === 'Link_direct');
-        line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+        line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 		for (const key of Object.keys(ontology.objectPropertyAssertions)) {
 		  const item = ontology.objectPropertyAssertions[key];
@@ -717,7 +717,7 @@ Meteor.methods({
 				}
 
 				elemStyle = elemTypeLine["styles"][0];
-				line_layoutSettings = ( elemTypeLine.layoutSettings != undefined) ?  elemTypeLine.layoutSettings : {};
+				line_layoutSettings = ( elemTypeLine.layoutSettings !== undefined) ?  elemTypeLine.layoutSettings : {};
 
 				for (let c = 0; c < item.length; c++) {
 				  if(element_map[item[c]]){
@@ -736,7 +736,7 @@ Meteor.methods({
 				}
 
 			  elemStyle = elemType["styles"][0];
-			  line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+			  line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 			  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[item[0]], element_map[item[1]], line_layoutSettings);
 
@@ -792,7 +792,7 @@ Meteor.methods({
 				}
 
 				elemStyle = elemTypeLine["styles"][0];
-				line_layoutSettings = ( elemTypeLine.layoutSettings != undefined) ?  elemTypeLine.layoutSettings : {};
+				line_layoutSettings = ( elemTypeLine.layoutSettings !== undefined) ?  elemTypeLine.layoutSettings : {};
 
 				for (let c = 0; c < item.length; c++) {
 				  if(element_map[item[c]]){
@@ -811,7 +811,7 @@ Meteor.methods({
 				}
 
 			  elemStyle = elemType["styles"][0];
-			  line_layoutSettings = ( elemType.layoutSettings != undefined) ?  elemType.layoutSettings : {};
+			  line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
 			  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[item[0]], element_map[item[1]], line_layoutSettings);
 
@@ -881,7 +881,7 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
       const nList = value_list.map(a => a.shortName)
       await add_one_compartment(list, 'SchemaInformation', JSON.stringify(nList), JSON.stringify(nList));
     }
-    if ( !list.compactClassView && compartmentName != 'ClassList')
+    if ( !list.compactClassView && compartmentName !== 'ClassList')
         cut_info.cut = false;
     if ( cut_info.cut ) {
         const values75 = value_list.filter(function(v){ return v.cnt > 0.75*cut_info.class_cnt; });

@@ -47,7 +47,7 @@ Template.AddAttribute_OWLGrEd.helpers({
 
 			const fieldName = fields[field]["name"];
 			if (
-			  fieldValue != null &&                            // not null and not undefined
+			  fieldValue !== null &&                            // not null and not undefined
 			  fieldValue !== "" &&                             // not empty string
 			  (fieldName === "Annotation" ||
 			   fieldName === "EquivalentProperties" ||
@@ -100,10 +100,10 @@ Template.AddAttribute_OWLGrEd.events({
 		let superProperties = "";
 		let disjointProperties = "";
 
-		if(document.getElementById("add-attribute-name") != null) name = document.getElementById("add-attribute-name").value;
-		if(document.getElementById("add-attribute-type") != null) type = document.getElementById("add-attribute-type").value;
-		if(document.getElementById("add-attribute-multiplicity") != null) multiplicity = document.getElementById("add-attribute-multiplicity").value;
-		if(document.getElementById("add-attribute-IsFunctional") != null) isFunctional = document.getElementById("add-attribute-IsFunctional").checked;
+		if(document.getElementById("add-attribute-name") !== null) name = document.getElementById("add-attribute-name").value;
+		if(document.getElementById("add-attribute-type") !== null) type = document.getElementById("add-attribute-type").value;
+		if(document.getElementById("add-attribute-multiplicity") !== null) multiplicity = document.getElementById("add-attribute-multiplicity").value;
+		if(document.getElementById("add-attribute-IsFunctional") !== null) isFunctional = document.getElementById("add-attribute-IsFunctional").checked;
 
 
 		const annotationsTable = templ.findAll('#property-table-annotations tbody tr');

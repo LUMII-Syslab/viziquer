@@ -39,7 +39,7 @@ Interpreter.methods({
 	// TODO Nav pārāk skaisti, pagaidu risinājums, lai 'neizlien tie garie saraksti'
 		var compart_type = this;
 		var compartment = Compartments.findOne({elementId: elem_id, compartmentTypeId: compart_type["_id"]});
-		if (  compartment && compartment.input.length != compartment.value.length) {
+		if (  compartment && compartment.input.length !== compartment.value.length) {
 			console.log('Imaiņas netiek veiktas! Saīsināto datu situācija.')
 			return;
 		}
@@ -348,7 +348,7 @@ const Dialog = {
 			var values;
 
 			//building drop down dynamically
-			if (dynamic_drop_down && dynamic_drop_down != "") {
+			if (dynamic_drop_down && dynamic_drop_down !== "") {
 				values = Interpreter.execute(dynamic_drop_down);
 			}
 
@@ -610,7 +610,7 @@ const Dialog = {
 				else {
 					var compart_type_type = compart_type.type || "text";
 					var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", compart_type);
-					if (proc_name && proc_name != "") {
+					if (proc_name && proc_name !== "") {
 
 						var val = Interpreter.execute(proc_name, [list.startElement, list.endElement,]);
 
@@ -722,7 +722,7 @@ function get_default_value(compart_type, value) {
 
 function get_object_type_property(compart_type, property, proc_name, value) {
 	var dynamic_suffix = Interpreter.getExtensionPointProcedure(proc_name, compart_type);
-	if (dynamic_suffix && dynamic_suffix != "") {
+	if (dynamic_suffix && dynamic_suffix !== "") {
 		return Interpreter.execute(dynamic_suffix, [value]);
 	}
 

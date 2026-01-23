@@ -40,7 +40,7 @@ Interpreter.customMethods({
 		Template.AddMergeValues.mergeAlias.set(mergeAlias);
 		Template.AddMergeValues.aliasField.set(await getAlais(e));
 		Template.AddMergeValues.attribute.set(e);
-		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
+		if(aggregation !== null && aggregation !== "")Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.distinct.set(distinct);
 
 		let scName = await getSchemaNameForElement();
@@ -64,11 +64,11 @@ Interpreter.customMethods({
 			var links = await vq_obj.getLinks();
 			for(let key in links) {
 				if(typeof links[key] !== "function"){
-					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
+					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement !== selected_elem_id) {
 						parentClass = await createVQ_Element(links[key].link.obj.startElement);
 						await links[key].link.setNestingType("SUBQUERY");
 					}
-					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
+					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement !== selected_elem_id) {
 						parentClass = await createVQ_Element(links[key].link.obj.endElement);
 						await links[key].link.setNestingType("SUBQUERY");
 					}
@@ -84,7 +84,7 @@ Interpreter.customMethods({
 		//Template.AddMergeValues.hideField.set(hideField);
 		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
 
-		if(expr != null && expr != "")$("#merge-values-form").modal("show");
+		if(expr !== null && expr !== "")$("#merge-values-form").modal("show");
 		else Interpreter.showErrorMsg("Please specify expression", -3);
 	}
 })
@@ -108,7 +108,7 @@ async function AddMergeValues2(e) {
 		Template.AddMergeValues.mergeAlias.set(mergeAlias);
 		Template.AddMergeValues.aliasField.set(document.getElementById("add-new-attribute-alias").value);
 		Template.AddMergeValues.attribute.set(e);
-		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
+		if(aggregation !== null && aggregation !== "")Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.distinct.set(distinct);
 
 		let scName = await getSchemaNameForElement();
@@ -132,11 +132,11 @@ async function AddMergeValues2(e) {
 			var links = await vq_obj.getLinks();
 			for(let key in links) {
 				if(typeof links[key] !== "function"){
-					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
+					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement !== selected_elem_id) {
 						parentClass = await createVQ_Element(links[key].link.obj.startElement);
 						await links[key].link.setNestingType("SUBQUERY");
 					}
-					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
+					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement !== selected_elem_id) {
 						parentClass = await createVQ_Element(links[key].link.obj.endElement);
 						await links[key].link.setNestingType("SUBQUERY");
 					}
@@ -153,7 +153,7 @@ async function AddMergeValues2(e) {
 		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
 		document.getElementById("merge-values-form").style.zIndex = "1051";
 
-		if(expr != null && expr != "")$("#merge-values-form").modal("show");
+		if(expr !== null && expr !== "")$("#merge-values-form").modal("show");
 		else Interpreter.showErrorMsg("Please specify expression", -3);
 	}
 
@@ -269,11 +269,11 @@ Template.AddMergeValues.events({
 				var links = await vq_obj.getLinks();
 				for(let key in links) {
 					if(typeof links[key] !== "function"){
-						if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
+						if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement !== selected_elem_id) {
 							parentClass = await createVQ_Element(links[key].link.obj.startElement);
 							await links[key].link.setNestingType("SUBQUERY");
 						}
-						if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
+						if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement !== selected_elem_id) {
 							parentClass = await createVQ_Element(links[key].link.obj.endElement);
 							await links[key].link.setNestingType("SUBQUERY");
 						}
@@ -287,10 +287,10 @@ Template.AddMergeValues.events({
 					var maxValue = $('input[id=merge-results-most]').val();
 
 					if(displayCase) await parentClass.addField(mergeAliasName,"",false,false,false);
-					if (minValue != "") await parentClass.addCondition(mergeAliasName + ">=" + minValue, false);
-					if (maxValue != "") await parentClass.addCondition(mergeAliasName + "<=" + maxValue, false);
+					if (minValue !== "") await parentClass.addCondition(mergeAliasName + ">=" + minValue, false);
+					if (maxValue !== "") await parentClass.addCondition(mergeAliasName + "<=" + maxValue, false);
 
-					//if(alias != null && alias !="") expr =  aggregation + "(" + alias + ")";
+					//if(alias !== null && alias !="") expr =  aggregation + "(" + alias + ")";
 				}
 
 				let requireValues = $('input[id=require-merge-check-box]:checked').val();
@@ -371,10 +371,10 @@ Template.AddMergeValues.events({
 });
 
 function parsedExpressionField(expression){
-	if(expression.indexOf("(") != -1 && expression.endsWith(")") == true ){
+	if(expression.indexOf("(") !== -1 && expression.endsWith(")") == true ){
 		var aggregation = expression.substring(0, expression.indexOf("("));
 		var aggregationList = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "group_concat"];
-		if(aggregationList.indexOf(aggregation.toLowerCase()) != -1) {
+		if(aggregationList.indexOf(aggregation.toLowerCase()) !== -1) {
 			expression = expression.substring(expression.indexOf("(")+1, expression.length-1)
 			var distinct = "";
 			if(expression.toLowerCase().startsWith("distinct ")) {

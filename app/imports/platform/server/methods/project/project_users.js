@@ -39,7 +39,7 @@ ProjectsUsers.after.insert(async function (user_id, doc) {
   if (!doc) return false;
 
   //not sending notifications to the user himself
-  if (doc["userSystemId"] != user_id) {
+  if (doc["userSystemId"] !== user_id) {
     //adding notification to the user that was invited
     await Notifications.insertAsync({
       createdBy: user_id,
@@ -73,7 +73,7 @@ ProjectsUsers.hookOptions.after.insert = { fetchPrevious: false };
 // 	}
 
 // 	//user status can be changed from invited to member only
-// 	else if (modifier.$set.status && modifier.$set.status != "Member") {
+// 	else if (modifier.$set.status && modifier.$set.status !== "Member") {
 // 		console.log("Update failed: User status can only be changed to Member");
 // 		return false;
 // 	}
@@ -283,7 +283,7 @@ ProjectsUsers.after.remove(async function (user_id, doc) {
     { $set: { activeProject: "no-project" } },
   );
 
-  if (target_user != user_id) {
+  if (target_user !== user_id) {
     //creates the new messages to inform that user is removed
     await Notifications.insertAsync({
       createdBy: user_id,

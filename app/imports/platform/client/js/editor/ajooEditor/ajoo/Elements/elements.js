@@ -307,7 +307,7 @@ AElements.prototype = {
                     var start_elem_id = elem["startElementId"];
                     var start_elem = element_list[start_elem_id];
 
-                    if (start_elem != undefined) {
+                    if (start_elem !== undefined) {
                         if (start_elem["outLines"] && start_elem["outLines"][elem_id]) {
                             delete start_elem["outLines"][elem_id];
                         }
@@ -315,7 +315,7 @@ AElements.prototype = {
 
                     var end_elem_id = elem["endElementId"];
                     var end_elem = element_list[end_elem_id];
-                    if (end_elem != undefined) {
+                    if (end_elem !== undefined) {
                         if (end_elem["inLines"] && end_elem["inLines"][elem_id]) {
                             delete end_elem["inLines"][elem_id];
                         }

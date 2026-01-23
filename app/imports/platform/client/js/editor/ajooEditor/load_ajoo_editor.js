@@ -31,16 +31,16 @@ Interpreter.loadAjooEditor = function(diagram) {
     var container_width = $("#" + container_name).width();
     var container_height = $(window).height() - $("#" + container_name).offset().top - 200;
 	let editor_min_height = diagram_type.editorMinHeight;
-	
+
 	if (editor_min_height !== undefined && container_height < editor_min_height) {
 	  container_height = editor_min_height;
 	} else container_height = container_height * 0.9;
-	
+
 
 	var layoutSettings = {"layout": "UNIVERSAL", "arrangeMethod": "arrangeFromScratch"};
-	if ( diagram.layoutSettings != undefined )
+	if ( diagram.layoutSettings !== undefined )
 		layoutSettings = diagram.layoutSettings;
-	else if ( diagram_type.layoutSettings != undefined)
+	else if ( diagram_type.layoutSettings !== undefined)
 		layoutSettings = diagram_type.layoutSettings;
 
 	var settings = {

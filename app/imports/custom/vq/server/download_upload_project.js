@@ -207,7 +207,7 @@ async function uploadProject(list) {
 						return;
 					}
 				}
-				if ( diagram_type != undefined) {
+				if ( diagram_type !== undefined) {
 					_.extend(diagram, {projectId: project_id,
 						versionId: version_id,
 						diagramTypeId: diagram_type._id,

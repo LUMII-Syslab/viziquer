@@ -59,7 +59,7 @@ Interpreter.methods({
 			var selected_elem_list = _.keys(selected_elements);
 
 			var res = Interpreter.executeExtensionPoint(diagram_type, "beforeCopyCollection", selected_elements);
-			if (res != false) {
+			if (res !== false) {
 				var list = {
 							diagramTypeId: diagram_type._id,
 							toolId: project.toolId,
@@ -78,7 +78,7 @@ Interpreter.methods({
 			});
 
 			var res = Interpreter.executeExtensionPoint(diagram_type, "beforeCopyCollection", selected_elements);
-			if (res != false) {
+			if (res !== false) {
 				var list = {
 							diagramId: diagram_id,
 							elements: selected_elem_list,

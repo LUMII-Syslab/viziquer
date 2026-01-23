@@ -12,7 +12,7 @@ Template.VQ_structureRibbon_button.helpers({
   isVQ: async function() {
   	const tool = await Tools.findOneAsync({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
     console.log('Iekš Template.VQ_structureRibbon_button.helpers', tool, Tools.findOne({isDeprecated: {$ne: true}}))
-	  if ( tool != undefined)
+	  if ( tool !== undefined)
 	   return true;
 	  else
 		  return true;
@@ -88,7 +88,7 @@ Template.VQcreateProjectModal.helpers({
       else if ( t.toolGroup == undefined)
         tt = {_id: t._id, name: t.name};
 
-      if ( tt._id != undefined) {
+      if ( tt._id !== undefined) {
         if ( t.name == "Viziquer" || t.name == "ViziQuer") {
           tt["selected"] = "selected";
           tool_id = t._id;
@@ -102,7 +102,7 @@ Template.VQcreateProjectModal.helpers({
 			tool_id = result[0]._id;
 		}
 
-		if (tool_id != "")
+		if (tool_id !== "")
 			await setServices (tool_id);
 
 		return result;
@@ -132,16 +132,16 @@ Template.VQcreateProjectModal.events({
 		let project_name = project_name_obj.val();
 		const o = $('input[name=stack-radio]:checked').closest(".schema");
 
-		if (project_name == "" && o.attr("name") != undefined && o.attr("name") != "" && o.attr("name") != "Def") {
+		if (project_name == "" && o.attr("name") !== undefined && o.attr("name") !== "" && o.attr("name") !== "Def") {
 			project_name = o.attr("name");
 			isProject = true;
 		}
 
-		if (project_name == "" && schema_name != "") {
+		if (project_name == "" && schema_name !== "") {
 			project_name = schema_name;
 		}
 
-		if(project_name != "") {
+		if(project_name !== "") {
 
 			document.getElementById("project-name-required").style.display = "none";
 			document.getElementById("project-name").style.borderColor = "#ccc";
@@ -165,11 +165,11 @@ Template.VQcreateProjectModal.events({
 			list.project_link = o.attr("link")
 			//console.log("Jauna projekta taisīšana");
 
-			if ( schema_name != "" && !isProject) {
+			if ( schema_name !== "" && !isProject) {
 				const schemas = Template.VQcreateProjectModal.schemas.get();
 				const schema_info = _.filter(schemas, function(o){ return o.display_name == schema_name});
 
-				if ( schema_info.length > 0 && schema_info[0].display_name != "") {
+				if ( schema_info.length > 0 && schema_info[0].display_name !== "") {
 					list.schema = schema_name;
 					list.endpoint = schema_info[0].sparql_url;
 					list.uri = schema_info[0].named_graph;
@@ -207,7 +207,7 @@ async function setServices (tool_id) {
 
 	Meteor.subscribe("Services", {}); // TODO bez šī man reizēm neizdevās tikst klāt
 
-	if ( tool_id != 'undefined')
+	if ( tool_id !== 'undefined')
 	{
     const services = await Services.findOneAsync({toolId: tool_id });
 
@@ -233,7 +233,7 @@ function getSchemas(tag) {
 	const allSchemas = Template.VQcreateProjectModal.allSchemas.get() || [];
 
 	for ( const sc of allSchemas ) {
-		if ( tag != 'All' && sc.tags.includes(tag))
+		if ( tag !== 'All' && sc.tags.includes(tag))
 			schemas.push(sc);
 		else if ( tag == 'All' )
 			schemas.push(sc);

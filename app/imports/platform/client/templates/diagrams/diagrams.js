@@ -121,7 +121,7 @@ Template.diagramsRibbon.helpers({
     }
 
     // tool.toolbar = "diagramsToolbar";
-    if (project.schema != undefined) {
+    if (project.schema !== undefined) {
       tool.schema = ` (schema - ${project.schema})`;
       tool.hasSchema = true;
     } else {
@@ -144,7 +144,7 @@ Template.diagramsToolbar.helpers({
       return false;
     }
 
-    if (project.schema != undefined) {
+    if (project.schema !== undefined) {
       return true;
       // TODO Šeit vispār vajadzētu skatīties, vai pretī ir pareizais DSS serveris un vai ir pareizas rīks (nav tikai VQ)
     }
@@ -918,7 +918,7 @@ Template.ontologySettings.events({
       .filter(function (o) {
         return o.display_name == schema;
       });
-    if (schema_info.length > 0 && schema_info[0].display_name != "") {
+    if (schema_info.length > 0 && schema_info[0].display_name !== "") {
       Template.ontologySettings.endpoint.set(schema_info[0].sparql_url);
       Template.ontologySettings.uri.set(schema_info[0].named_graph);
       Template.ontologySettings.queryEngineType.set(
@@ -1000,7 +1000,7 @@ function getSchemas(tag) {
   const allSchemas = Template.ontologySettings.allSchemas.get() || [];
 
   for (const sc of allSchemas) {
-    if (tag != "All" && sc.tags.includes(tag)) schemas.push(sc);
+    if (tag !== "All" && sc.tags.includes(tag)) schemas.push(sc);
     else if (tag == "All") schemas.push(sc);
   }
 
@@ -1035,7 +1035,7 @@ Template.ontologySettings.rendered = async function () {
     // if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
     // else Template.ontologySettings.graphs.set([]);
 
-    if (proj.schema != undefined && proj.schema != "") {
+    if (proj.schema !== undefined && proj.schema !== "") {
       var selected = schemas.filter(function (o) {
         return o.display_name == proj.schema;
       });
@@ -1315,7 +1315,7 @@ function is_toolbar_enabled() {
 
 function apply_selected_group_to_query(query) {
   var selected_group = get_user_settings_property("diagramsSelectedGroup");
-  if (selected_group && selected_group != "Admin" && selected_group != "none") {
+  if (selected_group && selected_group !== "Admin" && selected_group !== "none") {
     query["allowedGroups"] = selected_group;
   }
 }

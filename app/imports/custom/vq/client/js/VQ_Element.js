@@ -487,7 +487,7 @@ VQ_Element.prototype = {
  /* // determines whether a class rather than instance is searched
   isVariable: function() {
     var name = this.getName();
-	if(name != null){
+	if(name !== null){
 		const regex = /\([A-Za-z]+\) /g;
 		const found = name.search(regex);
 		if(found !== -1){
@@ -511,7 +511,7 @@ VQ_Element.prototype = {
 
 
 	for(let field in fields){
-		if(typeof fields[field] !== "function" && (fields[field]["requireValues"] != true || fields[field]["exp"] == "(select this)")){
+		if(typeof fields[field] !== "function" && (fields[field]["requireValues"] !== true || fields[field]["exp"] == "(select this)")){
 			isOptional = true;
 			break;
 		}
@@ -520,7 +520,7 @@ VQ_Element.prototype = {
 	var links = this.getLinks();
 	for(let l in links){
 
-		if(typeof links[l] === "object" && !links[l].start && links[l].link.getType() != "REQUIRED"){
+		if(typeof links[l] === "object" && !links[l].start && links[l].link.getType() !== "REQUIRED"){
 
 			isOptional = true;
 			break;
@@ -533,7 +533,7 @@ VQ_Element.prototype = {
   getVariableName: function() {
     if (this.isVariable()) {
 		var name = this.getName();
-		if(name != null){
+		if(name !== null){
 			const regex = /\([A-Za-z]+\) /g;
 			const found = name.search(regex);
 			if(found !== -1){
@@ -798,10 +798,10 @@ VQ_Element.prototype = {
 
 	var prefixesValue = "";
 	var graphPrefixValue = "";
-	if(graph != null && graph !="" && graphInstruction != null && graphInstruction != "") graphPrefixValue = "{" + graphInstruction + ": " + graph + "} ";
+	if(graph !== null && graph !="" && graphInstruction !== null && graphInstruction !== "") graphPrefixValue = "{" + graphInstruction + ": " + graph + "} ";
 	if(isInternal == true) prefixesValue = "h";
 	if(requireValues == true) prefixesValue = prefixesValue + "+";
-	if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+	if(prefixesValue !== "") prefixesValue = "{" + prefixesValue + "} ";
 	prefixesValue = graphPrefixValue + prefixesValue;
 
 	this.addCompartmentSubCompartments("Attributes",[
@@ -2048,7 +2048,7 @@ class VQ_Element_Async{
   // determines whether a class rather than instance is searched
   async isVariable() {
     var name = await this.getName();
-	if(name != null){
+	if(name !== null){
 		const regex = /\([A-Za-z]+\) /g;
 		const found = name.search(regex);
 		if(found !== -1){
@@ -2068,7 +2068,7 @@ class VQ_Element_Async{
 	var isOptional = false;
 
 	for(let field in fields){
-		if(typeof fields[field] !== "function" && (fields[field]["requireValues"] != true || fields[field]["exp"] == "(select this)")){
+		if(typeof fields[field] !== "function" && (fields[field]["requireValues"] !== true || fields[field]["exp"] == "(select this)")){
 			isOptional = true;
 			break;
 		}
@@ -2077,7 +2077,7 @@ class VQ_Element_Async{
 	var links = this.getLinks();
 	for(let l in links){
 
-		if(typeof links[l] === "object" && !links[l].start && await links[l].link.getType() != "REQUIRED"){
+		if(typeof links[l] === "object" && !links[l].start && await links[l].link.getType() !== "REQUIRED"){
 
 			isOptional = true;
 			break;
@@ -2090,7 +2090,7 @@ class VQ_Element_Async{
   async getVariableName() {
     if (await this.isVariable()) {
 		var name = await this.getName();
-		if(name != null){
+		if(name !== null){
 			const regex = /\([A-Za-z]+\) /g;
 			const found = name.search(regex);
 			if(found !== -1){
@@ -2351,10 +2351,10 @@ class VQ_Element_Async{
 
 	var prefixesValue = "";
 	var graphPrefixValue = "";
-	if(graph != null && graph !="" && graphInstruction != null && graphInstruction != "") graphPrefixValue = "{" + graphInstruction + ": " + graph + "} ";
+	if(graph !== null && graph !="" && graphInstruction !== null && graphInstruction !== "") graphPrefixValue = "{" + graphInstruction + ": " + graph + "} ";
 	if(isInternal == true) prefixesValue = "h";
 	if(requireValues == true) prefixesValue = prefixesValue + "+";
-	if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+	if(prefixesValue !== "") prefixesValue = "{" + prefixesValue + "} ";
 	prefixesValue = graphPrefixValue + prefixesValue;
 
 	await this.addCompartmentSubCompartments("Attributes",[

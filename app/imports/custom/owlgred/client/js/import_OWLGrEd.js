@@ -1103,7 +1103,7 @@ async function createOntologyStructure(ontology){
 			  restrictions.push(restriction);
 		  } else {
 			  //object property cardinality
-			  if(restriction.onClass != null && restriction.onProperty != null
+			  if(restriction.onClass !== null && restriction.onProperty !== null
 			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.objectProperties[restriction.onProperty].domain[0] && restriction.onClass === ontology.objectProperties[restriction.onProperty].range[0]
 			  ){
@@ -1112,8 +1112,8 @@ async function createOntologyStructure(ontology){
 					ontology.objectProperties[restriction.onProperty].multiplicity = multiplicity;
 				}
 			  // data property cardinality
-			  // }else if(restriction.onDataRange != null && restriction.onProperty != null
-			  }else if(restriction.onProperty != null
+			  // }else if(restriction.onDataRange !== null && restriction.onProperty !== null
+			  }else if(restriction.onProperty !== null
 			  && typeof ontology.dataProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.dataProperties[restriction.onProperty].domain[0]
 			  ){
@@ -1123,7 +1123,7 @@ async function createOntologyStructure(ontology){
 				}
 			  }
 			  //restriction cardinality
-			  else if(restriction.onClass != null && restriction.onProperty != null
+			  else if(restriction.onClass !== null && restriction.onProperty !== null
 			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.objectProperties[restriction.onProperty].domain[0] && restriction.onClass !== ontology.objectProperties[restriction.onProperty].range[0]
 			  ){
@@ -1131,7 +1131,7 @@ async function createOntologyStructure(ontology){
 			      restrictions.push(restriction);
 			  }
 			  //inverse restriction cardinality
-			  else if(restriction.inverse === true && restriction.onClass != null && restriction.onProperty != null
+			  else if(restriction.inverse === true && restriction.onClass !== null && restriction.onProperty !== null
 			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.objectProperties[restriction.onProperty].range[0] && restriction.onClass === ontology.objectProperties[restriction.onProperty].domain[0]
 			  ){
@@ -1673,7 +1673,7 @@ async function visualizeOntology(ontology){
 			  restrictions.push(restriction);
 		  } else {
 			  //object property cardinality
-			  if(restriction.onClass != null && restriction.onProperty != null
+			  if(restriction.onClass !== null && restriction.onProperty !== null
 			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.objectProperties[restriction.onProperty].domain[0] && restriction.onClass === ontology.objectProperties[restriction.onProperty].range[0]
 			  ){
@@ -1682,8 +1682,8 @@ async function visualizeOntology(ontology){
 					ontology.objectProperties[restriction.onProperty].multiplicity = multiplicity;
 				}
 			  // data property cardinality
-			  // }else if(restriction.onDataRange != null && restriction.onProperty != null
-			  }else if(restriction.onProperty != null
+			  // }else if(restriction.onDataRange !== null && restriction.onProperty !== null
+			  }else if(restriction.onProperty !== null
 			  && typeof ontology.dataProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.dataProperties[restriction.onProperty].domain[0]
 			  ){
@@ -1693,7 +1693,7 @@ async function visualizeOntology(ontology){
 				}
 			  }
 			  //restriction cardinality
-			  else if(restriction.onClass != null && restriction.onProperty != null
+			  else if(restriction.onClass !== null && restriction.onProperty !== null
 			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.objectProperties[restriction.onProperty].domain[0] && restriction.onClass !== ontology.objectProperties[restriction.onProperty].range[0]
 			  ){
@@ -1701,7 +1701,7 @@ async function visualizeOntology(ontology){
 			      restrictions.push(restriction);
 			  }
 			  //inverse restriction cardinality
-			  else if(restriction.inverse === true && restriction.onClass != null && restriction.onProperty != null
+			  else if(restriction.inverse === true && restriction.onClass !== null && restriction.onProperty !== null
 			  && typeof classes[restriction.onClass] !== "undefined" && typeof ontology.objectProperties[restriction.onProperty] !== "undefined"
 			  && iri === ontology.objectProperties[restriction.onProperty].range[0] && restriction.onClass === ontology.objectProperties[restriction.onProperty].domain[0]
 			  ){
@@ -1809,7 +1809,7 @@ async function visualizeOntology(ontology){
 		  return `${item.annotationType} : ${item.value}${lang}`;
 		}).join(', ');
 
-		
+
 		  let attrName = dataProperty.prefixed || " ";
 		  await cl.addCompartmentSubCompartments2("Attributes",[
 				  {name:"Name",value:attrName},
@@ -2583,7 +2583,7 @@ function combineRestrictions(restrictions) {
 
     // helpers for agreement on fillers
     const agree = (field) => {
-      const vals = arr.map(r => r[field]).filter(v => v != null);
+      const vals = arr.map(r => r[field]).filter(v => v !== null);
       if (vals.length === 0) return null;
       const first = vals[0];
       return vals.every(v => v === first) ? first : null;

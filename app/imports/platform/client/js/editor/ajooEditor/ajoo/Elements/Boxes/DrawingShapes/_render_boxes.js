@@ -103,7 +103,7 @@ var Box = function(editor) {
 		var shape = this.editor.findChild(shape_group, "Shape");
 		if (shape) {
 
-			if (shape["attrs"]["fillPriority"] != "color") {
+			if (shape["attrs"]["fillPriority"] !== "color") {
 
 				//selects element style and the size, then recomputes the gradient
 				if (!style) {
@@ -290,12 +290,12 @@ Box.prototype = {
 		var shape_group = element.presentation;
 
 		//recomputing the element's x position
-		if (elem_size["x"] != new_x) {
+		if (elem_size["x"] !== new_x) {
 			shape_group.x(new_x2 - new_size["width"]);
 		}
 
 		//recomputing the element's y position
-		if (elem_size["y"] != new_y) {
+		if (elem_size["y"] !== new_y) {
 			shape_group.y(new_y2 - new_size["height"]);
 		}
 	},
@@ -382,7 +382,7 @@ Box.prototype = {
 			style = style_obj["elementStyle"];
 
 		//changing box type
-		if (style["shape"] && box.name != style["shape"]) {
+		if (style["shape"] && box.name !== style["shape"]) {
 
 			var new_elem = box.editor.elements.createShape(style["shape"]);
 
@@ -453,7 +453,7 @@ Box.prototype = {
 			shape.setAttrs(style);
 
 			//if shape has gradient
-			if (shape["attrs"]["fillPriority"] != "color") {
+			if (shape["attrs"]["fillPriority"] !== "color") {
 				//resize_gradient(shape_group);
 			}
 		});

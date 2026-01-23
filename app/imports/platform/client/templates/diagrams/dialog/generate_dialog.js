@@ -496,7 +496,7 @@ function render_dialog_fields(compart_type, compartment) {
 		var values;
 
 		//building drop down dynamically
-		if (dynamic_drop_down && dynamic_drop_down != "") {
+		if (dynamic_drop_down && dynamic_drop_down !== "") {
 			values = Interpreter.execute(dynamic_drop_down);
 		}
 

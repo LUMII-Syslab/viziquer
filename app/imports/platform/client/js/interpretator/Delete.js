@@ -23,7 +23,7 @@ Interpreter.methods({
 
 		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
 		var res = Interpreter.executeExtensionPoint(diagram_type, "beforeDeleteCollection", selection_list);
-		if (res != false) {
+		if (res !== false) {
 
 			var selected_elem_ids = _.keys(selection_list);
 

@@ -12,7 +12,7 @@ Template.OWLGRED_structureRibbon_button.helpers({
   isOWLGRED: function() {
   	var tool = Tools.findOne({toolGroup: OWLGrEdToolGroup,isDeprecated: {$ne: true}});
 
-	  if ( tool != undefined)
+	  if ( tool !== undefined)
 	   return true;
 	  else
 		  return false;
@@ -51,7 +51,7 @@ Template.OWLGRED_createProjectModal.helpers({
       else if ( t.toolGroup == undefined)
         tt = {_id: t._id, name: t.name};
 
-      if ( tt._id != undefined) {
+      if ( tt._id !== undefined) {
         if ( t.name == "OWLGrEd" || t.name == "OWLGRED") {
           tt["selected"] = "selected";
           tool_id = t._id;
@@ -86,7 +86,7 @@ Template.OWLGRED_createProjectModal.events({
 			project_name = "OWLGRED project";
 		}
 
-		if(project_name != ""){
+		if(project_name !== ""){
 
 			document.getElementById("OWLGRED-project-name-required").style.display = "none";
 			document.getElementById("OWLGRED-project-name").style.borderColor = "#ccc";

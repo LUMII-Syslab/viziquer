@@ -91,7 +91,7 @@ function build_shape_object(node, shapes) {
             // do nothing for now
     }
 
-    if ( shape != null ) {
+    if ( shape !== null ) {
 
         //shape.realize();
         shape.callback = showIntersections;

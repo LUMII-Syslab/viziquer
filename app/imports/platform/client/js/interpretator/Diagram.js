@@ -17,7 +17,7 @@ Interpreter.methods({
 		var list = {name: diagram_name};
 		var res = Interpreter.executeExtensionPoint(diagram_type, "beforeCreateDiagram", list);
 
-		if (res != false) {
+		if (res !== false) {
 			Interpreter.executeExtensionPoint(diagram_type, "createDiagram", list);
 
 			Utilities.callMeteorMethod("insertDiagram", list, function(id) {
@@ -56,7 +56,7 @@ Interpreter.methods({
 
 			var list = {id: diagram_id};
 			var res = Interpreter.executeExtensionPoint(diagram_type, "beforeDeleteDiagram", list);
-			if (res != false) {
+			if (res !== false) {
 				Interpreter.executeExtensionPoint(diagram_type, "deleteDiagram", list);
 				Interpreter.executeExtensionPoint(diagram_type, "afterDeleteDiagram", list);
 			}
@@ -196,7 +196,7 @@ Interpreter.methods({
 			8: 4,
 			9: 3,
 			10: 2,
-			11: 1, 
+			11: 1,
 			12: 0,
 			13: 2,
 			14: 3,
@@ -216,19 +216,19 @@ Interpreter.methods({
 		  8: 4.8,
 		  9: 5.1,
 		  10: 5.4,
-		  11: 5.7, 
-		  12: 6.0, 
+		  11: 5.7,
+		  12: 6.0,
 		  13: 6.5,
-		  14: 7.0, 
-		  15: 7.4, 
+		  14: 7.0,
+		  15: 7.4,
 		  16: 8.5,
-		  17: 8.2, 
-		  18: 8.7, 
+		  17: 8.2,
+		  18: 8.7,
 		  19: 9.3,
-		  20: 9.8, 
-		  21: 10.4, 
+		  20: 9.8,
+		  21: 10.4,
 		  22: 10.9,
-		  23: 11.5, 
+		  23: 11.5,
 		  24: 12.0
 		};
 
@@ -393,15 +393,15 @@ Interpreter.methods({
 						}
 					}
 				}
-				if (compart_width != 0) {
+				if (compart_width !== 0) {
 					width = compart_width + 5;
 				}
 
-				if (compart_height != 0) {
+				if (compart_height !== 0) {
 					height = compart_height + 5;
 				}
 			}
-			
+
 			//min height
 			if(height < 30 && box.name !== "HorizontalLine") height = 30;
 			//min width

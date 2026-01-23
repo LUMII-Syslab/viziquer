@@ -14,7 +14,7 @@ Template.configuratorDiagramTemplate.helpers({
 
 	activeElementType: function() {
 		var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType")});
-		if (elem_type && elem_type["name"] != "Specialization")
+		if (elem_type && elem_type["name"] !== "Specialization")
 			return true;
 		else
 			return;

@@ -45,7 +45,7 @@ ContextMenu.prototype = {
 	},
 
 	selectMenuItem: function(indexes, procedure = '') {
-		if ( procedure != '' && procedure != undefined) {
+		if ( procedure !== '' && procedure !== undefined) {
 			Interpreter.execute(procedure);
 		}
 		else {
@@ -138,7 +138,7 @@ ContextMenu.prototype = {
 
 function get_context_menu_list(obj_type, property, extension_point) {
 	var prop_name = Interpreter.getExtensionPointProcedure(extension_point, obj_type);
-	if (prop_name && prop_name != "") {
+	if (prop_name && prop_name !== "") {
 		return {menu: Interpreter.execute(prop_name)};
 	}
 	else {
@@ -188,7 +188,7 @@ Template.contextMenuTemplate.helpers({
 
 													if (menu_item.subMenu) {
 														if (dataShapes.schema.hide_individuals == true) {
-															menu_item.subMenu = menu_item.subMenu.filter(function(m){ return m.procedure != 'AddUriName'; });
+															menu_item.subMenu = menu_item.subMenu.filter(function(m){ return m.procedure !== 'AddUriName'; });
 														}
 
 														menu_item.subMenu = _.map(menu_item.subMenu, function(menu_item_3, i) {

@@ -27,10 +27,10 @@ var ConnectionPoints = function(editor) {
 ConnectionPoints.prototype = {
 
 	addStartPoint: function(element) {
-		var connectionPoints = this;	
+		var connectionPoints = this;
 		var state = connectionPoints.state;
 
-		if (element.type != "Box")
+		if (element.type !== "Box")
 			return;
 
 		if (state.fixedStartElement)
@@ -44,7 +44,7 @@ ConnectionPoints.prototype = {
 	},
 
 	fixStartElement: function() {
-		var connectionPoints = this;	
+		var connectionPoints = this;
 		var state = connectionPoints.state;
 
 		if (_.isEmpty(state)) {
@@ -61,7 +61,7 @@ ConnectionPoints.prototype = {
 		var connectionPoints = this;
 		var state = connectionPoints.state;
 
-		if (element.type != "Box")
+		if (element.type !== "Box")
 			return;
 
 		var fixed_start_elem = state.fixedStartElement;
@@ -111,7 +111,7 @@ ConnectionPoints.prototype = {
 
 		connectionPoints[direction + "Parent"].destroyChildren();
 		connectionPoints[direction + "Parent"].draw();
-		
+
 		if (state[direction])
 			state[direction] = {};
 
@@ -124,16 +124,16 @@ ConnectionPoints.prototype = {
 		var state = connectionPoints.state;
 
 		//removing all connection points
-		connectionPoints.startParent.destroyChildren();		
+		connectionPoints.startParent.destroyChildren();
 		connectionPoints.endParent.destroyChildren();
-		
+
 		connectionPoints.state = {};
 	},
 
 	addConnectionPoints: function(box, parent) {
 		var connectionPoints = this;
 		var connection_point_positions = box.computeConnectionPointPositions();
-		
+
 		return connectionPoints.addConnectionPointsFromList(box, connection_point_positions, parent);
 	},
 
@@ -189,7 +189,7 @@ ConnectionPoints.prototype = {
 			var editor = connectionPoints.editor;
 			editor.actions.state.cancelMove = false;
 		});
-	
+
 		connection_point.on('mousedown', function(e) {
 
 			var editor = connectionPoints.editor;

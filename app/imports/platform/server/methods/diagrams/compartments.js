@@ -232,7 +232,7 @@ function build_compartment(compart_type, list, compart_in) {
       var prefix = get_prefix(compart_type, default_value);
       var suffix = get_suffix(compart_type, default_value);
 
-      if (default_value && default_value != "") {
+      if (default_value && default_value !== "") {
         value = prefix + default_value + suffix;
       }
     }

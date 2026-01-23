@@ -155,7 +155,7 @@ async function setTreeTop (filter = '', plus = 0) {
 
 	const namespaces = getNS();
 
-	if (namespaces.in != undefined || namespaces.notIn != undefined)
+	if (namespaces.in !== undefined || namespaces.notIn !== undefined)
 		params.namespaces = namespaces;
 
 	const clFull = await dataShapes.getTreeClasses({main:params});
@@ -175,7 +175,7 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 		params.filter = filter;
 
 	const namespaces = getNS();
-	if ( nsPlus && (namespaces.in != undefined || namespaces.notIn != undefined))
+	if ( nsPlus && (namespaces.in !== undefined || namespaces.notIn !== undefined))
 		params.namespaces = namespaces;
 
 	params.classId =  dataShapes.schema.tree.topClass;
@@ -194,7 +194,7 @@ async function  useFilter (plus = 0) {
 	dataShapes.schema.tree.filterC = text;
 	// ** setNS();
 	const treeTop = Template.schemaTree.Classes.get();
-	if ( dataShapes.schema.tree.topClass != 0 )
+	if ( dataShapes.schema.tree.topClass !== 0 )
 		if (treeTop.length == 1 )
 			await setTreeSubClasses ([treeTop[0]], true, text.toLowerCase());
 		else
@@ -280,7 +280,7 @@ async function  useFilterI () {
 			}
 		}
 		else {  // Zināma konkrēta klase ( wikidata klase vairs netiek ņemta vērā)
-			if ( text != '' ) { // Ir filtrs
+			if ( text !== '' ) { // Ir filtrs
 				if ( dataShapes.schema.schemaType !== 'dbpedia') {
 					instances = [{data_id: "...", localName: "Waiting ...", description: ''}];
 					params.individualMode = 'All';
@@ -478,7 +478,7 @@ Template.schemaTree.rendered = async function() {
 	Template.schemaTree.Waiting.set(true);
 	//const proj = Projects.findOne(Session.get("activeProject")); // Nez kā šis strādāja?
 	const proj = await Projects.findOneAsync({_id:Session.get("activeProject")});
-	if ( (proj !== undefined && dataShapes.schema.projectId != proj._id) || (dataShapes.schema.filling === 0 && proj !== undefined)) {
+	if ( (proj !== undefined && dataShapes.schema.projectId !== proj._id) || (dataShapes.schema.filling === 0 && proj !== undefined)) {
 		await dataShapes.changeActiveProjectFull(proj, 'Template.schemaTree.rendered');
 	}
 	Template.schemaTree.Waiting.set(false);

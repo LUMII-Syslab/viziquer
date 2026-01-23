@@ -470,7 +470,7 @@ Meteor.methods({
 
         await change_position(list, query, user_id);
 
-        if (list.isLayoutComputationNeededOnLoad != undefined) {
+        if (list.isLayoutComputationNeededOnLoad !== undefined) {
           await Diagrams.updateAsync(
             { _id: list.diagramId, projectId: list["projectId"] },
             {

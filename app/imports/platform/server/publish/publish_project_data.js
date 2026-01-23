@@ -63,7 +63,7 @@ Meteor.publish("Diagrams", async function (list) {
       versionId: list["versionId"],
     };
 
-    if (role != "Admin" && role != "Reader") {
+    if (role !== "Admin" && role !== "Reader") {
       diagrams_query["allowedGroups"] = role;
     }
 
@@ -112,7 +112,7 @@ Meteor.publish("FoundDiagrams", async function (list) {
   var role = proj_user["role"];
   if (await is_project_version_reader(user_id, list, role)) {
     //if search filter is applied, then selects diagrams from compartments
-    if (list["text"] && list["text"] != "") {
+    if (list["text"] && list["text"] !== "") {
       var proj_id = list["projectId"];
       var version_id = list["versionId"];
 
@@ -140,7 +140,7 @@ Meteor.publish("FoundDiagrams", async function (list) {
 
       var query2 = { _id: { $in: diagram_ids } };
 
-      if (role != "Admin" && role != "Reader") {
+      if (role !== "Admin" && role !== "Reader") {
         query1["allowedGroups"] = role;
         query2["allowedGroups"] = role;
       }
@@ -335,7 +335,7 @@ Meteor.publish("Diagram_Palette_ElementType", async function (list) {
         fields: { toolId: 0, versionId: 0, diagramId: 0 },
       };
 
-      if (role != "Admin" && role != "Reader" && role) {
+      if (role !== "Admin" && role !== "Reader" && role) {
         diagram_query["allowedGroups"] = role;
         //doc_query["allowedGroups"] = role;
       }
@@ -504,7 +504,7 @@ Meteor.publish("Diagram_Types", async function (list) {
       var dialog_type_limit = { fields: {} };
       //var palette_button_type_limit = {fields: {toolId: 0, versionId: 0, diagramId: 0}};
 
-      // if (role != "Admin" && role != "Reader") {
+      // if (role !== "Admin" && role !== "Reader") {
       // 	diagram_query["allowedGroups"] = role;
       // }
 
@@ -736,7 +736,7 @@ Meteor.publish("Searches", async function (list) {
 
   //gets user's id
   if (await is_project_member(this.userId, list)) {
-    if (list["text"] && list["text"] != "") {
+    if (list["text"] && list["text"] !== "") {
       var query = {
         phrase: { $regex: "^" + list["text"].toLowerCase() },
         type: list["type"],
@@ -746,7 +746,7 @@ Meteor.publish("Searches", async function (list) {
       return Searches.find(query, { sort: { counter: -1 }, limit: 10 });
     } else return this.stop();
   } else if (system_id) {
-    if (list["text"] && list["text"] != "") {
+    if (list["text"] && list["text"] !== "") {
       var query = {
         phrase: { $regex: "^" + list["text"].toLowerCase() },
         type: list["type"],
@@ -767,7 +767,7 @@ Meteor.publish("UserSearches", function (list) {
   //gets user's id
   var system_id = this.userId;
   if (system_id) {
-    if (list["text"] && list["text"] != "") {
+    if (list["text"] && list["text"] !== "") {
       var query = {};
       query["users." + system_id] = { $exists: true };
       query["phrase"] = { $regex: "^" + list["text"].toLowerCase() };
