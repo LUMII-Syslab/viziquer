@@ -22,6 +22,9 @@
     "jquery": "^3.7.1",
     "json2csv": "^5.0.7",
     "meteor-node-stubs": "^1.2.24",
+    "rdf-toolbag": "file:../../viziquer-archetype-viz",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "sparql-http-client": "^3.0.1",
     "sparqljs": "^3.7.3",
     "xml2js": "^0.6.2"

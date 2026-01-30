@@ -6,6 +6,12 @@ import { Projects, Diagrams } from '../../../../db/platform/collections.js'
 
 import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
+import { createElement } from "react";
+import { createRoot } from "react-dom/client";
+import { PropertySelector } from "rdf-toolbag";
+
+// FIXME: styling is not quite right
+import '/node_modules/rdf-toolbag/dist/rdf-toolbag.css'
 import './sparql_form.html'
 
 YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
@@ -15,6 +21,20 @@ YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyComplete
 // var yasqe = null;
 // var yasqe3 = null;
 
+/**
+ * Mount property selector.
+ */
+function initReactComponents(domElement) {
+    const root = createRoot(domElement);
+    const el = createElement(PropertySelector, {
+        suggestions: [
+            { label: "foo", value: "foo" },
+            { label: "bar", value: "bar" },
+        ],
+    });
+
+    root.render(el);
+}
 
 var sparql_form_events = {
 
@@ -235,6 +255,16 @@ Template.sparqlForm.onRendered( async function() {
 		var list = {projectId: project_id, set: {newPublicProject: false, isVisualizationNeeded: false},};
 		Utilities.callMeteorMethod("updateProject", list);
 	}
+
+    const elementSelector = ".react-mount-root";
+    const maybeElement = this.find(elementSelector);
+    if (maybeElement) {
+        initReactComponents(maybeElement);
+    } else {
+        throw new Error(
+            `Could not find element by '${elementSelector}, React component won't be mounted!`
+        );
+    }
 
 	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"
 

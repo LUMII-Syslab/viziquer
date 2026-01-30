@@ -4,9 +4,16 @@
       <ul class="nav nav-tabs" id="vq-tab">
           <li class="active"><a data-toggle="tab" href="#sparql">SPARQL</a></li>
           <li><a data-toggle="tab" href="#executed">Results</a></li>
+          <li><a data-toggle="tab" href="#extraResults">Extra Results</a></li>
           <!--<li class="disabled"><a data-toggle="tab" href="#">Messages</a></li>-->
       </ul>
       <div class="tab-content">
+        <div id="extraResults" class="tab-pane fade">
+          <div class="panel panel-default">
+            <div class="react-mount-root">
+            </div>
+          </div>
+        </div>
           <div id="executed" class="tab-pane fade">
             {{#with executedSparql}}
             <div class="panel panel-default">
