@@ -11,7 +11,7 @@ import { createRoot } from "react-dom/client";
 import { PropertySelector } from "rdf-toolbag";
 
 // FIXME: styling is not quite right
-import '/node_modules/rdf-toolbag/dist/rdf-toolbag.css'
+import rdfToolbagStyle from '/node_modules/rdf-toolbag/dist/rdf-toolbag.css';
 import './sparql_form.html'
 
 YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
@@ -25,7 +25,13 @@ YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyComplete
  * Mount property selector.
  */
 function initReactComponents(domElement) {
-    const root = createRoot(domElement);
+    const shadow = domElement.attachShadow({ mode: "open" });
+    const constructedStyleSheet = new CSSStyleSheet();
+
+    constructedStyleSheet.replaceSync(rdfToolbagStyle.textContent);
+    shadow.adoptedStyleSheets = [constructedStyleSheet];
+
+    const root = createRoot(shadow);
     const el = createElement(PropertySelector, {
         suggestions: [
             { label: "foo", value: "foo" },
