@@ -11,11 +11,12 @@ const VQToolGroupName = 'ViziQuer';
 Template.VQ_structureRibbon_button.helpers({
   isVQ: async function() {
   	const tool = await Tools.findOneAsync({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
-    console.log('Iekš Template.VQ_structureRibbon_button.helpers', tool, Tools.findOne({isDeprecated: {$ne: true}}))
+    console.log('Template.VQ_structureRibbon_button.helpers -- isVQ')
+    //console.log('Iekš Template.VQ_structureRibbon_button.helpers', tool, Tools.findOne({isDeprecated: {$ne: true}}))
 	  if ( tool !== undefined)
 	   return true;
 	  else
-		  return true;
+		  return false;
 	},
   toolGroupName: function() {
     return VQToolGroupName;
@@ -40,7 +41,7 @@ Template.VQcreateProjectModal.schemaTags = new ReactiveVar([{name:"All", display
 
 Template.VQcreateProjectModal.rendered = async function() {
   const tool = await Tools.findOneAsync({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
-  console.log('Template.VQcreateProjectModal.rendered', tool)
+  //console.log('Template.VQcreateProjectModal.rendered')
 	const rr = await dataShapes.getOntologiesAndTags();
 	const tags = rr.tags;
 
@@ -74,38 +75,38 @@ Template.VQcreateProjectModal.helpers({
 		return Template.VQcreateProjectModal.schemaTags.get();
 	},
 	VQtools: async function() {
-    console.log('Izsaucam... Template.VQcreateProjectModal.helpers VQtools')
-    const tools = await Tools.find({ isDeprecated: {$ne: true},}, {$sort: {name: 1}}).fetchAsync();
+    console.log('Template.VQcreateProjectModal.helpers VQtools')
+    //const tools = await Tools.find({ isDeprecated: {$ne: true},}, {$sort: {name: 1}}).fetchAsync();
 
-		let result = [];
-		let tool_id = "";
-
-    for (const t of tools) {
-      console.log(t, t.name, t.toolGroup)
-      let tt = {};
-      if ( t.toolGroup && t.toolGroup == VQToolGroup)
-        tt = {_id: t._id, name: t.name};
-      else if ( t.toolGroup == undefined)
-        tt = {_id: t._id, name: t.name};
-
-      if ( tt._id !== undefined) {
-        if ( t.name == "Viziquer" || t.name == "ViziQuer") {
-          tt["selected"] = "selected";
-          tool_id = t._id;
+    let result = [];
+    let resultAll = [];
+    let tool_id = "";
+    Tools.find({ isDeprecated: {$ne: true},}, {$sort: {name: 1}}).forEach(
+      function(t) {
+        let tt = {};
+        resultAll.push(t);
+        if (((t.toolGroup && t.toolGroup === VQToolGroup)|| t.toolGroup === undefined) && t.name !== '_Configurator') {
+          tt = {_id: t._id, name: t.name};
+          if (t.name ===  VQToolGroupName || t.name === 'Viziquer' || t.name === 'ViziQuer') {
+            tt["selected"] = "selected";
+            tool_id = t._id;
+          }
+          result.push(tt);
         }
-        result.push(tt);
       }
-    }
+    );
 
-		if ( tool_id == "" && result.length > 0) {
+    if ( tool_id === "" && result.length > 0) {
 			result[0]["selected"] = "selected";
 			tool_id = result[0]._id;
 		}
 
-		if (tool_id !== "")
+		if (tool_id !== "") {
 			await setServices (tool_id);
+    }
 
-		return result;
+    console.log(resultAll, result)
+    return result;
 	},
 	services: function() {
 		return Template.VQcreateProjectModal.services.get();
@@ -125,19 +126,19 @@ Template.VQcreateProjectModal.events({
     const selectSchema = document.getElementById("schema-selection");
     const selection = selectSchema.value;
 
-    const selectedSchema = Template.VQcreateProjectModal.schemas.get().filter(function(f){ return f.display_name_full == selection;})
+    const selectedSchema = Template.VQcreateProjectModal.schemas.get().filter(function(f){ return f.display_name_full === selection;})
     if ( selectedSchema.length > 0 )
       schema_name = selectedSchema[0].display_name;
 
 		let project_name = project_name_obj.val();
 		const o = $('input[name=stack-radio]:checked').closest(".schema");
 
-		if (project_name == "" && o.attr("name") !== undefined && o.attr("name") !== "" && o.attr("name") !== "Def") {
+		if (project_name === "" && o.attr("name") !== undefined && o.attr("name") !== "" && o.attr("name") !== "Def") {
 			project_name = o.attr("name");
 			isProject = true;
 		}
 
-		if (project_name == "" && schema_name !== "") {
+		if (project_name === "" && schema_name !== "") {
 			project_name = schema_name;
 		}
 
@@ -167,7 +168,7 @@ Template.VQcreateProjectModal.events({
 
 			if ( schema_name !== "" && !isProject) {
 				const schemas = Template.VQcreateProjectModal.schemas.get();
-				const schema_info = _.filter(schemas, function(o){ return o.display_name == schema_name});
+				const schema_info = _.filter(schemas, function(o){ return o.display_name === schema_name});
 
 				if ( schema_info.length > 0 && schema_info[0].display_name !== "") {
 					list.schema = schema_name;
@@ -205,7 +206,7 @@ Template.VQcreateProjectModal.events({
 async function setServices (tool_id) {
 	let result = {};
 
-	Meteor.subscribe("Services", {}); // TODO bez šī man reizēm neizdevās tikst klāt
+	Meteor.subscribe("Services", {}); // TODO bez šī man reizēm neizdevās tikt klāt
 
 	if ( tool_id !== 'undefined')
 	{
@@ -235,7 +236,7 @@ function getSchemas(tag) {
 	for ( const sc of allSchemas ) {
 		if ( tag !== 'All' && sc.tags.includes(tag))
 			schemas.push(sc);
-		else if ( tag == 'All' )
+		else if ( tag === 'All' )
 			schemas.push(sc);
 	}
 
@@ -255,6 +256,3 @@ function filterSchemas(filter) {
 	schemas.unshift({display_name: ""});
 	return schemas;
 }
-
-
-
