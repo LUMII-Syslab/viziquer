@@ -47,6 +47,7 @@ Meteor.publish("navbar_user", function (list) {
 });
 
 publishComposite("navbar_projects", function (list) {
+console.log('publishComposite(navbar_projects)')
   if (!list || list.noQuery) {
     return this.ready();
   }

@@ -85,6 +85,7 @@ const Utilities = {
 
     Utilities.callMeteorMethod("updateUser", list);
   },
+
   changeUserActiveProject: async function (proj_id) {
     const proj = await Projects.findOneAsync({ _id: proj_id });
 
@@ -100,7 +101,7 @@ const Utilities = {
       });
       if (proj !== undefined) {
         const tool = await Tools.findOneAsync({ _id: proj.toolId });
-        // TODO šis na līdz galam skaisti
+        // TODO šis nav līdz galam skaisti
         let toolGroupName = "ViziQuer";
         if (tool.toolGroup !== undefined) {
           if (tool.toolGroup !== "VQ") toolGroupName = tool.toolGroup;

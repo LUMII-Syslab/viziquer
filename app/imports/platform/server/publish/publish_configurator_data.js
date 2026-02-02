@@ -19,8 +19,8 @@ import { is_system_admin } from "../../../libs/platform/user_rights.js";
 import { error_msg } from "../_global_functions.js";
 
 Meteor.publish("Structure_Tools", async function (list) {
-  if (!list || list.noQuery) return this.stop();
-
+console.log('Meteor.publish(Structure_Tools')
+  if (!list || list["noQuery"]) return this.stop();
   var user_id = this.userId;
   if (user_id) {
     //removes the configurator from the query
@@ -29,7 +29,8 @@ Meteor.publish("Structure_Tools", async function (list) {
       isDeprecated: { $ne: true },
     };
 
-    return Tools.find(query, { fields: { name: 1 } });
+    //return Tools.find(query, { fields: { name: 0, toolGroup: 0 } });
+	return Tools.find(query ); // TODO Varbūt te arī ir jāliek laukus?
   } else {
     error_msg();
     return this.stop();
@@ -40,7 +41,7 @@ Meteor.publish("Tools", async function (list) {
   if (!list || list.noQuery) {
     return this.stop();
   }
-
+console.log('Meteor.publish("Tools',list)
   var user_id = this.userId;
   if (await is_system_admin(user_id)) {
     //removes the configurator from the query
@@ -58,7 +59,6 @@ Meteor.publish("Tools", async function (list) {
       extensionPoints: 0,
     };
     //Par šo īsti neesmu pārliecināta
-
     return [
       Tools.find(query, { sort: { name: 1 }, fields: fields }),
       UserTools.find({ userSystemId: user_id }),
@@ -69,8 +69,8 @@ Meteor.publish("Tools", async function (list) {
 });
 
 Meteor.publish("ToolVersions_Diagrams_DiagramTypes", async function (list) {
-  if (!list || list.noQuery) return this.stop();
-
+  if (!list || list["noQuery"]) return this.stop();
+console.log('Meteor.publish(ToolVersions_Diagrams_DiagramTypes')
   //gets user's id
   var user_id = this.userId;
   if (await is_system_admin(user_id)) {
@@ -89,11 +89,23 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", async function (list) {
 
     //var diagram_type_query1 = {toolId: list.toolId, versionId: version_id};
     var diagram_type_query2 = { toolId: await get_configurator_tool_id() };
+	var fields = {
+      createdBy: 0,
+      documents: 0,
+      forum: 0,
+      users: 0,
+      archive: 0,
+      analytics: 0,
+      training: 0,
+      tasks: 0,
+      toolGroup: 0,
+      extensionPoints: 0,
+    };
 
     return [
-      // Tools.find({_id: list.toolId}),
-      Tools.find(tools_query, { sort: { name: 1 } }),
-
+      // Tools.find({_id: list["toolId"]}),
+      //Tools.find(tools_query, { sort: { name: 1 } }),
+	  Tools.find(tools_query, { fields: fields }, { sort: { name: 1 } }),
       ToolVersions.find(
         { toolId: list.toolId },
         { fields: { toolId: 0, createdBy: 0 } },

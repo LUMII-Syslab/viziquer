@@ -41,6 +41,7 @@ import {
 } from "../_helpers.js";
 
 Meteor.publish("Diagrams", async function (list) {
+console.log("Meteor.publish(Diagrams)+Tools");
   var user_id = this.userId;
   if (!list || list.noQuery || !list.projectId || !user_id) {
     return this.stop();
@@ -81,15 +82,26 @@ Meteor.publish("Diagrams", async function (list) {
       layoutSettings: 1,
       description: 1,
     };
+	var Tfields = {
+      createdBy: 0,
+      documents: 0,
+      forum: 0,
+      users: 0,
+      archive: 0,
+      analytics: 0,
+      training: 0,
+      tasks: 0,
+      toolGroup: 0,
+      extensionPoints: 0,
+    };
 
     var query = {
       _id: { $ne: get_configurator_tool_id() },
       isDeprecated: { $ne: true },
     };
-
     return [
       Diagrams.find(diagrams_query, { fields: fields, sort: { name: 1 } }),
-      Tools.find(query),
+      Tools.find(query, { fields: Tfields, sort: { name: 1 } }),
     ];
   } else {
     error_msg();

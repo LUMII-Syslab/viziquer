@@ -28,6 +28,7 @@ Template.projectsT.onCreated(function () {
     projectId: Session.get("activeProject"),
   });
   Meteor.subscribe("Tools", {});
+  console.log('Notiek pierakstīšanās uz Tools')
 });
 
 Template.projectsT.events({
