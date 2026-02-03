@@ -27,8 +27,50 @@ YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyComplete
 function initReactComponents(domElement) {
     // NOTE: Component root and portal root is wrapped in shadow DOM in order to isolate styling
 
+    // NOTE: Using `rem` and `styleOverrideMap` to emulate the default 1rem=16px layout because
+    // the current 1rem is too small to be readable and we need to override all variables that use
+    // rem units.
+    const baseSizePx = 16;
+    const rem = (val) => `${baseSizePx * val}px`;
+
+    const styleOverrideMap = {
+        "--spacing": rem(0.25),
+        "--text-xs": rem(0.75),
+        "--text-sm": rem(0.875),
+        "--text-base": rem(1),
+        "--text-lg": rem(1.125),
+        "--text-xl": rem(1.25),
+        "--text-2xl": rem(1.5),
+        "--text-3xl": rem(1.875),
+        "--text-4xl": rem(2.25),
+        "--text-5xl": rem(3),
+        "--text-6xl": rem(3.75),
+        "--text-7xl": rem(4.5),
+        "--text-8xl": rem(6),
+        "--text-9xl": rem(8),
+        "--radius": rem(0.625),
+        "--radius-xs": rem(0.125),
+        "--radius-sm": rem(0.25),
+        "--radius-md": rem(0.375),
+        "--radius-lg": rem(0.5),
+        "--radius-xl": rem(0.75),
+        "--radius-2xl": rem(1),
+        "--radius-3xl": rem(1.5),
+        "--radius-4xl": rem(2),
+    };
+
+    const varOverride = new CSSStyleSheet();
+    const styleString = `:host { ${
+      Object.entries(styleOverrideMap).map(([k, v]) => `${k}: ${v};\n`).join("")
+    } }`;
+    varOverride.replaceSync(styleString);
+    console.log({ styleString, varOverride });
+
+
     const constructedStyleSheet = new CSSStyleSheet();
     constructedStyleSheet.replaceSync(rdfToolbagStyle.textContent);
+
+    const constructedStyleSheetArray = [varOverride, constructedStyleSheet];
 
     const mainShadow = domElement.attachShadow({ mode: "open" });
     const portalShadowHost = document.body.appendChild(document.createElement("div"));
@@ -36,8 +78,8 @@ function initReactComponents(domElement) {
     portalShadowHost.classList.add("portal-shadow-host");
     const portalShadow = portalShadowHost.attachShadow({ mode: "open" });
 
-    mainShadow.adoptedStyleSheets = [constructedStyleSheet];
-    portalShadow.adoptedStyleSheets = [constructedStyleSheet];
+    mainShadow.adoptedStyleSheets = constructedStyleSheetArray;
+    portalShadow.adoptedStyleSheets = constructedStyleSheetArray;
 
     const root = createRoot(mainShadow);
 
