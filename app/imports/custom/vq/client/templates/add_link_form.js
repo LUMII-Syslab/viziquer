@@ -432,6 +432,7 @@ Template.AddLink.events({
 	        	$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link. <br> Path deffinition will be added later</div>");
 	        }
         } else {
+			$("#add-link-form").modal("hide");
 			//start_elem
 			var start_elem_id = Session.get("activeElement");
 			Template.AggregateWizard.startClassId.set(start_elem_id);
@@ -591,7 +592,7 @@ Template.AddLink.events({
 					$("#aggregate-wizard-form").modal("show");
 				}
 			}
-			$("#add-link-form").modal("hide");
+			// $("#add-link-form").modal("hide");
 			clearAddLinkInput();
 
 			return;
