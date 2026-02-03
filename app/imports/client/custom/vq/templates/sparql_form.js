@@ -8,7 +8,7 @@ import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
-import { PropertySelector } from "rdf-toolbag";
+import { PropertySelector, PortalContext } from "rdf-toolbag";
 
 // FIXME: styling is not quite right
 import rdfToolbagStyle from '/node_modules/rdf-toolbag/dist/rdf-toolbag.css';
@@ -25,13 +25,22 @@ YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyComplete
  * Mount property selector.
  */
 function initReactComponents(domElement) {
-    const shadow = domElement.attachShadow({ mode: "open" });
+    // NOTE: Component root and portal root is wrapped in shadow DOM in order to isolate styling
+
     const constructedStyleSheet = new CSSStyleSheet();
-
     constructedStyleSheet.replaceSync(rdfToolbagStyle.textContent);
-    shadow.adoptedStyleSheets = [constructedStyleSheet];
 
-    const root = createRoot(shadow);
+    const mainShadow = domElement.attachShadow({ mode: "open" });
+    const portalShadowHost = document.body.appendChild(document.createElement("div"));
+    // NOTE: Added classname for debugability
+    portalShadowHost.classList.add("portal-shadow-host");
+    const portalShadow = portalShadowHost.attachShadow({ mode: "open" });
+
+    mainShadow.adoptedStyleSheets = [constructedStyleSheet];
+    portalShadow.adoptedStyleSheets = [constructedStyleSheet];
+
+    const root = createRoot(mainShadow);
+
     const el = createElement(PropertySelector, {
         suggestions: [
             { label: "foo", value: "foo" },
@@ -39,7 +48,13 @@ function initReactComponents(domElement) {
         ],
     });
 
-    root.render(el);
+    const portalContext = createElement(
+        PortalContext,
+        { value: { container: portalShadow } },
+        el,
+    );
+
+    root.render(portalContext);
 }
 
 var sparql_form_events = {
