@@ -23,11 +23,11 @@ const MAX_IND_ANSWERS = 100;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
-const DIAGRAM_CLASS_LIMIT = 2000;
+const DIAGRAM_CLASS_LIMIT = 2500;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
 const ConsoleLog = false;
-const isPublic = true;  // Parametrs testu paslēpšanai
+const isPublic = false;  // Parametrs testu paslēpšanai
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
