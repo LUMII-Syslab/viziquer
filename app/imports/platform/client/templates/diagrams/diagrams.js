@@ -696,6 +696,16 @@ Template.uploadProject.events({
 });
 
 
+//returns diagram types for drop down when user creates a new diagram
+Template.configuratorDiagramOptions.configuratorDiagrams = new ReactiveVar();
+
+Template.configuratorDiagramOptions.helpers({
+	configuratorDiagrams: function() {
+		return Template.configuratorDiagramOptions.configuratorDiagrams.get();
+		//return DiagramTypes.find({}, {$sort: {name: 1}});
+	},
+});
+
 Template.renameDiagramForm.events({
   "click #rename-diagram-form-ok": function () {
     var form = $("#rename-diagram-form");
