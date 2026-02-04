@@ -121,13 +121,6 @@ Template.diagramsRibbon.helpers({
     }
 
     // tool.toolbar = "diagramsToolbar";
-    if (project.schema !== undefined) {
-      tool.schema = ` (schema - ${project.schema})`;
-      tool.hasSchema = true;
-    } else {
-      tool.schema = "";
-      tool.hasSchema = false;
-    }
 
     return tool;
   },
@@ -136,6 +129,17 @@ Template.diagramsRibbon.helpers({
 // End of diagramsRibbon template
 
 Template.diagramsToolbar.helpers({
+  isOWLGrEd: function () {
+    const project = Projects.findOne({ _id: Session.get("activeProject") });
+    const tool = Tools.findOne({ _id: project.toolId });
+    console.log('helper - isOWlGrEd', project, tool)
+    if ( tool.toolGroup && tool.toolGroup === 'OWLGrEd' ) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
   hasSchema: function () {
     var project_id = Session.get("activeProject");
     var project = Projects.findOne({ _id: project_id });
@@ -205,6 +209,10 @@ Template.diagramsToolbar.events({
   "click #settings": function (e) {
     Dialog.destroyTooltip(e);
     $("#ontology-settings-form").modal("show");
+  },
+  "click #OWLGrEdsettings": function (e) {
+    Dialog.destroyTooltip(e);
+    $("#OWLGRED-ontology-settings-form").modal("show");
   },
   "click #migrate": function (e) {
     Dialog.destroyTooltip(e);
@@ -1435,7 +1443,7 @@ function build_diagram_tree(
 
 Template.migrateForm.helpers({
   tools: function () {
-    return Tools.find({ isDeprecated: { $ne: true } });
+    return Tools.find({ isDeprecated: { $ne: true }, name: { $ne: '_Configurator' } });
   },
 });
 

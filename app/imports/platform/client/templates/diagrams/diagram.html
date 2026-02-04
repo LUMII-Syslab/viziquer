@@ -30,7 +30,8 @@
     {{#if isReady}}
     <div style="display:{{plain.showPlain}}">{{> noDiagramTemplate}}</div>
 
-    <div class="row">
+    <div class="row" style="display:{{plain.showDiagram}}">
+      <div class="row">
         <div class="col-lg-12 text-right">
             <button
                 id="download-diagram-image"
@@ -55,8 +56,6 @@
             </button>
         </div>
     </div>
-
-    <div class="row" style="display:{{plain.showDiagram}}">
         {{#with diagram_type}}
         <!-- <div id="diagram_and_sparql" class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10" style="padding-left:2px;padding-right:2px;"> -->
         <div

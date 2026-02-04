@@ -41,7 +41,7 @@ Template.VQcreateProjectModal.schemaTags = new ReactiveVar([{name:"All", display
 
 Template.VQcreateProjectModal.rendered = async function() {
   const tool = await Tools.findOneAsync({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
-  //console.log('Template.VQcreateProjectModal.rendered')
+  console.log('Template.VQcreateProjectModal.rendered')
 	const rr = await dataShapes.getOntologiesAndTags();
 	const tags = rr.tags;
 
@@ -58,7 +58,7 @@ Template.VQcreateProjectModal.rendered = async function() {
     }
 		Template.VQcreateProjectModal.allSchemas.set(schemas);
 	}
-	Template.VQcreateProjectModal.schemas.set(getSchemas('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
+	Template.VQcreateProjectModal.schemas.set(getSchemasP('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
 }
 
 Template.VQcreateProjectModal.helpers({
@@ -198,7 +198,7 @@ Template.VQcreateProjectModal.events({
 	},
 	'change #schema-tags' : function(){
 		const tag = $("#schema-tags").val();
-		Template.VQcreateProjectModal.schemas.set(getSchemas(tag));
+		Template.VQcreateProjectModal.schemas.set(getSchemasP(tag));
 	},
 });
 
@@ -229,7 +229,7 @@ async function setServices (tool_id) {
 	Template.VQcreateProjectModal.services.set(result);
 }
 
-function getSchemas(tag) {
+function getSchemasP(tag) {
 	let schemas = [];
 	const allSchemas = Template.VQcreateProjectModal.allSchemas.get() || [];
 
@@ -256,3 +256,474 @@ function filterSchemas(filter) {
 	schemas.unshift({display_name: ""});
 	return schemas;
 }
+
+//----------------------------------------------------------------------------------------------
+
+Template.VQ_diagramsToolbar_buttons.helpers({
+  isVQProj: function() {
+    console.log('VQ_diagramsToolbar_buttons.helpers -  isVQProj')
+    const project = Projects.findOne({ _id: Session.get("activeProject") });
+  	const tool = Tools.findOne({_id: project.toolId});
+    if ( (tool.toolGroup && tool.toolGroup === VQToolGroup) || tool.toolGroup === undefined)
+      return true;
+    else
+      return false;
+	},
+  shemaName: function() {
+    const project = Projects.findOne({ _id: Session.get("activeProject") });
+    if (project.schema !== undefined) {
+      return ` Schema - ${project.schema}`;
+    }
+    else {
+      return '';
+    }
+  },
+  hasSchema: function () {
+    console.log('Template.diagramsToolbar.helpers - hasSchema')
+    const project = Projects.findOne({ _id: Session.get("activeProject") });
+
+    if (!project) {
+      return false;
+    }
+
+    if (project.schema !== undefined) {
+      return true;
+      // TODO Šeit vispār vajadzētu skatīties, vai pretī ir pareizais DSS serveris un vai ir pareizas rīks (nav tikai VQ)
+    }
+    return false;
+  },
+  isPublic: function () {
+    return dataShapes.schema.isPublic;
+  },
+
+});
+
+Template.VQ_diagramsToolbar_buttons.events({
+	'click #VQsettings': function(e) {
+    //Dialog.destroyTooltip(e); // TODO Nez kas šis bija un ko darīja
+    $("#VQontology-settings-form").modal("show");
+	},
+});
+
+Template.VQontologySettings.schemas = new ReactiveVar([{ name: "" }]);
+Template.VQontologySettings.allSchemas = new ReactiveVar();
+Template.VQontologySettings.schemaTags = new ReactiveVar([
+  { name: "All", display_name: "All schemas" },
+]);
+Template.VQontologySettings.uri = new ReactiveVar("");
+Template.VQontologySettings.endpoint = new ReactiveVar("");
+Template.VQontologySettings.queryEngineType = new ReactiveVar("");
+Template.VQontologySettings.directClassMembershipRole = new ReactiveVar("");
+Template.VQontologySettings.indirectClassMembershipRole = new ReactiveVar("");
+Template.VQontologySettings.graphs = new ReactiveVar([]);
+
+Template.VQontologySettings.onCreated(function () {
+  Session.set("msg", undefined);
+});
+
+Template.VQontologySettings.onDestroyed(function () {
+  Session.set("msg", undefined);
+});
+
+Template.VQontologySettings.events({
+  "click #ok-ontology-settings": async function () {
+
+    var list = {
+      projectId: Session.get("activeProject"),
+      versionId: Session.get("versionId"),
+      diagramId: Session.get("activeDiagram"),
+      uri: $("#ontology-uri").val(),
+      endpoint: $("#ontology-endpoint").val(),
+      schema: $("#dss-schema").val(),
+      useStringLiteralConversion: $("#use-string-literal-conversion").val(),
+      queryEngineType: $("#query-engine-type").val(),
+      useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(
+        ":checked",
+      ),
+      defaultGroupingSeparator: $("#default-grouping-separator").val(),
+      directClassMembershipRole: $("#direct-class-membership-role").val(),
+      indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
+      showCardinalities: $("#show-cardinalities").is(":checked"),
+      decorateInstancePositionVariable: $(
+        "#decorate-instance-position-variable",
+      ).is(":checked"),
+      decorateInstancePositionConstants: $(
+        "#decorate-instance-position-constants",
+      ).is(":checked"),
+      simpleConditionImplementation: $("#simple-condition-implementation").is(
+        ":checked",
+      ),
+      // autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
+      showPrefixesForAllNames: $("#show-prefixes-for-all-names").is(":checked"),
+      showPrefixesForAllNonLocalNames: $(
+        "#show-prefixes-for-all-non-local-names",
+      ).is(":checked"),
+      completeRDFBoxesInDatetimeFunctions: $(
+        "#complete-RDF-boxes-in-datetime-functions",
+      ).is(":checked"),
+      showGraphServiceCompartments: $("#show-graph-service-compartments").is(
+        ":checked",
+      ),
+      enableWikibaseLabelServices: $("#enable-wikibase-label-services").is(
+        ":checked",
+      ),
+      allowTopDownNamesInBINDs: $("#allow-top-down-names-in-BINDs").is(
+        ":checked",
+      ),
+      schemaDiagramDataLanguage: $("#schema-diagram-data-language").val(),
+      keepVariableNames: $("#keep-variable-names").is(":checked"),
+      endpointUsername: $("#endpoint-username").val(),
+      endpointPassword: $("#endpoint-password").val(),
+      // graphsInstructions: JSON.stringify(myRows)
+    };
+
+    Utilities.callMeteorMethod("updateProjectOntology", list);
+    list._id = Session.get("activeProject");
+    dataShapes.clearSchema();
+    //await dataShapes.changeActiveProjectFull(list);
+    await Template.schemaTree.rendered(); // Šis ir vajadzīgs publiskajām diagrammām
+  },
+
+  "click #use-default-grouping-separator": function () {
+    $("#default-grouping-separator").prop(
+      "disabled",
+      !$("#use-default-grouping-separator").is(":checked"),
+    );
+  },
+  "click #auto-hide-default-property-name": function () {},
+
+  "click #cancel-ontology-settings": function () {
+    var proj = Projects.findOne({ _id: Session.get("activeProject") });
+    if (proj) {
+      $("#ontology-uri").val(proj.uri);
+      $("#ontology-endpoint").val(proj.endpoint);
+      $("#dss-schema").val(proj.schema);
+      $("#use-string-literal-conversion").val(proj.useStringLiteralConversion);
+      $("#query-engine-type").val(proj.queryEngineType);
+      $("#use-default-grouping-separator").prop(
+        "checked",
+        proj.useDefaultGroupingSeparator,
+      );
+      $("#default-grouping-separator").prop(
+        "disabled",
+        proj.useDefaultGroupingSeparator === "false",
+      );
+      $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
+      $("#direct-class-membership-role").val(proj.directClassMembershipRole);
+      $("#indirect-class-membership-role").val(
+        proj.indirectClassMembershipRole,
+      );
+      $("#show-cardinalities").prop(
+        "checked",
+        proj.showCardinalities === "true",
+      );
+      $("#decorate-instance-position-variable").prop(
+        "checked",
+        proj.decorateInstancePositionVariable === "true",
+      );
+      $("#decorate-instance-position-constants").prop(
+        "checked",
+        proj.decorateInstancePositionConstants === "true",
+      );
+      $("#simple-condition-implementation").prop(
+        "checked",
+        proj.simpleConditionImplementation === "true",
+      );
+      // $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
+      $("#show-prefixes-for-all-names").prop(
+        "checked",
+        proj.showPrefixesForAllNames === "true",
+      );
+      $("#show-prefixes-for-all-non-local-names").prop(
+        "checked",
+        proj.showPrefixesForAllNonLocalNames === "true",
+      );
+      $("#complete-RDF-boxes-in-datetime-functions").prop(
+        "checked",
+        proj.completeRDFBoxesInDatetimeFunctions === "true",
+      );
+      $("#show-graph-service-compartments").prop(
+        "checked",
+        proj.showGraphServiceCompartments === "true",
+      );
+      $("#enable-wikibase-label-services").prop(
+        "checked",
+        proj.enableWikibaseLabelServices === "true",
+      );
+      $("#allow-top-down-names-in-BINDs").prop(
+        "checked",
+        proj.allowTopDownNamesInBINDs === "true",
+      );
+      $("#schema-diagram-data-language").prop(
+        "checked",
+        proj.schemaDiagramDataLanguage,
+      );
+      $("#keep-variable-names").prop(
+        "checked",
+        proj.keepVariableNames === "true",
+      );
+      $("#endpoint-username").val(proj.endpointUsername);
+      $("#endpoint-password").val(proj.endpointPassword);
+    }
+
+    Template.VQontologySettings.uri.set(proj.uri);
+    Template.VQontologySettings.endpoint.set(proj.endpoint);
+    Template.VQontologySettings.queryEngineType.set(proj.queryEngineType);
+    Template.VQontologySettings.directClassMembershipRole.set(
+      proj.directClassMembershipRole,
+    );
+    Template.VQontologySettings.indirectClassMembershipRole.set(
+      proj.indirectClassMembershipRole,
+    );
+
+  },
+
+  "click #test-endpoint": async function () {
+    const list = {
+      projectId: Session.get("activeProject"),
+      versionId: Session.get("versionId"),
+      uri: $("#ontology-uri").val(),
+      endpoint: $("#ontology-endpoint").val(),
+      endpointUsername: $("#endpoint-username").val(),
+      endpointPassword: $("#endpoint-password").val(),
+      // httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
+    };
+
+    const res = await Utilities.callMeteorMethodAsync(
+      "testProjectEndpoint",
+      list,
+    );
+
+    var class_name = "danger";
+    var text = "Connection is not ok";
+
+    if (res.status === 200) {
+      class_name = "success";
+      text = "Connection is ok";
+    } else if (res.status === 401) {
+      text = "Connection failed; probably wrong credentials";
+    }
+
+    var msg = { text: text, class: class_name };
+
+    Session.set("msg", msg);
+
+    setTimeout(function () {
+      Session.set("msg", undefined);
+    }, 4000);
+  },
+  // 'click #dss-schema' : function(e) {
+  "change #dss-schema": function () {
+    var schema = $("#dss-schema").val();
+    var schema_info = Template.VQontologySettings.schemas
+      .get()
+      .filter(function (o) {
+        return o.display_name === schema;
+      });
+    if (schema_info.length > 0 && schema_info[0].display_name !== "") {
+      Template.VQontologySettings.endpoint.set(schema_info[0].sparql_url);
+      Template.VQontologySettings.uri.set(schema_info[0].named_graph);
+      Template.VQontologySettings.queryEngineType.set(
+        schema_info[0].endpoint_type,
+      );
+      Template.VQontologySettings.directClassMembershipRole.set(
+        schema_info[0].direct_class_role,
+      );
+      Template.VQontologySettings.indirectClassMembershipRole.set(
+        schema_info[0].indirect_class_role,
+      );
+    }
+    if (schema_info.length > 0 && schema_info[0].display_name === "") {
+      Template.VQontologySettings.endpoint.set("");
+      Template.VQontologySettings.uri.set("");
+      Template.VQontologySettings.queryEngineType.set("");
+      Template.VQontologySettings.directClassMembershipRole.set("");
+      Template.VQontologySettings.indirectClassMembershipRole.set("");
+    }
+  },
+  "change #schema-tags": function () {
+    var tag = $("#schema-tags").val();
+    Template.VQontologySettings.schemas.set(getSchemasO(tag));
+    //var tag = $("#schema-tags").find(":selected").attr("id");
+  },
+  //adds context menu item
+  "click #add-graph-menu-item": function () {
+    var graphs = Template.VQontologySettings.graphs.get();
+    graphs.push({ index: graphs.length, Instruction: "", Graph: "" });
+    Template.VQontologySettings.graphs.set(graphs);
+  },
+
+  //removes context menu item
+  "click .remove-graph-menu-item": function (e) {
+    var index = e.target.parentElement.parentElement.parentElement.rowIndex;
+    if (typeof index === "undefined")
+      index =
+        e.target.parentElement.parentElement.parentElement.parentElement
+          .rowIndex;
+    index--;
+
+    var myRows = [];
+    var $headers = $("th");
+    var $rows = $("tbody tr").each(function (index) {
+      let $cells = $(this).find("td");
+      myRows[index] = {};
+      $cells.each(function (cellIndex) {
+        if (
+          $($headers[cellIndex]).html() === "Instruction" ||
+          $($headers[cellIndex]).html() === "Graph"
+        ) {
+          myRows[index][$($headers[cellIndex]).html()] = $(this)
+            .find("div")
+            .text();
+        }
+      });
+      myRows[index].index = index;
+    });
+
+    var graphsT = [];
+    var i = 0;
+    for (var graph in myRows) {
+      if (myRows[graph].index !== index) {
+        graphsT.push({
+          index: i,
+          Instruction: myRows[graph].Instruction,
+          Graph: myRows[graph].Graph,
+        });
+        i++;
+      }
+    }
+
+    Template.VQontologySettings.graphs.set(graphsT);
+  },
+});
+
+function getSchemasO(tag) {
+	let schemas = [];
+	const allSchemas = Template.VQontologySettings.allSchemas.get() || [];
+
+	for ( const sc of allSchemas ) {
+		if ( tag !== 'All' && sc.tags.includes(tag))
+			schemas.push(sc);
+		else if ( tag === 'All' )
+			schemas.push(sc);
+	}
+
+	schemas.unshift({display_name: "", display_name_full: ""});
+	return schemas;
+}
+
+Template.VQontologySettings.rendered = async function () {
+  const rr = await dataShapes.getOntologiesAndTags();
+  const tags = rr.tags || [];
+  tags.unshift({ name: "All", display_name: "All schemas" });
+  Template.VQontologySettings.schemaTags.set(tags);
+
+  let schemas = rr.schemas;
+  if (schemas && schemas.length > 0) {
+    for ( const sc of schemas ) {
+      sc.display_name_full = `${sc.display_name} (${sc.sparql_url} Class count:${sc.class_count})`;
+    }
+		Template.VQontologySettings.allSchemas.set(schemas);
+	}
+
+  schemas = getSchemasO("All");
+
+  // var schemas = await dataShapes.getOntologies();
+  var proj = Projects.findOne({ _id: Session.get("activeProject") });
+
+  if (proj) {
+    Template.VQontologySettings.uri.set(proj.uri);
+    Template.VQontologySettings.endpoint.set(proj.endpoint);
+    Template.VQontologySettings.queryEngineType.set(proj.queryEngineType);
+    Template.VQontologySettings.directClassMembershipRole.set(
+      proj.directClassMembershipRole,
+    );
+    Template.VQontologySettings.indirectClassMembershipRole.set(
+      proj.indirectClassMembershipRole,
+    );
+
+    if (proj.schema !== undefined && proj.schema !== "") {
+      var selected = schemas.filter(function (o) {
+        return o.display_name === proj.schema;
+      });
+      if (selected.length > 0) {
+        selected[0].selected = "selected";
+      }
+    }
+  }
+
+  Template.VQontologySettings.schemas.set(schemas);
+};
+
+Template.VQontologySettings.helpers({
+  msg: function () {
+    return Session.get("msg");
+  },
+
+  project: function () {
+    return Projects.findOne({ _id: Session.get("activeProject") });
+  },
+
+  uri: function () {
+    return Template.VQontologySettings.uri.get();
+  },
+
+  endpoint: function () {
+    return Template.VQontologySettings.endpoint.get();
+  },
+
+  schemas: function () {
+    return Template.VQontologySettings.schemas.get();
+  },
+
+  schema_tags: function () {
+    return Template.VQontologySettings.schemaTags.get();
+  },
+
+  useStringLiteralConversionList: function () {
+    var proj = Projects.findOne({ _id: Session.get("activeProject") });
+
+    //console.log("useStringLiteralConversionList ", proj)
+
+    var act = "SIMPLE";
+    if (proj) {
+      act = proj.useStringLiteralConversion;
+    }
+    var list = [{ name: "SIMPLE" }, { name: "TYPED" }, { name: "OFF" }];
+    var selected = list.filter(function (o) {
+      return o.name === act;
+    });
+    if (selected.length > 0) {
+      selected[0].selected = "selected";
+    }
+
+    return list;
+  },
+  queryEngineTypeList: function () {
+    //var proj = Projects.findOne({_id: Session.get("activeProject")});
+    var act = Template.VQontologySettings.queryEngineType.get();
+    //if (proj) {
+    //	act = proj.queryEngineType;
+    //}
+    var list = [];
+    if (act === "virtuoso" || act === "VIRTUOSO") {
+      list.push({ name: "VIRTUOSO", selected: "selected" });
+      list.push({ name: "GENERAL" });
+    } else {
+      list.push({ name: "VIRTUOSO" });
+      list.push({ name: "GENERAL", selected: "selected" });
+    }
+    return list;
+  },
+  directClassMembershipRole: function () {
+    return Template.VQontologySettings.directClassMembershipRole.get();
+  },
+  indirectClassMembershipRole: function () {
+    return Template.VQontologySettings.indirectClassMembershipRole.get();
+  },
+  graphs: function () {
+    return Template.VQontologySettings.graphs.get();
+    // return [{instruction:"dbpedia", graph:"http://dbpedia.org"}, {instruction:"wikidata", graph:"http://wikidata.org"}]
+  },
+});
+

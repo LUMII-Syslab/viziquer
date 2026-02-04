@@ -573,7 +573,7 @@
         <ol class="breadcrumb">
             <li>
                 <i class="fa fa-picture-o"></i> Diagrams
-                ({{tool.name}}){{tool.schema}}
+                ({{tool.name}})
             </li>
         </ol>
         <!-- end breadcrumb -->
@@ -603,81 +603,62 @@
 </template>
 
 <template name="diagramsToolbar">
-    <button
-        id="settings"
-        class="btn btn-ribbon toolbar-button"
-        data-title="Settings"
-        data-toggle="tooltip"
-        data-placement="bottom"
-    >
-        <i class="fa fa-gear"></i>
-    </button>
-    <a
-        id="download-project"
-        class="btn btn-ribbon toolbar-button"
-        data-title="Download Project"
-        data-toggle="tooltip"
-        data-placement="bottom"
-        ><i class="fa fa-cloud-download"></i
+      <a
+      id="download-project"
+      class="btn btn-ribbon toolbar-button"
+      data-title="Download Project"
+      data-toggle="tooltip"
+      data-placement="bottom"
+      ><i class="fa fa-cloud-download"></i
     ></a>
 
     <a
-        id="upload-project"
-        class="btn btn-ribbon toolbar-button"
-        data-title="Upload Project"
-        data-toggle="tooltip"
-        data-placement="bottom"
-        ><i class="fa fa-cloud-upload"></i
+      id="upload-project"
+      class="btn btn-ribbon toolbar-button"
+      data-title="Upload Project"
+      data-toggle="tooltip"
+      data-placement="bottom"
+      ><i class="fa fa-cloud-upload"></i
     ></a>
 
     <button
-        id="migrate"
-        class="btn btn-ribbon toolbar-button"
-        data-title="Migrate"
-        data-toggle="tooltip"
-        data-placement="bottom"
+      id="migrate"
+      class="btn btn-ribbon toolbar-button"
+      data-title="Migrate"
+      data-toggle="tooltip"
+      data-placement="bottom"
     >
-        <i class="fa fa-wrench"></i>
+      <i class="fa fa-wrench"></i>
     </button>
-    {{#if hasSchema }}
+
+    {{#if isOWLGrEd}}
       <button
-        id="saveSchema"
-        class="btn btn-ribbon toolbar-button"
-        data-title="Data Schema"
-        data-toggle="tooltip"
-        data-placement="bottom"
-      >
-        Data Schema
-      </button>
-      {{#if isPublic}}
-      {{else}}
-        <button
-          id="schemaFragment"
+          id="OWLGrEdsettings"
           class="btn btn-ribbon toolbar-button"
-          data-title="Schema Fragment"
+          data-title="Settings"
           data-toggle="tooltip"
           data-placement="bottom"
-        >
-          Schema Fragment
-        </button>
-      {{/if}}
-    {{else}}
-      <button
-        id="loadOntologyOWLGrEd"
-        class="btn btn-ribbon toolbar-button"
-        data-title="Load Ontology"
-        data-toggle="tooltip"
-        data-placement="bottom"
       >
-        Load Ontology
+          <i class="fa fa-gear"></i>
       </button>
-    {{/if}}
+
+      <button
+      id="loadOntologyOWLGrEd"
+      class="btn btn-ribbon toolbar-button"
+      data-title="Load Ontology"
+      data-toggle="tooltip"
+      data-placement="bottom"
+    >
+      Load Ontology
+    </button>
+
+  {{/if}}
+    {{> VQ_diagramsToolbar_buttons}}
 
     {{> uploadProject}}
     {{> ontologySettings}}
     {{> OWLGRED_ontologySettings}}
     {{> migrateForm}}
-    {{> VQ_DSS_schema}}
     {{> loadOntologyOWLGrEd}}
 </template>
 
