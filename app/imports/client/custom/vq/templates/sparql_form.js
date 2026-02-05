@@ -21,6 +21,65 @@ YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyComplete
 // var yasqe = null;
 // var yasqe3 = null;
 
+
+/**
+ * Reshape xml-ified json to json.
+ *
+ * @return {{
+ *   head: { vars: string[] },
+ *   results: {
+ *     bindings: {
+ *       type: "uri" | "literal",
+ *       value: string,
+ *   }[] }}
+ * }
+ */
+function reshapeData(sourceData) {
+    const cols = sourceData.head[0].variable.map((item) => item["$"].name);
+    const rows = sourceData
+        .results[0]
+        .result
+        .map((row) => {
+            const entries = row
+                .binding
+                .map((item) => {
+                    const key = item["$"].name;
+
+                    const maybeUri = item.uri;
+                    const maybeLiteral = item.literal;
+                    let type;
+                    let value;
+                    let extraProps = {};
+
+                    if (maybeUri !== undefined) {
+                        type = "uri";
+                        value = maybeUri[0];
+                    } else if (maybeLiteral !== undefined) {
+                        type = "literal";
+                        value = maybeLiteral[0]["_"];
+                        extraProps = maybeLiteral[0]["$"];
+                    } else {
+                        throw new Error("Unexpected type!");
+                    }
+
+                    return [key, {
+                        ...extraProps,
+                        type,
+                        value,
+                    }];
+                });
+
+            return Object.fromEntries(entries);
+        });
+
+    const res = {
+        head: { vars: cols },
+        results: { bindings: rows },
+    };
+
+    return res;
+}
+
 /**
  * Mount property selector.
  */
@@ -83,12 +142,30 @@ function initReactComponents(domElement) {
 
     const root = createRoot(mainShadow);
 
-    const el = createElement(PropertySelector, {
-        suggestions: [
-            { label: "foo", value: "foo" },
-            { label: "bar", value: "bar" },
-        ],
-    });
+    const el = createElement(
+        "div",
+        {},
+        createElement(
+            "button",
+            {
+                onClick: () => {
+                    const res = reshapeData(Session.get("executedSparql").sparql);
+                    console.log({ res });
+                },
+                style: {
+                    padding: `${rem(0.5)} ${rem(1)}`,
+                    cursor: "pointer",
+                },
+            },
+            "Reshape data"
+        ),
+        createElement(PropertySelector, {
+            suggestions: [
+                { label: "foo", value: "foo" },
+                { label: "bar", value: "bar" },
+            ],
+        })
+    );
 
     const portalContext = createElement(
         PortalContext,
