@@ -9,14 +9,24 @@ const VQToolGroup = 'VQ';
 const VQToolGroupName = 'ViziQuer';
 
 Template.VQ_structureRibbon_button.helpers({
-  isVQ: async function() {
-  	const tool = await Tools.findOneAsync({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
+  isVQ: function() {
+  	const tool = Tools.findOne({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
     console.log('Template.VQ_structureRibbon_button.helpers -- isVQ')
     //console.log('Iekš Template.VQ_structureRibbon_button.helpers', tool, Tools.findOne({isDeprecated: {$ne: true}}))
-	  if ( tool !== undefined)
+	  if ( tool !== undefined ) {
 	   return true;
-	  else
-		  return false;
+    }
+	  else {
+      let rez = false;
+      Tools.find({ isDeprecated: {$ne: true},}).forEach(
+        function(t) {
+          if ( t.toolGroup === undefined) {
+            rez = true;
+          }
+        }
+      );
+		  return rez;
+    }
 	},
   toolGroupName: function() {
     return VQToolGroupName;
