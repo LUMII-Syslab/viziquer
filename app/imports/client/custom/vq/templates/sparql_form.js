@@ -6,13 +6,20 @@ import { Projects, Diagrams } from '../../../../db/platform/collections.js'
 
 import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
-import { createElement } from "react";
+import {
+    createElement,
+    useState,
+} from "react";
 import { createRoot } from "react-dom/client";
-import { PropertySelector, PortalContext } from "rdf-toolbag";
+import {
+    PortalContext,
+    AggregatedTable,
+} from "rdf-toolbag";
 
 // FIXME: styling is not quite right
 import rdfToolbagStyle from '/node_modules/rdf-toolbag/dist/rdf-toolbag.css';
 import './sparql_form.html'
+import { tableToRows } from 'rdf-toolbag/dist/rdf-toolbag.js'
 
 YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
 YASQE.registerAutocompleter('customPropertyCompleter', customPropertyCompleter);
@@ -20,6 +27,12 @@ YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyComplete
 
 // var yasqe = null;
 // var yasqe3 = null;
+
+// NOTE: Using `rem` and `styleOverrideMap` to emulate the default 1rem=16px layout because
+// the current 1rem is too small to be readable and we need to override all variables that use
+// rem units.
+const baseSizePx = 16;
+const rem = (val) => `${baseSizePx * val}px`;
 
 
 /**
@@ -29,10 +42,13 @@ YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyComplete
  *   head: { vars: string[] },
  *   results: {
  *     bindings: {
- *       type: "uri" | "literal",
- *       value: string,
- *   }[] }}
- * }
+ *       [col: string]: {
+ *         type: "uri" | "literal",
+ *         value: string,
+ *       }
+ *     }[]
+ *   }
+ * }}
  */
 function reshapeData(sourceData) {
     const cols = sourceData.head[0].variable.map((item) => item["$"].name);
@@ -80,17 +96,68 @@ function reshapeData(sourceData) {
     return res;
 }
 
+function Button(props) {
+    const { style, ...restProps } = props;
+
+    return createElement(
+        "button",
+        {
+            style: {
+                padding: `${rem(0.5)} ${rem(1)}`,
+                cursor: "pointer",
+                borderRadius: rem(0.5),
+                color: "#000",
+                background: "#ddd",
+                ...style,
+            },
+            ...restProps,
+        },
+    );
+}
+
+function TableView() {
+    const getSparql = () => Session.get("executedSparql")?.sparql;
+
+    const [tableRes, setTableRes] = useState(getSparql());
+    const reshapedData = tableRes ? reshapeData(tableRes) : null;
+    const rows = reshapedData ? tableToRows(reshapedData) : null;
+    const properties = (rows && (rows.length >= 1)) ? Object.keys(rows[0].props) : undefined;
+
+    const canTableBeRendered = properties && rows;
+
+    return createElement(
+        "div",
+        {},
+        createElement(
+            Button,
+            {
+                onClick: () => setTableRes(getSparql()),
+            },
+            "sync data",
+        ),
+        !canTableBeRendered && createElement("p", {}, "table can't be rendered"),
+        canTableBeRendered && createElement(
+            AggregatedTable,
+            {
+                properties,
+                rows,
+            }),
+    );
+}
+
+function App() {
+    return createElement(
+        "div",
+        {},
+        createElement(TableView),
+    );
+}
+
 /**
  * Mount property selector.
  */
 function initReactComponents(domElement) {
     // NOTE: Component root and portal root is wrapped in shadow DOM in order to isolate styling
-
-    // NOTE: Using `rem` and `styleOverrideMap` to emulate the default 1rem=16px layout because
-    // the current 1rem is too small to be readable and we need to override all variables that use
-    // rem units.
-    const baseSizePx = 16;
-    const rem = (val) => `${baseSizePx * val}px`;
 
     const styleOverrideMap = {
         "--spacing": rem(0.25),
@@ -142,35 +209,10 @@ function initReactComponents(domElement) {
 
     const root = createRoot(mainShadow);
 
-    const el = createElement(
-        "div",
-        {},
-        createElement(
-            "button",
-            {
-                onClick: () => {
-                    const res = reshapeData(Session.get("executedSparql").sparql);
-                    console.log({ res });
-                },
-                style: {
-                    padding: `${rem(0.5)} ${rem(1)}`,
-                    cursor: "pointer",
-                },
-            },
-            "Reshape data"
-        ),
-        createElement(PropertySelector, {
-            suggestions: [
-                { label: "foo", value: "foo" },
-                { label: "bar", value: "bar" },
-            ],
-        })
-    );
-
     const portalContext = createElement(
         PortalContext,
         { value: { container: portalShadow } },
-        el,
+        createElement(App),
     );
 
     root.render(portalContext);
