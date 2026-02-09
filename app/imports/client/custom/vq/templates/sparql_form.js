@@ -11,6 +11,7 @@ import {
     useState,
 } from "react";
 import { createRoot } from "react-dom/client";
+import { useTracker } from "meteor/react-meteor-data";
 import {
     PortalContext,
     AggregatedTable,
@@ -116,9 +117,7 @@ function Button(props) {
 }
 
 function TableView() {
-    const getSparql = () => Session.get("executedSparql")?.sparql;
-
-    const [tableRes, setTableRes] = useState(getSparql());
+    const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
     const reshapedData = tableRes ? reshapeData(tableRes) : null;
     const rows = reshapedData ? tableToRows(reshapedData) : null;
     const properties = (rows && (rows.length >= 1)) ? Object.keys(rows[0].props) : undefined;
@@ -128,13 +127,6 @@ function TableView() {
     return createElement(
         "div",
         {},
-        createElement(
-            Button,
-            {
-                onClick: () => setTableRes(getSparql()),
-            },
-            "sync data",
-        ),
         !canTableBeRendered && createElement("p", {}, "table can't be rendered"),
         canTableBeRendered && createElement(
             AggregatedTable,
