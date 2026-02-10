@@ -18,7 +18,7 @@
             {{#with executedSparql}}
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    {{#if limit_set}} Only 50 rows shown. Total number of rows: {{number_of_rows}}. {{/if}}
+                    {{#if limit_set}} Only {{limit}} rows shown. Total number of rows: {{number_of_rows}}. {{/if}}
 					{{#if waiting}} Executes the query, waiting for results...{{/if}}
                 </div>
 
@@ -62,6 +62,9 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <button id="change-limit" class="btn btn-success btn-sm">
+                              Set limit {{bigLimit}}
+                            </button>
                             {{#if limit_set}}
                               {{#if showPrev offset}}<button id="prev-sparql" class="btn btn-success btn-sm">Previous 50</button>{{/if}}
                               {{#if showNext offset number_of_rows}}<button id="next-sparql" class="btn btn-success btn-sm">Next 50</button>{{/if}}
@@ -135,7 +138,7 @@
           {{#with executedSparql}}
             <div class="panel panel-default">
               <div class="panel-heading">
-                Results: {{#if limit_set}} Only 50 rows shown.{{/if}} Total number of rows: {{number_of_rows}}.
+                Results: {{#if limit_set}} Only {{ limit }} rows shown.{{/if}} Total number of rows: {{number_of_rows}}.
               </div>
 
               <div class="panel-body">
