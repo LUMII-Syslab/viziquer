@@ -7,6 +7,7 @@ import { Projects, Diagrams } from '../../../../db/platform/collections.js'
 import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 
 import {
+    Fragment,
     createElement,
     useState,
 } from "react";
@@ -137,10 +138,35 @@ function TableView() {
     );
 }
 
+function TableViewMsgs() {
+    const executedSparql = useTracker(() => Session.get("executedSparql"));
+    const limit = executedSparql?.limit;
+    const unprocessedNumberOfRows = executedSparql?.number_of_rows;
+    // NOTE: numberOfRows is a string for some reason and it should be processed
+    const numberOfRows = (unprocessedNumberOfRows === undefined)
+          ? undefined
+          : Number(unprocessedNumberOfRows);
+
+    /** @type {string|null} */
+    let msg = null;
+
+    if (!executedSparql) msg = "No sparql results.";
+    else if (limit === undefined) msg = "Limit is not defined";
+    else if (numberOfRows === undefined) msg = "Number of rows is unknown";
+    else if (numberOfRows >= limit) msg = "Warning: row limit is reached, data may be incomplete";
+
+    return createElement(
+        Fragment,
+        {},
+        msg && createElement("p", { style: { fontSize: rem(1) }}, msg)
+    );
+}
+
 function App() {
     return createElement(
         "div",
         {},
+        createElement(TableViewMsgs),
         createElement(TableView),
     );
 }
