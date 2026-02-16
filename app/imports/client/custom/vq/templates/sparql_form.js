@@ -9,6 +9,7 @@ import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 import {
     Fragment,
     createElement,
+    useEffect,
     useState,
 } from "react";
 import { createRoot } from "react-dom/client";
@@ -16,6 +17,8 @@ import { useTracker } from "meteor/react-meteor-data";
 import {
     PortalContext,
     AggregatedTable,
+    PropertySelector,
+    formatMultiCardinalTableAsSelectQuery,
 } from "rdf-toolbag";
 
 // FIXME: styling is not quite right
@@ -54,9 +57,8 @@ const rem = (val) => `${baseSizePx * val}px`;
  */
 function reshapeData(sourceData) {
     const cols = sourceData.head[0].variable.map((item) => item["$"].name);
-    const rows = sourceData
-        .results[0]
-        .result
+    const items = sourceData.results[0]?.result ?? [];
+    const rows = items
         .map((row) => {
             const entries = row
                 .binding
@@ -98,6 +100,54 @@ function reshapeData(sourceData) {
     return res;
 }
 
+/**
+ * @return {Promise<{
+ *   iri: string,
+ *   prefixedName: string,
+ *   displayName: string,
+ * }[] | null>}
+ */
+async function getClasses() {
+    const classesData = await dataShapes.getClasses();
+    // TODO: provide error msg
+    if (classesData.error) return null;
+    return classesData.data.map((item) => ({
+        iri: item.iri,
+        prefixedName: item.full_name,
+        displayName: item.display_name,
+    }));
+}
+
+/**
+ * @param {string} className
+ * @param {number} [limit]
+ *
+ * @return {Promise<{
+ *   iri: string,
+ *   prefixedName: string,
+ *   displayName: string,
+ * }[] | null>}
+ */
+async function getProperties(className, limit) {
+    const propertiesData = await dataShapes.getPropertiesFull({
+        main: {
+            propertyKind: 'Data',
+            limit,
+            addTypes: true,
+        },
+        element: { className },
+    });
+
+    // TODO: provide error msg
+    if (propertiesData.error) return null;
+
+    return propertiesData.data.map((item) => ({
+        iri: item.iri,
+        prefixedName: item.full_name,
+        displayName: item.display_name,
+    }));
+}
+
 function Button(props) {
     const { style, ...restProps } = props;
 
@@ -109,7 +159,7 @@ function Button(props) {
                 cursor: "pointer",
                 borderRadius: rem(0.5),
                 color: "#000",
-                background: "#ddd",
+                border: "1px solid #aaa",
                 ...style,
             },
             ...restProps,
@@ -162,7 +212,7 @@ function TableViewMsgs() {
     );
 }
 
-function App() {
+function ExtendedTableView() {
     return createElement(
         "div",
         {},
@@ -171,10 +221,127 @@ function App() {
     );
 }
 
+function setEditorText(text) {
+    const yasqe = Template.sparqlForm_see_results.yasqe.get();
+    const yasqe3 = Template.sparqlForm.yasqe3.get();
+
+    yasqe.setValue(text);
+    yasqe3.setValue(text);
+}
+
+function switchToEditorTab() {
+    $('#vq-tab a[href="#sparql"]').tab('show');
+}
+
+function QueryGeneratorView() {
+    const [selectedType, setSelectedType] = useState(null);
+    const [typeSuggestions, setTypeSuggestions] = useState(null);
+    const [properties, setProperties] = useState([]);
+    const [suggestions, setSuggestions] = useState([]);
+
+    // NOTE: Init class suggestions
+    useEffect(() => {
+        (async () => {
+            const res = await getClasses();
+            setTypeSuggestions(res);
+        })();
+    }, []);
+
+    // NOTE: Sync suggestions to selected class
+    useEffect(() => {
+        (async () => {
+            const res = await getProperties(selectedType);
+            if (!res) setSuggestions([]);
+            else setSuggestions(res.map(({ iri, prefixedName }) => ({
+                label: `${prefixedName}`,
+                value: iri,
+            })));
+        })();
+    }, [selectedType]);
+
+    return createElement(
+        "div",
+        {
+            style: {
+                display: "flex",
+                flexDirection: "column",
+                gap: rem(0.5),
+                fontSize: rem(1.0),
+            },
+        },
+        createElement(
+            "div",
+            {},
+            createElement("p", {}, "Type"),
+            createElement(
+                "select",
+                {
+                    value: selectedType || "",
+                    onChange: (e) => setSelectedType(e.target.value),
+                    style: {
+                        padding: `${rem(0.5)} ${rem(1)}`,
+                        border: "1px solid #aaa",
+                        borderRadius: rem(0.5),
+                    },
+                },
+                createElement(
+                    "option",
+                    {
+                        value: "",
+                        hidden: true,
+                    },
+                    "--Select type--",
+                ),
+                typeSuggestions && typeSuggestions.map((item) => createElement(
+                    "option",
+                    {
+                        value: item.iri,
+                        key: item.iri,
+                    },
+                    item.iri,
+                )),
+            ),
+        ),
+        createElement(
+            "div",
+            {},
+            createElement("p", {}, "Properties"),
+            createElement(
+                PropertySelector,
+                {
+                    value: properties,
+                    onValueChange: setProperties,
+                    suggestions,
+                }
+            ),
+        ),
+        createElement(
+            Button,
+            {
+                onClick: () => {
+                    if (!selectedType) return;
+                    const limit = 10;
+                    const q = formatMultiCardinalTableAsSelectQuery(
+                        `<${selectedType}>`,
+                        properties,
+                        limit
+                    );
+                    setEditorText(q);
+                    switchToEditorTab();
+                },
+                style: {
+                    width: "fit-content",
+                },
+            },
+            "Create sparql",
+        ),
+    );
+}
+
 /**
  * Mount property selector.
  */
-function initReactComponents(domElement) {
+function initReactComponents(domElement, component) {
     // NOTE: Component root and portal root is wrapped in shadow DOM in order to isolate styling
 
     const styleOverrideMap = {
@@ -227,13 +394,11 @@ function initReactComponents(domElement) {
 
     const root = createRoot(mainShadow);
 
-    const portalContext = createElement(
+    root.render(createElement(
         PortalContext,
         { value: { container: portalShadow } },
-        createElement(App),
-    );
-
-    root.render(portalContext);
+        component,
+    ));
 }
 
 // NOTE: Limit size that is larger than the usual page size and can be used to fetch more rows
@@ -488,12 +653,25 @@ Template.sparqlForm.onRendered( async function() {
     const elementSelector = ".react-mount-root";
     const maybeElement = this.find(elementSelector);
     if (maybeElement) {
-        initReactComponents(maybeElement);
+        initReactComponents(maybeElement, createElement(ExtendedTableView));
     } else {
         throw new Error(
             `Could not find element by '${elementSelector}, React component won't be mounted!`
         );
     }
+
+    const anotherElement = this.find("#queryGen");
+    if (!anotherElement) {
+        throw new Error("unexpected missing");
+    }
+
+    const root = anotherElement.getElementsByClassName("react-mount-root")[0];
+
+    if (!root) {
+        throw new Error("unexpected missing root");
+    }
+
+    initReactComponents(root, createElement(QueryGeneratorView));
 
 	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"
 
