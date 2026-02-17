@@ -165,19 +165,43 @@ function generateN3Syntax(onto, format, nsTable){
 			  namedNode('http://www.w3.org/2002/07/owl#DatatypeProperty')
 			)
 		  );
-		} else if (axiomObject.type === "DataPropertyDomain") {
+		} else if (axiomObject.type === "Declaration" && axiomObject.axiom.type === "ObjectProperty") {
+		  const classIRI = axiomObject.axiom.axiom.IRI;
+		  writer.addQuad(
+			quad(
+			  namedNode(classIRI),
+			  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+			  namedNode('http://www.w3.org/2002/07/owl#ObjectProperty')
+			)
+		  );
+		} else if (axiomObject.type === "DataPropertyDomain" || axiomObject.type === "ObjectPropertyDomain") {
 		  const attrIRI = axiomObject.axiom[0].IRI;
-		  const classIRI = axiomObject.axiom[1].IRI;
+		  let classIRI = axiomObject.axiom[1]?.IRI;
+		  if(classIRI) classIRI = namedNode(classIRI);
+		  else if(axiomObject.axiom[1].Expression){
+			 const dataPropertySet = new Set(onto.DataProperty);
+			 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[1].Expression, {
+					prefixes: namespaceTable,
+					isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+			 });
+
+			 for (let i = 0; i < exprQuads.length; i++) {
+					writer.addQuad(exprQuads[i]);
+			 }
+
+			 classIRI = exprTerm;
+		  }
 		  writer.addQuad(
 			quad(
 			  namedNode(attrIRI),
 			  namedNode('http://www.w3.org/2000/01/rdf-schema#domain'),
-			  namedNode(classIRI)
+			  classIRI
 			)
 		  );
-		} else if (axiomObject.type === "DataPropertyRange") {
+		} else if (axiomObject.type === "DataPropertyRange" || axiomObject.type === "ObjectPropertyRange") {
 		  const attrIRI = axiomObject.axiom[0].IRI;
 		  const classIRI = axiomObject.axiom[1].IRI;
+
 		  if(classIRI !== null && attrIRI !== null && typeof classIRI === "string"){
 			  writer.addQuad(
 				quad(
@@ -190,25 +214,32 @@ function generateN3Syntax(onto, format, nsTable){
 
 			  const quads = buildDataPropertyRangeQuads(
 				  attrIRI,
-				  classIRI
+				  classIRI,
+				  namespaceTable
 			  );
 			  writer.addQuads(quads);
 		  }
-		} else if (axiomObject.type === "FunctionalDataProperty") {
+		} else if (axiomObject.type === "FunctionalDataProperty" || axiomObject.type === "FunctionalObjectProperty") {
 		  const classIRI = axiomObject.axiom.IRI;
-		  writer.addQuad(
-			quad(
-			  namedNode(classIRI),
-			  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-			  namedNode('http://www.w3.org/2002/07/owl#FunctionalProperty')
-			)
-		  );
-		}else if(axiomObject.type === "EquivalentDataProperties" || axiomObject.type === "DisjointDataProperties" || axiomObject.type === "SubDataPropertyOf"){
+		  if(classIRI){
+			  writer.addQuad(
+				quad(
+				  namedNode(classIRI),
+				  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+				  namedNode('http://www.w3.org/2002/07/owl#FunctionalProperty')
+				)
+			  );
+		  }
+		}else if(axiomObject.type === "EquivalentDataProperties" || axiomObject.type === "DisjointDataProperties" || axiomObject.type === "SubDataPropertyOf" 
+		|| axiomObject.type === "EquivalentObjectProperties" || axiomObject.type === "DisjointObjectProperties" || axiomObject.type === "SubObjectPropertyOf"){
 
 			let typeList = {
 				"EquivalentDataProperties":'http://www.w3.org/2002/07/owl#equivalentProperty',
 				"SubDataPropertyOf":'http://www.w3.org/2000/01/rdf-schema#subPropertyOf',
-				"DisjointDataProperties":'http://www.w3.org/2002/07/owl#propertyDisjointWith'
+				"DisjointDataProperties":'http://www.w3.org/2002/07/owl#propertyDisjointWith',
+				"EquivalentObjectProperties":'http://www.w3.org/2002/07/owl#equivalentProperty',
+				"SubObjectPropertyOf":'http://www.w3.org/2000/01/rdf-schema#subPropertyOf',
+				"DisjointObjectProperties":'http://www.w3.org/2002/07/owl#propertyDisjointWith'
 
 			}
 			// Base property (the first one)
@@ -217,10 +248,17 @@ function generateN3Syntax(onto, format, nsTable){
 			let predicate = typeList[axiomObject.type]
 			// Add owl:equivalentProperty triples for the rest
 			for (let i = 1; i < axiom.length; i++) {
-
-			  writer.addQuad(
-				quad(base, namedNode(predicate), namedNode(axiom[i].IRI))
-			  );
+			  if(axiom[i].length > 0){
+				for (let j = 0; j < axiom[i].length; j++) {
+					if(base && axiom[i][j].IRI) {
+						writer.addQuad(quad(base, namedNode(predicate), namedNode(axiom[i][j].IRI)));
+					}
+				}
+			  } else if(base && axiom[i].IRI){
+				  writer.addQuad(
+					quad(base, namedNode(predicate), namedNode(axiom[i].IRI))
+				  );
+			  }
 			}
 
 		}
@@ -250,30 +288,75 @@ function generateN3Syntax(onto, format, nsTable){
 				namedNode('http://www.w3.org/2002/07/owl#Class')
 			  )
 			);
+			let classIRI = axiomObject.axiom.axiom.IRI;
+			if(classIRI) classIRI = namedNode(classIRI);
+			  else if(axiomObject.axiom.axiom.Expression){
+				 const dataPropertySet = new Set(onto.DataProperty);
+				 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom.axiom.Expression, {
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+				 });
+
+				 for (let i = 0; i < exprQuads.length; i++) {
+						writer.addQuad(exprQuads[i]);
+				 }
+
+				 classIRI = exprTerm;
+			}
 			writer.addQuad(
 			  quad(
 				complement,
 				namedNode('http://www.w3.org/2002/07/owl#complementOf'),
-				namedNode(axiomObject.axiom.axiom.IRI)
+				classIRI
 			  )
 			);
+			let oclassIRI = axiomObject.axiom.IRI;
+			if(oclassIRI) oclassIRI = namedNode(oclassIRI);
+			  else if(axiomObject.axiom.Expression){
+				 const dataPropertySet = new Set(onto.DataProperty);
+				 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom.Expression, {
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+				 });
+
+				 for (let i = 0; i < exprQuads.length; i++) {
+						writer.addQuad(exprQuads[i]);
+				 }
+
+				 oclassIRI = exprTerm;
+			}
 			writer.addQuad(
 			  quad(
-				namedNode(axiomObject.axiom.IRI),
+				oclassIRI,
 				namedNode('http://www.w3.org/2002/07/owl#equivalentClass'),
 				complement
 			  )
 			);
 		  } else if(typeof axiomObject.axiom[1] !== "undefined" && typeof axiomObject.axiom[1].type !== "undefined" && axiomObject.axiom[1].type.indexOf("Cardinality") !== -1){
-			  const clsIRI   = axiomObject.axiom[0].IRI;
+			  let classIRI   = axiomObject.axiom[0].IRI;
 			  const part     = axiomObject.axiom[1];
 			  const n        = part.axiom[0].Number;
 			  const propIRI  = part.axiom[1].IRI;
 			  const dtypeIRI = part.axiom[2]?.IRI; // may be undefined
+			  
+			  if(classIRI) classIRI = namedNode(classIRI);
+			  else if(axiomObject.axiom[0].Expression){
+				 const dataPropertySet = new Set(onto.DataProperty);
+				 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[0].Expression, {
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+				 });
+
+				 for (let i = 0; i < exprQuads.length; i++) {
+						writer.addQuad(exprQuads[i]);
+				 }
+
+				 classIRI = exprTerm;
+			  }
 
 			  // SubClassOf(:Class _:r)
 			  const r = blankNode();
-			  writer.addQuad(quad(namedNode(clsIRI), namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf"), r));
+			  writer.addQuad(quad(classIRI, namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf"), r));
 			  writer.addQuad(quad(r, namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), namedNode("http://www.w3.org/2002/07/owl#Restriction")));
 			  writer.addQuad(quad(r, namedNode("http://www.w3.org/2002/07/owl#onProperty"), namedNode(propIRI)));
 
@@ -284,12 +367,18 @@ function generateN3Syntax(onto, format, nsTable){
 			  const predUnq = {
 				DataMinCardinality:  "http://www.w3.org/2002/07/owl#minCardinality",
 				DataMaxCardinality:  "http://www.w3.org/2002/07/owl#maxCardinality",
-				DataExactCardinality: "http://www.w3.org/2002/07/owl#cardinality"
+				DataExactCardinality: "http://www.w3.org/2002/07/owl#cardinality",
+				ObjectMinCardinality:  "http://www.w3.org/2002/07/owl#minCardinality",
+				ObjectMaxCardinality:  "http://www.w3.org/2002/07/owl#maxCardinality",
+				ObjectExactCardinality: "http://www.w3.org/2002/07/owl#cardinality"
 			  };
 			  const predQ = {
 				DataMinCardinality:  "http://www.w3.org/2002/07/owl#minQualifiedCardinality",
 				DataMaxCardinality:  "http://www.w3.org/2002/07/owl#maxQualifiedCardinality",
-				DataExactCardinality: "http://www.w3.org/2002/07/owl#qualifiedCardinality"
+				DataExactCardinality: "http://www.w3.org/2002/07/owl#qualifiedCardinality",
+				ObjectMinCardinality:  "http://www.w3.org/2002/07/owl#minQualifiedCardinality",
+				ObjectMaxCardinality:  "http://www.w3.org/2002/07/owl#maxQualifiedCardinality",
+				ObjectExactCardinality: "http://www.w3.org/2002/07/owl#qualifiedCardinality"
 			  };
 
 			  if (dtypeIRI) {
@@ -326,42 +415,32 @@ function generateN3Syntax(onto, format, nsTable){
 			  writer.addQuad(quad(left, namedNode("http://www.w3.org/2002/07/owl#equivalentClass"), unionBNode));
 
 		  } else {
+			let subType = null;
 			let classIRI = axiomObject.axiom[0].IRI;
-
-			if (typeof axiomObject.axiom[1].IRI === "undefined") {
+			  if(classIRI) subType = "IRI";
+			  else if(axiomObject.axiom[0].Expression){
+				  classIRI = axiomObject.axiom[0].Expression;
+				  subType = "Expression";
+			}
+			
+			// if (typeof axiomObject.axiom[1].IRI === "undefined") {
+			if(axiomObject.axiom[1].length > 0){
 				if(axiomObject.axiom[1].length){
 			      for (let i = 0; i < axiomObject.axiom[1].length; i++) {
-
-					if(axiomObject.axiom[1][i].IRI){
-						writer.addQuad(
-						  quad(
-							namedNode(classIRI),
-							namedNode(typeList[axiomObject.type]),
-							namedNode(axiomObject.axiom[1][i].IRI)
-						  )
-						);
-					} else if (axiomObject.axiom[1][i].Expression && classIRI){
-						const dataPropertySet = new Set(onto.DataProperty);
-						const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[1][i].Expression, {
-						  prefixes: namespaceTable,
-						  isObjectProperty: (propIri) => !dataPropertySet.has(propIri), // your function
+					addN3AxiomQuad({
+						  classIRI,
+						  axiomItem: axiomObject.axiom[1][i],
+						  subType,
+						  axiomType: axiomObject.type,
+						  writer,
+						  quad,
+						  namedNode,
+						  onto,
+						  namespaceTable,
+						  typeList,
 						});
 
-						// add the supporting triples first
-						for (let i = 0; i < exprQuads.length; i++) {
-						  writer.addQuad(exprQuads[i]);
-						}
-
-						// then add the axiom triple (EquivalentClasses or SubClassOf)
-						writer.addQuad(
-						  quad(
-							namedNode(classIRI),
-							namedNode(typeList[axiomObject.type]), // e.g. OWL+"equivalentClass" or RDFS+"subClassOf"
-							exprTerm
-						  )
-						);
-
-					}
+					
 				  }
 				} else if(axiomObject.axiom[1].Expression){
 					const dataPropertySet = new Set(onto.DataProperty);
@@ -417,36 +496,73 @@ function generateN3Syntax(onto, format, nsTable){
 				);
 
 			} else {
-			  writer.addQuad(
-				quad(
-				  namedNode(classIRI),
-				  namedNode(typeList[axiomObject.type]),
-				  namedNode(axiomObject.axiom[1].IRI)
-				)
-			  );
+			  addN3AxiomQuad({
+						  classIRI,
+						  axiomItem: axiomObject.axiom[1],
+						  subType,
+						  axiomType: axiomObject.type,
+						  writer,
+						  quad,
+						  namedNode,
+						  onto,
+						  namespaceTable,
+						  typeList,
+						});
 			}
 		  }
 		} else if (axiomObject.type === "AnnotationAssertion") {
-
-			let classIRI = axiomObject.axiom[1]?.IRI;
 			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
 			let annotationValue = axiomObject.axiom[2]?.value;
-			let annotationLanguage = axiomObject.axiom[3]?.language;
+			if (annotationType && annotationValue) {
+				let classIRI = axiomObject.axiom[1]?.IRI;
+				if(classIRI) classIRI = namedNode(classIRI);
+				else if(axiomObject.axiom[1].Expression){
+					const dataPropertySet = new Set(onto.DataProperty);
+					const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[1].Expression, {
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					});
 
-			if (classIRI && annotationType && annotationValue) {
-			  const lit = annotationLanguage
-				? literal(annotationValue, annotationLanguage)
-				: literal(annotationValue);
+					for (let i = 0; i < exprQuads.length; i++) {
+						writer.addQuad(exprQuads[i]);
+					}
 
-			  writer.addQuad(quad(namedNode(classIRI), namedNode(annotationType),lit));
+					classIRI = exprTerm;
+				  }
+				
+				let annotationLanguage = axiomObject.axiom[3]?.language;
+
+				if (classIRI) {
+				  const lit = annotationLanguage
+					? literal(annotationValue, annotationLanguage)
+					: literal(annotationValue);
+
+				  writer.addQuad(quad(classIRI, namedNode(annotationType),lit));
+				}
 			}
 		} else if (axiomObject.type === "HasKey") {
 			  const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 			  const OWL = 'http://www.w3.org/2002/07/owl#';
 			  const [cls, propsBox] = axiomObject.axiom;
-			  if (!cls?.IRI) throw new Error('HasKey: missing class IRI');
+			  if (!cls?.IRI && !cls?.Expression) throw new Error('HasKey: missing class IRI');
 			  if (!propsBox || !Array.isArray(propsBox.axiom) || propsBox.axiom.length === 0) {
 				throw new Error('HasKey: properties list is empty');
+			  }
+			  
+			  let classNode;
+			  if(cls.IRI) classNode = namedNode(cls.IRI);
+			  else if(cls.Expression){
+				const dataPropertySet = new Set(onto.DataProperty);
+				const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(cls.Expression, {
+					prefixes: namespaceTable,
+					isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+				});
+
+				for (let i = 0; i < exprQuads.length; i++) {
+					writer.addQuad(exprQuads[i]);
+				}
+
+				classNode = exprTerm;
 			  }
 
 			  // Build list members
@@ -470,7 +586,7 @@ function generateN3Syntax(onto, format, nsTable){
 			  }
 
 			  // <Class> owl:hasKey ( ... )
-			  writer.addQuad(namedNode(cls.IRI), namedNode(OWL + 'hasKey'), listHead);
+			  writer.addQuad(classNode, namedNode(OWL + 'hasKey'), listHead);
 		}
 	  }
 	}
@@ -515,7 +631,8 @@ function generateN3Syntax(onto, format, nsTable){
 
 			  const quads = buildDataPropertyRangeQuads(
 				  dt,
-				  dtdefinition
+				  dtdefinition,
+				  namespaceTable
 			  );
 			  writer.addQuads(quads);
 		  }
@@ -593,14 +710,29 @@ function generateN3Syntax(onto, format, nsTable){
           )
         );
       } else if (axiomObject.type === "ClassAssertion") {
-        const subject = axiomObject.axiom[0].IRI;
+        let subject = axiomObject.axiom[0].IRI;
+		if(subject) subject = namedNode(subject);
+		else if(axiomObject.axiom[0].Expression){
+			 const dataPropertySet = new Set(onto.DataProperty);
+			 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[0].Expression, {
+				prefixes: namespaceTable,
+				isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+			 });
+
+			 for (let i = 0; i < exprQuads.length; i++) {
+				writer.addQuad(exprQuads[i]);
+			 }
+
+				 subject = exprTerm;
+		}
+
         const object = axiomObject.axiom[1].IRI;
 		if(typeof subject !== "undefined" && typeof object !== "undefined"){
 			writer.addQuad(
 			  quad(
 				namedNode(object),
 				namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-				namedNode(subject)
+				subject
 			  )
 			);
 		}
@@ -790,28 +922,77 @@ function generateN3Syntax(onto, format, nsTable){
 			let predicate = axiomList[axiomObject.type];
 			let object = axiomObject.axiom[1].IRI;
 
-			if(subject && predicate && object && typeof subject !== "undefined"&& typeof predicate !== "undefined"&& typeof object !== "undefined"){
-				writer.addQuad(
-					quad(
-						namedNode(subject),
-						namedNode(predicate),
-						namedNode(object)
-					)
-				);
+				
+ 
+			if(predicate && subject && typeof predicate !== "undefined"&& typeof subject !== "undefined"){
+				if(object) object = namedNode(object);
+				else if(axiomObject.axiom[1].Expression){
+					const dataPropertySet = new Set(onto.DataProperty);
+					const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[1].Expression, {
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					});
+
+					for (let i = 0; i < exprQuads.length; i++) {
+						writer.addQuad(exprQuads[i]);
+					}
+
+					object = exprTerm;
+				}
+				
+				if(object && typeof object !== "undefined"){
+					writer.addQuad(
+						quad(
+							namedNode(subject),
+							namedNode(predicate),
+							object
+						)
+					);
+				}
 			}
 		} else if (typeof axiomObject.type !== "undefined" && axiomObject.type === "SubClassOf"){
 			if(typeof axiomObject.axiom[1] !== "undefined" && axiomObject.axiom[1].type.indexOf("Cardinality") !== -1){
-			 const clsIRI  = axiomObject.axiom[0].IRI;
+				let clsIRI  = axiomObject.axiom[0].IRI;
 				const part    = axiomObject.axiom[1];           // type: ObjectMin/Max/ExactCardinality
 				const n       = part.axiom[0].Number;           // the number
 				const propIRI = part.axiom[1].IRI;              // object property
-				const classIRI = part.axiom[2]?.IRI;            // optional filler class for qualified form
+				let classIRI = part.axiom[2]?.IRI;            // optional filler class for qualified form
+				
+				if(clsIRI) clsIRI = namedNode(clsIRI);
+				else if(axiomObject.axiom[0].Expression){
+					 const dataPropertySet = new Set(onto.DataProperty);
+					 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[0].Expression, {
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					 });
+
+					 for (let i = 0; i < exprQuads.length; i++) {
+							writer.addQuad(exprQuads[i]);
+					 }
+
+					 clsIRI = exprTerm;
+				}
+				
+				if(classIRI) classIRI = namedNode(classIRI);
+				else if(part.axiom[2].Expression){
+					 const dataPropertySet = new Set(onto.DataProperty);
+					 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(part.axiom[2].Expression, {
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					 });
+
+					 for (let i = 0; i < exprQuads.length; i++) {
+							writer.addQuad(exprQuads[i]);
+					 }
+
+					 classIRI = exprTerm;
+				}
 
 				// _:r restriction node
 				const r = blankNode();
 
 				writer.addQuad(quad(
-				  namedNode(clsIRI),
+				  clsIRI,
 				  namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf"),
 				  r
 				));
@@ -853,7 +1034,7 @@ function generateN3Syntax(onto, format, nsTable){
 				  writer.addQuad(quad(
 					r,
 					namedNode("http://www.w3.org/2002/07/owl#onClass"),
-					namedNode(classIRI)
+					classIRI
 				  ));
 				} else {
 				  // Unqualified: plain cardinality, no filler
@@ -862,10 +1043,28 @@ function generateN3Syntax(onto, format, nsTable){
 			} else {
 			 let axiomList = { "ObjectSomeValuesFrom":'http://www.w3.org/2002/07/owl#someValuesFrom', "ObjectAllValuesFrom":'http://www.w3.org/2002/07/owl#allValuesFrom' }
 			  const r = blankNode();
-
+ 
 			  // :A rdfs:subClassOf _:r .
+			  
+			  let classIRI = axiomObject.axiom[0]?.IRI;
+			  if(classIRI) classIRI = namedNode(classIRI);
+			  else if(axiomObject.axiom[0].Expression){
+				 const dataPropertySet = new Set(onto.DataProperty);
+				 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[0].Expression, {
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+				 });
+
+				 for (let i = 0; i < exprQuads.length; i++) {
+						writer.addQuad(exprQuads[i]);
+				 }
+
+				 classIRI = exprTerm;
+			  }
+			  
+			  
 			  writer.addQuad(quad(
-				namedNode(axiomObject.axiom[0].IRI),
+				classIRI,
 				namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf"),
 				r
 			  ));
@@ -886,7 +1085,21 @@ function generateN3Syntax(onto, format, nsTable){
 
 			  } else {
 				// direct property
-				onPropObject = namedNode(propPart.IRI);
+				onPropObject = propPart.IRI;
+				if(onPropObject) onPropObject = namedNode(onPropObject);
+				else if(propPart.Expression){
+					 const dataPropertySet = new Set(onto.DataProperty);
+					 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(propPart.Expression, {
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					 });
+
+					 for (let i = 0; i < exprQuads.length; i++) {
+							writer.addQuad(exprQuads[i]);
+					 }
+
+					 onPropObject = exprTerm;
+				  }
 			  }
 
 			  // _:r owl:onProperty X .
@@ -894,13 +1107,31 @@ function generateN3Syntax(onto, format, nsTable){
 
 			  // _:r (some|all)ValuesFrom :B .
 			  const restrType = axiomObject.axiom[1].type; // "ObjectSomeValuesFrom" | "ObjectAllValuesFrom"
+			  
+			  let oclassIRI = axiomObject.axiom[1]?.axiom[1]?.IRI;
+			  if(oclassIRI) oclassIRI = namedNode(oclassIRI);
+			  else if(axiomObject.axiom[1].axiom[1].Expression){
+				 const dataPropertySet = new Set(onto.DataProperty);
+				 const { term: exprTerm, quads: exprQuads } = classExpressionAstToN3(axiomObject.axiom[1].axiom[1].Expression, {
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+				 });
+
+				 for (let i = 0; i < exprQuads.length; i++) {
+						writer.addQuad(exprQuads[i]);
+				 }
+
+				 oclassIRI = exprTerm;
+			  }
+			  
 			  writer.addQuad(quad(
 				r,
 				namedNode(axiomList[restrType]),
-				namedNode(axiomObject.axiom[1].axiom[1].IRI)
+				oclassIRI
 			  ));
 			}
 		} else if(axiomObject.type === "EquivalentObjectProperties" || axiomObject.type === "DisjointObjectProperties" || axiomObject.type === "SubObjectPropertyOf"){
+
 			let typeList = {
 				"EquivalentObjectProperties":'http://www.w3.org/2002/07/owl#equivalentProperty',
 				"SubObjectPropertyOf":'http://www.w3.org/2000/01/rdf-schema#subPropertyOf',
@@ -946,16 +1177,28 @@ function generateN3Syntax(onto, format, nsTable){
 				const listHead = addList(chainItems);
 				writer.addQuad(superProp, namedNode(OWL + 'propertyChainAxiom'), listHead);
 			} else {
-				for (let i = 0; i < axiomObject.axiom[1].length; i++) {
-				  let predicate = typeList[axiomObject.type]
-				  let object = axiomObject.axiom[1][i].IRI;
-				  writer.addQuad(
-					quad(
-					  namedNode(subject),
-					  namedNode(predicate),
-					  namedNode(object)
-					)
-				  );
+				if(axiomObject.axiom[1].length > 0){
+					for (let i = 0; i < axiomObject.axiom[1].length; i++) {
+					  let predicate = typeList[axiomObject.type]
+					  let object = axiomObject.axiom[1][i].IRI;
+					  writer.addQuad(
+						quad(
+						  namedNode(subject),
+						  namedNode(predicate),
+						  namedNode(object)
+						)
+					  );
+					}
+				} else if(axiomObject.axiom[1]?.IRI){
+					let predicate = typeList[axiomObject.type]
+					  let object = axiomObject.axiom[1].IRI;
+					  writer.addQuad(
+						quad(
+						  namedNode(subject),
+						  namedNode(predicate),
+						  namedNode(object)
+						)
+					  );
 				}
 			}
 		} else if (axiomObject.type === "FunctionalObjectProperty" || axiomObject.type === "InverseFunctionalObjectProperty" || axiomObject.type === "SymmetricObjectProperty" || axiomObject.type === "AsymmetricObjectProperty" || axiomObject.type === "ReflexiveObjectProperty" || axiomObject.type === "IrreflexiveObjectProperty" || axiomObject.type === "TransitiveObjectProperty") {
@@ -1219,7 +1462,7 @@ function dataRangeAstToN3(ast, prefixes = {}) {
 function buildDataPropertyRangeQuads(propertyIri, dataRangeAst, prefixes = {}) {
   const { rangeTerm, quads } = dataRangeAstToN3(dataRangeAst, prefixes);
   quads.push(quad(namedNode(propertyIri), namedNode(RDFS + "range"), rangeTerm));
-  quads.push(quad(namedNode(propertyIri), namedNode(RDF + "type"), namedNode(OWL + "DatatypeProperty")));
+  // quads.push(quad(namedNode(propertyIri), namedNode(RDF + "type"), namedNode(OWL + "DatatypeProperty")));
   return quads;
 }
 
@@ -1661,6 +1904,70 @@ function classExpressionAstToN3(ast, { prefixes = {}, isObjectProperty } = {}) {
 function isObjectProperty(property){
 	return false
 }
+
+
+function addN3AxiomQuad({
+  classIRI,
+  axiomItem,          // e.g. axiomObject.axiom[1][i]
+  subType,            // "IRI" | "Expression"
+  axiomType,          // axiomObject.type
+  writer,
+  quad,
+  namedNode,
+  onto,
+  namespaceTable,
+  typeList,
+}) {
+  const dataPropertySet = new Set(onto.DataProperty);
+
+  const addExprSupportAndGetTerm = (expression) => {
+    const { term, quads } = classExpressionAstToN3(expression, {
+      prefixes: namespaceTable,
+      isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+    });
+
+    for (let j = 0; j < quads.length; j++) writer.addQuad(quads[j]);
+    return term;
+  };
+
+  const predicate = namedNode(typeList[axiomType]);
+
+  // IRI → IRI
+  if (axiomItem.IRI && subType === "IRI") {
+    writer.addQuad(
+      quad(namedNode(classIRI), predicate, namedNode(axiomItem.IRI))
+    );
+    return;
+  }
+
+  // Expression → IRI
+  if (axiomItem.IRI && subType === "Expression") {
+    const subjTerm = addExprSupportAndGetTerm(classIRI);
+    writer.addQuad(
+      quad(subjTerm, predicate, namedNode(axiomItem.IRI))
+    );
+    return;
+  }
+
+  // IRI → Expression
+  if (axiomItem.Expression && subType === "IRI") {
+    const objTerm = addExprSupportAndGetTerm(axiomItem.Expression);
+    writer.addQuad(
+      quad(namedNode(classIRI), predicate, objTerm)
+    );
+    return;
+  }
+
+  // Expression → Expression
+  if (axiomItem.Expression && subType === "Expression") {
+    const subjTerm = addExprSupportAndGetTerm(classIRI);
+    const objTerm = addExprSupportAndGetTerm(axiomItem.Expression);
+    writer.addQuad(
+      quad(subjTerm, predicate, objTerm)
+    );
+  }
+}
+
 
 
 export {

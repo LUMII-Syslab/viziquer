@@ -1,4 +1,4 @@
-// In server-only code
+// In server-only code 
 import * as $rdf from 'rdflib';
 
 const RDF  = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -102,17 +102,27 @@ Meteor.methods({
 				let annotationType = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
 				let annotationValue = ax.axiom[1]?.value;
 				let annotationLanguage = ax.axiom[2]?.language;
-				if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
-				store.add(subj, annotationType, $rdf.literal(annotationValue));
+				// if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
+				const objLanguage = ax.axiom[2]?.language;
+				  if (subj && annotationType && annotationValue) {
+					 if (objLanguage) {
+						store.add(subj, annotationType, $rdf.literal(annotationValue, objLanguage));
+					  } else {
+						store.add(subj, annotationType, $rdf.literal(annotationValue));
+					  }
+				  }
 			} else if(ax.type === "AnnotationAssertion") {
 				if(typeof ax.axiom[1].IRI !== "undefined" && typeof ax.axiom[2].value !== "undefined"){
 				  const subj = ax.axiom[1].IRI;
 				  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
 				  let obj = ax.axiom[2].value;
 				  const objLanguage = ax.axiom[3]?.language;
-			      if(objLanguage) obj = obj + "@" + objLanguage;
 				  if (subj && pred && obj) {
-					store.add($rdf.sym(subj), pred, $rdf.literal(obj));
+					 if (objLanguage) {
+						store.add(subj, pred, $rdf.literal(obj, objLanguage));
+					  } else {
+						store.add(subj, pred, $rdf.literal(obj));
+					  }
 				  }
 				}
 			 }
@@ -126,28 +136,41 @@ Meteor.methods({
 			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('Class').uri);
 		  }else if (ax.type === "Declaration" && ax.axiom.type === "DataProperty") {
 			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('DatatypeProperty').uri);
-		  }else if (ax.type === "DataPropertyDomain") {
+		  }else if (ax.type === "Declaration" && ax.axiom.type === "ObjectProperty") {
+			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('ObjectProperty').uri);
+		  }else if (ax.type === "DataPropertyDomain" || ax.type === "ObjectPropertyDomain") {
 			  const attrIRI = ax.axiom[0].IRI;
-			  const classIRI = ax.axiom[1].IRI;
-			  addTriple(attrIRI, ns.rdfs('domain').uri, classIRI);
-		  } else if (ax.type === "DataPropertyRange") {
+			  let classIRI = ax.axiom[1].IRI;
+			  if(classIRI) classIRI = $rdf.sym(classIRI);
+			  else if(ax.axiom[1].Expression){
+				  const dataPropertySet = new Set(onto.DataProperty);
+				  const { term: exprTerm } = classExpressionAstToRdflib(
+					$rdf,
+					store,
+					ax.axiom[1].Expression,
+					{
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					}
+				);
+				classIRI = exprTerm;
+			  }
+  
+			  if(attrIRI && classIRI) store.add($rdf.sym(attrIRI), $rdf.sym(ns.rdfs('domain').uri), classIRI);
+		  } else if (ax.type === "DataPropertyRange" || ax.type === "ObjectPropertyRange") {
 			  const attrIRI = ax.axiom[0].IRI;
 			  const classIRI = ax.axiom[1].IRI;
 			  if(classIRI !== null && attrIRI !== null && typeof classIRI === "string"){
 				 addTriple(attrIRI, ns.rdfs('range').uri, classIRI);
 			  } else if(classIRI !== null && attrIRI !== null && typeof classIRI === "object"){
-
-				  // const quads = buildDataPropertyRangeQuads(
-					  // attrIRI,
-					  // classIRI
-				  // );
-				  // writer.addQuads(quads);
+					const statements = buildDataPropertyRangeStatements(attrIRI, classIRI, namespaceTable);
+					for (const st of statements) store.add(st.subject, st.predicate, st.object); 
 			  }
 
 
-		  }else if (ax.type === "FunctionalDataProperty") {
-			addTriple(ax.axiom.IRI, ns.rdf('type').uri, ns.owl('FunctionalProperty').uri);
-		  } else if (["EquivalentDataProperties", "DisjointDataProperties", "SubDataPropertyOf"].includes(ax.type)) {
+		  }else if (ax.type === "FunctionalDataProperty" || ax.type === "FunctionalObjectProperty") {
+			if(ax.axiom.IRI)addTriple(ax.axiom.IRI, ns.rdf('type').uri, ns.owl('FunctionalProperty').uri);
+		  } else if (["EquivalentDataProperties", "DisjointDataProperties", "SubDataPropertyOf", "EquivalentObjectProperties", "DisjointObjectProperties", "SubObjectPropertyOf"].includes(ax.type)) {
 			  if (ax.axiom.length >= 2) {
 				  const predMap = {
 					  EquivalentDataProperties: ns.owl('equivalentProperty').uri,
@@ -156,8 +179,15 @@ Meteor.methods({
 					};
 
 				  const base = ax.axiom[0].IRI;
+				 
 				  for (let i = 1; i < ax.axiom.length; i++) {
-					addTriple(base, predMap[ax.type] ,ax.axiom[i].IRI);
+					if(ax.axiom[i].length > 0){
+						 for (let j = 0; j < ax.axiom[i].length; j++) {
+							 if(base && ax.axiom[i][j].IRI) addTriple(base, predMap[ax.type] ,ax.axiom[i][j].IRI);
+						 }
+					}
+					
+					else if(base && ax.axiom[i].IRI) addTriple(base, predMap[ax.type] ,ax.axiom[i].IRI);
 				  }
 				}
 
@@ -176,22 +206,70 @@ Meteor.methods({
             store.add(complementBNode, ns.rdf('type'), ns.owl('Class'));
 
             // owl:complementOf ex:someClass
-            store.add(complementBNode, ns.owl('complementOf'), ax.axiom.axiom.IRI);
-
+			let classIRI = ax.axiom.axiom.IRI
+			if(classIRI) classIRI = $rdf.sym(classIRI);
+		    else if(ax.axiom.axiom.Expression){
+				const dataPropertySet = new Set(onto.DataProperty);
+				const { term: exprTerm } = classExpressionAstToRdflib(
+					$rdf,
+					store,
+					ax.axiom.axiom.Expression,
+					{
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					}
+				);
+				classIRI = exprTerm;
+		    }
+            store.add(complementBNode, ns.owl('complementOf'), classIRI);
+			
+			let oclassIRI = ax.axiom.IRI
+			if(oclassIRI) oclassIRI = $rdf.sym(oclassIRI);
+		    else if(ax.axiom.Expression){
+				const dataPropertySet = new Set(onto.DataProperty);
+				const { term: exprTerm } = classExpressionAstToRdflib(
+					$rdf,
+					store,
+					ax.axiom.Expression,
+					{
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					}
+				);
+				oclassIRI = exprTerm;
+		    }
             // ex:Person owl:equivalentClass _:bnode
-            store.add(ax.axiom.IRI, ns.owl('equivalentClass'), complementBNode);
+            store.add(oclassIRI, ns.owl('equivalentClass'), complementBNode);
         } else if(typeof ax.axiom[1] !== "undefined" && typeof ax.axiom[1].type !== "undefined" && ax.axiom[1].type.indexOf("Cardinality") !== -1){
-		  const clsIRI   = ax.axiom[0].IRI;
+		  
+		  let classIRI = ax.axiom[0].IRI;
 		  const part     = ax.axiom[1];
 		  const n        = part.axiom[0].Number;
 		  const propIRI  = part.axiom[1].IRI;
 		  const dtypeIRI = part.axiom[2]?.IRI; // may be undefined
+		  
+		  console.log("DDDDDD", ax, classIRI, part, n, propIRI, dtypeIRI)
+		  
+		  if(classIRI) classIRI = $rdf.sym(classIRI);
+		  else if(ax.axiom[0].Expression){
+			const dataPropertySet = new Set(onto.DataProperty);
+			const { term: exprTerm } = classExpressionAstToRdflib(
+				$rdf,
+				store,
+				ax.axiom[0].Expression,
+				{
+					prefixes: namespaceTable,
+					isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+				}
+			);
+			classIRI = exprTerm;
+		  }
 
 		  // _:r (blank node for the restriction)
 		  const r = $rdf.blankNode();
 
 		  // :Class rdfs:subClassOf _:r
-		  store.add($rdf.sym(clsIRI),
+		  store.add(classIRI,
 					$rdf.sym("http://www.w3.org/2000/01/rdf-schema#subClassOf"),
 					r);
 
@@ -215,12 +293,18 @@ Meteor.methods({
 		  const predUnq = {
 			DataMinCardinality:  "http://www.w3.org/2002/07/owl#minCardinality",
 			DataMaxCardinality:  "http://www.w3.org/2002/07/owl#maxCardinality",
-			DataExactCardinality:"http://www.w3.org/2002/07/owl#cardinality"
+			DataExactCardinality:"http://www.w3.org/2002/07/owl#cardinality",
+			ObjectMinCardinality:  "http://www.w3.org/2002/07/owl#minCardinality",
+			ObjectMaxCardinality:  "http://www.w3.org/2002/07/owl#maxCardinality",
+			ObjectExactCardinality:"http://www.w3.org/2002/07/owl#cardinality"
 		  };
 		  const predQ = {
 			DataMinCardinality:  "http://www.w3.org/2002/07/owl#minQualifiedCardinality",
 			DataMaxCardinality:  "http://www.w3.org/2002/07/owl#maxQualifiedCardinality",
-			DataExactCardinality:"http://www.w3.org/2002/07/owl#qualifiedCardinality"
+			DataExactCardinality:"http://www.w3.org/2002/07/owl#qualifiedCardinality",
+			ObjectMinCardinality:  "http://www.w3.org/2002/07/owl#minQualifiedCardinality",
+			ObjectMaxCardinality:  "http://www.w3.org/2002/07/owl#maxQualifiedCardinality",
+			ObjectExactCardinality:"http://www.w3.org/2002/07/owl#qualifiedCardinality"
 		  };
 
 		  if (dtypeIRI) {
@@ -304,34 +388,30 @@ Meteor.methods({
 				});
 			  }
 		  }else{
-
-			  const subj = ax.axiom[0].IRI;
-			  if(typeof ax.axiom[1].IRI === "undefined"){
+			  let subType = null;
+			  let subj = ax.axiom[0].IRI;
+			  if(subj) subType = "IRI";
+			  else if(ax.axiom[0].Expression){
+				  subj = ax.axiom[0].Expression;
+				  subType = "Expression";
+			  }
+			  
+			  if(ax.axiom[1].length > 0){
+			  // if(typeof ax.axiom[1].IRI === "undefined"){
 
 				  if(ax.axiom[1].length){
 					for (const target of ax.axiom[1]) {
-					  if(target.IRI){
-						addTriple(subj, typeMap[ax.type], target.IRI);
-					  } else if(target.Expression && subj){
-							const dataPropertySet = new Set(onto.DataProperty);
-							const { term: exprTerm } = classExpressionAstToRdflib(
-							  $rdf,
-							  store,
-							  target.Expression,
-							  {
-								prefixes: namespaceTable,
-								isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
-								// doc: $rdf.sym("http://example.com/graph") // optional named graph
-							  }
-							);
-
-							// Now add the axiom triple (example: EquivalentClasses)
-							store.add(
-							  $rdf.sym(subj),
-							  $rdf.sym(typeMap[ax.type]), // e.g. OWL+"equivalentClass" or RDFS+"subClassOf"
-							  exprTerm
-							);
-					  }
+					  addAxiomTriple({
+						  subj,
+						  target,
+						  subType,
+						  axType: ax.type,
+						  store,
+						  onto,
+						  namespaceTable,
+						  typeMap,
+						  addTriple,
+						});
 					}
 				  } else if(ax.axiom[1].Expression && subj) {
 					  const dataPropertySet = new Set(onto.DataProperty);
@@ -342,31 +422,61 @@ Meteor.methods({
 							  {
 								prefixes: namespaceTable,
 								isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
-								// doc: $rdf.sym("http://example.com/graph") // optional named graph
 							  }
 							);
 
-							// Now add the axiom triple (example: EquivalentClasses)
 							store.add(
 							  $rdf.sym(subj),
-							  $rdf.sym(typeMap[ax.type]), // e.g. OWL+"equivalentClass" or RDFS+"subClassOf"
+							  $rdf.sym(typeMap[ax.type]), 
 							  exprTerm
 							);
 				  }
 			  } else {
-				addTriple(subj, typeMap[ax.type], ax.axiom[1].IRI);
+				let target = ax.axiom[1]
+				addAxiomTriple({
+						  subj,
+						  target,
+						  subType,
+						  axType: ax.type,
+						  store,
+						  onto,
+						  namespaceTable,
+						  typeMap,
+						  addTriple,
+						});
 			  }
 			}
         }
 		  } else if (ax.type === "AnnotationAssertion") {
-			if(typeof ax.axiom[1].IRI !== "undefined" && typeof ax.axiom[2].value !== "undefined"){
-			  const subj = ax.axiom[1].IRI;
+			if((typeof ax.axiom[1].IRI !== "undefined" ||typeof ax.axiom[1].Expression !== "undefined") && typeof ax.axiom[2].value !== "undefined"){
 			  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
 			  let obj = ax.axiom[2].value;
-			  const objLanguage = ax.axiom[3]?.language;
-			  if(objLanguage) obj = obj + "@" + objLanguage;
-			  if (subj && pred && obj) {
-				store.add($rdf.sym(subj), pred, $rdf.literal(obj));
+			  if(pred && obj){
+				  let subj = ax.axiom[1].IRI;
+				  if(subj) subj = $rdf.sym(subj);
+				  else if(ax.axiom[1].Expression){
+					  const dataPropertySet = new Set(onto.DataProperty);
+					  const { term: exprTerm } = classExpressionAstToRdflib(
+						$rdf,
+						store,
+						ax.axiom[1].Expression,
+						{
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+						}
+					);
+					subj = exprTerm;
+				  }
+				  
+				  const objLanguage = ax.axiom[3]?.language;
+				  // if(objLanguage) obj = obj + "@" + objLanguage;
+				  if (subj) {
+					  if (objLanguage) {
+						store.add(subj, pred, $rdf.literal(obj, objLanguage));
+					  } else {
+						store.add(subj, pred, $rdf.literal(obj));
+					  }
+				  }
 			  }
 			}
 		  } else if (ax.type === "HasKey") {
@@ -376,13 +486,27 @@ Meteor.methods({
 			  const cls = ax.axiom[0];
 			  const propsBox = ax.axiom[1];
 
-			  if (!cls?.IRI) throw new Error('HasKey: missing class IRI');
+			  if (!cls?.IRI && !cls?.Expression) throw new Error('HasKey: missing class IRI');
 			  if (!propsBox || !Array.isArray(propsBox.axiom) || propsBox.axiom.length === 0) {
 				throw new Error('HasKey: properties list is empty');
 			  }
 
-			  const classNode = $rdf.namedNode(cls.IRI);
-
+			  let classNode;
+			  if(cls.IRI) classNode = $rdf.namedNode(cls.IRI);
+			  else if(cls.Expression){
+				  const dataPropertySet = new Set(onto.DataProperty);
+				  const { term: exprTerm } = classExpressionAstToRdflib(
+					$rdf,
+					store,
+					cls.Expression,
+					{
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					}
+				);
+				classNode = exprTerm;
+			  }
+			  
 			  // Build the list members: either a named node, or a bnode with owl:inverseOf
 			  const members = propsBox.axiom.map(p => {
 				if (p.inverseOf) {
@@ -415,20 +539,27 @@ Meteor.methods({
 			  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
 			  let obj = ax.axiom[2].value;
 			  const objLanguage = ax.axiom[3]?.language;
-			  if(objLanguage) obj = obj + "@" + objLanguage;
 			  if (subj && pred && obj) {
-				store.add($rdf.sym(subj), pred, $rdf.literal(obj));
+				 if (objLanguage) {
+					store.add(subj, pred, $rdf.literal(obj, objLanguage));
+				  } else {
+					store.add(subj, pred, $rdf.literal(obj));
+				  }
 			  }
 			}
 		 } else if (ax.type === "DataTypeDefinition") {
-			  const dt = ax.axiom[0].IRI;
-			  const dtdefinition = ax.axiom[1].type;
-			   if (dt && dtdefinition) {
-				  const attrIRI = ax.axiom[0].IRI;
-				  const classIRI = ax.axiom[1].IRI;
-				  addTriple(dt, ns.owl('onDatatype').uri, dtdefinition);
-			  }
+			const dt = ax.axiom[0].IRI;
+			const dtdefinition = ax.axiom[1].type;
+			if (dt && dtdefinition) {
+				const attrIRI = ax.axiom[0].IRI;
+
+				if(typeof dtdefinition === "string") addTriple(dt, ns.owl('onDatatype').uri, dtdefinition);
+				else{
+					const statements = buildDataPropertyRangeStatements(attrIRI, dtdefinition, namespaceTable);
+					for (const st of statements) store.add(st.subject, st.predicate, st.object); 
+				}
 			}
+		  }
 		}
 	  }
 
@@ -451,9 +582,13 @@ Meteor.methods({
           const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
           let obj = ax.axiom[2].value;
 		  const objLanguage = ax.axiom[3]?.language;
-		  if(objLanguage) obj = obj + "@" + objLanguage;
+
           if (subj && pred && obj) {
-            store.add($rdf.sym(subj), pred, $rdf.literal(obj));
+            if (objLanguage) {
+				store.add(subj, pred, $rdf.literal(obj, objLanguage));
+			} else {
+				store.add(subj, pred, $rdf.literal(obj));
+			}
           }
         }
 		  } else if (ax.type === "SubAnnotationPropertyOf") {
@@ -471,16 +606,38 @@ Meteor.methods({
 		  if (ax.type === "Declaration" && ax.axiom.type === "NamedIndividual") {
 			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('NamedIndividual').uri);
 		  } else if(ax.type === "ClassAssertion"){
-			  if(typeof ax.axiom[0].IRI !== "undefined" && typeof ax.axiom[1].IRI !== "undefined")addTriple(ax.axiom[1].IRI, ns.rdf('type').uri, ax.axiom[0].IRI);
+			if(typeof ax.axiom[1].IRI !== "undefined"){
+				let classIRI = ax.axiom[0].IRI;
+				if(classIRI) classIRI = $rdf.sym(classIRI);
+				else if(ax.axiom[0].Expression){
+					const dataPropertySet = new Set(onto.DataProperty);
+					const { term: exprTerm } = classExpressionAstToRdflib(
+						$rdf,
+						store,
+						ax.axiom[0].Expression,
+						{
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+						}
+					);
+					classIRI = exprTerm;
+				}
+				if(classIRI)store.add($rdf.sym(ax.axiom[1].IRI), $rdf.sym(ns.rdf('type').uri), classIRI);
+		    }
+			
+			  // if(typeof ax.axiom[0].IRI !== "undefined" && typeof ax.axiom[1].IRI !== "undefined")addTriple(ax.axiom[1].IRI, ns.rdf('type').uri, ax.axiom[0].IRI);
       } else if (ax.type === "AnnotationAssertion") {
         if(typeof ax.axiom[1].IRI !== "undefined" && typeof ax.axiom[2].value !== "undefined"){
           const subj = ax.axiom[1].IRI;
           const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
           let obj = ax.axiom[2].value;
 		  const objLanguage = ax.axiom[3]?.language;
-		  if(objLanguage) obj = obj + "@" + objLanguage;
           if (subj && pred && obj) {
-            store.add($rdf.sym(subj), pred, $rdf.literal(obj));
+			if (objLanguage) {
+			store.add(subj, pred, $rdf.literal(obj, objLanguage));
+		  } else {
+			store.add(subj, pred, $rdf.literal(obj));
+			}
           }
         }
 		  }else if (["SameIndividual", "DifferentIndividuals"].includes(ax.type)) {
@@ -617,7 +774,27 @@ Meteor.methods({
 			  ObjectPropertyRange: ns.rdfs('range').uri,
 			  InverseObjectProperties: ns.owl('inverseOf').uri,
 			};
-			if(typeof ax.axiom[0].IRI !== "undefined" && typeof ax.axiom[1].IRI !== "undefined")addTriple(ax.axiom[0].IRI, predMap[ax.type], ax.axiom[1].IRI);
+			
+			  let classIRI = ax.axiom[1].IRI;
+			  if(classIRI) classIRI = $rdf.sym(classIRI);
+			
+			if(typeof ax.axiom[0].IRI !== "undefined"){
+				if(ax.axiom[1].Expression){
+				  const dataPropertySet = new Set(onto.DataProperty);
+				  const { term: exprTerm } = classExpressionAstToRdflib(
+					$rdf,
+					store,
+					ax.axiom[1].Expression,
+					{
+						prefixes: namespaceTable,
+						isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+					}
+				  );
+				  classIRI = exprTerm;
+				}
+				if(classIRI)store.add($rdf.sym(ax.axiom[0].IRI), $rdf.sym(predMap[ax.type]), classIRI);
+			}
+			
 		  } else if (["EquivalentObjectProperties", "DisjointObjectProperties", "SubObjectPropertyOf"].includes(ax.type)) {
 
 			if(typeof ax.axiom[1].axiom !== "undefined" && typeof ax.axiom[1].axiom.type !== "undefined" && ax.axiom[1].axiom.type === "ObjectPropertyChain"){
@@ -649,23 +826,57 @@ Meteor.methods({
 				  SubObjectPropertyOf: ns.rdfs('subPropertyOf').uri,
 				};
 				const subj = ax.axiom[0].IRI;
-				for (const obj of ax.axiom[1]) {
-				  addTriple(subj, predMap[ax.type], obj.IRI);
+				if(ax.axiom[1].length>0){
+					for (const obj of ax.axiom[1]) {
+					  addTriple(subj, predMap[ax.type], obj.IRI);
+					}
+				} else if(ax.axiom[1].IRI) {
+					addTriple(subj, predMap[ax.type], ax.axiom[1].IRI);
 				}
 			}
 		  } else if (typeof ax.type !== "undefined" && ax.type === "SubClassOf"){
 			  if(typeof ax.axiom[1] !== "undefined" && ax.axiom[1].type.indexOf("Cardinality") !== -1){
-				const clsIRI   = ax.axiom[0].IRI;
+				let clsIRI   = ax.axiom[0].IRI;
 				const part     = ax.axiom[1];            // type: ObjectMin/Max/ExactCardinality
 				const n        = part.axiom[0].Number;   // the number
 				const propIRI  = part.axiom[1].IRI;      // object property IRI
-				const classIRI = part.axiom[2]?.IRI;     // optional filler class IRI (qualified form)
+				let classIRI = part.axiom[2]?.IRI;     // optional filler class IRI (qualified form)
+				
+				if(clsIRI) clsIRI = $rdf.sym(clsIRI);
+				else if(ax.axiom[0].Expression){
+					const dataPropertySet = new Set(onto.DataProperty);
+					const { term: exprTerm } = classExpressionAstToRdflib(
+						$rdf,
+						store,
+						ax.axiom[0].Expression,
+						{
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+						}
+					);
+					clsIRI = exprTerm;
+				}
+				
+				if(classIRI) classIRI = $rdf.sym(classIRI);
+				else if(part.axiom[2].Expression){
+					const dataPropertySet = new Set(onto.DataProperty);
+					const { term: exprTerm } = classExpressionAstToRdflib(
+						$rdf,
+						store,
+						part.axiom[2].Expression,
+						{
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+						}
+					);
+					classIRI = exprTerm;
+				}
 
 				// _:r (blank node for the restriction)
 				const r = $rdf.blankNode();
 
 				// :A rdfs:subClassOf _:r
-				store.add($rdf.sym(clsIRI),
+				store.add(clsIRI,
 						  $rdf.sym("http://www.w3.org/2000/01/rdf-schema#subClassOf"),
 						  r);
 
@@ -703,23 +914,39 @@ Meteor.methods({
 				  store.add(r, $rdf.sym(predQ[part.type]), nLit);
 				  store.add(r,
 							$rdf.sym("http://www.w3.org/2002/07/owl#onClass"),
-							$rdf.sym(classIRI));
+							classIRI);
 				} else {
 				  // Unqualified: plain cardinality (no filler)
 				  store.add(r, $rdf.sym(predUnq[part.type]), nLit);
 				}
 			  } else {
-				// axiomList: predicates as NamedNodes
-				const axiomList = {
-				  ObjectSomeValuesFrom: ns.owl("someValuesFrom"),
-				  ObjectAllValuesFrom:  ns.owl("allValuesFrom")
-				};
-
-
+				  // axiomList: predicates as NamedNodes
+				  const axiomList = {
+					  ObjectSomeValuesFrom: ns.owl("someValuesFrom"),
+					  ObjectAllValuesFrom:  ns.owl("allValuesFrom")
+				  };
+				  
 				  const r = $rdf.blankNode();
 
 				  // :A rdfs:subClassOf _:r .
-				  store.add($rdf.sym(ax.axiom[0].IRI), ns.rdfs("subClassOf"), r);
+				  let classIRI = ax.axiom[0].IRI;
+				  if(classIRI) classIRI = $rdf.sym(classIRI);
+				  else if(ax.axiom[0].Expression){
+					  const dataPropertySet = new Set(onto.DataProperty);
+					  const { term: exprTerm } = classExpressionAstToRdflib(
+						$rdf,
+						store,
+						ax.axiom[0].Expression,
+						{
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+						}
+					);
+					classIRI = exprTerm;
+				  }
+				  
+				  
+				  store.add(classIRI, ns.rdfs("subClassOf"), r);
 
 				  // _:r a owl:Restriction .
 				  store.add(r, ns.rdf("type"), ns.owl("Restriction"));
@@ -743,7 +970,24 @@ Meteor.methods({
 
 				  // _:r (some|all)ValuesFrom :B .
 				  const restrPred = axiomList[ax.axiom[1].type]; // NamedNode
-				  store.add(r, restrPred, $rdf.sym(ax.axiom[1].axiom[1].IRI));
+				  
+				  let oclassIRI = ax.axiom[1].axiom[1].IRI;
+				  if(oclassIRI) oclassIRI = $rdf.sym(oclassIRI);
+				  else if(ax.axiom[1].axiom[1].Expression){
+					  const dataPropertySet = new Set(onto.DataProperty);
+					  const { term: exprTerm } = classExpressionAstToRdflib(
+						$rdf,
+						store,
+						ax.axiom[1].axiom[1].Expression,
+						{
+							prefixes: namespaceTable,
+							isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+						}
+					);
+					oclassIRI = exprTerm;
+				  }
+				  
+				  store.add(r, restrPred, oclassIRI);
 			  }
 		} else if (["FunctionalObjectProperty", "InverseFunctionalObjectProperty", "SymmetricObjectProperty", "AsymmetricObjectProperty", "ReflexiveObjectProperty", "IrreflexiveObjectProperty", "TransitiveObjectProperty"].includes(ax.type)) {
 			if(typeof ax.axiom[1].IRI !== "undefined"){
@@ -1297,3 +1541,291 @@ function classExpressionAstToRdflib($rdf, store, ast, { prefixes = {}, isObjectP
   return { term };
 }
 
+function addAxiomTriple({
+  subj,
+  target,
+  subType,
+  axType,
+  store,
+  onto,
+  namespaceTable,
+  typeMap,
+  addTriple,
+}) {
+  const dataPropertySet = new Set(onto.DataProperty);
+
+  const makeExprTerm = (expression) =>
+    classExpressionAstToRdflib($rdf, store, expression, {
+      prefixes: namespaceTable,
+      isObjectProperty: (propIri) => !dataPropertySet.has(propIri),
+    }).term;
+
+  // IRI → IRI
+  if (target.IRI && subType === "IRI") {
+    addTriple(subj, typeMap[axType], target.IRI);
+    return;
+  }
+
+  // Expression → IRI
+  if (target.IRI && subType === "Expression") {
+    const subjTerm = makeExprTerm(subj);
+    store.add(subjTerm, $rdf.sym(typeMap[axType]), $rdf.sym(target.IRI));
+    return;
+  }
+
+  // IRI → Expression
+  if (target.Expression && subType === "IRI") {
+    const objTerm = makeExprTerm(target.Expression);
+    store.add($rdf.sym(subj), $rdf.sym(typeMap[axType]), objTerm);
+    return;
+  }
+
+  // Expression → Expression
+  if (target.Expression && subType === "Expression") {
+    const subjTerm = makeExprTerm(subj);
+    const objTerm = makeExprTerm(target.Expression);
+    store.add(subjTerm, $rdf.sym(typeMap[axType]), objTerm);
+  }
+}
+
+/**
+ * Builds the full DataPropertyRange triple + the datatype-expression triples.
+ * DataPropertyRange(R DR) -> R rdfs:range DR. :contentReference[oaicite:10]{index=10}
+ */
+function buildDataPropertyRangeStatements(propertyIri, dataRangeAst, prefixes = {}) {
+  const { rangeTerm, statements } = dataRangeAstToRdflib(dataRangeAst, prefixes);
+
+  const prop = $rdf.namedNode(propertyIri);
+
+  statements.push($rdf.st(prop, $rdf.namedNode(RDFS + "range"), rangeTerm));
+  // statements.push($rdf.st(prop, $rdf.namedNode(RDF + "type"), $rdf.namedNode(OWL + "DatatypeProperty")));
+
+  return statements;
+}
+
+function iriAstToNamedNode(iriAst, prefixes = {}, opts = {}) {
+  const { preferXsdBuiltins = false } = opts;
+  const t = iriAst.IRItype;
+  const v = iriAst.value;
+
+  // NOTE: rdflib namedNode expects a plain IRI string (no < >)
+  if (t === "fullIRI") {
+    const s = String(v);
+    const iri = (s.startsWith("<") && s.endsWith(">")) ? s.slice(1, -1) : s;
+    return $rdf.namedNode(iri);
+  }
+
+  if (t === "simpleIRI") {
+    const name = String(v);
+
+    // Only map builtin datatype names when we are in a datatype/data-range context
+    if (preferXsdBuiltins && XSD_BUILTINS.has(name)) {
+      return $rdf.namedNode(XSD + name); // xsd:integer etc.
+    }
+
+    // If it already looks like a CURIE/prefixed form "ex:Foo" or even a full scheme "http:"
+    if (/^[a-z][a-z0-9+.-]*:/.test(name)) return $rdf.namedNode(name);
+
+    // Your original behavior: base or ":" prefix fallback
+    if (prefixes.base) return $rdf.namedNode(prefixes.base + name);
+    if (prefixes[":"]) return $rdf.namedNode(prefixes[":"] + name);
+
+    // last resort: treat as-is
+    return $rdf.namedNode(name);
+  }
+
+  if (t === "abbreviatedIRI" || t === "fullNamespaceIRI") {
+    const name = v.name;
+    const pref = v.prefix;
+
+    // pref is like "ex" or "ex:" depending on your parser; you used prefixes[pref]
+    if (prefixes[pref]) return $rdf.namedNode(prefixes[pref] + name);
+
+    // allow pref being a full namespace IRI already
+    if (/^https?:\/\//.test(pref) || pref.includes("#") || pref.endsWith("/")) {
+      return $rdf.namedNode(pref + name);
+    }
+
+    // fallback: keep as "pref:name"
+    return $rdf.namedNode(pref + ":" + name);
+  }
+
+  throw new Error("Unsupported IRItype: " + t);
+}
+
+function iriAsDatatypeTerm(iriAst, prefixes) {
+  return iriAstToNamedNode(iriAst, prefixes, { preferXsdBuiltins: true });
+}
+
+/** ----- datatype/literal helpers (for data ranges) ----- **/
+function datatypeToTerm(dtAst, prefixes) {
+  if (dtAst.type === "predefined") return $rdf.namedNode(XSD + String(dtAst.value));
+  if (dtAst.type === "IRI") return iriAsDatatypeTerm(dtAst.value, prefixes);
+  throw new Error("Unknown datatype.type: " + dtAst.type);
+}
+
+function literalToTerm(litAst, prefixes) {
+  switch (litAst.type) {
+    case "stringNoLang":
+      return $rdf.literal(unquote(litAst.value));
+
+    case "stringWithLang":
+      // rdflib: literal(value, lang) where lang is string
+      return $rdf.literal(unquote(litAst.value), String(litAst.language || ""));
+
+    case "typed":
+      // rdflib: literal(value, datatypeNamedNode)
+      return $rdf.literal(unquote(litAst.value), datatypeToTerm(litAst.datatype, prefixes));
+
+    case "integer":
+      return $rdf.literal(String(litAst.value), $rdf.namedNode(XSD + "integer"));
+
+    case "decimal":
+      return $rdf.literal(String(litAst.value), $rdf.namedNode(XSD + "decimal"));
+
+    case "float": {
+      const s = String(litAst.value);
+      const lex = /[fF]$/.test(s) ? s.slice(0, -1) : s;
+      return $rdf.literal(lex, $rdf.namedNode(XSD + "float"));
+    }
+
+    default:
+      throw new Error("Unsupported literal type: " + litAst.type);
+  }
+}
+
+function dataRangeAstToRdflib(ast, prefixes = {}) {
+  const store = $rdf.graph();
+  const statements = store.statements || []; // store keeps statements internally; still return a handle
+
+  const sym = (iri) => ($rdf.sym ? $rdf.sym(iri) : $rdf.namedNode(iri));
+  const bnode = () => (typeof $rdf.blankNode === "function" ? $rdf.blankNode() : $rdf.bnode());
+
+  const rdfType = sym(RDF + "type");
+  const rdfsDatatype = sym(RDFS + "Datatype");
+
+  const owlUnionOf = sym(OWL + "unionOf");
+  const owlIntersectionOf = sym(OWL + "intersectionOf");
+  const owlOneOf = sym(OWL + "oneOf");
+  const owlDatatypeComplementOf = sym(OWL + "datatypeComplementOf");
+  const owlOnDatatype = sym(OWL + "onDatatype");
+  const owlWithRestrictions = sym(OWL + "withRestrictions");
+
+  function add(s, p, o) {
+    store.add(s, p, o);
+  }
+
+  function asDataRange(node) {
+    if (!node) throw new Error("Empty data range node");
+
+    if (node.grammarProduction === "dataDisjunction") return disjunction(node);
+    if (node.grammarProduction === "dataConjunction") return conjunction(node);
+
+    // allow passing primary directly
+    if (node.dataPrimaryType) return primary(node);
+
+    throw new Error("Unexpected node shape");
+  }
+
+  function disjunction(node) {
+    const terms = node.items.map(asDataRange);
+    if (terms.length === 1) return terms[0];
+
+    const b = bnode();
+    add(b, rdfType, rdfsDatatype);
+
+    // IMPORTANT: use makeList (Collection if available)
+    const listHead = makeList($rdf, store, terms);
+    add(b, owlUnionOf, listHead);
+
+    return b;
+  }
+
+  function conjunction(node) {
+    // keep your original behavior: conjunction maps items via primary()
+    const terms = node.items.map(primary);
+    if (terms.length === 1) return terms[0];
+
+    const b = bnode();
+    add(b, rdfType, rdfsDatatype);
+
+    const listHead = makeList($rdf, store, terms);
+    add(b, owlIntersectionOf, listHead);
+
+    return b;
+  }
+
+  function primary(node) {
+    let inner;
+
+    switch (node.dataPrimaryType) {
+      case "datatype":
+        inner = datatypeToTerm(node.datatype, prefixes); // -> NamedNode (sym/namedNode)
+        break;
+
+      case "datatypeRestriction":
+        inner = datatypeRestriction(node.restriction);
+        break;
+
+      case "literalList":
+        inner = dataOneOf(node.literalList);
+        break;
+
+      case "dataRange":
+        inner = asDataRange(node.dataRange);
+        break;
+
+      default:
+        throw new Error("Unknown dataPrimaryType: " + node.dataPrimaryType);
+    }
+
+    if (node.negation === "true") {
+      const b = bnode();
+      add(b, rdfType, rdfsDatatype);
+      add(b, owlDatatypeComplementOf, inner);
+      return b;
+    }
+
+    return inner;
+  }
+
+  function dataOneOf(list) {
+    const lits = list.map(l => literalToTerm(l, prefixes)); // -> Literal
+    const b = bnode();
+
+    add(b, rdfType, rdfsDatatype);
+
+    const listHead = makeList($rdf, store, lits);
+    add(b, owlOneOf, listHead);
+
+    return b;
+  }
+
+  function datatypeRestriction(dr) {
+    const dt = datatypeToTerm(dr.datatype, prefixes);
+    const restrictionNodes = dr.restrictions.map(r => restrictionNode(r));
+
+    const b = bnode();
+    add(b, rdfType, rdfsDatatype);
+    add(b, owlOnDatatype, dt);
+
+    const listHead = makeList($rdf, store, restrictionNodes);
+    add(b, owlWithRestrictions, listHead);
+
+    return b;
+  }
+
+  function restrictionNode(r) {
+    const facetIri = FACET_MAP[r.facet];
+    if (!facetIri) throw new Error("Unknown facet token: " + r.facet + " (add to FACET_MAP)");
+
+    const b = bnode();
+    add(b, sym(facetIri), literalToTerm(r.value, prefixes));
+    return b;
+  }
+
+  const rangeTerm = asDataRange(ast);
+
+  // statements: depending on rdflib build, store.statements is the array you want
+  return { rangeTerm, store, statements: store.statements || statements };
+}
