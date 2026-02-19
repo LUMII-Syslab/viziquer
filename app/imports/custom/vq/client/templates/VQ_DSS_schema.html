@@ -14,7 +14,7 @@
             {{#if fragmentForm}}
               <ul class="nav nav-tabs" id="vq-tab3" style="padding-top:10px;">
                 <li class="active"><a data-toggle="tab" href="#fragment1">Schema fragment</a></li>
-                <li><a data-toggle="tab" href="#fragment2">Parameters</a></li>
+                <li><a data-toggle="tab" href="#fragment2">Parameters + properties</a></li>
               </ul>
 
               <div class="tab-content" style="overflow:auto;">
@@ -95,6 +95,41 @@
                     <span class="custom-checkbox"></span>
                       Connect all classes
                   </label>
+                  <label class="form-check-label">
+                    <input class="form-check-input" name = "freeProp" id="freeProp" type="checkbox" checked = "checked">
+                    <span class="custom-checkbox"></span>
+                      Only free properties
+                  </label>
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <label>Properties</label>
+                      </div>
+                      <div class="col-sm-6">
+                        <label>Selected properties</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="container-fluid">
+                    <div style="display: inline-block; vertical-align:top;">
+                      <select class="form-select" id="propertiesF" size="40" multiple aria-label="multiple select 1" style="width: 400px;">
+                        {{#each propertiesF}}
+                          <option value="{{id}}" {{selected}}>{{p_name}} </option>
+                        {{/each}}
+                      </select>
+                    </div>
+                    <div style="display: inline-block; vertical-align:top;">
+                      <button id="propMoveR" type="button" class="btn btn-primary" >&rarr;</button>
+                      <button id="propMoveL" type="button" class="btn btn-primary ">&larr;</button>
+                    </div>
+                    <div style="display: inline-block; vertical-align:top;">
+                      <select class="form-select" id="propertiesFS" size="40" multiple aria-label="multiple select 2" style="width: 400px;">
+                        {{#each propertiesFS}}
+                          <option value="{{id}}" {{selected}}>{{p_name}}</option>
+                        {{/each}}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
               <!-- //////////////////////////////////////// -->
@@ -418,12 +453,13 @@
 					  {{else}}
               {{#if fragmentForm}}
                 <button id="makeDiagrAJOOFragment" type="button" class="btn btn-primary" data-dismiss="modal" {{hasFragment}}>Create Schema fragment</button>
+                <button id="makeDiagrAJOOProperties" type="button" class="btn btn-primary" data-dismiss="modal" {{hasFragment}}>Create Property diagram</button>
               {{else}}
                 <button id="makeDiagrAJOO2" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Create Schema diagram</button>
               {{/if}}
               {{#if pub}}
               {{else}}
-						    <button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Export Schema diagram data</button>
+						    <button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Export Schema diagram data (old)</button>
               {{/if}}
 					  {{/if}}
             <button id="cancel-VQ-DSS-schema" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

@@ -11,6 +11,8 @@ Template.VQ_DSS_schema.ClassesF = new ReactiveVar([]);
 Template.VQ_DSS_schema.ClassesFS = new ReactiveVar([]);
 Template.VQ_DSS_schema.Properties = new ReactiveVar([]);
 Template.VQ_DSS_schema.RestProperties = new ReactiveVar([]);
+Template.VQ_DSS_schema.PropertiesF = new ReactiveVar([]);
+Template.VQ_DSS_schema.PropertiesFS = new ReactiveVar([]);
 Template.VQ_DSS_schema.UsedClasses = new ReactiveVar([]);
 Template.VQ_DSS_schema.SubClasses = new ReactiveVar([]);
 Template.VQ_DSS_schema.ClassProperties = new ReactiveVar([]);
@@ -75,6 +77,8 @@ Template.VQ_DSS_schema.rendered = function( param = 'schema') {
 	Template.VQ_DSS_schema.HasCPC.set(dataShapes.schema.has_cpc);
   Template.VQ_DSS_schema.ClassesF.set([]);
   Template.VQ_DSS_schema.ClassesFS.set([]);
+  Template.VQ_DSS_schema.PropertiesF.set([]);
+  Template.VQ_DSS_schema.PropertiesFS.set([]);
 
 	// TODO cik lielas shēmas vispār piedāvāju vizualizēt
 	if ( dataShapes.schema.classCount < dataShapes.schema.diagram.maxCount) {
@@ -190,6 +194,13 @@ Template.VQ_DSS_schema.helpers({
 	},
 	restProperties: function() {
 		return Template.VQ_DSS_schema.RestProperties.get();
+	},
+  propertiesF: function() {
+    //console.log('Helperis', Template.VQ_DSS_schema.propertiesF.get())
+		return Template.VQ_DSS_schema.PropertiesF.get();
+	},
+	propertiesFS: function() {
+		return Template.VQ_DSS_schema.PropertiesFS.get();
 	},
 	has_cpc: function () {
 		return Template.VQ_DSS_schema.HasCPC.get();
@@ -608,9 +619,9 @@ Template.VQ_DSS_schema.events({
       table_representation.Class[el.id] = { compartments:{
         Name:el.display_name,
         AttributesT:{out:propOut.data, in:propIn.data, c:[]},
-        ClassList:[{cnt:el.cnt, shortName:el.name, name:el.display_name}],
+        ClassList:[{cnt:el.cnt, shortName:el.name, name:el.display_name}]},
         TypeOld:'Class',
-        TypeNew:'Class'},
+        TypeNew:'Class',
         Cnt:el.cnt};
 
         for (const el2 of classList) {
@@ -1026,7 +1037,259 @@ Template.VQ_DSS_schema.events({
       Template.VQ_DSS_schema.ShowFragmentBlock.set(true);
     }
   },
+  'click #freeProp': function() {
+    let freeProp = false;
+		if ( $("#freeProp").is(":checked") ) {
+      freeProp = true;
+		}
+		const properties = dataShapes.schema.diagram.properties;
+    let propF = [];
+    for (const p of properties) {
+      if ( freeProp) {
+        if ( p.object_cnt !== 0 && ( p.type_1 === '0' || p.type_2 === '0')) {
+          propF.push(p);
+        }
+      }
+      else {
+        if ( p.object_cnt !== 0 ) {
+          propF.push(p);
+        }
+      }
+    }
+    Template.VQ_DSS_schema.PropertiesF.set(propF);
+	},
+  'click #propMoveR': function() {
+		if ($("#propertiesF").val() != undefined) {
+			const selected = $("#propertiesF").val().map(v => Number(v));
+      let propF = [];
+      let propFS = Template.VQ_DSS_schema.PropertiesFS.get();
+      for (const p of Template.VQ_DSS_schema.PropertiesF.get() ) {
+        if ( selected.includes(p.id) ) {
+          propFS.push(p);
+        }
+        else {
+          propF.push(p);
+        }
+      }
+      propF = propF.sort(function(a,b){ return b.cnt-a.cnt;});
+      propFS = propFS.sort(function(a,b){ return b.cnt-a.cnt;});
+      Template.VQ_DSS_schema.PropertiesF.set(propF);
+      Template.VQ_DSS_schema.PropertiesFS.set(propFS);
+		}
+	},
+  'click #propMoveL': function() {
+		if ($("#propertiesFS").val() != undefined) {
+			const selected = $("#propertiesFS").val().map(v => Number(v));
+      let propFS = [];
+      let propF = Template.VQ_DSS_schema.PropertiesF.get();
+      for (const cl of Template.VQ_DSS_schema.PropertiesFS.get()) {
+        if ( selected.includes(cl.id) ) {
+          propF.push(cl);
+        }
+        else {
+          propFS.push(cl);
+        }
+      }
+      propF = propF.sort(function(a,b){ return b.cnt-a.cnt;});
+      propFS = propFS.sort(function(a,b){ return b.cnt-a.cnt;});
+      Template.VQ_DSS_schema.PropertiesF.set(propF);
+      Template.VQ_DSS_schema.PropertiesFS.set(propFS);
+		}
+	},
+  'click #makeDiagrAJOOProperties': async function() {
+    const propSelected = Template.VQ_DSS_schema.PropertiesFS.get();
+    if ( propSelected.length === 0 ) {
+      return;
+    }
+    const propSelectedIds = propSelected.map(v => v.id);
+    console.log('Kādas propertijas ir atlasītas', propSelectedIds)
+
+    let allParams = {main: {p_list: propSelectedIds, props:true}};
+    let rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams);
+    const cp_info = rr.data;
+    for (const cp of cp_info) {
+      if ( cp.type_id == 2 )
+        cp.name = `NO ${cp.prefix}:${cp.display_name} (${cp.cnt})`;
+      else
+      cp.name = `UZ ${cp.prefix}:${cp.display_name} (${cp.cnt})`;
+    }
+    console.log('CP_rels_info', rr.data)
+    rr = await dataShapes.callServerFunction("xx_getPPInfo", allParams);
+    const pp_info = rr.data;
+    console.log('PP_rels_info', rr.data)
+
+    let prop_tree = {};
+    let namespaces = {};
+    for (const p of propSelected) {
+      const cp_info_p = cp_info.filter(function(cp){ return cp.property_id === p.id; });
+      const c_from = cp_info_p.filter(function(cp){ return cp.type_id === 2});
+      const c_to = cp_info_p.filter(function(cp){ return cp.type_id === 1});
+      const pp_info_type_1a = pp_info.filter(function(pp){ return pp.type_id === 1 && pp.property_1_id === p.id;});
+      const pp_info_type_1b = pp_info.filter(function(pp){ return pp.type_id === 1 && pp.property_2_id === p.id;});
+      const pp_info_type_2 = pp_info.filter(function(pp){ return pp.type_id === 2 && pp.property_1_id == p.id;});
+      const pp_info_type_3 = pp_info.filter(function(pp){ return pp.type_id === 3 && pp.property_1_id == p.id;});
+
+      prop_tree[p.id] = {id:p.id, p_name:p.p_name, full_name:p.full_name, prefix:p.prefix, c_from:c_from, c_to:c_to, cnt:Number(p.cnt), type_1:p.type_1, type_2: p.type_2,
+        pp_type_1a: pp_info_type_1a, pp_type_1b: pp_info_type_1b, pp_type_2: pp_info_type_2, pp_type_3: pp_info_type_3 };
+
+      if ( namespaces[p.prefix] == undefined )
+        namespaces[p.prefix] = 1;
+      else
+        namespaces[p.prefix] = namespaces[p.prefix] + 1;
+    }
+
+    console.log('Savācāmmmmmm', prop_tree, namespaces)
+
+
+
+    const table_representation = {
+      Schema:dataShapes.schema.schemaName,
+      ClassCount:10,
+      CompactClassView:true,
+      NodesCount:10,
+      LinesCount:0,
+      Namespaces:{n_0:{compartments:{ List:[]}}},
+      Class:{},
+      ObjectProperty:{},
+      Generalization:{},
+      Intersect:{},
+      uStrings:{u_in_prop:'', u_c_prop:''},
+      diagram_description:`Propertiju diagramma`
+    };
+
+    for (const k of Object.keys(prop_tree)) {
+			const el = prop_tree[k];
+
+      if ( el.type_2 === '0' ) {
+        let p_in = [];
+        //for (const pp of el.pp_type_1b) {
+        //  p_in.push({name: `Ienāk 12 ${prop_tree[pp.property_1_id].full_name}`, cnt:pp.cnt});
+        //}
+        for (const pp of el.pp_type_1a) {
+          p_in.push({name:` Ienāk ${prop_tree[pp.property_2_id].full_name} (${pp.cnt})`, cnt:pp.cnt});
+        }
+        if ( el.type_1 === '0' || p_in.length > 0 && el.c_to.length > 0 ) {
+          table_representation.Class[`T2_${el.id}`] = { compartments:{
+            Name:`Source for ${el.p_name}`,
+            AttributesT:{out:p_in, in:el.c_to, c:[]},
+            ClassList:[{cnt:el.cnt, shortName:el.display_name, name:el.p_name}]},
+            TypeOld:'Class',
+            TypeNew:'Classifier',
+            Cnt:el.cnt
+          };
+        }
+        //const el_atrs = table_representation.Class[`T2_${el.id}`].compartments.AttributesT;
+        //if ( el_atrs.out.length === 0 || el_atrs.in.length === 0 )
+        //  table_representation.Class[`T2_${el.id}`].TypeNew = 'Class0';
+      }
+
+      if ( el.type_1 === '0' ) {
+        let p_out = [];
+        //for (const pp of el.pp_type_1a) {
+        //  p_out.push({name:` Iziet 12 ${prop_tree[pp.property_2_id].full_name}`, cnt:pp.cnt});
+        //}
+        for (const pp of el.pp_type_1b) {
+          p_out.push({name: `Iziet ${prop_tree[pp.property_1_id].full_name} (${pp.cnt})`, cnt:pp.cnt});
+        }
+        if ( el.type_2 === '0' || p_out.length > 0 && el.c_from.length > 0 ) {
+          table_representation.Class[`T1_${el.id}`] = { compartments:{
+            Name:`Target for ${el.p_name}`,
+            AttributesT:{out:el.c_from, in:p_out, c:[]},
+            ClassList:[{cnt:el.cnt, shortName:el.display_name, name:el.p_name}]},
+            TypeOld:'Class',
+            TypeNew:'Class',
+            Cnt:el.cnt
+          };
+        }
+        //const el_atrs = table_representation.Class[`T1_${el.id}`].compartments.AttributesT;
+        //if ( el_atrs.out.length === 0 || el_atrs.in.length === 0 )
+        //  table_representation.Class[`T1_${el.id}`].TypeNew = 'Class0';
+      }
+
+    }
+
+    for (const k of Object.keys(prop_tree)) {
+			const el = prop_tree[k];
+      if ( el.type_2 === '0' && table_representation.Class[`T2_${el.id}`] !== undefined ) {
+        if (el.pp_type_2.length > 0 ) {
+          for (const el2 of el.pp_type_2) {
+            if (table_representation.Class[`T2_${el2.property_2_id}`] !== undefined) {
+              table_representation.ObjectProperty[`T2_${el.id }_T2_${el2.property_2_id}`] = { source: `T2_${el.id}`, target: `T2_${el2.property_2_id}`, compartments:{ Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]}};
+            }
+          }
+        }
+      }
+      if ( el.type_1 === '0' && table_representation.Class[`T1_${el.id}`] !== undefined ) {
+        if (el.pp_type_3.length > 0 ) {
+          for (const el2 of el.pp_type_3) {
+            if (table_representation.Class[`T1_${el2.property_2_id}`] !== undefined) {
+              table_representation.ObjectProperty[`T1_${el.id }_T1_${el2.property_2_id}`] = { source: `T1_${el.id}`, target: `T1_${el2.property_2_id}`, compartments:{ Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]}};
+            }
+          }
+        }
+      }
+      if ( el.type_2 === '0' &&  el.type_1 === '0' ) {
+        const idFrom = `T1_${el.id}`;
+        const idTo = `T2_${el.id}`;
+        table_representation.Intersect[`${idFrom}_${idTo}`] = { source: idFrom, target: idTo, compartments:{ Information: 'Tā pati propertija'}};
+      }
+    }
+
+/*
+    for (const k of Object.keys(prop_tree)) {
+			const el = prop_tree[k];
+
+      if ( el.type_2 === '0' ) {
+        table_representation.Class[el.id] = { compartments:{
+          Name:el.p_name,
+          AttributesT:{out:el.c_from, in:el.c_to, c:[]},
+          ClassList:[{cnt:el.cnt, shortName:el.display_name, name:el.p_name}]},
+          TypeOld:'Class',
+          TypeNew:'Class',
+          Cnt:el.cnt
+        };
+
+
+      }
+      table_representation.Class[el.id] = { compartments:{
+        Name:el.p_name,
+        AttributesT:{out:el.c_from, in:el.c_to, c:[]},
+        ClassList:[{cnt:el.cnt, shortName:el.display_name, name:el.p_name}]},
+        TypeOld:'Class',
+        TypeNew:'Class',
+        Cnt:el.cnt
+      };
+
+      if (el.pp_type_2.length > 0 ) {
+        for (const el2 of el.pp_type_2) {
+          table_representation.ObjectProperty[`${el.id }_${el2.property_2_id}`] = { source: el.id, target: el2.property_2_id, compartments:{ Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]}};
+        }
+      }
+    } */
+
+    const nsLoc = dataShapes.schema.namespaces.find(function(n){ return n.name == dataShapes.schema.local_ns });
+    let namespacesL = [];
+
+    for (const ns of Object.keys(namespaces)) {
+      const fullNs = dataShapes.schema.namespaces.find(function(n){ return n.name == ns });
+      if ( fullNs != undefined && ns != 'null' && ns != dataShapes.schema.local_ns ) {
+        namespacesL.push({name:`PREFIX ${ns}: <${fullNs.value}>`,cnt:namespaces[ns]});
+      }
+    }
+    namespacesL = namespacesL.sort((a, b) => { return a.name.localeCompare(b.name); });
+    namespacesL.unshift({name:`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`,cnt:namespaces[dataShapes.schema.local_ns]});
+    table_representation.Namespaces.n_0.compartments.List = namespacesL;
+
+console.log(table_representation)
+await Meteor.callAsync("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+
+
+
+
+  }
 });
+
+
 
 function setClassListInfo(classes, restClasses) {
 	for ( const c of classes) {
@@ -1107,11 +1370,18 @@ function setClassList0() {
 	setClassListInfo(classes, restClasses);
 
 	if ( dataShapes.schema.diagram.properties != undefined) {
+    console.log('AAAAAAAAAAAAAAA', dataShapes.schema.diagram.properties)
 		const properties = dataShapes.schema.diagram.properties;
+    let propF = [];
 		Template.VQ_DSS_schema.Properties.set(properties);
 		Template.VQ_DSS_schema.PropCount.set(properties.length);
+    for (const p of properties) {
+      if ( p.object_cnt !== 0 && ( p.type_1 === '0' || p.type_2 === '0')) {
+        propF.push(p);
+      }
+    }
+    Template.VQ_DSS_schema.PropertiesF.set(propF);
 	}
-
 }
 
 function sortClassList() {
@@ -2004,6 +2274,7 @@ async function getBasicClasses() {
 		else
 			p_list_full[p_id].is_domain = '';
 	}
+  console.log(p_list_full)
   //console.log('getBasicClasses- Pirmais cikls beidzās')
 	// Funkcija propertijas pielikšanai, tiek izsaukta divās vietās
 	function addProperty(pp, c_from, c_to) {
@@ -2053,6 +2324,9 @@ async function getBasicClasses() {
 				if ( !rezFull.classes[to_id].all_atr_in.includes(pp.id)) rezFull.classes[to_id].all_atr_in.push(pp.id);
 			}
 		}
+    else {
+      console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHH', pp)
+    }
 	}
 
 	// Funkcija visu propertiju pielikšanai

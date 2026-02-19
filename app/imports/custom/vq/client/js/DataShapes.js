@@ -27,7 +27,7 @@ const DIAGRAM_CLASS_LIMIT = 2000;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
 const ConsoleLog = false;
-const isPublic = true;  // Parametrs testu paslēpšanai
+const isPublic = false;  // Parametrs testu paslēpšanai
 // Testa komitam
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
@@ -570,6 +570,11 @@ const dataShapes = {
 						this.schema.diagram.classList = await this.getClassListExt();
             this.schema.diagram.filteredClassList = this.schema.diagram.classList;
 						this.schema.diagram.properties = await this.getPropListExt();
+            for (const p of this.schema.diagram.properties) {
+              p.cnt = Number(p.cnt);
+              p.object_cnt = Number(p.object_cnt);
+              p.full_name = `${p.prefix}:${p.display_name}`;
+            }
 					}
 					this.schema.filling = 3;
 
