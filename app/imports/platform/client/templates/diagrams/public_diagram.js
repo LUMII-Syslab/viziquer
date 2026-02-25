@@ -17,6 +17,21 @@ import { Dialog } from "../../js/interpretator/Dialog.js";
 
 import "./public_diagram.html";
 
+Template.publicDiagramTemplate.onCreated(function () {
+  const projectId = FlowRouter.getParam('projectId')
+  const id = FlowRouter.getParam('_id')
+  const diagramTypeId = FlowRouter.getParam('diagramTypeId')
+  const versionId = FlowRouter.getParam('versionId')
+
+  const personality = FlowRouter.getParam('personality')
+
+  this.subscribe('Diagram_Types', { id, projectId, versionId, diagramTypeId })
+  this.subscribe('Diagram_Palette_ElementType', { id, projectId, versionId, diagramTypeId })
+  this.subscribe('Diagram_Locker', { projectId, diagramId: id, versionId })
+
+  this.subscribe('Services', {});
+})
+
 Template.publicDiagramTemplate.onRendered(function () {
   // $("#lockDiagram").trigger("click");
 

@@ -258,41 +258,41 @@ FlowRouter.route(
       // return import('/imports/platform/client/templates/signup/signup.js');
     },
 
-    subscriptions: function (params, queryParams) {
-      var proj_id = params.projectId;
-      var dgr_id = params._id;
-      var type_id = params.diagramTypeId;
-      var version_id = params.versionId;
+    // subscriptions: function (params, queryParams) {
+    //   var proj_id = params.projectId;
+    //   var dgr_id = params._id;
+    //   var type_id = params.diagramTypeId;
+    //   var version_id = params.versionId;
 
-      this.register(
-        "Diagram_Types",
-        Meteor.subscribe("Diagram_Types", {
-          id: dgr_id,
-          projectId: proj_id,
-          versionId: version_id,
-          diagramTypeId: type_id,
-        }),
-      );
+    //   this.register(
+    //     "Diagram_Types",
+    //     Meteor.subscribe("Diagram_Types", {
+    //       id: dgr_id,
+    //       projectId: proj_id,
+    //       versionId: version_id,
+    //       diagramTypeId: type_id,
+    //     }),
+    //   );
 
-      this.register(
-        "Diagram_Palette_ElementType",
-        Meteor.subscribe("Diagram_Palette_ElementType", {
-          id: dgr_id,
-          projectId: proj_id,
-          versionId: version_id,
-          diagramTypeId: type_id,
-        }),
-      );
+    //   this.register(
+    //     "Diagram_Palette_ElementType",
+    //     Meteor.subscribe("Diagram_Palette_ElementType", {
+    //       id: dgr_id,
+    //       projectId: proj_id,
+    //       versionId: version_id,
+    //       diagramTypeId: type_id,
+    //     }),
+    //   );
 
-      this.register(
-        "Diagram_Locker",
-        Meteor.subscribe("Diagram_Locker", {
-          projectId: proj_id,
-          diagramId: dgr_id,
-          versionId: version_id,
-        }),
-      );
-    },
+    //   this.register(
+    //     "Diagram_Locker",
+    //     Meteor.subscribe("Diagram_Locker", {
+    //       projectId: proj_id,
+    //       diagramId: dgr_id,
+    //       versionId: version_id,
+    //     }),
+    //   );
+    // },
 
     action(params, queryParams) {
       if (queryParams.plain) {
