@@ -170,7 +170,7 @@ FlowRouter.route(
   "/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId/:editMode?",
   {
     name: "diagram",
-    waitOn() {
+    waitOn(params) {
       // return import('/imports/platform/client/templates/signup/signup.js');
     },
 

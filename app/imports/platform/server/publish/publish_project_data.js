@@ -96,7 +96,8 @@ console.log("Meteor.publish(Diagrams)+Tools");
     };
 
     var query = {
-      _id: { $ne: get_configurator_tool_id() },
+      // _id: { $ne: get_configurator_tool_id() },
+      isConfigurator: { $ne: true },
       isDeprecated: { $ne: true },
     };
     return [
