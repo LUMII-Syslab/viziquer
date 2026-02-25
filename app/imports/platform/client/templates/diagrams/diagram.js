@@ -68,7 +68,24 @@ Template.noDiagramTemplate.helpers({
 
 //Start of sections template
 
+Template.diagramTemplate.onCreated(function () {
+  const projectId = FlowRouter.getParam('projectId')
+  const id = FlowRouter.getParam('_id')
+  const diagramTypeId = FlowRouter.getParam('diagramTypeId')
+  const versionId = FlowRouter.getParam('versionId')
+
+  const personality = FlowRouter.getParam('personality')
+
+  this.subscribe('Diagram_Types', { id, projectId, versionId, diagramTypeId })
+  this.subscribe('Diagram_Palette_ElementType', { id, projectId, versionId, diagramTypeId })
+  this.subscribe('Diagram_Locker', { projectId, diagramId: id, versionId })
+
+  this.subscribe('Services', {});
+
+});
+
 Template.diagramTemplate.onRendered(function () {
+
   // $("#lockDiagram").trigger("click");
 
   // YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
@@ -100,7 +117,8 @@ Template.diagramTemplate.onRendered(function () {
 
 Template.diagramTemplate.helpers({
   isReady: function () {
-    return FlowRouter.subsReady("Diagram_Palette_ElementType");
+    // return FlowRouter.subsReady("Diagram_Palette_ElementType");
+    return Template.instance().subscriptionsReady();
   },
 
   plain: function () {

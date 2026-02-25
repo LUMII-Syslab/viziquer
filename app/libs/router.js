@@ -76,9 +76,9 @@ FlowRouter.route("/structure", {
     // return import('/imports/platform/client/templates/signup/signup.js');
   },
 
-  subscriptions: function (params, queryParams) {
-    this.register("Structure_Tools", Meteor.subscribe("Structure_Tools", {}));
-  },
+  // subscriptions: function (params, queryParams) {
+  //   this.register("Structure_Tools", Meteor.subscribe("Structure_Tools", {}));
+  // },
 
   action() {
     Session.set("activePanelItem", "structure");
@@ -98,36 +98,36 @@ FlowRouter.route("/project/:projectId/version/:versionId/diagrams/:phrase?", {
     // return import('/imports/platform/client/templates/signup/signup.js');
   },
 
-  subscriptions: function (params, queryParams) {
-    var diagrams_query = build_diagrams_query(params);
+  // subscriptions: function (params, queryParams) {
+  //   var diagrams_query = build_diagrams_query(params);
 
-    this.register("Diagrams", Meteor.subscribe("Diagrams", diagrams_query));
-    this.register(
-      "FoundDiagrams",
-      Meteor.subscribe("FoundDiagrams", diagrams_query),
-    );
-    this.register(
-      "DiagramTypes_UserVersionSettings",
-      Meteor.subscribe("DiagramTypes_UserVersionSettings", {
-        projectId: params.projectId,
-        versionId: params.versionId,
-      }),
-    );
-    this.register(
-      "ProjectsGroups",
-      Meteor.subscribe("ProjectsGroups", { projectId: params.projectId }),
-    );
-  },
+  //   this.register("Diagrams", Meteor.subscribe("Diagrams", diagrams_query));
+  //   this.register(
+  //     "FoundDiagrams",
+  //     Meteor.subscribe("FoundDiagrams", diagrams_query),
+  //   );
+  //   this.register(
+  //     "DiagramTypes_UserVersionSettings",
+  //     Meteor.subscribe("DiagramTypes_UserVersionSettings", {
+  //       projectId: params.projectId,
+  //       versionId: params.versionId,
+  //     }),
+  //   );
+  //   this.register(
+  //     "ProjectsGroups",
+  //     Meteor.subscribe("ProjectsGroups", { projectId: params.projectId }),
+  //   );
+  // },
 
-  async data(params) {
-    const project = await Projects.findOneAsync({ _id: params.projectId });
-    if (!project) {
-      console.log("neatradu projektu", params.projectId);
-      return {};
-    }
-    const tool = await Tools.findOneAsync({ _id: project.toolId });
-    return { tool };
-  },
+  // async data(params) {
+  //   const project = await Projects.findOneAsync({ _id: params.projectId });
+  //   if (!project) {
+  //     console.log("neatradu projektu", params.projectId);
+  //     return {};
+  //   }
+  //   const tool = await Tools.findOneAsync({ _id: project.toolId });
+  //   return { tool };
+  // },
 
   action(params, queryParams) {
     var proj_id = params.projectId;
@@ -174,41 +174,41 @@ FlowRouter.route(
       // return import('/imports/platform/client/templates/signup/signup.js');
     },
 
-    subscriptions: function (params, queryParams) {
-      var proj_id = params.projectId;
-      var dgr_id = params._id;
-      var type_id = params.diagramTypeId;
-      var version_id = params.versionId;
+    // subscriptions: function (params, queryParams) {
+    //   var proj_id = params.projectId;
+    //   var dgr_id = params._id;
+    //   var type_id = params.diagramTypeId;
+    //   var version_id = params.versionId;
 
-      this.register(
-        "Diagram_Types",
-        Meteor.subscribe("Diagram_Types", {
-          id: dgr_id,
-          projectId: proj_id,
-          versionId: version_id,
-          diagramTypeId: type_id,
-        }),
-      );
+    //   this.register(
+    //     "Diagram_Types",
+    //     Meteor.subscribe("Diagram_Types", {
+    //       id: dgr_id,
+    //       projectId: proj_id,
+    //       versionId: version_id,
+    //       diagramTypeId: type_id,
+    //     }),
+    //   );
 
-      this.register(
-        "Diagram_Palette_ElementType",
-        Meteor.subscribe("Diagram_Palette_ElementType", {
-          id: dgr_id,
-          projectId: proj_id,
-          versionId: version_id,
-          diagramTypeId: type_id,
-        }),
-      );
+    //   this.register(
+    //     "Diagram_Palette_ElementType",
+    //     Meteor.subscribe("Diagram_Palette_ElementType", {
+    //       id: dgr_id,
+    //       projectId: proj_id,
+    //       versionId: version_id,
+    //       diagramTypeId: type_id,
+    //     }),
+    //   );
 
-      this.register(
-        "Diagram_Locker",
-        Meteor.subscribe("Diagram_Locker", {
-          projectId: proj_id,
-          diagramId: dgr_id,
-          versionId: version_id,
-        }),
-      );
-    },
+    //   this.register(
+    //     "Diagram_Locker",
+    //     Meteor.subscribe("Diagram_Locker", {
+    //       projectId: proj_id,
+    //       diagramId: dgr_id,
+    //       versionId: version_id,
+    //     }),
+    //   );
+    // },
 
     action(params, queryParams) {
       if (queryParams.plain) {

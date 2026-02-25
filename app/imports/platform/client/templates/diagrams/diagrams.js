@@ -1,5 +1,7 @@
 import { Template } from "meteor/templating";
 
+import { FlowRouter } from "meteor/ostrio:flow-router-extra";
+
 import { Interpreter } from "../../../../client/lib/interpreter.js";
 import { Utilities } from "../../js/utilities/utils.js";
 import {
@@ -20,6 +22,28 @@ import "./diagrams.html";
 import { joined_date } from "../../js/utilities/time_utilities.js";
 
 // Start of diagramsTemplate template
+Template.diagramsTemplate.onCreated(function() {
+  const projectId = FlowRouter.getParam('projectId')
+  const id = FlowRouter.getParam('_id')
+  const diagramTypeId = FlowRouter.getParam('diagramTypeId')
+  const versionId = FlowRouter.getParam('versionId')
+  const phrase = FlowRouter.getParam('phrase')
+
+  const personality = FlowRouter.getParam('personality')
+
+  const diagrams_query = { projectId, versionId }
+  if (phrase) {
+    diagrams_query.text = phrase
+  }
+
+  console.log('👹 diagrams_query', diagrams_query)
+  this.subscribe('Diagrams', diagrams_query)
+  this.subscribe('FoundDiagrams', diagrams_query)
+  this.subscribe('DiagramTypes_UserVersionSettings', { projectId, versionId })
+  this.subscribe('ProjectsGroups', { projectId })
+
+  this.subscribe('Services', {})
+});
 
 //calculates the view to render
 Template.diagramsTemplate.helpers({
@@ -611,6 +635,10 @@ Template.addDiagram.events({
 
 Template.uploadProject.loading = new ReactiveVar(false);
 
+Template.uploadProject.onCreated(function() {
+  this.subscribe('Services', {})
+})
+
 Template.uploadProject.helpers({
   loading: function () {
     return Template.uploadProject.loading.get();
@@ -621,7 +649,7 @@ Template.uploadProject.helpers({
     var project = Projects.findOne({ _id: Session.get("activeProject") });
     if (project) {
       var tool_id = project.toolId;
-      Meteor.subscribe("Services", {});
+      // Meteor.subscribe("Services", {});
 
       if (tool_id) {
         var services = Services.findOne({ toolId: tool_id });

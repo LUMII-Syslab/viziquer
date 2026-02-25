@@ -11,6 +11,10 @@ import { Utilities, reset_variable } from "../../js/utilities/utils.js";
 
 import "./structure.html";
 
+Template.structureTemplate.onCreated(function() {
+  this.subscribe('Structure_Tools', {});
+});
+
 Template.structureTemplate.helpers({
   categories: function () {
     //selelcts project properties
