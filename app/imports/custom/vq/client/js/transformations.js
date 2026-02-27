@@ -1450,7 +1450,7 @@ function findAttributeInAbstractTable(context, clazz, fieldValue) {
 }
 
 
-async function generateSymbolTable(notResolveTable) {
+async function generateSymbolTable(notResolveTable, selectedElementIdFromDataSchema) {
 
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
@@ -1487,20 +1487,20 @@ async function generateSymbolTable(notResolveTable) {
 
        await GetComponentIds(selected_elem);
 
-       var elem_ids = _.keys(visited_elems);
-       var queries = await genAbstractQueryForElementList(elem_ids, null);
-	   if(!notResolveTable){
-		   for (const q of queries) {
-			//_.each(queries,async function(q) {
-			abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
-		   }
-	   } else {
-		   abstractQueryTable = queries[0];
-	   }
-	   //)
-    } else {
-      // nothing selected
-    }
+		var elem_ids = _.keys(visited_elems);
+		var queries = await genAbstractQueryForElementList(elem_ids, [selectedElementIdFromDataSchema]);
+		if (!notResolveTable) {
+			for (const q of queries) {
+				//_.each(queries,async function(q) {
+				abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
+			}
+		} else {
+			abstractQueryTable = queries[0];
+		}
+		//)
+	} else {
+		// nothing selected
+	}
 
 	// console.log(abstractQueryTable);
 	if(Session.get("activeElement") !== null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
@@ -1575,10 +1575,10 @@ function setSchemaNamesForQuery(abstractQueryTable, schemaNamesTable, parentSche
 	return schemaNamesTable;
 }
 
-async function getSchemaNameForElement(elem_id){
+async function getSchemaNameForElement(elem_id, is_data_schema = false) {
 	let selected_elem_id = elem_id;
-	if(typeof selected_elem_id === "undefined" || selected_elem_id === null) selected_elem_id = Session.get("activeElement");
-	let tempSymbolTable = await generateSymbolTable(true);
+	if (typeof selected_elem_id === "undefined" || selected_elem_id === null) selected_elem_id = Session.get("activeElement");
+	let tempSymbolTable = await generateSymbolTable(true, is_data_schema ? selected_elem_id : null);
 	let sc = await dataShapes.schema.schema;
 	let schemaNames = setSchemaNamesForQuery(tempSymbolTable["abstractQueryTable"], [], sc);
 	let schemaNameFromABS = schemaNames[selected_elem_id];

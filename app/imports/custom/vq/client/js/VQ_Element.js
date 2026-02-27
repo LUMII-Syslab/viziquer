@@ -2019,6 +2019,11 @@ class VQ_Element_Async{
         return name;
     // }
   }
+
+  async getClassList() {
+    return await this.getCompartmentValue("ClassList");
+  }
+
   // --> string
   async getInstanceAlias() {
     return await this.getCompartmentValue("Instance");
@@ -3277,8 +3282,16 @@ class VQ_Element_Async{
 		}
 	}
 
+  setNewExploreFillColor(init_color) {
+    let currentColor = init_color ?? this.obj.style.elementStyle.fill
+    var [r, g, b] = currentColor.match(/\d+/g).map(Number);
+    r = (r - 60) % 256;
+    b = (b + 80) % 256;
+    this.setCustomStyle([{ attrName: "elementStyle.fill", attrValue: `rgb(${r}, ${g}, ${b})` }]);
+  }
 
-	boolToString(bool) {if (bool) {return "true"} else {return "false"}}
+
+  boolToString(bool) { if (bool) { return "true" } else { return "false" } }
 
   // isVirtualRoot: false,
 

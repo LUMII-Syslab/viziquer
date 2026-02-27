@@ -5916,6 +5916,10 @@
               {
                 "item": "Custom Data",
                 "procedure": "GenereteSPARQL_form_class_costumise_DSS"
+              },
+              {
+                "item": "Explore ...",
+                "procedure": "AddLinkForSchema"
               }
             ],
             "readModeContextMenu": [],

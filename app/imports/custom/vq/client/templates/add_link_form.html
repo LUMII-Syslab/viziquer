@@ -71,11 +71,19 @@
         font-style: italic;
     }
 
-    #add-long-link {
-        background-color:#4CAF50;
-        float:left;
-    }
-</style>
+        #add-long-link {
+            background-color: #4CAF50;
+            float: left;
+        }
+
+        .add-class-empty-error {
+            display: none;
+            color: rgb(170, 11, 11);
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+    </style>
 
 	<!-- Modal for new document -->
     <div id="add-link-form" class="modal fade" data-backdrop="static" data-keyboard="false">
@@ -84,7 +92,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Add Link</h4>
+                    <h4 id="modal-title" class="modal-title">Add Link</h4>
                 </div>
 
                 <div class="searchBox" id="searchBox">
@@ -110,13 +118,15 @@
                     <hr>
                 </div>
 
+                {{#if isDataSchema}}
+                {{else}}
                 <div class="link-type-part">
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
                             <div name="chain">
                                 <p style="color: black;"> Change Link Type </p>
                                 <div id="add-link-type-choice">
-    								<label class="label-radio">
+                                    <label class="label-radio">
                                         <input type="radio" name="type-radio" value="JOIN">
                                         <span class="custom-radio"></span>
                                         Join Link &ensp;
@@ -156,34 +166,42 @@
                         </div>
                     </form>
                 </div>
+                {{/if}}
 
                 <div class="modal-body" id="mbodyAL">
                     <form id="link-list-form" class="form-horizontal" role="form">
                         <div class="form-group">
                         <!-- {{#if testAddLink.data}}                    -->
                             {{#each fullList}}
-								{{#if wait}}
-                                <div class="col-lg-10 association" name="{{name}}">
-                                    <label class="label-radio">
-                                        <span> {{text}} </span>
-                                    </label>
-                                </div>
-                                {{/if}}
-                                {{#if show}}
-                                <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
-                                    <label class="label-radio">
-                                        <input type="radio" name="link-list-radio" value="{{name}}" card={{card}}>
-                                        <span class="custom-radio"></span>
+                            {{#if wait}}
+                            <div class="col-lg-10 association" name="{{name}}">
+                                <label class="label-radio">
+                                    <span> {{text}} </span>
+                                </label>
+                            </div>
+                            {{/if}}
+                            {{#if show}}
+                            <div class="col-lg-10 association" name="{{name}}" className="{{class}}"
+                                line_direct="{{type}}">
+                                <label class="label-radio">
+                                    {{#if isDataSchema}}
+                                    <input type="checkbox" name="link-list-checkbox" value="{{name}}" card={{card}}>
+                                    <span class="custom-checkbox"></span>
+                                    {{else}}
+                                    <input type="radio" name="link-list-radio" value="{{name}}" card={{card}}>
+                                    <span class="custom-radio"></span>
+                                    {{/if}}
 
-                                        <span style="color:#009688; font-weight: normal;"> {{is}} </span>
-                                        <span style="{{clr}}">{{name}} {{text}} </span>
-										<span style="color:#009688; font-weight: normal;"> {{of}} </span>
-                                        <span style="{{clr}}">{{type}} {{card}} </span>
-                                        <span id="targetClass" style="{{clr}}">{{class}} </span>
-										<a class="btn btn-xs btn-default" id="select-class-button"><i class="fa" >..</i></a>
-                                    </label>
-                                </div>
-                                {{/if}}
+                                    <span style="color:#009688; font-weight: normal;"> {{is}} </span>
+                                    <span style="{{clr}}">{{name}} {{text}} </span>
+                                    <span style="color:#009688; font-weight: normal;"> {{of}} </span>
+                                    <span style="{{clr}}">{{type}} {{card}} </span>
+                                    <span class="targetClass" style="{{clr}}">{{class}} </span>
+                                    <span class="add-class-empty-error">Please choose a class </span>
+                                    <a class="btn btn-xs btn-default select-class-button"><i class="fa">..</i></a>
+                                </label>
+                            </div>
+                            {{/if}}
                             {{/each}}
                         <!-- {{else}}
                             {{#each shortList}}
@@ -267,29 +285,42 @@
                 </div>
 
 
-                 <div class="form-group" >
-					<form autocomplete="off" onsubmit="return false;">
-					<div class="searchBox" id="searchBox">
-						<input class="form-control" id="class-search" type="text" placeholder="Search.." style="display: inline-block;">
-					</div>
-					</form>
-					<div style="height:420px; overflow-y: scroll;">
-                              <div class="col-lg-10 targetClass" name="(no_class)" className="(no_class)">
-                                    <label class="label-radio">
-                                        <input type="radio" name="class-list-radio" value="(no_class)">
-                                        <span class="custom-radio"></span>
-                                        <span>(no_class)</span>
-                                    </label>
-                                </div>
-                            {{#each classes}}
-                                <div class="col-lg-10 targetClass" name="{{short_class_name}}" className="{{short_class_name}}">
-                                    <label class="label-radio">
-                                        <input type="radio" name="class-list-radio" value="{{short_class_name}}">
-                                        <span class="custom-radio"></span>
-                                        <span style="{{clr}}">{{short_class_name}} </span>
-                                    </label>
-                                </div>
-                            {{/each}}
+                <div class="form-group">
+                    <form autocomplete="off" onsubmit="return false;">
+                        <div class="searchBox" id="searchBox">
+                            <input class="form-control" id="class-search" type="text" placeholder="Search.."
+                                style="display: inline-block;">
+                        </div>
+                    </form>
+                    <div style="height:420px; overflow-y: scroll;">
+                        <div class="col-lg-10 targetClass" name="(no_class)" className="(no_class)">
+                            <label class="label-radio">
+                                {{#if isDataSchema}}
+                                <input type="checkbox" name="class-list-checkbox" value="(no_class)">
+                                <span class="custom-checkbox"></span>
+                                {{else}}
+                                <input type="radio" name="class-list-radio" value="(no_class)">
+                                <span class="custom-radio"></span>
+                                {{/if}}
+                                <span>(no_class)</span>
+                            </label>
+                        </div>
+
+                        {{#each classes}}
+                        <div class="col-lg-10 targetClass" name="{{short_class_name}}" className="{{short_class_name}}">
+                            <label class="label-radio">
+                                {{#if isDataSchema}}
+                                <input type="checkbox" name="class-list-checkbox" value="{{short_class_name}}"
+                                    {{checked}}>
+                                <span class="custom-checkbox"></span>
+                                {{else}}
+                                <input type="radio" name="class-list-radio" value="{{short_class_name}}">
+                                <span class="custom-radio"></span>
+                                {{/if}}
+                                <span style="{{clr}}">{{short_class_name}} </span>
+                            </label>
+                        </div>
+                        {{/each}}
                     </div>
                 </div>
 

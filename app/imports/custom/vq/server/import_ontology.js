@@ -358,6 +358,12 @@ Meteor.methods({
 		})
 		*/
 	},
+	addClassCompartments: async function (list, item) {
+		await add_class_compartments(list, item);
+	},
+	addOneCompartmentFromList: async function (list, compartmentName, value_list, pref, cut_info) {
+		await add_one_compartment_from_list(list, compartmentName, value_list, pref, cut_info);
+	},
 });
 
 async function add_class_compartments(list, item) {

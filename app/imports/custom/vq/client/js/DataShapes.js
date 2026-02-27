@@ -1,4 +1,4 @@
-import { Projects, Compartments, CompartmentTypes } from '../../../../db/platform/collections.js'
+import { Projects, Compartments, CompartmentTypes, DiagramTypes, Diagrams } from '../../../../db/platform/collections.js'
 import { Services } from '../../../../db/platform/collections.js'
 import { faas } from './faas.js'
 import { createVQ_Element } from './VQ_Element.js'
@@ -206,13 +206,15 @@ const getPList = async (vq_obj) => {
 		else
 			link.element = link.eE
 	})
-	const el_schema = await getSchemaNameForElement(vq_obj._id());
+	const activeDiagram = await Diagrams.findOneAsync({ _id: Session.get("activeDiagram") });
+	const data_schema_diagram_type = await DiagramTypes.findOneAsync({ name: "DataSchema" });
+	const el_schema = await getSchemaNameForElement(vq_obj._id(), data_schema_diagram_type ? activeDiagram["diagramTypeId"] == data_schema_diagram_type._id : false);
 	const isRoot = await vq_obj.isRoot();
 
 	for (const link of link_list_filtered) {
-		const l_schema = await getSchemaNameForElement(link.element);
-		if (link.type === 'in' && link.name !== null && link.name !== undefined  && link.name !== '++' && el_schema == l_schema ) { // Šeit nebija tas ++
-			if ( link.t === 'REQUIRED' ) {
+		const l_schema = await getSchemaNameForElement(link.element, data_schema_diagram_type ? activeDiagram["diagramTypeId"] == data_schema_diagram_type._id : false);
+		if (link.type === 'in' && link.name !== null && link.name !== undefined && link.name !== '++' && el_schema == l_schema) { // Šeit nebija tas ++
+			if (link.t === 'REQUIRED') {
 				pList.in.push(link);
 			}
 			else {
@@ -294,10 +296,10 @@ const findElementDataForClass = async (vq_obj) => {
 	return params;
 }
 
-const findElementDataForProperty = async (vq_obj) => {
+const findElementDataForProperty = async (vq_obj, className = null) => {
 	let params = {};
-	const individual =  await vq_obj.getInstanceAlias();
-	const class_name = await vq_obj.getName();
+	const individual = await vq_obj.getInstanceAlias();
+	const class_name = className ? className : await vq_obj.getName();
 	if (isIndividual(individual))
 		params.uriIndividual = dataShapes.getIndividualName(individual);
 	if (class_name !== null && class_name !== undefined)
@@ -379,7 +381,7 @@ const classes = [
 
 const getEmptySchema  = () => {
 	return {
-    isPublic:isPublic,
+		isPublic: isPublic,
 		filling: 0,
 		classCount: 0,
 		resolvedClasses: {},
@@ -834,7 +836,7 @@ const dataShapes = {
 		}
 		return rr;
 	},
-	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {
+	getProperties: async function (params = {}, vq_obj = null, vq_obj_2 = null, className_obj_1 = null) {
 		// *** console.log("*** ---------GetProperties---------------***", vq_obj)
 		//dataShapes.getProperties({schema:'europeana', propertyKind:'Data'})
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
@@ -855,10 +857,10 @@ const dataShapes = {
 				params.filter = filter_split[1];
 			}
 		}
-		let allParams = {main: params};
-		if ( vq_obj !== null && vq_obj !== undefined )
-			allParams.element = await findElementDataForProperty(vq_obj);
-		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
+		let allParams = { main: params };
+		if (vq_obj !== null && vq_obj !== undefined)
+			allParams.element = await findElementDataForProperty(vq_obj, className_obj_1);
+		if (vq_obj_2 !== null && vq_obj_2 !== undefined)
 			allParams.elementOE = await findElementDataForProperty(vq_obj_2);
 		return await this.getPropertiesF(allParams); //this.callServerFunction("getProperties", allParams);
 	},
