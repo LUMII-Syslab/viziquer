@@ -6,6 +6,9 @@ const RDFS = 'http://www.w3.org/2000/01/rdf-schema#';
 const OWL  = 'http://www.w3.org/2002/07/owl#';
 const XSD  = 'http://www.w3.org/2001/XMLSchema#';
 
+import fs from "fs";
+import path from "path";
+
 // Helper to convert full IRI to prefixed name if possible
 function iriToPrefixed(iri, prefixes = {}) {
   for (const [pfx, base] of Object.entries(prefixes)) {
@@ -20,8 +23,24 @@ function iriToPrefixed(iri, prefixes = {}) {
 }
 
 Meteor.methods({
+	
+  OWLGREDwritePublicOntologyLoadingPreferences(settings) {
+    // check(settings, Object);
+
+    // Project root (works in dev; production bundles may differ)
+    const publicDir = path.join(process.cwd(), "public/OWLGrEd_ImportSettings");
+    const filePath = path.join(publicDir, "ontology-loading-preferences.json");
+	
+
+	
+    // fs.mkdirSync(publicDir, { recursive: true });
+    // fs.writeFileSync(filePath, settings, "utf8");
+
+    return { ok: true, filePath };
+  },
+
   // Meteor method to load and parse an OWL ontology using RDFLib.js
-  loadOwlRDFLib(ontologyText) {
+  loadOwlRDFLib2(ontologyText) {
     // **1. Detect the ontology format and set content type for RDFLib parser**
     let contentType;
     const text = ontologyText || '';

@@ -99,7 +99,7 @@ Meteor.methods({
 			const ax = Ontology[key][onto];
 			if(ax.type === "Annotation"){
 				let subj = $rdf.namedNode(namespaceTable[":"])
-				let annotationType = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
+				let annotationType = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol] || $rdf.sym(ax.axiom[0]?.axiomSymbol);
 				let annotationValue = ax.axiom[1]?.value;
 				let annotationLanguage = ax.axiom[2]?.language;
 				// if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
@@ -114,7 +114,7 @@ Meteor.methods({
 			} else if(ax.type === "AnnotationAssertion") {
 				if(typeof ax.axiom[1].IRI !== "undefined" && typeof ax.axiom[2].value !== "undefined"){
 				  const subj = ax.axiom[1].IRI;
-				  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
+				  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol] || $rdf.sym(ax.axiom[0]?.axiomSymbol);
 				  let obj = ax.axiom[2].value;
 				  const objLanguage = ax.axiom[3]?.language;
 				  if (subj && pred && obj) {
@@ -248,7 +248,6 @@ Meteor.methods({
 		  const propIRI  = part.axiom[1].IRI;
 		  const dtypeIRI = part.axiom[2]?.IRI; // may be undefined
 		  
-		  console.log("DDDDDD", ax, classIRI, part, n, propIRI, dtypeIRI)
 		  
 		  if(classIRI) classIRI = $rdf.sym(classIRI);
 		  else if(ax.axiom[0].Expression){
@@ -448,8 +447,12 @@ Meteor.methods({
 			}
         }
 		  } else if (ax.type === "AnnotationAssertion") {
+			if(ax.axiom?.[4]?.axiom){
+				  addAnnotationAssertionWithAxiomAnnotations(store, ax)
+			}
 			if((typeof ax.axiom[1].IRI !== "undefined" ||typeof ax.axiom[1].Expression !== "undefined") && typeof ax.axiom[2].value !== "undefined"){
-			  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
+			  
+			  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol] || $rdf.sym(ax.axiom[0]?.axiomSymbol);
 			  let obj = ax.axiom[2].value;
 			  if(pred && obj){
 				  let subj = ax.axiom[1].IRI;
@@ -536,7 +539,7 @@ Meteor.methods({
 		  }else if (ax.type === "AnnotationAssertion") {
 			if(typeof ax.axiom[1].IRI !== "undefined" && typeof ax.axiom[2].value !== "undefined"){
 			  const subj = ax.axiom[1].IRI;
-			  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
+			  const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol] || $rdf.sym(ax.axiom[0]?.axiomSymbol);
 			  let obj = ax.axiom[2].value;
 			  const objLanguage = ax.axiom[3]?.language;
 			  if (subj && pred && obj) {
@@ -579,7 +582,7 @@ Meteor.methods({
       } else if (ax.type === "AnnotationAssertion") {
         if(typeof ax.axiom[1].IRI !== "undefined" && typeof ax.axiom[2].value !== "undefined"){
           const subj = ax.axiom[1].IRI;
-          const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
+          const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol] || $rdf.sym(ax.axiom[0]?.axiomSymbol);
           let obj = ax.axiom[2].value;
 		  const objLanguage = ax.axiom[3]?.language;
 
@@ -629,7 +632,7 @@ Meteor.methods({
       } else if (ax.type === "AnnotationAssertion") {
         if(typeof ax.axiom[1].IRI !== "undefined" && typeof ax.axiom[2].value !== "undefined"){
           const subj = ax.axiom[1].IRI;
-          const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
+          const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol] || $rdf.sym(ax.axiom[0]?.axiomSymbol);
           let obj = ax.axiom[2].value;
 		  const objLanguage = ax.axiom[3]?.language;
           if (subj && pred && obj) {
@@ -1004,48 +1007,10 @@ Meteor.methods({
 
 				addTriple(subj, ns.rdf('type').uri, objMap[ax.type]);
 			}
-		  }else if (ax.type === "AnnotationAssertion") {
-			const subj = ax.axiom[1]?.IRI;
-			const pred = annotationPropertyTypes[ax.axiom[0]?.axiomSymbol];
-			let obj = ax.axiom[2]?.value;
-			const objLanguage = ax.axiom[3]?.language;
-			if(objLanguage) obj = obj + "@" + objLanguage;
-			if (subj && pred && obj) {
-			  // Check for annotations on this annotation
-			  const annotations = ax.axiom[3].annotations || [];
+		  }else if (ax.type === "AnnotationAssertion") { 
+		  
+			addAnnotationAssertionWithAxiomAnnotations(store, ax)
 
-			  if (annotations.length > 0) {
-				const axiomNode = $rdf.blankNode();
-				store.add(axiomNode, ns.rdf('type'), ns.owl('Axiom'));
-				store.add(axiomNode, ns.owl('annotatedSource'), $rdf.sym(subj));
-				store.add(axiomNode, ns.owl('annotatedProperty'), pred);
-				store.add(axiomNode, ns.owl('annotatedTarget'), $rdf.literal(obj));
-
-				for (const ann of annotations) {
-				  const annPred = annotationPropertyTypes[ann.IRI] || $rdf.sym(ann.IRI);
-				  const annValue = $rdf.literal(ann.value);
-				  store.add(axiomNode, annPred, annValue);
-
-				  // Handle one level of nested annotations if present as object
-				  const nestedAnnotations = ann.annotations;
-				  if (Object.keys(nestedAnnotations).length > 0) {
-					const nestedAxiomNode = $rdf.blankNode();
-					store.add(nestedAxiomNode, ns.rdf('type'), ns.owl('Axiom'));
-					store.add(nestedAxiomNode, ns.owl('annotatedSource'), axiomNode);
-					store.add(nestedAxiomNode, ns.owl('annotatedProperty'), annPred);
-					store.add(nestedAxiomNode, ns.owl('annotatedTarget'), annValue);
-
-					const innerPred = annotationPropertyTypes[nestedAnnotations.IRI] || $rdf.sym(nestedAnnotations.IRI);
-					const innerValue = $rdf.literal(nestedAnnotations.value);
-					store.add(nestedAxiomNode, innerPred, innerValue);
-
-				  }
-				  //here is there level of annotations
-				}
-			  } else {
-				store.add($rdf.sym(subj), pred, $rdf.literal(obj));
-			  }
-			}
 		  }
 		}
 	  }
@@ -1828,4 +1793,97 @@ function dataRangeAstToRdflib(ast, prefixes = {}) {
 
   // statements: depending on rdflib build, store.statements is the array you want
   return { rangeTerm, store, statements: store.statements || statements };
+}
+
+
+function termFromValueOrIRI(objNode, langNode) {
+	const XSD = $rdf.Namespace('http://www.w3.org/2001/XMLSchema#');
+  // objNode can be: { IRI }, { value }, { Number }
+  if (!objNode) return null;
+
+  if (typeof objNode.IRI !== "undefined") {
+    return $rdf.sym(objNode.IRI);
+  }
+
+  if (typeof objNode.value !== "undefined") {
+    const lang = langNode?.language;
+    return lang ? $rdf.literal(objNode.value, lang) : $rdf.literal(objNode.value);
+  }
+
+  if (typeof objNode.Number !== "undefined") {
+    // good default for cardinalities in OWL
+    return $rdf.literal(String(objNode.Number), XSD("nonNegativeInteger"));
+  }
+
+  return null;
+}
+
+function predFromAxiomSymbol(axiomSymbol) {
+	 const ns = {
+		rdf: $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#'),
+		rdfs: $rdf.Namespace('http://www.w3.org/2000/01/rdf-schema#'),
+		owl: $rdf.Namespace('http://www.w3.org/2002/07/owl#'),
+	  };
+	const annotationPropertyTypes = {
+		"rdfs:label": ns.rdfs('label'),
+		"rdfs:comment": ns.rdfs('comment'),
+		"rdfs:seeAlso": ns.rdfs('seeAlso'),
+		"rdfs:isDefinedBy": ns.rdfs('isDefinedBy'),
+		"owl:versionInfo": ns.owl('versionInfo'),
+		"owl:priorVersion": ns.owl('priorVersion'),
+		"owl:backwardCompatibleWith": ns.owl('backwardCompatibleWith'),
+		"owl:incompatibleWith": ns.owl('incompatibleWith'),
+		"dc:title": $rdf.sym('http://purl.org/dc/elements/1.1/title'),
+		"dc:creator": $rdf.sym('http://purl.org/dc/elements/1.1/creator'),
+		"dc:description": $rdf.sym('http://purl.org/dc/elements/1.1/description'),
+		"skos:definition": $rdf.sym('http://www.w3.org/2004/02/skos/core#definition'),
+		"skos:altLabel": $rdf.sym('http://www.w3.org/2004/02/skos/core#altLabel'),
+		"skos:prefLabel": $rdf.sym('http://www.w3.org/2004/02/skos/core#prefLabel'),
+		"owl:annotatedSource": ns.owl('annotatedSource'),
+		"owl:annotatedProperty": ns.owl('annotatedProperty'),
+		"owl:annotatedTarget": ns.owl('annotatedTarget'),
+		"rdf:reifies": ns.rdf('reifies')
+	  };
+  return annotationPropertyTypes[axiomSymbol] || $rdf.sym(axiomSymbol);
+}
+
+// ---- main: AnnotationAssertion with optional axiom annotations ----
+function addAnnotationAssertionWithAxiomAnnotations(store, ax) {
+    const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
+    const RDF = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+    
+  // ax.axiom: [ predSymbolNode, subjNode, objNode, langNode, optionalAnnotationsNode ]
+  if (typeof ax?.axiom?.[1]?.IRI === "undefined") return;
+
+  const subj = $rdf.sym(ax.axiom[1].IRI);
+  const pred = predFromAxiomSymbol(ax.axiom[0]?.axiomSymbol);
+
+  const objTerm = termFromValueOrIRI(ax.axiom[2], ax.axiom[3]);
+  if (!subj || !pred || !objTerm) return;
+
+  // 1) add the base triple (AnnotationAssertion)
+  store.add(subj, pred, objTerm);
+
+  // 2) if axiom annotations exist, reify with owl:Axiom and add them
+  const annList = ax.axiom?.[4]?.axiom;
+  if (Array.isArray(annList) && annList.length > 0) {
+    const axiomBNode = $rdf.blankNode();
+
+    store.add(axiomBNode, RDF("type"), OWL("Axiom"));
+    store.add(axiomBNode, OWL("annotatedSource"), subj);
+    store.add(axiomBNode, OWL("annotatedProperty"), pred);
+    store.add(axiomBNode, OWL("annotatedTarget"), objTerm);
+
+    for (const ann of annList) {
+      // ann example:
+      // { type:"Annotation", axiomSymbol:"rdfs:range", axiom:{IRI:"..."} }
+      // { type:"Annotation", axiomSymbol:"owl:maxCardinality", axiom:{Number:1} }
+      const annPred = predFromAxiomSymbol(ann?.axiomSymbol);
+      const annObj = termFromValueOrIRI(ann?.axiom, ann?.language ? { language: ann.language } : null);
+
+      if (annPred && annObj) {
+        store.add(axiomBNode, annPred, annObj);
+      }
+    }
+  }
 }

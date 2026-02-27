@@ -2,7 +2,8 @@ import { DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Eleme
 
 
 Meteor.methods({
-	importOntologyOWLGrEd: async function(list, ontology, ontologyName) {
+	importOntologyOWLGrEd: async function(list, ontology, ontologyName, importSettings) {
+
 		var user_id = Meteor.userId();
 
         let project = await Projects.findOneAsync({_id: list.projectId,});
@@ -77,6 +78,40 @@ Meteor.methods({
 				])
 			}
 		}
+		//Annotation 
+		elemType = await ElementTypes.findOneAsync({name: "Annotation", diagramTypeId: diagram_type._id});
+		if (!elemType) {
+			console.error("No Class type");
+			return;
+		}
+		for (const key of Object.keys(ontology.ontology.annotations)) {
+			const item = ontology.ontology.annotations[key];
+			if (element_map[key]) {
+				console.error("Key already exists", key, element_map);
+				continue;
+			}
+			
+			let elemStyle = elemType["styles"][0];
+			let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, false)
+
+			let new_box_id = await Elements.insertAsync(object);
+			element_map[key] = new_box_id;
+
+			let listForCompartment = {
+				diagram_id: new_diagram_id,
+				diagram_type_id: diagram_type._id,
+				projectId: list.projectId,
+				versionId: list.versionId,
+				element_id: new_box_id,
+				element_type_id: elemType._id
+			}
+			//Type
+			await add_one_compartment(listForCompartment, "AnnotationType", item[0].value, "<<"+item[0].value+">>");
+			//Value
+			await add_one_compartment(listForCompartment, "Value", item[1].value, 'Value: "'+item[1].value + '"');
+			// Language
+			if(item[2].value !== "")await add_one_compartment(listForCompartment, "Language", item[2].value, 'Language: '+item[2].value);
+		}
 
 		// Class
 		elemType = await ElementTypes.findOneAsync({name: "Class", diagramTypeId: diagram_type._id});
@@ -112,17 +147,100 @@ Meteor.methods({
 			// await add_one_compartment(listForCompartment, "HorizontalLine1", " ", " ")
 			await setHorizontalLine(listForCompartment, "HorizontalLine1")
 
-			//Label
-			if(item.label) {await addCompartmentSubCompartments2(listForCompartment, "Annotation",[
-				  {name:"AnnotationType",value:"Label"},
-				  {name:"Value",value:item.label},
-				  {name:"Language",value:""},
-				])
-			}
+			//Comment
+			if(item.comment) await add_one_compartment(listForCompartment, "Comment", item.comment, item.comment)
+
 			//Annotations
-			//TO DO
-			for(let i = 0; i < item.annotations.length; i++){
+			if((importSettings?.showClassAnnotationsType_graph ?? true) === true){
+			  let elemTypeAn = await ElementTypes.findOneAsync({name: "Annotation", diagramTypeId: diagram_type._id});
+			  if (!elemTypeAn) {
+					console.error("No Class type");
+					return;
+			  }
+			  let elemStyleAn = elemTypeAn["styles"][0];
+			  
+			  let elemTypeAnC = await ElementTypes.findOneAsync({name: "Connector", diagramTypeId: diagram_type._id});
+				if (!elemTypeAnC) {
+					console.error("No Class type");
+					return;
+				}
+			  let elemStyleAnC = elemTypeAnC["styles"][0];
+			  let line_layoutSettings = ( elemStyleAnC.layoutSettings !== undefined) ?  elemStyleAnC.layoutSettings : {};
+			  
+			  //Label
+			  if(item.label) {
+					const itemAn = item.label;
+					let object = await Create_New_OWLGrEd_Element(list, elemTypeAn, diagram_type, new_diagram_id, elemStyleAn, false)
+
+					let new_box_id_An = await Elements.insertAsync(object);
+					element_map[new_box_id_An] = new_box_id_An;
+
+					let listForCompartmentAn = {
+						diagram_id: new_diagram_id,
+						diagram_type_id: diagram_type._id,
+						projectId: list.projectId,
+						versionId: list.versionId,
+						element_id: new_box_id_An,
+						element_type_id: elemTypeAn._id
+					}
+					
+					//Type
+					await add_one_compartment(listForCompartmentAn, "AnnotationType", "Label", "<<Label>>");
+					//Value
+					await add_one_compartment(listForCompartmentAn, "Value", item.label, 'Value: "'+item.label + '"');
+					
+				    let objectC = await Create_New_OWLGrEd_Element(list, elemStyleAnC, diagram_type, new_diagram_id, elemStyleAnC, true, new_box_id_An, new_box_id, line_layoutSettings);
+
+				    let new_line_id_An = await Elements.insertAsync(objectC);
+				    element_map[new_line_id_An] = new_line_id_An;
+					
+			  }	
+
+			  
+			  for(let i = 0; i < item.annotations.length; i++){
+
+				const itemAn = item.annotations[i];
+				if(itemAn !== null){
+					let object = await Create_New_OWLGrEd_Element(list, elemTypeAn, diagram_type, new_diagram_id, elemStyleAn, false)
+
+					let new_box_id_An = await Elements.insertAsync(object);
+					element_map[new_box_id_An] = new_box_id_An;
+
+					let listForCompartmentAn = {
+						diagram_id: new_diagram_id,
+						diagram_type_id: diagram_type._id,
+						projectId: list.projectId,
+						versionId: list.versionId,
+						element_id: new_box_id_An,
+						element_type_id: elemTypeAn._id
+					}
+					
+					//Type
+					await add_one_compartment(listForCompartmentAn, "AnnotationType", itemAn[0].value, "<<"+itemAn[0].value+">>");
+					//Value
+					await add_one_compartment(listForCompartmentAn, "Value", itemAn[1].value, 'Value: "'+itemAn[1].value + '"');
+					// Language
+					if(itemAn[2].value !== "")await add_one_compartment(listForCompartmentAn, "Language", itemAn[2].value, 'Language: '+itemAn[2].value);
+					
+					
+				    let objectC = await Create_New_OWLGrEd_Element(list, elemStyleAnC, diagram_type, new_diagram_id, elemStyleAnC, true, new_box_id_An, new_box_id, line_layoutSettings);
+
+				    let new_line_id_An = await Elements.insertAsync(objectC);
+				    element_map[new_line_id_An] = new_line_id_An;
+				}
+			  }
+			} else {
+			    //Label
+				if(item.label) {await addCompartmentSubCompartments2(listForCompartment, "Annotation",[
+					  {name:"AnnotationType",value:"Label"},
+					  {name:"Value",value:item.label},
+				 	  {name:"Language",value:""},
+					])
+				}	
+				
+			  for(let i = 0; i < item.annotations.length; i++){
 			   await addCompartmentSubCompartments2(listForCompartment, "Annotation", item.annotations[i])
+			  }
 			}
 
 			//Attributes
@@ -144,7 +262,7 @@ Meteor.methods({
 
 			// DisjointClasses
 			for(let i = 0; i < item.disjointWith.length; i++){
-			   await addCompartmentSubCompartments2(listForCompartment, "DisjointClasses", item.disjointWith[i])
+				if(typeof item.disjointWith[i] !== "string")await addCompartmentSubCompartments2(listForCompartment, "DisjointClasses", item.disjointWith[i])
 			}
 
 			if(item.disjointWith.length>0){
@@ -153,7 +271,7 @@ Meteor.methods({
 
 			// EquivalentClasses
 			for(let i = 0; i < item.equivalentClasses.length; i++){
-			   await addCompartmentSubCompartments2(listForCompartment, "EquivalentClasses", item.equivalentClasses[i])
+			   if(typeof item.equivalentClasses[i] !== "string")await addCompartmentSubCompartments2(listForCompartment, "EquivalentClasses", item.equivalentClasses[i])
 			}
 
 			if(item.equivalentClasses.length>0){
@@ -177,48 +295,86 @@ Meteor.methods({
 		for (const iri in superClasses) {
 			let subClasses = superClasses[iri];
 			if(subClasses.length > 1){
+			  if((importSettings?.showSubclassesGraphicsType_forks ?? true) === true){
 				// HorizontalFork
-			  elemType = await ElementTypes.findOneAsync({name: "HorizontalFork", diagramTypeId: diagram_type._id});
-			  if (!elemType) {
-					console.error("No HorizontalFork type");
-					return;
-			  }
+				  elemType = await ElementTypes.findOneAsync({name: "HorizontalFork", diagramTypeId: diagram_type._id});
+				  if (!elemType) {
+						console.error("No HorizontalFork type");
+						return;
+				  }
 
-			  let elemStyle = elemType["styles"][0];
-			  let horizontalFork = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, false)
+				  let elemStyle = elemType["styles"][0];
+				  let horizontalFork = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, false)
 
-			  let horizontalFork_box_id = await Elements.insertAsync(horizontalFork);
-			  element_map[horizontalFork_box_id] = horizontalFork_box_id;
+				  let horizontalFork_box_id = await Elements.insertAsync(horizontalFork);
+				  element_map[horizontalFork_box_id] = horizontalFork_box_id;
+				  
+				  if(importSettings?.showDisjointClassesMarkAtForks === true){
+					let res = containsSameArrayAndRemove(subClasses, ontology.allDisjointClasses);
+					if(res.found === true)
+					  ontology.allDisjointClasses = res.list;
+				  
+				      let listForCompartmentAn = {
+						diagram_id: new_diagram_id,
+						diagram_type_id: diagram_type._id,
+						projectId: list.projectId,
+						versionId: list.versionId,
+						element_id: horizontalFork_box_id,
+						element_type_id: elemType._id
+					}
+					
+					//Disjoint
+					await add_one_compartment(listForCompartmentAn, "Disjoint", "true", "{disjoint}");
+				  }
 
-			  // GeneralizationToFork
-			  elemType = await ElementTypes.findOneAsync({name: "GeneralizationToFork", diagramTypeId: diagram_type._id});
-			  if (!elemType) {
-					console.error("No GeneralizationToFork type");
-					return;
-			  }
+				  // GeneralizationToFork
+				  elemType = await ElementTypes.findOneAsync({name: "GeneralizationToFork", diagramTypeId: diagram_type._id});
+				  if (!elemType) {
+						console.error("No GeneralizationToFork type");
+						return;
+				  }
 
-			  elemStyle = elemType["styles"][0];
-			  let line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
+				  elemStyle = elemType["styles"][0];
+				  let line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
-			  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[horizontalFork_box_id], element_map[iri], line_layoutSettings);
+				  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[horizontalFork_box_id], element_map[iri], line_layoutSettings);
 
-			  let generalizationToFork_box_id = await Elements.insertAsync(object);
-			  element_map[generalizationToFork_box_id] = generalizationToFork_box_id;
+				  let generalizationToFork_box_id = await Elements.insertAsync(object);
+				  element_map[generalizationToFork_box_id] = generalizationToFork_box_id;
 
 
-			  // AssocToFork
-			  elemType = await ElementTypes.findOneAsync({name: "AssocToFork", diagramTypeId: diagram_type._id});
-			  if (!elemType) {
-					console.error("No AssocToFork type");
-					return;
-			  }
-			  elemStyle = elemType["styles"][0];
-			  line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
+				  // AssocToFork
+				  elemType = await ElementTypes.findOneAsync({name: "AssocToFork", diagramTypeId: diagram_type._id});
+				  if (!elemType) {
+						console.error("No AssocToFork type");
+						return;
+				  }
+				  elemStyle = elemType["styles"][0];
+				  line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
 
-			  for(let sc = 0; sc < subClasses.length; sc++){
-				  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[subClasses[sc]], element_map[horizontalFork_box_id], line_layoutSettings);
-				  let new_line_id = await Elements.insertAsync(object);
-				  element_map[new_line_id] = new_line_id;
+				  for(let sc = 0; sc < subClasses.length; sc++){
+					  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[subClasses[sc]], element_map[horizontalFork_box_id], line_layoutSettings);
+					  let new_line_id = await Elements.insertAsync(object);
+					  element_map[new_line_id] = new_line_id;
+				  }
+			  
+			  }else if((importSettings?.showSubclassesGraphicsType_lines ?? true) === true){
+				  // Generalization
+				  elemType = await ElementTypes.findOneAsync({name: "Generalization", diagramTypeId: diagram_type._id});
+				  if (!elemType) {
+						console.error("No Generalization type");
+						return;
+				  }
+
+				  let elemStyle = elemType["styles"][0];
+				  let line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
+				  
+				  for(let sc = 0; sc < subClasses.length; sc++){
+					  let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[subClasses[sc]], element_map[iri], line_layoutSettings);
+					  let new_line_id = await Elements.insertAsync(object);
+					  element_map[new_line_id] = new_line_id;
+				  }
+				  
 			  }
 
 			} else {
@@ -251,8 +407,8 @@ Meteor.methods({
 		let elemStyle = assocStyles.find(s => s.name === 'Association_direct');
 
         let line_layoutSettings = ( elemType.layoutSettings !== undefined) ?  elemType.layoutSettings : {};
-
-		for (const key of Object.keys(ontology.objectProperties)) {
+		if((importSettings?.showObjectProperties ?? true) === true && importSettings?.showObjectPropertiesType_graph === true){
+		  for (const key of Object.keys(ontology.objectProperties)) {
 			const item = ontology.objectProperties[key];
 			if(!item.handled && item.domain.length === 1 && item.range.length === 1 ){
 				const d = item.domain[0], r = item.range[0];
@@ -346,15 +502,18 @@ Meteor.methods({
 					 ])
 					}
 					// Annotation
-					for(let i = 0; i < item.annotationsInv.length; i++){
-					   await addCompartmentSubCompartments2(listForCompartment, "AnnotationInv", item.annotationsInv[i])
+					const annot = item.annotationsInv || [];
+					for(let i = 0; i < annot.length; i++){
+					   await addCompartmentSubCompartments2(listForCompartment, "AnnotationInv", annot[i])
 					}
 					// PropertyChains
-					for(let i = 0; i < item.propertyChainsInv.length; i++){
-					   await addCompartmentSubCompartments2(listForCompartment, "PropertyChainsInv", item.propertyChainsInv[i])
+					const propertyChainsInv = item.propertyChainsInv || [];
+					for(let i = 0; i < propertyChainsInv.length; i++){
+					   await addCompartmentSubCompartments2(listForCompartment, "PropertyChainsInv", propertyChainsInv[i])
 					}
 				}
 			}
+		  }
 		}
 
 		// Restriction
@@ -451,7 +610,7 @@ Meteor.methods({
 			const item = ontology.individuals[key];
 			if (element_map[key]) {
 				console.error("Key already exists", key, element_map);
-				return;
+				continue;
 			}
 
             let elemStyle = elemType["styles"][0];
@@ -474,16 +633,124 @@ Meteor.methods({
 			//Class name
 			if(item.className)await add_one_compartment(listForCompartment, "ClassName", item.className, ": "+item.className)
 			await setHorizontalLine(listForCompartment, "HorizontalLine12")
-			// Label
-			if(item.label) {await addCompartmentSubCompartments2(listForCompartment, "Annotation",[
-					  {name:"AnnotationType",value:"Label"},
-					  {name:"Value",value:item.label},
-					  {name:"Language",value:""},
-					 ])
+			
+			if(item.classID){
+			  let elemTypeAnC = await ElementTypes.findOneAsync({name: "InstanceOf", diagramTypeId: diagram_type._id});
+			  if (!elemTypeAnC) {
+				console.error("No Class type");
+				return;
+			  }
+			  let elemStyleAnC = elemTypeAnC["styles"][0];
+			  let line_layoutSettings = ( elemStyleAnC.layoutSettings !== undefined) ?  elemStyleAnC.layoutSettings : {};
+			  let objectC = await Create_New_OWLGrEd_Element(list, elemStyleAnC, diagram_type, new_diagram_id, elemStyleAnC, true, new_box_id, element_map[item.classID], line_layoutSettings);
+
+			  let new_line_id_An = await Elements.insertAsync(objectC);
+			  element_map[new_line_id_An] = new_line_id_An;
+			  
+			  let listForCompartmentL = {
+					diagram_id: new_diagram_id,
+					diagram_type_id: diagram_type._id,
+					projectId: list.projectId,
+					versionId: list.versionId,
+					element_id: new_line_id_An,
+					element_type_id: elemTypeAnC._id
+			  }
+			  
+			  await add_one_compartment(listForCompartmentL, "Label", "<<instanceOf>>", "<<instanceOf>>");
+					
 			}
-			// Annotations
-			for(let i = 0; i < item.annotations.length; i++){
-				await addCompartmentSubCompartments2(listForCompartment, "Annotation", item.annotations[i])
+			
+			//Annotations
+			if((importSettings?.showIndividualAnnotationType_graph ?? true) === true){
+			  let elemTypeAn = await ElementTypes.findOneAsync({name: "Annotation", diagramTypeId: diagram_type._id});
+			  if (!elemTypeAn) {
+					console.error("No Class type");
+					return;
+			  }
+			  let elemStyleAn = elemTypeAn["styles"][0];
+			  
+			  let elemTypeAnC = await ElementTypes.findOneAsync({name: "Connector", diagramTypeId: diagram_type._id});
+				if (!elemTypeAnC) {
+					console.error("No Class type");
+					return;
+				}
+			  let elemStyleAnC = elemTypeAnC["styles"][0];
+			  let line_layoutSettings = ( elemStyleAnC.layoutSettings !== undefined) ?  elemStyleAnC.layoutSettings : {};
+			  
+			  //Label
+			  if(item.label) {
+					const itemAn = item.label;
+					let object = await Create_New_OWLGrEd_Element(list, elemTypeAn, diagram_type, new_diagram_id, elemStyleAn, false)
+
+					let new_box_id_An = await Elements.insertAsync(object);
+					element_map[new_box_id_An] = new_box_id_An;
+
+					let listForCompartmentAn = {
+						diagram_id: new_diagram_id,
+						diagram_type_id: diagram_type._id,
+						projectId: list.projectId,
+						versionId: list.versionId,
+						element_id: new_box_id_An,
+						element_type_id: elemTypeAn._id
+					}
+					
+					//Type
+					await add_one_compartment(listForCompartmentAn, "AnnotationType", "Label", "<<Label>>");
+					//Value
+					await add_one_compartment(listForCompartmentAn, "Value", item.label, 'Value: "'+item.label + '"');
+					
+				    let objectC = await Create_New_OWLGrEd_Element(list, elemStyleAnC, diagram_type, new_diagram_id, elemStyleAnC, true, new_box_id_An, new_box_id, line_layoutSettings);
+
+				    let new_line_id_An = await Elements.insertAsync(objectC);
+				    element_map[new_line_id_An] = new_line_id_An;
+					
+			  }	
+
+			  for(let i = 0; i < item.annotations.length; i++){
+
+				const itemAn = item.annotations[i];
+				if(itemAn !== null){
+					let object = await Create_New_OWLGrEd_Element(list, elemTypeAn, diagram_type, new_diagram_id, elemStyleAn, false)
+
+					let new_box_id_An = await Elements.insertAsync(object);
+					element_map[new_box_id_An] = new_box_id_An;
+
+					let listForCompartmentAn = {
+						diagram_id: new_diagram_id,
+						diagram_type_id: diagram_type._id,
+						projectId: list.projectId,
+						versionId: list.versionId,
+						element_id: new_box_id_An,
+						element_type_id: elemTypeAn._id
+					}
+					
+					//Type
+					await add_one_compartment(listForCompartmentAn, "AnnotationType", itemAn[0].value, "<<"+itemAn[0].value+">>");
+					//Value
+					await add_one_compartment(listForCompartmentAn, "Value", itemAn[1].value, 'Value: "'+itemAn[1].value + '"');
+					// Language
+					if(itemAn[2].value !== "")await add_one_compartment(listForCompartmentAn, "Language", itemAn[2].value, 'Language: '+itemAn[2].value);
+					
+					
+				    let objectC = await Create_New_OWLGrEd_Element(list, elemStyleAnC, diagram_type, new_diagram_id, elemStyleAnC, true, new_box_id_An, new_box_id, line_layoutSettings);
+
+				    let new_line_id_An = await Elements.insertAsync(objectC);
+				    element_map[new_line_id_An] = new_line_id_An;
+				}
+			  }
+			} else {
+			
+				// Label
+				if(item.label) {await addCompartmentSubCompartments2(listForCompartment, "Annotation",[
+						  {name:"AnnotationType",value:"Label"},
+						  {name:"Value",value:item.label},
+						  {name:"Language",value:""},
+						 ])
+				}
+				// Annotations
+				for(let i = 0; i < item.annotations.length; i++){
+					await addCompartmentSubCompartments2(listForCompartment, "Annotation", item.annotations[i])
+				}
 			}
 			// DataPropertyAssertions
 			for(let i = 0; i < item.dataPropertyAssertions.length; i++){
@@ -661,6 +928,7 @@ Meteor.methods({
 			await add_one_compartment(listForCompartment, "Label", "<<DataType>>", "<<DataType>>")
 			//Name
 			if(item.prefixed) await add_one_compartment(listForCompartment, "Name", item.prefixed, item.prefixed)
+			
 			// DataTypeDefinition
 			if(item.base !== null) await add_one_compartment(listForCompartment, "DataTypeDefinition", getDatatypeLocalName(item.base), getDatatypeLocalName(item.base))
 
@@ -1320,4 +1588,31 @@ function getBuiltInAnnotationShortName(iri, annotationProperties) {
   // Fallback: extract local name after '#' or last '/'
   // const cut = Math.max(iri.lastIndexOf('#'), iri.lastIndexOf('/'));
   // return cut >= 0 ? iri.slice(cut + 1) : iri;
+}
+
+function sameElements(a, b) {
+  if (a.length !== b.length) return false;
+
+  const counts = new Map();
+  for (const x of a) counts.set(x, (counts.get(x) || 0) + 1);
+
+  for (const x of b) {
+    const n = counts.get(x);
+    if (!n) return false;
+    if (n === 1) counts.delete(x);
+    else counts.set(x, n - 1);
+  }
+  return counts.size === 0;
+}
+
+function containsSameArrayAndRemove(target, listOfArrays) {
+  const idx = listOfArrays.findIndex(arr => sameElements(target, arr));
+
+  if (idx === -1) {
+    return { found: false, list: listOfArrays.slice() }; // unchanged copy
+  }
+
+  const newList = listOfArrays.slice();
+  newList.splice(idx, 1); // remove matched array
+  return { found: true, list: newList };
 }

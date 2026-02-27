@@ -451,7 +451,7 @@
               "Declaration(Class($getUri(/Name)))",
 			  "DisjointClasses($getClassExpr /DisjointClasses:$getExpression(/DisjointClass))",
 			  "SubClassOf($getClassExpr /SuperClasses:$getExpression(/SuperClass))",
-			  "AnnotationAssertion(rdfs:comment $getClassExpr \"$value(/Comment)\")"
+			  "AnnotationAssertion(rdfs:comment $getClassExpr $value(/Comment))"
 			]
           },
           "compartmentTypes": [
@@ -2251,7 +2251,7 @@
             "exportAxioms": [
               "Declaration(NamedIndividual($getObjectExpr))",
               "ClassAssertion($getUri(/ClassName) $getObjectExpr)",
-              "AnnotationAssertion(rdfs:comment $getObjectExpr \"$value(/Comment)\")",
+              "AnnotationAssertion(rdfs:comment $getObjectExpr $value(/Comment))",
               "SameIndividual($getObjectExpr /SameIndividuals:$getExpression(/Individual))",
               "DifferentIndividuals($getObjectExpr /DifferentIndividuals:$getExpression(/Individual))"
             ],
@@ -4742,7 +4742,7 @@
             "targetDiagramTypeId": "Ca5nHdCHmkBgxxSgd",
             "exportAxioms": [
               "Declaration(AnnotationProperty($getAnnotationProperty(/Name)))",
-              "AnnotationAssertion(rdfs:comment $getUri(/Name) \"$value(/Comment)\")",
+              "AnnotationAssertion(rdfs:comment $getUri(/Name) $value(/Comment))",
               "SubAnnotationPropertyOf($getAnnotationProperty(/Name) /SuperProperties:$getExpression(/SuperProperty))",
               "AnnotationPropertyDomain($getAnnotationProperty(/Name) $getAnnotationProperty(/Domain))",
               "AnnotationPropertyRange($getAnnotationProperty(/Name) $getAnnotationProperty(/Range))"
@@ -5486,7 +5486,7 @@
             },
             "exportAxioms": [
               "Declaration(Datatype($getUri(/Name)))",
-              "AnnotationAssertion(rdfs:comment $getUri(/Name) \"$value(/Comment)\")"
+              "AnnotationAssertion(rdfs:comment $getUri(/Name) $value(/Comment))"
             ]
           },
           "compartmentTypes": [
@@ -8553,7 +8553,7 @@
                       "padding": "0",
                       "placement": "end-right",
                       "visible": true,
-                      "fontSize": 14,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -8666,7 +8666,7 @@
                 "noRepresentation": false,
                 "tabIndex": 1200,
                 "dialogTabId": "JWM4CjSR3FuaaFaxp",
-                "name": "Statements",
+                "name": "Qualifiers",
                 "description": "",
                 "prefix": "\u2022 ",
                 "suffix": "",
@@ -8726,7 +8726,7 @@
                 "subCompartmentTypes": [
                   {
                     "_id": "6edf01q4077olse4dfjj5j6q",
-                    "name": "Statements",
+                    "name": "Qualifiers",
                     "extensionPoints": [],
                     "prefix": "\u2022 ",
                     "suffix": null,
@@ -8786,11 +8786,11 @@
                         "subCompartmentTypes": []
                       }
                     ],
-                    "label": "Statements"
+                    "label": "Qualifiers"
                   }
                 ],
                 "type": "text",
-                "label": "Statements"
+                "label": "Qualifiers"
               }
             }
           ],
@@ -9447,7 +9447,7 @@
                       "padding": "0",
                       "placement": "end-right",
                       "visible": true,
-                      "fontSize": 14,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -10149,7 +10149,7 @@
                 "noRepresentation": false,
                 "tabIndex": 1100,
                 "dialogTabId": "A2bhBcyjwQgjfMret",
-                "name": "Statements",
+                "name": "Qualifiers",
                 "description": "",
                 "prefix": "\u2022 ",
                 "suffix": "",
@@ -10209,7 +10209,7 @@
                 "subCompartmentTypes": [
                   {
                     "_id": "6edf01q4077olse4dfjj5j6q",
-                    "name": "Statements",
+                    "name": "Qualifiers",
                     "extensionPoints": [],
                     "prefix": "\u2022 ",
                     "suffix": null,
@@ -10269,11 +10269,11 @@
                         "subCompartmentTypes": []
                       }
                     ],
-                    "label": "Statements"
+                    "label": "Qualifiers"
                   }
                 ],
                 "type": "text",
-                "label": "Statements"
+                "label": "Qualifiers"
               }
             }
           ],
@@ -10755,7 +10755,7 @@
                 "noRepresentation": false,
                 "tabIndex": 5,
                 "dialogTabId": "RTgcsiezvDcBYEKpE",
-                "name": "Statements",
+                "name": "Qualifiers",
                 "description": "",
                 "prefix": "\u2022 ",
                 "suffix": "",
@@ -10815,7 +10815,7 @@
                 "subCompartmentTypes": [
                   {
                     "_id": "knQuAv79xZm3cf5OORnuZlF0",
-                    "name": "Statements",
+                    "name": "Qualifiers",
                     "extensionPoints": [],
                     "prefix": "\u2022 ",
                     "suffix": null,
@@ -10870,11 +10870,11 @@
                         "subCompartmentTypes": []
                       }
                     ],
-                    "label": "Statements"
+                    "label": "Qualifiers"
                   }
                 ],
                 "type": "text",
-                "label": "Statements"
+                "label": "Qualifiers"
               }
             }
           ],
@@ -11462,7 +11462,7 @@
                 "noRepresentation": false,
                 "tabIndex": 110,
                 "dialogTabId": "ZHcgauL6RSmSgr5Nc",
-                "name": "Statements",
+                "name": "Qualifiers",
                 "description": "",
                 "prefix": "\u2022 ",
                 "suffix": "",
@@ -11522,7 +11522,7 @@
                 "subCompartmentTypes": [
                   {
                     "_id": "knQuAv79xZm3af5OORnuZlF0",
-                    "name": "Statements",
+                    "name": "Qualifiers",
                     "extensionPoints": [],
                     "prefix": "\u2022 ",
                     "suffix": null,
@@ -11577,11 +11577,11 @@
                         "subCompartmentTypes": []
                       }
                     ],
-                    "label": "Statements"
+                    "label": "Qualifiers"
                   }
                 ],
                 "type": "text",
-                "label": "Statements"
+                "label": "Qualifiers"
               }
             }
           ],
@@ -12206,7 +12206,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 16,
+                      "fontSize": 14,
                       "fontStyle": "bold",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"
@@ -12281,7 +12281,7 @@
                       "padding": 0,
                       "placement": "start-left",
                       "visible": true,
-                      "fontSize": 14,
+                      "fontSize": 12,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
                       "fontVariant": "normal"

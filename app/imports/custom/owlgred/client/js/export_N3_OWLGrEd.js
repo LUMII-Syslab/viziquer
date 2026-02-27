@@ -103,7 +103,7 @@ function generateN3Syntax(onto, format, nsTable){
 
 			if (axiomObject.type === "Annotation") {
 
-			  let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
+			  let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol]  || axiomObject.axiom[0]?.axiomSymbol;
 			  let annotationValue = axiomObject.axiom[1]?.value;
 			  let annotationLanguage = axiomObject.axiom[2]?.language;
 			  // if(annotationLanguage) annotationValue = annotationValue + "@" + annotationLanguage;
@@ -115,7 +115,7 @@ function generateN3Syntax(onto, format, nsTable){
 
 				writer.addQuad(
 				  quad(
-					namedNode(namespaceTable[":"] || "http://owlgred.lumii.lv/web/2025#"),
+					namedNode(namespaceTable[":"] || "http://owlgred.lumii.lv/web/2026#"),
 					namedNode(annotationType),
 					lit
 				  )
@@ -123,7 +123,7 @@ function generateN3Syntax(onto, format, nsTable){
 			  }
 			}else if (axiomObject.type === "AnnotationAssertion") {
 				let classIRI = axiomObject.axiom[1]?.IRI;
-				let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
+				let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol] || axiomObject.axiom[0]?.axiomSymbol;
 				let annotationValue = axiomObject.axiom[2]?.value;
 				let annotationLanguage = axiomObject.axiom[3]?.language;
 
@@ -511,7 +511,8 @@ function generateN3Syntax(onto, format, nsTable){
 			}
 		  }
 		} else if (axiomObject.type === "AnnotationAssertion") {
-			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
+			if(axiomObject.axiom?.[4]?.axiom) addAnnotationAssertionWithAxiomAnnotationsN3(writer, axiomObject);
+			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol] || axiomObject.axiom[0]?.axiomSymbol;
 			let annotationValue = axiomObject.axiom[2]?.value;
 			if (annotationType && annotationValue) {
 				let classIRI = axiomObject.axiom[1]?.IRI;
@@ -605,7 +606,7 @@ function generateN3Syntax(onto, format, nsTable){
 			);
 		}else if(axiomObject.type === "AnnotationAssertion"){
 			let classIRI = axiomObject.axiom[1]?.IRI;
-			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
+			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol] || axiomObject.axiom[0]?.axiomSymbol;
 			let annotationValue = axiomObject.axiom[2]?.value;
 			let annotationLanguage = axiomObject.axiom[3]?.language;
 			if (classIRI && annotationType && annotationValue) {
@@ -642,7 +643,9 @@ function generateN3Syntax(onto, format, nsTable){
 
  for (const key of Object.keys(annotationProperties)) {
    for (const clazz of Object.keys(annotationProperties[key])) {
+	  
 		let axiomObject = annotationProperties[key][clazz];
+
 		if (axiomObject.type === "Declaration" && axiomObject.axiom.type === "AnnotationProperty") {
 			const classIRI = axiomObject.axiom.axiom.IRI;
 			writer.addQuad(
@@ -682,7 +685,7 @@ function generateN3Syntax(onto, format, nsTable){
 
     } else if(axiomObject.type === "AnnotationAssertion"){
 		let classIRI = axiomObject.axiom[1]?.IRI;
-		let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
+		let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol] || axiomObject.axiom[0]?.axiomSymbol;
 		let annotationValue = axiomObject.axiom[2]?.value;
 		let annotationLanguage = axiomObject.axiom[3]?.language;
 
@@ -738,7 +741,7 @@ function generateN3Syntax(onto, format, nsTable){
 		}
       } else if(axiomObject.type === "AnnotationAssertion"){
         let classIRI = axiomObject.axiom[1]?.IRI;
-		let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
+		let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol] || axiomObject.axiom[0]?.axiomSymbol;
 		let annotationValue = axiomObject.axiom[2]?.value;
 		let annotationLanguage = axiomObject.axiom[3]?.language;
 
@@ -1224,7 +1227,7 @@ function generateN3Syntax(onto, format, nsTable){
 			}
 		} else if(axiomObject.type === "AnnotationAssertion"){
 			let classIRI = axiomObject.axiom[1]?.IRI;
-			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol];
+			let annotationType = annotationPropertyTypes[axiomObject.axiom[0]?.axiomSymbol] || axiomObject.axiom[0]?.axiomSymbol;
 			let annotationValue = axiomObject.axiom[2]?.value;
 			let annotationLanguage = axiomObject.axiom[3]?.language;
 
@@ -1235,6 +1238,9 @@ function generateN3Syntax(onto, format, nsTable){
 
 			  writer.addQuad(quad(namedNode(classIRI), namedNode(annotationType),lit));
 			}
+			
+	
+			addAnnotationAssertionWithAxiomAnnotationsN3(writer, axiomObject);
 
 
 			/*
@@ -1965,6 +1971,119 @@ function addN3AxiomQuad({
     writer.addQuad(
       quad(subjTerm, predicate, objTerm)
     );
+  }
+}
+
+const NS = {
+  rdf:  "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+  rdfs: "http://www.w3.org/2000/01/rdf-schema#",
+  owl:  "http://www.w3.org/2002/07/owl#",
+  xsd:  "http://www.w3.org/2001/XMLSchema#",
+  dc:   "http://purl.org/dc/elements/1.1/",
+  skos: "http://www.w3.org/2004/02/skos/core#",
+};
+
+function nn(iri) { return namedNode(iri); }
+
+// Your mapping, but returning N3 NamedNodes
+function predFromAxiomSymbolN3(axiomSymbol) {
+  const map = {
+    "rdfs:label": nn(NS.rdfs + "label"),
+    "rdfs:comment": nn(NS.rdfs + "comment"),
+    "rdfs:seeAlso": nn(NS.rdfs + "seeAlso"),
+    "rdfs:isDefinedBy": nn(NS.rdfs + "isDefinedBy"),
+    "owl:versionInfo": nn(NS.owl + "versionInfo"),
+    "owl:priorVersion": nn(NS.owl + "priorVersion"),
+    "owl:backwardCompatibleWith": nn(NS.owl + "backwardCompatibleWith"),
+    "owl:incompatibleWith": nn(NS.owl + "incompatibleWith"),
+    "dc:title": nn(NS.dc + "title"),
+    "dc:creator": nn(NS.dc + "creator"),
+    "dc:description": nn(NS.dc + "description"),
+    "skos:definition": nn(NS.skos + "definition"),
+    "skos:altLabel": nn(NS.skos + "altLabel"),
+    "skos:prefLabel": nn(NS.skos + "prefLabel"),
+    "owl:annotatedSource": nn(NS.owl + "annotatedSource"),
+    "owl:annotatedProperty": nn(NS.owl + "annotatedProperty"),
+    "owl:annotatedTarget": nn(NS.owl + "annotatedTarget"),
+    "rdf:reifies": nn(NS.rdf + "reifies"),
+  };
+
+  // If axiomSymbol is already a full IRI, use it directly.
+  // If it’s prefixed (e.g., "rdfs:range") and NOT in map, you need a prefix-expander.
+  // Here we do a minimal expander for rdf/rdfs/owl/xsd/dc/skos:
+  if (map[axiomSymbol]) return map[axiomSymbol];
+
+  const m = /^([a-zA-Z_][\w-]*):(.+)$/.exec(axiomSymbol || "");
+  if (m) {
+    const [_, pfx, local] = m;
+    if (NS[pfx]) return nn(NS[pfx] + local);
+  }
+
+  return nn(axiomSymbol); // assume absolute IRI
+}
+
+function termFromValueOrIRIN3(objNode, langNode) {
+  if (!objNode) return null;
+
+  if (typeof objNode.IRI !== "undefined") {
+    return nn(objNode.IRI);
+  }
+
+  if (typeof objNode.value !== "undefined") {
+    const lang = langNode?.language;
+    return lang ? literal(objNode.value, lang) : literal(objNode.value);
+  }
+
+  if (typeof objNode.Number !== "undefined") {
+    // Cardinalities: nonNegativeInteger is a good default
+    return literal(String(objNode.Number), nn(NS.xsd + "nonNegativeInteger"));
+  }
+
+  return null;
+}
+
+// writer can be N3.Writer or store can be N3.Store. Both can accept quads.
+// - If using N3.Writer: writer.addQuad(s,p,o)
+// - If using N3.Store:  store.addQuad(s,p,o)
+function addQuad(target, s, p, o) {
+  if (!s || !p || !o) return;
+  if (typeof target.addQuad === "function") target.addQuad(s, p, o);
+  else if (typeof target.add === "function") target.addQuad(s, p, o); // just in case
+}
+
+// ---- main: AnnotationAssertion with optional axiom annotations (N3.js) ----
+export function addAnnotationAssertionWithAxiomAnnotationsN3(target, ax) {
+  if (typeof ax?.axiom?.[1]?.IRI === "undefined") return;
+
+  const subj = nn(ax.axiom[1].IRI);
+  const pred = predFromAxiomSymbolN3(ax.axiom[0]?.axiomSymbol);
+  const objTerm = termFromValueOrIRIN3(ax.axiom[2], ax.axiom[3]);
+  if (!subj || !pred || !objTerm) return;
+
+  // 1) base triple
+  addQuad(target, subj, pred, objTerm);
+
+  // 2) axiom annotations via owl:Axiom reification
+  const annList = ax.axiom?.[4]?.axiom;
+  if (Array.isArray(annList) && annList.length > 0) {
+    const axiomBNode = blankNode();
+
+    addQuad(target, axiomBNode, nn(NS.rdf + "type"), nn(NS.owl + "Axiom"));
+    addQuad(target, axiomBNode, nn(NS.owl + "annotatedSource"), subj);
+    addQuad(target, axiomBNode, nn(NS.owl + "annotatedProperty"), pred);
+    addQuad(target, axiomBNode, nn(NS.owl + "annotatedTarget"), objTerm);
+
+    for (const ann of annList) {
+      const annPred = predFromAxiomSymbolN3(ann?.axiomSymbol);
+      const annObj = termFromValueOrIRIN3(
+        ann?.axiom,
+        ann?.language ? { language: ann.language } : null
+      );
+
+      if (annPred && annObj) {
+        addQuad(target, axiomBNode, annPred, annObj);
+      }
+    }
   }
 }
 

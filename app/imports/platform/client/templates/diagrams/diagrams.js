@@ -234,10 +234,8 @@ Template.diagramsToolbar.events({
     Dialog.destroyTooltip(e);
     $("#ontology-settings-form").modal("show");
   },
-  "click #OWLGrEdsettings": function (e) {
-    Dialog.destroyTooltip(e);
-    $("#OWLGRED-ontology-settings-form").modal("show");
-  },
+
+
   "click #migrate": function (e) {
     Dialog.destroyTooltip(e);
     $("#migrate-form").modal("show");
@@ -933,30 +931,3 @@ Template.migrateForm.events({
   },
 });
 
-// START of OWLGRED_ontologySettings
-
-Template.OWLGRED_ontologySettings.onCreated(function () {
-  Session.set("msg", undefined);
-});
-
-Template.OWLGRED_ontologySettings.onDestroyed(function () {
-  Session.set("msg", undefined);
-});
-
-Template.OWLGRED_ontologySettings.events({
-  "click #OWLGRED-ok-ontology-settings": async function () {},
-
-  "click #OWLGRED-cancel-ontology-settings": function () {},
-});
-
-Template.OWLGRED_ontologySettings.helpers({
-  msg: function () {
-    return Session.get("msg");
-  },
-
-  project: function () {
-    return Projects.findOne({ _id: Session.get("activeProject") });
-  },
-});
-
-// END of OWLGRED_ontologySettings

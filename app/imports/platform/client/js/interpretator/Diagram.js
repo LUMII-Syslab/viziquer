@@ -482,6 +482,7 @@ Interpreter.methods({
 
       //min height
       if (height < 30 && box.name !== "HorizontalLine") height = 30;
+	  if(box.name === "HorizontalLine") height = position.height;
       //min width
       if (width < 120) width = 120;
 

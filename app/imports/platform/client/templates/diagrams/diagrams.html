@@ -631,155 +631,15 @@
       <i class="fa fa-wrench"></i>
     </button>
 
-    {{#if isOWLGrEd}}
-      <button
-          id="OWLGrEdsettings"
-          class="btn btn-ribbon toolbar-button"
-          data-title="Settings"
-          data-toggle="tooltip"
-          data-placement="bottom"
-      >
-          <i class="fa fa-gear"></i>
-      </button>
-
-      <button
-      id="loadOntologyOWLGrEd"
-      class="btn btn-ribbon toolbar-button"
-      data-title="Load Ontology"
-      data-toggle="tooltip"
-      data-placement="bottom"
-    >
-      Load Ontology
-    </button>
-
-  {{/if}}
     {{> VQ_diagramsToolbar_buttons}}
+    {{> OWLGrEd_diagramsToolbar_buttons}}
 
     {{> uploadProject}}
-    {{> OWLGRED_ontologySettings}}
     {{> migrateForm}}
-    {{> loadOntologyOWLGrEd}}
+
 </template>
 
-<template name="OWLGRED_ontologySettings">
-    <style>
-        .help-tip {
-            position: relative;
-            display: inline;
-            padding-right: 5px;
-            padding-left: 5px;
-            text-align: center;
-            background-color: #8a2be2;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            font-size: 12px;
-            cursor: help;
-        }
-
-        .help-tip:before {
-            content: "?";
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .help-tip:hover p {
-            display: block;
-        }
-
-        .help-tip p {
-            display: none;
-            text-align: left;
-            font-size: 12px;
-            line-height: 16px;
-            color: white;
-            border: 1px solid #7f7f7f;
-            background-color: slategrey;
-            border-radius: 5px;
-            padding: 10px;
-            width: 200px;
-            position: absolute;
-            right: 105%;
-            z-index: 1000;
-        }
-    </style>
-
-    <!-- Modal for new document -->
-    <div id="OWLGRED-ontology-settings-form" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button
-                        type="button"
-                        class="close"
-                        data-dismiss="modal"
-                        aria-hidden="true"
-                    >
-                        &times;
-                    </button>
-                    <h4 class="modal-title">Project Settings</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="panel panel-default">
-                        <div class="panel-tab clearfix">
-                            <ul class="tab-bar">
-                                <li
-                                    class="active"
-                                    id="OWLGRED-project-settings"
-                                >
-                                    <a href="#main" data-toggle="tab">Main</a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="panel-body">
-                            <div class="tab-content user-tab-content">
-                                <!-- tab1 -->
-                                <div class="tab-pane fade in active" id="main">
-                                    <form
-                                        class="form-horizontal"
-                                        role="form"
-                                    ></form>
-                                </div>
-                                <!-- end of tab1 -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button
-                        id="OWLGRED-cancel-ontology-settings"
-                        type="button"
-                        class="btn btn-default"
-                        data-dismiss="modal"
-                    >
-                        {{_ "cancel"}}
-                    </button>
-                    <button
-                        id="OWLGRED-ok-ontology-settings"
-                        type="button"
-                        data-dismiss="modal"
-                        class="btn btn-primary"
-                    >
-                        {{_ "ok"}}
-                    </button>
-
-                    {{#if msg.text}}
-                    <ul class="parsley-error-list" style="display: block">
-                        <li style="display: list-item">{{msg.text}}</li>
-                    </ul>
-                    {{/if}}
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-    <!-- End of modal -->
-</template>
-
+ 
 <template name="migrateForm">
     <div id="migrate-form" class="modal fade">
         <div class="modal-dialog">

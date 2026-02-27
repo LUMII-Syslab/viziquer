@@ -60,6 +60,8 @@ import "/imports/custom/vq/server/import_ontology";
 
 
 import "/imports/custom/owlgred/server/import_ontology";
+import "/imports/custom/owlgred/server/OWLGrEdontologyParams";
+import "/imports/custom/owlgred/server/OWLGrEdImportOntologyRDFlib";
 import "/imports/custom/owlgred/server/parseOwl";
 import "/imports/custom/owlgred/server/parseOwlImportOwlgred";
 

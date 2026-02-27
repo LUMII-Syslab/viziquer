@@ -106,13 +106,84 @@ Template.OWLGRED_createProjectModal.events({
 						category: category_name,
 						toolId: tool_id,
 					};
-
+					
+			let OWLGrEdimportParameters = {
+				"showOntoAnnotations": true,
+				"showAnnotationPropertyDefs": true,
+				"showDataTypes": true,
+				"showClasses": true,
+				"showSubclasses": true,
+				"showSubclassesType_text": false,
+				"showSubclassesType_graph": true,
+				"showSubclassesGraphicsType_lines": false,
+				"showSubclassesGraphicsType_forks": true,
+				"showDisjointClasses": true,
+				"showDisjointClassesType_text": false,
+				"showDisjointClassesType_graph": true,
+				"showDisjointClassesGraphicsGroupAsBoxes": true,
+				"showDisjointClassesMarkAtForks": true,
+				"showEquivalentClasses": true,
+				"showEquivalentClassesType_text": false,
+				"showEquivalentClassesType_graph": true,
+				"showEquivalentClassesGraphicsGroupAsBoxes": true,
+				"showKeys": true,
+				"showClassAnnotations": true,
+				"showClassAnnotationsType_text": false,
+				"showClassAnnotationsType_graph": true,
+				"showClassAnnotationsEnableSpecComments": true,
+				"showObjectProperties": true,
+				"showObjectPropertiesType_text": false,
+				"showObjectPropertiesType_graph": true,
+				"showObjectPropertiesMergeInverse": true,
+				"showObjectPropertiesSubObjectProperties": true,
+				"showObjectPropertiesEquivalentObjectProperties": true,
+				"showObjectPropertiesDisjointObjectProperties": true,
+				"showObjectPropertiesPropertyChains": true,
+				"showObjectPropertiesIsFunctional": true,
+				"showObjectPropertiesIsInverSefunctional": true,
+				"showObjectPropertiesIsSymmetric": true,
+				"showObjectPropertiesIsAsymmetric": true,
+				"showObjectPropertiesIsReflexive": true,
+				"showObjectPropertiesIsIrreflexive": true,
+				"showObjectPropertiesIsTransitive": true,
+				"showObjectPropertyAnnotations": true,
+				"showDataProperties": true,
+				"showDataPropertiesSubDataProperties": true,
+				"showDataPropertiesEquivalentDataProperties": true,
+				"showDataPropertiesDisjointDataProperties": true,
+				"showDataPropertiesIsFunctional": true,
+				"showDataPropertyAnnotations": true,
+				"showPropertyRestrictions": true,
+				"showObjectCardinalityRestrictionsAsMultiplicity": true,
+				"showDataCardinalityRestrictionsAsMultiplicity": true,
+				"showPropertyRestrictionsGraphically": true,
+				"showPropertyRestrictionsGraphicallyNoLineToSelf": true,
+				"showIndividuals": true,
+				"showSameIndividuals": true,
+				"showSameIndividualsType_text": false,
+				"showSameIndividualsType_graph": true,
+				"showSameIndividualsGraphicsGroupAsBoxes": true,
+				"showDifferentIndividuals": true,
+				"showDifferentIndividualsType_text": false,
+				"showDifferentIndividualsType_graph": true,
+				"showDifferentIndividualsGraphicsGroupAsBoxes": true,
+				"showIndividualAnnotations": true,
+				"showIndividualAnnotationType_text": false,
+				"showIndividualAnnotationType_graph": true,
+				"showIndividualClassAssertions": true,
+				"showClassAssertionsType_text": false,
+				"showClassAssertionsType_graph": true,
+				"showClassAssertionsGraphicsKeepText": true,
+				"showIndividualsObjectPropertyAssertions": true,
+				"showIndividualsDataPropertyAssertions": true,
+				"showIndividualsNegativeObjectPropertyAssertions": true,
+				"showIndividualsNegativeDataPropertyAssertions": true
+			}
+			list.OWLGrEdimportParameters = JSON.stringify(OWLGrEdimportParameters, null, 2);
 			await Utilities.callMeteorMethodAsync("insertProject", list);
 			$("#OWLGRED-add-project").modal("hide");
 
 		} else {
-
-			console.log(document.getElementById("project-name").style.borderColor)
 
 			document.getElementById("project-name").style.borderColor = "red";
 			document.getElementById("project-name-required").style.display = "block";
@@ -159,3 +230,172 @@ Template.OWLGRED_editProjectModal.events({
 	},
 
 });
+
+//----------------------------------------------------------------------------------------------
+
+Template.OWLGrEd_diagramsToolbar_buttons.helpers({
+  isOWLGrEProj: function() {
+    const project = Projects.findOne({ _id: Session.get("activeProject") });
+  	const tool = Tools.findOne({_id: project.toolId});
+    if ( (tool.toolGroup && tool.toolGroup === OWLGrEdToolGroup) || tool.toolGroup === undefined)
+      return true;
+    else
+      return false;
+	},
+});
+
+Template.OWLGrEd_diagramsToolbar_buttons.events({
+  "click #OWLGrEdsettings": function (e) {
+    // Dialog.destroyTooltip(e);
+    $("#OWLGRED-ontology-settings-form").modal("show");
+  },
+});
+
+// START of OWLGRED_ontologySettings
+
+Template.OWLGRED_ontologySettings.onCreated(function () {
+  Session.set("msg", undefined);
+});
+
+Template.OWLGRED_ontologySettings.onRendered(async function () {
+  const instance = this;
+
+  const applySettingsToForm = (settings) => {
+    const $modal = instance.$("#OWLGRED-ontology-settings-form");
+
+    Object.entries(settings || {}).forEach(([id, val]) => {
+      const $el = $modal.find("#" + id);
+      if (!$el.length) return;
+
+      const el = $el.get(0);
+      if (el.type === "checkbox" || el.type === "radio") el.checked = !!val;
+      else $el.val(val);
+    });
+
+    if (instance._refreshOntologySettingsDependencies) {
+      instance._refreshOntologySettingsDependencies();
+    }
+  };
+
+  // Load settings from proj.OWLGrEdimportParameters (JSON string)
+  const loadFromProject = async () => {
+    const proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
+
+    let settings = {};
+    try {
+      const jsonStr = proj?.OWLGrEdimportParameters;
+
+      // If missing/empty => treat as defaults (empty object)
+      if (typeof jsonStr === "string" && jsonStr.trim() !== "") {
+        settings = JSON.parse(jsonStr);
+      }
+    } catch (e) {
+      console.error("Invalid OWLGrEdimportParameters JSON:", e);
+      settings = {};
+    }
+
+    applySettingsToForm(settings);
+  };
+
+  // When modal is shown, load from project and fill inputs
+  instance
+    .$("#OWLGRED-ontology-settings-form")
+    .off("shown.bs.modal.owlgredLoadProject")
+    .on("shown.bs.modal.owlgredLoadProject", loadFromProject);
+});
+
+
+Template.OWLGRED_ontologySettings.onDestroyed(function () {
+  Session.set("msg", undefined);
+
+  // Remove delegated handlers if template gets destroyed while modal is open
+  try {
+    this.$("#OWLGRED-ontology-settings-form").off(".owlgredSettings");
+  } catch (e) {}
+});
+
+Template.OWLGRED_ontologySettings.events({
+    "click #OWLGRED-ok-ontology-settings": async function (e, t) {
+	  // Collect values of all inputs in the settings modal as { id: value }
+	  const $modal = $("#OWLGRED-ontology-settings-form");
+	  const settings = {};
+
+	  $modal.find("input, select, textarea").each(function () {
+		if (!this.id) return;
+
+		if (this.type === "checkbox" || this.type === "radio") {
+		  settings[this.id] = !!this.checked;
+		} else {
+		  settings[this.id] = $(this).val();
+		}
+	  });
+
+	  const jsonText = JSON.stringify(settings, null, 2);
+	  
+	  // Download as file
+	  // const blob = new Blob([jsonText], { type: "application/json;charset=utf-8" });
+	  // const url = URL.createObjectURL(blob);
+
+	  // const a = document.createElement("a");
+	  // a.href = url;
+	  // a.download = "ontology-loading-preferences.json";
+	  // document.body.appendChild(a);
+	  // a.click();
+	  // a.remove();
+
+	  // URL.revokeObjectURL(url);
+	  var list = {
+		  projectId: Session.get("activeProject"),
+		  versionId: Session.get("versionId"),
+		  diagramId: Session.get("activeDiagram"),
+		  OWLGrEdimportParameters: jsonText
+		};
+	  
+	  
+	  Utilities.callMeteorMethod("OWLGrEdupdateProjectOntology", list);
+   },
+
+  "click #OWLGRED-cancel-ontology-settings": function () {},
+
+  "click #selectAllIndividualsAssertions": function (e, t) {
+    e.preventDefault();
+    [
+      "showIndividualsObjectPropertyAssertions",
+      "showIndividualsDataPropertyAssertions",
+      "showIndividualsNegativeObjectPropertyAssertions",
+      "showIndividualsNegativeDataPropertyAssertions",
+    ].forEach((id) => {
+      const el = t.$("#" + id).get(0);
+      if (el && !el.disabled) el.checked = true;
+    });
+
+    if (t._refreshOntologySettingsDependencies) t._refreshOntologySettingsDependencies();
+  },
+
+  "click #clearAllIndividualsAssertions": function (e, t) {
+    e.preventDefault();
+    [
+      "showIndividualsObjectPropertyAssertions",
+      "showIndividualsDataPropertyAssertions",
+      "showIndividualsNegativeObjectPropertyAssertions",
+      "showIndividualsNegativeDataPropertyAssertions",
+    ].forEach((id) => {
+      const el = t.$("#" + id).get(0);
+      if (el && !el.disabled) el.checked = false;
+    });
+
+    if (t._refreshOntologySettingsDependencies) t._refreshOntologySettingsDependencies();
+  },
+});
+
+Template.OWLGRED_ontologySettings.helpers({
+  msg: function () {
+    return Session.get("msg");
+  },
+
+  project: function () {
+    return Projects.findOne({ _id: Session.get("activeProject") });
+  },
+});
+
+// END of OWLGRED_ontologySettings

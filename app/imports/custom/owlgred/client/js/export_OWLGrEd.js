@@ -86,7 +86,7 @@ async function saveOntologyInFormatOwlgred(){
     for(let namespaceElem = 0; namespaceElem < elem_namespace.length; namespaceElem++){
 
       const elemOWLGrEd = await Create_OWLGrEd_Element(elem_namespace[namespaceElem]);
-      const dafaultNamespace = await elemOWLGrEd.getCompartmentValue("Dafault Namespace") || "http://owlgred.lumii.lv/web/2025#";
+      const dafaultNamespace = await elemOWLGrEd.getCompartmentValue("Dafault Namespace") || "http://owlgred.lumii.lv/web/2026#";
       if(dafaultNamespace) ontology.Ontology.iri = dafaultNamespace;
       if(typeof dafaultNamespace !== "undefined" && dafaultNamespace !== null && dafaultNamespace !== "")namespaceTable[":"]=dafaultNamespace;
       const namespaces = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Namespaces declarations",  [{title:"Prefix",name:"Prefix"},
@@ -96,9 +96,10 @@ async function saveOntologyInFormatOwlgred(){
        }
     }
 	if(elem_namespace.length === 0){
-		ontology.Ontology.iri = "http://owlgred.lumii.lv/web/2025#";
-		namespaceTable[":"]="http://owlgred.lumii.lv/web/2025#";
+		ontology.Ontology.iri = "http://owlgred.lumii.lv/web/2026#";
+		namespaceTable[":"]="http://owlgred.lumii.lv/web/2026#";
 	}
+	namespaceTable["ex"]="http://lumii.lv/2011/1.0/extended#";
 	let elem_type = ElementTypes.find({diagramTypeId:active_diagram_type_id})
 		.map(function(e) {
 		  return {name: e.name, id: e["_id"], exportAxioms : e["exportAxioms"]}
@@ -320,6 +321,7 @@ async function saveOntologyInFormatOwlgred(){
 						annotationObject.axiom.push({value: annotations[axiom]["Value"]})
 						annotationObject.axiom.push({language: annotations[axiom]["Language"]})
 						ontologyObject.push(annotationObject);
+
 					}
 
 					//Attributes
@@ -671,7 +673,32 @@ async function saveOntologyInFormatOwlgred(){
 							annotationObject.axiom.push({IRI: domain})
 							annotationObject.axiom.push({IRI: range})
 							ontologyObject.push(annotationObject);
+						
+						
+							//Qualifiers
+							// let qualifiers = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Qualifiers");
+							// for(let axiom = 0; axiom < qualifiers.length; axiom++){
+								
+								// let property = qualifiers[axiom]["Property"];
+								// let value = qualifiers[axiom]["Value"];
+								// let type = qualifiers[axiom]["Type"];
+
+								// let qualifierProperties = [];
+								// annotationObject.axiom.push({axiom: qualifierProperties})
+								// if(type){
+									// qualifierProperties.push(
+									  // {
+										// "type": "Annotation",
+										// "axiomSymbol": await getFullName(property),
+										// "axiom": {value: value}
+									  // }	
+									// )
+
+								// }
+								// ontologyObject.push(annotationObject);			
+							// }
 						}
+						
 					}
 				} else if(elem_type[elemType]["name"] === "DataPropertyAssertion"){
 					let clazzS = await getElementsFromPath(["end", "start"], elemOWLGrEd);
@@ -819,6 +846,81 @@ async function saveOntologyInFormatOwlgred(){
 						annotationObject.axiom.push({language: annotations[axiom]["Language"]})
 						ontologyObject.push(annotationObject);
 					}
+					
+					let qualifiers = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Qualifiers");
+					for(let axiom = 0; axiom < qualifiers.length; axiom++){
+						
+						let propertyName = await elemOWLGrEd.getCompartmentValue("Name");
+						let property = qualifiers[axiom]["Property"];
+						let type = qualifiers[axiom]["Type"];
+						let multiplicity = qualifiers[axiom]["Multiplicity"];
+						
+						let annotationPropertyObject = createExportStructureElement(ontology, "AnnotationProperty", qualifiers[axiom]["Property"]);
+						annotationPropertyObject.push(
+							{
+								"type": "Declaration",
+								"axiom": {
+									"type": "AnnotationProperty",
+									"axiom": {
+										"IRI": await getFullName(property)
+									}
+								}
+							}
+						)
+						
+						let annotationObject = {};
+						annotationObject.type = "AnnotationAssertion";
+						annotationObject.axiom = [];
+						const annotationType = "http://lumii.lv/2011/1.0/extended#qualifier";
+						annotationObject.axiom.push({axiomSymbol: annotationType})
+
+						annotationObject.axiom.push({IRI: await getFullName(propertyName)});
+						annotationObject.axiom.push({IRI: await getFullName(property)});
+						annotationObject.axiom.push({language: ""});
+						
+						let qualifierProperties = [];
+						annotationObject.axiom.push({axiom: qualifierProperties})
+						if(type){
+							qualifierProperties.push(
+							  {
+								"type": "Annotation",
+								"axiomSymbol": "http://www.w3.org/2000/01/rdf-schema#range",
+								"axiom": {IRI: await getTypeExpression(type, ontology)}
+							  }	
+							)
+
+						}
+						if(multiplicity){
+							multiplicity = getMultiplicity(multiplicity);
+							let axiomSymbol;
+							let multiplicityValue = multiplicity.value;
+							if(multiplicity.type === "max") {
+								axiomSymbol = "http://www.w3.org/2002/07/owl#maxCardinality";
+							}
+							if(multiplicity.type === "min") {
+								axiomSymbol = "http://www.w3.org/2002/07/owl#minCardinality";
+							}
+							if(multiplicity.type === "exact") {
+								axiomSymbol = "http://www.w3.org/2002/07/owl#qualifiedCardinality";
+							}
+							if(multiplicity.type === "range") {
+								
+							}
+							
+							qualifierProperties.push(
+							  {
+								"type": "Annotation",
+								"axiomSymbol": axiomSymbol,
+								"axiom": {Number: multiplicityValue}
+							  }	
+							)
+
+						}
+						
+						ontologyObject.push(annotationObject);
+							
+					}
+					
 				} else if(elem_type[elemType]["name"] === "Association" || elem_type[elemType]["name"] === "ObjectProperty"){
 					let propertyName = await elemOWLGrEd.getCompartmentValue("Name");
 					ontologyObject = createExportStructureElement(ontology, "ObjectProperty", propertyName);
@@ -1011,6 +1113,81 @@ async function saveOntologyInFormatOwlgred(){
 							ontologyObject.push(keysObject);
 						}
 					}
+					
+					let qualifiers = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Qualifiers");
+					for(let axiom = 0; axiom < qualifiers.length; axiom++){
+						
+						let propertyName = await elemOWLGrEd.getCompartmentValue("Name");
+						let property = qualifiers[axiom]["Property"];
+						let type = qualifiers[axiom]["Type"];
+						let multiplicity = qualifiers[axiom]["Multiplicity"];
+						
+						let annotationPropertyObject = createExportStructureElement(ontology, "AnnotationProperty", qualifiers[axiom]["Property"]);
+						annotationPropertyObject.push(
+							{
+								"type": "Declaration",
+								"axiom": {
+									"type": "AnnotationProperty",
+									"axiom": {
+										"IRI": await getFullName(property)
+									}
+								}
+							}
+						)
+						
+						let annotationObject = {};
+						annotationObject.type = "AnnotationAssertion";
+						annotationObject.axiom = [];
+						const annotationType = "http://lumii.lv/2011/1.0/extended#qualifier";
+						annotationObject.axiom.push({axiomSymbol: annotationType})
+
+						annotationObject.axiom.push({IRI: await getFullName(propertyName)});
+						annotationObject.axiom.push({IRI: await getFullName(property)});
+						annotationObject.axiom.push({language: ""});
+						
+						let qualifierProperties = [];
+						annotationObject.axiom.push({axiom: qualifierProperties})
+						if(type){
+							qualifierProperties.push(
+							  {
+								"type": "Annotation",
+								"axiomSymbol": "http://www.w3.org/2000/01/rdf-schema#range",
+								"axiom": {IRI: await getTypeExpression(type, ontology)}
+							  }	
+							)
+
+						}
+						if(multiplicity){
+							multiplicity = getMultiplicity(multiplicity);
+							let axiomSymbol;
+							let multiplicityValue = multiplicity.value;
+							if(multiplicity.type === "max") {
+								axiomSymbol = "http://www.w3.org/2002/07/owl#maxCardinality";
+							}
+							if(multiplicity.type === "min") {
+								axiomSymbol = "http://www.w3.org/2002/07/owl#minCardinality";
+							}
+							if(multiplicity.type === "exact") {
+								axiomSymbol = "http://www.w3.org/2002/07/owl#qualifiedCardinality";
+							}
+							if(multiplicity.type === "range") {
+								
+							}
+							
+							qualifierProperties.push(
+							  {
+								"type": "Annotation",
+								"axiomSymbol": axiomSymbol,
+								"axiom": {Number: multiplicityValue}
+							  }	
+							)
+
+						}
+						
+						ontologyObject.push(annotationObject);
+							
+					}
+					
 				} else if(elem_type[elemType]["name"] === "HorizontalFork"){
 					let disjoint = await elemOWLGrEd.getCompartmentValue("Disjoint");
 					let complete = await elemOWLGrEd.getCompartmentValue("Complete");
@@ -1203,7 +1380,7 @@ async function saveOntologyInFormatOwlgred(){
 		}
 	}
 
-	console.log("OOOOOOOOOOOOOOO", ontology);
+	// console.log("OOOOOOOOOOOOOOO", ontology);
 	return ontology;
  }
 
@@ -1260,7 +1437,7 @@ function generateRDFLibSyntax(onto,format){
 		  return;
 		}
 
-		console.log('Output:\n', result);
+		// console.log('Output:\n', result);
 
 		// Trigger browser download
 		const filename = guessFilename(onto, format);
@@ -1848,12 +2025,12 @@ async function getAnnotationPropertyName(name, namespace) {
         if (ns_uri_table_annot[name.toLowerCase()]) {
             return ns_uri_table_annot[name.toLowerCase()];
         }
-        return "<" + await getCurrentUri() + name + ">";
+        return  await getCurrentUri() + name ;
     }
 }
 
 async function getCurrentUri(pathTable, currentComp){
-  return namespaceTable[":"] || "http://owlgred.lumii.lv/web/2025#"
+  return namespaceTable[":"] || "http://owlgred.lumii.lv/web/2026#"
 }
 
 async function getClassExpression(elem) {
