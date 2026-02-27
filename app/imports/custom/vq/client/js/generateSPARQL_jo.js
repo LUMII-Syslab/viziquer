@@ -5759,5 +5759,6 @@ function combineWithDefinedPrefixes(knownPrefixes, prefixDeclarations){
 }
 
 export {
-  executeSparqlString
+	executeSparqlString,
+	getClassListFromString,
 }

@@ -130,6 +130,79 @@ VQ_Schema.prototype = {
 };
 */
 
+async function Create_Any_VQ_Element_Async(location, elementType, isLine, source, target) {
+  const activeDiagram = await Diagrams.findOneAsync({_id:Session.get("activeDiagram")});
+  const active_diagram_type_id = activeDiagram["diagramTypeId"];
+
+  if (isLine) {
+    let elem_type = await ElementTypes.findOneAsync({name:elementType, diagramTypeId:active_diagram_type_id});
+    let elem_style = _.find(elem_type.styles, function(style) {
+                return style.name === "Default";
+    });
+
+    var new_line = {
+        projectId: Session.get("activeProject"),
+        versionId: Session.get("versionId"),
+
+        diagramId: Session.get("activeDiagram"),
+        diagramTypeId: elem_type["diagramTypeId"],
+        elementTypeId: elem_type["_id"],
+
+        style: {startShapeStyle: elem_style["startShapeStyle"],
+            endShapeStyle: elem_style["endShapeStyle"],
+            elementStyle: elem_style["elementStyle"],
+            lineType: elem_type["lineType"],
+          },
+
+        styleId: elem_style["id"],
+        type: "Line",
+        points: location,
+        startElement: source._id(),
+        endElement: target._id(),
+      };
+
+      let compartments = Dialog.buildCopartmentDefaultValue(new_line);
+
+      if (_.size(compartments) > 0) {
+        new_line.initialCompartments = compartments;
+      }
+	  
+	  const elem_id = await Utilities.callMeteorMethodAsync("insertElement", new_line);
+	  const vq_obj = await createVQ_Element(elem_id);
+	  return vq_obj;
+
+  } else {
+    let elem_type = await ElementTypes.findOneAsync({name:elementType, diagramTypeId:active_diagram_type_id});
+    
+	let elem_style = _.find(elem_type.styles, function(style) {
+                return style.name === "Default";
+    });
+
+    var new_box = {
+            projectId: Session.get("activeProject"),
+            versionId: Session.get("versionId"),
+
+            diagramId: Session.get("activeDiagram"),
+            diagramTypeId: elem_type["diagramTypeId"],
+            elementTypeId: elem_type["_id"],
+            style: {elementStyle: elem_style["elementStyle"]},
+            styleId: elem_style["id"],
+            type: "Box",
+            location:  location
+    };
+
+    let compartments = Dialog.buildCopartmentDefaultValue(new_box);
+
+    if (_.size(compartments) > 0) {
+      new_box.initialCompartments = compartments;
+    }
+
+	const elem_id = await Utilities.callMeteorMethodAsync("insertElement", new_box);
+	const vq_obj = await createVQ_Element(elem_id);
+	  return vq_obj;
+  }
+
+};
 
 async function Create_VQ_Element_Async(location, isLink, source, target) {
   const activeDiagram = await Diagrams.findOneAsync({_id:Session.get("activeDiagram")});
@@ -2019,6 +2092,11 @@ class VQ_Element_Async{
         return name;
     // }
   }
+
+  async getClassList() {
+    return await this.getCompartmentValue("ClassList");
+  }
+
   // --> string
   async getInstanceAlias() {
     return await this.getCompartmentValue("Instance");
@@ -3277,8 +3355,16 @@ class VQ_Element_Async{
 		}
 	}
 
+  setNewExploreFillColor(init_color) {
+    let currentColor = init_color ?? this.obj.style.elementStyle.fill
+    var [r, g, b] = currentColor.match(/\d+/g).map(Number);
+    r = (r - 60) % 256;
+    b = (b + 80) % 256;
+    this.setCustomStyle([{ attrName: "elementStyle.fill", attrValue: `rgb(${r}, ${g}, ${b})` }]);
+  }
 
-	boolToString(bool) {if (bool) {return "true"} else {return "false"}}
+
+  boolToString(bool) { if (bool) { return "true" } else { return "false" } }
 
   // isVirtualRoot: false,
 
@@ -3446,6 +3532,7 @@ export {
   createVQ_Element,
   // Create_VQ_Element,
   Create_VQ_Element_Async,
+  Create_Any_VQ_Element_Async,
   // async_Create_VQ_Element,
   Create_VQ_Element_Declaration,
 }
