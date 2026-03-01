@@ -1185,6 +1185,10 @@
                     "procedure": "GenerateSPARQL_from_selection"
                   }
                 ]
+              },
+              {
+                "item": "Generate complex table query",
+                "procedure": "GenerateComplexTableQuery"
               }
             ],
             "readModeContextMenu": [

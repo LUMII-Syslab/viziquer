@@ -16,6 +16,7 @@ import '/imports/client/custom/vq/templates/SchemaTree.js'
 import '/imports/client/custom/vq/templates/VQ_DSS_schema.js'
 import '/imports/client/custom/vq/templates/VQ_DSS_custom_sparql.js'
 import '/imports/client/custom/vq/templates/fragments.js'
+import '/imports/client/custom/vq/templates/generate_complex_table_query_form.js'
 
 // import '/imports/client/custom/vq/templates/add_subquery_form.html'
 import '/imports/client/custom/vq/templates/ajoo_bkus.html'
