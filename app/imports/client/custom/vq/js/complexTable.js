@@ -28,6 +28,71 @@ const baseSizePx = 16;
 const rem = (val) => `${baseSizePx * val}px`;
 
 /**
+ * @param style {string}
+ */
+function styleSheetFromString(style) {
+    const res = new CSSStyleSheet();
+    res.replaceSync(style);
+    return res;
+}
+
+const styleOverrideMap = {
+    "--spacing": rem(0.25),
+    "--text-xs": rem(0.75),
+    "--text-sm": rem(0.875),
+    "--text-base": rem(1),
+    "--text-lg": rem(1.125),
+    "--text-xl": rem(1.25),
+    "--text-2xl": rem(1.5),
+    "--text-3xl": rem(1.875),
+    "--text-4xl": rem(2.25),
+    "--text-5xl": rem(3),
+    "--text-6xl": rem(3.75),
+    "--text-7xl": rem(4.5),
+    "--text-8xl": rem(6),
+    "--text-9xl": rem(8),
+    "--radius": rem(0.625),
+    "--radius-xs": rem(0.125),
+    "--radius-sm": rem(0.25),
+    "--radius-md": rem(0.375),
+    "--radius-lg": rem(0.5),
+    "--radius-xl": rem(0.75),
+    "--radius-2xl": rem(1),
+    "--radius-3xl": rem(1.5),
+    "--radius-4xl": rem(2),
+};
+
+const varOverrideStyleSheet = styleSheetFromString(`:host { ${
+    Object.entries(styleOverrideMap).map(([k, v]) => `${k}: ${v};\n`).join("")
+} }`);
+
+const rdfToolbagStyleSheet = styleSheetFromString(rdfToolbagStyle.textContent);
+
+// NOTE: We picked a z-index that's bigger than bootstrap modal's z-index with the assumption that
+// this modal will be above other modals.
+const portalStyleSheet = styleSheetFromString("* { z-index: 2000; }");
+
+const portalShadowClassname = "portal-shadow-host";
+
+// NOTE: This function ensures only one portal shadow exists because we don't need more than one
+function getPortalShadow() {
+    const maybeRes = document.getElementsByClassName(portalShadowClassname).item(0);
+    if (maybeRes) return maybeRes.shadowRoot;
+
+    const portalShadowHost = document.body.appendChild(document.createElement("div"));
+    portalShadowHost.classList.add(portalShadowClassname);
+    const portalShadow = portalShadowHost.attachShadow({ mode: "open" });
+
+    portalShadow.adoptedStyleSheets = [
+        varOverrideStyleSheet,
+        rdfToolbagStyleSheet,
+        portalStyleSheet,
+    ];
+
+    return portalShadow;
+}
+
+/**
  * Reshape xml-ified json to json.
  *
  * @param sourceData {*}
@@ -340,6 +405,7 @@ export function QueryGeneratorView() {
                     );
                     setEditorText(q);
                     switchToEditorTab();
+                    Template.GenerateComplexTableQueryForm.hideModal();
                 },
                 style: {
                     width: "fit-content",
@@ -353,65 +419,25 @@ export function QueryGeneratorView() {
 /**
  * Mount property selector.
  *
- * @param domElement {HTMLElement}
- * @param component {React.FC}
+ * @param domElement {Element}
+ * @param component {React.ReactNode}
  */
 export function initReactComponents(domElement, component) {
     // NOTE: Component root and portal root is wrapped in shadow DOM in order to isolate styling
 
-    const styleOverrideMap = {
-        "--spacing": rem(0.25),
-        "--text-xs": rem(0.75),
-        "--text-sm": rem(0.875),
-        "--text-base": rem(1),
-        "--text-lg": rem(1.125),
-        "--text-xl": rem(1.25),
-        "--text-2xl": rem(1.5),
-        "--text-3xl": rem(1.875),
-        "--text-4xl": rem(2.25),
-        "--text-5xl": rem(3),
-        "--text-6xl": rem(3.75),
-        "--text-7xl": rem(4.5),
-        "--text-8xl": rem(6),
-        "--text-9xl": rem(8),
-        "--radius": rem(0.625),
-        "--radius-xs": rem(0.125),
-        "--radius-sm": rem(0.25),
-        "--radius-md": rem(0.375),
-        "--radius-lg": rem(0.5),
-        "--radius-xl": rem(0.75),
-        "--radius-2xl": rem(1),
-        "--radius-3xl": rem(1.5),
-        "--radius-4xl": rem(2),
-    };
-
-    const varOverride = new CSSStyleSheet();
-    const styleString = `:host { ${
-      Object.entries(styleOverrideMap).map(([k, v]) => `${k}: ${v};\n`).join("")
-    } }`;
-    varOverride.replaceSync(styleString);
-    console.log({ styleString, varOverride });
-
-    const constructedStyleSheet = new CSSStyleSheet();
-    constructedStyleSheet.replaceSync(rdfToolbagStyle.textContent);
-
-    const constructedStyleSheetArray = [varOverride, constructedStyleSheet];
-
     const mainShadow = domElement.attachShadow({ mode: "open" });
-    const portalShadowHost = document.body.appendChild(document.createElement("div"));
-    // NOTE: Added classname for debugability
-    portalShadowHost.classList.add("portal-shadow-host");
-    const portalShadow = portalShadowHost.attachShadow({ mode: "open" });
 
-    mainShadow.adoptedStyleSheets = constructedStyleSheetArray;
-    portalShadow.adoptedStyleSheets = constructedStyleSheetArray;
+    mainShadow.adoptedStyleSheets = [
+        varOverrideStyleSheet,
+        rdfToolbagStyleSheet
+    ];
 
     const root = createRoot(mainShadow);
 
     root.render(createElement(
         PortalContext,
         // @ts-ignore
-        { value: { container: portalShadow } },
+        { value: { container: getPortalShadow() } },
         component,
     ));
 }

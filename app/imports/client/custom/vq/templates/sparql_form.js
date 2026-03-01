@@ -282,19 +282,6 @@ Template.sparqlForm.onRendered( async function() {
         );
     }
 
-    const anotherElement = this.find("#queryGen");
-    if (!anotherElement) {
-        throw new Error("unexpected missing");
-    }
-
-    const root = anotherElement.getElementsByClassName("react-mount-root")[0];
-
-    if (!root) {
-        throw new Error("unexpected missing root");
-    }
-
-    initReactComponents(root, createElement(QueryGeneratorView));
-
 	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"
 
 });
