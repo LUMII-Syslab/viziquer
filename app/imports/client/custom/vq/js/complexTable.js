@@ -14,6 +14,7 @@ import {
     AggregatedTable,
     PropertySelector,
     formatMultiCardinalTableAsSelectQuery,
+    deduplicateTable,
 } from "rdf-toolbag";
 // @ts-ignore
 import rdfToolbagStyle from 'rdf-toolbag/dist/rdf-toolbag.css';
@@ -256,10 +257,20 @@ export function Button(props) {
     );
 }
 
-function TableView() {
+function TripleAggregationTableView() {
     const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
     const reshapedData = tableRes ? reshapeData(tableRes) : null;
-    const rows = reshapedData ? tableToRows(reshapedData) : null;
+
+    // NOTE: tableToRows throws error if there's not exactly 3 cols
+    const rows = (() => {
+        if (!reshapedData) return null
+        try {
+            return tableToRows(reshapedData);
+        } catch {
+            return null;
+        }
+    })();
+
     const properties = (rows && (rows.length >= 1)) ? Object.keys(rows[0].props) : undefined;
 
     const canTableBeRendered = properties && rows;
@@ -301,12 +312,69 @@ function TableViewMsgs() {
     );
 }
 
+function DeduplicatedTableView() {
+    const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
+    const reshapedData = tableRes ? reshapeData(tableRes) : null;
+
+    const rows = reshapedData && deduplicateTable(reshapedData);
+    const properties = (rows && (rows.length >= 1)) ? Object.keys(rows[0].props) : undefined;
+
+    return rows && properties && createElement(AggregatedTable, { properties, rows });
+}
+
 export function ExtendedTableView() {
+    const [tabIndex, setTabIndex] = useState(0);
+
+    /** @type {{name: string, el: React.ReactNode}[]} */
+    const tabs = [
+        {
+            name: "Triple aggregation",
+            el: createElement(
+                "div",
+                {},
+                createElement(TableViewMsgs),
+                createElement(TripleAggregationTableView),
+            ),
+        },
+        {
+            name: "Deduplicated table",
+            el: createElement(
+                "div",
+                {},
+                createElement(DeduplicatedTableView)
+            )
+        },
+    ];
+
     return createElement(
         "div",
         {},
-        createElement(TableViewMsgs),
-        createElement(TableView),
+        createElement(
+            "div",
+            {
+                style: {
+                    padding: rem(0.5),
+                    display: "flex",
+                    gap: rem(0.5),
+                }
+            },
+            tabs.map(({ name }, i) => {
+                const selected = i == tabIndex;
+                return createElement(
+                    Button,
+                    {
+                        onClick: () => setTabIndex(i),
+                        style: {
+                            ...(selected ? {
+                                fontWeight: "bold",
+                            } : {}),
+                        }
+                    },
+                    name,
+                );
+            }),
+        ),
+        tabs[tabIndex]?.el,
     );
 }
 
