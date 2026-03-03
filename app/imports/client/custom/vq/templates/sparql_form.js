@@ -9,7 +9,6 @@ import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 import {
     initReactComponents,
     ExtendedTableView,
-    QueryGeneratorView,
 } from '../js/complexTable.js';
 import { createElement } from 'react';
 
@@ -21,7 +20,6 @@ YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyComplete
 
 // var yasqe = null;
 // var yasqe3 = null;
-
 
 // NOTE: Limit size that is larger than the usual page size and can be used to fetch more rows
 const BIG_LIMIT = 2000;

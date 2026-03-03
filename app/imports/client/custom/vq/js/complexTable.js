@@ -23,9 +23,9 @@ import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
 // NOTE: Using `rem` and `styleOverrideMap` to emulate the default 1rem=16px layout because
 // the current 1rem is too small to be readable and we need to override all variables that use
 // rem units.
-const baseSizePx = 16;
+export const baseSizePx = 16;
 /** @type (function(number):string) */
-const rem = (val) => `${baseSizePx * val}px`;
+export const rem = (val) => `${baseSizePx * val}px`;
 
 /**
  * @param style {string}
@@ -161,7 +161,7 @@ function reshapeData(sourceData) {
  *   displayName: string,
  * }[] | null>}
  */
-async function getClasses() {
+export async function getClasses() {
     /** @type {{ error: string, data: *[] }} */
     const classesData = await dataShapes.getClasses();
     // TODO: provide error msg
@@ -183,7 +183,7 @@ async function getClasses() {
  *   displayName: string,
  * }[] | null>}
  */
-async function getProperties(className, limit) {
+export async function getProperties(className, limit) {
     /** @type {{ error: string, data: *[] }} */
     const propertiesData = await dataShapes.getPropertiesFull({
         main: {
@@ -205,9 +205,39 @@ async function getProperties(className, limit) {
 }
 
 /**
+ * Get map that matches prefix with full URI.
+ *
+ * @return {Promise<{[key: string]:string}>}
+ */
+export async function getPrefixes() {
+    /** @type {*} */
+    const namespaces = await dataShapes.getNamespaces();
+    const res = Object.fromEntries(namespaces.map((item) => [item.name, item.value]));
+
+    return res;
+}
+
+/**
+ * Get full URI from prefixedName.
+ *
+ * @param prefixMap {{[key: string]: string}}
+ * @param prefixedName {string}
+ *
+ * @return {string?}
+ */
+export function resolvePrefixedName(prefixMap, prefixedName) {
+    const splitName = prefixedName.split(":");
+    if (splitName.length !== 2) return null;
+    const [prefix, name] = splitName;
+    const uriPrefix = prefixMap[prefix];
+    if (uriPrefix === undefined) return null;
+    return `${uriPrefix}${name}`;
+}
+
+/**
  * @param props {React.JSX.IntrinsicElements["button"]}
  */
-function Button(props) {
+export function Button(props) {
     const { style, ...restProps } = props;
 
     return createElement(
@@ -277,142 +307,6 @@ export function ExtendedTableView() {
         {},
         createElement(TableViewMsgs),
         createElement(TableView),
-    );
-}
-
-/**
- * @param text {string}
- */
-function setEditorText(text) {
-    const yasqe = Template.sparqlForm_see_results.yasqe.get();
-    const yasqe3 = Template.sparqlForm.yasqe3.get();
-
-    yasqe.setValue(text);
-    yasqe3.setValue(text);
-}
-
-function switchToEditorTab() {
-    // @ts-ignore
-    $('#vq-tab a[href="#sparql"]').tab('show');
-}
-
-export function QueryGeneratorView() {
-    const [selectedType, setSelectedType] = useState(
-        /** @type {string?} */ (null)
-    );
-    const [typeSuggestions, setTypeSuggestions] = useState(
-        /** @type {Awaited<ReturnType<getClasses>>} */ (null)
-    );
-    const [properties, setProperties] = useState(
-        /** @type {string[]} */ ([])
-    );
-    const [suggestions, setSuggestions] = useState(
-        /** @type {{label: string, value: string}[]} */ ([])
-    );
-
-    // NOTE: Init class suggestions
-    useEffect(() => {
-        (async () => {
-            const res = await getClasses();
-            setTypeSuggestions(res);
-        })();
-    }, []);
-
-    // NOTE: Sync suggestions to selected class
-    useEffect(() => {
-        (async () => {
-            if (!selectedType) {
-                setSuggestions([]);
-                return;
-            }
-            const res = await getProperties(selectedType);
-            if (!res) setSuggestions([]);
-            else setSuggestions(res.map(({ iri, prefixedName }) => ({
-                label: `${prefixedName}`,
-                value: iri,
-            })));
-        })();
-    }, [selectedType]);
-
-    return createElement(
-        "div",
-        {
-            style: {
-                display: "flex",
-                flexDirection: "column",
-                gap: rem(0.5),
-                fontSize: rem(1.0),
-            },
-        },
-        createElement(
-            "div",
-            {},
-            createElement("p", {}, "Type"),
-            createElement(
-                "select",
-                {
-                    value: selectedType || "",
-                    // @ts-ignore
-                    onChange: (e) => setSelectedType(e.target.value),
-                    style: {
-                        padding: `${rem(0.5)} ${rem(1)}`,
-                        border: "1px solid #aaa",
-                        borderRadius: rem(0.5),
-                    },
-                },
-                createElement(
-                    "option",
-                    {
-                        value: "",
-                        hidden: true,
-                    },
-                    "--Select type--",
-                ),
-                typeSuggestions && typeSuggestions.map((item) => createElement(
-                    "option",
-                    {
-                        value: item.iri,
-                        key: item.iri,
-                    },
-                    item.iri,
-                )),
-            ),
-        ),
-        createElement(
-            "div",
-            {},
-            createElement("p", {}, "Properties"),
-            createElement(
-                PropertySelector,
-                {
-                    value: properties,
-                    // @ts-ignore
-                    onValueChange: setProperties,
-                    suggestions,
-                }
-            ),
-        ),
-        createElement(
-            Button,
-            {
-                onClick: () => {
-                    if (!selectedType) return;
-                    const limit = 10;
-                    const q = formatMultiCardinalTableAsSelectQuery(
-                        `<${selectedType}>`,
-                        properties,
-                        limit
-                    );
-                    setEditorText(q);
-                    switchToEditorTab();
-                    Template.GenerateComplexTableQueryForm.hideModal();
-                },
-                style: {
-                    width: "fit-content",
-                },
-            },
-            "Create sparql",
-        ),
     );
 }
 
