@@ -6,18 +6,18 @@
 
 meteor-base@1.5.2             # Packages every Meteor app needs to have
 mobile-experience@1.1.2       # Packages for a great mobile UX
-mongo@2.2.0                   # The database Meteor supports right now
+mongo@2.1.4                   # The database Meteor supports right now
 blaze-html-templates    # Compile .html files into Meteor Blaze views
 #jquery                  # Wrapper package for npm-installed jquery
 reactive-var@1.0.13            # Reactive variable for tracker
 tracker@1.3.4                 # Meteor's client-side reactive programming library
 
-standard-minifier-css@1.10.0   # CSS minifier run for production mode
-standard-minifier-js@3.2.0    # JS minifier run for production mode
+standard-minifier-css@1.9.3   # CSS minifier run for production mode
+standard-minifier-js@3.1.1    # JS minifier run for production mode
 es5-shim@4.8.1                # ECMAScript 5 compatibility for older browsers
-ecmascript@0.17.0              # Enable ECMAScript2015+ syntax in app code
-typescript@5.9.3              # Enable TypeScript syntax in .ts and .tsx modules
-shell-server@0.7.0            # Server-side component of the `meteor shell` command
+ecmascript@0.16.13              # Enable ECMAScript2015+ syntax in app code
+typescript@5.6.6              # Enable TypeScript syntax in .ts and .tsx modules
+shell-server@0.6.2            # Server-side component of the `meteor shell` command
 
 
 
@@ -26,7 +26,7 @@ blaze-hot               # Update files using Blaze's API with HMR
 
 roles@1.0.1
 matb33:collection-hooks
-accounts-password@3.2.2
+accounts-password@3.2.1
 ostrio:flow-router-extra
 underscore
 zodern:types
@@ -34,4 +34,3 @@ universe:i18n
 session@1.2.2
 reywood:publish-composite
 spacebars-compiler
-rspack
