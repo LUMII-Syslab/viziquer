@@ -313,13 +313,42 @@ function TableViewMsgs() {
 }
 
 function DeduplicatedTableView() {
+    const [deduplicationKey, setDeduplicationKey] = useState(
+        /** @type {string | undefined} */ (undefined)
+    );
+
     const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
     const reshapedData = tableRes ? reshapeData(tableRes) : null;
 
-    const rows = reshapedData && deduplicateTable(reshapedData);
+    const rows = reshapedData && deduplicateTable(reshapedData, deduplicationKey);
     const properties = (rows && (rows.length >= 1)) ? Object.keys(rows[0].props) : undefined;
+    // NOTE: This set of properties is selected differently because deduplicateTable renames the id
+    // column.
+    const deduplicationKeySuggestions = reshapedData?.head.vars;
 
-    return rows && properties && createElement(AggregatedTable, { properties, rows });
+    return rows && properties && createElement(
+        "div",
+        {},
+        createElement(
+            "select",
+            {
+                value: deduplicationKey,
+                // @ts-ignore
+                onChange: (e) => setDeduplicationKey(e.target.value),
+                style: {
+                    padding: `${rem(0.5)} ${rem(1)}`,
+                    border: "1px solid #aaa",
+                    borderRadius: rem(0.5),
+                },
+            },
+            deduplicationKeySuggestions?.map((item) => createElement(
+                "option",
+                { value: item, key: item },
+                item,
+            )),
+        ),
+        createElement(AggregatedTable, { properties, rows }),
+    );
 }
 
 export function ExtendedTableView() {
