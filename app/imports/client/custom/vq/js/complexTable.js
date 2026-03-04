@@ -321,10 +321,13 @@ function DeduplicatedTableView() {
     const reshapedData = tableRes ? reshapeData(tableRes) : null;
 
     const rows = reshapedData && deduplicateTable(reshapedData, deduplicationKey);
-    const properties = (rows && (rows.length >= 1)) ? Object.keys(rows[0].props) : undefined;
-    // NOTE: This set of properties is selected differently because deduplicateTable renames the id
-    // column.
-    const deduplicationKeySuggestions = reshapedData?.head.vars;
+
+    const firstRow = rows?.[0];
+
+    if (!firstRow) return undefined;
+
+    const properties = Object.keys(firstRow.props);
+    const deduplicationKeySuggestions = [firstRow.idName, ...properties];
 
     return rows && properties && createElement(
         "div",
