@@ -1445,7 +1445,7 @@ function setClassList0() {
 	setClassListInfo(classes, restClasses);
 
 	if ( dataShapes.schema.diagram.properties != undefined) {
-    console.log('AAAAAAAAAAAAAAA', dataShapes.schema.diagram.properties)
+    //console.log('AAAAAAAAAAAAAAA', dataShapes.schema.diagram.properties)
 		const properties = dataShapes.schema.diagram.properties;
     let propF = [];
 		Template.VQ_DSS_schema.Properties.set(properties);
@@ -2240,238 +2240,6 @@ function showClasses(basic = false) {
 	Template.VQ_DSS_schema.ClassCountAbstr.set(abstrCount);
 }
 // *** Salasa sākotnējās klases un to propertijas
-async function getBasicClasses_Old() {
-	//console.log('Izsauc - getBasicClasses')
-	  clearData();
-	  //state = 1;
-	  const classesAndProperties = await getClassesAndProperties(); // Var pateikt, ka nav jāliek virsklases klāt
-	  rezFull.namespaces = classesAndProperties[2];
-	  const c_list = classesAndProperties[0];
-	  let p_list = classesAndProperties[1];
-	//const rr0 = await dataShapes.callServerFunction("xx_getPropList2", {main: { c_list: `${c_list}`}});
-	//console.log('getBasicClasses- propertiju saraksta salīdzināšana', p_list.length, rr0.data.length)
-	  params = getParams();
-	  let rr;
-	  const addIds = params.addIds;
-	  //const compView = params.compView; // Atribūtu parametrs
-	  let allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
-	  has_cpc = false;
-	  let cp_info;
-  
-	  rr = await dataShapes.callServerFunction("xx_getClassListInfo", allParams);
-	console.log('$$$$$$$$$', rr.data)
-	  // Pamata klašu saraksta izveidošana
-	  _.each(rr.data, function(cl) {
-		  const id = `c_${cl.id}`;
-		  let type = 'Class';
-		  if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
-			  type = 'Classif';
-		  }
-  
-		  cl.cnt = Number(cl.cnt);
-		  let full_name = `${cl.full_name} (weight-${roundCount(cl.cnt_sum)} (${roundCount(cl.cnt)} ${roundCount(cl.in_props)}))`;
-		  let full_name_d = `${cl.full_name} (${roundCount(cl.cnt)})`;
-  
-		  if ( addIds ) {
-			  full_name = `${full_name} ID-${cl.id}`;
-			  full_name_d = `${full_name_d} ID-${cl.id}`;
-		  }
-			  rezFull.classes[id] = { id:id, displayName:cl.full_name, id_id:cl.id, c_list_id:[cl.id], super_classes:[], sub_classes:[],
-				  used:true, hasGen:false, type:type, fullName:full_name, fullNameD:full_name_d,
-				  sup:cl.s, sub:cl.b, sup0:cl.s0, sub0:cl.b0, cnt:cl.cnt, cnt_sum:cl.cnt_sum, in_props:cl.in_props,
-				  atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[] };
-	  });
-  
-	  if ( params.cover) // TODO Jāpadomā, vai šim nevajag atsevišķu pazīmi
-		  rr = await dataShapes.callServerFunction("xx_getCCInfo", allParams);
-	  else
-		  rr = await dataShapes.callServerFunction("xx_getCCInfoNew", allParams);
-  
-	  // DB virsklašu informācijas pielikšana
-	  for (const cl of rr.data) {
-		  const id1 = `c_${cl.class_1_id}`;
-		  const id2 = `c_${cl.class_2_id}`;
-		  rezFull.classes[id1].super_classes.push(id2);
-		  rezFull.classes[id2].sub_classes.push(id1);
-		  rezFull.classes[id1].used = true;
-		  rezFull.classes[id2].used = true;
-		  rezFull.classes[id1].hasGen = true;
-		  rezFull.classes[id2].hasGen = true;
-	  }
-  
-	  //rr = await dataShapes.callServerFunction("xx_getCPCInfo", allParams);
-	  allParams.main.p_list =  p_list.map(v => v.id);
-	  rr = await getCPCRels(allParams);
-  
-	  cpc_info = rr.data;
-	  if ( cpc_info.length > 0 ) {
-		  has_cpc = true;
-		  for (const cpc of cpc_info) {
-			  cpc.cnt = Number(cpc.cnt);
-		  }
-	  }
-	  rr = await dataShapes.callServerFunction("xx_getCCInfo_Type3", allParams);
-	  cc_info_type3 = rr.data;
-  
-	  //rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams);
-	  //cp_info = rr.data;
-	  cp_info = await getCPRels(allParams);
-	//console.log('getBasicClasses- Dabūjām cp_rels')
-	  // 55555555 Testam (ņemam tikai īpašās propertijas)
-	  allParams.main.p_list =  p_list.map(v => v.id);
-	  //const tt = await dataShapes.callServerFunction("xx_getCPInfoNew", allParams);
-	  //p_list = p_list.filter(function(p){ return tt.diffs.pIds.includes(p.id)});
-	  //console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', p_list);
-  
-	  // Propertiju saraksta sākotnējā apstrāde, savāc galus
-	  for (const p of p_list) {
-		  const p_id = `p_${p.id}`;
-		  const p_name = `${p.prefix}:${p.display_name}`;
-  
-		  const cp_info_p = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) && cp.cover_set_index > 0; });
-		  const cp_info_p_full = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) });
-		  const cp_info_p_o =  cp_info_p.filter(function(cp){ return cp.type_id == 2 && cp.object_cnt > 0; });
-		  const c_from = cp_info_p.filter(function(cp){ return cp.type_id == 2});
-		  const c_from_full = cp_info_p_full.filter(function(cp){ return cp.type_id == 2});
-		  const c_to_full = cp_info_p_full.filter(function(cp){ return cp.type_id == 1});
-		  let c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1});
-		  if (cp_info_p_o.length == 0 )
-			  c_to = [];
-  
-		  if ( p.max_cardinality == -1 )
-			  p.max_cardinality = '*';
-		  p_list_full[p_id] = {id:p.id, p_name:p_name, c_from:c_from, c_to:c_to, iri:p.iri, c_from_full:c_from_full, c_to_full:c_to_full,
-			  cnt:Number(p.cnt), object_cnt:Number(p.object_cnt), count:0, max_cardinality:p.max_cardinality};
-  
-		  if ( c_to.length == 1 && p.range_class_id == c_to[0].class_id)  // TODO te varētu būt drusku savādāk, šie ir Aigas atrastie
-			  p_list_full[p_id].range_id = `c_${p.range_class_id}`;
-		  else
-			  p_list_full[p_id].range_id = '';
-  
-		  if ( c_from.length == 1 && p.domain_class_id == c_from[0].class_id) // Te nezin kāpēc bija  _from.length > 0
-			  p_list_full[p_id].is_domain = 'D';
-		  else
-			  p_list_full[p_id].is_domain = '';
-	  }
-	console.log(p_list_full)
-	//console.log('getBasicClasses- Pirmais cikls beidzās')
-	  // Funkcija propertijas pielikšanai, tiek izsaukta divās vietās
-	  function addProperty(pp, c_from, c_to) {
-		  if ( c_from.length > 0  && c_to.length == 0) {
-			  for (const cl of c_from) {
-				  const cl_id = `c_${cl.class_id}`;
-				  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(cl.cnt), cnt2:Number(cl.cnt), object_cnt:Number(cl.object_cnt),
-					  is_domain:pp.is_domain, range_id:'', max_cardinality:pp.max_cardinality, class_list:[], cnt_full:Number(pp.cnt)};
-				  rezFull.classes[cl_id].atr_list.push(p_info);
-				  rezFull.classes[cl_id].used = true;
-				  if ( !rezFull.classes[cl_id].all_atr.includes(pp.id)) rezFull.classes[cl_id].all_atr.push(pp.id);
-			  }
-		  }
-		  else if ( c_from.length > 0  && c_to.length > 0) {
-			  for (const c_1 of c_from) {
-				  const from_id = `c_${c_1.class_id}`;
-				  if ( c_1.object_cnt > 0 ) {
-					  let cl_list = c_to.map( c => c.class_id);
-					  //const cpc_i = cpc_info.filter(function(i){ return i.class_id == c_1.class_id && i.property_id == c_1.property_id && i.type_id == c_1.type_id });  // ??? { return i.cp_rel_id == c_1.id });
-					  const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id });
-					  const from_id = `c_${c_1.class_id}`;
-					  if ( has_cpc && cpc_i.length > 0 ) // ( !compView && has_cpc && cpc_i.length > 0 )
-						  cl_list = cpc_i.map( c => c.other_class_id);
-					  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt),
-						  is_domain:pp.is_domain, range_id:pp.range_id, max_cardinality:pp.max_cardinality, class_list:cl_list.sort(), cnt_full:Number(pp.cnt)};
-					  rezFull.classes[from_id].atr_list.push(p_info);
-				  }
-				  else {
-					  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt),
-						  is_domain:pp.is_domain, range_id:'', max_cardinality:pp.max_cardinality, class_list:[], cnt_full:Number(pp.cnt)};
-					  rezFull.classes[from_id].atr_list.push(p_info);
-				  }
-				  rezFull.classes[from_id].used = true;
-				  if ( !rezFull.classes[from_id].all_atr.includes(pp.id)) rezFull.classes[from_id].all_atr.push(pp.id);
-			  }
-			  for (const c_2 of c_to) {
-				  const to_id = `c_${c_2.class_id}`;
-				  let cl_list = c_from.map( c => c.class_id);
-				  //const cpc_i = cpc_info.filter(function(i){ return i.other_class_id == c_2.class_id && i.property_id == c_2.property_id && i.type_id == c_2.type_id});  //{ return i.cp_rel_id == c_2.id });
-				  const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_2.id });
-				  if ( has_cpc && cpc_i.length > 0 ) // ( !compView && has_cpc && cpc_i.length > 0 )
-					  cl_list = cpc_i.map( c => c.other_class_id);
-				  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'in', cnt:Number(c_2.cnt), cnt2:Number(c_2.cnt), object_cnt:Number(c_2.object_cnt),
-					  is_domain:pp.is_domain, range_id:pp.range_id, class_list:cl_list.sort(), cnt_full:Number(pp.cnt)};
-				  rezFull.classes[to_id].atr_list.push(p_info);
-				  rezFull.classes[to_id].used = true;
-				  if ( !rezFull.classes[to_id].all_atr_in.includes(pp.id)) rezFull.classes[to_id].all_atr_in.push(pp.id);
-			  }
-		  }
-	  else {
-		console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHH', pp)
-	  }
-	  }
-  
-	  // Funkcija visu propertiju pielikšanai
-	  function addPropertyFull(pp, c_from, c_to) {
-		  if ( c_from.length > 0 ) {
-			  for (const cl of c_from) {
-				  const cl_id = `c_${cl.class_id}`;
-				  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(cl.cnt), cnt2:Number(cl.cnt), cover_set_index:cl.cover_set_index, cnt_full:Number(pp.cnt)};
-				  rezFull.classes[cl_id].atr_list_full.push(p_info);
-			  }
-		  }
-		  if ( c_to.length > 0 ) {
-			  for (const cl of c_to) {
-				  const cl_id = `c_${cl.class_id}`;
-				  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'in', cnt:Number(cl.cnt), cnt2:Number(cl.cnt), cover_set_index:cl.cover_set_index, cnt_full:Number(pp.cnt)};
-				  rezFull.classes[cl_id].atr_list_full.push(p_info);
-			  }
-		  }
-	  }
-  
-	  //  propertiju pielikšana un visu (arī mantoto) propertiju pielikšana
-	  for (const p of Object.keys(p_list_full)) {
-		  const pp = p_list_full[p];
-		  const c_from = pp.c_from;
-		  let c_to = pp.c_to;
-		  //if (has_cpc)
-		  //	c_to = pp.c_to_full;
-		  addProperty(pp, c_from, c_to);
-		  if ( !unused_props.includes(pp.iri) )
-			  addPropertyFull(pp, pp.c_from_full, pp.c_to_full);
-	  }
-	//console.log('getBasicClasses- Otrais cikls beidzās')
-	  // Iztūkstošo propertiju pievienošana (pārbaudot arī apkārtni)
-	  for (const cl of Object.keys(rezFull.classes)) {
-		  let cl_info = rezFull.classes[cl];
-  
-		  for (const s of cl_info.sub) {
-			  if ( s != cl_info.id) {
-				  cl_info.all_atr = [...new Set([...cl_info.all_atr, ...rezFull.classes[`c_${s}`].all_atr])];
-				  cl_info.all_atr_in = [...new Set([...cl_info.all_atr_in, ...rezFull.classes[`c_${s}`].all_atr_in])];
-			  }
-		  }
-		  for (const s of cl_info.sup) {
-			  if ( s != cl_info.id) {
-				  cl_info.all_atr = [...new Set([...cl_info.all_atr, ...rezFull.classes[`c_${s}`].all_atr])];
-				  cl_info.all_atr_in = [...new Set([...cl_info.all_atr_in, ...rezFull.classes[`c_${s}`].all_atr_in])];
-			  }
-		  }
-  
-		  const cp_info_p = cp_info.filter(function(cp){ return cp.class_id == cl_info.id && cp.type_id == 2 && cp.cover_set_index > 0;}).map(cp => cp.property_id); // ??? Kāpēc te ir cp.cover_set_index > 0
-		  for (const p of cp_info_p) {
-			  if ( !cl_info.all_atr.includes(p)) {
-				  console.log('******** Pieliek papildus propertiju ***********', cl_info.fullNameD, p_list_full[`p_${p}`].p_name)
-				  const c_from = cp_info.filter(function(cp){
-					  return cp.type_id == 2 && cp.property_id == p && cp.class_id == cl_info.id;
-				  });
-				  const c_to = cp_info.filter(function(cp){
-					  return cp.type_id == 1 && cp.property_id == p && c_list.includes(cp.class_id) && cp.cover_set_index > 0;
-				  });
-				  addProperty(p_list_full[`p_${p}`], c_from, c_to);
-			  }
-		  }
-	  }
-	  //console.log('getBasicClasses- p_list_full', p_list_full);
-	  //console.log('rezFull', rezFull);
-}
 async function getBasicClasses() {
   //console.log('Izsauc - getBasicClasses')
 	clearData();
@@ -2567,8 +2335,9 @@ async function getBasicClasses() {
 		const c_from_full = cp_info_p_full.filter(function(cp){ return cp.type_id == 2});
 		const c_to_full = cp_info_p_full.filter(function(cp){ return cp.type_id == 1});
 		let c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1});
-		if (cp_info_p_o.length == 0 )
-			c_to = [];
+
+		//if (cp_info_p_o.length == 0 )  // TODO Šis liekas bija kaut kādiem ne gluži labiem datiem 
+		//	c_to = [];
 
 		if ( p.max_cardinality == -1 )
 			p.max_cardinality = '*';
@@ -2599,7 +2368,7 @@ async function getBasicClasses() {
 				if ( !rezFull.classes[cl_id].all_atr.includes(pp.id)) rezFull.classes[cl_id].all_atr.push(pp.id);
 			}
 		}
-		else if ( c_from.length > 0  && c_to.length > 0) {
+		else if ( c_from.length > 0  || c_to.length > 0) {  // TODO te bija && 
 			for (const c_1 of c_from) {
 				const from_id = `c_${c_1.class_id}`;
 				if ( c_1.object_cnt > 0 ) {
@@ -3118,7 +2887,12 @@ function countAssociations() {
 function makeAssociations() {
 	const remBig = params.disconnBig > 0;
 	const remCount = params.disconnBig;
-	const hideSmall = params.hideSmall;
+	let hideSmall = params.hideSmall;
+	let showEssent = 0;
+	if ( hideSmall < 0 ) {
+		showEssent = -1/hideSmall;
+		hideSmall = 0;
+	} 
 	const showIntersect = params.showIntersect;
 
 	function findNewClassList(atr, type = '') {
@@ -3170,11 +2944,11 @@ function makeAssociations() {
 	}
 
 	// Savelk asociācijas
-	for (const clId of Object.keys(rezFull.classes)) {
+	for (const clId of Object.keys(rezFull.classes)) { 
 		const classInfo = rezFull.classes[clId];
 		if ( classInfo.used) {
 			for ( const atr of classInfo.atr_list) {
-				if ( atr.type == 'out' && atr.cnt > 0 && atr.cnt_full > hideSmall ) {
+				if ( atr.type == 'out' && atr.cnt > 0 && atr.cnt_full > hideSmall && atr.object_cnt > classInfo.cnt*showEssent ) {
 					let hasAssoc = false;
 					if ( has_cpc ) {
 						const cpc_info_full = cpc_info.filter(function(i){
