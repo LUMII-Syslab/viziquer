@@ -563,6 +563,7 @@ const dataShapes = {
 
 					if (this.schema.schemaType === 'wikidata')
 						this.schema.simple_prompt = true;
+
 					this.schema.classCount = await this.getClassCount();
 					this.schema.has_cpc = await this.getCPC_info();
 					const propInfo = await this.getPropInfo();
@@ -570,13 +571,13 @@ const dataShapes = {
 					this.schema.propMax = propInfo.max;
 					if ( this.schema.classCount < DIAGRAM_CLASS_LIMIT) {
 						this.schema.diagram.classList = await this.getClassListExt();
-            this.schema.diagram.filteredClassList = this.schema.diagram.classList;
+            			this.schema.diagram.filteredClassList = this.schema.diagram.classList;
 						this.schema.diagram.properties = await this.getPropListExt();
-            for (const p of this.schema.diagram.properties) {
-              p.cnt = Number(p.cnt);
-              p.object_cnt = Number(p.object_cnt);
-              p.full_name = `${p.prefix}:${p.display_name}`;
-            }
+            			for (const p of this.schema.diagram.properties) {
+            				p.cnt = Number(p.cnt);
+            				p.object_cnt = Number(p.object_cnt);
+            				p.full_name = `${p.prefix}:${p.display_name}`;
+            			}
 					}
 					this.schema.filling = 3;
 

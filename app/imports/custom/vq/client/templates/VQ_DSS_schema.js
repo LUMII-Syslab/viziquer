@@ -195,7 +195,7 @@ Template.VQ_DSS_schema.helpers({
 	restProperties: function() {
 		return Template.VQ_DSS_schema.RestProperties.get();
 	},
-  propertiesF: function() {
+	propertiesF: function() {
     //console.log('Helperis', Template.VQ_DSS_schema.propertiesF.get())
 		return Template.VQ_DSS_schema.PropertiesF.get();
 	},
@@ -205,12 +205,12 @@ Template.VQ_DSS_schema.helpers({
 	has_cpc: function () {
 		return Template.VQ_DSS_schema.HasCPC.get();
 	},
-  showFragmentBlock: function() {
-    return Template.VQ_DSS_schema.ShowFragmentBlock.get();
-  },
-  fragmentForm: function() {
-    return Template.VQ_DSS_schema.fragmentForm.get();
-  },
+	showFragmentBlock: function() {
+    	return Template.VQ_DSS_schema.ShowFragmentBlock.get();
+	},
+	fragmentForm: function() {
+    	return Template.VQ_DSS_schema.fragmentForm.get();
+	},
 });
 
 function getParams() {
@@ -240,14 +240,14 @@ function getInfo() {
 			$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text()];
 }
 
-async function getClassesAndProperties(addSupClasses = true) {
+async function getClassesAndProperties(addSupClasses = true) {  
 	//addSupClasses Pagaidām ir konstante, bet būs iespēja virsklašu pielikšanu atslēgt
 	let classList = Template.VQ_DSS_schema.Classes.get();
-  let classIds = classList.map(v => v.id);
+	let classIds = classList.map(v => v.id);
 	let namespaces = {};
 	let namespacesL = [];
-  if (!$("#addSup").is(":checked"))
-    addSupClasses = false;
+	if (!$("#addSup").is(":checked"))
+    	addSupClasses = false;
 
 	if (addSupClasses) {
 		let all_s = [];
@@ -258,13 +258,13 @@ async function getClassesAndProperties(addSupClasses = true) {
 			else cl.sel = 0;
 		});
 	}
-  else
-  {
-    _.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+	else
+	{
+    	_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
 			if ( classIds.includes(cl.id)) cl.sel = 1;
 			else cl.sel = 0;
 		});
-  }
+	}
 
 	classList = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 1});
 
@@ -300,6 +300,19 @@ async function getClassesAndProperties(addSupClasses = true) {
 		//namespacesL = namespacesL.sort((a, b) => { return b.cnt - a.cnt; })
 	}
 
+    let propT = [];  // TODO Te būs jāprecizē
+	let propS = [];
+    for (const p of dataShapes.schema.diagram.properties) {
+      if ( !unused_orphan_props.includes(p.full_name)) {
+		if ( p.object_cnt !== 0 && p.type_1 === '0') {
+		  propT.push(p);  	
+		}
+		if ( p.object_cnt != 0 && p.type_2 === '0' && p.isFollower === '0') {
+		  propS.push(p);	
+		}
+	  }	
+    }
+console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%', propT, propS)
 	namespacesL.unshift({name:`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`,cnt:namespaces[dataShapes.schema.local_ns]});
 	return [classList, propList, namespacesL];
 }
@@ -1039,20 +1052,22 @@ Template.VQ_DSS_schema.events({
   },
   'click #freeProp': function() {
     let freeProp = false;
-		if ( $("#freeProp").is(":checked") ) {
-      freeProp = true;
-		}
-		const properties = dataShapes.schema.diagram.properties;
+	if ( $("#freeProp").is(":checked") ) {
+    	freeProp = true;
+	}
+	const properties = dataShapes.schema.diagram.properties;
     let propF = [];
     for (const p of properties) {
-      if ( freeProp) {
-        if ( p.object_cnt !== 0 && ( p.type_1 === '0' || p.type_2 === '0')) {
-          propF.push(p);
+      if ( !unused_orphan_props.includes(p.full_name)) {
+        if ( freeProp) {
+          if ( p.object_cnt !== 0 && ( p.type_1 === '0' || p.type_2 === '0')) {
+            propF.push(p);
+          }
         }
-      }
-      else {
-        if ( p.object_cnt !== 0 ) {
-          propF.push(p);
+        else {
+          if ( p.object_cnt !== 0 && ( p.source_cover_complete === false || p.target_cover_complete === false ) ) {
+            propF.push(p);
+          }
         }
       }
     }
@@ -1078,8 +1093,8 @@ Template.VQ_DSS_schema.events({
 		}
 	},
   'click #propMoveL': function() {
-		if ($("#propertiesFS").val() != undefined) {
-			const selected = $("#propertiesFS").val().map(v => Number(v));
+	if ($("#propertiesFS").val() != undefined) {
+	  const selected = $("#propertiesFS").val().map(v => Number(v));
       let propFS = [];
       let propF = Template.VQ_DSS_schema.PropertiesF.get();
       for (const cl of Template.VQ_DSS_schema.PropertiesFS.get()) {
@@ -1094,29 +1109,35 @@ Template.VQ_DSS_schema.events({
       propFS = propFS.sort(function(a,b){ return b.cnt-a.cnt;});
       Template.VQ_DSS_schema.PropertiesF.set(propF);
       Template.VQ_DSS_schema.PropertiesFS.set(propFS);
-		}
-	},
+	}
+  },
   'click #makeDiagrAJOOProperties': async function() {
     const propSelected = Template.VQ_DSS_schema.PropertiesFS.get();
+    let freeProp = false;
+		if ( $("#freeProp").is(":checked") ) {
+      freeProp = true;
+		}
     if ( propSelected.length === 0 ) {
       return;
     }
     const propSelectedIds = propSelected.map(v => v.id);
+    console.log('Kādas propertijas ir atlasītas', propSelected)
     console.log('Kādas propertijas ir atlasītas', propSelectedIds)
 
     let allParams = {main: {p_list: propSelectedIds, props:true}};
     let rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams);
     const cp_info = rr.data;
+    console.log(cp_info)
     for (const cp of cp_info) {
       if ( cp.type_id == 2 )
         cp.name = `NO ${cp.prefix}:${cp.display_name} (${cp.cnt})`;
-      else
-      cp.name = `UZ ${cp.prefix}:${cp.display_name} (${cp.cnt})`;
+      else if ( cp.type_id == 1 )
+        cp.name = `UZ ${cp.prefix}:${cp.display_name} (${cp.cnt})`;
     }
     console.log('CP_rels_info', rr.data)
     rr = await dataShapes.callServerFunction("xx_getPPInfo", allParams);
     const pp_info = rr.data;
-    console.log('PP_rels_info', rr.data)
+    console.log('PP_rels_info', rr.data.length)
 
     let prop_tree = {};
     let namespaces = {};
@@ -1132,12 +1153,28 @@ Template.VQ_DSS_schema.events({
       prop_tree[p.id] = {id:p.id, p_name:p.p_name, full_name:p.full_name, prefix:p.prefix, c_from:c_from, c_to:c_to, cnt:Number(p.cnt), type_1:p.type_1, type_2: p.type_2,
         pp_type_1a: pp_info_type_1a, pp_type_1b: pp_info_type_1b, pp_type_2: pp_info_type_2, pp_type_3: pp_info_type_3 };
 
+      if ( freeProp ) {
+        if ( p.type_2 === '0' ) {
+          prop_tree[p.id].putSource = true;
+        }
+        if ( p.type_1 === '0' ) {
+          prop_tree[p.id].putTarget = true;
+        }
+      }
+      else {
+        if ( !p.source_cover_complete ) {
+          prop_tree[p.id].putSource = true;
+        }
+        if ( !p.target_cover_complete ) {
+          prop_tree[p.id].putTarget = true;
+        }
+      }
+
       if ( namespaces[p.prefix] == undefined )
         namespaces[p.prefix] = 1;
       else
         namespaces[p.prefix] = namespaces[p.prefix] + 1;
     }
-
 
     let prop_full_names = {};
     for (const p of dataShapes.schema.diagram.properties) {
@@ -1161,24 +1198,36 @@ Template.VQ_DSS_schema.events({
       diagram_description:`Propertiju diagramma`
     };
 
+    let connected = {};
+    function put_line(line_type, source, target, compartments) {
+      table_representation[line_type][`${source}_${target}`] = { source: source, target: target, compartments: compartments};
+      connected[source] = true;
+      connected[target] = true;
+
+    }
     for (const k of Object.keys(prop_tree)) {
 			const el = prop_tree[k];
 
-      if ( el.type_2 === '0' ) {
+      if ( el.putSource) {
         let p_in = [];
         for (const pp of el.pp_type_1b) {
           p_in.push({name: `Ienāk ${prop_full_names[pp.property_1_id]} cnt-${pp.cnt}`, cnt:pp.cnt});
-          if ( prop_tree[pp.property_1_id] !== undefined &&  prop_tree[pp.property_1_id].type_1 === '0')
-            table_representation.Intersect[`S${el.id}_T${pp.property_1_id}`] = { source: `T2_${el.id}`, target: `T1_${pp.property_1_id}`, compartments:{ Information: `Savienojas - ${pp.cnt}`}};
+          connected[`T2_${el.id}`] = true;
+          if ( prop_tree[pp.property_1_id] !== undefined && prop_tree[pp.property_1_id].putTarget) {
+            put_line('Intersect', `T2_${el.id}`, `T1_${pp.property_1_id}`, { Information: `Savienojas - ${pp.cnt}`});
+            //table_representation.Intersect[`S${el.id}_T${pp.property_1_id}`] = { source: `T2_${el.id}`, target: `T1_${pp.property_1_id}`, compartments:{ Information: `Savienojas - ${pp.cnt}`}};
+            //connected[`T2_${el.id}`] = true;
+            //connected[`T1_${pp.property_1_id}`] = true;
+          }
         }
         // for (const pp of el.pp_type_1a) {
         //  p_in.push({name:` Ienāk 21 ${prop_tree[pp.property_2_id].full_name} (${pp.cnt})`, cnt:pp.cnt});
         //}
         //if ( el.type_1 === '0' || p_in.length > 0 && el.c_to.length > 0 ) {
           table_representation.Class[`T2_${el.id}`] = { compartments:{
-            Name:`Source for ${el.p_name}`,
+            Name:`Source for ${el.p_name} ID-${el.id}`,
             AttributesT:{out:p_in, in:el.c_to, c:[]},
-            ClassList:[{cnt:el.cnt, shortName:el.display_name, name:el.p_name}]},
+            ClassList:[{cnt:el.cnt, shortName:el.full_name, name:`Source for ${el.p_name}`}]},
             TypeOld:'Class',
             TypeNew:'Classifier',
             Cnt:el.cnt
@@ -1189,21 +1238,24 @@ Template.VQ_DSS_schema.events({
         //  table_representation.Class[`T2_${el.id}`].TypeNew = 'Class0';
       }
 
-      if ( el.type_1 === '0' ) {
+      if ( el.putTarget ) {
         let p_out = [];
         for (const pp of el.pp_type_1a) {
-          p_out.push({name:` Iziet ${prop_full_names[pp.property_2_id]} cnt-${pp.cnt}`, cnt:pp.cnt});
-          if ( prop_tree[pp.property_2_id] !== undefined &&  prop_tree[pp.property_2_id].type_2 === '0')
-            table_representation.Intersect[`T${el.id}_S${pp.property_2_id}`] = { source: `T1_${el.id}`, target: `T2_${pp.property_2_id}`, compartments:{ Information: `Savienojas - ${pp.cnt}`}};
+          p_out.push({name:`Iziet ${prop_full_names[pp.property_2_id]} cnt-${pp.cnt}`, cnt:pp.cnt});
+          connected[`T1_${el.id}`] = true;
+          if ( prop_tree[pp.property_2_id] !== undefined &&  prop_tree[pp.property_2_id].putSource) {
+            put_line('Intersect', `T1_${el.id}`, `T2_${pp.property_2_id}`, { Information: `Savienojas - ${pp.cnt}`});
+            //table_representation.Intersect[`T${el.id}_S${pp.property_2_id}`] = { source: `T1_${el.id}`, target: `T2_${pp.property_2_id}`, compartments:{ Information: `Savienojas - ${pp.cnt}`}};
+          }
         }
         //for (const pp of el.pp_type_1b) {
         //  p_out.push({name: `Iziet 21 ${prop_tree[pp.property_1_id].full_name} (${pp.cnt})`, cnt:pp.cnt});
         //}
         //if ( el.type_2 === '0' || p_out.length > 0 && el.c_from.length > 0 ) {
           table_representation.Class[`T1_${el.id}`] = { compartments:{
-            Name:`Target for ${el.p_name}`,
+            Name:`Target for ${el.p_name} ID-${el.id}`,
             AttributesT:{out:el.c_from, in:p_out, c:[]},
-            ClassList:[{cnt:el.cnt, shortName:el.display_name, name:el.p_name}]},
+            ClassList:[{cnt:el.cnt, shortName:el.full_name, name:`Target for ${el.p_name}`}]},
             TypeOld:'Class',
             TypeNew:'Class',
             Cnt:el.cnt
@@ -1218,28 +1270,31 @@ Template.VQ_DSS_schema.events({
 
     for (const k of Object.keys(prop_tree)) {
 			const el = prop_tree[k];
-      if ( el.type_2 === '0' && table_representation.Class[`T2_${el.id}`] !== undefined ) {
+      if ( el.putSource && table_representation.Class[`T2_${el.id}`] !== undefined ) {
         if (el.pp_type_2.length > 0 ) {
           for (const el2 of el.pp_type_2) {
             if (table_representation.Class[`T2_${el2.property_2_id}`] !== undefined) {
               if ( el.id !==  el2.property_2_id) {
-                table_representation.ObjectProperty[`T2_${el.id }_T2_${el2.property_2_id}`] = { source: `T2_${el.id}`, target: `T2_${el2.property_2_id}`, compartments:{ Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]}};
+                put_line('ObjectProperty', `T2_${el.id}`, `T2_${el2.property_2_id}`, { Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]});
+                //table_representation.ObjectProperty[`T2_${el.id }_T2_${el2.property_2_id}`] = { source: `T2_${el.id}`, target: `T2_${el2.property_2_id}`, compartments:{ Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]}};
               }
             }
           }
         }
       }
-      if ( el.type_1 === '0' && table_representation.Class[`T1_${el.id}`] !== undefined ) {
+      if ( el.putTarget && table_representation.Class[`T1_${el.id}`] !== undefined ) {
         if (el.pp_type_3.length > 0 ) {
           for (const el2 of el.pp_type_3) {
             if (table_representation.Class[`T1_${el2.property_2_id}`] !== undefined) {
               if ( el.id !== el2.property_2_id) {
-                table_representation.ObjectProperty[`T1_${el.id}_T1_${el2.property_2_id}`] = { source: `T1_${el.id}`, target: `T1_${el2.property_2_id}`, compartments:{ Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]}};
+                put_line('ObjectProperty', `T1_${el.id}`, `T1_${el2.property_2_id}`, { Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]});
+                //table_representation.ObjectProperty[`T1_${el.id}_T1_${el2.property_2_id}`] = { source: `T1_${el.id}`, target: `T1_${el2.property_2_id}`, compartments:{ Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]}};
               }
             }
           }
         }
       }
+
       // Nez vai šis ir interesanti ?
       //if ( el.type_2 === '0' &&  el.type_1 === '0' ) {
       //  const idFrom = `T1_${el.id}`;
@@ -1248,37 +1303,46 @@ Template.VQ_DSS_schema.events({
       //}
     }
 
-/*
-    for (const k of Object.keys(prop_tree)) {
-			const el = prop_tree[k];
+    table_representation.Class['T1_0'] = { compartments:{
+      Name:'Targets ... ',
+      AttributesT:{out:[], in:[], c:[]},
+      ClassList:[]},
+      TypeOld:'Class',
+      TypeNew:'Class',
+      IsGroup: true,
+      Cnt:1
+    };
 
-      if ( el.type_2 === '0' ) {
-        table_representation.Class[el.id] = { compartments:{
-          Name:el.p_name,
-          AttributesT:{out:el.c_from, in:el.c_to, c:[]},
-          ClassList:[{cnt:el.cnt, shortName:el.display_name, name:el.p_name}]},
-          TypeOld:'Class',
-          TypeNew:'Class',
-          Cnt:el.cnt
-        };
+    table_representation.Class['T2_0'] = { compartments:{
+      Name:'Sources ... ',
+      AttributesT:{out:[], in:[], c:[]},
+      ClassList:[]},
+      TypeOld:'Class',
+      TypeNew:'Classifier',
+      IsGroup: true,
+      Cnt:1
+    };
 
-
-      }
-      table_representation.Class[el.id] = { compartments:{
-        Name:el.p_name,
-        AttributesT:{out:el.c_from, in:el.c_to, c:[]},
-        ClassList:[{cnt:el.cnt, shortName:el.display_name, name:el.p_name}]},
-        TypeOld:'Class',
-        TypeNew:'Class',
-        Cnt:el.cnt
-      };
-
-      if (el.pp_type_2.length > 0 ) {
-        for (const el2 of el.pp_type_2) {
-          table_representation.ObjectProperty[`${el.id }_${el2.property_2_id}`] = { source: el.id, target: el2.property_2_id, compartments:{ Name: [{name: el2.cnt, shortName: el2.cnt, cnt: el2.cnt}]}};
+    for (const k of Object.keys(table_representation.Class)) {
+      el = table_representation.Class[k];
+      if ( k !== 'T1_0' && k !== 'T2_0') {
+        if ( connected[k] === undefined ) {
+          if ( el.TypeNew === 'Class') {
+            table_representation.Class['T1_0'].compartments.ClassList.push(table_representation.Class[k].compartments.ClassList[0]);
+          }
+          else {
+            table_representation.Class['T2_0'].compartments.ClassList.push(table_representation.Class[k].compartments.ClassList[0]);
+          }
+          delete table_representation.Class[k];
         }
       }
-    } */
+    }
+
+    if ( table_representation.Class['T1_0'].compartments.ClassList.length === 0 )
+      delete table_representation.Class['T1_0'];
+
+    if ( table_representation.Class['T2_0'].compartments.ClassList.length === 0 )
+      delete table_representation.Class['T2_0'];
 
     const nsLoc = dataShapes.schema.namespaces.find(function(n){ return n.name == dataShapes.schema.local_ns });
     let namespacesL = [];
@@ -1293,7 +1357,7 @@ Template.VQ_DSS_schema.events({
     namespacesL.unshift({name:`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`,cnt:namespaces[dataShapes.schema.local_ns]});
     table_representation.Namespaces.n_0.compartments.List = namespacesL;
 
-    console.log(table_representation)
+    console.log(table_representation, connected)
 
     await Meteor.callAsync("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
 
@@ -1387,8 +1451,10 @@ function setClassList0() {
 		Template.VQ_DSS_schema.Properties.set(properties);
 		Template.VQ_DSS_schema.PropCount.set(properties.length);
     for (const p of properties) {
-      if ( p.object_cnt !== 0 && ( p.type_1 === '0' || p.type_2 === '0')) {
-        propF.push(p);
+      if ( !unused_orphan_props.includes(p.full_name )) {
+        if ( p.object_cnt !== 0 && ( p.type_1 === '0' || p.type_2 === '0')) {
+          propF.push(p);
+        }
       }
     }
     Template.VQ_DSS_schema.PropertiesF.set(propF);
@@ -1508,6 +1574,7 @@ const unused_props = [
 	'http://www.w3.org/2004/02/skos/core#prefLabel',
 	'http://www.w3.org/2004/02/skos/core#altLabel',
 	'http://www.w3.org/2000/01/rdf-schema#label' ];
+const unused_orphan_props = [ 'rdf:type', 'rdf:first', 'rdf:rest', 'rdf:value', 'rdf:_1', 'rdf:_2', 'rdf:_3', 'rdf:_4', 'rdf:_5', 'rdfs:label', 'rdfs:comment', 'owl:sameAs' ];
 
 function setPropSliderInfo() {
 	//let propSliderIntValuesTemp = [1,5,10,20,50,100,200,500,1000,2000,5000];  // TODO jāsakrīt ar propSliderIntValues
@@ -2173,16 +2240,248 @@ function showClasses(basic = false) {
 	Template.VQ_DSS_schema.ClassCountAbstr.set(abstrCount);
 }
 // *** Salasa sākotnējās klases un to propertijas
+async function getBasicClasses_Old() {
+	//console.log('Izsauc - getBasicClasses')
+	  clearData();
+	  //state = 1;
+	  const classesAndProperties = await getClassesAndProperties(); // Var pateikt, ka nav jāliek virsklases klāt
+	  rezFull.namespaces = classesAndProperties[2];
+	  const c_list = classesAndProperties[0];
+	  let p_list = classesAndProperties[1];
+	//const rr0 = await dataShapes.callServerFunction("xx_getPropList2", {main: { c_list: `${c_list}`}});
+	//console.log('getBasicClasses- propertiju saraksta salīdzināšana', p_list.length, rr0.data.length)
+	  params = getParams();
+	  let rr;
+	  const addIds = params.addIds;
+	  //const compView = params.compView; // Atribūtu parametrs
+	  let allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
+	  has_cpc = false;
+	  let cp_info;
+  
+	  rr = await dataShapes.callServerFunction("xx_getClassListInfo", allParams);
+	console.log('$$$$$$$$$', rr.data)
+	  // Pamata klašu saraksta izveidošana
+	  _.each(rr.data, function(cl) {
+		  const id = `c_${cl.id}`;
+		  let type = 'Class';
+		  if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+			  type = 'Classif';
+		  }
+  
+		  cl.cnt = Number(cl.cnt);
+		  let full_name = `${cl.full_name} (weight-${roundCount(cl.cnt_sum)} (${roundCount(cl.cnt)} ${roundCount(cl.in_props)}))`;
+		  let full_name_d = `${cl.full_name} (${roundCount(cl.cnt)})`;
+  
+		  if ( addIds ) {
+			  full_name = `${full_name} ID-${cl.id}`;
+			  full_name_d = `${full_name_d} ID-${cl.id}`;
+		  }
+			  rezFull.classes[id] = { id:id, displayName:cl.full_name, id_id:cl.id, c_list_id:[cl.id], super_classes:[], sub_classes:[],
+				  used:true, hasGen:false, type:type, fullName:full_name, fullNameD:full_name_d,
+				  sup:cl.s, sub:cl.b, sup0:cl.s0, sub0:cl.b0, cnt:cl.cnt, cnt_sum:cl.cnt_sum, in_props:cl.in_props,
+				  atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[] };
+	  });
+  
+	  if ( params.cover) // TODO Jāpadomā, vai šim nevajag atsevišķu pazīmi
+		  rr = await dataShapes.callServerFunction("xx_getCCInfo", allParams);
+	  else
+		  rr = await dataShapes.callServerFunction("xx_getCCInfoNew", allParams);
+  
+	  // DB virsklašu informācijas pielikšana
+	  for (const cl of rr.data) {
+		  const id1 = `c_${cl.class_1_id}`;
+		  const id2 = `c_${cl.class_2_id}`;
+		  rezFull.classes[id1].super_classes.push(id2);
+		  rezFull.classes[id2].sub_classes.push(id1);
+		  rezFull.classes[id1].used = true;
+		  rezFull.classes[id2].used = true;
+		  rezFull.classes[id1].hasGen = true;
+		  rezFull.classes[id2].hasGen = true;
+	  }
+  
+	  //rr = await dataShapes.callServerFunction("xx_getCPCInfo", allParams);
+	  allParams.main.p_list =  p_list.map(v => v.id);
+	  rr = await getCPCRels(allParams);
+  
+	  cpc_info = rr.data;
+	  if ( cpc_info.length > 0 ) {
+		  has_cpc = true;
+		  for (const cpc of cpc_info) {
+			  cpc.cnt = Number(cpc.cnt);
+		  }
+	  }
+	  rr = await dataShapes.callServerFunction("xx_getCCInfo_Type3", allParams);
+	  cc_info_type3 = rr.data;
+  
+	  //rr = await dataShapes.callServerFunction("xx_getCPInfo", allParams);
+	  //cp_info = rr.data;
+	  cp_info = await getCPRels(allParams);
+	//console.log('getBasicClasses- Dabūjām cp_rels')
+	  // 55555555 Testam (ņemam tikai īpašās propertijas)
+	  allParams.main.p_list =  p_list.map(v => v.id);
+	  //const tt = await dataShapes.callServerFunction("xx_getCPInfoNew", allParams);
+	  //p_list = p_list.filter(function(p){ return tt.diffs.pIds.includes(p.id)});
+	  //console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', p_list);
+  
+	  // Propertiju saraksta sākotnējā apstrāde, savāc galus
+	  for (const p of p_list) {
+		  const p_id = `p_${p.id}`;
+		  const p_name = `${p.prefix}:${p.display_name}`;
+  
+		  const cp_info_p = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) && cp.cover_set_index > 0; });
+		  const cp_info_p_full = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) });
+		  const cp_info_p_o =  cp_info_p.filter(function(cp){ return cp.type_id == 2 && cp.object_cnt > 0; });
+		  const c_from = cp_info_p.filter(function(cp){ return cp.type_id == 2});
+		  const c_from_full = cp_info_p_full.filter(function(cp){ return cp.type_id == 2});
+		  const c_to_full = cp_info_p_full.filter(function(cp){ return cp.type_id == 1});
+		  let c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1});
+		  if (cp_info_p_o.length == 0 )
+			  c_to = [];
+  
+		  if ( p.max_cardinality == -1 )
+			  p.max_cardinality = '*';
+		  p_list_full[p_id] = {id:p.id, p_name:p_name, c_from:c_from, c_to:c_to, iri:p.iri, c_from_full:c_from_full, c_to_full:c_to_full,
+			  cnt:Number(p.cnt), object_cnt:Number(p.object_cnt), count:0, max_cardinality:p.max_cardinality};
+  
+		  if ( c_to.length == 1 && p.range_class_id == c_to[0].class_id)  // TODO te varētu būt drusku savādāk, šie ir Aigas atrastie
+			  p_list_full[p_id].range_id = `c_${p.range_class_id}`;
+		  else
+			  p_list_full[p_id].range_id = '';
+  
+		  if ( c_from.length == 1 && p.domain_class_id == c_from[0].class_id) // Te nezin kāpēc bija  _from.length > 0
+			  p_list_full[p_id].is_domain = 'D';
+		  else
+			  p_list_full[p_id].is_domain = '';
+	  }
+	console.log(p_list_full)
+	//console.log('getBasicClasses- Pirmais cikls beidzās')
+	  // Funkcija propertijas pielikšanai, tiek izsaukta divās vietās
+	  function addProperty(pp, c_from, c_to) {
+		  if ( c_from.length > 0  && c_to.length == 0) {
+			  for (const cl of c_from) {
+				  const cl_id = `c_${cl.class_id}`;
+				  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(cl.cnt), cnt2:Number(cl.cnt), object_cnt:Number(cl.object_cnt),
+					  is_domain:pp.is_domain, range_id:'', max_cardinality:pp.max_cardinality, class_list:[], cnt_full:Number(pp.cnt)};
+				  rezFull.classes[cl_id].atr_list.push(p_info);
+				  rezFull.classes[cl_id].used = true;
+				  if ( !rezFull.classes[cl_id].all_atr.includes(pp.id)) rezFull.classes[cl_id].all_atr.push(pp.id);
+			  }
+		  }
+		  else if ( c_from.length > 0  && c_to.length > 0) {
+			  for (const c_1 of c_from) {
+				  const from_id = `c_${c_1.class_id}`;
+				  if ( c_1.object_cnt > 0 ) {
+					  let cl_list = c_to.map( c => c.class_id);
+					  //const cpc_i = cpc_info.filter(function(i){ return i.class_id == c_1.class_id && i.property_id == c_1.property_id && i.type_id == c_1.type_id });  // ??? { return i.cp_rel_id == c_1.id });
+					  const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id });
+					  const from_id = `c_${c_1.class_id}`;
+					  if ( has_cpc && cpc_i.length > 0 ) // ( !compView && has_cpc && cpc_i.length > 0 )
+						  cl_list = cpc_i.map( c => c.other_class_id);
+					  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt),
+						  is_domain:pp.is_domain, range_id:pp.range_id, max_cardinality:pp.max_cardinality, class_list:cl_list.sort(), cnt_full:Number(pp.cnt)};
+					  rezFull.classes[from_id].atr_list.push(p_info);
+				  }
+				  else {
+					  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(c_1.cnt), cnt2:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt),
+						  is_domain:pp.is_domain, range_id:'', max_cardinality:pp.max_cardinality, class_list:[], cnt_full:Number(pp.cnt)};
+					  rezFull.classes[from_id].atr_list.push(p_info);
+				  }
+				  rezFull.classes[from_id].used = true;
+				  if ( !rezFull.classes[from_id].all_atr.includes(pp.id)) rezFull.classes[from_id].all_atr.push(pp.id);
+			  }
+			  for (const c_2 of c_to) {
+				  const to_id = `c_${c_2.class_id}`;
+				  let cl_list = c_from.map( c => c.class_id);
+				  //const cpc_i = cpc_info.filter(function(i){ return i.other_class_id == c_2.class_id && i.property_id == c_2.property_id && i.type_id == c_2.type_id});  //{ return i.cp_rel_id == c_2.id });
+				  const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_2.id });
+				  if ( has_cpc && cpc_i.length > 0 ) // ( !compView && has_cpc && cpc_i.length > 0 )
+					  cl_list = cpc_i.map( c => c.other_class_id);
+				  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'in', cnt:Number(c_2.cnt), cnt2:Number(c_2.cnt), object_cnt:Number(c_2.object_cnt),
+					  is_domain:pp.is_domain, range_id:pp.range_id, class_list:cl_list.sort(), cnt_full:Number(pp.cnt)};
+				  rezFull.classes[to_id].atr_list.push(p_info);
+				  rezFull.classes[to_id].used = true;
+				  if ( !rezFull.classes[to_id].all_atr_in.includes(pp.id)) rezFull.classes[to_id].all_atr_in.push(pp.id);
+			  }
+		  }
+	  else {
+		console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHH', pp)
+	  }
+	  }
+  
+	  // Funkcija visu propertiju pielikšanai
+	  function addPropertyFull(pp, c_from, c_to) {
+		  if ( c_from.length > 0 ) {
+			  for (const cl of c_from) {
+				  const cl_id = `c_${cl.class_id}`;
+				  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(cl.cnt), cnt2:Number(cl.cnt), cover_set_index:cl.cover_set_index, cnt_full:Number(pp.cnt)};
+				  rezFull.classes[cl_id].atr_list_full.push(p_info);
+			  }
+		  }
+		  if ( c_to.length > 0 ) {
+			  for (const cl of c_to) {
+				  const cl_id = `c_${cl.class_id}`;
+				  const p_info = {p_name:pp.p_name, p_id:pp.id, type:'in', cnt:Number(cl.cnt), cnt2:Number(cl.cnt), cover_set_index:cl.cover_set_index, cnt_full:Number(pp.cnt)};
+				  rezFull.classes[cl_id].atr_list_full.push(p_info);
+			  }
+		  }
+	  }
+  
+	  //  propertiju pielikšana un visu (arī mantoto) propertiju pielikšana
+	  for (const p of Object.keys(p_list_full)) {
+		  const pp = p_list_full[p];
+		  const c_from = pp.c_from;
+		  let c_to = pp.c_to;
+		  //if (has_cpc)
+		  //	c_to = pp.c_to_full;
+		  addProperty(pp, c_from, c_to);
+		  if ( !unused_props.includes(pp.iri) )
+			  addPropertyFull(pp, pp.c_from_full, pp.c_to_full);
+	  }
+	//console.log('getBasicClasses- Otrais cikls beidzās')
+	  // Iztūkstošo propertiju pievienošana (pārbaudot arī apkārtni)
+	  for (const cl of Object.keys(rezFull.classes)) {
+		  let cl_info = rezFull.classes[cl];
+  
+		  for (const s of cl_info.sub) {
+			  if ( s != cl_info.id) {
+				  cl_info.all_atr = [...new Set([...cl_info.all_atr, ...rezFull.classes[`c_${s}`].all_atr])];
+				  cl_info.all_atr_in = [...new Set([...cl_info.all_atr_in, ...rezFull.classes[`c_${s}`].all_atr_in])];
+			  }
+		  }
+		  for (const s of cl_info.sup) {
+			  if ( s != cl_info.id) {
+				  cl_info.all_atr = [...new Set([...cl_info.all_atr, ...rezFull.classes[`c_${s}`].all_atr])];
+				  cl_info.all_atr_in = [...new Set([...cl_info.all_atr_in, ...rezFull.classes[`c_${s}`].all_atr_in])];
+			  }
+		  }
+  
+		  const cp_info_p = cp_info.filter(function(cp){ return cp.class_id == cl_info.id && cp.type_id == 2 && cp.cover_set_index > 0;}).map(cp => cp.property_id); // ??? Kāpēc te ir cp.cover_set_index > 0
+		  for (const p of cp_info_p) {
+			  if ( !cl_info.all_atr.includes(p)) {
+				  console.log('******** Pieliek papildus propertiju ***********', cl_info.fullNameD, p_list_full[`p_${p}`].p_name)
+				  const c_from = cp_info.filter(function(cp){
+					  return cp.type_id == 2 && cp.property_id == p && cp.class_id == cl_info.id;
+				  });
+				  const c_to = cp_info.filter(function(cp){
+					  return cp.type_id == 1 && cp.property_id == p && c_list.includes(cp.class_id) && cp.cover_set_index > 0;
+				  });
+				  addProperty(p_list_full[`p_${p}`], c_from, c_to);
+			  }
+		  }
+	  }
+	  //console.log('getBasicClasses- p_list_full', p_list_full);
+	  //console.log('rezFull', rezFull);
+}
 async function getBasicClasses() {
   //console.log('Izsauc - getBasicClasses')
 	clearData();
 	//state = 1;
-	const classesAndProperties = await getClassesAndProperties(); // Var pateikt, ka nav jāliek virsklases klāt
+	const classesAndProperties = await getClassesAndProperties(); // Var pateikt, ka nav jāliek virsklases klāt (Tagad ir parametrs formā, kas ir galvenais)
 	rezFull.namespaces = classesAndProperties[2];
 	const c_list = classesAndProperties[0];
 	let p_list = classesAndProperties[1];
-  const rr0 = await dataShapes.callServerFunction("xx_getPropList2", {main: { c_list: `${c_list}`}});
-  console.log('getBasicClasses- Salīdzināšana', p_list.length, rr0.data.length)
+  //const rr0 = await dataShapes.callServerFunction("xx_getPropList2", {main: { c_list: `${c_list}`}});
+  //console.log('getBasicClasses- propertiju saraksta salīdzināšana', p_list.length, rr0.data.length)
 	params = getParams();
 	let rr;
 	const addIds = params.addIds;
@@ -2192,6 +2491,7 @@ async function getBasicClasses() {
 	let cp_info;
 
 	rr = await dataShapes.callServerFunction("xx_getClassListInfo", allParams);
+  console.log('$$$$$$$$$', rr.data)
 	// Pamata klašu saraksta izveidošana
 	_.each(rr.data, function(cl) {
 		const id = `c_${cl.id}`;
@@ -2989,7 +3289,7 @@ function makeDiagramData() {
 			if ( atr_info.type == 'out' ) {
 				if ( p_list_full[`p_${atr_info.p_id}`].in_diagram ) {
 					if ( atr_info.object_cnt_dgr > 0 )
-						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}$ ${u_to_type} dgr,IRI`;
+						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} dgr,IRI`;
 					else
 						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} IRI`;
 				}
