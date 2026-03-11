@@ -272,10 +272,25 @@ Interpreter.customMethods({
 
 		Template.AddLink.fullList.set(asc);
 
+		const properties = dataShapes.schema.diagram.properties;
+		selectedProperties = properties;
+		Template.AddLink.Properties.set(properties);
+		Template.AddLink.PropCount.set(properties.length);
+		Template.AddLink.PropCountRest.set(0);
+		Template.AddLink.RestProperties.set([]);
+
 		$("#add-link-form").modal("show");
 	},
 
 })
+// actual lists
+var selectedProperties = [];
+var restProperties = [];
+// UI
+Template.AddLink.Properties = new ReactiveVar([]);
+Template.AddLink.PropCount = new ReactiveVar("");
+Template.AddLink.RestProperties = new ReactiveVar([]);
+Template.AddLink.PropCountRest = new ReactiveVar('');
 Template.AddLink.JoinLinkText = new ReactiveVar("")
 Template.AddLink.SubqueryLinkText = new ReactiveVar("")
 Template.AddLink.Count = new ReactiveVar("")
@@ -306,6 +321,18 @@ Template.AddLink.helpers({
 	},
 	isDataSchema: function () {
 		return Template.AddLink.isDataSchema.get();
+	},
+	properties: function () {
+		return Template.AddLink.Properties.get();
+	},
+	propCount: function () {
+		return Template.AddLink.PropCount.get();
+	},
+	restProperties: function () {
+		return Template.AddLink.RestProperties.get();
+	},
+	propCountRest: function() {
+		return Template.AddLink.PropCountRest.get();
 	},
 });
 
@@ -755,6 +782,55 @@ Template.AddLink.events({
 		}
 	},
 
+	'click #removeSelectedProp': function () {
+		if ($("#selectedProperties").val() != undefined) {
+			const selected = $("#selectedProperties").val().map(v => Number(v));
+			let propList = Template.AddLink.Properties.get();
+			let restPropList = Template.AddLink.RestProperties.get();
+			for (const p of propList) {
+				if (selected.includes(p.id)) {
+					restPropList.push(p);
+					restProperties.push(p);
+				}
+			}
+			propList = propList.filter(function (p) { return !selected.includes(p.id); }); // UI list
+			selectedProperties = selectedProperties.filter(function (p) { return !selected.includes(p.id); }); // actual list
+
+			Template.AddLink.Properties.set(propList);
+			Template.AddLink.PropCount.set(selectedProperties.length);
+
+			restPropList = restPropList.sort((a, b) => { return b.cnt - a.cnt; }); // UI list
+			restProperties = restProperties.sort((a, b) => { return b.cnt - a.cnt; }); // actual list
+
+			Template.AddLink.RestProperties.set(restPropList);
+			Template.AddLink.PropCountRest.set(restProperties.length);
+		}
+	},
+	'click #addSelectedProp': function () {
+		if ($("#restProperties").val() != undefined) {
+			const selected = $("#restProperties").val().map(v => Number(v));
+			let propList = Template.AddLink.Properties.get();
+			let restPropList = Template.AddLink.RestProperties.get();
+			for (const p of restPropList) {
+				if (selected.includes(p.id)) {
+					propList.push(p);
+					selectedProperties.push(p)
+				}
+			}
+			restPropList = restPropList.filter(function (p) { return !selected.includes(p.id); }); // UI list
+			restProperties = restProperties.filter(function (p) { return !selected.includes(p.id); }); // actual list
+
+			propList = propList.sort((a, b) => { return b.cnt - a.cnt; }); // UI list
+			selectedProperties = selectedProperties.sort((a, b) => { return b.cnt - a.cnt; }); // actual list
+
+			Template.AddLink.Properties.set(propList);
+			Template.AddLink.PropCount.set(selectedProperties.length);
+
+			Template.AddLink.RestProperties.set(restPropList);
+			Template.AddLink.PropCountRest.set(restProperties.length);
+		}
+	},
+
 	//Menu listeners
 	"click #add-link-type-choice": async function () {
 		var checkedName = $('input[name=type-radio]').filter(':checked').val(); // console.log(checkedName);
@@ -887,6 +963,24 @@ Template.AddLink.events({
 			}
 
 			Template.AddLink.fullList.set(asc);
+		}
+		return;
+	},
+	'keyup #mySearchProps': async function (e) {
+		linkKeyDownTimeStamp = e.timeStamp;
+		await delay(delayTime);
+		if (linkKeyDownTimeStamp === e.timeStamp) {
+			var filter = $("#mySearchProps").val().toLowerCase();
+			if (filter != null && filter != "") {
+				const filteredProps = selectedProperties.filter(function (p) { return p.full_name.toLowerCase().includes(filter); });
+				const filteredRestProps = restProperties.filter(function (p) { return p.full_name.toLowerCase().includes(filter); });
+				Template.AddLink.Properties.set(filteredProps);
+				Template.AddLink.RestProperties.set(filteredRestProps);
+			} else {
+				// Filtering elements is only visual, when filter is empty, set the UI lists back to the actual lists
+				Template.AddLink.Properties.set(selectedProperties);
+				Template.AddLink.RestProperties.set(restProperties);
+			}
 		}
 		return;
 	},
@@ -1033,9 +1127,11 @@ async function createMissingClassBoxes(classesToFetchIds, currentElement, diagra
 	for (const el of resSelected.data) {
 		const limit = 30;
 		const propOut = await dataShapes.callServerFunction("xx_getClassOutProperties", { main: { c_id: el.id, limit: limit } });
+		propOut.data = propOut.data.filter(function (p) { return !restProperties.map(p => p.full_name).includes(p.shortName) });
 		for (const p of propOut.data) { if (p.object_cnt > 0) p.name = `${p.name} \u21D2 IRI`; }
 
 		const propIn = await dataShapes.callServerFunction("xx_getClassInProperties", { main: { c_id: el.id, limit: limit } });
+		propIn.data = propIn.data.filter(function (p) { return !restProperties.map(p => p.full_name).includes(p.shortName) });
 		for (const p of propIn.data) { p.name = `${p.name} \u21D0 IRI`; }
 
 		let item = {
@@ -1071,6 +1167,7 @@ async function createMissingClassBoxes(classesToFetchIds, currentElement, diagra
 }
 
 async function drawObjectPropertyLine(sourceElem, targetElem, propertiesData, existingLines, diagramId, diagram_type) {
+	propertiesData = propertiesData.filter(function (p) { return !restProperties.map(p => p.full_name).includes(p.shortName) });
 	if (!propertiesData || propertiesData.length === 0) return;
 
 	let sourceId = sourceElem.obj._id;
@@ -1335,12 +1432,12 @@ async function getAllAssociations() {
 		var classNameListForCurrentElement;
 		if (Template.AddLink.isDataSchema.get()) {
 			classNameListForCurrentElement = await getClassListFromString(await startElement.getClassList());
+		} else {
+			classNameListForCurrentElement = [await startElement.getName()];
 		}
 
 		var proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
 		var allAssociations = [];
-
-		classNameListForCurrentElement = Template.AddLink.isDataSchema.get() ? classNameListForCurrentElement : [await startElement.getName()];
 
 		let scName = await getSchemaNameForElement(null, Template.AddLink.isDataSchema.get());
 		let schemaName = dataShapes.schema.schema;
@@ -1549,6 +1646,11 @@ async function getAllAssociations() {
 		asc = await Promise.all(associationPromises);
 		asc = asc.filter(function (association) {
 			return association.filteredClasses && association.filteredClasses.length > 0;
+		});
+		asc = asc.map(function (a) {
+			const max = a.filteredClasses.length;
+			a.class = a.filteredClasses[Math.floor(Math.random() * max)].full_name;
+			return a;
 		});
 	}
 	return asc;

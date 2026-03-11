@@ -846,8 +846,10 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	// Regular expression to match and remove the optional parts at the beginning and end
 	className = await selected_elem.getName();
 
-  className = className.replace(/^(?:\(\w+\)\s*)?(?:[\w-]*:)?/, '')    // Remove "(string) " and "prefix:" or ":"
-										.replace(/\s+et al\..*$/, '');               // Remove " et al. string" at the end
+	className = className.replace(/^(?:\(\w+\)\s*)?(?:[\w-]*:)?/, '') // Remove "(string) " and "prefix:" or ":"
+		.replace(/\s+et al\..*$/, '') // Remove " et al. string" at the end
+		.replace(/\s*\([^)]*\)\s*$/, '') // Remove " (string)" at the end
+		.trim(); 
 	if(className.indexOf("[") !== -1 && className.indexOf(" ") !== -1) className = className.substring(className.indexOf("[")+1, className.indexOf(" "))
 	if(typeof usedNames !== "undefined" && usedNames !== null && typeof usedNames[className] !== "undefined") {
 		className = className + "_" + usedNames[className];
