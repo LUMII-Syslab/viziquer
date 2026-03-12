@@ -109,3 +109,9 @@ Template.userT.events({
 });
 //End of user
 
+Meteor.startup(() => {
+  Tracker.autorun(() => {
+    const toolGroup = Session.get("toolGroup");
+    document.title = `${toolGroup || ""} App`;
+  });
+});
