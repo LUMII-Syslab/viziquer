@@ -1455,13 +1455,11 @@ async function generateSymbolTable(notResolveTable, selectedElementIdFromDataSch
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
 	var abstractQueryTable = {}
-	//console.log("    generateSymbolTable", elem)
     // now we should find the connected classes ...
     if (elem) {
        var selected_elem = await createVQ_Element(elem[0]);
 	   if(selected_elem.obj.type === "Line") selected_elem = await selected_elem.getStartElement();
        var visited_elems = {};
-		//console.log("  1  generateSymbolTable", elem, selected_elem.obj.type, selected_elem.getStartElement())
        async function GetComponentIds(vq_elem) {
 			visited_elems[vq_elem._id()] = true;
 
@@ -1502,7 +1500,6 @@ async function generateSymbolTable(notResolveTable, selectedElementIdFromDataSch
 		// nothing selected
 	}
 
-	// console.log(abstractQueryTable);
 	if(Session.get("activeElement") !== null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
     return {symbolTable:{}, rootSymbolTable:{}, abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
   }
