@@ -2431,7 +2431,7 @@ class VQ_Element_Async{
 
 	var prefixesValue = "";
 	var graphPrefixValue = "";
-	if(graph !== null && graph !="" && graphInstruction !== null && graphInstruction !== "") graphPrefixValue = "{" + graphInstruction + ": " + graph + "} ";
+	if(typeof graph !== "undefined" && graph !== null && graph !="" && graphInstruction !== null && graphInstruction !== "" && typeof graphInstruction !== "undefined") graphPrefixValue = "{" + graphInstruction + ": " + graph + "} ";
 	if(isInternal == true) prefixesValue = "h";
 	if(requireValues == true) prefixesValue = prefixesValue + "+";
 	if(prefixesValue !== "") prefixesValue = "{" + prefixesValue + "} ";
