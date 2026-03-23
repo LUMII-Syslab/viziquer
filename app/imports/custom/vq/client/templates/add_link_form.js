@@ -294,6 +294,7 @@ Template.AddLink.PropCountRest = new ReactiveVar('');
 Template.AddLink.JoinLinkText = new ReactiveVar("")
 Template.AddLink.SubqueryLinkText = new ReactiveVar("")
 Template.AddLink.Count = new ReactiveVar("")
+Template.AddLink.ShowMore = new ReactiveVar(true);
 const startCount = 30;
 const plusCount = 20
 Template.AddLink.fullList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: "", show: true}]);
@@ -333,6 +334,9 @@ Template.AddLink.helpers({
 	},
 	propCountRest: function() {
 		return Template.AddLink.PropCountRest.get();
+	},
+	showMore: function() {
+		return Template.AddLink.ShowMore.get();
 	},
 });
 
@@ -1446,6 +1450,7 @@ async function getAllAssociations() {
 		}
 		if (typeof schemaName === "undefined") schemaName = "";
 
+		var complete = true;
 		for (let className of classNameListForCurrentElement) {
 
 			if (typeof className === "undefined" || className === null) className = "";
@@ -1480,13 +1485,16 @@ async function getAllAssociations() {
 				if (typeof scName !== "undefined" && scName !== null && scName !== "" && dataShapes.schema.schema !== scName) {
 					param.schema = scName;
 				}
-
+				
 				var prop = await dataShapes.getProperties(param, newStartElement, null, className);
+				complete = complete && prop.complete;
 
 				let currentProps = prop["data"].map(p => ({ ...p, _sourceClassName: className }));
 				allAssociations.push(...currentProps);
 			}
 		}
+
+		Template.AddLink.ShowMore.set(!complete);
 
 		for (let e of allAssociations) {
 			if (e.mark === 'out') {
