@@ -176,6 +176,7 @@ export async function getClasses() {
 
 /**
  * @param {string} className
+ * @param {"Data" | "Object"} [propertyKind]
  * @param {number} [limit]
  *
  * @return {Promise<{
@@ -184,11 +185,11 @@ export async function getClasses() {
  *   displayName: string,
  * }[] | null>}
  */
-export async function getProperties(className, limit) {
+export async function getProperties(className, propertyKind, limit) {
     /** @type {{ error: string, data: *[] }} */
     const propertiesData = await dataShapes.getPropertiesFull({
         main: {
-            propertyKind: 'Data',
+            propertyKind,
             limit,
             addTypes: true,
         },

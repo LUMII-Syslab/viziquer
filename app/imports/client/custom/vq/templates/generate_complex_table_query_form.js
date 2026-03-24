@@ -37,6 +37,67 @@ function switchToEditorTab() {
     $('#vq-tab a[href="#sparql"]').tab('show');
 }
 
+/**
+ * useState hook that immediately tries to fetch the needed properties.
+ *
+ * @param {string?} selectedType
+ * @param {"Object" | "Data"} propertyType
+ */
+function usePropertiesQuery(selectedType, propertyType) {
+    const propertiesState = useState(
+        /** @type {{value: string, label: string}[]} */ ([])
+    );
+    const [_, setProperties] = propertiesState;
+    useEffect(() => {
+        (async () => {
+            if (!selectedType) {
+                setProperties([]);
+                return;
+            }
+            const props = await getProperties(selectedType, propertyType);
+            if (!props) setProperties([]);
+            else setProperties(props.map(({ iri, prefixedName }) => ({
+                label: `${prefixedName}`,
+                value: iri,
+            })));
+        })();
+    }, [selectedType]);
+
+    return propertiesState;
+}
+
+/**
+ * Call `setClass` with selected element's type.
+ *
+ * @param {(newValue: string | null) => void} setClass
+ */
+function useSyncClass(setClass) {
+    async function syncSelectionToDiagramSelection() {
+        const elements = Interpreter.editor.getSelectedElements();
+        const firstKey = Object.keys(elements)[0];
+        const vqItem = await createVQ_Element(firstKey);
+        if (!vqItem) return;
+
+        const [prefixedClass, prefixes] = await Promise.all([
+            vqItem.getName(),
+            getPrefixes(),
+        ]);
+
+        const newClass = resolvePrefixedName(prefixes, prefixedClass);
+
+        setClass(newClass);
+    }
+
+    useEffect(() => {
+      const cb = () => syncSelectionToDiagramSelection();
+
+      queryGeneratorModalRequest.subscribe(cb);
+      return () => {
+        queryGeneratorModalRequest.unsubcribe(cb)
+      };
+    }, [setClass]);
+}
+
 export function QueryGeneratorView() {
     const [selectedType, setSelectedType] = useState(
         /** @type {string?} */ (null)
@@ -44,12 +105,17 @@ export function QueryGeneratorView() {
     const [typeSuggestions, setTypeSuggestions] = useState(
         /** @type {Awaited<ReturnType<getClasses>>} */ (null)
     );
-    const [properties, setProperties] = useState(
+    const [dataProperties, setDataProperties] = useState(
         /** @type {string[]} */ ([])
     );
-    const [suggestions, setSuggestions] = useState(
-        /** @type {{label: string, value: string}[]} */ ([])
+    const [objectProperties, setObjectProperties] = useState(
+        /** @type {string[]} */ ([])
     );
+    const [suggestionsData] = usePropertiesQuery(selectedType, "Data");
+
+    const [suggestionsClass] = usePropertiesQuery(selectedType, "Object");
+
+    useSyncClass(setSelectedType);
 
     // NOTE: Init class suggestions
     useEffect(() => {
@@ -58,57 +124,6 @@ export function QueryGeneratorView() {
             setTypeSuggestions(res);
         })();
     }, []);
-
-    // NOTE: Sync suggestions to selected class
-    useEffect(() => {
-        (async () => {
-            if (!selectedType) {
-                setSuggestions([]);
-                return;
-            }
-            const res = await getProperties(selectedType);
-            if (!res) setSuggestions([]);
-            else setSuggestions(res.map(({ iri, prefixedName }) => ({
-                label: `${prefixedName}`,
-                value: iri,
-            })));
-        })();
-    }, [selectedType]);
-
-    async function syncSelectionToDiagramSelection() {
-        const elements = Interpreter.editor.getSelectedElements();
-        const firstKey = Object.keys(elements)[0];
-        const vqItem = await createVQ_Element(firstKey);
-        if (!vqItem) return;
-
-        const [fields, prefixedClass, prefixes] = await Promise.all([
-            vqItem.getFields(),
-            vqItem.getName(),
-            getPrefixes(),
-        ]);
-        /** @type {string[]} */
-        const newProperties = fields.map(({ exp }) => exp);
-        const newUnprefixedProperties = newProperties
-              .map((name) => resolvePrefixedName(prefixes, name))
-              .filter((item) => item !== null);
-
-        const newClass = resolvePrefixedName(prefixes, prefixedClass);
-
-        setSelectedType(newClass);
-        setProperties(newUnprefixedProperties);
-    }
-
-    // NOTE: Attach diagram selection syncer
-    useEffect(() => {
-      const cb = () => syncSelectionToDiagramSelection();
-
-      queryGeneratorModalRequest.subscribe(cb);
-      return () => {
-        queryGeneratorModalRequest.unsubcribe(cb)
-      };
-    });
-
-
 
     return createElement(
         "div",
@@ -157,14 +172,28 @@ export function QueryGeneratorView() {
         createElement(
             "div",
             {},
-            createElement("p", {}, "Properties"),
+            createElement("p", {}, "Properties (data)"),
             createElement(
                 PropertySelector,
                 {
-                    value: properties,
+                    value: dataProperties,
                     // @ts-ignore
-                    onValueChange: setProperties,
-                    suggestions,
+                    onValueChange: setDataProperties,
+                    suggestions: suggestionsData,
+                }
+            ),
+        ),
+        createElement(
+            "div",
+            {},
+            createElement("p", {}, "Properties (class)"),
+            createElement(
+                PropertySelector,
+                {
+                    value: objectProperties,
+                    // @ts-ignore
+                    onValueChange: setObjectProperties,
+                    suggestions: suggestionsClass,
                 }
             ),
         ),
@@ -176,7 +205,7 @@ export function QueryGeneratorView() {
                     const limit = 10;
                     const q = formatMultiCardinalTableAsSelectQuery(
                         `<${selectedType}>`,
-                        properties,
+                        [...dataProperties, ...objectProperties],
                         limit
                     );
                     setEditorText(q);
