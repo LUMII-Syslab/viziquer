@@ -240,7 +240,7 @@ function getInfo() {
 			$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text()];
 }
 
-async function getClassesAndProperties(addSupClasses = true) {  
+async function getClassesAndProperties(addSupClasses = true) {
 	//addSupClasses Pagaidām ir konstante, bet būs iespēja virsklašu pielikšanu atslēgt
 	let classList = Template.VQ_DSS_schema.Classes.get();
 	let classIds = classList.map(v => v.id);
@@ -301,20 +301,22 @@ async function getClassesAndProperties(addSupClasses = true) {
 	}
 
     let propT = [];  // TODO Te būs jāprecizē
-	let propS = [];
+	  let propS = [];
+    console.log('uuuuuuuuuuuuuuuuuuuuuu', dataShapes.schema.diagram.properties)
     for (const p of dataShapes.schema.diagram.properties) {
+      // TODO kaut kā unused_orphan_props būs jāņem vērā, bet ne gluži šādi
       if ( !unused_orphan_props.includes(p.full_name)) {
-		if ( p.object_cnt !== 0 && p.type_1 === '0') {
-		  propT.push(p);  	
-		}
-		if ( p.object_cnt != 0 && p.type_2 === '0' && p.isFollower === '0') {
-		  propS.push(p);	
-		}
-	  }	
+		    if ( p.object_cnt !== 0 && p.type_1 === '0' && ( p.follows > 0 || p.common_objects > 0 )) {
+		      propT.push(p);
+		    }
+		    if ( p.object_cnt !== 0 && p.type_2 === '0' && p.is_follower === '0' && p.common_subjects > 0) {
+		      propS.push(p);
+		    }
+	    }
     }
 console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%', propT, propS)
 	namespacesL.unshift({name:`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`,cnt:namespaces[dataShapes.schema.local_ns]});
-	return [classList, propList, namespacesL];
+	return [classList, propList, namespacesL, {propT:propT, propS:propS}];
 }
 
 function setClassProperties(cId) {
@@ -731,10 +733,18 @@ Template.VQ_DSS_schema.events({
 					type = 'Class';
 					typeNew = `Class${el.size}`;
 				}
-				if ( type== 'Abstract') {
+				if ( type == 'Abstract') {
 					type = 'AbstractClass';
 					typeNew = `AbstractClass${el.size}`;
 				}
+        if ( type == 'PropertyTarget' || type == 'PropertySource') {
+          type = 'Class';
+					typeNew = 'PropertyEnd';
+          if ( el.sub_classes_group_string != undefined ) {
+            isGroup = true;
+            typeNew = 'PropertyEnds';
+          }
+        }
 
 				//const atrCnt = calculateCount(7, el.attributesT.out, el.cnt);  // Pagaidām neizmantosim
 				//console.log(atrCnt);							atrCnt: atrCnt,
@@ -1574,7 +1584,8 @@ const unused_props = [
 	'http://www.w3.org/2004/02/skos/core#prefLabel',
 	'http://www.w3.org/2004/02/skos/core#altLabel',
 	'http://www.w3.org/2000/01/rdf-schema#label' ];
-const unused_orphan_props = [ 'rdf:type', 'rdf:first', 'rdf:rest', 'rdf:value', 'rdf:_1', 'rdf:_2', 'rdf:_3', 'rdf:_4', 'rdf:_5', 'rdfs:label', 'rdfs:comment', 'owl:sameAs' ];
+//const unused_orphan_props = [ 'rdf:type', 'rdf:first', 'rdf:rest', 'rdf:value', 'rdf:_1', 'rdf:_2', 'rdf:_3', 'rdf:_4', 'rdf:_5', 'rdfs:label', 'rdfs:comment', 'owl:sameAs' ];
+const unused_orphan_props = []; // TODO šīs būs jaatliek atpakaļ
 
 function setPropSliderInfo() {
 	//let propSliderIntValuesTemp = [1,5,10,20,50,100,200,500,1000,2000,5000];  // TODO jāsakrīt ar propSliderIntValues
@@ -2195,7 +2206,8 @@ function showClasses(basic = false) {
 			let pref = 'C';
 			if ( cInfo.isGroup ) pref = 'M';
 			if ( cInfo.type == 'Abstract' ) pref = 'A';
-			if (  basic && cInfo.sub_classes.length > 0 ) pref = 'A';
+      if ( cInfo.type == 'PropertyTarget' || cInfo.type == 'PropertySource') pref = 'P';
+			if ( basic && cInfo.sub_classes.length > 0 ) pref = 'A';
 			if ( indMax < 1000) { // Šī ir konstante
 				if ( cInfo[key] < 100 ) // Cita konstante
 					cInfo.size = 0;
@@ -2248,6 +2260,7 @@ async function getBasicClasses() {
 	rezFull.namespaces = classesAndProperties[2];
 	const c_list = classesAndProperties[0];
 	let p_list = classesAndProperties[1];
+
   //const rr0 = await dataShapes.callServerFunction("xx_getPropList2", {main: { c_list: `${c_list}`}});
   //console.log('getBasicClasses- propertiju saraksta salīdzināšana', p_list.length, rr0.data.length)
 	params = getParams();
@@ -2259,7 +2272,7 @@ async function getBasicClasses() {
 	let cp_info;
 
 	rr = await dataShapes.callServerFunction("xx_getClassListInfo", allParams);
-  console.log('$$$$$$$$$', rr.data)
+
 	// Pamata klašu saraksta izveidošana
 	_.each(rr.data, function(cl) {
 		const id = `c_${cl.id}`;
@@ -2302,9 +2315,8 @@ async function getBasicClasses() {
 	//rr = await dataShapes.callServerFunction("xx_getCPCInfo", allParams);
 	allParams.main.p_list =  p_list.map(v => v.id);
 	rr = await getCPCRels(allParams);
-
 	cpc_info = rr.data;
-	if ( cpc_info.length > 0 ) {
+  if ( cpc_info.length > 0 ) {
 		has_cpc = true;
 		for (const cpc of cpc_info) {
 			cpc.cnt = Number(cpc.cnt);
@@ -2327,7 +2339,6 @@ async function getBasicClasses() {
 	for (const p of p_list) {
 		const p_id = `p_${p.id}`;
 		const p_name = `${p.prefix}:${p.display_name}`;
-
 		const cp_info_p = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) && cp.cover_set_index > 0; });
 		const cp_info_p_full = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) });
 		const cp_info_p_o =  cp_info_p.filter(function(cp){ return cp.type_id == 2 && cp.object_cnt > 0; });
@@ -2336,7 +2347,7 @@ async function getBasicClasses() {
 		const c_to_full = cp_info_p_full.filter(function(cp){ return cp.type_id == 1});
 		let c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1});
 
-		//if (cp_info_p_o.length == 0 )  // TODO Šis liekas bija kaut kādiem ne gluži labiem datiem 
+		//if (cp_info_p_o.length == 0 )  // TODO Šis liekas bija kaut kādiem ne gluži labiem datiem
 		//	c_to = [];
 
 		if ( p.max_cardinality == -1 )
@@ -2368,7 +2379,7 @@ async function getBasicClasses() {
 				if ( !rezFull.classes[cl_id].all_atr.includes(pp.id)) rezFull.classes[cl_id].all_atr.push(pp.id);
 			}
 		}
-		else if ( c_from.length > 0  || c_to.length > 0) {  // TODO te bija && 
+		else if ( c_from.length > 0  || c_to.length > 0) {  // TODO te bija &&
 			for (const c_1 of c_from) {
 				const from_id = `c_${c_1.class_id}`;
 				if ( c_1.object_cnt > 0 ) {
@@ -2405,7 +2416,7 @@ async function getBasicClasses() {
 			}
 		}
     else {
-      console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHH', pp)
+      //console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHH', pp)
     }
 	}
 
@@ -2470,6 +2481,85 @@ async function getBasicClasses() {
 			}
 		}
 	}
+
+  function addAttr(c_id, p_id, cnt, object_cnt, type) {
+    const p_info = p_list_full[`p_${p_id}`];
+    if ( type === 'in' ) {
+      const class_ids = p_info.c_from.map( v => v.class_id);
+      rezFull.classes[c_id].all_atr_in.push(p_id);
+      rezFull.classes[c_id].atr_list.push({type:type, class_list:class_ids, cnt:cnt, cnt2:cnt, object_cnt:object_cnt, cnt_full:p_info.cnt, is_domain:'', range_id:'', max_cardinality:'*', p_id:p_id, p_name:p_info.p_name});
+      if ( !unused_props.includes(p_info.iri) ) {
+        rezFull.classes[c_id].atr_list_full.push({type:type, cnt:cnt, cnt2:cnt, cnt_full:p_info.cnt, cover_set_index:1, p_id:p_id, p_name:p_info.p_name});
+      }
+    }
+    else {
+      const class_ids = p_info.c_to.map( v => v.class_id);
+      rezFull.classes[c_id].all_atr.push(p_id);
+      rezFull.classes[c_id].atr_list.push({type:type, class_list:class_ids, cnt:cnt, cnt2:cnt, object_cnt:object_cnt, cnt_full:p_info.cnt, is_domain:'', range_id:'', max_cardinality:'*', p_id:p_id, p_name:p_info.p_name});
+      if ( !unused_props.includes(p_info.iri) ) {
+        rezFull.classes[c_id].atr_list_full.push({type:type, cnt:cnt, cnt2:cnt, cnt_full:p_info.cnt, cover_set_index:1, p_id:p_id, p_name:p_info.p_name});
+      }
+    }
+  }
+
+  if ( !dataShapes.schema.isPublic) {
+    const propT = classesAndProperties[3].propT;
+    const propS = classesAndProperties[3].propS;
+    rr = await dataShapes.callServerFunction("xx_getPPInfo", allParams);
+    const pp_info = rr.data;
+
+    if ( propT.length + propS.length > 0 ) {
+      for (const p of propT) {
+        const id = `pt_${p.id}`;
+        const name = `Target for ${p.full_name}`;
+        const full_name = `Target for ${p.full_name} (${roundCount(p.object_cnt)})`;
+        rezFull.classes[id] = { id:id, displayName:p.full_name, id_id:p.id, c_list_id:[p.id], super_classes:[], sub_classes:[],
+          used:true, hasGen:false, type:'PropertyTarget', fullName:full_name, fullNameD:full_name,
+          sup:[], sub:[], sup0:[], sub0:[], cnt:p.object_cnt, cnt_sum:p.object_cnt, in_props:0,
+          atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[]};
+        addAttr(id, p.id, p.cnt, p.cnt, 'in');
+        const comon_objects = pp_info.filter(function(pp) { return pp.property_1_id == p.id && pp.property_2_id !== p.id  && pp.type_id== 3; });
+        for ( const p2 of comon_objects) {
+          addAttr(id, p2.property_2_id, Number(p2.cnt), Number(p2.cnt), 'in');
+        }
+        const followers = pp_info.filter(function(pp) { return pp.property_1_id == p.id && pp.property_2_id !== p.id  && pp.type_id== 1; });
+
+        for ( const p2 of followers) {
+          let object_cnt = Number(p2.cnt);
+          let type = 'out';
+          if ( p_list_full[`p_${p2.property_2_id}`].object_cnt == 0 ) {
+            object_cnt = 0;
+            type = 'data';
+          }
+          addAttr(id, p2.property_2_id, Number(p2.cnt), object_cnt, type);
+        }
+      }
+      for (const p of propS) {
+        const id = `ps_${p.id}`;
+        const name = `Saurce for ${p.full_name}`;
+        const full_name = `Saurce for ${p.full_name} (${roundCount(p.object_cnt)})`;
+        rezFull.classes[id] = { id:id, displayName:name, id_id:p.id, c_list_id:[p.id], super_classes:[], sub_classes:[],
+          used:true, hasGen:false, type:'PropertySource', fullName:name, fullNameD:name,
+          sup:[], sub:[], sup0:[], sub0:[], cnt:p.object_cnt, cnt_sum:p.object_cnt, in_props:0,
+          atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[] };
+        addAttr(id, p.id, p.cnt, p.cnt, 'out');
+        const comon_subjects = pp_info.filter(function(pp) { return pp.property_1_id == p.id && pp.property_2_id !== p.id  && pp.type_id== 2; });
+        for ( const p2 of comon_subjects) {
+          let object_cnt = Number(p2.cnt);
+          let type = 'out';
+          if ( p_list_full[`p_${p2.property_2_id}`].object_cnt == 0 ) {
+            object_cnt = 0;
+            type = 'data';
+          }
+          addAttr(id, p2.property_2_id, Number(p2.cnt), object_cnt, type);
+        }
+        const in_props = pp_info.filter(function(pp) { return pp.property_2_id == p.id && pp.property_1_id !== p.id  && pp.type_id== 1; });
+        for ( const p2 of in_props) {
+          addAttr(id, p2.property_1_id, Number(p2.cnt), Number(p2.cnt), 'in');
+        }
+      }
+    }
+  }
 	//console.log('getBasicClasses- p_list_full', p_list_full);
 	//console.log('rezFull', rezFull);
 }
@@ -2892,7 +2982,7 @@ function makeAssociations() {
 	if ( hideSmall < 0 ) {
 		showEssent = -1/hideSmall;
 		hideSmall = 0;
-	} 
+	}
 	const showIntersect = params.showIntersect;
 
 	function findNewClassList(atr, type = '') {
@@ -2929,7 +3019,8 @@ function makeAssociations() {
 		}
 		return 	c_list2;
 	}
-	for (const clId of Object.keys(rezFull.classes)) {
+
+  for (const clId of Object.keys(rezFull.classes)) {
 		const classInfo = rezFull.classes[clId];
 		if ( classInfo.used) {
 			for (const atr of classInfo.atr_list) {
@@ -2944,7 +3035,7 @@ function makeAssociations() {
 	}
 
 	// Savelk asociācijas
-	for (const clId of Object.keys(rezFull.classes)) { 
+	for (const clId of Object.keys(rezFull.classes)) {
 		const classInfo = rezFull.classes[clId];
 		if ( classInfo.used) {
 			for ( const atr of classInfo.atr_list) {
@@ -2980,6 +3071,39 @@ function makeAssociations() {
 					}
 					atr.hasAssoc = hasAssoc;
 				}
+
+        if ( !dataShapes.schema.isPublic ) {
+          //if ( classInfo.type == 'PropertyTarget') {
+            if ( atr.type == 'out' && ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource' ) ) {
+              for (const to_id of atr.class_list2) {
+                const aId = `${clId}_${to_id}_${atr.p_name}`;
+                rezFull.assoc[aId] = {string:`${atr.p_name} (${roundCount(atr.cnt)})`, cnt:atr.cnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
+                atr.hasAssoc = true;
+                atr.object_cnt_dgr = atr.object_cnt;
+              }
+              if ( atr.class_list2.length == 0 && rezFull.classes[`pt_${atr.p_id}`] != undefined ) {
+                let to_id = `pt_${atr.p_id}`;
+                if ( rezFull.classes[to_id].G_id != undefined ) {
+                  to_id = rezFull.classes[to_id].G_id[rezFull.classes[to_id].G_id.length-1];
+                }
+                rezFull.assoc[`${clId}_${to_id}_${atr.p_name}`] = {string:`${atr.p_name} (${roundCount(atr.cnt)})`, cnt:atr.cnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
+                atr.hasAssoc = true;
+                atr.object_cnt_dgr = atr.object_cnt;
+              }
+            }
+            if ( atr.type == 'in' &&  classInfo.type == 'PropertyTarget' ) {
+              for (const to_id of atr.class_list2) {
+                const aId = `${to_id}_${clId}_${atr.p_name}`;
+                rezFull.assoc[aId] = {string:`${atr.p_name} (${roundCount(atr.cnt)})`, cnt:atr.cnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:to_id, to:clId, removed:false };
+                atr.hasAssoc = true;
+              }
+            }
+          //}
+          //if ( classInfo.type == 'PropertySource') {
+          //  console.log('IR SSSSSSSSSSSSSSSSSSSSSSS', classInfo)
+          //}
+        }
+
 			}
 		}
 	}
@@ -3118,7 +3242,7 @@ function makeDiagramData() {
 		let inPropList = [];
 		if ( classInfo.used ) {
 			classInfo.attributesT.c.sort((a, b) => { return b.cnt - a.cnt; });
-			for ( const atr of classInfo.atr_list) {
+			for ( const atr of classInfo.atr_list) { // BBBBBB te būs jāpielabo
 				if ( atr.type == 'data' ) {
 					restAtrList.push(atr);
 				}

@@ -6383,11 +6383,93 @@
                   "shape": "Rectangle"
                 }
               },
-              {
-                "id": "4957a26f34a71a81948e2a6f",
+			  {
+			    "id": "4957a26f34a71a81948e3b6f",
                 "name": "ClassifierGroup",
                 "elementStyle": {
                   "fill": "rgb(255,176,176)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "black",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 0.5,
+                  "shadowOffsetX": 4,
+                  "shadowOffsetY": 3,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "shape": "Rectangle"
+                }
+              },
+              {
+                "id": "c2e6cd4419bedeac145af206",
+                "name": "PropertyEnd",
+                "elementStyle": {
+                  "fill": "rgb(255,255,255)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(0,0,0)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": "0",
+                  "shadowOffsetY": "0",
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "shape": "Rectangle"
+                }
+              },			  
+              {
+                "id": "4957a26f34a71a81948e2a6f",
+                "name": "PropertyEnds",
+                "elementStyle": {
+                  "fill": "rgb(255,255,255)",
                   "fillPriority": "color",
                   "fillLinearGradientStartPointX": 0.5,
                   "fillLinearGradientStartPointY": 0,
