@@ -347,8 +347,8 @@
                           <option value=5 >Draw object properties ( triples > 5 ) </option>
                           <option value=10 >Draw object properties ( triples > 10 )</option>
                           <option value=100 >Draw object properties ( triples > 100 )</option>
-                          <option value=-10 >Draw essential properties of a class ( > 10% ) </option> 
-                          <option value=-100 >Draw essential properties of a class ( > 1% ) </option> 
+                          <option value=-10 >Draw essential properties of a class ( > 10% ) </option>
+                          <option value=-100 >Draw essential properties of a class ( > 1% ) </option>
                         </select>
                         <label class="form-check-label" style="padding-top:10px;">
                           <input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">
@@ -436,6 +436,11 @@
                   <input class="form-check-input" name = "addIds" id="addIds" type="checkbox">
                   <span class="custom-checkbox"></span>
                     Show DB IDs in names
+                  </label>
+                  <label class="form-check-label">
+                    <input class="form-check-input" name = "onlyOrphan" id="onlyOrphan" type="checkbox" checked = "checked">
+                    <span class="custom-checkbox"></span>
+                      Only orphan properties
                   </label>
                   <div class="form-group">
                     <button id="calck" type="button" class="btn btn-primary">Test</button>

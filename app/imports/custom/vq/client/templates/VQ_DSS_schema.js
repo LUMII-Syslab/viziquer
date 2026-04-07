@@ -302,14 +302,28 @@ async function getClassesAndProperties(addSupClasses = true) {
 
     let propT = [];  // TODO Te būs jāprecizē
 	  let propS = [];
+    dataShapes.schema.diagram.properties.sort(function(a,b){ return b.id-a.id;});  // TODO šis ir drukai
     console.log('uuuuuuuuuuuuuuuuuuuuuu', dataShapes.schema.diagram.properties)
+    //dataShapes.schema.diagram.properties.sort(function(a,b){ return b.cnt-a.cnt;});
+    const onlyOrphan = $("#onlyOrphan").is(":checked");
+    let parT = true;
+    let parS = true;
     for (const p of dataShapes.schema.diagram.properties) {
       // TODO kaut kā unused_orphan_props būs jāņem vērā, bet ne gluži šādi
+      //const tPar = p.type_1 == '0'
       if ( !unused_orphan_props.includes(p.full_name)) {
-		    if ( p.object_cnt !== 0 && p.type_1 === '0' && ( p.follows > 0 || p.common_objects > 0 )) {
+        if ( onlyOrphan ) {
+          parT = p.type_1 === '0'
+          parS = p.type_2 === '0'
+        }
+        else {
+          parT = !p.target_cover_complete;
+          parS = !p.source_cover_complete;
+        }
+		    if ( p.object_cnt !== 0 && parT && ( p.follows > 0 || p.common_objects > 0 )) { // !p.target_cover_complete p.type_1 === '0' ooooo
 		      propT.push(p);
 		    }
-		    if ( p.object_cnt !== 0 && p.type_2 === '0' && p.is_follower === '0' && p.common_subjects > 0) {
+		    if ( p.object_cnt !== 0 && parS && p.is_follower === '0' && p.common_subjects > 0) { //p.type_2 === '0'
 		      propS.push(p);
 		    }
 	    }
@@ -2062,6 +2076,8 @@ function makeClassGroup(list, group_type, sum = true ) { // ekv = false) {
 		else
 			cInfo.G_id.push(g_id);
 	}
+  if ( group_type == 'Equivalent classes' && list[0].type == 'PropertyTarget')
+    sum = false;
 	let hasGen = false;
 	let g_id = '';
 	if ( list.length > 1 ) {
@@ -2517,6 +2533,16 @@ async function getBasicClasses() {
           used:true, hasGen:false, type:'PropertyTarget', fullName:full_name, fullNameD:full_name,
           sup:[], sub:[], sup0:[], sub0:[], cnt:p.object_cnt, cnt_sum:p.object_cnt, in_props:0,
           atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[]};
+        if ( p.type_1 != '0') {
+          const prop_info = p_list_full[`p_${p.id}`];
+          for(const c of prop_info.c_from){
+            const cId = `c_${c.class_id}`;
+            rezFull.classes[id].sub_classes.push(cId);
+            rezFull.classes[cId].super_classes.push(id);
+            rezFull.classes[id].hasGen = true;
+            rezFull.classes[cId].hasGen = true;
+          }
+        }
         addAttr(id, p.id, p.cnt, p.cnt, 'in');
         const comon_objects = pp_info.filter(function(pp) { return pp.property_1_id == p.id && pp.property_2_id !== p.id  && pp.type_id== 3; });
         for ( const p2 of comon_objects) {
