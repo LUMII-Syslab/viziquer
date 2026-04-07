@@ -2535,7 +2535,7 @@ async function getBasicClasses() {
           atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[]};
         if ( p.type_1 != '0') {
           const prop_info = p_list_full[`p_${p.id}`];
-          for(const c of prop_info.c_from){
+          for(const c of prop_info.c_to){
             const cId = `c_${c.class_id}`;
             rezFull.classes[id].sub_classes.push(cId);
             rezFull.classes[cId].super_classes.push(id);
