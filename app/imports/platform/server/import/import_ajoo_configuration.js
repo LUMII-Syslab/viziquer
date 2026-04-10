@@ -116,6 +116,7 @@ ImportAjooConfiguration.prototype = {
       );
       await self.importSuperTypes(diagram_type_in.boxTypes);
       await self.importSuperTypes(diagram_type_in.lineTypes);
+	  await self.importSubTypes(diagram_type_in.boxTypes);
     }
   },
 
@@ -337,6 +338,27 @@ ImportAjooConfiguration.prototype = {
         await ElementTypes.updateAsync(
           { _id: elem_id },
           { $set: { superTypeIds: super_types } },
+        );
+      }
+    });
+  },
+  
+  importSubTypes: function (elem_type) {
+    const self = this;
+    _.each(elem_type, async function (et) {
+      const sub_types = _.map(
+        et.object.subTypeIds,
+        function (sub_type_id) {
+          return self.obj_type_map[sub_type_id];
+        },
+      );
+
+      if (_.size(sub_types)) {
+        const elem_id_json = et.object._id;
+        const elem_id = self.obj_type_map[elem_id_json];
+        await ElementTypes.updateAsync(
+          { _id: elem_id },
+          { $set: { subTypeIds: sub_types } },
         );
       }
     });

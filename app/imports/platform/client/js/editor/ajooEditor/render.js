@@ -622,8 +622,36 @@ function build_palette_button(id, palette_button) {
   }
 
   palette_button.style = complex_style;
+  
+  let elementTypeIds = [];
+  for(let i = 0; i < palette_button.elementTypeIds.length; i++){
+	 let elem_type_temp = ElementTypes.findOne({
+		_id: palette_button.elementTypeIds[i],
+	 });
+	 if(elem_type_temp){
+		 let startSubTypeIds = [];
+		 let endSubTypeIds = [];
+		 let end_elem_type_temp = ElementTypes.findOne({
+			_id: elem_type_temp.endElementTypeId,
+		 });
+		 if(end_elem_type_temp) endSubTypeIds = end_elem_type_temp.subTypeIds;
+		 let start_elem_type_temp = ElementTypes.findOne({
+			_id: elem_type_temp.startElementTypeId,
+		 });
+		 if(start_elem_type_temp)startSubTypeIds = start_elem_type_temp.subTypeIds;
 
-  palette_button.data = { elementTypeId: elem_type._id };
+		 
+		 elementTypeIds[palette_button.elementTypeIds[i]] = {
+			 startElementTypeId: elem_type_temp.startElementTypeId,
+			 endElementTypeId: elem_type_temp.endElementTypeId,
+			 startSubTypeIds: startSubTypeIds,
+			 endSubTypeIds: endSubTypeIds,
+			 styles: elem_type_temp.styles
+		 }
+	 }
+  }
+
+  palette_button.data = { elementTypeId: elem_type._id,  elementTypeIds: elementTypeIds};
 }
 
 function compute_palette() {

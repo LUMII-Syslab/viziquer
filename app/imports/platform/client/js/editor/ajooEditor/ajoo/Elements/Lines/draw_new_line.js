@@ -167,6 +167,18 @@ ANewLine.prototype = {
       new_points.push(line_points[2], line_points[3]);
     }
 
+	let end_elem = state.end;
+	if (start_elem && end_elem) {
+
+	  let line_type_info = newLine.getLineTypeFromElements(
+		start_elem,
+		end_elem,
+		state.data
+	  );
+
+	  newLine.applyLineType(new_line, line_type_info);
+	}
+
     //need recomputing
     if (new_line.lineType === "Orthogonal") {
       var recomputed_points = new NewOrthogonalLine(
@@ -205,8 +217,6 @@ ANewLine.prototype = {
 
     state.end = target;
     var ev = new Event(editor, "checkingNewLineConstraints", state);
-
-    console.log("ev", ev);
 
     if (ev.result === false) {
       return newLine.destroyNewLine();
@@ -263,6 +273,69 @@ ANewLine.prototype = {
     palette_button.unPressPaletteButton();
 
     state = {};
+  },
+  
+  getLineTypeFromElements: function(startElem, endElem, data) {
+	  let elementTypeIds = data.elementTypeIds;
+
+	  if (!startElem || !endElem) {
+		return {
+		  elementTypeId: data.elementTypeId,
+		  style: elementTypeIds[data.elementTypeId].styles[0],
+		};
+	  }
+
+	  for (let key in elementTypeIds) {
+		let type = elementTypeIds[key];
+
+		let startSubTypeIds = type.startSubTypeIds || [];
+		let endSubTypeIds = type.endSubTypeIds || [];
+
+		let normalStartMatches =
+		  startElem.elementTypeId === type.startElementTypeId ||
+		  startSubTypeIds.includes(startElem.elementTypeId);
+
+		let normalEndMatches =
+		  endElem.elementTypeId === type.endElementTypeId ||
+		  endSubTypeIds.includes(endElem.elementTypeId);
+
+		let reverseStartMatches =
+		  startElem.elementTypeId === type.endElementTypeId ||
+		  endSubTypeIds.includes(startElem.elementTypeId);
+
+		let reverseEndMatches =
+		  endElem.elementTypeId === type.startElementTypeId ||
+		  startSubTypeIds.includes(endElem.elementTypeId);
+
+		let matches =
+		  (normalStartMatches && normalEndMatches) ||
+		  (reverseStartMatches && reverseEndMatches);
+
+		if (matches) {
+		  return {
+			elementTypeId: key,
+			style: type.styles[0],
+		  };
+		}
+	  }
+
+	  return {
+		elementTypeId: data.elementTypeId,
+		style: elementTypeIds[data.elementTypeId].styles[0],
+	  };
+},
+  
+
+  applyLineType: function(line, lineTypeInfo) {
+	  if (!line || !lineTypeInfo) return;
+
+	  line.elementTypeId = lineTypeInfo.elementTypeId;
+	  
+	  // depends on Link implementation:
+	  if (line.presentation) {
+		// reapply style to rendered Konva/SVG shape if needed
+		// e.g. line.setStyle(lineTypeInfo.style);
+	  }
   },
 
   getShapeCollisionPoint: function (elem, point1, point2) {
