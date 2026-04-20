@@ -62,25 +62,41 @@ async function getPropertySuggestions(selectedType, propertyType) {
 }
 
 /**
+ * @typedef {NonNullable<Parameters<typeof ComplexPropertySelector>[0]["selection"]>} ComplexPropertySelection
+ */
+
+/**
  * Call `setClass` with selected element's type.
  *
- * @param {(newValue: string | null) => void} setClass
+ * @param {(newValue: ComplexPropertySelection) => void} setSelection
  */
-function useSyncClass(setClass) {
+function useSyncWithDiagram(setSelection) {
     async function syncSelectionToDiagramSelection() {
         const elements = Interpreter.editor.getSelectedElements();
         const firstKey = Object.keys(elements)[0];
         const vqItem = await createVQ_Element(firstKey);
         if (!vqItem) return;
 
-        const [prefixedClass, prefixes] = await Promise.all([
+        const [prefixedClass, prefixes, fields] = await Promise.all([
             vqItem.getName(),
             getPrefixes(),
+            vqItem.getFields(),
         ]);
+
+
+        /** @type {{label: string, value: string}[]} */
+        const newProperties = fields.flatMap(({ exp }) => {
+            const maybeValue = resolvePrefixedName(prefixes, exp);
+            return maybeValue ? ({ value: maybeValue, label: exp }) : [];
+        });
 
         const newClass = resolvePrefixedName(prefixes, prefixedClass);
 
-        setClass(newClass);
+        setSelection({
+            rdfType: newClass || "",
+            dataProps: newProperties.map(({ value }) => ({ name: value })),
+            objectProps: [],
+        });
     }
 
     useEffect(() => {
@@ -90,22 +106,19 @@ function useSyncClass(setClass) {
       return () => {
         queryGeneratorModalRequest.unsubcribe(cb)
       };
-    }, [setClass]);
+    }, [setSelection]);
 }
 
 export function QueryGeneratorView() {
     const [selection, setSelection] = useState(
-        /** @type {NonNullable<Parameters<typeof ComplexPropertySelector>[0]["selection"]>} */ ({
+        /** @type {ComplexPropertySelection} */ ({
             rdfType: "",
             dataProps: [],
             objectProps: [],
         })
     );
 
-    useSyncClass((newType) => setSelection({
-        ...selection,
-        rdfType: newType || "",
-    }));
+    useSyncWithDiagram(setSelection);
 
     return createElement(
         "div",
