@@ -6,7 +6,9 @@ import { createVQ_Element } from '../js/VQ_Element.js'
 import './generate_complex_table_query_form.html'
 import { Button, getClasses, getPrefixes, getProperties, initReactComponents, rem, resolvePrefixedName } from '../js/complexTable.js';
 import { createElement, useEffect, useState } from 'react';
-import { formatMultiCardinalTableAsSelectQuery, PropertySelector } from 'rdf-toolbag';
+import {
+    ComplexPropertySelector,
+} from 'rdf-toolbag';
 
 /** @type {*} */
 let modalElement = null;
@@ -42,28 +44,21 @@ function switchToEditorTab() {
  *
  * @param {string?} selectedType
  * @param {"Object" | "Data"} propertyType
+ *
+ * @return {Promise<{label: string, value: string}[]>}
  */
-function usePropertiesQuery(selectedType, propertyType) {
-    const propertiesState = useState(
-        /** @type {{value: string, label: string}[]} */ ([])
-    );
-    const [_, setProperties] = propertiesState;
-    useEffect(() => {
-        (async () => {
-            if (!selectedType) {
-                setProperties([]);
-                return;
-            }
-            const props = await getProperties(selectedType, propertyType);
-            if (!props) setProperties([]);
-            else setProperties(props.map(({ iri, prefixedName }) => ({
-                label: `${prefixedName}`,
-                value: iri,
-            })));
-        })();
-    }, [selectedType]);
+async function getPropertySuggestions(selectedType, propertyType) {
+    console.log({ selectedType, propertyType });
 
-    return propertiesState;
+    // NOTE: There's probably a bunch of properties to suggest when no type is known but for now
+    // we will return empty array.
+    if (!selectedType) return [];
+    const props = await getProperties(selectedType, propertyType);
+    if (!props) return [];
+    return props.map(({ iri, prefixedName }) => ({
+        label: `${prefixedName}`,
+        value: iri,
+    }));
 }
 
 /**
@@ -99,31 +94,18 @@ function useSyncClass(setClass) {
 }
 
 export function QueryGeneratorView() {
-    const [selectedType, setSelectedType] = useState(
-        /** @type {string?} */ (null)
+    const [selection, setSelection] = useState(
+        /** @type {NonNullable<Parameters<typeof ComplexPropertySelector>[0]["selection"]>} */ ({
+            rdfType: "",
+            dataProps: [],
+            objectProps: [],
+        })
     );
-    const [typeSuggestions, setTypeSuggestions] = useState(
-        /** @type {Awaited<ReturnType<getClasses>>} */ (null)
-    );
-    const [dataProperties, setDataProperties] = useState(
-        /** @type {string[]} */ ([])
-    );
-    const [objectProperties, setObjectProperties] = useState(
-        /** @type {string[]} */ ([])
-    );
-    const [suggestionsData] = usePropertiesQuery(selectedType, "Data");
 
-    const [suggestionsClass] = usePropertiesQuery(selectedType, "Object");
-
-    useSyncClass(setSelectedType);
-
-    // NOTE: Init class suggestions
-    useEffect(() => {
-        (async () => {
-            const res = await getClasses();
-            setTypeSuggestions(res);
-        })();
-    }, []);
+    useSyncClass((newType) => setSelection({
+        ...selection,
+        rdfType: newType || "",
+    }));
 
     return createElement(
         "div",
@@ -136,84 +118,27 @@ export function QueryGeneratorView() {
             },
         },
         createElement(
-            "div",
-            {},
-            createElement("p", {}, "Type"),
-            createElement(
-                "select",
-                {
-                    value: selectedType || "",
-                    // @ts-ignore
-                    onChange: (e) => setSelectedType(e.target.value),
-                    style: {
-                        padding: `${rem(0.5)} ${rem(1)}`,
-                        border: "1px solid #aaa",
-                        borderRadius: rem(0.5),
-                    },
-                },
-                createElement(
-                    "option",
-                    {
-                        value: "",
-                        hidden: true,
-                    },
-                    "--Select type--",
-                ),
-                typeSuggestions && typeSuggestions.map((item) => createElement(
-                    "option",
-                    {
-                        value: item.iri,
-                        key: item.iri,
-                    },
-                    item.iri,
-                )),
-            ),
+            ComplexPropertySelector,
+            {
+                selection,
+                onSelectionChange: setSelection,
+                dataPropFetcher: (rdfType) => getPropertySuggestions(rdfType, "Data"),
+                objectPropFetcher: (rdfType) => getPropertySuggestions(rdfType, "Object"),
+                rdfTypeFetcher: () => getClasses()
+                    .then((res) => (res || []).map(({ iri, prefixedName }) => ({
+                        label: `${prefixedName}`,
+                        value: iri,
+                    }))),
+            },
         ),
-        createElement(
-            "div",
-            {},
-            createElement("p", {}, "Properties (data)"),
-            createElement(
-                PropertySelector,
-                {
-                    value: dataProperties,
-                    // @ts-ignore
-                    onValueChange: setDataProperties,
-                    suggestions: suggestionsData,
-                }
-            ),
-        ),
-        createElement(
-            "div",
-            {},
-            createElement("p", {}, "Properties (class)"),
-            createElement(
-                PropertySelector,
-                {
-                    value: objectProperties,
-                    // @ts-ignore
-                    onValueChange: setObjectProperties,
-                    suggestions: suggestionsClass,
-                }
-            ),
-        ),
+        // TODO: Make button do the work
         createElement(
             Button,
             {
-                onClick: () => {
-                    if (!selectedType) return;
-                    const limit = 10;
-                    const q = formatMultiCardinalTableAsSelectQuery(
-                        `<${selectedType}>`,
-                        [...dataProperties, ...objectProperties],
-                        limit
-                    );
-                    setEditorText(q);
-                    switchToEditorTab();
-                    Template.GenerateComplexTableQueryForm.hideModal();
-                },
+                disabled: true,
                 style: {
                     width: "fit-content",
+                    color: "#aaa",
                 },
             },
             "Create sparql",
