@@ -12,7 +12,7 @@ import { Template } from "meteor/templating";
 import {
     PortalContext,
     AggregatedTable,
-    PropertySelector,
+    SyncPropertySelector,
     formatMultiCardinalTableAsSelectQuery,
     deduplicateTable,
     demangleVarName,

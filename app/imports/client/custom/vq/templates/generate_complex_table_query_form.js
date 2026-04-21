@@ -9,9 +9,11 @@ import { createElement, useEffect, useState } from 'react';
 import {
     ComplexPropertySelector,
     deduplicateTable,
+    demangleVarName,
     formatMultiCardinalTableAsSelectQuery,
     formatQuery,
     formatUniversalPaginatorQuery,
+    SyncPropertySelector,
 } from 'rdf-toolbag';
 
 /** @type {*} */
@@ -121,8 +123,25 @@ export function QueryGeneratorView() {
             objectProps: [],
         })
     );
+    const [idVars, setIdVars] = useState(["this"]);
 
-    const idVars = ["this"]; // FIXME: hardcoded
+    /**
+     * @param {ComplexPropertySelection} selection
+     * @return {string[]}
+     */
+    function selectionToIdVarSuggestions(selection) {
+        // NOTE: A pretty rough method to do this but it does work
+        const formattedQuery = formatQuery(selection);
+        const matches = formattedQuery.match(/\?\w+/g);
+        // NOTE: Keep unique values and remove the leading "?" in matched var name
+        return [...new Set(matches)].map((match) => match.slice(1));
+    }
+
+    const suggestions = selectionToIdVarSuggestions(selection).flatMap((value) => {
+        const label = demangleVarName(value, selection);
+        return label ? { value, label } : [];
+    });
+
     const globalLimit = 1000; // FIXME: hardcoded
     const pageSize = 10; // FIXME: hardcoded
 
@@ -188,10 +207,27 @@ export function QueryGeneratorView() {
         createElement(H1, {}, "Limiting & Grouping"),
         createElement(
             "div",
-            {},
+            {
+                style: {
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: rem(0.5),
+                },
+            },
             createElement("p", {}, `globalLimit: ${globalLimit}`),
             createElement("p", {}, `pageSize: ${pageSize}`),
-            createElement("p", {}, `idVars: ${idVars}`),
+            createElement(
+                "div",
+                {},
+                createElement("p", {}, "idVars"),
+                createElement(
+                    SyncPropertySelector,
+                    {
+                        suggestions,
+                        value: idVars,
+                        onValueChange: setIdVars,
+                    }),
+            ),
         ),
         createElement(
             Button,
