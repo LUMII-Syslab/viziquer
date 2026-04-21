@@ -8,6 +8,10 @@ import { Button, getClasses, getPrefixes, getProperties, initReactComponents, re
 import { createElement, useEffect, useState } from 'react';
 import {
     ComplexPropertySelector,
+    deduplicateTable,
+    formatMultiCardinalTableAsSelectQuery,
+    formatQuery,
+    formatUniversalPaginatorQuery,
 } from 'rdf-toolbag';
 
 /** @type {*} */
@@ -118,7 +122,43 @@ export function QueryGeneratorView() {
         })
     );
 
+    const idVars = ["this"]; // FIXME: hardcoded
+    const globalLimit = 1000; // FIXME: hardcoded
+    const pageSize = 10; // FIXME: hardcoded
+
     useSyncWithDiagram(setSelection);
+
+    function onCreateClick() {
+        const queryToWrap = formatQuery(selection);
+        const finalQuery = formatUniversalPaginatorQuery({
+            queryToWrap,
+            globalLimit,
+            groupLimit: pageSize,
+            groupOffset: 0,
+            idVars,
+        });
+
+        setEditorText(finalQuery);
+        switchToEditorTab();
+        Session.set("complexTableInfo", { idVars, finalQuery, selection });
+
+        Template.GenerateComplexTableQueryForm.hideModal();
+    }
+
+    function H1({ style, ...props }) {
+        return createElement(
+            "h1",
+            {
+                style: {
+                    fontSize: `${16 * 1.5}px`,
+                    fontWeight: "bold",
+                    marginTop: `${16 * 0.5}px`,
+                    ...(style ?? {}),
+                },
+                ...props,
+            },
+        );
+    }
 
     return createElement(
         "div",
@@ -130,6 +170,7 @@ export function QueryGeneratorView() {
                 fontSize: rem(1.0),
             },
         },
+        createElement(H1, {}, "Property Selection"),
         createElement(
             ComplexPropertySelector,
             {
@@ -144,14 +185,20 @@ export function QueryGeneratorView() {
                     }))),
             },
         ),
-        // TODO: Make button do the work
+        createElement(H1, {}, "Limiting & Grouping"),
+        createElement(
+            "div",
+            {},
+            createElement("p", {}, `globalLimit: ${globalLimit}`),
+            createElement("p", {}, `pageSize: ${pageSize}`),
+            createElement("p", {}, `idVars: ${idVars}`),
+        ),
         createElement(
             Button,
             {
-                disabled: true,
+                onClick: onCreateClick,
                 style: {
                     width: "fit-content",
-                    color: "#aaa",
                 },
             },
             "Create sparql",

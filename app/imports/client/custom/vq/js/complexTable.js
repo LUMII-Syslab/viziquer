@@ -15,6 +15,7 @@ import {
     PropertySelector,
     formatMultiCardinalTableAsSelectQuery,
     deduplicateTable,
+    demangleVarName,
 } from "rdf-toolbag";
 // @ts-ignore
 import rdfToolbagStyle from 'rdf-toolbag/dist/rdf-toolbag.css';
@@ -258,67 +259,14 @@ export function Button(props) {
     );
 }
 
-function TripleAggregationTableView() {
-    const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
-    const reshapedData = tableRes ? reshapeData(tableRes) : null;
-
-    // NOTE: tableToRows throws error if there's not exactly 3 cols
-    const rows = (() => {
-        if (!reshapedData) return null
-        try {
-            return tableToRows(reshapedData);
-        } catch {
-            return null;
-        }
-    })();
-
-    const properties = (rows && (rows.length >= 1)) ? Object.keys(rows[0].props) : undefined;
-
-    const canTableBeRendered = properties && rows;
-
-    return createElement(
-        "div",
-        {},
-        !canTableBeRendered && createElement("p", {}, "table can't be rendered"),
-        canTableBeRendered && createElement(
-            AggregatedTable,
-            {
-                properties,
-                rows,
-            }),
-    );
-}
-
-function TableViewMsgs() {
-    const executedSparql = useTracker(() => Session.get("executedSparql"));
-    const limit = executedSparql?.limit;
-    const unprocessedNumberOfRows = executedSparql?.number_of_rows;
-    // NOTE: numberOfRows is a string for some reason and it should be processed
-    const numberOfRows = (unprocessedNumberOfRows === undefined)
-          ? undefined
-          : Number(unprocessedNumberOfRows);
-
-    /** @type {string|null} */
-    let msg = null;
-
-    if (!executedSparql) msg = "No sparql results.";
-    else if (limit === undefined) msg = "Limit is not defined";
-    else if (numberOfRows === undefined) msg = "Number of rows is unknown";
-    else if (numberOfRows >= limit) msg = "Warning: row limit is reached, data may be incomplete";
-
-    return createElement(
-        Fragment,
-        {},
-        msg && createElement("p", { style: { fontSize: rem(1) }}, msg)
-    );
-}
-
 function DeduplicatedTableView() {
-    const [deduplicationKey, setDeduplicationKey] = useState(
-        /** @type {string | undefined} */ (undefined)
-    );
-
+    const complexTableInfo = useTracker(() => Session.get("complexTableInfo"));
     const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
+
+    // NOTE: Stricter validation could come handy here
+    const deduplicationKey = complexTableInfo?.idVars || [];
+    const selection = complexTableInfo?.selection;
+
     const reshapedData = tableRes ? reshapeData(tableRes) : null;
 
     const rows = reshapedData && deduplicateTable(reshapedData, deduplicationKey);
@@ -327,48 +275,53 @@ function DeduplicatedTableView() {
 
     if (!firstRow) return undefined;
 
-    const properties = Object.keys(firstRow.props);
-    const deduplicationKeySuggestions = [firstRow.idName, ...properties];
+    /**
+     * @param {import("rdf-toolbag").MulticardinalRow} row
+     */
+    function renameCols(row) {
+        /**
+         * @param {string} k
+         * @return {string}
+         */
+        function columnRenamer(k) {
+            if (!selection) return k;
+            return demangleVarName(k, selection) || k;
+        }
 
-    return rows && properties && createElement(
+        /**
+         * @template T
+         * @param {{[k: string]: T}} item
+         * @return {{[k: string]: T}}
+         */
+        function renameObj(item) {
+            return Object.fromEntries(
+                Object.entries(item).map(([k, v]) => [columnRenamer(k), v])
+            );
+        }
+
+        return {
+            idCols: row.idCols.map(columnRenamer),
+            restCols: row.restCols.map(columnRenamer),
+            idValues: renameObj(row.idValues),
+            restValues: renameObj(row.restValues),
+        };
+    }
+
+    const renamedRows = rows.map(renameCols);
+
+    return rows && createElement(
         "div",
         {},
-        createElement(
-            "select",
-            {
-                value: deduplicationKey,
-                // @ts-ignore
-                onChange: (e) => setDeduplicationKey(e.target.value),
-                style: {
-                    padding: `${rem(0.5)} ${rem(1)}`,
-                    border: "1px solid #aaa",
-                    borderRadius: rem(0.5),
-                },
-            },
-            deduplicationKeySuggestions?.map((item) => createElement(
-                "option",
-                { value: item, key: item },
-                item,
-            )),
-        ),
-        createElement(AggregatedTable, { properties, rows }),
+        createElement(AggregatedTable, { rows: renamedRows }),
     );
 }
 
 export function ExtendedTableView() {
     const [tabIndex, setTabIndex] = useState(0);
 
+    // NOTE: There's only one tab, so we can probably remove tab functionality altogether
     /** @type {{name: string, el: React.ReactNode}[]} */
     const tabs = [
-        {
-            name: "Triple aggregation",
-            el: createElement(
-                "div",
-                {},
-                createElement(TableViewMsgs),
-                createElement(TripleAggregationTableView),
-            ),
-        },
         {
             name: "Deduplicated table",
             el: createElement(
