@@ -21,12 +21,21 @@ let modalElement = null;
 
 // NOTE: Made this simple event handler in order to cleanly notify QueryGeneratorView when property
 // selection needs to be pre-filled again.
-/** @type {Set<function>} */
+// NOTE: autoFillStrategy:
+//   - "fromElement" -- props are retrieved from the info available in the visual element
+//   - "topProps" -- most frequently occurring props for the element's type are selected
+/** @typedef {{ autofillStrategy: "fromElement" | "topProps" }} ModalRequestEventPayload */
+/** @typedef {(payload: ModalRequestEventPayload) => void} ModalRequestCallback */
+
+/** @type {Set<ModalRequestCallback>} */
 let eventTargets = new Set();
 const queryGeneratorModalRequest = {
-    subscribe: (callback) => eventTargets.add(callback),
-    unsubcribe: (callback) => eventTargets.delete(callback),
-    emit: () => eventTargets.forEach((callback) => callback()),
+    /** @type {(callback: ModalRequestCallback) => void} */
+    subscribe: (callback) => {eventTargets.add(callback)},
+    /** @type {(callback: ModalRequestCallback) => void} */
+    unsubcribe: (callback) => {eventTargets.delete(callback)},
+    /** @type {ModalRequestCallback} */
+    emit: (eventPayload) => eventTargets.forEach((callback) => callback(eventPayload)),
 };
 
 /**
@@ -50,16 +59,17 @@ function switchToEditorTab() {
  *
  * @param {string?} selectedType
  * @param {"Object" | "Data"} propertyType
+ * @param {number} [limit]
  *
  * @return {Promise<{label: string, value: string}[]>}
  */
-async function getPropertySuggestions(selectedType, propertyType) {
+async function getPropertySuggestions(selectedType, propertyType, limit) {
     console.log({ selectedType, propertyType });
 
     // NOTE: There's probably a bunch of properties to suggest when no type is known but for now
     // we will return empty array.
     if (!selectedType) return [];
-    const props = await getProperties(selectedType, propertyType);
+    const props = await getProperties(selectedType, propertyType, limit);
     if (!props) return [];
     return props.map(({ iri, prefixedName }) => ({
         label: `${prefixedName}`,
@@ -77,7 +87,68 @@ async function getPropertySuggestions(selectedType, propertyType) {
  * @param {(newValue: ComplexPropertySelection) => void} setSelection
  */
 function useSyncWithDiagram(setSelection) {
-    async function syncSelectionToDiagramSelection() {
+    /**
+     * @param {ModalRequestEventPayload} payload
+     */
+    async function syncSelectionToDiagramSelection(payload) {
+        switch (payload.autofillStrategy) {
+            case "fromElement":
+                await fromElementSyncSelectionToDiagramSelection();
+                break;
+            case "topProps":
+                await topPropsSyncSelectionToDiagramSelection();
+                break;
+        }
+    }
+
+    const dataLimit = 5;
+    const objLimit = 3;
+
+    async function topPropsSyncSelectionToDiagramSelection() {
+        const elements = Interpreter.editor.getSelectedElements();
+        const firstKey = Object.keys(elements)[0];
+        const vqItem = await createVQ_Element(firstKey);
+        if (!vqItem) return;
+
+
+        const [prefixedClass, prefixes] = await Promise.all([
+            vqItem.getName(),
+            getPrefixes(),
+        ]);
+
+        const resolvedClass = resolvePrefixedName(prefixes, prefixedClass);
+
+        if (!resolvedClass) {
+            setSelection({
+                rdfType: "",
+                dataProps: [],
+                objectProps: [],
+            });
+            return;
+        }
+
+        const [dataProps, objectProps] = await Promise.all([
+            getPropertySuggestions(resolvedClass, "Data", dataLimit)
+                .then((res) => res.map(({ value }) => ({ name: value }))),
+            getPropertySuggestions(resolvedClass, "Object", objLimit)
+                .then((res) => res.map(({ value }) => ({
+                    name: value,
+                    selection: {
+                        rdfType: "",
+                        dataProps: [],
+                        objectProps: [],
+                    },
+                }))),
+        ]);
+
+        setSelection({
+            rdfType: resolvedClass,
+            dataProps,
+            objectProps,
+        });
+    }
+
+    async function fromElementSyncSelectionToDiagramSelection() {
         const elements = Interpreter.editor.getSelectedElements();
         const firstKey = Object.keys(elements)[0];
         const vqItem = await createVQ_Element(firstKey);
@@ -86,8 +157,12 @@ function useSyncWithDiagram(setSelection) {
         const [prefixedClass, prefixes, fields] = await Promise.all([
             vqItem.getName(),
             getPrefixes(),
-            vqItem.getFields(),
+            vqItem.getFields()
+            // NOTE: adding type to .catch return value because otherwise the resulting type will be
+            // a union with never[] that causes useless errors.
+                  .catch(() => /** @type {Awaited<ReturnType<(typeof vqItem.getFields)>>} */ ([])),
         ]);
+
 
 
         /** @type {{label: string, value: string}[]} */
@@ -106,7 +181,8 @@ function useSyncWithDiagram(setSelection) {
     }
 
     useEffect(() => {
-      const cb = () => syncSelectionToDiagramSelection();
+      /** @type {ModalRequestCallback} */
+      const cb = (payload) => {syncSelectionToDiagramSelection(payload)};
 
       queryGeneratorModalRequest.subscribe(cb);
       return () => {
@@ -256,8 +332,14 @@ Template.GenerateComplexTableQueryForm.onRendered(function () {
 });
 
 Interpreter.customMethods({
+    GenerateComplexTableQueryDSS: async function() {
+      queryGeneratorModalRequest.emit({ autofillStrategy: "topProps" });
+
+      if (!modalElement) return;
+      modalElement.modal("show");
+    },
     GenerateComplexTableQuery: async function() {
-      queryGeneratorModalRequest.emit();
+      queryGeneratorModalRequest.emit({ autofillStrategy: "fromElement" });
 
       if (!modalElement) return;
       modalElement.modal("show");
