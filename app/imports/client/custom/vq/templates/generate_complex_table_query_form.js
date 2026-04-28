@@ -88,6 +88,19 @@ async function getPropertySuggestions(selectedType, propertyType, limit) {
  */
 function useSyncWithDiagram(setSelection) {
     /**
+     * @param {string} val
+     *
+     * @return {string}
+     **/
+    function itemNameToPrefixedName(val) {
+        const matches = val.split(/\s+/);
+
+        // NOTE: Probably should find a first match that looks like prefixed name but this will do
+        // for now
+        return matches[0];
+    }
+
+    /**
      * @param {ModalRequestEventPayload} payload
      */
     async function syncSelectionToDiagramSelection(payload) {
@@ -110,9 +123,8 @@ function useSyncWithDiagram(setSelection) {
         const vqItem = await createVQ_Element(firstKey);
         if (!vqItem) return;
 
-
         const [prefixedClass, prefixes] = await Promise.all([
-            vqItem.getName(),
+            vqItem.getName().then(itemNameToPrefixedName),
             getPrefixes(),
         ]);
 
@@ -155,7 +167,7 @@ function useSyncWithDiagram(setSelection) {
         if (!vqItem) return;
 
         const [prefixedClass, prefixes, fields] = await Promise.all([
-            vqItem.getName(),
+            vqItem.getName().then(itemNameToPrefixedName),
             getPrefixes(),
             vqItem.getFields()
             // NOTE: adding type to .catch return value because otherwise the resulting type will be
