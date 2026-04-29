@@ -81,7 +81,7 @@
             <div class="col-sm-10">
               <select class="form-control" id="schema-tags" >
                 {{#each schema_tags}}
-                  <option value="{{name}}">{{display_name}}</option>
+                  <option value="{{name}}">{{title}}</option>
                 {{/each}}
               </select>
             </div>
@@ -93,7 +93,7 @@
                                   <label class="label-radio">
                                       <input type="radio" name="stack-radio" value="Def" checked="checked">
                                       <span class="custom-radio"></span>
-                                       <span style="{{clr}}">Start empty project (fill schema and connection later)</span>
+                                       <span style="{{clr}}">Start empty project </span>
                                   </label>
                               </div>
             </div>
@@ -262,19 +262,12 @@
                                               >DSS schema</label
                                           >
                                           <div class="col-sm-9">
-                                              <select
-                                                  class="form-control"
-                                                  id="dss-schema"
-                                              >
-                                                  {{#each schemas}}
-                                                  <option
-                                                      {{selected}}
-                                                      value="{{display_name}}"
-                                                  >
-                                                      {{display_name_full}}
-                                                  </option>
-                                                  {{/each}}
-                                              </select>
+                                          <input id="schema-selection" type="text" list="SchemaList" class="form-control" value={{selected_schema}} autocomplete="off" >
+                                          <datalist id="SchemaList" class="datalist" >
+                                            {{#each schemas}}
+                                              <option mappedValue = "{{display_name}}" input="{{display_name}}" id="{{id}}">{{display_name_full}}</option>
+                                            {{/each}}
+                                          </datalist>
                                           </div>
                                       </div>
 
@@ -291,7 +284,7 @@
                                               >
                                                   {{#each schema_tags}}
                                                   <option value="{{name}}">
-                                                      {{display_name}}
+                                                      {{title}}
                                                   </option>
                                                   {{/each}}
                                               </select>

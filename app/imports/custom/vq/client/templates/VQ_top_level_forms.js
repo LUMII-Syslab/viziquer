@@ -47,7 +47,8 @@ Template.VQcreateProjectModal.loading = new ReactiveVar(false);
 Template.VQcreateProjectModal.services = new ReactiveVar("");
 Template.VQcreateProjectModal.schemas = new ReactiveVar();
 Template.VQcreateProjectModal.allSchemas = new ReactiveVar();
-Template.VQcreateProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas"}]);
+//Template.VQcreateProjectModal.schemaTags = new ReactiveVar([{name:"All", display_name: "All schemas", title: "All schemas"}]);
+Template.VQcreateProjectModal.schemaTags = new ReactiveVar([{name:"First", display_name: "", title: ""}, {name:"All", display_name: "All schemas", title: "All schemas"}]);
 
 Template.VQcreateProjectModal.rendered = async function() {
   const tool = await Tools.findOneAsync({toolGroup: VQToolGroup, isDeprecated: {$ne: true}});
@@ -56,7 +57,8 @@ Template.VQcreateProjectModal.rendered = async function() {
 	const tags = rr.tags;
 
 	if (_.size(tags) > 0) {
-		tags.unshift({name:"All", display_name: "All schemas"});
+		tags.unshift({name:"First", display_name: "", title: ""});
+    tags.push({name:"All", display_name: "All schemas", title: "All schemas"});
 		Template.VQcreateProjectModal.schemaTags.set(tags);
 	}
 	Template.VQcreateProjectModal.loading.set(false);
@@ -68,7 +70,7 @@ Template.VQcreateProjectModal.rendered = async function() {
     }
 		Template.VQcreateProjectModal.allSchemas.set(schemas);
 	}
-	Template.VQcreateProjectModal.schemas.set(getSchemasP('All')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
+	Template.VQcreateProjectModal.schemas.set(getSchemasP('First')); // TODO te varētu būt kāds sākotnējais tags uzstādīts
 }
 
 Template.VQcreateProjectModal.helpers({
@@ -244,10 +246,12 @@ function getSchemasP(tag) {
 	const allSchemas = Template.VQcreateProjectModal.allSchemas.get() || [];
 
 	for ( const sc of allSchemas ) {
-		if ( tag !== 'All' && sc.tags.includes(tag))
+		if ( tag !== 'All' && tag !== 'First' && sc.tags.includes(tag))
 			schemas.push(sc);
 		else if ( tag === 'All' )
 			schemas.push(sc);
+    else if ( tag === 'First' && !sc.tags.includes('Extra'))
+      schemas.push(sc);
 	}
 
 	schemas.unshift({display_name: "", display_name_full: ""});
@@ -318,7 +322,7 @@ Template.VQ_diagramsToolbar_buttons.events({
 Template.VQontologySettings.schemas = new ReactiveVar([{ name: "" }]);
 Template.VQontologySettings.allSchemas = new ReactiveVar();
 Template.VQontologySettings.schemaTags = new ReactiveVar([
-  { name: "All", display_name: "All schemas" },
+  { name: "All", display_name: "All schemas", title:  "All schemas" },
 ]);
 Template.VQontologySettings.uri = new ReactiveVar("");
 Template.VQontologySettings.endpoint = new ReactiveVar("");
@@ -326,6 +330,7 @@ Template.VQontologySettings.queryEngineType = new ReactiveVar("");
 Template.VQontologySettings.directClassMembershipRole = new ReactiveVar("");
 Template.VQontologySettings.indirectClassMembershipRole = new ReactiveVar("");
 Template.VQontologySettings.graphs = new ReactiveVar([]);
+Template.VQontologySettings.selectedSchema = new ReactiveVar("");
 
 Template.VQontologySettings.onCreated(function () {
   Session.set("msg", undefined);
@@ -337,6 +342,15 @@ Template.VQontologySettings.onDestroyed(function () {
 
 Template.VQontologySettings.events({
   "click #ok-ontology-settings": async function () {
+    let schema_name = "";
+    const selectSchema = document.getElementById("schema-selection");
+    const selection = selectSchema.value;
+
+    const selectedSchema = Template.VQontologySettings.schemas.get().filter(function(f){ return f.display_name_full === selection;})
+    if ( selectedSchema.length > 0 ) {
+      schema_name = selectedSchema[0].display_name;
+      console.log('Kaaadas vērtības', $("#dss-schema").val(), schema_name)
+    }
 
     var list = {
       projectId: Session.get("activeProject"),
@@ -344,7 +358,7 @@ Template.VQontologySettings.events({
       diagramId: Session.get("activeDiagram"),
       uri: $("#ontology-uri").val(),
       endpoint: $("#ontology-endpoint").val(),
-      schema: $("#dss-schema").val(),
+      schema:schema_name, // vecā vieta $("#dss-schema").val(),
       useStringLiteralConversion: $("#use-string-literal-conversion").val(),
       queryEngineType: $("#query-engine-type").val(),
       useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(
@@ -525,9 +539,7 @@ Template.VQontologySettings.events({
   // 'click #dss-schema' : function(e) {
   "change #dss-schema": function () {
     var schema = $("#dss-schema").val();
-    var schema_info = Template.VQontologySettings.schemas
-      .get()
-      .filter(function (o) {
+    var schema_info = Template.VQontologySettings.schemas.get().filter(function (o) {
         return o.display_name === schema;
       });
     if (schema_info.length > 0 && schema_info[0].display_name !== "") {
@@ -550,6 +562,34 @@ Template.VQontologySettings.events({
       Template.VQontologySettings.directClassMembershipRole.set("");
       Template.VQontologySettings.indirectClassMembershipRole.set("");
     }
+  },
+  "change #schema-selection": function () {
+    const selectSchema = document.getElementById("schema-selection");
+    const selection = selectSchema.value;
+
+    const schema_info = Template.VQontologySettings.schemas.get().filter(function(f){ return f.display_name_full === selection;})
+
+    if (schema_info.length > 0 && schema_info[0].display_name !== "") {
+      Template.VQontologySettings.endpoint.set(schema_info[0].sparql_url);
+      Template.VQontologySettings.uri.set(schema_info[0].named_graph);
+      Template.VQontologySettings.queryEngineType.set(
+        schema_info[0].endpoint_type,
+      );
+      Template.VQontologySettings.directClassMembershipRole.set(
+        schema_info[0].direct_class_role,
+      );
+      Template.VQontologySettings.indirectClassMembershipRole.set(
+        schema_info[0].indirect_class_role,
+      );
+    }
+    if (schema_info.length > 0 && schema_info[0].display_name === "") {
+      Template.VQontologySettings.endpoint.set("");
+      Template.VQontologySettings.uri.set("");
+      Template.VQontologySettings.queryEngineType.set("");
+      Template.VQontologySettings.directClassMembershipRole.set("");
+      Template.VQontologySettings.indirectClassMembershipRole.set("");
+    }
+
   },
   "change #schema-tags": function () {
     var tag = $("#schema-tags").val();
@@ -625,7 +665,7 @@ function getSchemasO(tag) {
 Template.VQontologySettings.rendered = async function () {
   const rr = await dataShapes.getOntologiesAndTags();
   const tags = rr.tags || [];
-  tags.unshift({ name: "All", display_name: "All schemas" });
+  tags.unshift({ name: "All", display_name: "All schemas", title:  "All schemas" });
   Template.VQontologySettings.schemaTags.set(tags);
 
   let schemas = rr.schemas;
@@ -658,6 +698,7 @@ Template.VQontologySettings.rendered = async function () {
       });
       if (selected.length > 0) {
         selected[0].selected = "selected";
+        Template.VQontologySettings.selectedSchema.set(selected[0].display_name_full);
       }
     }
   }
@@ -688,6 +729,10 @@ Template.VQontologySettings.helpers({
 
   schema_tags: function () {
     return Template.VQontologySettings.schemaTags.get();
+  },
+
+  selected_schema: function () {
+    return Template.VQontologySettings.selectedSchema.get();
   },
 
   useStringLiteralConversionList: function () {
