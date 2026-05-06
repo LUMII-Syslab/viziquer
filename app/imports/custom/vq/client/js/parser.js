@@ -696,12 +696,25 @@ function getReferenceName(referenceName, symbolTable, classID){
 }
 
 function setVariableName(varName, alias, variableData, generateNewName, useAlias){
+	
 
-	var reserverNames = ["constructor", "length", "prototype"];
+	let reserverNames = ["constructor", "length", "prototype"];
 	if(reserverNames.indexOf(varName) != -1) varName = varName + " ";
 	if(reserverNames.indexOf(alias) != -1) alias = alias + " ";
-
-	// console.log("setVariableName", varName, alias, variableData, generateNewName);
+	
+	reservedNames = [
+						"slice",
+						"map",
+						"filter",
+						"length",
+						"constructor",
+						"toString",
+						"push",
+						"pop",
+						"find"
+					]
+	if(reservedNames.indexOf(varName) !== -1) varName = "_"+varName;
+	
 	if(useAlias && typeof alias !== "undefined" && alias != null) return alias;
 
 	if(variableData["kind"]!== null && variableData["kind"].indexOf("CLASS") !== -1) {
@@ -764,6 +777,7 @@ function setVariableName(varName, alias, variableData, generateNewName, useAlias
 					}
 				}
 				//if variableNamesTable has property with given field id, use it
+				
 				return variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId]["name"];
 			} else {
 
@@ -2263,9 +2277,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 
 		//REFERENCE
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Reference"] !== 'undefined'){
-
-
-
 			var underOptionalPlain = checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false);
 			var underUnion = checkIfUnderUnion(expressionTable[key]["Reference"]["name"], classTable, false)
 			if(underOptionalPlain == false && underUnion == false){

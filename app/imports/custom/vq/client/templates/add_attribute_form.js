@@ -1098,7 +1098,7 @@ async function getAssociations(filter){
 			let vq_obj = await createVQ_Element(selected_elem_id);
 
 
-			var param = formParams(vq_obj, 'Object', filter, Template.AddAttribute.CountAssoc.get());
+			var param = formParams(vq_obj, 'ObjectExt', filter, Template.AddAttribute.CountAssoc.get());
 
 			var newStartElement = vq_obj;
 			if ((await vq_obj.isUnion() || await vq_obj.isUnit()) && !(await vq_obj.isRoot())) { // [ + ] element, that has link to upper class

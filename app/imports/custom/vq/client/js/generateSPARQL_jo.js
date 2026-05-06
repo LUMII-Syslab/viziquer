@@ -1905,6 +1905,7 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 				if(field["isSimplePath"]){
 					attributeName = field["exp"].split(/[/.\s]/).slice(-1)[0];
 				}
+				
 				const pattern = /^(.*:)?[a-zA-Z0-9]+@[a-zA-Z0-9]+$/;
 				if((typeof field["alias"] === "undefined" || field["alias"] == null || field["alias"] == "") && (field["isSimple"] || field["isSimplePath"] || pattern.test(attributeName) === true)){
 
@@ -1927,6 +1928,18 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 					if(pattern.test(attributeName)) attributeName = attributeName.substring(0, attributeName.indexOf("@"));
 
 					attributeName = attributeName.replace(/-/g, '_');
+					let reservedNames = [
+						"slice",
+						"map",
+						"filter",
+						"length",
+						"constructor",
+						"toString",
+						"push",
+						"pop",
+						"find"
+					]
+					if(reservedNames.indexOf(attributeName) !== -1) attributeName = "_"+attributeName;
 
 					var generatedName = attributeName;
 					if(attributeName.startsWith("^") == true) {
