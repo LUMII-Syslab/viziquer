@@ -216,7 +216,7 @@ Template.VQ_DSS_schema.helpers({
 function getParams() {
   let diffG = (isFragment) ? 0 : $("#diffG").val();
 	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:true, cover:$("#cover").is(":checked"),
-		pw:$("#pw").val(), k:1, diffG:diffG, diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked")}; // withoutGen:$("#withoutGen").is(":checked"),
+		pw:$("#pw").val(), k:1, diffG:diffG, diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked"), addPropEnds:false}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 )
 		//	par.supPar = 2;
 	if ( $("#abstr").is(":checked") )
@@ -225,8 +225,9 @@ function getParams() {
 		par.supPar = 0;
 	if ( $("#oldDifs").is(":checked") )
 		par.newDifs = false;
+  if ( $("#addPropEnds").is(":checked") )
+		par.addPropEnds = true;
 
-	//if ( !Template.VQ_DSS_schema.IsPublic.get() ) {
   if ( !dataShapes.schema.isPublic ) {
 		par.addIds = $("#addIds").is(":checked");
 		par.k = $("#kValue").val();
@@ -282,6 +283,7 @@ async function getClassesAndProperties(addSupClasses = true) {
 		const rr = await dataShapes.callServerFunction("xx_getPropList2", allParams);
 		propList = rr.data;
 	}
+  const propListIds = propList.map(v => v.id);
 	_.each(propList, function(pr) {
 		if ( namespaces[pr.prefix] == undefined )
 			namespaces[pr.prefix] = 1;
@@ -320,10 +322,10 @@ async function getClassesAndProperties(addSupClasses = true) {
           parT = !p.target_cover_complete;
           parS = !p.source_cover_complete;
         }
-		    if ( p.object_cnt !== 0 && parT && ( p.follows > 0 || p.common_objects > 0 )) { // !p.target_cover_complete p.type_1 === '0' ooooo
+		    if ( propListIds.includes(p.id) && p.object_cnt !== 0 && parT && ( p.follows > 0 || p.common_objects > 0 )) { // !p.target_cover_complete p.type_1 === '0'
 		      propT.push(p);
 		    }
-		    if ( p.object_cnt !== 0 && parS && p.is_follower === '0' && p.common_subjects > 0) { //p.type_2 === '0'
+		    if ( propListIds.includes(p.id) && p.object_cnt !== 0 && parS && p.is_follower === '0' && p.common_subjects > 0) { //p.type_2 === '0'
 		      propS.push(p);
 		    }
 	    }
@@ -2569,7 +2571,9 @@ async function getBasicClasses() {
     }
   }
 
-  if ( !dataShapes.schema.isPublic) {
+  //if ( !dataShapes.schema.isPublic) {
+  if ( params.addPropEnds) {
+    console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
     const propT = classesAndProperties[3].propT;
     const propS = classesAndProperties[3].propS;
     rr = await dataShapes.callServerFunction("xx_getPPInfo", allParams);
@@ -3186,39 +3190,6 @@ function makeAssociations() {
             atr.class_list2 = [to_id];
           }
         }
-/*
-        if ( !dataShapes.schema.isPublic ) {
-          //if ( classInfo.type == 'PropertyTarget') {
-            if ( atr.type == 'out' && ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource' ) ) {
-              for (const to_id of atr.class_list2) {
-                const aId = `${clId}_${to_id}_${atr.p_name}`;
-                rezFull.assoc[aId] = {string:`${atr.p_name} (${roundCount(atr.cnt)})`, cnt:atr.cnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
-                atr.hasAssoc = true;
-                atr.object_cnt_dgr = atr.object_cnt;
-              }
-              if ( atr.class_list2.length == 0 && rezFull.classes[`pt_${atr.p_id}`] != undefined ) { // TODO - vai te bija labi tas class_list2 ?
-                let to_id = `pt_${atr.p_id}`;
-                if ( rezFull.classes[to_id].G_id != undefined ) {
-                  to_id = rezFull.classes[to_id].G_id[rezFull.classes[to_id].G_id.length-1];
-                }
-                rezFull.assoc[`${clId}_${to_id}_${atr.p_name}`] = {string:`${atr.p_name} (${roundCount(atr.cnt)})`, cnt:atr.cnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
-                atr.hasAssoc = true;
-                atr.object_cnt_dgr = atr.object_cnt;
-              }
-            }
-            if ( atr.type == 'in' &&  classInfo.type == 'PropertyTarget' ) {
-              for (const to_id of atr.class_list2) {
-                const aId = `${to_id}_${clId}_${atr.p_name}`;
-                rezFull.assoc[aId] = {string:`${atr.p_name} (${roundCount(atr.cnt)})`, cnt:atr.cnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:to_id, to:clId, removed:false };
-                atr.hasAssoc = true;
-              }
-            }
-          //}
-          //if ( classInfo.type == 'PropertySource') {
-          //  console.log('IR SSSSSSSSSSSSSSSSSSSSSSS', classInfo)
-          //}
-        } */
-
 			}
 		}
 	}
