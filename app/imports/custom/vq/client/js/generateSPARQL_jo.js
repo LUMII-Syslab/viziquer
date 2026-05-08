@@ -701,11 +701,14 @@ async function generateSPARQLtextFromSchema(){
 		}
 	}
 	let classList = await selected_elem.getCompartmentValue("ClassList");
+	let classListL = await getClassListFromString(classList);
 
 	if(classList === null){
 		return simpleSchemaBox(selected_elem, n, dirRole, []);
 	} else {
-		return groupSchemaBox(selected_elem, n, dirRole, classList, []);
+		let classListL = await getClassListFromString(classList);
+		if(classListL.length != 1) return groupSchemaBox(selected_elem, n, dirRole, classList, []);
+		else return simpleSchemaBox(selected_elem, n, dirRole, []);
 	}
 }
 
@@ -862,6 +865,7 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 	let prefixes = await dataShapes.getNamespaces();
 	for(let clazz = 0; clazz < classList.length; clazz++){
 		let params = {name: classList[clazz]};
+		let classNameForProp = classList[clazz];
 		let cls = await dataShapes.resolveClassByName(params);
 
 		if(cls.complete === true){
@@ -876,8 +880,9 @@ async function groupSchemaBox(selected_elem, n, dirRole, classListString, usedNa
 			prefixTable[classPrefix] = "";
 
 			let propParams = {main:{propertyKind:'Data',"limit": 30, addTypes:true}};
-			propParams.element = {className: classList[clazz]};
+			propParams.element = {className: classNameForProp};
 			let props = await dataShapes.getPropertiesFull(propParams);
+			
 			for(let prop = 0; prop < props.data.length; prop++){
 				let dataProperty = props.data[prop];
 				let dataProp = dataProperty.prefix +":"+dataProperty.local_name;
