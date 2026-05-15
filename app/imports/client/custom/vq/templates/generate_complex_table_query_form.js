@@ -1,7 +1,7 @@
 // @ts-check
 import { Interpreter } from '../../../lib/interpreter.js'
 import { Template } from "meteor/templating";
-import { createVQ_Element } from '../js/VQ_Element.js'
+import { createVQ_Element, VQ_Element } from '../js/VQ_Element.js'
 
 import './generate_complex_table_query_form.html'
 import { Button, getClasses, getPrefixes, getProperties, initReactComponents, rem, resolvePrefixedName } from '../js/complexTable.js';
@@ -24,7 +24,12 @@ let modalElement = null;
 // NOTE: autoFillStrategy:
 //   - "fromElement" -- props are retrieved from the info available in the visual element
 //   - "topProps" -- most frequently occurring props for the element's type are selected
-/** @typedef {{ autofillStrategy: "fromElement" | "topProps" }} ModalRequestEventPayload */
+//   - "linkTopProps" -- like "topProps" but the current element is assumed to be a link
+/**
+ * @typedef {{
+ *   autofillStrategy: "fromElement" | "topProps" | "linkTopProps",
+ * }} ModalRequestEventPayload
+ **/
 /** @typedef {(payload: ModalRequestEventPayload) => void} ModalRequestCallback */
 
 /** @type {Set<ModalRequestCallback>} */
@@ -78,6 +83,17 @@ async function getPropertySuggestions(selectedType, propertyType, limit) {
 }
 
 /**
+ * @return ComplexPropertySelection
+ */
+function makeDefaultSelection() {
+    return {
+        rdfType: "",
+        dataProps: [],
+        objectProps: [],
+    };
+}
+
+/**
  * @typedef {NonNullable<Parameters<typeof ComplexPropertySelector>[0]["selection"]>} ComplexPropertySelection
  */
 
@@ -104,6 +120,9 @@ function useSyncWithDiagram(setSelection) {
      * @param {ModalRequestEventPayload} payload
      */
     async function syncSelectionToDiagramSelection(payload) {
+        // TODO: This function should maintain some sort of loading state. If the user starts
+        // editing while this function is not finished, selection will most likely be overriden on
+        // finish.
         switch (payload.autofillStrategy) {
             case "fromElement":
                 await fromElementSyncSelectionToDiagramSelection();
@@ -111,33 +130,28 @@ function useSyncWithDiagram(setSelection) {
             case "topProps":
                 await topPropsSyncSelectionToDiagramSelection();
                 break;
+            case "linkTopProps":
+                await topPropsLinkSyncSelectionToDiagramSelection();
+                break;
         }
     }
 
     const dataLimit = 5;
     const objLimit = 3;
 
-    async function topPropsSyncSelectionToDiagramSelection() {
-        const elements = Interpreter.editor.getSelectedElements();
-        const firstKey = Object.keys(elements)[0];
-        const vqItem = await createVQ_Element(firstKey);
-        if (!vqItem) return;
+    /**
+     * @param {{[key: string]: string}} prefixes
+     * @param {Awaited<ReturnType<createVQ_Element>>} vqItem
+     *
+     * @return ComplexPropertySelection
+     */
+    async function topPropsToSelection(prefixes, vqItem) {
+        if (!vqItem) return makeDefaultSelection();
 
-        const [prefixedClass, prefixes] = await Promise.all([
-            vqItem.getName().then(itemNameToPrefixedName),
-            getPrefixes(),
-        ]);
-
+        const prefixedClass = await vqItem.getName().then(itemNameToPrefixedName);
         const resolvedClass = resolvePrefixedName(prefixes, prefixedClass);
 
-        if (!resolvedClass) {
-            setSelection({
-                rdfType: "",
-                dataProps: [],
-                objectProps: [],
-            });
-            return;
-        }
+        if (!resolvedClass) return makeDefaultSelection();
 
         const [dataProps, objectProps] = await Promise.all([
             getPropertySuggestions(resolvedClass, "Data", dataLimit)
@@ -153,11 +167,80 @@ function useSyncWithDiagram(setSelection) {
                 }))),
         ]);
 
-        setSelection({
+        return {
             rdfType: resolvedClass,
             dataProps,
             objectProps,
-        });
+        };
+    }
+
+    async function topPropsSyncSelectionToDiagramSelection() {
+        const elements = Interpreter.editor.getSelectedElements();
+        const firstKey = Object.keys(elements)[0];
+
+        const [vqItem, prefixes] = await Promise.all([
+            createVQ_Element(firstKey),
+            getPrefixes(),
+        ]);
+
+        setSelection(
+            vqItem
+                ? await topPropsToSelection(prefixes, vqItem)
+                : makeDefaultSelection()
+        );
+    }
+
+    async function topPropsLinkSyncSelectionToDiagramSelection() {
+        const elements = Interpreter.editor.getSelectedElements();
+        const firstElement = Object.entries(elements)[0][1];
+        if (!firstElement) throw new Error("No element can be found!");
+        if (firstElement.type !== "Line") throw new Error("Found element is not a line!");
+
+        const startId = firstElement?.startElementId;
+        const endId = firstElement?.endElementId;
+
+        const [startObj, endObj, linkObj, prefixes] = await Promise.all([
+            createVQ_Element(startId),
+            createVQ_Element(endId),
+            createVQ_Element(firstElement._id),
+            getPrefixes(),
+        ]);
+
+        if (!startObj) throw new Error("Start element could not be found!");
+        if (!endObj) throw new Error("End element could not be found!");
+        if (!linkObj) throw new Error("Link element could not be found!");
+
+        const [startSelection, endSelection, linkName] = await Promise.all([
+            topPropsToSelection(prefixes, startObj),
+            topPropsToSelection(prefixes, endObj),
+            linkObj
+                .getName()
+                .then(itemNameToPrefixedName)
+                .then((name) => resolvePrefixedName(prefixes, name)),
+        ]);
+
+        if (!linkName) throw new Error("link name could not be found");
+
+        const tmpReplaceIndex = startSelection.objectProps.findIndex((item) => item.name === linkName);
+        // NOTE: Correcting the index to make slicing by index simpler
+        const replaceIndex = (tmpReplaceIndex === -1)
+              ? startSelection.objectProps.length
+              : tmpReplaceIndex;
+
+        /** @type {ComplexPropertySelection} */
+        const finalSelection = {
+            ...startSelection,
+            objectProps: [
+                ...startSelection.objectProps.slice(0, replaceIndex),
+                {
+                    name: linkName,
+                    selection: endSelection,
+                },
+                ...startSelection.objectProps.slice(replaceIndex + 1),
+            ],
+        };
+
+        setSelection(finalSelection);
     }
 
     async function fromElementSyncSelectionToDiagramSelection() {
@@ -343,16 +426,20 @@ Template.GenerateComplexTableQueryForm.onRendered(function () {
   initReactComponents(mountRoot, createElement(QueryGeneratorView));
 });
 
+function tryShowingModal() {
+    if (!modalElement) return;
+    modalElement.modal("show");
+}
+
 Interpreter.customMethods({
     GenerateComplexTableQueryDSS: async function() {
       queryGeneratorModalRequest.emit({ autofillStrategy: "topProps" });
-
-      if (!modalElement) return;
-      modalElement.modal("show");
+      tryShowingModal();
     },
     // NOTE: Named "normal" because the arrow looks ordinary
     GenerateComplexTableQueryLinkNormal: async function() {
-        alert("todo implement link normal");
+        queryGeneratorModalRequest.emit({ autofillStrategy: "linkTopProps" });
+        tryShowingModal();
     },
     // NOTE: Named "strong" because the arrow looks bolder than ordinary arrow
     GenerateComplexTableQueryLinkStrong: async function() {
@@ -360,9 +447,7 @@ Interpreter.customMethods({
     },
     GenerateComplexTableQuery: async function() {
       queryGeneratorModalRequest.emit({ autofillStrategy: "fromElement" });
-
-      if (!modalElement) return;
-      modalElement.modal("show");
+      tryShowingModal();
     },
 })
 
