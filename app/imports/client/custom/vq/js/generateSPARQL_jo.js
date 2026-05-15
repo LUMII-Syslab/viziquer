@@ -429,17 +429,13 @@ Interpreter.customMethods({
   },
 
   GenereteSPARQL_form_class_DSS: async function() {
-    await Interpreter.execute("GenerateComplexTableQueryDSS");
-
-    // NOTE: former implementation of this function. Replacing existing one because the context menu
-    // does not update.
-//      Interpreter.destroyErrorMsg();
-//	  let q = await generateSPARQLtextFromSchema();
-//	  let SPARQL_text = q.SPARQL_text;
-//	  if(typeof q.messages !== "undefined" && q.messages.length > 0){
-//		 let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);
-//		 Interpreter.showErrorMsg(messages.join(" // "), -3);
-//	  }
+      Interpreter.destroyErrorMsg();
+	  let q = await generateSPARQLtextFromSchema();
+	  let SPARQL_text = q.SPARQL_text;
+	  if(typeof q.messages !== "undefined" && q.messages.length > 0){
+		 let messages = q.messages.filter((item, index) => q.messages.indexOf(item) === index);
+		 Interpreter.showErrorMsg(messages.join(" // "), -3);
+	  }
   },
 
   // GenereteSPARQL_form_class_costumise_DSS: async function() {

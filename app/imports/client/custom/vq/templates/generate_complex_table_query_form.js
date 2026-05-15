@@ -350,6 +350,14 @@ Interpreter.customMethods({
       if (!modalElement) return;
       modalElement.modal("show");
     },
+    // NOTE: Named "normal" because the arrow looks ordinary
+    GenerateComplexTableQueryLinkNormal: async function() {
+        alert("todo implement link normal");
+    },
+    // NOTE: Named "strong" because the arrow looks bolder than ordinary arrow
+    GenerateComplexTableQueryLinkStrong: async function() {
+        alert("todo implement link strong");
+    },
     GenerateComplexTableQuery: async function() {
       queryGeneratorModalRequest.emit({ autofillStrategy: "fromElement" });
 

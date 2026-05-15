@@ -5919,6 +5919,10 @@
               {
                 "item": "Custom Data",
                 "procedure": "GenereteSPARQL_form_class_costumise_DSS"
+              },
+              {
+                "item": "Generate complex table query",
+                "procedure": "GenerateComplexTableQueryDSS"
               }
             ],
             "readModeContextMenu": [],
@@ -7122,6 +7126,10 @@
               {
                 "item": "Generate SPARQL",
                 "procedure": "GenereteSPARQL_form_object_property_DSS"
+              },
+              {
+                "item": "Generate complex table query",
+                "procedure": "GenerateComplexTableQueryLinkNormal"
               }
             ],
             "readModeContextMenu": [],
@@ -7361,6 +7369,10 @@
               {
                 "item": "Delete",
                 "procedure": "Delete"
+              },
+              {
+                "item": "Generate complex table query",
+                "procedure": "GenerateComplexTableQueryLinkStrong"
               }
             ],
             "readModeContextMenu": [],
