@@ -132,8 +132,19 @@ function reshapeData(sourceData) {
                         value = maybeUri[0];
                     } else if (maybeLiteral !== undefined) {
                         type = "literal";
-                        value = maybeLiteral[0]["_"];
-                        extraProps = maybeLiteral[0]["$"];
+                        const itemToExtractFrom = maybeLiteral[0];
+                        const childType = typeof itemToExtractFrom;
+
+                        if (childType === "object") {
+                            value = itemToExtractFrom["_"];
+                            extraProps = itemToExtractFrom["$"];
+                        } else if (childType === "string") {
+                            // NOTE: For some reason child can be a string, not just object.
+                            value = itemToExtractFrom;
+                            extraProps = {};
+                        } else {
+                            throw new Error(`Unexpected child type: ${childType}!`);
+                        }
                     } else {
                         throw new Error("Unexpected type!");
                     }
