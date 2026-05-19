@@ -138,7 +138,8 @@
 
               <ul class="nav nav-tabs" id="vq-tab2" style="padding-top:10px;">
                 <li class="active"><a data-toggle="tab" href="#VQ-DSS-main">Classes and properties</a></li>
-                <li><a data-toggle="tab" href="#paremeters">Class merging parameters</a></li>
+                <li><a data-toggle="tab" href="#parameters">Class merging parameters</a></li>
+                <li><a data-toggle="tab" href="#extra2">Extra parameters</a></li>
                 {{#if pub}}
                 {{else}}
                   <li><a data-toggle="tab" href="#support">Support</a></li>
@@ -275,7 +276,7 @@
                   {{/if}}
                 </div>
                 <!-- //////////////////////////////////////// -->
-                <div id="paremeters" class="tab-pane fade">
+                <div id="parameters" class="tab-pane fade">
                   <div class="container-fluid">
                     <div class="row">
                       <div class="col-sm-4">
@@ -283,7 +284,7 @@
                           <p><span id="classCount-slider-span2"> </span> Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
                           <input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount2"  {{filterDisabled}}>
                         </div>
-                        <select class="form-control" id="diffG" style="width:300px" >
+                        <select class="form-control" id="diffG" style="width:300px;" >
                           <option value=0 >Without merging</option>
                           <option value=1 >Merge equivalent classes</option>
                           <option value=2 >Weak merging (2)</option>
@@ -291,104 +292,38 @@
                           <option value=10 >Strong merging (10)</option>
                           <option value=20 >Strong merging (20)</option>
                         </select>
-                        <label class="form-check-label" style="padding-top:10px;">
-                          <input class="form-check-input" name = "abstr" id="abstr" type="checkbox">
-                          <span class="custom-checkbox"></span>
-                          Make abstract superclasses
-                        </label>
-                        <label class="form-check-label">
-                          <input class="form-check-input" name = "cover" id="cover" type="checkbox" checked = "checked">
-                          <span class="custom-checkbox"></span>
-                          Use DB Cover set indexes
-                        </label>
-                        <label class="form-check-label">
-                          <input class="form-check-input" name = "addSup" id="addSup" type="checkbox" checked = "checked">
-                          <span class="custom-checkbox"></span>
-                          Add fragment superclasses to diagram
-                        </label>
+
                       </div>
                       <div class="col-sm-4">
                         <div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
                           <p><span id="propCount-slider-span2"> </span>. Properties - {{propCount}}</p>
                           <input type="range" min="0" max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider2" {{filterDisabled}} >
                         </div>
-                        <select class="form-control" id="pw" style="width:300px" >
-                          <option value=0 >Size factor: power = 0 </option>
-                          <option value=3 >Size factor: power = 1/3 </option>
-                          <option selected value=5 >Size factor: power =  1/5 </option>
-                          <option value=10 >Size factor: power =  1/10 </option>
-                          <option value=20 >Size factor: power =  1/20 </option>
-                          <option value=50 >Size factor: power =  1/50 </option>
-                          <option value=100 >Size factor: power =  1/100 </option>
-                        </select>
-                        <label class="form-check-label" style="padding-bottom:10px; padding-top:10px;">
-                          <input class="form-check-input" name = "addPropEnds" id="addPropEnds" type="checkbox" >
-                          <span class="custom-checkbox"></span>
-                          Display property ends as boxes
-                        </label>
+                        <button id="showGroups" type="button" class="btn btn-primary" >Show merged classes</button>
                         {{#if pub}}
                         {{else}}
-                          <select class="form-control" id="kValue" style="width:300px;">
-                            <option selected value=1 > dw(A,B)/(sw(A,B)+ε) &lt; 1 </option>
-                            <option value=2 > dw(A,B)/(sw(A,B)+ε) &lt; 2 </option>
-                            <option value=3 > dw(A,B)/(sw(A,B)+ε) &lt; 3 </option>
-                            <option value=5 > dw(A,B)/(sw(A,B)+ε) &lt; 5 </option>
-                            <option value=10 > dw(A,B)/(sw(A,B)+ε) &lt; 10 </option>
-                          </select>
+                          <button id="showClasses" type="button" class="btn btn-primary">Show basic classes</button>
                         {{/if}}
                       </div>
                       <div class="col-sm-4" style="padding-top:10px;">
                         <div style="padding-bottom:10px;">
                           <span class="label label-default" style="font-size:15px; background-color:transparent;">Diagram parameters:</span>
                         </div>
-                        <select class="form-control" id="disconnBig">
-                          <option value=5 >Max. 5 one object property edges</option>
-                          <option selected value=7 >Max. 7 one object property edges</option>
-                          <option value=10 >Max. 10 one object property edges</option>
-                          <option value=0 >Draw all object properties in the diagram</option>
-                        </select>
-                        <select class="form-control" id="hideSmall">
-                          <option selected value=0 >Draw all object properties in the diagram</option>
-                          <option value=5 >Draw object properties ( triples > 5 ) </option>
-                          <option value=10 >Draw object properties ( triples > 10 )</option>
-                          <option value=100 >Draw object properties ( triples > 100 )</option>
-                          <option value=-10 >Draw essential properties of a class ( > 10% ) </option>
-                          <option value=-100 >Draw essential properties of a class ( > 1% ) </option>
-                        </select>
-                        <label class="form-check-label" style="padding-top:10px;">
-                          <input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">
+                        <label class="form-check-label" >
+                          <input class="form-check-input" name = "abstr" id="abstr" type="checkbox">
                           <span class="custom-checkbox"></span>
-                          Compact view of properties
+                          Make abstract superclasses
                         </label>
-                        <label class="form-check-label">
-                          <input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
+                        <label class="form-check-label" >
+                          <input class="form-check-input" name = "addPropEnds" id="addPropEnds" type="checkbox" >
                           <span class="custom-checkbox"></span>
-                          Compact list of property target classes
+                          Display property sources and targets as boxes
                         </label>
-                        <label class="form-check-label">
-                          <input class="form-check-input" name = "showIntersect" id="showIntersect" type="checkbox">
-                          <span class="custom-checkbox"></span>
-                          Connect intersecting classes
-                        </label>
+                        <button id="makeDiagrAJOO2a" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Create Schema diagram</button>
                       </div>
                     </div>
                   </div>
                   <div class="container-fluid" >
-                    <div class="form-group">
-                      {{#if pub}}
-                      {{else}}
-                        <button id="showClasses" type="button" class="btn btn-primary">Show basic classes</button>
-                      {{/if}}
-                      <button id="showGroups" type="button" class="btn btn-primary">Show merged classes</button>
-                      {{#if pub}}
-                      {{else}}
-                        <label class="form-check-label">
-                          <input class="form-check-input" name = "odlDifs" id="aldDifs" type="checkbox">
-                          <span class="custom-checkbox"></span>
-                          Old diffs
-                        </label>
-                      {{/if}}
-                    </div>
                     <span class="label label-default" style="font-size:15px; background-color:transparent; padding-left:0px;">Nodes- {{classCountUsed}}, groups - {{classCountGroups}}, abstract classes - {{classCountAbstr}}, lines - {{linesCount}} </span>
                   </div>
                   <div class="container-fluid" style="padding-top:10px;">
@@ -424,6 +359,80 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <!-- //////////////////////////////////////// -->
+                <div id="extra2" class="tab-pane fade">
+                  <div class="col-sm-4" style="padding-top:10px;">
+                    <div style="padding-bottom:10px;">
+                      <span class="label label-default" style="font-size:15px; background-color:transparent;">Diagram parameters:</span>
+                    </div>
+                        <select class="form-control" id="disconnBig">
+                          <option value=5 >Max. 5 one object property edges</option>
+                          <option selected value=7 >Max. 7 one object property edges</option>
+                          <option value=10 >Max. 10 one object property edges</option>
+                          <option value=0 >Draw all object properties in the diagram</option>
+                        </select>
+                        <select class="form-control" id="hideSmall">
+                          <option selected value=0 >Draw all object properties in the diagram</option>
+                          <option value=5 >Draw object properties ( triples > 5 ) </option>
+                          <option value=10 >Draw object properties ( triples > 10 )</option>
+                          <option value=100 >Draw object properties ( triples > 100 )</option>
+                          <option value=-10 >Draw essential properties of a class ( > 10% ) </option>
+                          <option value=-100 >Draw essential properties of a class ( > 1% ) </option>
+                        </select>
+                        <label class="form-check-label" style="padding-top:10px;">
+                          <input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">
+                          <span class="custom-checkbox"></span>
+                          Compact view of properties
+                        </label>
+                        <label class="form-check-label">
+                          <input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
+                          <span class="custom-checkbox"></span>
+                          Compact list of property target classes
+                        </label>
+                        <label class="form-check-label">
+                          <input class="form-check-input" name = "showIntersect" id="showIntersect" type="checkbox">
+                          <span class="custom-checkbox"></span>
+                          Connect intersecting classes
+                        </label>
+                        <label class="form-check-label">
+                          <input class="form-check-input" name = "addSup" id="addSup" type="checkbox" checked = "checked">
+                          <span class="custom-checkbox"></span>
+                          Add fragment superclasses to diagram
+                        </label>
+                        <label class="form-check-label">
+                          <input class="form-check-input" name = "cover" id="cover" type="checkbox" checked = "checked">
+                          <span class="custom-checkbox"></span>
+                          Use DB Cover set indexes
+                        </label>
+                    <div style="padding-bottom:10px; padding-top:10px;">
+                      <span class="label label-default" style="font-size:15px; background-color:transparent;">Grouping extra parameter:</span>
+                    </div>
+                        <select class="form-control" id="pw" style="width:300px" >
+                          <option value=0 >Size factor: power = 0 </option>
+                          <option value=3 >Size factor: power = 1/3 </option>
+                          <option selected value=5 >Size factor: power =  1/5 </option>
+                          <option value=10 >Size factor: power =  1/10 </option>
+                          <option value=20 >Size factor: power =  1/20 </option>
+                          <option value=50 >Size factor: power =  1/50 </option>
+                          <option value=100 >Size factor: power =  1/100 </option>
+                        </select>
+                        {{#if pub}}
+                        {{else}}
+                          <select class="form-control" id="kValue" style="width:300px;">
+                            <option selected value=1 > dw(A,B)/(sw(A,B)+ε) &lt; 1 </option>
+                            <option value=2 > dw(A,B)/(sw(A,B)+ε) &lt; 2 </option>
+                            <option value=3 > dw(A,B)/(sw(A,B)+ε) &lt; 3 </option>
+                            <option value=5 > dw(A,B)/(sw(A,B)+ε) &lt; 5 </option>
+                            <option value=10 > dw(A,B)/(sw(A,B)+ε) &lt; 10 </option>
+                          </select>
+                          <label class="form-check-label">
+                            <input class="form-check-input" name = "odlDifs" id="aldDifs" type="checkbox">
+                            <span class="custom-checkbox"></span>
+                            Old diffs
+                          </label>
+                        {{/if}}
                   </div>
                 </div>
                 <!-- //////////////////////////////////////// -->

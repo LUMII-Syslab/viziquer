@@ -684,133 +684,10 @@ Template.VQ_DSS_schema.events({
 
   },
 	'click #makeDiagrAJOO2': async function() {
-		//if ( state == 0 )
-    const startTime = Date.now();
-		await getBasicClasses();
-    console.log('################### pēc getBasicClasses',Date.now() - startTime);
-    let time2 = Date.now();
-  	await calculateGroups();
-    console.log('################### pēc calculateGroups',Date.now() - time2)
-    time2 = Date.now();
-		makeSuperClasses();
-    console.log('################### pēc makeSuperClasses',Date.now() - time2)
-    time2 = Date.now();
-		makeAssociations();
-    console.log('################### pēc makeAssociations',Date.now() - time2)
-    time2 = Date.now();
-		showClasses(); // TODO Šeit būtu tikai jāsaskaita, kas būs diagrammā
-    console.log('################### pēc showClasses',Date.now() - time2)
-    time2 = Date.now();
-		makeDiagramData();
-    console.log('################### pēc makeDiagramData',Date.now() - time2)
-    time2 = Date.now();
-		console.log('rezFull', rezFull);
-
-		const table_representation = {
-			Schema:dataShapes.schema.schemaName,
-			ClassCount:Template.VQ_DSS_schema.ClassCountSelected.get(),
-			CompactClassView:$("#compClassView").is(":checked"),
-			NodesCount:Template.VQ_DSS_schema.ClassCountUsed.get(),
-			LinesCount:countAssociations(),
-			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces}}},
-			Class:{},
-			ObjectProperty:{},
-			Generalization:{},
-			Intersect:{},
-			uStrings:{u_in_prop:u_in_prop,u_c_prop:u_c_prop}
-		};
-
-		let hasGeneralization = false;
-		let generalizationCount = 0;
-
-		for (const k of Object.keys(rezFull.classes)) {
-			const el = rezFull.classes[k];
-			if ( el.used ) {
-				let type = el.type;
-				let typeNew = el.type;
-        let isGroup = false;
-				if ( type == 'Classif') {
-					if ( el.sub_classes_group_string != undefined ) {
-						type = 'ClassifierGroup'
-						typeNew = 'ClassifierGroup'
-            isGroup = true;
-					}
-					else {
-						type = 'Classifier';
-						typeNew = 'Classifier';
-					}
-				}
-				if ( type == 'Class' && el.sub_classes_group_string != undefined ) {
-					type = 'ClassGroup';
-					typeNew = `ClassGroup${el.size}`;
-          isGroup = true;
-				}
-				if ( type == 'Class' && el.sub_classes_group_string == undefined ) {
-					type = 'Class';
-					typeNew = `Class${el.size}`;
-				}
-				if ( type == 'Abstract') {
-					type = 'AbstractClass';
-					typeNew = `AbstractClass${el.size}`;
-				}
-        if ( type == 'PropertyTarget' || type == 'PropertySource') {
-          type = 'Class';
-					typeNew = 'PropertyEnd';
-          if ( el.sub_classes_group_string != undefined ) {
-            isGroup = true;
-            typeNew = 'PropertyEnds';
-          }
-        }
-
-				//const atrCnt = calculateCount(7, el.attributesT.out, el.cnt);  // Pagaidām neizmantosim
-				//console.log(atrCnt);							atrCnt: atrCnt,
-
-				table_representation.Class[k] = { compartments:{
-						Name:el.fullNameD,
-						AttributesT:el.attributesT,
-						ClassList:[]},
-            TypeOld:type,
-						TypeNew:typeNew,
-            IsGroup:isGroup,
-					  Cnt:el.cnt};
-				if ( el.sub_classes_list != undefined && el.sub_classes_list.length > 0 )
-					table_representation.Class[k].compartments.ClassList = el.sub_classes_list;
-        else
-          table_representation.Class[k].compartments.ClassList = [{cnt:el.cnt, name:el.fullNameD, shortName:el.displayName }];
-
-				for (const s of el.super_classes) {
-					if ( rezFull.classes[s].used ) {
-						hasGeneralization = true;
-						generalizationCount = generalizationCount + 1;
-						table_representation.Generalization[`${k}_${s}`] = { source:s, target:k, compartments:{}};
-					}
-				}
-			}
-		}
-
-		for (const k of Object.keys(rezFull.assoc)) {
-			const el = rezFull.assoc[k];
-			if ( el.removed == false )
-				table_representation.ObjectProperty[k] = { source: el.from, target: el.to, compartments:{ Name: el.names}};
-		}
-		for (const l of Object.keys(rezFull.lines)) {
-			const el = rezFull.lines[l];
-			table_representation.Intersect[l] = { source: el.from, target: el.to, compartments:{ Information: 'Class instances intersect'}};
-		}
-		table_representation.hasGeneralization = hasGeneralization;
-		table_representation.generalizationCount = generalizationCount;
-		table_representation.params = getParams();
-		table_representation.diagram_description =`${table_representation.ClassCount} classes, ${table_representation.NodesCount} nodes, ${table_representation.LinesCount +
-    table_representation.generalizationCount} (${table_representation.LinesCount}a + ${table_representation.generalizationCount}g) lines, Merging level - ${table_representation.params.diffG}`
-
-    console.log('################### pēc table_representation',Date.now() - time2)
-    time2 = Date.now();
-    console.log(table_representation)
-
-		//await Utilities.callMeteorMethodAsync("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
-		await Meteor.callAsync("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
-		//Meteor.call("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
-    console.log('################### pēc importOntologyNew',Date.now() - time2)
+    await createSchemaDiagram();
+	},
+  'click #makeDiagrAJOO2a': async function() {
+    await createSchemaDiagram();
 	},
 	'click #getProperties': async function() {
 		let classList = Template.VQ_DSS_schema.Classes.get();
@@ -1391,7 +1268,135 @@ Template.VQ_DSS_schema.events({
   }
 });
 
+async function createSchemaDiagram() {
+		//if ( state == 0 )
+    const startTime = Date.now();
+		await getBasicClasses();
+    console.log('################### pēc getBasicClasses',Date.now() - startTime);
+    let time2 = Date.now();
+  	await calculateGroups();
+    console.log('################### pēc calculateGroups',Date.now() - time2)
+    time2 = Date.now();
+		makeSuperClasses();
+    console.log('################### pēc makeSuperClasses',Date.now() - time2)
+    time2 = Date.now();
+		makeAssociations();
+    console.log('################### pēc makeAssociations',Date.now() - time2)
+    time2 = Date.now();
+		showClasses(); // TODO Šeit būtu tikai jāsaskaita, kas būs diagrammā
+    console.log('################### pēc showClasses',Date.now() - time2)
+    time2 = Date.now();
+		makeDiagramData();
+    console.log('################### pēc makeDiagramData',Date.now() - time2)
+    time2 = Date.now();
+		console.log('rezFull', rezFull);
 
+		const table_representation = {
+			Schema:dataShapes.schema.schemaName,
+			ClassCount:Template.VQ_DSS_schema.ClassCountSelected.get(),
+			CompactClassView:$("#compClassView").is(":checked"),
+			NodesCount:Template.VQ_DSS_schema.ClassCountUsed.get(),
+			LinesCount:countAssociations(),
+			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces}}},
+			Class:{},
+			ObjectProperty:{},
+			Generalization:{},
+			Intersect:{},
+			uStrings:{u_in_prop:u_in_prop,u_c_prop:u_c_prop}
+		};
+
+		let hasGeneralization = false;
+		let generalizationCount = 0;
+
+		for (const k of Object.keys(rezFull.classes)) {
+			const el = rezFull.classes[k];
+			if ( el.used ) {
+				let type = el.type;
+				let typeNew = el.type;
+        let isGroup = false;
+				if ( type == 'Classif') {
+					if ( el.sub_classes_group_string != undefined ) {
+						type = 'ClassifierGroup'
+						typeNew = 'ClassifierGroup'
+            isGroup = true;
+					}
+					else {
+						type = 'Classifier';
+						typeNew = 'Classifier';
+					}
+				}
+				if ( type == 'Class' && el.sub_classes_group_string != undefined ) {
+					type = 'ClassGroup';
+					typeNew = `ClassGroup${el.size}`;
+          isGroup = true;
+				}
+				if ( type == 'Class' && el.sub_classes_group_string == undefined ) {
+					type = 'Class';
+					typeNew = `Class${el.size}`;
+				}
+				if ( type == 'Abstract') {
+					type = 'AbstractClass';
+					typeNew = `AbstractClass${el.size}`;
+				}
+        if ( type == 'PropertyTarget' || type == 'PropertySource') {
+          type = 'Class';
+					typeNew = 'PropertyEnd';
+          if ( el.sub_classes_group_string != undefined ) {
+            isGroup = true;
+            typeNew = 'PropertyEnds';
+          }
+        }
+
+				//const atrCnt = calculateCount(7, el.attributesT.out, el.cnt);  // Pagaidām neizmantosim
+				//console.log(atrCnt);							atrCnt: atrCnt,
+
+				table_representation.Class[k] = { compartments:{
+						Name:el.fullNameD,
+						AttributesT:el.attributesT,
+						ClassList:[]},
+            TypeOld:type,
+						TypeNew:typeNew,
+            IsGroup:isGroup,
+					  Cnt:el.cnt};
+				if ( el.sub_classes_list != undefined && el.sub_classes_list.length > 0 )
+					table_representation.Class[k].compartments.ClassList = el.sub_classes_list;
+        else
+          table_representation.Class[k].compartments.ClassList = [{cnt:el.cnt, name:el.fullNameD, shortName:el.displayName }];
+
+				for (const s of el.super_classes) {
+					if ( rezFull.classes[s].used ) {
+						hasGeneralization = true;
+						generalizationCount = generalizationCount + 1;
+						table_representation.Generalization[`${k}_${s}`] = { source:s, target:k, compartments:{}};
+					}
+				}
+			}
+		}
+
+		for (const k of Object.keys(rezFull.assoc)) {
+			const el = rezFull.assoc[k];
+			if ( el.removed == false )
+				table_representation.ObjectProperty[k] = { source: el.from, target: el.to, compartments:{ Name: el.names}};
+		}
+		for (const l of Object.keys(rezFull.lines)) {
+			const el = rezFull.lines[l];
+			table_representation.Intersect[l] = { source: el.from, target: el.to, compartments:{ Information: 'Class instances intersect'}};
+		}
+		table_representation.hasGeneralization = hasGeneralization;
+		table_representation.generalizationCount = generalizationCount;
+		table_representation.params = getParams();
+		table_representation.diagram_description =`${table_representation.ClassCount} classes, ${table_representation.NodesCount} nodes, ${table_representation.LinesCount +
+    table_representation.generalizationCount} (${table_representation.LinesCount}a + ${table_representation.generalizationCount}g) lines, Merging level - ${table_representation.params.diffG}`
+
+    console.log('################### pēc table_representation',Date.now() - time2)
+    time2 = Date.now();
+    console.log(table_representation)
+
+		//await Utilities.callMeteorMethodAsync("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+		await Meteor.callAsync("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+		//Meteor.call("importOntologyNew", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")}, table_representation);
+    console.log('################### pēc importOntologyNew',Date.now() - time2)
+}
 
 function setClassListInfo(classes, restClasses) {
 	for ( const c of classes) {
@@ -1421,7 +1426,7 @@ function setClassList0() {
 	Template.VQ_DSS_schema.ManualDisabled.set("disabled");
 	Template.VQ_DSS_schema.FilterDisabled.set("");
 	Template.VQ_DSS_schema.RestProperties.set([]);
-	const nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}];
+	const nsFilters = [{value:'All', name:'Classes in all namespaces'},{value:'Data',name:'Classes in all data namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}];
 
 	//const schema = dataShapes.schema.schema;
 	let nsFiltersSel = 'All';
@@ -1535,6 +1540,8 @@ function setClassList(changeCount = false) {
 
 		if ( nsFilter == 'Exclude')
 			filteredClassList = filteredClassList.filter(function(c){ const not_in = ['owl','rdf','rdfs']; return !not_in.includes(c.prefix);});
+    if ( nsFilter == 'Data')
+			filteredClassList = filteredClassList.filter(function(c){ const not_in = ['virtrdf','dav']; return !not_in.includes(c.prefix);});
 		if ( nsFilter == 'Local')
 			filteredClassList = filteredClassList.filter(function(c){ return c.is_local == 1;});
 
@@ -2547,6 +2554,10 @@ async function getBasicClasses() {
 
   function addAttr(c_id, p_id, cnt, object_cnt, type) {
     const p_info = p_list_full[`p_${p_id}`];
+    if ( p_info == undefined ) {
+      console.log('Nav propertijas....', p_id);
+      return;
+    }
     if ( type === 'in' ) {
       const class_ids = p_info.c_from.map( v => v.class_id);
       rezFull.classes[c_id].all_atr_in.push(p_id);
@@ -2573,7 +2584,6 @@ async function getBasicClasses() {
 
   //if ( !dataShapes.schema.isPublic) {
   if ( params.addPropEnds) {
-    console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
     const propT = classesAndProperties[3].propT;
     const propS = classesAndProperties[3].propS;
     rr = await dataShapes.callServerFunction("xx_getPPInfo", allParams);
