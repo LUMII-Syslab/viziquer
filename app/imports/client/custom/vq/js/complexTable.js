@@ -270,6 +270,18 @@ export function Button(props) {
     );
 }
 
+function usePrefixes() {
+    const [prefixes, setPrefixes] = useState(
+        /** @type {Awaited<ReturnType<getPrefixes>> | null} */ (null)
+    );
+
+    useEffect(() => {
+        getPrefixes().then((newPrefixes) => setPrefixes(newPrefixes));
+    }, []);
+
+    return prefixes;
+}
+
 function DeduplicatedTableView() {
     const complexTableInfo = useTracker(() => Session.get("complexTableInfo"));
     const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
@@ -281,6 +293,8 @@ function DeduplicatedTableView() {
     const reshapedData = tableRes ? reshapeData(tableRes) : null;
 
     const rows = reshapedData && deduplicateTable(reshapedData, deduplicationKey);
+
+    const prefixes = usePrefixes();
 
     const firstRow = rows?.[0];
 
@@ -323,7 +337,24 @@ function DeduplicatedTableView() {
     return rows && createElement(
         "div",
         {},
-        createElement(AggregatedTable, { rows: renamedRows }),
+        createElement(AggregatedTable, {
+            rows: renamedRows,
+            renderHeader(colName) {
+                if (!prefixes) return colName;
+
+                const prefixEntries = Object.entries(prefixes);
+
+                const parts = colName
+                      .split(">")
+                      .map((s) => s.trim())
+                      .map((part) => {
+                          const maybePrefix = prefixEntries.find(([_, full]) => part.startsWith(full));
+                          return maybePrefix ? part.replace(maybePrefix[1], `${maybePrefix[0]}:`) : part;
+                      });
+
+                return parts.join(" > ");
+            },
+        }),
     );
 }
 
