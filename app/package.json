@@ -16,6 +16,7 @@
     "bootstrap-colorpicker": "^3.4.0",
     "ClientStorage": "^4.0.1",
     "dotenv": "^17.2.3",
+    "dss-client": "github:LUMII-Syslab/dss-client#semver:~0.8.0",
     "express": "^5.2.1",
     "font-awesome": "^4.7.0",
     "html2canvas": "^1.4.1",
