@@ -101,6 +101,144 @@ Template.VQ_DSS_schema.rendered = function( param = 'schema') {
 	}
 }
 
+const STANDARD_PROP_COVERAGE_THRESHOLD = 0.5;
+
+const fragmentStdPropEditing = new ReactiveVar(false);
+let fragmentStdPropIds = new Set();
+
+let stdPropSelectedBackup = null;
+let stdPropRestBackup = null;
+const delay = ms => new Promise(res => setTimeout(res, ms));
+let stdPropSearchTimeStamp = 0;
+
+function propCoverage(p, classCount) {
+	if (!classCount) return NaN;
+	return (Number(p.type_1 || 0) + Number(p.type_2 || 0)) / classCount;
+}
+
+async function buildFragmentStdPropList(forceReload = false) {
+	const container = document.getElementById("fragment-std-prop-list");
+	if (!container || !dataShapes.schema) return;
+	const classCount = Number(dataShapes.schema.classCount) || 0;
+
+	if (forceReload || (container.children.length === 0 && !container.dataset.loaded)) {
+		let persisted = null;
+		const schemaName = dataShapes.schema.schemaName;
+		if (schemaName) {
+			try { persisted = await Meteor.callAsync("getBRPStandardProperties", schemaName); }
+			catch (e) { console.warn("getBRPStandardProperties failed", e); }
+		}
+		if (persisted && persisted.length > 0) {
+			fragmentStdPropIds = new Set(persisted.map(Number));
+		}
+		else {
+			fragmentStdPropIds = new Set();
+			const properties = (dataShapes.schema.diagram && dataShapes.schema.diagram.properties) || [];
+			properties.forEach(p => {
+				if (propCoverage(p, classCount) >= STANDARD_PROP_COVERAGE_THRESHOLD) {
+					fragmentStdPropIds.add(p.id);
+				}
+			});
+		}
+		container.dataset.loaded = "1";
+		fragmentStdPropEditing.set(false);
+		const btn = document.getElementById("editStandardProps");
+		if (btn) btn.textContent = "Edit standard properties";
+	}
+
+	renderFragmentStdPropList();
+}
+
+function renderFragmentStdPropList() {
+	const container = document.getElementById("fragment-std-prop-list");
+	if (!container || !dataShapes.schema) return;
+	const classCount = Number(dataShapes.schema.classCount) || 0;
+
+	const rows = [];
+	const stripCntSuffix = s => (s || "").replace(/\s*\(cnt-[^)]*\)\s*$/, "");
+	const properties = (dataShapes.schema.diagram && dataShapes.schema.diagram.properties) || [];
+	properties.forEach(p => {
+		if (!fragmentStdPropIds.has(p.id)) return;
+		const k = Number(p.type_1 || 0) + Number(p.type_2 || 0);
+		const pct = classCount > 0 ? (k / classCount) : 0;
+		rows.push({ id: p.id, name: stripCntSuffix(p.p_name || p.display_name || String(p.id)), k, pct });
+	});
+	rows.sort((a, b) => b.pct - a.pct);
+
+	const editing = fragmentStdPropEditing.get();
+	container.innerHTML = "";
+	if (rows.length === 0) {
+		container.textContent = editing
+			? "No properties selected. Click properties on the left/right to add."
+			: "No standard properties.";
+		return;
+	}
+	rows.forEach(r => {
+		const row = document.createElement("div");
+		row.className = "fragment-std-prop-row";
+		row.dataset.propId = r.id;
+		row.style.whiteSpace = "nowrap";
+		row.style.cursor = editing ? "pointer" : "default";
+		const pctStr = `${Math.round(r.pct * 100)}%`;
+		row.textContent = `${r.name} (${pctStr} — ${r.k}/${classCount})`;
+		container.appendChild(row);
+	});
+}
+
+function setFragmentStdPropEditing(on) {
+	fragmentStdPropEditing.set(!!on);
+	const btn = document.getElementById("editStandardProps");
+	if (btn) btn.textContent = on ? "Save standard properties" : "Edit standard properties";
+	["selectedProperties", "restProperties"].forEach(id => { const sel = document.getElementById(id); if (sel) sel.selectedIndex = -1; });
+
+	const searchInput = document.getElementById("stdPropSearch");
+	const helpText = document.getElementById("stdPropHelpText");
+	const display = on ? "" : "none";
+	if (on) {
+		stdPropSelectedBackup = (Template.VQ_DSS_schema.Properties.get() || []).slice();
+		stdPropRestBackup = (Template.VQ_DSS_schema.RestProperties.get() || []).slice();
+	} else {
+		if (stdPropSelectedBackup) Template.VQ_DSS_schema.Properties.set(stdPropSelectedBackup);
+		if (stdPropRestBackup) Template.VQ_DSS_schema.RestProperties.set(stdPropRestBackup);
+		stdPropSelectedBackup = null;
+		stdPropRestBackup = null;
+	}
+	if (searchInput) { searchInput.value = ""; searchInput.style.display = display; }
+	if (helpText) helpText.style.display = display;
+
+	renderFragmentStdPropList();
+	applyStdPropHighlight();
+}
+
+function applyStdPropHighlight() {
+	const editing = fragmentStdPropEditing.get();
+	["selectedProperties", "restProperties"].forEach(id => {
+		const sel = document.getElementById(id);
+		if (!sel) return;
+		[...sel.options].forEach(opt => {
+			opt.style.backgroundColor = (editing && fragmentStdPropIds.has(Number(opt.value))) ? "#eee" : "";
+		});
+	});
+}
+
+const BRP_SPLIT_LEFT_COLOR = "#428bca";
+const BRP_SPLIT_RIGHT_COLOR = "#f0ad4e";
+function paintSplitSlider(slider, leftValId, rightValId) {
+	if (!slider) return;
+	const min = parseFloat(slider.min);
+	const max = parseFloat(slider.max);
+	const val = parseFloat(slider.value);
+	const pct = ((val - min) / (max - min)) * 100;
+	const track = slider.parentElement;
+	if (track) {
+		track.style.background = `linear-gradient(to right, ${BRP_SPLIT_LEFT_COLOR} 0 ${pct}%, ${BRP_SPLIT_RIGHT_COLOR} ${pct}% 100%)`;
+	}
+	const leftEl = document.getElementById(leftValId);
+	const rightEl = document.getElementById(rightValId);
+	if (leftEl) leftEl.textContent = val.toFixed(1);
+	if (rightEl) rightEl.textContent = (1 - val).toFixed(1);
+}
+
 Template.VQ_DSS_schema.helpers({
 	pub: function() {
 		return dataShapes.schema.isPublic; //Template.VQ_DSS_schema.IsPublic.get();
@@ -455,6 +593,15 @@ function calculateCount(value, list, parentCnt) {
 	return rezValue;
 } */
 
+// Re-apply the std-prop highlight after rebuilding the option lists
+Template.VQ_DSS_schema.onRendered(function() {
+	this.autorun(() => {
+		Template.VQ_DSS_schema.Properties.get();
+		Template.VQ_DSS_schema.RestProperties.get();
+		Tracker.afterFlush(() => applyStdPropHighlight());
+	});
+});
+
 Template.VQ_DSS_schema.events({
 	'click #calck': async function() {
     const startTime = Date.now();
@@ -761,13 +908,21 @@ Template.VQ_DSS_schema.events({
 		const fragAlgorithm = document.getElementById("fragment-algorithm").value;
 		const fragEdgeWeightContext = document.getElementById("fragment-edge-weight-context").value;
 
-		// Uncomment to console log fragment similarity comparison for different algorithms
-		// compareFragmentAlgorithmsIntersection();
-		// compareFragmentAlgorithmsSizeIncrease();
-		// compareFragmentAlgorithmsRank();
+		let brpConfig = {};
+		if (fragAlgorithm === "brp") {
+			const cwIn = parseFloat(document.getElementById("brp-cw-incoming").value);
+			const pwSt = parseFloat(document.getElementById("brp-pw-standart").value);
+			const beta = parseFloat(document.getElementById("brp-beta").value);
+			brpConfig = {
+				standardProperties: [...fragmentStdPropIds],
+				classWeightIncoming: cwIn,
+				propWeightStandart: pwSt,
+				beta: beta,
+			};
+		}
 
 		// Calculate fragment
-		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize);
+		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize, undefined, undefined, brpConfig);
 
 		// Update list of chosen classes
     _.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
@@ -786,11 +941,6 @@ Template.VQ_DSS_schema.events({
 		const fragSize = parseInt(document.getElementById("fragment-size2").value);
 		const fragAlgorithm = document.getElementById("fragment-algorithm2").value;
 		const fragEdgeWeightContext = document.getElementById("fragment-edge-weight-context2").value;
-
-		// Uncomment to console log fragment similarity comparison for different algorithms
-		// compareFragmentAlgorithmsIntersection();
-		// compareFragmentAlgorithmsSizeIncrease();
-		// compareFragmentAlgorithmsRank();
 
 		// Calculate fragment
 		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize);
@@ -944,6 +1094,85 @@ Template.VQ_DSS_schema.events({
     let allParams = {main: { limit: 100, filter: filter }};
 		rr = await dataShapes.callServerFunction("xx_getClassList", allParams);
     Template.VQ_DSS_schema.ClassesF.set(rr.data);
+  },
+  'change #fragment-algorithm': function(e) {
+    const isBRP = e.target.value === "brp";
+    const wcWrap = document.getElementById("fragment-weight-context-wrap");
+    const spWrap = document.getElementById("fragment-std-prop-wrap");
+    const sliders = document.getElementById("fragment-brp-sliders");
+    if (wcWrap) wcWrap.style.display = isBRP ? "none" : "inline-flex";
+    if (spWrap) spWrap.style.display = isBRP ? "inline-flex" : "none";
+    if (sliders) sliders.style.display = isBRP ? "grid" : "none";
+    if (isBRP) {
+      void buildFragmentStdPropList();
+      paintSplitSlider(document.getElementById("brp-cw-incoming"), "brp-cw-incoming-val", "brp-cw-outgoing-val");
+      paintSplitSlider(document.getElementById("brp-pw-standart"), "brp-pw-standart-val", "brp-pw-user-val");
+      paintSplitSlider(document.getElementById("brp-beta"), "brp-beta-val", "brp-alpha-val");
+    }
+  },
+  'input #brp-cw-incoming': function(e) {
+    paintSplitSlider(e.target, "brp-cw-incoming-val", "brp-cw-outgoing-val");
+  },
+  'input #brp-pw-standart': function(e) {
+    paintSplitSlider(e.target, "brp-pw-standart-val", "brp-pw-user-val");
+  },
+  'input #brp-beta': function(e) {
+    // Clamp: alpha = 1 - beta, beta=0 would break the closeness term.
+    if (parseFloat(e.target.value) < 0.1) e.target.value = "0.1";
+    paintSplitSlider(e.target, "brp-beta-val", "brp-alpha-val");
+  },
+  'click #editStandardProps': async function() {
+    if (!fragmentStdPropEditing.get()) {
+      setFragmentStdPropEditing(true);
+      return;
+    }
+    const schemaName = dataShapes.schema && dataShapes.schema.schemaName;
+    if (schemaName) {
+      try { await Meteor.callAsync("saveBRPStandardProperties", schemaName, [...fragmentStdPropIds]); }
+      catch (e) { console.warn("saveBRPStandardProperties failed", e); }
+    }
+    setFragmentStdPropEditing(false);
+  },
+  'click .fragment-std-prop-row': function(e) {
+    if (!fragmentStdPropEditing.get()) return;
+    const id = Number(e.currentTarget.dataset.propId);
+    if (Number.isFinite(id)) {
+      fragmentStdPropIds.delete(id);
+      renderFragmentStdPropList();
+      applyStdPropHighlight();
+    }
+  },
+  'keyup #stdPropSearch': async function(e) {
+    if (!fragmentStdPropEditing.get()) return;
+    stdPropSearchTimeStamp = e.timeStamp;
+    await delay(250);
+    if (stdPropSearchTimeStamp !== e.timeStamp) return;
+    const term = (e.currentTarget.value || "").toLowerCase().trim();
+    if (term.length < 3) {
+      if (stdPropSelectedBackup) Template.VQ_DSS_schema.Properties.set(stdPropSelectedBackup);
+      if (stdPropRestBackup) Template.VQ_DSS_schema.RestProperties.set(stdPropRestBackup);
+      return;
+    }
+    const matches = p => {
+      const n = (p && (p.full_name || p.p_name) || "").toLowerCase();
+      return n.includes(term);
+    };
+    Template.VQ_DSS_schema.Properties.set((stdPropSelectedBackup || []).filter(matches));
+    Template.VQ_DSS_schema.RestProperties.set((stdPropRestBackup || []).filter(matches));
+  },
+  // Suppress native multi-select highlight so only our gray edit-mode highlight is visible.
+  'mousedown #selectedProperties option, mousedown #restProperties option': function(e) {
+    if (fragmentStdPropEditing.get()) e.preventDefault();
+  },
+  'click #selectedProperties option, click #restProperties option': function(e) {
+    if (!fragmentStdPropEditing.get()) return;
+    const id = Number(e.currentTarget.value);
+    if (!Number.isFinite(id)) return;
+    if (fragmentStdPropIds.has(id)) fragmentStdPropIds.delete(id);
+    else fragmentStdPropIds.add(id);
+    renderFragmentStdPropList();
+    applyStdPropHighlight();
+    ["selectedProperties", "restProperties"].forEach(id => { const sel = document.getElementById(id); if (sel) sel.selectedIndex = -1; });
   },
   'click #hideFragment': function() {
     if (Template.VQ_DSS_schema.ShowFragmentBlock.get() ) {

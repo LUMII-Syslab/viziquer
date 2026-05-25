@@ -1,6 +1,66 @@
 
 <template name="VQ_DSS_schema">
 
+	<style>
+		/* BRP-algorithm tunable sliders: each represents a pair of complementary
+		   weights summing to 1. The track is a thick two-colour bar whose split
+		   follows the (transparent-track) range input thumb sitting on top. */
+		.brp-split-track {
+			position: relative;
+			width: 100%;
+			min-width: 0;
+			height: 24px;
+			border-radius: 3px;
+			background: linear-gradient(to right, #428bca 0 30%, #f0ad4e 30% 100%);
+		}
+		.brp-split-slider {
+			-webkit-appearance: none;
+			appearance: none;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: transparent;
+			outline: none;
+			padding: 0;
+			margin: 0;
+			cursor: ew-resize;
+			z-index: 1;
+		}
+		.brp-split-slider::-webkit-slider-runnable-track {
+			height: 24px;
+			background: transparent;
+			border: none;
+		}
+		.brp-split-slider::-moz-range-track {
+			height: 24px;
+			background: transparent;
+			border: none;
+		}
+		.brp-split-slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 6px;
+			height: 32px;
+			border-radius: 2px;
+			background: #222;
+			border: 1px solid #fff;
+			box-shadow: 0 0 3px rgba(0,0,0,0.4);
+			margin-top: -4px;
+			cursor: ew-resize;
+		}
+		.brp-split-slider::-moz-range-thumb {
+			width: 6px;
+			height: 32px;
+			border-radius: 2px;
+			background: #222;
+			border: 1px solid #fff;
+			box-shadow: 0 0 3px rgba(0,0,0,0.4);
+			cursor: ew-resize;
+		}
+	</style>
+
 	<!-- Modal for new document -->
     <div id="VQ-DSS-schema" class="modal fade" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog" style="width:1000px">
@@ -247,26 +307,71 @@
                       </select>
                     </div>
                   </div>
-                  <button id="hideFragment" type="button" class="btn btn-primary" style="margin-left: 10px; margin-top: 10px;">Fragment computation options</button>
+                  <div style="display: flex; align-items: center; margin-left: 10px; margin-top: 10px; margin-right: 15px;">
+                    <button id="hideFragment" type="button" class="btn btn-primary">Fragment computation options</button>
+                    {{#if showFragmentBlock}}
+                      <button id="getFragment" type="button" class="btn btn-primary" style="margin-left: auto;">Get fragment</button>
+                    {{/if}}
+                  </div>
                   {{#if showFragmentBlock}}
-                    <div id="fragment-div" style="padding-top: 10px;">
-                      <label for="fragment-size">Fragment size:</label>
-                      <input type="number" id="fragment-size" name="fragment-size" value="10" size="5">
-                      <label for="fragment-algorithm" style="margin-left: 10px;">Algorithm:</label>
-                      <select name="fragment-algorithm" id="fragment-algorithm">
-                        <option value="trivial">Direct</option>
-                        <option value="heuristic">Heuristic (greedy)</option>
-                        <option value="ppr">Personalized PageRank</option>
-                        <option  selected value="limited-ppr">Stepwise PPR</option>
-                      </select>
-                      <label for="fragment-edge-weight-context" style="margin-left: 10px;">Weight context:</label>
-                      <select name="fragment-edge-weight-context" id="fragment-edge-weight-context">
-                        <option value="src-conn">Source class connectivity</option>
-                        <option  selected value="src-tgt-conn">Source and target class connectivity</option>
-                        <option value="src-size">Source class size</option>
-                        <option value="src-tgt-size">Source and target class size</option>
-                      </select>
-                      <button id="getFragment" type="button" class="btn btn-primary" style="margin-left: 10px;">Get fragment</button>
+                    <div id="fragment-div" style="padding-top: 10px; padding-bottom: 10px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px;">
+                      <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0;">
+                        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+                          <label for="fragment-size" style="margin-left: 10px;">Fragment size:</label>
+                          <input type="number" id="fragment-size" name="fragment-size" value="10" size="5">
+                          <label for="fragment-algorithm" style="margin-left: 10px;">Algorithm:</label>
+                          <select name="fragment-algorithm" id="fragment-algorithm">
+                            <option value="trivial">Direct</option>
+                            <option value="heuristic">Heuristic (greedy)</option>
+                            <option value="ppr">Personalized PageRank</option>
+                            <option selected value="limited-ppr">Stepwise PPR</option>
+                            <option value="brp">BRP centrality</option>
+                          </select>
+                          <span id="fragment-weight-context-wrap">
+                            <label for="fragment-edge-weight-context" style="margin-left: 10px;">Weight context:</label>
+                            <select name="fragment-edge-weight-context" id="fragment-edge-weight-context">
+                              <option value="src-conn">Source class connectivity</option>
+                              <option selected value="src-tgt-conn">Source and target class connectivity</option>
+                              <option value="src-size">Source class size</option>
+                              <option value="src-tgt-size">Source and target class size</option>
+                            </select>
+                          </span>
+                        </div>
+                        <div id="fragment-brp-sliders" style="display: none; grid-template-columns: 100px max-content 1fr max-content 100px; column-gap: 8px; row-gap: 12px; align-items: center; padding: 0 10px; width: 100%; box-sizing: border-box;">
+                          <label for="brp-cw-incoming" style="text-align: right; margin-bottom: 0; line-height: 1.2;">Incoming Class Weight</label>
+                          <span id="brp-cw-incoming-val" style="font-variant-numeric: tabular-nums; text-align: right; min-width: 24px;">0.3</span>
+                          <div class="brp-split-track">
+                            <input type="range" id="brp-cw-incoming" class="brp-split-slider" min="0" max="1" step="0.1" value="0.3">
+                          </div>
+                          <span id="brp-cw-outgoing-val" style="font-variant-numeric: tabular-nums; text-align: left; min-width: 24px;">0.7</span>
+                          <label style="text-align: left; margin-bottom: 0; line-height: 1.2;">Outgoing Class Weight</label>
+
+                          <label for="brp-pw-standart" style="text-align: right; margin-bottom: 0; line-height: 1.2;">Standard Property Weight</label>
+                          <span id="brp-pw-standart-val" style="font-variant-numeric: tabular-nums; text-align: right; min-width: 24px;">0.3</span>
+                          <div class="brp-split-track">
+                            <input type="range" id="brp-pw-standart" class="brp-split-slider" min="0" max="1" step="0.1" value="0.3">
+                          </div>
+                          <span id="brp-pw-user-val" style="font-variant-numeric: tabular-nums; text-align: left; min-width: 24px;">0.7</span>
+                          <label style="text-align: left; margin-bottom: 0; line-height: 1.2;">User-Defined Property Weight</label>
+
+                          <label for="brp-beta" style="text-align: right; margin-bottom: 0; line-height: 1.2;">Centrality Measure Weight</label>
+                          <span id="brp-beta-val" style="font-variant-numeric: tabular-nums; text-align: right; min-width: 24px;">0.7</span>
+                          <div class="brp-split-track">
+                            <input type="range" id="brp-beta" class="brp-split-slider" min="0" max="1" step="0.1" value="0.7">
+                          </div>
+                          <span id="brp-alpha-val" style="font-variant-numeric: tabular-nums; text-align: left; min-width: 24px;">0.3</span>
+                          <label style="text-align: left; margin-bottom: 0; line-height: 1.2;">Closeness Measure Weight</label>
+                        </div>
+                      </div>
+                      <span id="fragment-std-prop-wrap" style="display: none; margin-left: 10px; align-items: flex-start; gap: 6px;">
+                        <label style="white-space: nowrap;">Standard properties:</label>
+                        <div id="fragment-std-prop-list" style="max-height: 160px; overflow: auto; border: 1px solid #ccc; padding: 4px 8px 16px; width: 240px;"></div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; align-self: flex-start;">
+                          <button id="editStandardProps" type="button" class="btn btn-default">Edit standard properties</button>
+                          <input class="form-control" id="stdPropSearch" type="text" autocomplete="off" placeholder="Search.." style="display: none; width: 160px;">
+                          <div id="stdPropHelpText" style="display: none; max-width: 160px; font-size: 12px; color: #666; line-height: 1.2;">Click on a property to add/remove it from the standard property list.</div>
+                        </div>
+                      </span>
                       <!-- Optional. Used to show adj with edge weights to analyze fragment finding algorithms -->
                       <!-- <div id="fragment-relevances">
                         <p id="fragment-ancestor-classes"></p>
