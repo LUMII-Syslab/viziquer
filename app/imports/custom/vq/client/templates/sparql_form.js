@@ -552,14 +552,10 @@ function dssClientCompleter(yasqeClass) {
 		preProcessToken(token) {
 			return preprocessIriForCompletion(yasqeClass, token);
 		},
-		postProcessSuggestion: (t, s) => {
+		postProcessToken: (t, s) => {
 			return postProcessPropertySuggestion(yasqeClass, t, s);
 
 		},
-		postprocessHints: (hs) => {
-			return postProcessPropertyHints(yasqeClass, hs);
-
-		}
 	}
 	return propertyCompleter;
 }
@@ -852,87 +848,3 @@ function highlightSequenceToHtml(highlightedSequence) {
 	}
 	return span;
 }
-
-/**
- * @param {Editor} cm
- * @param {string} prefixName
- * @param {string} uri
- * @returns {void}
- */
-function addPrefix(cm, prefixName, uri) {
-	// Find first prefix
-	const firstPrefixRegex = /^PREFIX\s+\w*:\s*<[^>]*>\s*$/im;
-	const firstPrefixMatch = cm.getValue().match(firstPrefixRegex);
-	const position = cm.posFromIndex(firstPrefixMatch?.index ?? 0);
-
-	cm.replaceRange(`PREFIX ${prefixName}: <${uri}>\n`, position);
-}
-
-
-/** @type {NonNullable<CompleterConfig["postprocessHints"]>} */
-const postProcessPropertyHints = (_yasqe, hints) => {
-	/** @type {(Hint & Completion)[]} */
-	const hintsWithCompletionCallback = hints;
-	for (const hint of hintsWithCompletionCallback) {
-		hint.hint = (cm, data, hint) => {
-			console.log("Completion callback triggered with hint:", hint, "and data:", data);
-			const cursor = cm.getCursor();
-			if (!hint) {
-				console.error("No hint provided for completion callback");
-			}
-			function getText(completion) {
-				if (typeof completion == "string") return completion;
-				else return completion.text;
-			}
-			cm.replaceRange(getText(hint ?? ""), hint?.from ?? data?.from ?? cursor,
-				hint?.to ?? data?.to ?? cursor, "complete");
-			if (!hint) {
-				return;
-			}
-			const prefixes = _yasqe.getPrefixesFromQuery();
-			// If the completion's prefix isn't in query prefixes, add it
-			const prefix = Object.entries(prefixes).find(([prefix,]) => hint.text.startsWith(prefix));
-			if (!prefix) {
-				const dssPrefixes = autocompletionData.namespaceData?.map(ns => ([ns.name, ns.value])) ?? [];
-				const matchingDssPrefix = dssPrefixes.find(([prefix,]) => hint.text.startsWith(`${prefix}:`));
-
-				if (matchingDssPrefix) {
-					addPrefix(cm, matchingDssPrefix[0], matchingDssPrefix[1]);
-				}
-			}
-		};
-
-		const completedString = hint.text;
-		const propertyData = autocompletionData.tokenMap[completedString];
-		if (propertyData) {
-			const prefixFormText = `${propertyData.prefix}:${propertyData.localName}`;
-			const withDisplay = propertyData.localName == propertyData.displayName ? `${prefixFormText}` : `${prefixFormText} (${propertyData.displayName})`;
-			const withIri = `${withDisplay}\t<${propertyData.value}>`;
-			hint.displayText = withIri;
-			hint.render = (el) => {
-				el.style.display = "flex";
-				el.style.alignItems = "center";
-				el.style.width = "100%";
-
-				const displaySpan = document.createElement("span");
-				if (autocompletionData.token) {
-					const highlightedSequence = subsequenceHighlighter(autocompletionData.token.autocompletionString ?? "", prefixFormText);
-					const highlightedHtml = highlightSequenceToHtml(highlightedSequence);
-					displaySpan.appendChild(highlightedHtml);
-				} else {
-					displaySpan.textContent = withDisplay;
-				}
-				displaySpan.classList.add("iri-short");
-				el.appendChild(displaySpan);
-
-				const iriSpan = document.createElement("span");
-				iriSpan.textContent = `<${propertyData.value}>`;
-				iriSpan.classList.add("iri");
-				el.appendChild(iriSpan);
-
-
-			};
-		}
-	}
-	return hints;
-};
