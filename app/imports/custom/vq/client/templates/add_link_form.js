@@ -10,6 +10,7 @@ import { autoCompletionCleanup, autoCompletionAddLink } from '../js/autoCompleti
 import { getClassListFromString } from '../js/generateSPARQL_jo.js'
 
 import { getSchemaNameForElement } from '../../../../custom/vq/client/js/transformations.js'
+import { computeOrthogonalLinePointsFromBoxes } from '../../../../platform/client/js/editor/ajooEditor/ajoo/Elements/Lines/draw_new_line.js'
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const delayTime = 500;
@@ -1121,9 +1122,13 @@ async function getDiagramContext() {
 	};
 }
 
-async function createMissingClassBoxes(classesToFetchIds, currentElement, diagramId, diagram_type) {
+async function createMissingClassBoxes(classesToFetchIds, currentElement, diagramId, diagram_type, newBoxes) {
 	let createdBoxesMap = {};
 	if (classesToFetchIds.length === 0) return createdBoxesMap;
+
+	const baseCoords = await currentElement.getCoordinates();
+	const baseX = baseCoords.x + baseCoords.width + 150;
+	let boxIndex = 0;
 
 	let paramsSelected = { main: { ids: classesToFetchIds } };
 	let resSelected = await dataShapes.callServerFunction("xx_getClassListFullfromIds", paramsSelected);
@@ -1149,7 +1154,9 @@ async function createMissingClassBoxes(classesToFetchIds, currentElement, diagra
 			TypeNew: 'Class'
 		};
 
-		var newBox = await Create_Any_VQ_Element_Async(await currentElement.getNewLocation(60), "Class", false);
+		const offsetY = baseCoords.y + boxIndex * 60;
+		var newBox = await Create_Any_VQ_Element_Async({x: baseX, y: offsetY, width: 120, height: 30}, "Class", false);
+		boxIndex++;
 		newBox.setNewExploreFillColor();
 
 		await Meteor.callAsync("addClassCompartments", {
@@ -1165,12 +1172,13 @@ async function createMissingClassBoxes(classesToFetchIds, currentElement, diagra
 
 		createdBoxesMap[el.name] = newBox;
 		createdBoxesMap[el.display_name] = newBox;
+		newBoxes.push(newBox);
 	}
 
 	return createdBoxesMap;
 }
 
-async function drawObjectPropertyLine(sourceElem, targetElem, propertiesData, existingLines, diagramId, diagram_type) {
+async function drawObjectPropertyLine(sourceElem, targetElem, propertiesData, existingLines, diagramId, diagram_type, newLines) {
 	propertiesData = propertiesData.filter(function (p) { return !restProperties.map(p => p.full_name).includes(p.shortName) });
 	if (!propertiesData || propertiesData.length === 0) return;
 
@@ -1180,15 +1188,14 @@ async function drawObjectPropertyLine(sourceElem, targetElem, propertiesData, ex
 	let lineExists = existingLines.find(e => e.source === sourceId && e.target === targetId);
 	if (lineExists) return;
 
-	var d = 60;
-	var locClass = await sourceElem.getNewLocation(d);
-	var coordX = locClass.x + Math.round(locClass.width / 2);
-	var coordY = locClass.y - d;
-	var locLink = [coordX, locClass.y, coordX, coordY];
+	var srcBox = await sourceElem.getCoordinates();
+	var tgtBox = await targetElem.getCoordinates();
+	var locLink = computeOrthogonalLinePointsFromBoxes(srcBox, tgtBox);
 
 	var newLine = await Create_Any_VQ_Element_Async(locLink, "ObjectProperty", true, sourceElem, targetElem);
 
 	existingLines.push({ source: sourceId, target: targetId });
+	if (newLines) newLines.push(newLine);
 
 	let compartmentList = propertiesData.map(p => ({ name: p.name || p.display_name }));
 
@@ -1230,7 +1237,9 @@ async function addNewLinksForDataSchema() {
 	let classesToFetchNames = newTargetClassNames.filter(name => !existingBoxesMap[name] && classIdMap[name]);
 	let classesToFetchIds = classesToFetchNames.map(name => classIdMap[name]);
 
-	let createdBoxesMap = await createMissingClassBoxes(classesToFetchIds, currentElement, diagramId, diagram_type);
+	let newBoxes = [];
+	let newLines = [];
+	let createdBoxesMap = await createMissingClassBoxes(classesToFetchIds, currentElement, diagramId, diagram_type, newBoxes);
 
 	let allDiagramNodes = [];
 	for (let name of Array.from(existingClassNames)) {
@@ -1262,7 +1271,7 @@ async function addNewLinksForDataSchema() {
 				const propsOut = await dataShapes.callServerFunction("xx_getClasstoClassProperties", {
 					main: { c_1_id: targetId, c_2_id: diagramNode.id, limit: 30 }
 				});
-				await drawObjectPropertyLine(targetBox, diagramNode.box, propsOut.data, existingLines, diagramId, diagram_type);
+				await drawObjectPropertyLine(targetBox, diagramNode.box, propsOut.data, existingLines, diagramId, diagram_type, newLines);
 				drawnPairs.add(pairKeyOut);
 			}
 
@@ -1271,13 +1280,16 @@ async function addNewLinksForDataSchema() {
 				const propsIn = await dataShapes.callServerFunction("xx_getClasstoClassProperties", {
 					main: { c_1_id: diagramNode.id, c_2_id: targetId, limit: 30 }
 				});
-				await drawObjectPropertyLine(diagramNode.box, targetBox, propsIn.data, existingLines, diagramId, diagram_type);
+				await drawObjectPropertyLine(diagramNode.box, targetBox, propsIn.data, existingLines, diagramId, diagram_type, newLines);
 				drawnPairs.add(pairKeyIn);
 			}
 		}
 	}
 
-	Interpreter.execute("ComputeLayout");
+	if (newBoxes.length > 0 || newLines.length > 0) {
+		Interpreter.execute("ComputeIncrementalLayout", [currentElement, newBoxes, newLines, diagramId]);
+	}
+
 	$("#add-link-form").modal("hide");
 	clearAddLinkInput();
 }

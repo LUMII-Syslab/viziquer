@@ -9,6 +9,151 @@ import {
   DiagramTypes,
   ElementTypes,
 } from "../../../../db/platform/collections.js";
+import { computeOrthogonalLinePointsFromBoxes } from "../editor/ajooEditor/ajoo/Elements/Lines/draw_new_line.js";
+
+const heightConst = {
+  8: 4, 9: 3, 10: 2, 11: 1, 12: 0, 13: 2, 14: 3, 15: 4,
+  16: 4, 17: 5, 18: 5, 19: 5, 20: 5, 21: 6, 22: 6, 23: 6, 24: 6,
+};
+
+const widthConst = {
+  8: 4.8, 9: 5.1, 10: 5.4, 11: 5.7, 12: 6.0, 13: 6.5, 14: 7.0, 15: 7.4,
+  16: 8.5, 17: 8.2, 18: 8.7, 19: 9.3, 20: 9.8, 21: 10.4, 22: 10.9, 23: 11.5, 24: 12.0,
+};
+
+function computeBoxSizeFromCompartments(boxId) {
+  let minWidth = 100;
+  let width = 120;
+  let height = 30;
+  let compart_width = 0;
+  let compart_height = 0;
+  let nonEmptyRowCount = 0;
+  let longestRow = {};
+  let secondLongestRow = {};
+
+  Compartments.find({ elementId: boxId }).forEach(function (compart) {
+    if (compart.style.visible === true) {
+      if (!compart.value) return;
+      let value = compart.value.trimStart();
+      if (value === "") return;
+
+      let font_size = compart.style.fontSize;
+      let font_style_coef = compart.style.fontStyle === "bold" ? 1.1 : 0.95;
+
+      let tmp_width = 0;
+      let tmp_height = 0;
+
+      let splitted_value = value.split(/\r?\n/);
+      _.each(splitted_value, function (row) {
+        if (row === "") return;
+        nonEmptyRowCount++;
+
+        let text_length = Math.ceil(font_style_coef * (row.length * widthConst[font_size]));
+        tmp_width = Math.max(tmp_width, text_length);
+        tmp_height += font_size + heightConst[font_size];
+
+        if (typeof longestRow.row === "undefined") {
+          longestRow = { row, font_size, text_length, font_style_coef };
+          secondLongestRow = { row, font_size, text_length, font_style_coef };
+        } else if (longestRow.text_length < text_length) {
+          longestRow = { row, font_size, text_length, font_style_coef };
+        } else if (secondLongestRow.text_length < text_length) {
+          secondLongestRow = { row, font_size, text_length, font_style_coef };
+        }
+      });
+
+      compart_width = Math.max(compart_width, tmp_width);
+      compart_height += tmp_height;
+    }
+  });
+
+  if (nonEmptyRowCount === 1 && longestRow.text_length > minWidth) {
+    let row = longestRow.row.trim();
+    let rowMiddlePoint = Math.ceil(row.length / 2);
+    let rowMiddle = row.substring(rowMiddlePoint);
+    let rowStart = row.substring(1, rowMiddlePoint - 1);
+    if (rowMiddle.indexOf(" ") !== -1) {
+      compart_width = Math.ceil(
+        longestRow.font_style_coef * ((rowMiddle.indexOf(" ") + rowMiddlePoint) * widthConst[longestRow.font_size]),
+      );
+    } else if (rowStart.indexOf(" ") !== -1) {
+      compart_width = Math.ceil(
+        longestRow.font_style_coef * ((row.length - rowStart.indexOf(" ")) * widthConst[longestRow.font_size]),
+      );
+    } else {
+      compart_width = Math.ceil(
+        longestRow.font_style_coef * rowMiddlePoint * widthConst[longestRow.font_size],
+      );
+    }
+    compart_height += longestRow.font_size + heightConst[longestRow.font_size];
+  } else if (nonEmptyRowCount > 1 && secondLongestRow.text_length < longestRow.text_length) {
+    if (secondLongestRow.text_length < minWidth) secondLongestRow.text_length = minWidth;
+    let longestCoefficient = 100 - (secondLongestRow.text_length * 100) / longestRow.text_length;
+    if (longestCoefficient > 20) {
+      if (longestCoefficient < 50) {
+        compart_width = secondLongestRow.text_length;
+        compart_height +=
+          (longestRow.font_size + heightConst[longestRow.font_size]) *
+          Math.ceil(longestRow.text_length / secondLongestRow.text_length);
+      } else {
+        let row = longestRow.row.trim();
+        let rowMiddlePoint = Math.ceil(row.length / 2);
+        let rowMiddle = row.substring(rowMiddlePoint);
+        let rowStart = row.substring(1, rowMiddlePoint - 1);
+
+        if (rowMiddle.indexOf(" ") !== -1) {
+          if (rowMiddle.indexOf(" ") < rowMiddle.length / 2) {
+            compart_width = Math.ceil(
+              longestRow.font_style_coef * rowMiddlePoint * widthConst[longestRow.font_size],
+            );
+          } else {
+            compart_width = Math.ceil(
+              longestRow.font_style_coef *
+                ((rowMiddle.indexOf(" ") + rowMiddlePoint) * widthConst[longestRow.font_size]),
+            );
+          }
+        } else if (rowStart.indexOf(" ") !== -1) {
+          if (rowStart.indexOf(" ") < rowStart.length / 2) {
+            compart_width = Math.ceil(
+              longestRow.font_style_coef * rowMiddlePoint * widthConst[longestRow.font_size],
+            );
+          } else {
+            compart_width = Math.ceil(
+              longestRow.font_style_coef *
+                ((row.length - rowStart.indexOf(" ")) * widthConst[longestRow.font_size]),
+            );
+          }
+          if (row.indexOf("<-") !== -1) {
+            compart_height += longestRow.font_size + heightConst[longestRow.font_size];
+          }
+        } else {
+          compart_width = Math.ceil(
+            longestRow.font_style_coef * rowMiddlePoint * widthConst[longestRow.font_size],
+          );
+        }
+        compart_height += longestRow.font_size + heightConst[longestRow.font_size];
+      }
+    }
+  }
+
+  if (compart_width !== 0) width = compart_width + 5;
+  if (compart_height !== 0) height = compart_height + 5;
+  if (height < 30) height = 30;
+  if (width < 120) width = 120;
+
+  return { width, height };
+}
+
+export function persistLayoutChanges(diagramId, movedBoxes, lines) {
+  const list = {
+    projectId: Session.get("activeProject"),
+    versionId: Session.get("versionId"),
+    diagramId: diagramId,
+    lines: lines,
+    movedBoxes: movedBoxes,
+  };
+  Utilities.callMeteorMethod("changeCollectionPosition", list);
+}
 
 Interpreter.methods({
   createDiagram: function (diagram_name, diagram_type_id) {
@@ -210,6 +355,140 @@ Interpreter.methods({
     editor.layoutSettings = remembered_layout_settings;
   },
 
+  ComputeIncrementalLayout: function (currentElement, newBoxes, newLines, diagramId) {
+    const editor = Interpreter.editor;
+    const layoutEngine = editor.layoutEngine("UNIVERSAL");
+
+    const newBoxIds = new Set(newBoxes.map(b => b.obj._id));
+    const newLineIds = new Set(newLines.map(l => l.obj._id));
+
+    const idToIndex = {};
+    let idx = 0;
+
+    // Add existing boxes with their current positions (engine treats them as fixed)
+    Elements.find({ type: "Box" }).forEach(el => {
+      if (newBoxIds.has(el._id)) return;
+      // if (skipTypeIds.has(el.elementTypeId)) return;
+      const loc = el.location;
+      if (!loc) return;
+
+      let { width, height } = computeBoxSizeFromCompartments(el._id);
+      if (width < loc.width) width = loc.width;
+      if (height < loc.height) height = loc.height;
+
+      idToIndex[el._id] = idx;
+      layoutEngine.addBox(idx, loc.x, loc.y, width, height);
+      idx++;
+    });
+
+    // Add new boxes at their DB location so the engine places them near existing elements
+    for (const box of newBoxes) {
+      const boxId = box.obj._id;
+      const { width, height } = computeBoxSizeFromCompartments(boxId);
+      const loc = Elements.findOne({ _id: boxId })?.location;
+      const seedX = (loc && loc.x > -9000) ? loc.x : 0;
+      const seedY = (loc && loc.y > -9000) ? loc.y : 0;
+      idToIndex[boxId] = idx;
+      layoutEngine.addBox(idx, seedX, seedY, width, height);
+      idx++;
+    }
+
+    // Add existing lines
+    Elements.find({ type: "Line" }).forEach(el => {
+      if (newLineIds.has(el._id)) return;
+      const fromIdx = idToIndex[el.startElement];
+      const toIdx = idToIndex[el.endElement];
+      if (fromIdx === undefined || toIdx === undefined) return;
+      idToIndex[el._id] = idx;
+      layoutEngine.addLine(idx, fromIdx, toIdx, el.layoutSettings ?? {
+        lineType: "ORTHOGONAL", startSides: 15, endSides: 15,
+      });
+      idx++;
+    });
+
+    // Add new lines and their labels
+    let labelIdx = idx + newLines.length + 100;
+    for (const line of newLines) {
+      const lineId = line.obj._id;
+      const fromIdx = idToIndex[line.obj.startElement];
+      const toIdx = idToIndex[line.obj.endElement];
+      if (fromIdx === undefined || toIdx === undefined) continue;
+      idToIndex[lineId] = idx;
+      const lineIdx = idx;
+      layoutEngine.addLine(idx, fromIdx, toIdx, {
+        lineType: "ORTHOGONAL", startSides: 15, endSides: 15,
+      });
+      idx++;
+
+      const labelSize = computeBoxSizeFromCompartments(lineId);
+      if (labelSize.width > 0 && labelSize.height > 0) {
+        layoutEngine.addLineLabel(labelIdx, lineIdx, labelSize.width, labelSize.height, "start-left");
+        labelIdx++;
+      }
+    }
+
+    const result = layoutEngine.arrangeIncrementally();
+    const elementList = editor.getElements();
+
+    // The engine normalizes output to (0,0) by subtracting minX/minY.
+    // Compute the offset by comparing an existing box's known DB position
+    // with the engine's returned position for that same box.
+    let offsetX = 0;
+    let offsetY = 0;
+    for (const [elId, elIdx] of Object.entries(idToIndex)) {
+      if (newBoxIds.has(elId) || newLineIds.has(elId)) continue;
+      const enginePos = result.boxes[elIdx];
+      if (!enginePos) continue;
+      const dbEl = Elements.findOne({ _id: elId });
+      if (!dbEl?.location) continue;
+      offsetX = dbEl.location.x - enginePos.x;
+      offsetY = dbEl.location.y - enginePos.y;
+      break;
+    }
+
+    // 1. Update new box positions visually FIRST
+    const movedBoxes = [];
+    for (const box of newBoxes) {
+      const pos = result.boxes[idToIndex[box.obj._id]];
+      if (pos) {
+        const bx = pos.x + offsetX;
+        const by = pos.y + offsetY;
+        movedBoxes.push({ id: box.obj._id, position: { x: bx, y: by, width: pos.width, height: pos.height } });
+        const editorElem = elementList[box.obj._id];
+        if (editorElem) {
+          editorElem.setElementPosition(bx, by);
+          editorElem.updateSize(pos.width, pos.height);
+        }
+      }
+    }
+
+    // 2. Recompute line points from actual box positions
+    const newLineData = [];
+    for (const line of newLines) {
+      const editorLine = elementList[line.obj._id];
+      if (!editorLine) continue;
+      const startBox = elementList[line.obj.startElement];
+      const endBox = elementList[line.obj.endElement];
+      if (!startBox || !endBox) continue;
+
+      const srcPos = startBox.getElementPosition();
+      const srcSize = startBox.getSize();
+      const tgtPos = endBox.getElementPosition();
+      const tgtSize = endBox.getSize();
+
+      const srcBox = { x: srcPos.x, y: srcPos.y, width: srcSize.width, height: srcSize.height };
+      const tgtBox = { x: tgtPos.x, y: tgtPos.y, width: tgtSize.width, height: tgtSize.height };
+
+      const points = computeOrthogonalLinePointsFromBoxes(srcBox, tgtBox);
+      newLineData.push({ id: line.obj._id, points });
+      editorLine.setPoints(points);
+    }
+
+    // 3. Persist to DB (reactive observer will re-apply same values — harmless)
+    persistLayoutChanges(diagramId, movedBoxes, newLineData);
+    editor.size.recomputeStageBorders();
+  },
+
   ComputeLayout: function (x, y, boxes, lines) {
     let editor = Interpreter.editor;
 
@@ -217,48 +496,6 @@ Interpreter.methods({
     let layoutType = layout_settings.layout;
 
     let layoutEngine = editor.layoutEngine(layoutType);
-
-    let minWidth = 100;
-
-    const heightConst = {
-      8: 4,
-      9: 3,
-      10: 2,
-      11: 1,
-      12: 0,
-      13: 2,
-      14: 3,
-      15: 4,
-      16: 4,
-      17: 5,
-      18: 5,
-      19: 5,
-      20: 5,
-      21: 6,
-      22: 6,
-      23: 6,
-      24: 6,
-    };
-
-    const widthConst = {
-      8: 4.8,
-      9: 5.1,
-      10: 5.4,
-      11: 5.7,
-      12: 6.0,
-      13: 6.5,
-      14: 7.0,
-      15: 7.4,
-      16: 8.5,
-      17: 8.2,
-      18: 8.7,
-      19: 9.3,
-      20: 9.8,
-      21: 10.4,
-      22: 10.9,
-      23: 11.5,
-      24: 12.0,
-    };
 
     let elements_to_map = {};
     let elements_from_map = {};
@@ -285,206 +522,12 @@ Interpreter.methods({
       let width = position.width;
       let height = position.height;
       if (box.compartments) {
-        let compart_width = 0;
-        let compart_height = 0;
-        let nonEmptyRowCount = 0;
-        let longestRow = {};
-        let secondLongestRow = {};
-        Compartments.find({ elementId: box._id }).forEach(function (compart) {
-          //calculate width and height only for visible compartments
-          if (compart.style.visible === true) {
-            if (!compart.value) return;
-            let value = compart.value.trimStart();
-            if (value === "") {
-              return;
-            }
-
-            let font_size = compart.style.fontSize;
-            let font_style_coef =
-              compart.style.fontStyle === "bold" ? 1.1 : 0.95;
-
-            let tmp_width = 0;
-            let tmp_height = 0;
-
-            let splitted_value = value.split(/\r?\n/);
-            _.each(splitted_value, function (row) {
-              if (row === "") {
-                return;
-              }
-              nonEmptyRowCount++;
-
-              //text_length = number_of_charecters_in_string / 2 rounded towards the greater value
-              // let text_length = Math.ceil(font_style_coef*(row.length * Math.ceil(font_size/2)));
-              let text_length = Math.ceil(
-                font_style_coef * (row.length * widthConst[font_size]),
-              );
-              tmp_width = Math.max(tmp_width, text_length);
-
-              //tmp_height = font_size + consant for gap between compartments
-
-              tmp_height += font_size + heightConst[font_size]; // ??? pagaidām noņēmu ??? + 5; // add a height gap between compartments
-
-              // Vairs nav izmēra ierobežojuma
-              //// if compartment length if bigger than max box width
-              //if(text_length > 500){
-              //	//compartment height = font_size * (text_length/max_box_width/2 rounded towards the greater value)
-              //	tmp_height += font_size * Math.ceil(text_length/500/2) + 5;
-              //}
-              if (typeof longestRow.row === "undefined") {
-                longestRow = {
-                  row: row,
-                  font_size: font_size,
-                  text_length: text_length,
-                  font_style_coef: font_style_coef,
-                };
-                secondLongestRow = {
-                  row: row,
-                  font_size: font_size,
-                  text_length: text_length,
-                  font_style_coef: font_style_coef,
-                };
-                // if current compartment is longer then longest found so far
-              } else if (longestRow.text_length < text_length) {
-                longestRow = {
-                  row: row,
-                  font_size: font_size,
-                  text_length: text_length,
-                  font_style_coef: font_style_coef,
-                };
-                // if current compartment is longer then second longest found so far
-              } else if (secondLongestRow.text_length < text_length) {
-                secondLongestRow = {
-                  row: row,
-                  font_size: font_size,
-                  text_length: text_length,
-                  font_style_coef: font_style_coef,
-                };
-              }
-            });
-
-            compart_width = Math.max(compart_width, tmp_width);
-            compart_height += tmp_height;
-          }
-        });
-
-        //if only 1 non-empty compartment, that is longer then min width
-        if (nonEmptyRowCount === 1 && longestRow.text_length > minWidth) {
-          let row = longestRow.row.trim();
-          let rowMiddlePoint = Math.ceil(row.length / 2);
-          let rowMiddle = row.substring(rowMiddlePoint);
-          let rowStart = row.substring(1, rowMiddlePoint - 1);
-          // if string has space after the middle part
-          if (rowMiddle.indexOf(" ") !== -1) {
-            compart_width = Math.ceil(
-              longestRow.font_style_coef *
-                ((rowMiddle.indexOf(" ") + rowMiddlePoint) *
-                  widthConst[longestRow.font_size]),
-            );
-            // if string has space before the middle part
-          } else if (rowStart.indexOf(" ") !== -1) {
-            compart_width = Math.ceil(
-              longestRow.font_style_coef *
-                ((row.length - rowStart.indexOf(" ")) *
-                  widthConst[longestRow.font_size]),
-            );
-            // if string does not has space
-          } else {
-            compart_width = Math.ceil(
-              longestRow.font_style_coef *
-                rowMiddlePoint *
-                widthConst[longestRow.font_size],
-            );
-          }
-          compart_height +=
-            longestRow.font_size + heightConst[longestRow.font_size];
-        }
-        // more then one non-empty compartment.
-        // if longest row is longer then second longest more then 20%
-        else if (
-          nonEmptyRowCount > 1 &&
-          secondLongestRow.text_length < longestRow.text_length
-        ) {
-          if (secondLongestRow.text_length < minWidth)
-            secondLongestRow.text_length = minWidth;
-          let longestCoefficient =
-            100 - (secondLongestRow.text_length * 100) / longestRow.text_length;
-          if (longestCoefficient > 20) {
-            // if longest row is no longer then second longest more then 50% set width as second longest
-            if (longestCoefficient < 50) {
-              compart_width = secondLongestRow.text_length;
-              compart_height +=
-                (longestRow.font_size + heightConst[longestRow.font_size]) *
-                Math.ceil(
-                  longestRow.text_length / secondLongestRow.text_length,
-                );
-            } else {
-              // if longest row is longer then second longest more then 50%, split longest row in half by space
-              let row = longestRow.row.trim();
-              let rowMiddlePoint = Math.ceil(row.length / 2);
-              let rowMiddle = row.substring(rowMiddlePoint);
-              let rowStart = row.substring(1, rowMiddlePoint - 1);
-
-              // if string has space after the middle part
-              if (rowMiddle.indexOf(" ") !== -1) {
-                //if string has space in the 4/4 of the string, split in half
-                if (rowMiddle.indexOf(" ") < rowMiddle.length / 2) {
-                  compart_width = Math.ceil(
-                    longestRow.font_style_coef *
-                      rowMiddlePoint *
-                      widthConst[longestRow.font_size],
-                  );
-                } else
-                  compart_width = Math.ceil(
-                    longestRow.font_style_coef *
-                      ((rowMiddle.indexOf(" ") + rowMiddlePoint) *
-                        widthConst[longestRow.font_size]),
-                  );
-                // if string has space before the middle part
-              } else if (rowStart.indexOf(" ") !== -1) {
-                //if string has space in the 1/4 of the string, split in half
-                if (rowStart.indexOf(" ") < rowStart.length / 2) {
-                  compart_width = Math.ceil(
-                    longestRow.font_style_coef *
-                      rowMiddlePoint *
-                      widthConst[longestRow.font_size],
-                  );
-                } else
-                  compart_width = Math.ceil(
-                    longestRow.font_style_coef *
-                      ((row.length - rowStart.indexOf(" ")) *
-                        widthConst[longestRow.font_size]),
-                  );
-                // if the row split is in the first part of the string and containce "<-" (tipically for VQ attributes with aliass), then add extra height
-                if (row.indexOf("<-") !== -1)
-                  compart_height +=
-                    longestRow.font_size + heightConst[longestRow.font_size];
-                // if string does not has space, split in half
-              } else {
-                compart_width = Math.ceil(
-                  longestRow.font_style_coef *
-                    rowMiddlePoint *
-                    widthConst[longestRow.font_size],
-                );
-              }
-              compart_height +=
-                longestRow.font_size + heightConst[longestRow.font_size];
-            }
-          }
-        }
-        if (compart_width !== 0) {
-          width = compart_width + 5;
-        }
-
-        if (compart_height !== 0) {
-          height = compart_height + 5;
-        }
+        const computed = computeBoxSizeFromCompartments(box._id);
+        width = computed.width;
+        height = computed.height;
       }
 
-      //min height
-      if (height < 30 && box.name !== "HorizontalLine") height = 30;
-	  if(box.name === "HorizontalLine") height = position.height;
-      //min width
-      if (width < 120) width = 120;
+      if (box.name === "HorizontalLine") height = position.height;
 
       layoutEngine.addBox(i, position.x, position.y, width, height);
 

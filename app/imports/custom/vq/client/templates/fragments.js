@@ -2,6 +2,21 @@ import { Template } from 'meteor/templating';
 import { dataShapes } from '/imports/custom/vq/client/js/DataShapes.js'
 
 
+// Lookup propertyId -> {id, namespace, displayName} from the loaded schema 
+function buildPropMetaGetter() {
+	const propMeta = new Map();
+	const plist = (dataShapes.schema && dataShapes.schema.diagram && dataShapes.schema.diagram.properties) || [];
+	plist.forEach(p => propMeta.set(p.id, { id: p.id, namespace: p.prefix, displayName: p.display_name }));
+	return (pid) => propMeta.get(pid) || { id: pid, namespace: undefined, displayName: undefined };
+}
+
+// Predicate: is the property's id in standardProperties? null/undefined -> always true
+function makeIsStandardProperty(standardProperties) {
+	if (standardProperties === undefined || standardProperties === null) return () => true;
+	const set = new Set([...standardProperties].map(Number));
+	return (prop) => !!(prop && set.has(Number(prop.id)));
+}
+
 // Creates an adjacency list (a list of relevant cpc_rels for each class)
 export async function getCPCAdj(weightByCPCsum, useBothClasses) {
 	if (weightByCPCsum !== true && weightByCPCsum !== false) {console.error("getCPCAdj: weightByCPCsum is not true or false");}
@@ -39,7 +54,7 @@ export async function getCPCAdj(weightByCPCsum, useBothClasses) {
 		const cnt = parseFloat(cpc.cnt);
 		// Calculate edge weight. Do not allow a weight greater than 0.9. Important in cases where class size is used and cpc count is high; especially if one of the classes is small -- weight can become > 1000.
 		if (useBothClasses === true) {
-			cpcWeight = cnt / classSizes.get(otherC) * cnt / classSizes.get(c);
+			let cpcWeight = cnt / classSizes.get(otherC) * cnt / classSizes.get(c);
 			cpcWeight = Math.min(0.9, cpcWeight);
 			adj.get(otherC).push({class: c, property: cpc.property_id, weight: cpcWeight, propDirection: "out"});
 			adj.get(c).push({class: otherC, property: cpc.property_id, weight: cpcWeight, propDirection: "in"});
@@ -143,6 +158,109 @@ async function getAdjFromCP(weightByCPCsum, useBothClasses) {
 		let weightSum = 0;
 		cps.forEach(cp => {weightSum += cp.weight;})
 		cps.forEach(cp => {cp.weight /= weightSum;})
+	});
+
+	return adj;
+}
+
+// Like getCPCAdj but unweighted, each (otherClass, direction) pair appears at most once per class
+// adj value: {neighbors: [{class, propDirection, property}], inCount, outCount, properties, standardRelCount, userDefinedRelCount}
+// standardRelCount/userDefinedRelCount split neighbors by whether the connecting property is in standardProperties (null -> all standard)
+export async function getCPCAdjSimple(standardProperties = null) {
+	const CPCs = await dataShapes.callServerFunction("xx_getCPCInfo", {main: {}});
+	console.log("Returned CPCs from DSS");
+	const getProp = buildPropMetaGetter();
+	const isStandardProperty = makeIsStandardProperty(standardProperties);
+
+	const adj = new Map();
+	const seen = new Map();
+	const ensure = (cls) => {
+		if (!adj.has(cls)) { adj.set(cls, {neighbors: [], inCount: 0, outCount: 0, properties: new Map(), standardRelCount: 0, userDefinedRelCount: 0}); seen.set(cls, new Set()); }
+	};
+
+	CPCs.data.forEach(cpc => {
+		const c = cpc.class_id;
+		const otherC = cpc.other_class_id;
+		// Direction of edge: otherC ->(p)-> c
+		ensure(c);
+		ensure(otherC);
+
+		const prop = getProp(cpc.property_id);
+		adj.get(c).properties.set(prop.id, prop);
+		adj.get(otherC).properties.set(prop.id, prop);
+
+		const std = isStandardProperty(prop);
+		const outKey = `${c}|out`;
+		if (!seen.get(otherC).has(outKey)) {
+			seen.get(otherC).add(outKey);
+			adj.get(otherC).neighbors.push({class: c, propDirection: "out", property: prop});
+			adj.get(otherC).outCount++;
+			if (std) adj.get(otherC).standardRelCount++; else adj.get(otherC).userDefinedRelCount++;
+		}
+		const inKey = `${otherC}|in`;
+		if (!seen.get(c).has(inKey)) {
+			seen.get(c).add(inKey);
+			adj.get(c).neighbors.push({class: otherC, propDirection: "in", property: prop});
+			adj.get(c).inCount++;
+			if (std) adj.get(c).standardRelCount++; else adj.get(c).userDefinedRelCount++;
+		}
+	});
+
+	return adj;
+}
+
+// Like getAdjFromCP but unweighted, same shape as getCPCAdjSimple.
+export async function getAdjFromCPSimple(standardProperties = null) {
+	const xxCPs = await dataShapes.callServerFunction("xx_getCPInfoObjectProps", {main: {}});
+	const CPs = xxCPs.data;
+	const getProp = buildPropMetaGetter();
+	const isStandardProperty = makeIsStandardProperty(standardProperties);
+
+	const PtoCP = new Map();	// For each property for each direction a list of cp rels
+	CPs.forEach(cp => {
+		const p = cp.property_id;
+		if (!PtoCP.get(p)) { PtoCP.set(p, new Map()); }
+		if (!PtoCP.get(p).get(cp.type_id)) { PtoCP.get(p).set(cp.type_id, []); }
+		PtoCP.get(p).get(cp.type_id).push(cp);
+	});
+
+	const adj = new Map();
+	const seen = new Map();
+	const ensure = (cls) => {
+		if (!adj.has(cls)) { adj.set(cls, {neighbors: [], inCount: 0, outCount: 0, properties: new Map(), standardRelCount: 0, userDefinedRelCount: 0}); seen.set(cls, new Set()); }
+	};
+
+	// For each property look at all possible triples c2->p->c1; only when both ends of the property are observed
+	PtoCP.forEach((cps, p) => {
+		if (cps.get(1) && cps.get(2)) {
+			const prop = getProp(p);
+			cps.get(2).forEach(cp2 => {
+				const c2 = cp2.class_id;
+				ensure(c2);
+				adj.get(c2).properties.set(prop.id, prop);
+				cps.get(1).forEach(cp1 => {
+					const c1 = cp1.class_id;
+					ensure(c1);
+					adj.get(c1).properties.set(prop.id, prop);
+
+					const std = isStandardProperty(prop);
+					const outKey = `${c1}|out`;
+					if (!seen.get(c2).has(outKey)) {
+						seen.get(c2).add(outKey);
+						adj.get(c2).neighbors.push({class: c1, propDirection: "out", property: prop});
+						adj.get(c2).outCount++;
+						if (std) adj.get(c2).standardRelCount++; else adj.get(c2).userDefinedRelCount++;
+					}
+					const inKey = `${c2}|in`;
+					if (!seen.get(c1).has(inKey)) {
+						seen.get(c1).add(inKey);
+						adj.get(c1).neighbors.push({class: c2, propDirection: "in", property: prop});
+						adj.get(c1).inCount++;
+						if (std) adj.get(c1).standardRelCount++; else adj.get(c1).userDefinedRelCount++;
+					}
+				});
+			});
+		}
 	});
 
 	return adj;
@@ -316,8 +434,284 @@ export async function fragmentsLimitedPPR(mainClasses, fragmentClassCount, alpha
 		}
 	}
 
+	return [classes, rank];
+}
 
-	// justifyFragmentRelevance(adj, classes, rank, [mainClasses[0]]);
+// Relation Relevance (BRP), used to order vertexes in AdjacentNodes
+// vertexInfo: cpcListSimple value object for Vn (has .neighbors and .relevance)
+// pathSet: Array<Map<classId, valueObject>> -- each path has the same shape as cpcListSimple
+// Incoming and outgoing relationships are counted separately (each entry in vertexInfo.neighbors counts)
+function relationRelevance(vertexInfo, pathSet) {
+	// Pre-summarize each path so we don't rebuild sumRelevance per neighbor lookup
+	const pathInfo = pathSet.map(path => {
+		let sumRelevance = 0;
+		path.forEach((obj) => { sumRelevance += obj.relevance; });
+		return { path, sumRelevance, size: path.size };
+	});
+
+	let sumSizePaths = 0;
+	pathInfo.forEach(p => { sumSizePaths += p.size; });
+
+	// noPath: count of Vn's neighbor-entries that point at a vertex contained in any path
+	let noPath = 0;
+	vertexInfo.neighbors.forEach(nb => {
+		for (const p of pathInfo) {
+			if (p.path.has(nb.class)) {
+				noPath++;
+				break;
+			}
+		}
+	});
+
+	// Σ over paths T that Vn touches: sumRelevance(T) / sumSizePaths
+	let pathTerm = 0;
+	if (sumSizePaths > 0) {
+		pathInfo.forEach(p => {
+			const touches = vertexInfo.neighbors.some(nb => p.path.has(nb.class));
+			if (touches) pathTerm += p.sumRelevance / sumSizePaths;
+		});
+	}
+
+	return noPath + vertexInfo.relevance + pathTerm;
+}
+
+// Path quality (BRP), combines Relevance Coverage (RC) and Relevance Degree (RD) via an f-measure
+// path: Map<classId, {relevance, ...}> -- subset of cpcListSimple representing the path's vertexes
+// graph: Map<classId, {relevance, ...}> -- full cpcListSimple
+function fmeasure(path, graph, alpha) {
+	// Accept either Map<classId, valueObject-with-.relevance> (BRP shape) or Map<classId, number> (numeric rank shape)
+	const rel = (v) => (typeof v === 'number' ? v : (v && typeof v.relevance === 'number' ? v.relevance : 0));
+
+	let pathRelevanceSum = 0;
+	path.forEach((v) => { pathRelevanceSum += rel(v); });
+
+	let graphRelevanceSum = 0;
+	let maxRelevance = 0;
+	graph.forEach((v) => {
+		const r = rel(v);
+		graphRelevanceSum += r;
+		if (r > maxRelevance) maxRelevance = r;
+	});
+
+	const avgRelevance = path.size > 0 ? pathRelevanceSum / path.size : 0;
+
+	const RC = graphRelevanceSum > 0 ? pathRelevanceSum / graphRelevanceSum : 0;
+	const RD = maxRelevance > 0 ? avgRelevance / maxRelevance : 0;
+
+	const denom = (1 - alpha) * RD + alpha * RC;
+	return denom > 0 ? (RD * RC) / denom : 0;
+}
+
+// Build a CSV string from an array of rows and trigger a browser download, used only for analysis and testing
+function downloadCSV(filename, rows) {
+	const csv = rows.map(row => row.map(cell => {
+		const s = String(cell ?? "");
+		return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+	}).join(",")).join("\n");
+	const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+	const link = document.createElement("a");
+	link.href = url;
+	link.download = filename;
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
+}
+
+// Undirected BFS over the simple adj map, 
+// Returns Map<class, hopDistance>
+function bfsUndirected(start, adj) {
+	const dist = new Map([[start, 0]]);
+	const queue = [start];
+	let head = 0;
+	while (head < queue.length) {
+		const c = queue[head++];
+		const node = adj.get(c);
+		if (!node) continue;
+		node.neighbors.forEach(nb => {
+			if (!dist.has(nb.class)) {
+				dist.set(nb.class, dist.get(c) + 1);
+				queue.push(nb.class);
+			}
+		});
+	}
+	return dist;
+}
+
+// Subgraph-connectivity metrics for a fragment
+// Returns { components, largestSize, isolatedCount }:
+//   components -- count of connected components within the fragment subgraph
+//   largestSize -- vertex count of the biggest component
+//   isolatedCount -- vertices with no neighbour inside the fragment
+function subgraphConnectivity(fragClassIds, simpleAdj) {
+	const fragSet = new Set(fragClassIds);
+	let isolatedCount = 0;
+	fragClassIds.forEach(c => {
+		const node = simpleAdj.get(c);
+		if (!node || !node.neighbors.some(nb => fragSet.has(nb.class))) isolatedCount++;
+	});
+
+	const visited = new Set();
+	let components = 0;
+	let largestSize = 0;
+	fragClassIds.forEach(start => {
+		if (visited.has(start)) return;
+		components++;
+		let size = 0;
+		const queue = [start];
+		let head = 0;
+		while (head < queue.length) {
+			const c = queue[head++];
+			if (visited.has(c)) continue;
+			visited.add(c);
+			size++;
+			const node = simpleAdj.get(c);
+			if (!node) continue;
+			node.neighbors.forEach(nb => {
+				if (fragSet.has(nb.class) && !visited.has(nb.class)) queue.push(nb.class);
+			});
+		}
+		if (size > largestSize) largestSize = size;
+	});
+
+	return { components, largestSize, isolatedCount };
+}
+
+export async function fragmentsBRP(mainClasses, fragmentClassCount, simpleAdj, config = {}) {
+	const mainClassBoost = 1;
+	const classWeightIncoming = config.classWeightIncoming ?? 0.3;
+	const classWeightOutgoing = 1 - classWeightIncoming;
+	const propWeightStandart = config.propWeightStandart ?? 0.2;
+	const propWeightUserDefined = 1 - propWeightStandart;
+	const beta = config.beta ?? 0.8;
+	const alpha = 1 - beta;
+	const alphaF = 0.7;
+
+	let cpcListSimple = simpleAdj;
+	if (cpcListSimple === undefined) {
+		cpcListSimple = await getCPCAdjSimple(config.standardProperties ?? null);
+		if (cpcListSimple.size == 0) cpcListSimple = await getAdjFromCPSimple(config.standardProperties ?? null);
+	}
+
+	// Guard: with 0 or 1 classes, centrality formula divides by zero.
+	if (cpcListSimple.size <= 1) {
+		const classes = [...cpcListSimple.keys()].slice(0, fragmentClassCount);
+		return [classes, cpcListSimple];
+	}
+
+	let maxStandardRels = 0, maxUserDefinedRels = 0;
+	cpcListSimple.forEach((obj) => {
+		if (obj.standardRelCount > maxStandardRels) maxStandardRels = obj.standardRelCount;
+		if (obj.userDefinedRelCount > maxUserDefinedRels) maxUserDefinedRels = obj.userDefinedRelCount;
+	});
+
+	// Centrality(Cn) = (WI*CI + WO*CO) * (ns*ws/maxs + nud*wud/maxud) / (|C| - 1)
+	cpcListSimple.forEach((obj, classId) => {
+		if (mainClasses.includes(classId)) {
+			obj.centralityMeasure = mainClassBoost;
+		} else {
+			const propTerm =
+				(maxStandardRels > 0 ? (obj.standardRelCount * propWeightStandart) / maxStandardRels : 0) +
+				(maxUserDefinedRels > 0 ? (obj.userDefinedRelCount * propWeightUserDefined) / maxUserDefinedRels : 0);
+			obj.centralityMeasure =
+				((classWeightIncoming * obj.inCount) + (classWeightOutgoing * obj.outCount)) * propTerm / (cpcListSimple.size - 1);
+		}
+	});
+
+	// Closeness: weighted average of others' centrality, weighted by 1/distance
+	cpcListSimple.forEach((objCn, Cn) => {
+		const dist = bfsUndirected(Cn, cpcListSimple);
+		let num = 0, den = 0;
+		dist.forEach((d, n) => {
+			if (n === Cn || d === 0) return;
+			num += cpcListSimple.get(n).centralityMeasure / (d * d);
+			den += 1 / d;
+		});
+		objCn.closeness = den > 0 ? num / den : 0;
+	});
+
+	// Relevance: weighted combination of centrality and closeness; alpha + beta = 1
+	cpcListSimple.forEach((obj) => {
+		obj.relevance = beta * obj.centralityMeasure + alpha * obj.closeness;
+	});
+
+	// --- Broaden Relevant Paths (BRP) ---
+
+	// NodeSet: all vertexes ordered by relevance desc, each entry is [classId, valueObject]
+	const NodeSet = [...cpcListSimple.entries()].sort((a, b) => b[1].relevance - a[1].relevance);
+	// AdjacentNodes: vertexes connected to anything in PathSet, ordered by Relation Relevance desc
+	const AdjacentNodes = [];
+	// PathSet: Array<Map<classId, valueObject>>; each path has the same shape as cpcListSimple
+	let PathSet = [];
+	const inPathSet = new Set();
+
+	const removeFromList = (list, classId) => {
+		const idx = list.findIndex(([id]) => id === classId);
+		if (idx >= 0) list.splice(idx, 1);
+	};
+
+	let resultPath = null;
+	while (true) {
+		if (NodeSet.length === 0) break;
+
+		// Stop condition: the best path has reached the requested size, pathSet is kept
+		// sorted by f-measure desc, so PathSet[0] is both the largest-ready and best path
+		if (PathSet.length > 0 && PathSet[0].size >= fragmentClassCount) {
+			resultPath = PathSet[0];
+			break;
+		}
+
+		// Pick Cr -- AdjacentNodes' head wins only if its relevance is strictly higher than NodeSet's head
+		let Cr;
+		if (AdjacentNodes.length > 0 && AdjacentNodes[0][1].relevance > NodeSet[0][1].relevance) {
+			Cr = AdjacentNodes.shift();
+			removeFromList(NodeSet, Cr[0]);
+		} else {
+			Cr = NodeSet.shift();
+			removeFromList(AdjacentNodes, Cr[0]);
+		}
+
+		// Insert Cr into PathSet, if Cr connects to existing paths, merge them with Cr into one path
+		const connected = [];
+		const unconnected = [];
+		PathSet.forEach(path => {
+			if (Cr[1].neighbors.some(nb => path.has(nb.class))) connected.push(path);
+			else unconnected.push(path);
+		});
+		if (connected.length > 0) {
+			const merged = new Map([Cr]);
+			connected.forEach(path => path.forEach((v, k) => merged.set(k, v)));
+			PathSet = [...unconnected, merged];
+		} else {
+			PathSet.push(new Map([Cr]));
+		}
+		inPathSet.add(Cr[0]);
+
+		// Keep PathSet ordered by f-measure desc so PathSet[0] is always the best path
+		const pathF = new Map(PathSet.map(p => [p, fmeasure(p, cpcListSimple, alphaF)]));
+		PathSet.sort((a, b) => pathF.get(b) - pathF.get(a));
+
+		// Add Cr's neighbors to AdjacentNodes (skip if already in PathSet or already in AdjacentNodes)
+		Cr[1].neighbors.forEach(nb => {
+			if (inPathSet.has(nb.class)) return;
+			if (AdjacentNodes.some(([id]) => id === nb.class)) return;
+			const nbInfo = cpcListSimple.get(nb.class);
+			if (nbInfo) AdjacentNodes.push([nb.class, nbInfo]);
+		});
+
+		// Re-order AdjacentNodes by Relation Relevance against the updated PathSet
+		AdjacentNodes.forEach(([, info]) => {
+			info.relationRelevance = relationRelevance(info, PathSet);
+		});
+		AdjacentNodes.sort((a, b) => b[1].relationRelevance - a[1].relationRelevance);
+	}
+
+	// Fallback (NodeSet exhausted before any path hit the target size): PathSet is kept
+	// sorted by f-measure desc, so the best surviving path is simply PathSet[0]
+	if (!resultPath && PathSet.length > 0) resultPath = PathSet[0];
+
+	const classes = resultPath ? [...resultPath.keys()] : [];
+	const rank = new Map([...cpcListSimple].map(([k, v]) => [k, v.relevance]));
 
 	return [classes, rank];
 }
@@ -345,7 +739,7 @@ export async function runFragmentAlgorithm(algorithm, edgeWeightContext, mainCla
 	let [weightByCPCsum, useBothClasses] = getBoolsFromEdgeWeightContext(edgeWeightContext);
 
 	// Create an adjacency list (a list of relevant cpc_rels for each class) if not given as a parameter
-	if (adj === undefined) {
+	if (adj === undefined && algorithm != "brp") {
 		adj = await getCPCAdj(weightByCPCsum, useBothClasses);
 		if (adj.size === 0) {adj = await getAdjFromCP(weightByCPCsum, useBothClasses);}
 	}
@@ -363,8 +757,90 @@ export async function runFragmentAlgorithm(algorithm, edgeWeightContext, mainCla
 			break;
 		case "limited-ppr":
 			[fragmentClasses, rank] = await fragmentsLimitedPPR(mainClasses, fragSize, 0.85, 1e-5, adj);
+			break;
+		case "brp":
+			[fragmentClasses, rank] = await fragmentsBRP(mainClasses, fragSize, simpleAdj, brpConfig);
+			break;
 	}
 	return [fragmentClasses, rank];
+}
+
+// Run BRP over a cartesian product of (paramRanges × fragSize). Downloads brp_runs.csv (one row per run)
+// and brp_fragment_classes.csv (one row per fragment class); join on run_id.
+// paramRanges: BRP config keys -> scalar | array. Supported keys: classWeightIncoming, beta, propWeightStandart.
+// Standard properties come from the #fragment-std-prop-list box (empty -> all properties standard).
+// Use this only for testing/analysis!
+export async function exportBRPAnalysisCSV(paramRanges = {}, fragSizes = [10, 20, 30, 40, 50], mainClasses = null) {
+	const paramSets = Object.keys(paramRanges).reduce((acc, key) => {
+		const values = Array.isArray(paramRanges[key]) ? paramRanges[key] : [paramRanges[key]];
+		return acc.flatMap(combo => values.map(v => ({ ...combo, [key]: v })));
+	}, [{}]);
+
+	const xxClasses = await dataShapes.callServerFunction("xx_getClassesSimple", {main: {}});
+	const localClassNames = new Map(xxClasses.data.map(obj => [obj.id, `${obj.ns_name}:${obj.class_name}`]));
+
+	const standardProperties = [...document.querySelectorAll("#fragment-std-prop-list .fragment-std-prop-row")]
+		.map(r => Number(r.dataset.propId)).filter(Number.isFinite);
+	const stdPropArg = standardProperties.length > 0 ? standardProperties : null;
+	const standardPropCol = standardProperties.join(";");
+
+	let simpleAdj = await getCPCAdjSimple(stdPropArg);
+	if (simpleAdj.size === 0) simpleAdj = await getAdjFromCPSimple(stdPropArg);
+
+	// Fall back to the schema browser selection only if mainClasses wasn't explicitly passed.
+	if (mainClasses === null || mainClasses === undefined) {
+		mainClasses = Template.VQ_DSS_schema.Classes.get().map(c => c.id);
+	}
+	const mainClassesSet = new Set(mainClasses);
+	const mainClassIds = mainClasses.join(";");
+	console.log(`BRP sweep: mainClasses=[${mainClasses.join(", ")}], paramSets=${paramSets.length} (from ranges), fragSizes=[${fragSizes.join(", ")}]`);
+
+	const alphaF = 0.7;
+	const runsRows = [["run_id", "class_weight_incoming", "beta", "prop_weight_standart", "frag_size", "fragment_size_actual", "fragment_f_measure", "connected_components", "largest_component_fraction", "isolated_count", "main_class_ids"]];
+	const classRows = [["run_id", "class_id", "class_name", "is_main_class", "centrality", "closeness", "relevance", "relation_relevance", "standard_properties"]];
+
+	for (let paramIdx = 0; paramIdx < paramSets.length; paramIdx++) {
+		const paramSet = paramSets[paramIdx];
+		const classWeightIncoming = paramSet.classWeightIncoming ?? 0.3;
+		const beta = paramSet.beta ?? 0.3;
+		const propWeightStandart = paramSet.propWeightStandart ?? 0.4;
+
+		for (const fragSize of fragSizes) {
+			const runId = `p${paramIdx}_s${fragSize}`;
+			const [frag, ] = await fragmentsBRP(mainClasses, fragSize, simpleAdj, { ...paramSet, standardProperties: stdPropArg });
+
+			const fragMap = new Map();
+			frag.forEach(id => { const v = simpleAdj.get(id); if (v) fragMap.set(id, v); });
+			const fragF = fmeasure(fragMap, simpleAdj, alphaF);
+
+			const conn = subgraphConnectivity(frag, simpleAdj);
+			const largestComponentFraction = frag.length > 0 ? conn.largestSize / frag.length : 0;
+
+			runsRows.push([runId, classWeightIncoming, beta, propWeightStandart, fragSize, frag.length, fragF, conn.components, largestComponentFraction, conn.isolatedCount, mainClassIds]);
+
+			frag.forEach(id => {
+				const v = simpleAdj.get(id);
+				if (!v) return;
+				classRows.push([
+					runId,
+					id,
+					localClassNames.get(id) ?? "",
+					mainClassesSet.has(id) ? 1 : 0,
+					v.centralityMeasure,
+					v.closeness,
+					v.relevance,
+					v.relationRelevance ?? "",
+					standardPropCol,
+				]);
+			});
+
+			console.log(`Run ${runId}: fragment size ${frag.length}/${fragSize}, f-measure ${fragF.toFixed(4)}`);
+		}
+	}
+
+	downloadCSV("brp_runs.csv", runsRows);
+	downloadCSV("brp_fragment_classes.csv", classRows);
+	console.log(`Wrote brp_runs.csv (${runsRows.length - 1} rows) and brp_fragment_classes.csv (${classRows.length - 1} rows).`);
 }
 
 // Compare fragments calculated by various algorithms by calculating the fraction of common classes; uses each of selected classes as a main class. Currently always uses CPC rels.
