@@ -1,5 +1,5 @@
 // @ts-check
-import { Interpreter } from '../../../lib/interpreter.js'
+import { Interpreter } from '/imports/client/lib/interpreter.js';
 import { Template } from "meteor/templating";
 import { createVQ_Element, VQ_Element } from '../js/VQ_Element.js'
 

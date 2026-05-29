@@ -20,7 +20,7 @@ import {
 // @ts-ignore
 import rdfToolbagStyle from 'rdf-toolbag/dist/rdf-toolbag.css';
 import { tableToRows } from 'rdf-toolbag/dist/rdf-toolbag.js'
-import { dataShapes } from '../../../custom/vq/js/DataShapes.js'
+import { dataShapes } from '../../../vq/client/js/DataShapes.js'
 
 // NOTE: Using `rem` and `styleOverrideMap` to emulate the default 1rem=16px layout because
 // the current 1rem is too small to be readable and we need to override all variables that use
