@@ -1,127 +1,164 @@
-import { Elements } from '../../db/platform/collections.js'
-import { reset_variable } from '../platform/js/utilities/utils.js'
+import { Elements } from "../../db/platform/collections.js";
+import { reset_variable } from "../../platform/client/js/utilities/utils.js";
 
-$(document).on('keypress', function (e) {
-
-	// if modal is open, than closing it
-	var modal_path = ".modal.in";
-	if (e.keyCode == 13 && _.size($(modal_path)) > 0) {
-		$(modal_path).find(".btn.btn-primary").trigger("click");
-	}
+$(document).on("keypress", function (e) {
+  // if modal is open, than closing it
+  var modal_path = ".modal.in";
+  if (e.keyCode === 13 && _.size($(modal_path)) > 0) {
+    $(modal_path).find(".btn.btn-primary").trigger("click");
+  }
 });
 
+function isPromise(promise) {
+  return !!promise && typeof promise.then === "function";
+}
 
 var Interpreter = {
+  customExtensionPoints: {},
+  extensionPoints: {
+    SelectAll: function () {
+      var editor = this.editor;
+      editor.selection.selectAll();
+    },
+  },
 
-	customExtensionPoints: {},
-	extensionPoints: {
-						SelectAll: function() {
-							var editor = this.editor;
-							editor.selection.selectAll();
-						},
-					},
+  methods: function (list) {
+    Object.assign(this.extensionPoints, list);
+  },
 
-	methods: function(list) {
-		_.extend(this.extensionPoints, list);
-	},
+  customMethods: function (list) {
+    Object.assign(this.customExtensionPoints, list);
+  },
 
-	customMethods: function(list) {
-		_.extend(this.customExtensionPoints, list);
-	},
+  execute: function (method_name, args, obj_type) {
+    var func =
+      Interpreter.extensionPoints[method_name] ||
+      Interpreter.customExtensionPoints[method_name];
+    if (func) {
+      if (isPromise(func)) {
+        console.error(
+          "Attention: attempt to execute asynchronous extension procedure synchronously!",
+        );
+      }
 
-	execute: function(method_name, args, obj_type) {
+      if (obj_type) {
+        return func.apply(obj_type, args);
+      } else {
+        return func.apply(this, args);
+      }
+    } else {
+      //if method_name is empty string or undefined, then not displaying error msg
+      if (method_name) {
+        console.error("Error: No such function - ", method_name);
+      }
+    }
+  },
 
-		var func = Interpreter.extensionPoints[method_name] || Interpreter.customExtensionPoints[method_name];
-		if (func) {
-			if (obj_type) {
-				return func.apply(obj_type, args);
-			}
+  executeAsync: async function (method_name, args, obj_type) {
+    var func =
+      Interpreter.extensionPoints[method_name] ||
+      Interpreter.customExtensionPoints[method_name];
+    if (func) {
+      if (obj_type) {
+        return await func.apply(obj_type, args);
+      } else {
+        return await func.apply(this, args);
+      }
+    } else {
+      //if method_name is empty string or undefined, then not displaying error msg
+      if (method_name) {
+        console.error("Error: No such function - ", method_name);
+      }
+    }
+  },
 
-			else {
-				return func.apply(this, args);
-			}
-		}
+  executeExtensionPoint: function (obj_type, extension_point_name, args) {
+    var method_name = this.getExtensionPointProcedure(
+      extension_point_name,
+      obj_type,
+    );
+    if (!_.isArray(args)) {
+      args = [args];
+    }
 
-		else {
+    return this.execute(method_name, args, obj_type);
+  },
 
-			//if method_name is empty string or undefined, then not displaying error msg
-			if (method_name) {
-				console.error("Error: No such function - ", method_name);
-			}
-		}
+  executeExtensionPointAsync: async function (
+    obj_type,
+    extension_point_name,
+    args,
+  ) {
+    var method_name = this.getExtensionPointProcedure(
+      extension_point_name,
+      obj_type,
+    );
+    if (!_.isArray(args)) {
+      args = [args];
+    }
 
-	},
+    return await this.executeAsync(method_name, args, obj_type);
+  },
 
-	executeExtensionPoint: function(obj_type, extension_point_name, args) {
-		var method_name = this.getExtensionPointProcedure(extension_point_name, obj_type);
-		if (!_.isArray(args)) {
-			args = [args];
-		}
+  getExtensionPointProcedure: function (extension_point, obj_type) {
+    //collects all object type translets
+    var translet = _.find(
+      obj_type["extensionPoints"],
+      function (extensionPoint) {
+        return extensionPoint["extensionPoint"] === extension_point;
+      },
+    );
 
-		return this.execute(method_name, args, obj_type);
-	},
+    if (translet) {
+      return translet.procedure;
+    }
+  },
 
-	getExtensionPointProcedure: function(extension_point, obj_type) {
+  setActiveElement: function (elem_id) {
+    Session.set("activeElement", elem_id);
+    var elem = Elements.findOne({ _id: elem_id });
+    if (elem) {
+      Session.set("activeElementType", elem["elementTypeId"]);
+    }
+  },
 
-		//collects all object type translets
-		var translet = _.find(obj_type["extensionPoints"], function(extensionPoint) {
-			return extensionPoint["extensionPoint"] === extension_point;
-		});
+  resetActiveElement: function () {
+    Session.set("activeElement", reset_variable());
+    Session.set("activeElementType", reset_variable());
+  },
 
-		if (translet) {
-			return translet.procedure;
-		}
-	},
+  showErrorMsg: function (text, delay) {
+    if (!delay) {
+      delay = 5000;
+    }
 
-	setActiveElement: function(elem_id) {
-		Session.set("activeElement", elem_id);
-		var elem = Elements.findOne({_id: elem_id});
-		if (elem) {
-			Session.set("activeElementType", elem["elementTypeId"]);
-		}
-	},
+    //type is one of the bootstrap's variables - danger, warning, etc.
+    Session.set("errorMsg", { type: "danger", text: text });
 
-	resetActiveElement: function() {
-		Session.set("activeElement", reset_variable());
-		Session.set("activeElementType", reset_variable());
-	},
+    if (delay > 0) {
+      //removing the message after 5 sec
+      Meteor.setTimeout(function () {
+        Interpreter.destroyErrorMsg();
+      }, delay);
+    }
+  },
 
-	showErrorMsg: function(text, delay) {
+  destroyErrorMsg: function () {
+    Session.set("errorMsg", reset_variable());
+  },
 
-		if (!delay) {
-			delay = 5000;
-		}
+  getEditorType: function () {
+    //var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
+    //if (!diagram_type)
+    //	return;
 
-		//type is one of the bootstrap's variables - danger, warning, etc.
-		Session.set("errorMsg", {type: "danger", text: text});
+    //return diagram_type["editorType"];
+    return Session.get("editorType");
+  },
 
-		if (delay > 0) {
-
-			//removing the message after 5 sec
-			Meteor.setTimeout(function() {
-				Interpreter.destroyErrorMsg();
-			}, delay);
-		}
-	},
-
-	destroyErrorMsg: function() {
-		Session.set("errorMsg", reset_variable());
-	},
-
-	getEditorType: function() {
-		//var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
-		//if (!diagram_type)
-		//	return;
-
-		//return diagram_type["editorType"];
-		return Session.get("editorType");
-	},
-
-	destroy: function() {
-		//this.editor = 
-	},
-
+  destroy: function () {
+    //this.editor =
+  },
 };
 
-
-export {Interpreter}
+export { Interpreter };

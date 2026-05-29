@@ -1,10 +1,9 @@
+import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { ClientStorage } from 'ClientStorage';
 
 import { Users } from '../../imports/db/platform/collections.js'
 import { i18n } from 'meteor/universe:i18n';
-
-import { Template } from 'meteor/templating';
 
 i18n.setLocale('en');
 Template.registerHelper('_', function (key, options) {
@@ -18,6 +17,9 @@ Template.nav.helpers({
     skin: function() {
         return 6;
     },
+    toolGroup: function() {
+      return Session.get("toolGroup");
+    }
 });
 
 Template.nav.events({
@@ -92,7 +94,7 @@ Template.userT.events({
           }
 
           else {
-              const clientStorage = new ClientStorage("localStorage"); 
+              const clientStorage = new ClientStorage("localStorage");
               clientStorage.set('current_user', "{}");
 
               // if (UserStatus.isMonitoring())
@@ -107,3 +109,9 @@ Template.userT.events({
 });
 //End of user
 
+Meteor.startup(() => {
+  Tracker.autorun(() => {
+    const toolGroup = Session.get("toolGroup");
+    document.title = `${toolGroup || ""} App`;
+  });
+});

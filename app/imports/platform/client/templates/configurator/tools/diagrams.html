@@ -1,0 +1,316 @@
+<template name="toolDiagrams">
+    <!--     {{> diagramToolbar}} -->
+
+    <div class="panel-heading text-right">
+        <a class="btn btn-success btn-sm" id="add"
+            ><i class="fa fa-plus"></i> Add</a
+        >
+        <a class="btn btn-primary btn-sm" id="import-diagram"
+            ><i class="fa fa-upload"></i> Import</a
+        >
+        <a
+            class="btn btn-primary btn-sm"
+            id="download-diagram"
+            href="{{pathFor 'dump' tool_id=tool_id}}"
+            target="_blank"
+            ><i class="fa fa-download"></i> Dump</a
+        >
+        <a class="btn btn-info btn-sm" id="migrate-project"
+            ><i class="fa fa-wrench"></i> Migrate</a
+        >
+        <a class="btn btn-info btn-sm" id="toolbar"
+            ><i class="fa fa-wrench"></i> Toolbar</a
+        >
+    </div>
+
+    <div>
+        {{#each diagrams}}
+        <div class="col-sm-6 col-md-6">
+            <div class="thumbnail">
+                <!-- :toolId/version/:versionId/diagram/:_id/diagramType/:diagramTypeId -->
+                <a
+                    class="reference"
+                    href="{{pathFor 'configuratorDiagram' toolId=this.toolId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId }}"
+                >
+                    {{#if imageUrl}}
+                    <img
+                        src="{{imageUrl}}"
+                        alt="{{imageUrl}}"
+                        class="diagram-image"
+                    />
+                    {{else}}
+                    <img
+                        src="https://placehold.co/770x347"
+                        class="diagram-image"
+                    />
+                    {{/if}}
+                </a>
+                <div class="caption">
+                    <center>
+                        <a
+                            class="reference"
+                            href="{{pathFor 'configuratorDiagram' toolId=this.toolId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId}}"
+                            ><h4>{{name}}</h4></a
+                        >
+                    </center>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    {{> migrateProjectForm}}
+    {{> toolbarForm}}
+
+</template>
+
+<template name="addConfiguratorDiagram">
+    <!-- Modal for new diagram -->
+    <div id="add-configurator-diagram" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
+                    <h4 class="modal-title">New Diagram Type</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label
+                                for="diagram-name"
+                                class="col-sm-1 control-label"
+                                >Name</label
+                            >
+                            <div class="col-sm-10">
+                                <input
+                                    id="diagram-name"
+                                    type="text"
+                                    class="form-control"
+                                    autocomplete="off"
+                                    placeholder=""
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label
+                                for="editor-type"
+                                class="col-sm-1 control-label"
+                                >Type</label
+                            >
+                            <div class="col-sm-10">
+                                <select class="form-control" id="editor-type">
+                                    <option id="ajooEditor">ajooEditor</option>
+                                    <option id="ZoomChart">ZoomChart</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        id="create-configurator-diagram"
+                        type="button"
+                        class="btn btn-primary"
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
+</template>
+
+<template name="importConfigurationForm">
+    <!-- Modal for new document -->
+    <div id="upload-data" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
+                    <h4 class="modal-title">Upload</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <input id="fileList" type="file" multiple />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        id="ok-upload-files"
+                        type="button"
+                        class="btn btn-default"
+                    >
+                        Upload
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-dismiss="modal"
+                    >
+                        {{_ "close"}}
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
+</template>
+
+<template name="migrateProjectForm">
+    <!-- Modal for new document -->
+    <div id="migrate-project-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
+                    <h4 class="modal-title">Migrate</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label
+                                for="diagramType"
+                                class="control-label col-sm-2"
+                                >Migrate To</label
+                            >
+                            <div class="col-sm-10">
+                                <select class="form-control" id="migrate-tools">
+                                    {{#each tools}}
+                                    <option id="{{_id}}" value="{{_id}}">
+                                        {{name}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        {{_ "cancel"}}
+                    </button>
+                    <button
+                        id="ok-migrate-project-form"
+                        type="button"
+                        class="btn btn-primary"
+                        data-dismiss="modal"
+                    >
+                        {{_ "ok"}}
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
+</template>
+
+<template name="toolbarForm">
+    <!-- Modal for new document -->
+    <div id="toolbar-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
+                    <h4 class="modal-title">Toolbar</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label
+                                for="toolbar-name"
+                                class="col-sm-3 control-label"
+                                >Template name</label
+                            >
+                            <div class="col-sm-8">
+                                <input
+                                    id="toolbar-form-name"
+                                    type="text"
+                                    class="form-control"
+                                    autocomplete="off"
+                                    placeholder=""
+                                    value="{{templateName}}"
+                                />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                    >
+                        {{_ "cancel"}}
+                    </button>
+                    <button
+                        id="ok-toolbar-form"
+                        type="button"
+                        class="btn btn-primary"
+                        data-dismiss="modal"
+                    >
+                        {{_ "ok"}}
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
+</template>

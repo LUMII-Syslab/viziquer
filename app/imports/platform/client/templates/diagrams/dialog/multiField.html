@@ -1,0 +1,125 @@
+<template name="multiField">
+    {{#with multi_fields_obj}}
+      {{> Template.dynamic template="multiFieldBody" data=this}}
+    {{/with}}
+</template>
+
+<template name="multiFieldBody">
+    <div
+        id="{{_id}}"
+        class="multi-field multi-field-parent"
+        data-element="{{elementId}}"
+    >
+        <table class="table table-striped" style="margin-bottom: 0px">
+            <thead>
+                <tr>
+                    <th>{{name}}</th>
+                    <th>
+                        <a
+                            class="btn btn-xs btn-success pull-right add-multi-field {{addButtonStatus}}"
+                            ><i class="fa fa-plus"></i
+                        ></a>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {{#each values}}
+                <tr id="{{_id}}" class="multi-field-row">
+                    <td>{{input}}</td>
+                    <td class="pull-right">
+                        <!-- <a class="btn btn-xs btn-primary down-multi-field"><i class="fa fa-arrow-down"></i></a> -->
+                        <a class="btn btn-xs btn-info up-multi-field"
+                            ><i class="fa fa-arrow-up"></i
+                        ></a>
+
+                        <a class="btn btn-xs btn-warning edit-multi-field"
+                            ><i class="fa fa-pencil"></i
+                        ></a>
+                        <a class="btn btn-xs btn-danger remove-multi-field"
+                            ><i class="fa fa-trash-o"></i
+                        ></a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        {{> Template.dynamic template=next_level_form data=this}}
+        <!-- {{> Template.dynamic template="show_multi_field_form" field_obj=this}} -->
+    </div>
+</template>
+
+<template name="show_multi_field_form">
+    {{#with field_obj}}
+
+    <!-- Modal for new document -->
+    <div
+        id="{{_id}}"
+        class="modal fade row-form compart-type"
+        compartmentId="{{compartmentId}}"
+        data-element="{{elementId}}"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                    >
+                        &times;
+                    </button>
+                    <h4 class="modal-title">{{name}}</h4>
+                </div>
+
+                <div class="modal-body multi-field" style="width: 550px">
+                    <form onsubmit="return false;">
+                        {{#if fields}}
+                          {{> Template.dynamic template="dialogTabContent" data=fields}}
+                        {{/if}}
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="row">
+                      {{#with extraButton}}
+                        {{#if isAvailable}}
+                          <div class="col-md-2 pull-left">
+                            <button
+                                type="button"
+                                class="btn btn-warning yellow-button"
+                            >
+                              {{caption}}
+                            </button>
+                          </div>
+                        {{/if}}
+                      {{/with}}
+
+                        <div class="col-md-10 pull-right">
+                            <button
+                                type="button"
+                                class="btn btn-default"
+                                data-dismiss="modal"
+                            >
+                                {{_ "cancel"}}
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-primary new-multi-row"
+                            >
+                                {{_ "ok"}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of modal -->
+    {{/with}}
+</template>

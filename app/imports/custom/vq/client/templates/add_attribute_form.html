@@ -1,0 +1,445 @@
+<template name="AddAttribute">
+<style>
+    div.modal-body {
+        overflow-y: auto;
+        max-height: 60vh;
+    }
+
+	.form-group-associations{
+		display: none;
+    }
+	.button-required {
+	  background-color: #f9f9f9;
+	  color: #777;
+	  border-radius: 3px;
+	  border: 1px solid #cccccc;
+	  width: 18px;
+	  height: 18px;
+	  display:inline-block;
+      vertical-align: middle;
+      horizontal-align: middle;
+	  padding: 1px 1px 1px 2px;
+	}
+	.button-new {
+	   font-size: 14px;
+	   font-style:normal;
+	}
+	.label-extra {
+	  border: 1px solid #ccc;
+	  display: none;
+	}
+	#resp-table {
+	  display: table;
+	  margin-left:3px;
+	}
+	#resp-table-body{
+	  display: table-row-group;
+
+	}
+	.resp-table-row{
+	  display: table-row;
+	}
+	.table-body-cell{
+	  display: table-cell;
+	}
+
+	button:disabled,
+	button[disabled]{
+	  border: 1px solid #999999;
+	  background-color: #cccccc;
+	  color: #666666;
+	}
+
+	.help-tip-attribute{
+        display:inline;
+        padding-right: 5px;
+        padding-left: 5px;
+        text-align: center;
+        background-color: #8A2BE2;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        line-height: 26px;
+        cursor: help;
+		position: absolute;
+		left: 20px;
+    }
+
+    .help-tip-attribute:before{
+        content:'?';
+        font-weight: bold;
+        color:#fff;
+    }
+
+    .help-tip-attribute:hover p{
+        display: block;
+    }
+
+    .help-tip-attribute p{
+        display: none;
+        text-align: left;
+        font-size: 12px;
+        line-height: 16px;
+        color: white;
+        border: 1px solid #7F7F7F;
+        background-color: slategrey;
+        border-radius: 5px;
+        padding: 10px;
+        width: 700px;
+        position: absolute;
+        z-index: 1000;
+    }
+
+</style>
+
+	<!-- Modal for new document -->
+    <div id="add-attribute-form" class="modal fade" data-backdrop="static" data-keyboard="false">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Add Attributes</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" autocomplete="off" onsubmit="return false;" role="form">
+
+						<div class="form-group">
+							<table class="table table-striped" style="margin-bottom:0px;margin-left:10px;margin-right:10px;width:95%;">
+									<tbody>
+										{{#each existingAttributes}}
+											{{#if wait}}
+											<tr class="attribute">
+												<td class="information">{{name}}</td>
+											</tr>
+											{{else}}
+											<tr class="attribute">
+												<td class="information" name="{{id}}" alias="{{al}}" expression="{{name}}" requireValues="{{requireValues}}" helper="{{hel}}" addLabel="{{addLabel}}" addAltLabel="{{addAltLabel}}" addDescription="{{addDescription}}" graphInstruction="{{graphInstruction}}" graph="{{graph}}" attributeCondition="{{attributeCondition}}" attributeConditionSelection="{{attributeConditionSelection}}">{{fulltext}}</td>
+												<td class="pull-right">
+													<a class="btn btn-xs btn-warning edit-multi-field"><i id="attribute-extra-button" class="fa fa-pencil"></i></a>
+													<a class="btn btn-xs btn-default" {{disabled}}><i id="attribute-helper-button" class="fa" >helper</i></a>
+													<a class="btn btn-xs btn-default" {{disabled}}><i id="required-existing-attribute" class="fa fa-plus" ></i></a>
+													<a class="btn btn-xs btn-info up-multi-field"><i id="attribute-move-button" class="fa fa-arrow-up"></i></a>
+													<a class="btn btn-xs btn-danger remove-multi-field"><i id="attribute-delete-button" class="fa fa-trash-o"></i></a>
+												</td>
+											</tr>
+											{{/if}}
+										{{/each}}
+
+									</tbody>
+								</table>
+						</div>
+						<div class="searchBox" id="searchBox-attribute">
+							<label class="form-check-label">
+								<input class="form-check-input" name = "dbp_for_attributes" id="dbp_for_attributes" type="checkbox" checked="checked">
+								<span class="custom-checkbox"></span>
+								Basic order
+							</label>
+							<input class="form-control" id="mySearch-attribute" type="text" placeholder="Search.." style="width:50%;display: inline-block;">
+							&ensp;
+							<!-- <a id="attribute-apply-button" class="btn btn-xs btn-success button-new"><i>Apply filter</i></a> -->
+							&ensp;
+							<a id="attribute-new-button" class="btn btn-xs btn-success button-new"><i>Build expression ..</i></a>
+
+						</div>
+                        <div class="form-group">
+							<div class="col-lg-10 attribute">
+                                      <hr>
+                                  </div>
+                            {{#each attributes}}
+
+                                {{#if separator}}
+                                  <div class="col-lg-10 attribute">
+                                      <hr>
+                                  </div>
+                                {{else}}
+                                <div class="col-lg-10 attribute attribute-to-add" name="{{name}}" >
+                                    <label class="label-checkbox" name="add-attribute">
+                                        <button name="{{buttonName}}" type="button" class="{{buttonClassName}}" disabled="{{disabled}}"></button>
+                                        {{name}}
+                                    </label>
+                                </div>
+                                {{/if}}
+
+                            {{/each}}
+
+                        </div>
+						<div>
+						<a style="width: 53px;" id="more-attributes-button" class="btn btn-xs btn-success button-new"><i>More..</i></a>
+						 </div>
+                    </form>
+
+					<button id="show-class-associations">[+]</button>
+					<form class="form-horizontal" role="form">
+						<div class="form-group-associations form-group"  id="class-associations" style="display: none">
+
+                            {{#each associations}}
+                                <div class="col-lg-10 attribute" name="{{name}}" >
+                                    <label class="label-checkbox" name="add-attribute">
+                                        <button name="{{buttonName}}" type="button" class="{{buttonClassName}}" disabled="{{disabled}}"></button>
+                                        {{name}}
+                                    </label>
+                                </div>
+
+                            {{/each}}
+
+                        </div>
+						<div>
+						<a style="width: 53px;" id="more-associations-button" class="btn btn-xs btn-success button-new" complete="false"><i>More..</i></a>
+						</div>
+					</form>
+                </div>
+
+
+
+                <div class="modal-footer">
+
+					<div class="help-tip-attribute">
+                        <p>Tick the box by an attribute name to include it as an optional attribute in the selection.<br><br>
+
+Tick the box once again (the sign changes to +) to have the attribute as required.<br><br>
+
+To add an alias to the attribute, or to change the attribute to a helper (exclude from selection), save the attribute selection, then edit the form upper part.<br><br>
+
+You can always edit the attibute list also from the node property pane to the right of the diagram.</p>
+					</div>
+                    <button id="cancel-add-attribute" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="save-add-attribute" type="button" class="btn btn-default">Save</button>
+                    <button id="ok-add-attribute" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</template>
+
+<template name="AddNewAttribute">
+  {{#with field_obj}}
+	<!-- Modal for new document -->
+    <div id="add-new-attribute-form" class="modal fade row-form compart-type" data-backdrop="static" data-keyboard="false" compartmentId={{compartmentId}}>
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Attributes</h4>
+                </div>
+                <div id="add-new-attribute-id" class="modal-body" style="width: 550px" attributeid="{{attributeid}}">
+	                <form autocomplete="off" onsubmit="return false;">
+					{{#if fields}}
+
+						{{#each fields}}
+							{{#if Graphinstruction}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label>Graph instruction</label>
+									<input id="add-new-attribute-graph-instruction" type="text" class="form-control" list="graph-instruction-list" value="{{field_value}}">
+										<datalist id="graph-instruction-list" class="datalist">
+												<option mappedvalue="GRAPH" input="GRAPH">GRAPH</option>
+												<option mappedvalue="SERVICE" input="SERVICE">SERVICE</option>
+										</datalist>
+								</div>
+							{{/if}}
+							{{#if Graph}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label>Graph</label>
+									<input id="add-new-attribute-graph" autocomplete="off" class="form-control" value="{{field_value}}">
+								</div>
+							{{/if}}
+							{{#if FieldName}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label>Alias</label>
+									<input id="add-new-attribute-alias" type="text" class="form-control" value="{{field_value}}">
+								</div>
+							{{/if}}
+
+							{{#if Expression}}
+								<div id = "add-new-attribute-expression-field" class="form-group" style="margin-bottom:10px;">
+									<label>Expression</label>
+									<input id="add-new-attribute-expression" type="text" class="form-control" value="{{field_value}}">
+									<span class="help-block">Use Ctrl+Space for text auto-completion</span>
+								</div>
+							{{/if}}
+							{{#if RequireValues}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-requireValues" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Require Values
+									</label>
+								</div>
+							{{/if}}
+							{{#if IsInternal}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-helper" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Helper (do not include in selection)
+									</label>
+								</div>
+							{{/if}}
+							{{#if AddLabel}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-add-label" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Add Label
+									</label>
+								</div>
+							{{/if}}
+							{{#if AddAltLabel}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-add-alt-label" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Add AltLabel
+									</label>
+								</div>
+							{{/if}}
+							{{#if AddDescription}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-add-description" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Add Description
+									</label>
+								</div>
+							{{/if}}
+							{{#if AttributeConditionSelection}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label>Condition(s)</label>
+									<div>
+									<input autocomplete="off" class="form-control" type="text" id="add-new-attribute-selection-condition" value="{{field_value}}" style="width:89%; display: inline-block;">
+									<a id="more-options-attribute-button" class="btn btn-xs btn-success"><i>More...</i></a>
+									</div>
+								</div>
+							{{/if}}
+							{{#if NodelevelCondition}}
+								<div class="form-group"  id = "more-condition-options-node" style="margin-bottom:10px;  display: none;">
+									<label class="label-checkbox">
+										<input id="add-new-node-level-condition" type="checkbox" checked="{{checked}}" {{isdisabled}}>
+										<span class="custom-checkbox"></span>
+										Node-level Condition: Include or exclude data rows, based on the condition
+									</label>
+								</div>
+							{{/if}}
+							{{#if AttributeCondition}}
+								<div class="form-group" id = "more-condition-options" style="margin-bottom:10px;  display: none;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-condition" type="checkbox" checked="{{checked}}" {{isdisabled}}>
+										<span class="custom-checkbox"></span>
+										Attribute Condition: filter expression values only, rows without expression values can be kept
+									</label>
+								</div>
+							{{/if}}
+						{{/each}}
+
+					{{else}}
+						{{#if showGraph}}
+						<div class="form-group" style="margin-bottom:10px;">
+							<label>Graph instruction</label>
+							<input id="add-new-attribute-graph-instruction" type="text" class="form-control dialog-combobox input-sm" list="graph-instruction-list" value="{{graphInstruction}}">
+								<datalist id="graph-instruction-list" class="datalist">
+										<option mappedvalue="GRAPH" input="GRAPH">GRAPH</option>
+										<option mappedvalue="SERVICE" input="SERVICE">SERVICE</option>
+								</datalist>
+						</div>
+						<div class="form-group" style="margin-bottom:10px;">
+							<label>Graph</label>
+							<input id="add-new-attribute-graph" autocomplete="off" class="form-control input-sm" value="{{graph}}">
+						</div>
+						{{/if}}
+
+						<div class="form-group" style="margin-bottom:10px;">
+							<label>Alias</label>
+							<input id="add-new-attribute-alias" class="form-control input-sm" value="{{alias}}">
+						</div>
+						<div id = "add-new-attribute-expression-field" class="form-group" style="margin-bottom:10px;">
+							<label>Expression</label>
+							<input id="add-new-attribute-expression" type="text" class="form-control input-sm" value="{{expression}}">
+							<span class="help-block">Use Ctrl+Space for text auto-completion</span>
+						</div>
+						<div class="form-group" style="margin-bottom:10px;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-requireValues" type="checkbox" class="dialog-checkbox input-sm" {{selectThis}} {{requireValues}}>
+								<span class="custom-checkbox"></span>
+								Require Values
+							</label>
+						</div>
+						<div class="form-group " style="margin-bottom:10px;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-helper" type="checkbox" class="dialog-checkbox input-sm" {{selectThis}} {{helper}}>
+								<span class="custom-checkbox"></span>
+								Helper (do not include in selection)
+							</label>
+						</div>
+						{{#if showLabel}}
+						<div class="form-group " style="margin-bottom:10px;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-add-label" type="checkbox" class="dialog-checkbox input-sm" {{addLabel}}>
+								<span class="custom-checkbox"></span>
+								Add Label
+							</label>
+						</div>
+						<div class="form-group " style="margin-bottom:10px;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-add-alt-label" type="checkbox" class="dialog-checkbox input-sm" {{addAltLabel}}>
+								<span class="custom-checkbox"></span>
+								Add AltLabel
+							</label>
+						</div>
+						<div class="form-group " style="margin-bottom:10px;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-add-description" type="checkbox" class="dialog-checkbox input-sm" {{addDescription}}>
+								<span class="custom-checkbox"></span>
+								Add Description
+							</label>
+						</div>
+						{{/if}}
+
+						<div class="form-group " style="margin-bottom:10px;">
+							<label>Condition(s)</label>
+							<div>
+							<input autocomplete="off" class="form-control input-sm" id="add-new-attribute-selection-condition" value="{{attributeConditionSelection}}" style="width:89%; display: inline-block;">
+							<a id="more-options-attribute-button" class="btn btn-xs btn-success"><i>More...</i></a>
+							</div>
+						</div>
+						<!-- <div class="form-group " style="margin-bottom:10px;"> -->
+							<!-- <label>Required condition</label> -->
+							<!-- <input autocomplete="off" class="form-control dialog-input input-sm" id="add-new-attribute-required-condition" value="{{attributeConditionSelection}}"> -->
+						<!-- </div> -->
+
+						<div class="form-group "  id = "more-condition-options-node" style="margin-bottom:10px;  display: none;">
+							<label class="label-checkbox">
+								<input id="add-new-node-level-condition" type="checkbox" class="dialog-checkbox input-sm" {{addNodeLevelCondition}}>
+								<span class="custom-checkbox"></span>
+								Node-level Condition: Include or exclude data rows, based on the condition
+							</label>
+						</div>
+						<div class="form-group " id = "more-condition-options" style="margin-bottom:10px;  display: none;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-condition" type="checkbox" class="dialog-checkbox input-sm" {{addAttributeCondition}}>
+								<span class="custom-checkbox"></span>
+								Attribute Condition: filter expression values only, rows without expression values can be kept
+							</label>
+						</div>
+					 {{/if}}
+	                </form>
+
+	            </div>
+
+                <div class="modal-footer">
+				{{#if fields}}
+					<div class="col-md-2 pull-left">
+
+						   <button id="merge-values-attribute" type="button" class="btn btn-warning yellow-button">Merge values ..</button>
+					</div>
+				{{/if}}
+                    <button id="cancel-add-new-attribute" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-add-new-attribute" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+    </div><!-- /.modal -->
+  {{/with}}
+</template>

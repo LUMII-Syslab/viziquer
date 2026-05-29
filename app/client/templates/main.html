@@ -16,7 +16,7 @@
     </script> -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>ViziQuer App</title>
+    <title>App</title>
     <!-- <script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script> -->
 
 
@@ -37,11 +37,17 @@
     <!-- <script type="application/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script> -->
     <!-- <script>jQuery.fn.tooltip = _tooltip;</script> -->
 
-
+    <!-- VQ start -->
     <script src='//cdn.jsdelivr.net/yasr/2.4/yasr.bundled.min.js'></script>
     <script src='//cdn.jsdelivr.net/yasqe/2.2/yasqe.bundled.min.js'></script>
 
     <link href='//cdn.jsdelivr.net/g/yasqe@2.2(yasqe.min.css),yasr@2.4(yasr.min.css)' rel='stylesheet' type='text/css'/>
+    <!-- VQ end -->
+
+    <!-- OWLGrEd start -->
+    <script src='/lib/owlgred/rdflib.min.js'></script>
+    <script src="https://unpkg.com/n3/browser/n3.min.js"></script>
+    <!-- OWLGrEd end -->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
@@ -127,7 +133,7 @@
 <template name="nav">
     <div id="top-nav" class="skin-{{skin}} fixed">
         <div class="brand">
-            <span><a href="https://viziquer.lumii.lv" title="Tool website" target="_blank" style="color: white; font-weight: bold;">ViziQuer</a></span>
+            <span><a href="https://viziquer.lumii.lv" title="Tool website" target="_blank" style="color: white; font-weight: bold;">{{toolGroup}}</a></span>
         </div><!-- /brand -->
         <button type="button" class="navbar-toggle pull-left" id="sidebarToggle">
             <span class="icon-bar"></span>
@@ -142,6 +148,12 @@
         </button>
 
         <ul class="nav-notification clearfix">
+
+            <li>
+                <a href="https://github.com/LUMII-Syslab/viziquer" title="GitHub" target="_blank">
+                    <i class="fa fa-github fa-lg"></i>
+                </a>
+            </li>
 
             {{> projectsT}}
 

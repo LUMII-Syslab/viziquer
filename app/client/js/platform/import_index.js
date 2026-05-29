@@ -1,6 +1,8 @@
 // platform templates
-import '/imports/client/platform/templates/import_index.js'
+// import ('../../../imports/platform/client/templates/import_index.js').then(()=>console.log('platform templates imported'))
+import  '../../../imports/platform/client/templates/import_index.js'
 
 // interpreter methods
-import '/imports/client/platform/js/import_index.js'
+// import ('../../../imports/platform/client/js/import_index.js').then(()=>console.log('platform methods imported'))
+import '../../../imports/platform/client/js/import_index.js'
 

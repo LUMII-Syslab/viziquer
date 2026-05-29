@@ -1,0 +1,849 @@
+
+<template name="OWLGRED_structureRibbon_button">
+  {{#if isOWLGRED }}
+	 <span class="ribbon-button-alignment pull-right1">
+        	<button id="OWLGRED-add" class="btn btn-ribbon" data-title='{{_ "OWLGRED_add_project"}}'>New {{toolGroupName}} project</button>
+        </span>
+  {{/if}}
+  {{> OWLGRED_createProjectModal}}
+</template>
+
+<template name="OWLGRED_createProjectModal">
+
+    <!-- Modal to create new project -->
+    <div id="OWLGRED-add-project" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "add_project"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <div class="col-sm-10" id="OWLGRED-project-name-required" style="display: none;">
+                                <p style="color:red;">Project name is required</p>
+                            </div>
+                        </div>
+
+						            <div class="form-group">
+                            <label for="OWLGRED-project-name" class="col-sm-2 control-label">{{_ "project_name"}}</label>
+                            <div class="col-sm-10">
+                                <input id="OWLGRED-project-name" type="text" class="form-control" autocomplete="off" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="OWLGRED-category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
+                            <div class="col-sm-10">
+                                <input id="OWLGRED-category-name" type="text" class="form-control" autocomplete="off" placeholder="" value={{toolGroupName}}>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="OWLGRED-icon-name" class="col-sm-2 control-label">{{_ "project_icon"}}</label>
+                            <div class="col-sm-10">
+                                <input id="OWLGRED-icon-name" type="text" class="form-control" autocomplete="off" placeholder="" value="object-group">
+                                <ul id="parsley-5828012968413532" class="parsley-error-list" style="display: block;">
+                                  <li class="type" style="display: list-item;">{{{_ "structure_font_awesome"}}}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tool" class="control-label col-sm-2">{{_ "project_tool"}}</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="OWLGRED-tool">
+                                    {{#each tools.tools}}
+                                        <option {{selected}} id="{{_id}}" name={{name}}>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="OWLGRED-create-project" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+
+<template name="OWLGRED_editProjectModal">
+
+    <!-- Modal to create new project -->
+    <div id="OWLGRED-edit-project-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "project_edit_project"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        {{#with data}}
+
+                            <div class="form-group">
+                                <label for="edit-project-name" class="col-sm-2 control-label">{{_ "project_name"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="OWLGRED-edit-project-name" type="text" class="form-control" value="{{name}}" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="edit-category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="OWLGRED-edit-category-name" type="text" class="form-control" value="{{category}}" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="edit-icon-name" class="col-sm-2 control-label">{{_ "project_icon"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="OWLGRED-edit-icon-name" type="text" class="form-control" value="{{icon}}" autocomplete="off">
+    								<ul id="parsley-5828012968413532" class="parsley-error-list" style="display: block;">
+    									<li class="type" style="display: list-item;">{{{_ "structure_font_awesome"}}}</li>
+    								</ul>
+
+                                </div>
+                            </div>
+                        {{/with}}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="OWLGRED-project-edited" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+
+<!-- ---------------------------------------------------------------------- -->
+<template name="OWLGrEd_diagramsToolbar_buttons">
+  {{#if isOWLGrEProj }}
+     <button id="OWLGrEdsettings" class="btn btn-ribbon toolbar-button" data-title="Settings" data-toggle="tooltip" data-placement="bottom">
+          <i class="fa fa-gear"></i>
+     </button>
+
+     <button id="loadOntologyOWLGrEd" class="btn btn-ribbon toolbar-button" data-title="Load Ontology" data-toggle="tooltip" data-placement="bottom" >
+      Load Ontology
+     </button>
+  {{/if}}
+
+  {{> OWLGRED_ontologySettings}}
+  {{> loadOntologyOWLGrEd}}
+</template>
+
+<template name="OWLGRED_ontologySettings">
+    <style>
+        .help-tip {
+            position: relative;
+            display: inline;
+            padding-right: 5px;
+            padding-left: 5px;
+            text-align: center;
+            background-color: #8a2be2;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: help;
+        }
+
+        .help-tip:before {
+            content: "?";
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .help-tip:hover p {
+            display: block;
+        }
+
+        .help-tip p {
+            display: none;
+            text-align: left;
+            font-size: 12px;
+            line-height: 16px;
+            color: white;
+            border: 1px solid #7f7f7f;
+            background-color: slategrey;
+            border-radius: 5px;
+            padding: 10px;
+            width: 200px;
+            position: absolute;
+            right: 105%;
+            z-index: 1000;
+        }
+
+        /* Minimal helpers for layout inside the modal (not aiming to match OWLGrEd desktop look) */
+        .owlgred-settings .row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .owlgred-settings .indent-1 { margin-left: 20px; }
+        .owlgred-settings .indent-2 { margin-left: 40px; }
+        .owlgred-settings .indent-3 { margin-left: 60px; }
+        .owlgred-settings fieldset { margin: 1px 0; padding: 0 10px; }
+        .owlgred-settings legend { margin: 0px 0;padding: 0 6px; font-size: 14px;}
+        .owlgred-settings .small { width: 70px; }
+        .owlgred-settings .tiny { width: 50px; }
+
+        /* Fix: ensure checkboxes + radios are visible (theme override) */
+        #OWLGRED-ontology-settings-form input[type="checkbox"],
+        #OWLGRED-ontology-settings-form input[type="radio"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+
+            /* override theme styles that hide inputs */
+            display: inline-block !important;
+            opacity: 1 !important;
+            position: static !important;
+            visibility: visible !important;
+
+            margin: 0;
+            appearance: auto !important;
+            -webkit-appearance: auto !important;
+            accent-color: auto;
+        }
+
+    </style>
+
+    <div id="OWLGRED-ontology-settings-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">Import Settings</h4>
+                </div>
+
+                <div class="modal-body owlgred-settings">
+                    <div class="panel panel-default">
+                        <div class="panel-tab clearfix">
+                            <ul class="tab-bar">
+                                <li class="active"><a href="#owlgred-general" data-toggle="tab">General</a></li>
+                                <li><a href="#owlgred-classes" data-toggle="tab">Classes</a></li>
+                                <li><a href="#owlgred-properties" data-toggle="tab">Properties</a></li>
+                                <li><a href="#owlgred-individuals" data-toggle="tab">Individuals</a></li>
+                                <!-- <li><a href="#owlgred-effects" data-toggle="tab">Effects</a></li> -->
+                                <!-- <li><a href="#owlgred-module" data-toggle="tab">Ontology module parameters</a></li> -->
+                            </ul>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="tab-content user-tab-content">
+                                <div class="tab-pane fade in active" id="owlgred-general">
+                                    <form class="form-horizontal" role="form">
+<div class="row">
+      <label><input type="checkbox" id="showOntoAnnotations" /> Ontology annotations</label>
+</div>
+
+    <!-- <fieldset class="indent-1" data-enable-when="showOntoAnnotations"> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="radio" name="showOntoAnnotationsInSeed" id="showOntoAnnotationsInSeed_seed" disabled /> Show in Seed symbol</label> -->
+      <!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="radio" name="showOntoAnnotationsInSeed" id="showOntoAnnotationsInSeed_diagram" /> Show in diagram</label> -->
+<!-- </div> -->
+    <!-- </fieldset> -->
+
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="showUnloadedAxioms" /> Unvisualized axioms</label> -->
+<!-- </div> -->
+    <!-- <div class="row indent-1" data-enable-when="showUnloadedAxioms"> -->
+      <!-- <label><input type="checkbox" id="showUnloadedAxioms_InComment" /> Show in Annotation symbol</label> -->
+<!-- </div> -->
+    <!-- <div class="row indent-1" data-enable-when="showUnloadedAxioms"> -->
+      <!-- <label><input type="checkbox" id="showUnloadedAxioms_DisplayOnDemand" /> Display on demand</label> -->
+<!-- </div> -->
+
+    <div class="row">
+      <label><input type="checkbox" id="showAnnotationPropertyDefs" /> Annotation property definitions</label>
+</div>
+
+    <div class="row">
+      <label><input type="checkbox" id="showDataTypes" /> Data type definitions</label>
+</div>
+
+    <!-- <div class="row"> -->
+      <!-- <label for="showAnnotationsInLanguages">Show Annotations in</label> -->
+      <!-- <input id="showAnnotationsInLanguages" type="text" class="small" placeholder="e.g. en,lv" /> -->
+      <!-- <span>languages</span> -->
+<!-- </div> -->
+
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="showClassExprsAsBoxByCountEnable" disabled /> Show class expression as box if referenced at least</label> -->
+      <!-- <input id="showClassExprsAsBoxCount" type="number" class="tiny" min="0" disabled /> -->
+      <!-- <span>times</span> -->
+<!-- </div> -->
+
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="addSchemaAssertionsToDomainAssertions" /> Create schema assertions for corresponding domain/range assertions</label> -->
+<!-- </div> -->
+
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="AutomaticallyGenerateNamespacesFromEntityURI" /> Automatically generate namespaces from entity URI</label> -->
+<!-- </div> -->
+
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="DiscardPreviousOWLGrEdVersionAnnotations" /> Discard previous OWLGrEd version annotations</label> -->
+<!-- </div> -->
+                                    </form>
+                                </div>
+
+                                <div class="tab-pane fade" id="owlgred-classes">
+                                    <form class="form-horizontal" role="form">
+<div class="row">
+      <label><input type="checkbox" id="showClasses" /> Show classes</label>
+</div>
+
+    <fieldset data-enable-when="showClasses">
+
+      <div class="row">
+        <label><input type="checkbox" id="showSubclasses" /> Subclasses</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showClasses,showSubclasses">
+        <div class="row">
+          <label><input type="radio" name="showSubclassesType" id="showSubclassesType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showSubclassesType" id="showSubclassesType_graph" /> Graphically</label>
+		</div>
+
+        <fieldset class="indent-1" data-enable-when="showClasses,showSubclasses,showSubclassesType_graph">
+          <div class="row">
+            <label><input type="radio" name="showSubclassesGraphicsType" id="showSubclassesGraphicsType_lines" /> As lines</label>
+          </div>
+          <div class="row">
+            <label><input type="radio" name="showSubclassesGraphicsType" id="showSubclassesGraphicsType_forks" /> As forks (if &gt; 1)</label>
+		</div>
+          <!-- <div class="row indent-1" data-enable-when="showSubclassesGraphicsType_forks"> -->
+            <!-- <label><input type="checkbox" id="showSubclassesAutoForksForDisjoint" /> Create Auto forks for Disjoint Subclasses</label> -->
+<!-- </div> -->
+        </fieldset>
+
+        <!-- <div class="row"> -->
+          <!-- <button type="button">Extra items</button> -->
+        <!-- </div> -->
+      </fieldset>
+    </fieldset>
+
+    <fieldset data-enable-when="showClasses">
+      <div class="row">
+        <label><input type="checkbox" id="showDisjointClasses" /> Disjoint classes</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showClasses,showDisjointClasses">
+        <div class="row">
+          <label><input type="radio" name="showDisjointClassesType" id="showDisjointClassesType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showDisjointClassesType" id="showDisjointClassesType_graph" /> Graphically</label>
+		</div>
+
+        <div class="row indent-1" data-enable-when="showDisjointClassesType_graph">
+          <label><input type="checkbox" id="showDisjointClassesGraphicsGroupAsBoxes" /> Group as boxes (if &gt; 2)</label>
+		</div>
+        <!-- <div class="row indent-1"> -->
+          <!-- <label><input type="checkbox" id="showDisjointClassesHideNotGraphical" /> Hide information, if not presented graphically</label> -->
+		<!-- </div> -->
+        <div class="row">
+          <label><input type="checkbox" id="showDisjointClassesMarkAtForks" /> Use Disjoint mark at forks</label>
+		</div>
+      </fieldset>
+    </fieldset>
+
+    <fieldset data-enable-when="showClasses">
+      <div class="row">
+        <label><input type="checkbox" id="showEquivalentClasses" /> Equivalent classes</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showClasses,showEquivalentClasses">
+        <div class="row">
+          <label><input type="radio" name="showEquivalentClassesType" id="showEquivalentClassesType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showEquivalentClassesType" id="showEquivalentClassesType_graph" /> Graphically</label>
+		</div>
+
+        <div class="row indent-1" data-enable-when="showEquivalentClassesType_graph">
+          <label><input type="checkbox" id="showEquivalentClassesGraphicsGroupAsBoxes" /> Group as boxes (if &gt; 2)</label>
+		</div>
+        <!-- <div class="row indent-1"> -->
+          <!-- <label><input type="checkbox" id="showEquivalentClassesHideNotGraphical" /> Hide information, if not presented graphically</label> -->
+		<!-- </div> -->
+      </fieldset>
+    </fieldset>
+
+    <div class="row indent-1" data-enable-when="showClasses">
+      <label><input type="checkbox" id="showKeys" /> Keys</label>
+	</div>
+
+    <fieldset data-enable-when="showClasses">
+      <div class="row">
+        <label><input type="checkbox" id="showClassAnnotations" /> Annotations</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showClasses,showClassAnnotations">
+        <div class="row">
+          <label><input type="radio" name="showClassAnnotationsType" id="showClassAnnotationsType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showClassAnnotationsType" id="showClassAnnotationsType_graph" /> Graphically</label>
+		</div>
+        <div class="row">
+          <label><input type="checkbox" id="showClassAnnotationsEnableSpecComments" /> Enable special comment redesign</label>
+		</div>
+      </fieldset>
+    </fieldset>
+                                    </form>
+                                </div>
+
+                                <div class="tab-pane fade" id="owlgred-properties">
+                                    <form class="form-horizontal" role="form">
+<fieldset>
+
+      <div class="row">
+        <label><input type="checkbox" id="showObjectProperties" /> Show object properties</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showObjectProperties">
+
+        <div class="row">
+          <label><input type="radio" name="showObjectPropertiesType" id="showObjectPropertiesType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showObjectPropertiesType" id="showObjectPropertiesType_graph" /> Graphically</label>
+		</div>
+
+        <div class="row indent-1" data-enable-when="showObjectProperties,showObjectPropertiesType_graph">
+          <label><input type="checkbox" id="showObjectPropertiesMergeInverse" /> Merge inverse properties</label>
+		</div>
+
+        <div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesSubObjectProperties" /> Super Properties</label>
+        </div>
+		
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesEquivalentObjectProperties" /> Equivalent Properties</label>
+        </div>
+
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesDisjointObjectProperties" /> Disjoint Properties</label>
+        </div>
+
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesPropertyChains" /> Property Chains</label>
+        </div>
+
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesIsFunctional" /> Is Functional</label>
+        </div>
+
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesIsInverSefunctional" /> Is Inverse Functional</label>
+        </div>
+
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesIsSymmetric" /> Is Symmetric</label>
+        </div>
+
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesIsAsymmetric" /> Is Asymmetric</label>
+        </div>
+		
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesIsReflexive" /> Is Reflexive</label>
+        </div>
+
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesIsIrreflexive" /> Is Irreflexive</label>
+        </div>
+
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertiesIsTransitive" /> Is Transitive</label>
+        </div>
+		
+		<div class="row">
+          <label><input type="checkbox" id="showObjectPropertyAnnotations" /> Annotations</label>
+        </div>
+
+        <!-- <fieldset class="indent-1" data-enable-when="showObjectProperties,showObjectPropertyAnnotations"> -->
+          <!-- <div class="row"> -->
+            <!-- <label><input type="radio" name="showObjectPropertyAnnotationsType" id="showObjectPropertyAnnotationsType_text" /> As text</label> -->
+          <!-- </div> -->
+          <!-- <div class="row"> -->
+            <!-- <label><input type="radio" name="showObjectPropertyAnnotationsType" id="showObjectPropertyAnnotationsType_graph" /> Graphically</label> -->
+		<!-- </div> -->
+        <!-- </fieldset> -->
+
+        <!-- <div class="row"> -->
+          <!-- <button type="button">Extra..</button> -->
+        <!-- </div> -->
+      </fieldset>
+    </fieldset>
+
+    <fieldset>
+
+      <div class="row">
+        <label><input type="checkbox" id="showDataProperties" /> Show data properties</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showDataProperties">
+        <!-- <div class="row"> -->
+          <!-- <label><input type="radio" name="showDataPropertiesType" id="showDataPropertiesType_text" /> As text</label> -->
+		<!-- </div> -->
+
+        <!-- <div class="row indent-1" data-enable-when="showDataProperties,showDataPropertiesType_text"> -->
+          <!-- <label><input type="checkbox" id="showDataTypesLinkToAttributeClasses" /> Link type to dataType</label> -->
+		<!-- </div> -->
+
+        <!-- <div class="row"> -->
+          <!-- <label><input type="radio" name="showDataPropertiesType" id="showDataPropertiesType_graph" /> Graphically</label> -->
+        <!-- </div> -->
+
+        <div class="row">
+          <label><input type="checkbox" id="showDataPropertiesSubDataProperties" /> Super Properties</label>
+        </div>
+		
+		<div class="row">
+          <label><input type="checkbox" id="showDataPropertiesEquivalentDataProperties" /> Equivalent Properties</label>
+        </div>
+		<div class="row">
+          <label><input type="checkbox" id="showDataPropertiesDisjointDataProperties" /> Disjoint Properties</label>
+        </div>
+		<div class="row">
+          <label><input type="checkbox" id="showDataPropertiesIsFunctional" /> Is Functional</label>
+        </div>
+		<div class="row">
+          <label><input type="checkbox" id="showDataPropertyAnnotations" /> Annotations</label>
+        </div>
+
+        <!-- <fieldset class="indent-1" data-enable-when="showDataProperties,showDataPropertyAnnotations"> -->
+          <!-- <div class="row"> -->
+            <!-- <label><input type="radio" name="showDataPropertiesAnnotationType" id="showDataPropertiesAnnotationType_text" /> As text</label> -->
+          <!-- </div> -->
+          <!-- <div class="row"> -->
+            <!-- <label><input type="radio" name="showDataPropertiesAnnotationType" id="showDataPropertiesAnnotationType_graph" /> Graphically</label> -->
+		<!-- </div> -->
+        <!-- </fieldset> -->
+
+        <!-- <div class="row"> -->
+          <!-- <button type="button">Extra..</button> -->
+        <!-- </div> -->
+      </fieldset>
+    </fieldset>
+
+    <fieldset>
+
+      <div class="row">
+        <label><input type="checkbox" id="showPropertyRestrictions" /> Show property restrictions</label>
+	</div>
+
+      <div class="row indent-1" data-enable-when="showPropertyRestrictions">
+        <label><input type="checkbox" id="showObjectCardinalityRestrictionsAsMultiplicity" /> Object cardinality restrictions as multiplicities when possible</label>
+</div>
+      <div class="row indent-1" data-enable-when="showPropertyRestrictions">
+        <label><input type="checkbox" id="showDataCardinalityRestrictionsAsMultiplicity" /> Data cardinality restrictions as multiplicities when possible</label>
+</div>
+
+      <div class="row indent-1" data-enable-when="showPropertyRestrictions">
+        <label><input type="checkbox" id="showPropertyRestrictionsGraphically" /> Show object property restrictions graphicaly</label>
+</div>
+
+      <!-- <div class="row indent-2" data-enable-when="showPropertyRestrictions,showPropertyRestrictionsGraphically"> -->
+        <!-- <label><input type="checkbox" id="showPropertyRestrictionsGraphicallyNoLineToThing" /> No restriction lines to Thing</label> -->
+<!-- </div> -->
+      <div class="row indent-2" data-enable-when="showPropertyRestrictions,showPropertyRestrictionsGraphically">
+        <label><input type="checkbox" id="showPropertyRestrictionsGraphicallyNoLineToSelf" /> No restriction lines to self</label>
+</div>
+
+      <!-- <div class="row indent-1" data-enable-when="showPropertyRestrictions"> -->
+        <!-- <label><input type="checkbox" id="showPropertyRestrictionsHideNotGraphical" /> Hide restrictions not presented graphically or as multiplicities</label> -->
+<!-- </div> -->
+    </fieldset>
+                                    </form>
+                                </div>
+
+                                <div class="tab-pane fade" id="owlgred-individuals">
+                                    <form class="form-horizontal" role="form">
+<div class="row">
+      <label><input type="checkbox" id="showIndividuals" /> Show individuals</label>
+</div>
+
+    <fieldset data-enable-when="showIndividuals">
+
+      <div class="row">
+        <label><input type="checkbox" id="showSameIndividuals" /> Same individuals</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showIndividuals,showSameIndividuals">
+        <div class="row">
+          <label><input type="radio" name="showSameIndividualsType" id="showSameIndividualsType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showSameIndividualsType" id="showSameIndividualsType_graph" /> Graphically</label>
+		</div>
+        <div class="row indent-1" data-enable-when="showSameIndividualsType_graph">
+          <label><input type="checkbox" id="showSameIndividualsGraphicsGroupAsBoxes" /> Group as boxes (if &gt; 2)</label>
+		</div>
+        <!-- <div class="row indent-1"> -->
+          <!-- <label><input type="checkbox" id="showSameIndividualsHideNotGraphical" /> Hide information, if not presented graphically</label> -->
+<!-- </div> -->
+      </fieldset>
+    </fieldset>
+
+    <fieldset data-enable-when="showIndividuals">
+
+
+      <div class="row">
+        <label><input type="checkbox" id="showDifferentIndividuals" /> Different individuals</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showIndividuals,showDifferentIndividuals">
+        <div class="row">
+          <label><input type="radio" name="showDifferentIndividualsType" id="showDifferentIndividualsType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showDifferentIndividualsType" id="showDifferentIndividualsType_graph" /> Graphically</label>
+		</div>
+        <div class="row indent-1" data-enable-when="showDifferentIndividualsType_graph">
+          <label><input type="checkbox" id="showDifferentIndividualsGraphicsGroupAsBoxes" /> Group as boxes (if &gt; 2)</label>
+		</div>
+        <!-- <div class="row indent-1"> -->
+          <!-- <label><input type="checkbox" id="showDifferentIndividualsHideNotGraphical" /> Hide information, if not presented graphically</label> -->
+		<!-- </div> -->
+      </fieldset>
+    </fieldset>
+
+    <fieldset data-enable-when="showIndividuals">
+      <div class="row">
+        <label><input type="checkbox" id="showIndividualAnnotations" /> Annotations</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showIndividuals,showIndividualAnnotations">
+        <div class="row">
+          <label><input type="radio" name="showIndividualAnnotationType" id="showIndividualAnnotationType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showIndividualAnnotationType" id="showIndividualAnnotationType_graph" /> Graphically</label>
+		</div>
+      </fieldset>
+    </fieldset>
+
+    <fieldset data-enable-when="showIndividuals">
+
+      <div class="row">
+        <label><input type="checkbox" id="showIndividualClassAssertions" /> Class assertions</label>
+      </div>
+
+      <fieldset class="indent-1" data-enable-when="showIndividuals,showIndividualClassAssertions">
+        <div class="row">
+          <label><input type="radio" name="showClassAssertionsType" id="showClassAssertionsType_text" /> As text</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showClassAssertionsType" id="showClassAssertionsType_graph" /> Graphically</label>
+		</div>
+        <div class="row indent-1" data-enable-when="showClassAssertionsType_graph">
+          <label><input type="checkbox" id="showClassAssertionsGraphicsKeepText" /> Keep text with graphics</label>
+		</div>
+        <!-- <div class="row"> -->
+          <!-- <button type="button">Extra..</button> -->
+        <!-- </div> -->
+      </fieldset>
+    </fieldset>
+
+    <fieldset data-enable-when="showIndividuals">
+      <div class="row">
+        <label><input type="checkbox" id="showIndividualsObjectPropertyAssertions" /> Object property assertions</label>
+	  </div>
+      <div class="row">
+        <label><input type="checkbox" id="showIndividualsDataPropertyAssertions" /> Data property assertions</label>
+	  </div>
+      <div class="row">
+        <label><input type="checkbox" id="showIndividualsNegativeObjectPropertyAssertions" /> Negative object property assertions</label>
+	  </div>
+      <div class="row">
+        <label><input type="checkbox" id="showIndividualsNegativeDataPropertyAssertions" /> Negative data property assertions</label>
+	  </div>
+
+      <!-- <div class="row"> -->
+        <!-- <button type="button" id="selectAllIndividualsAssertions">Select all</button> -->
+        <!-- <button type="button" id="clearAllIndividualsAssertions">Clear all</button> -->
+      <!-- </div> -->
+    </fieldset>
+                                    </form>
+                                </div>
+
+                                <!-- <div class="tab-pane fade" id="owlgred-effects"> -->
+                                    <!-- <form class="form-horizontal" role="form"> -->
+<!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="cloneClassBoxesBySelfLines" /> Clone class boxes with</label> -->
+      <!-- <input type="number" id="cloneClassBoxesBySelfLinesCount" class="tiny" min="0" value="5" /> -->
+      <!-- <span>or more self-links</span> -->
+<!-- </div> -->
+
+    <!-- <fieldset> -->
+      <!-- <legend>Create containers for single nodes</legend> -->
+
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodes" /> Create containers for single nodes</label> -->
+<!-- </div> -->
+
+      <!-- <div class="row indent-1" data-enable-when="useContainersForSingleNodes"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesOntoAnnotations" /> Ontology annotations</label> -->
+<!-- </div> -->
+      <!-- <div class="row indent-2" data-enable-when="useContainersForSingleNodes,useContainersForSingleNodesOntoAnnotations"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesOntoAnnotationsSeparate" /> Use separate container</label> -->
+<!-- </div> -->
+
+      <!-- <div class="row indent-1" data-enable-when="useContainersForSingleNodes"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesDataTypes" /> Data types</label> -->
+<!-- </div> -->
+      <!-- <div class="row indent-2" data-enable-when="useContainersForSingleNodes,useContainersForSingleNodesDataTypes"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesDataTypesSeparate" /> Use separate container</label> -->
+<!-- </div> -->
+
+      <!-- <div class="row indent-1" data-enable-when="useContainersForSingleNodes"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesAnnotPropDefs" /> Annotation property definitions</label> -->
+<!-- </div> -->
+      <!-- <div class="row indent-2" data-enable-when="useContainersForSingleNodes,useContainersForSingleNodesAnnotPropDefs"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesAnnotPropDefsSeparate" /> Use separate container</label> -->
+<!-- </div> -->
+
+      <!-- <div class="row indent-1" data-enable-when="useContainersForSingleNodes"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesIndividuals" /> OWL individuals</label> -->
+<!-- </div> -->
+      <!-- <div class="row indent-2" data-enable-when="useContainersForSingleNodes,useContainersForSingleNodesIndividuals"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesIndividualsSeparate" /> Use separate container</label> -->
+<!-- </div> -->
+      <!-- <div class="row indent-2" data-enable-when="useContainersForSingleNodes,useContainersForSingleNodesIndividuals"> -->
+        <!-- <label><input type="checkbox" id="useContainersForSingleNodesIndividualsGroupByClasses" /> Group by classes</label> -->
+<!-- </div> -->
+    <!-- </fieldset> -->
+                                    <!-- </form> -->
+                                <!-- </div> -->
+
+                                <!-- <div class="tab-pane fade" id="owlgred-module"> -->
+                                    <!-- <form class="form-horizontal" role="form"> -->
+<!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="DirectAssertedSuperclassesOfModuleClasses" /> Direct asserted superclasses of module classes</label> -->
+<!-- </div> -->
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="AnonymousSuperclassesOfModuleClasses" /> Anonymous 'A or B' superclasses of module classes</label> -->
+<!-- </div> -->
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="TransitiveSuperclasses" /> Transitive superclasses</label> -->
+<!-- </div> -->
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="DirectAssertedSubclassesOfModuleClasses" /> Direct asserted subclasses of module classes</label> -->
+<!-- </div> -->
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="AnonymousSubclassesOfModuleClasses" /> Anonymous 'A and ..' subclasses of module classes</label> -->
+<!-- </div> -->
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="TransitiveSubclasses" /> Transitive subclasses</label> -->
+<!-- </div> -->
+
+    <!-- <fieldset> -->
+      <!-- <legend>Property range assertions</legend> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="PropertyRangeAssertionsForModuleClasses" /> For module classes</label> -->
+<!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="PropertyRangeAssertionsForModuleClassesForSuperclasses" /> For superclasses</label> -->
+<!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="PropertyRangeAssertionsForModuleClassesForSubclasses" /> For subclasses</label> -->
+<!-- </div> -->
+    <!-- </fieldset> -->
+
+    <!-- <fieldset> -->
+      <!-- <legend>Range classes for object properties</legend> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RangeClassesForObjectPropertiesAtModuleClasses" /> At module classes</label> -->
+<!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RangeClassesForObjectPropertiesAtSuperclasses" /> At superclasses</label> -->
+<!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RangeClassesForObjectPropertiesAtSubclasses" /> At subclasses</label> -->
+<!-- </div> -->
+    <!-- </fieldset> -->
+
+    <!-- <fieldset> -->
+      <!-- <legend>Restriction target classes for restrictions</legend> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RestrictionTargetClassesForRestrictionsAtModuleClasses" /> At module classes</label> -->
+<!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RestrictionTargetClassesForRestrictionsAtSuperclasses" /> At superclasses</label> -->
+<!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RestrictionTargetClassesForRestrictionsAtSubclasses" /> At subclasses</label> -->
+<!-- </div> -->
+    <!-- </fieldset> -->
+
+    <!-- <fieldset> -->
+      <!-- <legend>Restriction source classes for restrictions towards</legend> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RestrictionSourcetClassesForRestrictionsAtModuleClasses" /> Module classes</label> -->
+<!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RestrictionSourcetClassesForRestrictionsAtSuperclasses" /> Superclasses</label> -->
+<!-- </div> -->
+      <!-- <div class="row"> -->
+        <!-- <label><input type="checkbox" id="RestrictionSourcetClassesForRestrictionsAtSubclasses" /> Subclasses</label> -->
+<!-- </div> -->
+    <!-- </fieldset> -->
+
+    <!-- <div class="row"> -->
+      <!-- <label><input type="checkbox" id="ShowOtherPropertiesInPropertyDomainRangeRestriction" /> Show other properties in property domain/range/restriction</label> -->
+<!-- </div> -->
+                                    <!-- </form> -->
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="OWLGRED-cancel-ontology-settings" type="button" class="btn btn-default" data-dismiss="modal">
+                        {{_ "cancel"}}
+                    </button>
+                    <button id="OWLGRED-ok-ontology-settings" type="button" data-dismiss="modal" class="btn btn-primary">
+                        {{_ "ok"}}
+                    </button>
+
+                    {{#if msg.text}}
+                    <ul class="parsley-error-list" style="display: block">
+                        <li style="display: list-item">{{msg.text}}</li>
+                    </ul>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+
