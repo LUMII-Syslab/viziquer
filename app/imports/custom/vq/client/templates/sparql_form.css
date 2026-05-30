@@ -4,11 +4,12 @@
     margin-left: auto;
     text-align: right;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 50%;
 }
 
 .iri-short {
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -36,5 +37,5 @@ li.CodeMirror-hint-active .iri .highlighted {
 }
 
 li.CodeMirror-hint {
-    width: fit-content;
+    width: 400px;
 }

@@ -33,7 +33,7 @@ const Yasqe = window.Yasqe;
  * @property {string} sparqlUrl
  */
 
-import { DSSClient, queryLexer, suggestionComparatorModule, TripletStore, DSSAutocompletionClient, QueryBuilder, queryBuilderModule } from 'dss-client';
+import { DSSClient, queryLexer, TripletStore, DSSAutocompletionClient, QueryBuilder, suggestionComparator, extractTriplePatternsFromQuery } from 'dss-client';
 
 
 import './sparql_form.html'
@@ -230,8 +230,10 @@ Template.sparqlForm.onRendered(async function () {
 		await dataShapes.changeActiveProject(project_id, 'Template.sparqlForm.onRendered');
 	}
 
-	Yasqe.registerAutocompleter(customClassCompleter());
-	Yasqe.registerAutocompleter(dssClientCompleter());
+	const [propertyCompleter, classCompleter] = dssClientCompleter();
+
+	Yasqe.registerAutocompleter(propertyCompleter);
+	Yasqe.registerAutocompleter(classCompleter);
 	Yasqe.defaults.autocompleters = ['customClassCompleter', "customPropertyCompleter", "variables"];
 
 
@@ -332,37 +334,6 @@ Template.sparqlForm_see_results.helpers(sparql_form_helpers);
 Template.sparqlForm_see_results.events(sparql_form_events);
 
 
-
-function extractTriplePatternsFromQuery(sparqlQuery) {
-	// Locate the `WHERE` clause
-	const whereIndex = sparqlQuery.toUpperCase().indexOf(" WHERE");
-	if (whereIndex === -1) {
-		return [];
-	}
-
-	// Extract the portion of the query starting from the `WHERE` clause
-	const whereClause = sparqlQuery.slice(whereIndex);
-
-	// Regex to match triple patterns
-	const triplePatternRegex =
-		/([^\s;{}]+)\s+([^\s;{}()]+(?:\([^)]*\))?)\s+((["'].*?["'](?:\^\^<[^>]+>|@[a-zA-Z]+)?)|<[^>]+>|[^\s;{}()]+)\s*\.\s*/g;
-
-	const triples = [];
-	let match;
-
-	while ((match = triplePatternRegex.exec(whereClause)) !== null) {
-		const [fullMatch, subject, predicate, object] = match;
-
-		triples.push({
-			subject,
-			predicate,
-			object,
-		});
-	}
-
-	return triples;
-}
-
 // Returns a list of class names that a given token may have based on triples that contain the token
 async function getTokenClassesFromTriples(token, extractedTriples) {
 	let className;
@@ -426,44 +397,6 @@ function sortAndFilterResult(result, currToken) {
 		return 0;
 	});
 	return result;
-}
-
-/**
- * 
- * @param {Yasqe} yasqe_doc 
- * @returns {CompleterConfig}
- */
-function customClassCompleter() {
-	return {
-		isValidCompletionPosition: function (yasqe) { return Yasqe.Autocompleters.class.isValidCompletionPosition(yasqe) },
-		preProcessToken: function (yasqe, token) { return token },
-		postProcessSuggestion: function (yasqe, token, suggestedString) { return suggestedString },
-		bulk: false,
-		async: true,
-		autoShow: false,
-		name: "customClassCompleter",
-		get: async (yasqe_doc, token) => {
-			let result = [];
-			const cur = yasqe_doc.getDoc().getCursor();	// Text cursor position
-			const predicateToken = yasqe_doc.getPreviousNonWsToken(cur.line, token);	// Non-whitespace token before the current token (predicate)
-			const subjectToken = yasqe_doc.getPreviousNonWsToken(cur.line, predicateToken);	// Non-whitespace token before the predicate token (subject)
-
-			if (predicateToken.string === "a" || predicateToken.string === "rdf:type") {
-				let classes = await getTokenClassesFromTriples(subjectToken, extractTriplePatternsFromQuery(yasqe_doc.getValue()));
-				// Suggest all classes if no classes were found using existing triples
-				if (!classes) {
-					classes = await dataShapes.getClassesFull({ main: { onlyPropsInSchema: true } });
-					classes = classes.data.map(row => row.full_name);
-				}
-
-				// Filter and sort the results based on incomplete token
-				result = sortAndFilterResult(classes, token);
-			}
-
-			return result;
-
-		}
-	};
 }
 
 
@@ -560,7 +493,6 @@ function dssClientCompleter() {
 		name: "customPropertyCompleter",
 		isValidCompletionPosition: (yasqe) => {
 			const isValid = defaultPropertyCompleter.isValidCompletionPosition(yasqe);
-			console.log(`isValid: ${isValid}`);
 			return isValid ?? false;
 		},
 		preProcessToken(yasqe, token) {
@@ -574,8 +506,31 @@ function dssClientCompleter() {
 			return postProcessPropertyHints(yasqe, hs);
 
 		}
-	}
-	return propertyCompleter;
+	};
+
+	/**@type {CompleterConfig} */
+	const classCompleter = {
+		name: "customClassCompleter",
+		autoShow: false,
+		get: async (yasqe, token) => {
+			return await getClasses(dssClient, yasqe, selectedEndpointData)(yasqe, token);
+		},
+		bulk: false,
+		isValidCompletionPosition: (yasqe) => {
+			return Yasqe.Autocompleters["class"]?.isValidCompletionPosition(yasqe) ?? false;
+		},
+		preProcessToken(yasqe, token) {
+			return preprocessIriForCompletion(yasqe, token);
+		},
+		postProcessSuggestion(yasqe, token, suggestedString) {
+			return postProcessPropertySuggestion(yasqe, token, suggestedString);
+		},
+		postprocessHints: (yasqe, hs) => {
+			return postProcessPropertyHints(yasqe, hs);
+
+		}
+	};
+	return [propertyCompleter, classCompleter];
 }
 
 /** @type {{propertydata: { [IRIs: string]: PropertyData }, tokenMap: { [tokens: string]: PropertyData | null }, namespaceData?: NamespaceData[], token: AutocompletionToken | null}}*/
@@ -776,7 +731,7 @@ const getProperties = async (dssClient, yasqeClass, endpointData, token) => {
 	const cursor = yasqeClass.getCursor();
 	console.log(`Cursor position: line ${cursor.line}, ch ${cursor.ch}`);
 
-	const triplePatterns = queryBuilderModule.extractTriplePatternsFromQuery(yasqeClass.getValue(), cursor);
+	const triplePatterns = extractTriplePatternsFromQuery(yasqeClass.getValue(), cursor);
 	console.log(triplePatterns);
 
 	const processedTriples = triplePatterns[0].map(tp => preprocessTriplePattern(yasqeClass, tp));
@@ -796,7 +751,7 @@ const getProperties = async (dssClient, yasqeClass, endpointData, token) => {
 	const namespaceData = await autocompletionClient.dssClient.getNamespaces();
 
 	if (token) {
-		suggestions = suggestions.sort(suggestionComparatorModule.suggestionComparator(yasqeClass.getPrefixesFromQuery(), token.autocompletionString, namespaceData));
+		suggestions = suggestions.sort(suggestionComparator(yasqeClass.getPrefixesFromQuery(), token.autocompletionString, namespaceData));
 	}
 
 	if (suggestions.length === 0) {
@@ -813,10 +768,9 @@ const getProperties = async (dssClient, yasqeClass, endpointData, token) => {
 		tokenMap: {},
 		namespaceData: await autocompletionClient.dssClient.getNamespaces(),
 		token: token ?? null,
-	}
+	};
 
 	const suggestionValues = suggestions.map(s => s.value);
-	console.log(`Found ${suggestionValues.length} property suggestions: ${suggestionValues}`);
 	return suggestionValues;
 }
 
@@ -825,6 +779,21 @@ const getProperties = async (dssClient, yasqeClass, endpointData, token) => {
 export const postProcessPropertySuggestion = (yasqe, token, suggestedString) => {
 	const completedString = postprocessIriCompletion(yasqe, token, suggestedString, autocompletionData.namespaceData);
 	autocompletionData.tokenMap[completedString] = autocompletionData.propertydata[suggestedString] ?? null;
+	if (!autocompletionData.tokenMap[completedString].prefix) {
+		if (completedString.startsWith("<")) {
+			autocompletionData.tokenMap[completedString] = null;
+		} else if (completedString.indexOf(":") > 0) {
+			autocompletionData.tokenMap[completedString].prefix = completedString.split(":")[0];
+		}
+	}
+	if (!autocompletionData.tokenMap[completedString].localName) {
+		if (completedString.startsWith("<")) {
+			autocompletionData.tokenMap[completedString] = null;
+		} else if (completedString.indexOf(":") > 0) {
+			autocompletionData.tokenMap[completedString].localName = completedString.split(":")[1];
+		}
+	}
+
 	return completedString;
 }
 
@@ -949,4 +918,73 @@ const postProcessPropertyHints = (_yasqe, hints) => {
 		}
 	}
 	return hints;
+};
+
+
+
+/**
+ * 
+ * @param {DSSClient} dssClient 
+ * @param {YASQE} yasqeClass 
+ * @param {EndpointData | null} endpointData 
+ * @returns {(yasqe: YASQE, token?: AutocompletionToken) => Promise<string[]>}
+ */
+export const getClasses = (dssClient, yasqeClass, endpointData) => async (yasqe, token) => {
+	if (autocompleterAbortController) {
+		autocompleterAbortController.abort("New autocompletion request triggered");
+	}
+	autocompleterAbortController = new AbortController();
+	const cursor = yasqe.getCursor();
+	console.log(`Cursor position: line ${cursor.line}, ch ${cursor.ch}`);
+
+	const triplePatterns = extractTriplePatternsFromQuery(yasqe.getValue(), cursor);
+	console.log(triplePatterns);
+
+	const processedTriples = triplePatterns[0].map(tp => preprocessTriplePattern(yasqe, tp));
+	const currentTriple = triplePatterns[1] ? preprocessTriplePattern(yasqe, triplePatterns[1]) : null;
+
+
+	const activeItem = endpointData;
+
+	if (!activeItem) {
+		console.error("No active endpoint selected for autocompletion.");
+		return [];
+	}
+
+
+	const autocompletionClient = constructClient(dssClient, processedTriples, activeItem?.dbSchemaName);
+
+
+	let suggestions = await autocompletionClient.suggestClasses(currentTriple?.subject ?? "", autocompleterAbortController.signal);
+
+	if (token?.tokenPrefixUri !== undefined) {
+		const prefixUri = token.tokenPrefixUri;
+		suggestions = suggestions.filter(s => s.value.startsWith(prefixUri));
+	}
+
+	const namespaceData = await autocompletionClient.dssClient.getNamespaces();
+
+	if (token) {
+		suggestions = suggestions.sort(suggestionComparator(yasqe.getPrefixesFromQuery(), token.autocompletionString ?? "", namespaceData));
+	}
+
+	if (suggestions.length === 0) {
+		// If no suggestions are returned, fall back to generic class suggestions
+		console.log("Falling back to generic class suggestions");
+		const genericSuggestions = await yasqeClass.Autocompleters["class"]?.get(yasqe, token);
+		return genericSuggestions || [];
+	}
+
+
+	autocompletionData = {
+		propertydata: suggestions.reduce((acc, suggestion) => {
+			acc[suggestion.value] = suggestion;
+			return acc;
+		}, {}),
+		tokenMap: {},
+		namespaceData: await autocompletionClient.dssClient.getNamespaces(),
+		token: token ?? null,
+	};
+
+	return suggestions.map(s => s.value);
 };
