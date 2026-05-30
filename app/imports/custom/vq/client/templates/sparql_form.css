@@ -1,0 +1,41 @@
+.iri {
+    font-size: 80%;
+    margin-right: 10px;
+    margin-left: auto;
+    text-align: right;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 50%;
+}
+
+.iri-short {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.iri-short .highlighted {
+    font-weight: bold;
+}
+
+
+
+li .iri {
+    color: gray;
+}
+
+li .iri .highlighted {
+    color: rgb(74, 74, 74);
+    font-weight: bold;
+}
+
+li.CodeMirror-hint-active .iri {
+    color: white;
+}
+
+li.CodeMirror-hint-active .iri .highlighted {
+    color: rgb(196, 196, 196);
+}
+
+li.CodeMirror-hint {
+    width: 400px;
+}
