@@ -729,7 +729,7 @@ function getBoolsFromEdgeWeightContext(edgeWeightContext) {
 }
 
 let classNames, propertyNames;
-export async function runFragmentAlgorithm(algorithm, edgeWeightContext, mainClasses, fragSize, adj) {
+export async function runFragmentAlgorithm(algorithm, edgeWeightContext, mainClasses, fragSize, adj, brpConfig = {}) {
 	// Class and property names needed for justifyFragmentRelevance
 	const xxClasses = await dataShapes.callServerFunction("xx_getClassesSimple", {main: {}});
 	classNames = new Map(xxClasses.data.map(obj => [obj.id, `${obj.ns_name}:${obj.class_name}`]));
@@ -759,7 +759,7 @@ export async function runFragmentAlgorithm(algorithm, edgeWeightContext, mainCla
 			[fragmentClasses, rank] = await fragmentsLimitedPPR(mainClasses, fragSize, 0.85, 1e-5, adj);
 			break;
 		case "brp":
-			[fragmentClasses, rank] = await fragmentsBRP(mainClasses, fragSize, simpleAdj, brpConfig);
+			[fragmentClasses, rank] = await fragmentsBRP(mainClasses, fragSize, undefined, brpConfig);
 			break;
 	}
 	return [fragmentClasses, rank];

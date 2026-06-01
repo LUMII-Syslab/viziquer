@@ -922,7 +922,7 @@ Template.VQ_DSS_schema.events({
 		}
 
 		// Calculate fragment
-		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize, undefined, undefined, brpConfig);
+		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize, undefined, brpConfig);
 
 		// Update list of chosen classes
     _.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
