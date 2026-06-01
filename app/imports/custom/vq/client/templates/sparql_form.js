@@ -7,6 +7,12 @@ import { Projects, Diagrams } from '../../../../db/platform/collections.js'
 
 import { dataShapes } from '../../../../custom/vq/client/js/DataShapes.js'
 
+import {
+    initReactComponents,
+    ExtendedTableView,
+} from '../js/complexTable.js';
+import { createElement } from 'react';
+
 /** @import { DSSRequestProvider, DSSParams, ClassData, DSSPropertyData } from 'dss-client' */
 
 /** @type {typeof import('@triply/yasqe').Yasqe} */
@@ -35,12 +41,13 @@ const Yasqe = window.Yasqe;
 
 import { DSSClient, queryLexer, TripletStore, DSSAutocompletionClient, QueryBuilder, suggestionComparator, extractTriplePatternsFromQuery } from 'dss-client';
 
-
 import './sparql_form.html'
 import './sparql_form.css'
 // var yasqe = null;
 // var yasqe3 = null;
 
+// NOTE: Limit size that is larger than the usual page size and can be used to fetch more rows
+const BIG_LIMIT = 2000;
 
 var sparql_form_events = {
 
@@ -110,6 +117,29 @@ var sparql_form_events = {
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
 	},
+
+    "click #change-limit": async function(e) {
+        e.preventDefault();
+
+        const yasqe = Template.sparqlForm_see_results.yasqe.get();
+        const query = yasqe.getValue();
+        const obj = Session.get("executedSparql");
+
+        const newLimit = BIG_LIMIT;
+		const paging_info = { offset: 0, limit: newLimit, number_of_rows: obj.number_of_rows};
+
+		await Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
+
+        // NOTE: We are fixing limit because it is not updated
+        // NOTE: We are overriding limit_set to be true only when row count hits the limit because
+        // UI uses this info to show if the limit is reached.
+        const oldValue = Session.get("executedSparql");
+        Session.set("executedSparql", {
+            ...oldValue,
+            limit: newLimit,
+            limit_set: oldValue.number_of_rows >= newLimit,
+        });
+    },
 
 	"click #download-results": function (e) {
 		e.preventDefault();
@@ -216,8 +246,10 @@ var sparql_form_helpers = {
 		let beforeLocalName = uri.slice(0, splitPos);
 
 		return `${beforeLocalName.slice(0, MAX_URI_DISPLAYED - localName.length - 2)}...${localName}`
-	}
-
+	},
+    bigLimit() {
+        return BIG_LIMIT;
+    },
 };
 
 
@@ -276,6 +308,16 @@ Template.sparqlForm.onRendered(async function () {
 		var list = { projectId: project_id, set: { newPublicProject: false, isVisualizationNeeded: false }, };
 		Utilities.callMeteorMethod("updateProject", list);
 	}
+
+    const elementSelector = ".react-mount-root";
+    const maybeElement = this.find(elementSelector);
+    if (maybeElement) {
+        initReactComponents(maybeElement, createElement(ExtendedTableView));
+    } else {
+        throw new Error(
+            `Could not find element by '${elementSelector}, React component won't be mounted!`
+        );
+    }
 
 	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"
 

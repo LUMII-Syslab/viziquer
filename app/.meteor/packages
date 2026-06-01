@@ -34,3 +34,4 @@ universe:i18n
 session@1.2.2
 reywood:publish-composite
 spacebars-compiler
+react-meteor-data
