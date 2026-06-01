@@ -651,7 +651,6 @@ class Graph {
         const canMerge =
           !hasAbsorbableChildren &&
           innerGraph.size > 1 &&
-          !graphsService &&
           inner.conditions.length === 0 &&
           !hasNonTrivialAttributes;
 
@@ -670,9 +669,22 @@ class Graph {
             isInverse = true;
           }
 
-          if (connectingEdge) {
-            connectingEdge.nestingType = nestingType;
-            connectingEdge.linkType = linkType;
+          const hasNestingConflict =
+            connectingEdge &&
+            connectingEdge.nestingType !== NestingType.Plain &&
+            nestingType !== NestingType.Plain;
+          const hasLinkConflict =
+            connectingEdge &&
+            connectingEdge.linkType !== LinkType.Required &&
+            linkType !== LinkType.Required;
+
+          if (connectingEdge && !hasNestingConflict && !hasLinkConflict) {
+            if (nestingType !== NestingType.Plain) {
+              connectingEdge.nestingType = nestingType;
+            }
+            if (linkType !== LinkType.Required) {
+              connectingEdge.linkType = linkType;
+            }
             if (!isInverse) {
               connectingEdge.from = outer;
               outer.outgoing.push(connectingEdge);
