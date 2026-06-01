@@ -741,7 +741,7 @@ const getProperties = async (dssClient, yasqeClass, endpointData, token) => {
 		console.error("No active endpoint selected for autocompletion.");
 		return [];
 	}
-	console.log(`Current endpoint: ${activeItem?.name}`);
+	console.log(`Current endpoint: ${activeItem?.db_schema_name}`);
 
 	const autocompletionClient = constructClient(dssClient, processedTriples, activeItem.dbSchemaName);
 	const incomingBuilder = new QueryBuilder();
