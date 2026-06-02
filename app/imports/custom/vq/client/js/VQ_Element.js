@@ -283,10 +283,13 @@ async function Create_VQ_Element_Async(location, isLink, source, target) {
 
 };
 
-async function Create_VQ_Element_Declaration(func, location) {
-  var active_diagram_type_id = await Diagrams.findOneAsync({_id:Session.get("activeDiagram")})["diagramTypeId"];
+async function Create_VQ_Element_Declaration(location) {
+	let diagram = await Diagrams.findOneAsync({_id:Session.get("activeDiagram")})
+    let active_diagram_type_id = diagram["diagramTypeId"];
 
     let elem_type = await ElementTypes.findOneAsync({name:"Declaration", diagramTypeId:active_diagram_type_id});
+    let class_type = await ElementTypes.findOneAsync({name:"Class", diagramTypeId:active_diagram_type_id});
+	
     let elem_style = _.find(elem_type.styles, function(style) {
                 return style.name === "Default";
     });

@@ -780,4 +780,41 @@ NewOrthogonalLine.prototype = {
   },
 };
 
-export { ANewLine, NewOrthogonalLine };
+function sideMiddlePoint(box, side) {
+  switch (side) {
+    case "top":    return [box.x + Math.round(box.width / 2), box.y];
+    case "bottom": return [box.x + Math.round(box.width / 2), box.y + box.height];
+    case "left":   return [box.x, box.y + Math.round(box.height / 2)];
+    case "right":  return [box.x + box.width, box.y + Math.round(box.height / 2)];
+  }
+}
+
+function computeOrthogonalLinePointsFromBoxes(srcBox, tgtBox) {
+  var srcCx = srcBox.x + Math.round(srcBox.width / 2);
+  var srcCy = srcBox.y + Math.round(srcBox.height / 2);
+  var tgtCx = tgtBox.x + Math.round(tgtBox.width / 2);
+  var tgtCy = tgtBox.y + Math.round(tgtBox.height / 2);
+
+  var dx = tgtCx - srcCx;
+  var dy = tgtCy - srcCy;
+
+  var startSide, endSide;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    startSide = dx > 0 ? "right" : "left";
+    endSide = dx > 0 ? "left" : "right";
+  } else {
+    startSide = dy > 0 ? "bottom" : "top";
+    endSide = dy > 0 ? "top" : "bottom";
+  }
+
+  var sp = sideMiddlePoint(srcBox, startSide);
+  var ep = sideMiddlePoint(tgtBox, endSide);
+
+  return NewOrthogonalLine.prototype.computeLine.call(
+    { pointsIn: [sp[0], sp[1], ep[0], ep[1]] },
+    startSide,
+    endSide
+  ) || [sp[0], sp[1], ep[0], ep[1]];
+}
+
+export { ANewLine, NewOrthogonalLine, computeOrthogonalLinePointsFromBoxes };

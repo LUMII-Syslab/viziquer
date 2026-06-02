@@ -57,6 +57,7 @@ import "/imports/custom/vq/server/generate_query_from_SPARQL";
 import "/imports/custom/vq/server/version_migration";
 import "/imports/custom/vq/server/ontologyParams";
 import "/imports/custom/vq/server/import_ontology";
+import "/imports/custom/vq/server/brp_standard_properties";
 
 
 import "/imports/custom/owlgred/server/import_ontology";
