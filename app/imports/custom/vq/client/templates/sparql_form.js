@@ -490,7 +490,7 @@ class VqDSSRequestProvider {
 	 */
 	async getOntologyList() {
 		/** @type { {id: number, display_name: string, db_schema_name: string, schema_name: string, sparql_url: string}[] } */
-		const ontologies = await dataShapes.getOntologies();
+		const ontologies = dataShapes.getOntologiesSync();
 		return ontologies.map(o => ({
 			dbSchemaName: o.db_schema_name,
 			name: o.display_name,
@@ -534,8 +534,10 @@ function dssClientCompleter() {
 		async: true,
 		name: "customPropertyCompleter",
 		isValidCompletionPosition: (yasqe) => {
-			const isValid = defaultPropertyCompleter.isValidCompletionPosition(yasqe);
-			return isValid ?? false;
+			const token = yasqe.getCompleteToken();
+			if (token.string[0] === "?" || token.string[0] === "$") return false; // we are typing a var
+			if (token.state.possibleCurrent.indexOf("a") >= 0) return true; // predicate pos
+			return false;
 		},
 		preProcessToken(yasqe, token) {
 			return preprocessIriForCompletion(yasqe, token);
@@ -783,7 +785,7 @@ const getProperties = async (dssClient, yasqeClass, endpointData, token) => {
 		console.error("No active endpoint selected for autocompletion.");
 		return [];
 	}
-	console.log(`Current endpoint: ${activeItem?.name}`);
+	console.log(`Current endpoint: ${activeItem?.db_schema_name}`);
 
 	const autocompletionClient = constructClient(dssClient, processedTriples, activeItem.dbSchemaName);
 	const incomingBuilder = new QueryBuilder();
