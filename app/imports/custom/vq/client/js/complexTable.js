@@ -359,50 +359,46 @@ function DeduplicatedTableView() {
 }
 
 export function ExtendedTableView() {
-    const [tabIndex, setTabIndex] = useState(0);
+    const complexTableInfo = useTracker(() => Session.get("complexTableInfo"));
+    const idVars = complexTableInfo?.idVars || [];
+    const selection = complexTableInfo?.selection;
 
-    // NOTE: There's only one tab, so we can probably remove tab functionality altogether
-    /** @type {{name: string, el: React.ReactNode}[]} */
-    const tabs = [
-        {
-            name: "Deduplicated table",
-            el: createElement(
-                "div",
-                {},
-                createElement(DeduplicatedTableView)
-            )
-        },
-    ];
+    /**
+     * @param {string[]} newValue
+     **/
+    function setIdVars(newValue) {
+        Session.set("complexTableInfo", { ...complexTableInfo, idVars: newValue });
+    }
+
+    const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
+    const reshapedData = tableRes ? reshapeData(tableRes) : null;
+
+    const suggestions = reshapedData?.head.vars.map((value) => {
+        const maybeLabel = selection && demangleVarName(value, selection);
+        return { value, label: maybeLabel || value, };
+    }) || [];
 
     return createElement(
         "div",
         {},
         createElement(
             "div",
-            {
-                style: {
-                    padding: rem(0.5),
-                    display: "flex",
-                    gap: rem(0.5),
-                }
-            },
-            tabs.map(({ name }, i) => {
-                const selected = i == tabIndex;
-                return createElement(
-                    Button,
-                    {
-                        onClick: () => setTabIndex(i),
-                        style: {
-                            ...(selected ? {
-                                fontWeight: "bold",
-                            } : {}),
-                        }
-                    },
-                    name,
-                );
-            }),
+            { style: { marginBottom: "4px" } },
+            createElement("p", { style: { fontSize: "16px" }}, "Key columns"),
+            createElement(
+                SyncPropertySelector,
+                {
+                    suggestions,
+                    value: idVars,
+                    onValueChange: setIdVars,
+                }),
         ),
-        tabs[tabIndex]?.el,
+        createElement("p", { style: { fontSize: "16px" } }, "Table"),
+        createElement(
+            "div",
+            {},
+            createElement(DeduplicatedTableView)
+        ),
     );
 }
 
