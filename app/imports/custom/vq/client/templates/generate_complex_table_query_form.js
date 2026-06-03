@@ -335,6 +335,24 @@ export function QueryGeneratorView() {
         Template.GenerateComplexTableQueryForm.hideModal();
     }
 
+    function onExecuteClick() {
+        const queryToWrap = formatQuery(selection);
+        const finalQuery = formatUniversalPaginatorQuery({
+            queryToWrap,
+            globalLimit,
+            groupLimit: pageSize,
+            groupOffset: 0,
+            idVars,
+        });
+
+        setEditorText(finalQuery);
+        Session.set("complexTableInfo", { idVars, finalQuery, selection });
+
+        Template.GenerateComplexTableQueryForm.hideModal();
+
+        Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(finalQuery);
+    }
+
     function H1({ style, ...props }) {
         return createElement(
             "h1",
@@ -401,14 +419,28 @@ export function QueryGeneratorView() {
             ),
         ),
         createElement(
-            Button,
-            {
-                onClick: onCreateClick,
-                style: {
-                    width: "fit-content",
+            "div",
+            { style: { display: "flex", gap: "8px" } },
+            createElement(
+                Button,
+                {
+                    onClick: onCreateClick,
+                    style: {
+                        width: "fit-content",
+                    },
                 },
-            },
-            "Create sparql",
+                "Create sparql",
+            ),
+            createElement(
+                Button,
+                {
+                    onClick: onExecuteClick,
+                    style: {
+                        width: "fit-content",
+                    },
+                },
+                "Execute sparql",
+            ),
         ),
     );
 }
