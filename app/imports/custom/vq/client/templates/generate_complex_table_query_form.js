@@ -468,6 +468,9 @@ Interpreter.customMethods({
       queryGeneratorModalRequest.emit({ autofillStrategy: "topProps" });
       tryShowingModal();
     },
+    GenerateComplexTableQueryDSSAuto: async function() {
+      alert("todo: implement GenerateComplexTableQueryDSSAuto");
+    },
     // NOTE: Named "normal" because the arrow looks ordinary
     GenerateComplexTableQueryLinkNormal: async function() {
         queryGeneratorModalRequest.emit({ autofillStrategy: "linkTopProps" });

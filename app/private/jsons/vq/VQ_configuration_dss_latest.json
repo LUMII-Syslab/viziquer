@@ -5910,19 +5910,23 @@
                 "procedure": "Delete"
               },
               {
-                "item": "Show Data",
-                "procedure": "ExecuteSPARQL_form_class_DSS"
-              },
-              {
                 "item": "Generate SPARQL",
                 "procedure": "GenereteSPARQL_form_class_DSS"
               },
               {
-                "item": "Custom Data",
+                "item": "Show Data (legacy)",
+                "procedure": "ExecuteSPARQL_form_class_DSS"
+              },
+              {
+                "item": "Custom Data (legacy)",
                 "procedure": "GenereteSPARQL_form_class_costumise_DSS"
               },
               {
-                "item": "Generate complex table query",
+                "item": "Show Data",
+                "procedure": "GenerateComplexTableQueryDSSAuto"
+              },
+              {
+                "item": "Custom Data",
                 "procedure": "GenerateComplexTableQueryDSS"
               },
               {
