@@ -2,7 +2,7 @@ import { Template } from 'meteor/templating';
 import { Interpreter } from '../../../../client/lib/interpreter.js'
 import { dataShapes } from '../../../../custom/vq/client/js/DataShapes.js'
 import './VQ_DSS_schema.html'
-import { runFragmentAlgorithm, compareFragmentAlgorithmsIntersection, compareFragmentAlgorithmsSizeIncrease, compareFragmentAlgorithmsRank } from './fragments.js';
+import { runFragmentAlgorithm, compareFragmentAlgorithmsIntersection, compareFragmentAlgorithmsSizeIncrease, compareFragmentAlgorithmsRank, exportCSVBRPandPPRComparison } from './fragments.js';
 
 Template.VQ_DSS_schema.SchemaName = new ReactiveVar('');
 Template.VQ_DSS_schema.Classes = new ReactiveVar([]);
@@ -931,7 +931,7 @@ Template.VQ_DSS_schema.events({
 		const fragAlgorithm = document.getElementById("fragment-algorithm").value;
 		const fragEdgeWeightContext = document.getElementById("fragment-edge-weight-context").value;
 
-		let brpConfig = {};
+		let brpConfig = null;
 		if (fragAlgorithm === "brp") {
 			const cwIn = parseFloat(document.getElementById("brp-cw-incoming").value);
 			const pwSt = parseFloat(document.getElementById("brp-pw-standart").value);
@@ -943,6 +943,15 @@ Template.VQ_DSS_schema.events({
 				beta: beta,
 			};
 		}
+
+		// await exportCSVBRPandPPRComparison(
+		// 	mainClasses,
+		// 	0.85,
+		// 	1e-5,
+		// 	["src-tgt-size", "src-size", "src-tgt-conn", "src-conn"],
+		// 	brpConfig,
+		// 	[10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
+		// );
 
 		// Calculate fragment
 		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize, undefined, brpConfig);
