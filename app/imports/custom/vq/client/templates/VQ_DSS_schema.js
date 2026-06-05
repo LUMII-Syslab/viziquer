@@ -442,6 +442,9 @@ async function getClassesAndProperties(addSupClasses = true) {
 
     let propT = [];  // TODO Te būs jāprecizē
 	  let propS = [];
+    let propTS_Ids = [];
+    let propT_Ids = [];
+    let propS_Ids = [];
     dataShapes.schema.diagram.properties.sort(function(a,b){ return b.id-a.id;});  // TODO šis ir drukai
     console.log('uuuuuuuuuuuuuuuuuuuuuu', dataShapes.schema.diagram.properties)
     //dataShapes.schema.diagram.properties.sort(function(a,b){ return b.cnt-a.cnt;});
@@ -462,15 +465,33 @@ async function getClassesAndProperties(addSupClasses = true) {
         }
 		    if ( propListIds.includes(p.id) && p.object_cnt !== 0 && parT && ( p.follows > 0 || p.common_objects > 0 )) { // !p.target_cover_complete p.type_1 === '0'
 		      propT.push(p);
+          propTS_Ids.push(p.id);
+          propT_Ids.push(p.id)
 		    }
 		    if ( propListIds.includes(p.id) && p.object_cnt !== 0 && parS && p.is_follower === '0' && p.common_subjects > 0) { //p.type_2 === '0'
 		      propS.push(p);
+          propTS_Ids.push(p.id);
+          propT_Ids.push(p.id)
 		    }
 	    }
     }
-console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%', propT, propS)
+console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%-1', propT, propS)
+  const rr2 = await dataShapes.callServerFunction("xx_getPropList3a", {main: {p_list:propTS_Ids, p_list_full:propListIds}});
+  // Paskatās, vai visi atrastie joprojam der - skatās uz atlasītajām propertijām
+  //console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%', rr2.data)
+  let propT_corr = [];
+  let propS_corr = [];
+  for (const pp of rr2.data) {
+    if ( propT_Ids.includes(pp.id) && ( pp.follows > 0 || pp.common_objects > 0 )) {
+        propT_corr.push(pp);
+    }
+    if ( propS_Ids.includes(pp.id) && p.common_subjects > 0) {
+      propS_corr.push(pp);
+    }
+  }
+  console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%-2', propT_corr, propS_corr)
 	namespacesL.unshift({name:`PREFIX ${dataShapes.schema.local_ns}: <${nsLoc.value}>`,cnt:namespaces[dataShapes.schema.local_ns]});
-	return [classList, propList, namespacesL, {propT:propT, propS:propS}];
+	return [classList, propList, namespacesL, {propT:propT_corr, propS:propS_corr}];
 }
 
 function setClassProperties(cId) {
@@ -1939,6 +1960,7 @@ function checkSimilarity(diff, level) {
 			result = true;
 	}
   else if ( level == 6 ) { // Propertiju gali
+    // cccccc console.log('Vērtība.....', diff[0]) Te varēs šķirot dažādas līdzības
     if ( diff[0] > 0 ) // TODO Te pagaidam ielikta 0, vai ir kāda līdzība, uz atšķirībām neskatāmies.
 			result = true;
   }
@@ -2856,9 +2878,9 @@ async function getBasicClasses() {
       }
       for (const p of propS) {
         const id = `ps_${p.id}`;
-        const name = `Saurce for ${p.full_name}`;
-        const full_name = `Saurce for ${p.full_name} (${roundCount(p.object_cnt)})`;
-        rezFull.classes[id] = { id:id, displayName:name, id_id:p.id, c_list_id:[p.id], super_classes:[], sub_classes:[],
+        const name = `Source for ${p.full_name}`;
+        const full_name = `Source for ${p.full_name} (${roundCount(p.object_cnt)})`;
+        rezFull.classes[id] = { id:id, displayName:p.full_name, id_id:p.id, c_list_id:[p.id], super_classes:[], sub_classes:[],
           used:true, hasGen:false, type:'PropertySource', fullName:name, fullNameD:name,
           sup:[], sub:[], sup0:[], sub0:[], cnt:p.object_cnt, cnt_sum:p.object_cnt, in_props:0,
           atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[], atr_list_full_p:[] };
@@ -3573,6 +3595,9 @@ function makeDiagramData() {
 				}
 				if ( atr.type == 'out' ) {
           if ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
+            restAtrList.push(atr);
+          }
+          else if ( rezFull.classes[`pt_${atr.p_id}`] != undefined) {
             restAtrList.push(atr);
           }
           else {
