@@ -28,6 +28,7 @@ let modalElement = null;
 /**
  * @typedef {{
  *   autofillStrategy: "fromElement" | "topProps" | "linkTopProps",
+ *   onAutoFillCompletion?: (selection: ComplexPropertySelection) => void,
  * }} ModalRequestEventPayload
  **/
 /** @typedef {(payload: ModalRequestEventPayload) => void} ModalRequestCallback */
@@ -120,19 +121,19 @@ function useSyncWithDiagram(setSelection) {
      * @param {ModalRequestEventPayload} payload
      */
     async function syncSelectionToDiagramSelection(payload) {
+        const { onAutoFillCompletion } = payload;
+
         // TODO: This function should maintain some sort of loading state. If the user starts
         // editing while this function is not finished, selection will most likely be overriden on
         // finish.
-        switch (payload.autofillStrategy) {
-            case "fromElement":
-                await fromElementSyncSelectionToDiagramSelection();
-                break;
-            case "topProps":
-                await topPropsSyncSelectionToDiagramSelection();
-                break;
-            case "linkTopProps":
-                await topPropsLinkSyncSelectionToDiagramSelection();
-                break;
+        const maybeSelection = await ({
+            fromElement: fromElementSyncSelectionToDiagramSelection,
+            topProps: topPropsSyncSelectionToDiagramSelection,
+            linkTopProps: topPropsLinkSyncSelectionToDiagramSelection,
+        })[payload.autofillStrategy]();
+        if (maybeSelection) {
+            setSelection(maybeSelection);
+            if (onAutoFillCompletion) onAutoFillCompletion(maybeSelection);
         }
     }
 
@@ -174,6 +175,9 @@ function useSyncWithDiagram(setSelection) {
         };
     }
 
+    /**
+     * @return {Promise<ComplexPropertySelection | null>}
+     **/
     async function topPropsSyncSelectionToDiagramSelection() {
         const elements = Interpreter.editor.getSelectedElements();
         const firstKey = Object.keys(elements)[0];
@@ -183,13 +187,14 @@ function useSyncWithDiagram(setSelection) {
             getPrefixes(),
         ]);
 
-        setSelection(
-            vqItem
-                ? await topPropsToSelection(prefixes, vqItem)
-                : makeDefaultSelection()
-        );
+        return vqItem
+            ? await topPropsToSelection(prefixes, vqItem)
+            : makeDefaultSelection();
     }
 
+    /**
+     * @return {Promise<ComplexPropertySelection | null>}
+     **/
     async function topPropsLinkSyncSelectionToDiagramSelection() {
         const elements = Interpreter.editor.getSelectedElements();
         const firstElement = Object.entries(elements)[0][1];
@@ -240,14 +245,17 @@ function useSyncWithDiagram(setSelection) {
             ],
         };
 
-        setSelection(finalSelection);
+        return finalSelection;
     }
 
+    /**
+     * @return {Promise<ComplexPropertySelection | null>}
+     **/
     async function fromElementSyncSelectionToDiagramSelection() {
         const elements = Interpreter.editor.getSelectedElements();
         const firstKey = Object.keys(elements)[0];
         const vqItem = await createVQ_Element(firstKey);
-        if (!vqItem) return;
+        if (!vqItem) return null;
 
         const [prefixedClass, prefixes, fields] = await Promise.all([
             vqItem.getName().then(itemNameToPrefixedName),
@@ -268,11 +276,11 @@ function useSyncWithDiagram(setSelection) {
 
         const newClass = resolvePrefixedName(prefixes, prefixedClass);
 
-        setSelection({
+        return {
             rdfType: newClass || "",
             dataProps: newProperties.map(({ value }) => ({ name: value })),
             objectProps: [],
-        });
+        };
     }
 
     useEffect(() => {
@@ -284,6 +292,30 @@ function useSyncWithDiagram(setSelection) {
         queryGeneratorModalRequest.unsubcribe(cb)
       };
     }, [setSelection]);
+}
+
+/**
+ * @param {ComplexPropertySelection} selection
+ * @param {number} globalLimit
+ * @param {string[]} idVars
+ * @param {number} pageSize
+ **/
+function executeFromSelection(selection, globalLimit, idVars, pageSize) {
+    const queryToWrap = formatQuery(selection);
+    const finalQuery = formatUniversalPaginatorQuery({
+        queryToWrap,
+        globalLimit,
+        groupLimit: pageSize,
+        groupOffset: 0,
+        idVars,
+    });
+
+    setEditorText(finalQuery);
+    Session.set("complexTableInfo", { idVars, finalQuery, selection });
+
+    Template.GenerateComplexTableQueryForm.hideModal();
+
+    Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(finalQuery);
 }
 
 export function QueryGeneratorView() {
@@ -333,6 +365,10 @@ export function QueryGeneratorView() {
         Session.set("complexTableInfo", { idVars, finalQuery, selection });
 
         Template.GenerateComplexTableQueryForm.hideModal();
+    }
+
+    function onExecuteClick() {
+        executeFromSelection(selection, globalLimit, idVars, pageSize);
     }
 
     function H1({ style, ...props }) {
@@ -401,14 +437,28 @@ export function QueryGeneratorView() {
             ),
         ),
         createElement(
-            Button,
-            {
-                onClick: onCreateClick,
-                style: {
-                    width: "fit-content",
+            "div",
+            { style: { display: "flex", gap: "8px" } },
+            createElement(
+                Button,
+                {
+                    onClick: onCreateClick,
+                    style: {
+                        width: "fit-content",
+                    },
                 },
-            },
-            "Create sparql",
+                "Create sparql",
+            ),
+            createElement(
+                Button,
+                {
+                    onClick: onExecuteClick,
+                    style: {
+                        width: "fit-content",
+                    },
+                },
+                "Execute sparql",
+            ),
         ),
     );
 }
@@ -431,19 +481,37 @@ function tryShowingModal() {
     modalElement.modal("show");
 }
 
+/**
+ * @param {ComplexPropertySelection} selection
+ */
+function executeFromSelectionWithDefaults(selection) {
+    const globalLimit = 1000;
+    const idVars = ["this"];
+    const pageSize = 10;
+    executeFromSelection(selection, globalLimit, idVars, pageSize);
+}
+
 Interpreter.customMethods({
     GenerateComplexTableQueryDSS: async function() {
       queryGeneratorModalRequest.emit({ autofillStrategy: "topProps" });
       tryShowingModal();
+    },
+    GenerateComplexTableQueryDSSAuto: async function() {
+      queryGeneratorModalRequest.emit({
+          autofillStrategy: "topProps",
+          onAutoFillCompletion: executeFromSelectionWithDefaults,
+      });
     },
     // NOTE: Named "normal" because the arrow looks ordinary
     GenerateComplexTableQueryLinkNormal: async function() {
         queryGeneratorModalRequest.emit({ autofillStrategy: "linkTopProps" });
         tryShowingModal();
     },
-    // NOTE: Named "strong" because the arrow looks bolder than ordinary arrow
-    GenerateComplexTableQueryLinkStrong: async function() {
-        alert("todo implement link strong");
+    GenerateComplexTableQueryLinkNormalAuto: async function() {
+        queryGeneratorModalRequest.emit({
+            autofillStrategy: "linkTopProps",
+            onAutoFillCompletion: executeFromSelectionWithDefaults,
+        });
     },
     GenerateComplexTableQuery: async function() {
       queryGeneratorModalRequest.emit({ autofillStrategy: "fromElement" });
