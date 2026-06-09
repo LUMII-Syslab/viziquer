@@ -481,6 +481,16 @@ function tryShowingModal() {
     modalElement.modal("show");
 }
 
+/**
+ * @param {ComplexPropertySelection} selection
+ */
+function executeFromSelectionWithDefaults(selection) {
+    const globalLimit = 1000;
+    const idVars = ["this"];
+    const pageSize = 10;
+    executeFromSelection(selection, globalLimit, idVars, pageSize);
+}
+
 Interpreter.customMethods({
     GenerateComplexTableQueryDSS: async function() {
       queryGeneratorModalRequest.emit({ autofillStrategy: "topProps" });
@@ -489,12 +499,7 @@ Interpreter.customMethods({
     GenerateComplexTableQueryDSSAuto: async function() {
       queryGeneratorModalRequest.emit({
           autofillStrategy: "topProps",
-          onAutoFillCompletion: (selection) => {
-              const globalLimit = 1000;
-              const idVars = ["this"];
-              const pageSize = 10;
-              executeFromSelection(selection, globalLimit, idVars, pageSize);
-          },
+          onAutoFillCompletion: executeFromSelectionWithDefaults,
       });
     },
     // NOTE: Named "normal" because the arrow looks ordinary
@@ -502,9 +507,11 @@ Interpreter.customMethods({
         queryGeneratorModalRequest.emit({ autofillStrategy: "linkTopProps" });
         tryShowingModal();
     },
-    // NOTE: Named "strong" because the arrow looks bolder than ordinary arrow
-    GenerateComplexTableQueryLinkStrong: async function() {
-        alert("todo implement link strong");
+    GenerateComplexTableQueryLinkNormalAuto: async function() {
+        queryGeneratorModalRequest.emit({
+            autofillStrategy: "linkTopProps",
+            onAutoFillCompletion: executeFromSelectionWithDefaults,
+        });
     },
     GenerateComplexTableQuery: async function() {
       queryGeneratorModalRequest.emit({ autofillStrategy: "fromElement" });
