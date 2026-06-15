@@ -111,7 +111,7 @@ function getPortalShadow() {
  *   }
  * }}
  */
-function reshapeData(sourceData) {
+export function reshapeData(sourceData) {
     const cols = sourceData.head[0].variable.map((item) => item["$"].name);
     const items = sourceData.results[0]?.result ?? [];
     const rows = items

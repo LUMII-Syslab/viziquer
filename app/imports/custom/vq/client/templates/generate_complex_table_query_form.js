@@ -4,7 +4,7 @@ import { Template } from "meteor/templating";
 import { createVQ_Element, VQ_Element } from '../js/VQ_Element.js'
 
 import './generate_complex_table_query_form.html'
-import { Button, getClasses, getPrefixes, getProperties, initReactComponents, rem, resolvePrefixedName } from '../js/complexTable.js';
+import { Button, getClasses, getPrefixes, getProperties, initReactComponents, rem, reshapeData, resolvePrefixedName } from '../js/complexTable.js';
 import { createElement, useEffect, useState } from 'react';
 import {
     ComplexPropertySelector,
@@ -15,12 +15,13 @@ import {
     formatUniversalPaginatorQuery,
     SyncPropertySelector,
 } from 'rdf-toolbag';
+import { makeEventHandler } from './event.js';
+import { subscribeQueryEvent } from '../js/generateSPARQL_jo.js';
 
 /** @type {*} */
 let modalElement = null;
 
-// NOTE: Made this simple event handler in order to cleanly notify QueryGeneratorView when property
-// selection needs to be pre-filled again.
+
 // NOTE: autoFillStrategy:
 //   - "fromElement" -- props are retrieved from the info available in the visual element
 //   - "topProps" -- most frequently occurring props for the element's type are selected
@@ -31,18 +32,30 @@ let modalElement = null;
  *   onAutoFillCompletion?: (selection: ComplexPropertySelection) => void,
  * }} ModalRequestEventPayload
  **/
-/** @typedef {(payload: ModalRequestEventPayload) => void} ModalRequestCallback */
 
-/** @type {Set<ModalRequestCallback>} */
-let eventTargets = new Set();
-const queryGeneratorModalRequest = {
-    /** @type {(callback: ModalRequestCallback) => void} */
-    subscribe: (callback) => {eventTargets.add(callback)},
-    /** @type {(callback: ModalRequestCallback) => void} */
-    unsubcribe: (callback) => {eventTargets.delete(callback)},
-    /** @type {ModalRequestCallback} */
-    emit: (eventPayload) => eventTargets.forEach((callback) => callback(eventPayload)),
-};
+/** @template {ModalRequestEventPayload} T */
+const queryGeneratorModalRequest = /** @type {ReturnType<typeof makeEventHandler<ModalRequestEventPayload>>} */ (
+    makeEventHandler()
+);
+
+// NOTE: handle automatic idVars override
+subscribeQueryEvent(({ eventType }) => {
+    if (eventType === "queryFinished") {
+        const { sparql } = Session.get("executedSparql");
+        const complexTableInfo = Session.get("complexTableInfo") ?? {};
+        const { finalQuery } = complexTableInfo;
+        const currentEditorText = Template.sparqlForm.yasqe3.get().getValue();
+
+        // NOTE: If true that means that the generated query was not modified and we should respect
+        // the selection that was made beforehand. `finalQuery` is only set during complex table
+        // generation.
+        if (currentEditorText === finalQuery) return;
+
+        const reshaped = reshapeData(sparql);
+        const idVars = reshaped.head.vars.slice(0, 1);
+        Session.set("complexTableInfo", { ...complexTableInfo, idVars});
+    }
+});
 
 /**
  * @param text {string}
@@ -284,12 +297,12 @@ function useSyncWithDiagram(setSelection) {
     }
 
     useEffect(() => {
-      /** @type {ModalRequestCallback} */
+      /** @param {ModalRequestEventPayload} payload */
       const cb = (payload) => {syncSelectionToDiagramSelection(payload)};
 
       queryGeneratorModalRequest.subscribe(cb);
       return () => {
-        queryGeneratorModalRequest.unsubcribe(cb)
+        queryGeneratorModalRequest.unsubscribe(cb)
       };
     }, [setSelection]);
 }
