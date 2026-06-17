@@ -471,7 +471,7 @@ async function getClassesAndProperties(addSupClasses = true) {
 		    if ( propListIds.includes(p.id) && p.object_cnt !== 0 && parS && p.is_follower === '0' && p.common_subjects > 0) { //p.type_2 === '0'
 		      propS.push(p);
           propTS_Ids.push(p.id);
-          propT_Ids.push(p.id)
+          propS_Ids.push(p.id)
 		    }
 	    }
     }
@@ -485,7 +485,7 @@ console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%-1', propT, propS)
     if ( propT_Ids.includes(pp.id) && ( pp.follows > 0 || pp.common_objects > 0 )) {
         propT_corr.push(pp);
     }
-    if ( propS_Ids.includes(pp.id) && p.common_subjects > 0) {
+    if ( propS_Ids.includes(pp.id) && pp.common_subjects > 0) {
       propS_corr.push(pp);
     }
   }
@@ -1922,7 +1922,8 @@ function getDiffs() {
 			diffS = rezFull.diffMax - 1;
 	}
   let diffG = (isFragment) ? 0 : $("#diffG").val();
-  return {diffG:diffG, diffS:diffS};
+  const diffT = $("#diffT").val();
+  return {diffG:diffG, diffS:diffS, diffT:diffT};
 	//return {diffG:$("#diffG").val(), diffS:diffS};
 }
 // ***************** Konstantes***************************
@@ -1960,8 +1961,8 @@ function checkSimilarity(diff, level) {
 			result = true;
 	}
   else if ( level == 6 ) { // Propertiju gali
-    // cccccc console.log('Vērtība.....', diff[0]) Te varēs šķirot dažādas līdzības
-    if ( diff[0] > 0 ) // TODO Te pagaidam ielikta 0, vai ir kāda līdzība, uz atšķirībām neskatāmies.
+    //console.log('Vērtība.....', diff[0], diff[1]) //Te varēs šķirot dažādas līdzības
+    if ( diff[0] > diffs.diffT ) // TODO Te pagaidam ielikta 0, vai ir kāda līdzība, uz atšķirībām neskatāmies.
 			result = true;
   }
 	return result;
@@ -2859,7 +2860,7 @@ async function getBasicClasses() {
             rezFull.classes[cId].hasGen = true;
           }
         }
-        addAttr(id, p.id, p.cnt, p.cnt, 'in');
+        addAttr(id, p.id, Number(p.cnt), Number(p.cnt), 'in');
         const comon_objects = pp_info.filter(function(pp) { return pp.property_1_id == p.id && pp.property_2_id !== p.id  && pp.type_id== 3; });
         for ( const p2 of comon_objects) {
           addAttr(id, p2.property_2_id, Number(p2.cnt), Number(p2.cnt), 'in');
@@ -2881,10 +2882,10 @@ async function getBasicClasses() {
         const name = `Source for ${p.full_name}`;
         const full_name = `Source for ${p.full_name} (${roundCount(p.object_cnt)})`;
         rezFull.classes[id] = { id:id, displayName:p.full_name, id_id:p.id, c_list_id:[p.id], super_classes:[], sub_classes:[],
-          used:true, hasGen:false, type:'PropertySource', fullName:name, fullNameD:name,
+          used:true, hasGen:false, type:'PropertySource', fullName:full_name, fullNameD:full_name,
           sup:[], sub:[], sup0:[], sub0:[], cnt:p.object_cnt, cnt_sum:p.object_cnt, in_props:0,
           atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[], atr_list_full_p:[] };
-        addAttr(id, p.id, p.cnt, p.cnt, 'out');
+        addAttr(id, p.id, Number(p.cnt), Number(p.cnt), 'out');
         const comon_subjects = pp_info.filter(function(pp) { return pp.property_1_id == p.id && pp.property_2_id !== p.id  && pp.type_id== 2; });
         for ( const p2 of comon_subjects) {
           let object_cnt = Number(p2.cnt);
