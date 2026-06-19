@@ -354,7 +354,7 @@ Template.VQ_DSS_schema.helpers({
 function getParams() {
   let diffG = (isFragment) ? 0 : $("#diffG").val();
 	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:true, cover:$("#cover").is(":checked"),
-		pw:$("#pw").val(), k:1, diffG:diffG, diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked"), addPropEnds:false}; // withoutGen:$("#withoutGen").is(":checked"),
+		pw:$("#pw").val(), k:1, diffG:diffG, diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked"), addPropEnds:false, duplicate:false}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 )
 		//	par.supPar = 2;
 	if ( $("#abstr").is(":checked") )
@@ -365,6 +365,8 @@ function getParams() {
 		par.newDifs = false;
   if ( $("#addPropEnds").is(":checked") )
 		par.addPropEnds = true;
+  if ( $("#duplicate").is(":checked") )
+		par.duplicate = true;
 
   if ( !dataShapes.schema.isPublic ) {
 		par.addIds = $("#addIds").is(":checked");
@@ -893,7 +895,7 @@ Template.VQ_DSS_schema.events({
 		clearData();
 	},
 	'change #nsFilter': function() {
-		setClassList();
+		setClassList(true);
 		clearData();
 	},
 	'change #sortPar': function() {
@@ -3534,7 +3536,9 @@ function makeDiagramData() {
 
 			if ( atr_info.type == 'out' ) {
 				if ( p_list_full[`p_${atr_info.p_id}`].in_diagram ) {
-					if ( atr_info.object_cnt_dgr > 0 )
+          if ( atr_info.duplicated )
+            rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} Target for ${p_name}`;
+					else if ( atr_info.object_cnt_dgr > 0 )
 						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} dgr,IRI`;
 					else
 						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} IRI`;
@@ -3595,10 +3599,12 @@ function makeDiagramData() {
 					restAtrList.push(atr);
 				}
 				if ( atr.type == 'out' ) {
-          if ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
+          if ( params.duplicate && ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource')) {
+            atr.duplicated = true;
             restAtrList.push(atr);
           }
-          else if ( rezFull.classes[`pt_${atr.p_id}`] != undefined) {
+          else if ( params.duplicate && rezFull.classes[`pt_${atr.p_id}`] != undefined) {
+            atr.duplicated = true;
             restAtrList.push(atr);
           }
           else {
@@ -3611,7 +3617,7 @@ function makeDiagramData() {
           }
 				}
         if ( atr.type == 'in' ) {
-          if ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
+          if ( params.duplicate && ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource')) {
             inPropList.push(atr);
           }
           else if ( !p_list_full[`p_${atr.p_id}`].in_diagram ) {

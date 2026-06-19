@@ -397,11 +397,6 @@
                           <option value=10 >Strong merging (10)</option>
                           <option value=20 >Strong merging (20)</option>
                         </select>
-                        <select class="form-control" id="diffT" style="width:300px;" >
-                          <option selected value=0 >Target merging Sim>0</option>
-                          <option value=1 >Target merging Sim>1</option>
-                          <option value=2 >Target merging Sim>2</option>
-                        </select>
                       </div>
                       <div class="col-sm-4">
                         <div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
@@ -514,6 +509,16 @@
                           <input class="form-check-input" name = "cover" id="cover" type="checkbox" checked = "checked">
                           <span class="custom-checkbox"></span>
                           Use DB Cover set indexes
+                        </label>
+                        <select class="form-control" id="diffT" style="width:300px;" >
+                          <option selected value=0 >Target merging Sim>0</option>
+                          <option value=1 >Target merging Sim>1</option>
+                          <option value=2 >Target merging Sim>2</option>
+                        </select>
+                        <label class="form-check-label" style="padding-top:10px;">
+                          <input class="form-check-input" name = "duplicate" id="duplicate" type="checkbox" checked = "checked">
+                          <span class="custom-checkbox"></span>
+                          Duplicate non class links in attributes
                         </label>
                     <div style="padding-bottom:10px; padding-top:10px;">
                       <span class="label label-default" style="font-size:15px; background-color:transparent;">Grouping extra parameter:</span>
