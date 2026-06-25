@@ -11,6 +11,10 @@ import {
     initReactComponents,
     ExtendedTableView,
 } from '../js/complexTable.js';
+import {
+    GroupedResultsPaginated,
+} from './grouped_results_paginated.js';
+
 import { createElement } from 'react';
 
 /** @import { DSSRequestProvider, DSSParams, ClassData, DSSPropertyData } from 'dss-client' */
@@ -309,15 +313,25 @@ Template.sparqlForm.onRendered(async function () {
 		Utilities.callMeteorMethod("updateProject", list);
 	}
 
-    const elementSelector = ".react-mount-root";
-    const maybeElement = this.find(elementSelector);
-    if (maybeElement) {
-        initReactComponents(maybeElement, createElement(ExtendedTableView));
-    } else {
-        throw new Error(
-            `Could not find element by '${elementSelector}, React component won't be mounted!`
-        );
+    function tryMounting(selector, component) {
+        const maybeElement = document.querySelector(selector);
+        if (maybeElement) {
+            initReactComponents(maybeElement, component);
+        } else {
+            console.error(
+                `Could not find element by '${selector}, React component won't be mounted!`
+            )
+        }
     }
+
+    tryMounting(
+        "#extraResults .react-mount-root",
+        createElement(ExtendedTableView),
+    );
+    tryMounting(
+        "#extraResultsPaginated .react-mount-root",
+        createElement(GroupedResultsPaginated),
+    );
 
 	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"
 

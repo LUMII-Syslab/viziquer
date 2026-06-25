@@ -17,6 +17,7 @@ import {
 } from 'rdf-toolbag';
 import { makeEventHandler } from './event.js';
 import { subscribeQueryEvent } from '../js/generateSPARQL_jo.js';
+import { getComplexTableInfoSession, setComplexTableInfoSession } from '../js/complexTableUtil.js';
 
 /** @type {*} */
 let modalElement = null;
@@ -42,18 +43,18 @@ const queryGeneratorModalRequest = /** @type {ReturnType<typeof makeEventHandler
 subscribeQueryEvent(({ eventType }) => {
     if (eventType === "queryFinished") {
         const { sparql } = Session.get("executedSparql");
-        const complexTableInfo = Session.get("complexTableInfo") ?? {};
-        const { finalQuery } = complexTableInfo;
+        const complexTableInfo = getComplexTableInfoSession();
+        const { queryToWrap } = complexTableInfo;
         const currentEditorText = Template.sparqlForm.yasqe3.get().getValue();
 
         // NOTE: If true that means that the generated query was not modified and we should respect
         // the selection that was made beforehand. `finalQuery` is only set during complex table
         // generation.
-        if (currentEditorText === finalQuery) return;
+        if (currentEditorText === queryToWrap) return;
 
         const reshaped = reshapeData(sparql);
         const idVars = reshaped.head.vars.slice(0, 1);
-        Session.set("complexTableInfo", { ...complexTableInfo, idVars});
+        setComplexTableInfoSession({ ...complexTableInfo, idVars});
     }
 });
 
@@ -309,26 +310,20 @@ function useSyncWithDiagram(setSelection) {
 
 /**
  * @param {ComplexPropertySelection} selection
- * @param {number} globalLimit
  * @param {string[]} idVars
- * @param {number} pageSize
  **/
-function executeFromSelection(selection, globalLimit, idVars, pageSize) {
+function executeFromSelection(selection, idVars) {
     const queryToWrap = formatQuery(selection);
-    const finalQuery = formatUniversalPaginatorQuery({
+
+    setEditorText(queryToWrap);
+    setComplexTableInfoSession({
         queryToWrap,
-        globalLimit,
-        groupLimit: pageSize,
-        groupOffset: 0,
         idVars,
     });
 
-    setEditorText(finalQuery);
-    Session.set("complexTableInfo", { idVars, finalQuery, selection });
-
     Template.GenerateComplexTableQueryForm.hideModal();
 
-    Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(finalQuery);
+    Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(queryToWrap);
 }
 
 export function QueryGeneratorView() {
@@ -365,23 +360,19 @@ export function QueryGeneratorView() {
 
     function onCreateClick() {
         const queryToWrap = formatQuery(selection);
-        const finalQuery = formatUniversalPaginatorQuery({
+
+        setEditorText(queryToWrap);
+        switchToEditorTab();
+        setComplexTableInfoSession({
             queryToWrap,
-            globalLimit,
-            groupLimit: pageSize,
-            groupOffset: 0,
             idVars,
         });
-
-        setEditorText(finalQuery);
-        switchToEditorTab();
-        Session.set("complexTableInfo", { idVars, finalQuery, selection });
 
         Template.GenerateComplexTableQueryForm.hideModal();
     }
 
     function onExecuteClick() {
-        executeFromSelection(selection, globalLimit, idVars, pageSize);
+        executeFromSelection(selection, idVars);
     }
 
     function H1({ style, ...props }) {
@@ -498,10 +489,8 @@ function tryShowingModal() {
  * @param {ComplexPropertySelection} selection
  */
 function executeFromSelectionWithDefaults(selection) {
-    const globalLimit = 1000;
     const idVars = ["this"];
-    const pageSize = 10;
-    executeFromSelection(selection, globalLimit, idVars, pageSize);
+    executeFromSelection(selection, idVars);
 }
 
 Interpreter.customMethods({

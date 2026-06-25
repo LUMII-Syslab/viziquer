@@ -5,6 +5,7 @@
             <li class="active"><a data-toggle="tab" href="#sparql">SPARQL</a></li>
             <li><a data-toggle="tab" href="#executed">Results</a></li>
             <li><a data-toggle="tab" href="#extraResults">Grouped results</a></li>
+            <li><a data-toggle="tab" href="#extraResultsPaginated">Grouped results Paginated</a></li>
             <!--<li class="disabled"><a data-toggle="tab" href="#">Messages</a></li>-->
         </ul>
         <div class="tab-content">
@@ -13,6 +14,10 @@
               <div class="react-mount-root">
               </div>
             </div>
+            </div>
+            <div id="extraResultsPaginated" class="tab-pane fade">
+                <div class="react-mount-root">
+                </div>
             </div>
             <div id="executed" class="tab-pane fade">
                 {{#with executedSparql}}

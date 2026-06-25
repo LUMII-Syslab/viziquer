@@ -300,45 +300,11 @@ function DeduplicatedTableView() {
 
     if (!firstRow) return undefined;
 
-    /**
-     * @param {import("rdf-toolbag").MulticardinalRow} row
-     */
-    function renameCols(row) {
-        /**
-         * @param {string} k
-         * @return {string}
-         */
-        function columnRenamer(k) {
-            if (!selection) return k;
-            return demangleVarName(k, selection) || k;
-        }
-
-        /**
-         * @template T
-         * @param {{[k: string]: T}} item
-         * @return {{[k: string]: T}}
-         */
-        function renameObj(item) {
-            return Object.fromEntries(
-                Object.entries(item).map(([k, v]) => [columnRenamer(k), v])
-            );
-        }
-
-        return {
-            idCols: row.idCols.map(columnRenamer),
-            restCols: row.restCols.map(columnRenamer),
-            idValues: renameObj(row.idValues),
-            restValues: renameObj(row.restValues),
-        };
-    }
-
-    const renamedRows = rows.map(renameCols);
-
     return rows && createElement(
         "div",
         {},
         createElement(AggregatedTable, {
-            rows: renamedRows,
+            rows,
             renderHeader(colName) {
                 if (!prefixes) return colName;
 
