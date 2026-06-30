@@ -3509,14 +3509,17 @@ class VQ_Element_Async{
     	if (await classObj.isRoot()){
     		return classObj.obj._id;
     	} else {
-    		if (await classObj.getLinkToRoot()){
-    			var elements = await classObj.getLinkToRoot().link.getElements();
-    			if (await classObj.getLinkToRoot().start) {
-    				return await elements.start.getRootId();
-    			} else {
-    				return await elements.end.getRootId();
-    			}
-    		}
+    		const linkToRoot = await classObj.getLinkToRoot();
+
+			if (linkToRoot) {
+				const elements = await linkToRoot.link.getElements();
+
+				if (linkToRoot.start) {
+					return await elements.start.getRootId();
+				} else {
+					return await elements.end.getRootId();
+				}
+			}
     	}
     }
 

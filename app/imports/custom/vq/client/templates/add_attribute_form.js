@@ -1024,6 +1024,8 @@ async function getAttributes(filter, waiting){
 					// console.log("schemaName", scName, dataShapes.schema.schema);
 
 					var prop = await dataShapes.getProperties(param, newStartElement);
+					
+					console.log("prop1", prop, param)
 
 					if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
 					else $("#more-attributes-button")[0].style.display = "block";
@@ -1119,6 +1121,7 @@ async function getAssociations(filter){
 			}
 
 			var prop = await dataShapes.getProperties(param, newStartElement);
+			console.log("prop2", prop, param)
 
 			if(prop["complete"] == true) {
 				$("#more-associations-button")[0].complete = "true";
@@ -1135,7 +1138,7 @@ async function getAssociations(filter){
 
 
 			for(let cl in prop){
-				if(typeof prop[cl] !== "function"){
+				if(typeof prop[cl] !== "function" &&  prop[cl].mark === "out"){
 					var prefix;
 					if(dataShapes.schema.schema === schemaName &&
 					((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
