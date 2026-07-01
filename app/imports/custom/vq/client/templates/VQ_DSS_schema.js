@@ -2,7 +2,7 @@ import { Template } from 'meteor/templating';
 import { Interpreter } from '../../../../client/lib/interpreter.js'
 import { dataShapes } from '../../../../custom/vq/client/js/DataShapes.js'
 import './VQ_DSS_schema.html'
-import { runFragmentAlgorithm, compareFragmentAlgorithmsIntersection, compareFragmentAlgorithmsSizeIncrease, compareFragmentAlgorithmsRank, exportCSVBRPandPPRComparison } from './fragments.js';
+import { runFragmentAlgorithm, computeBRPRelevance, compareFragmentAlgorithmsIntersection, compareFragmentAlgorithmsSizeIncrease, compareFragmentAlgorithmsRank, exportCSVBRPandPPRComparison, exportBRPAnalysisCSV, exportClassDatasetCSV } from './fragments.js';
 
 Template.VQ_DSS_schema.SchemaName = new ReactiveVar('');
 Template.VQ_DSS_schema.Classes = new ReactiveVar([]);
@@ -42,6 +42,8 @@ Template.VQ_DSS_schema.HasClasses = new ReactiveVar('');
 Template.VQ_DSS_schema.fragmentForm = new ReactiveVar('');
 Template.VQ_DSS_schema.HasCPC = new ReactiveVar('');
 Template.VQ_DSS_schema.ShowFragmentBlock = new ReactiveVar('');
+Template.VQ_DSS_schema.ShowCentralityButton = new ReactiveVar(false);
+Template.VQ_DSS_schema.CentralityButtonDisabled = new ReactiveVar(false);
 
 Interpreter.customMethods({
 	VQ_DSS_schema: function(){
@@ -106,6 +108,70 @@ const STANDARD_PROP_COVERAGE_THRESHOLD = 0.5;
 const fragmentStdPropEditing = new ReactiveVar(false);
 let fragmentStdPropIds = new Set();
 
+// BRP relevance state
+let brpCentralityData = null;   // { cpcListSimple } when pre-calculated
+let brpRelevanceMap = null;     // Map<classId, relevance> currently applied to display_names
+const brpOriginalNames = new Map(); // classId → original display_name before R-prefix
+
+function getBRPConfig() {
+	const cwIn = parseFloat(document.getElementById("brp-cw-incoming").value);
+	const pwSt = parseFloat(document.getElementById("brp-pw-standart").value);
+	const beta = parseFloat(document.getElementById("brp-beta").value);
+	const edgesInTriples = document.getElementById("brp-edgesInTriples").value === "true";
+	const useInstanceCount = document.getElementById("brp-useInstanceCount").value === "true";
+	const closenessMode = document.getElementById("brp-closenessMode").value;
+	const cntTransformName = edgesInTriples ? document.getElementById("brp-cntTransform").value : null;
+	const cntTransformFn = cntTransformName === "log2" ? Math.log2
+		: cntTransformName === "log10" ? Math.log10
+		: cntTransformName === "sqrt" ? Math.sqrt
+		: cntTransformName === "full" ? x => x
+		: null;
+	return {
+		standardProperties: fragmentStdPropIds.size > 0 ? [...fragmentStdPropIds] : null,
+		classWeightIncoming: cwIn,
+		propWeightStandart: pwSt,
+		beta,
+		edgesInTriples,
+		useInstanceCount,
+		closenessMode,
+		cntTransform: cntTransformFn,
+	};
+}
+
+function applyRelevancePrefixes(relevanceMap) {
+	brpRelevanceMap = relevanceMap;
+	dataShapes.schema.diagram.filteredClassList.forEach(cl => {
+		if (!brpOriginalNames.has(cl.id)) brpOriginalNames.set(cl.id, cl.display_name);
+		const r = relevanceMap.get(cl.id);
+		cl.display_name = (r !== undefined ? `R${r.toFixed(3)} - ` : '') + brpOriginalNames.get(cl.id);
+	});
+}
+
+function revertBRPMode() {
+	brpRelevanceMap = null;
+	brpCentralityData = null;
+	brpOriginalNames.forEach((orig, id) => {
+		const cl = dataShapes.schema.diagram.filteredClassList.find(c => c.id === id);
+		if (cl) cl.display_name = orig;
+	});
+	brpOriginalNames.clear();
+	Template.VQ_DSS_schema.Classes.set([...Template.VQ_DSS_schema.Classes.get()]);
+	Template.VQ_DSS_schema.RestClasses.set([...Template.VQ_DSS_schema.RestClasses.get()]);
+	sortClassList();
+}
+
+function sortAndApplyBRPRelevance(relevanceMap) {
+	applyRelevancePrefixes(relevanceMap);
+	const byRel = (a, b) => (relevanceMap.get(b.id) ?? 0) - (relevanceMap.get(a.id) ?? 0);
+	Template.VQ_DSS_schema.Classes.set([...Template.VQ_DSS_schema.Classes.get()].sort(byRel));
+	Template.VQ_DSS_schema.RestClasses.set([...Template.VQ_DSS_schema.RestClasses.get()].sort(byRel));
+}
+
+function resetCentralityPreCalc() {
+	brpCentralityData = null;
+	Template.VQ_DSS_schema.CentralityButtonDisabled.set(false);
+}
+
 let stdPropSelectedBackup = null;
 let stdPropRestBackup = null;
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -135,7 +201,7 @@ async function buildFragmentStdPropList(forceReload = false) {
 			fragmentStdPropIds = new Set();
 			const properties = (dataShapes.schema.diagram && dataShapes.schema.diagram.properties) || [];
 			properties.forEach(p => {
-				if (propCoverage(p, classCount) >= STANDARD_PROP_COVERAGE_THRESHOLD) {
+				if (Number(p.type_1 || 0) > 0 && Number(p.type_2 || 0) > 0 && propCoverage(p, classCount) >= STANDARD_PROP_COVERAGE_THRESHOLD) {
 					fragmentStdPropIds.add(p.id);
 				}
 			});
@@ -348,6 +414,12 @@ Template.VQ_DSS_schema.helpers({
 	},
 	fragmentForm: function() {
     	return Template.VQ_DSS_schema.fragmentForm.get();
+	},
+	showCentralityButton: function() {
+		return Template.VQ_DSS_schema.ShowCentralityButton.get();
+	},
+	centralityApplied: function() {
+		return Template.VQ_DSS_schema.CentralityButtonDisabled.get();
 	},
 });
 
@@ -933,25 +1005,36 @@ Template.VQ_DSS_schema.events({
 
 		let brpConfig = null;
 		if (fragAlgorithm === "brp") {
-			const cwIn = parseFloat(document.getElementById("brp-cw-incoming").value);
-			const pwSt = parseFloat(document.getElementById("brp-pw-standart").value);
-			const beta = parseFloat(document.getElementById("brp-beta").value);
-			brpConfig = {
-				standardProperties: [...fragmentStdPropIds],
-				classWeightIncoming: cwIn,
-				propWeightStandart: pwSt,
-				beta: beta,
-			};
+			brpConfig = getBRPConfig();
+			if (Template.VQ_DSS_schema.CentralityButtonDisabled.get() && brpCentralityData) {
+				brpConfig.preCalcAdj = brpCentralityData.cpcListSimple;
+			}
 		}
 
-		// await exportCSVBRPandPPRComparison(
-		// 	mainClasses,
-		// 	0.85,
-		// 	1e-5,
-		// 	["src-tgt-size", "src-size", "src-tgt-conn", "src-conn"],
-		// 	brpConfig,
-		// 	[10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
-		// );
+		// Example usage of exportCSVBRPandPPRComparison
+		// let ctxs = ["src-tgt-conn", "no-ctx"];
+		// let sizes = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+		// await exportCSVBRPandPPRComparison(mainClasses, ctxs, {
+		// 	edgesInTriples:      [true],
+		// 	cntTransform:        [{name: "log2", fn: Math.log2}, {name: "log10", fn: Math.log10}],
+		// 	useInstanceCount:    [false, true],
+		// 	classWeightIncoming: [0.3],
+		// 	beta:                [0.7],
+		// 	propWeightStandart:  [0.3],
+		// 	standardProperties:  fragmentStdPropIds.size > 0 ? [...fragmentStdPropIds] : null,
+		// 	closenessMode: ['centralityBased', 'weightBased', 'unweighted'],
+		// }, sizes);
+
+		// await exportCSVBRPandPPRComparison(mainClasses, ctxs, {
+		// 	edgesInTriples:      [false],
+		// 	useInstanceCount:    [false, true],
+		// 	classWeightIncoming: [0.3],
+		// 	beta:                [0.7],
+		// 	propWeightStandart:  [0.3],
+		// 	standardProperties:  fragmentStdPropIds.size > 0 ? [...fragmentStdPropIds] : null,
+		// 	closenessMode: ['centralityBased', 'weightBased', 'unweighted'],
+		// }, sizes);
+		
 
 		// Calculate fragment
 		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize, undefined, brpConfig);
@@ -962,10 +1045,20 @@ Template.VQ_DSS_schema.events({
 			else cl.sel = 0;
 		});
     makeClassLists();
-		//const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){return fragmentClasses.includes(c.id)});
-		//const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return !fragmentClasses.includes(c.id)});
-		//setClassListInfo(classes, restClasses);
-		//clearData();
+		if (fragAlgorithm === "brp") sortAndApplyBRPRelevance(rank);
+	},
+  'click #calculateRelevance': async function() {
+		if (Template.VQ_DSS_schema.CentralityButtonDisabled.get()) {
+			revertBRPMode();
+			Template.VQ_DSS_schema.CentralityButtonDisabled.set(false);
+			return;
+		}
+		const mainClasses = Template.VQ_DSS_schema.Classes.get().map(c => c.id);
+		const brpConfig = getBRPConfig();
+		const { cpcListSimple, relevanceMap } = await computeBRPRelevance(mainClasses, brpConfig);
+		brpCentralityData = { cpcListSimple };
+		Template.VQ_DSS_schema.CentralityButtonDisabled.set(true);
+		sortAndApplyBRPRelevance(relevanceMap);
 	},
   'click #getFragment2': async function() {
 		// Get parameters
@@ -998,7 +1091,9 @@ Template.VQ_DSS_schema.events({
 					cl.sel = 0;
 			});
 			makeClassLists();
+			if (brpRelevanceMap) sortAndApplyBRPRelevance(brpRelevanceMap);
 		}
+		resetCentralityPreCalc();
 		clearData();
 	},
   'click #moveR': function() {
@@ -1053,7 +1148,9 @@ Template.VQ_DSS_schema.events({
 					cl.sel = 1;
 			});
 			makeClassLists();
+			if (brpRelevanceMap) sortAndApplyBRPRelevance(brpRelevanceMap);
 		}
+		resetCentralityPreCalc();
 		clearData();
 	},
 	'click #removeSelectedProp': function() {
@@ -1132,27 +1229,47 @@ Template.VQ_DSS_schema.events({
     const wcWrap = document.getElementById("fragment-weight-context-wrap");
     const spWrap = document.getElementById("fragment-std-prop-wrap");
     const sliders = document.getElementById("fragment-brp-sliders");
+    const opts = document.getElementById("fragment-brp-options");
     if (wcWrap) wcWrap.style.display = isBRP ? "none" : "inline-flex";
     if (spWrap) spWrap.style.display = isBRP ? "inline-flex" : "none";
     if (sliders) sliders.style.display = isBRP ? "grid" : "none";
+    if (opts) opts.style.display = isBRP ? "flex" : "none";
+    Template.VQ_DSS_schema.ShowCentralityButton.set(isBRP);
     if (isBRP) {
+      Template.VQ_DSS_schema.CentralityButtonDisabled.set(false);
       void buildFragmentStdPropList();
       paintSplitSlider(document.getElementById("brp-cw-incoming"), "brp-cw-incoming-val", "brp-cw-outgoing-val");
       paintSplitSlider(document.getElementById("brp-pw-standart"), "brp-pw-standart-val", "brp-pw-user-val");
       paintSplitSlider(document.getElementById("brp-beta"), "brp-beta-val", "brp-alpha-val");
+      const edgesEl = document.getElementById("brp-edgesInTriples");
+      const cntWrap = document.getElementById("brp-cntTransform-wrap");
+      if (edgesEl && cntWrap) cntWrap.style.display = edgesEl.value === "true" ? "inline-flex" : "none";
+    } else {
+      revertBRPMode();
     }
   },
   'input #brp-cw-incoming': function(e) {
     paintSplitSlider(e.target, "brp-cw-incoming-val", "brp-cw-outgoing-val");
+    resetCentralityPreCalc();
   },
   'input #brp-pw-standart': function(e) {
     paintSplitSlider(e.target, "brp-pw-standart-val", "brp-pw-user-val");
+    resetCentralityPreCalc();
   },
   'input #brp-beta': function(e) {
     // Clamp: alpha = 1 - beta, beta=0 would break the closeness term.
     if (parseFloat(e.target.value) < 0.1) e.target.value = "0.1";
     paintSplitSlider(e.target, "brp-beta-val", "brp-alpha-val");
+    resetCentralityPreCalc();
   },
+  'change #brp-edgesInTriples': function(e) {
+    const wrap = document.getElementById("brp-cntTransform-wrap");
+    if (wrap) wrap.style.display = e.target.value === "true" ? "inline-flex" : "none";
+    resetCentralityPreCalc();
+  },
+  'change #brp-useInstanceCount': function() { resetCentralityPreCalc(); },
+  'change #brp-closenessMode': function() { resetCentralityPreCalc(); },
+  'change #brp-cntTransform': function() { resetCentralityPreCalc(); },
   'click #editStandardProps': async function() {
     if (!fragmentStdPropEditing.get()) {
       setFragmentStdPropEditing(true);
@@ -1172,6 +1289,7 @@ Template.VQ_DSS_schema.events({
       fragmentStdPropIds.delete(id);
       renderFragmentStdPropList();
       applyStdPropHighlight();
+      resetCentralityPreCalc();
     }
   },
   'keyup #stdPropSearch': async function(e) {
@@ -1205,6 +1323,7 @@ Template.VQ_DSS_schema.events({
     renderFragmentStdPropList();
     applyStdPropHighlight();
     ["selectedProperties", "restProperties"].forEach(id => { const sel = document.getElementById(id); if (sel) sel.selectedIndex = -1; });
+    resetCentralityPreCalc();
   },
   'click #hideFragment': function() {
     if (Template.VQ_DSS_schema.ShowFragmentBlock.get() ) {
@@ -3395,74 +3514,71 @@ function makeAssociations() {
 	// Savelk asociācijas
 	for (const clId of Object.keys(rezFull.classes)) {
 		const classInfo = rezFull.classes[clId];
-    if ( classInfo.used) {
-			for ( const atr of classInfo.atr_list) {
-				if ( atr.type == 'out' && atr.cnt > 0 && atr.cnt_full > hideSmall && atr.object_cnt > classInfo.cnt*showEssent ) {
+		if (classInfo.used) {
+			for (const atr of classInfo.atr_list) {
+				if (atr.type == 'out' && atr.cnt > 0 && atr.cnt_full > hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {
 					let hasAssoc = false;
-					if ( has_cpc ) {
-            if ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
-              atr.object_cnt_dgr = atr.object_cnt;  // TODO šis arī ir drusku šaubīgs
-            }
-            else {
-              const cpc_info_full = cpc_info.filter(function(i){
-                return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && atr.class_list.includes(i.other_class_id)});
-              atr.object_cnt_dgr = cpc_info_full.map( v => v.cnt).reduce((a, b) => a + b, 0);
-            }
+					if (has_cpc) {
+						if (classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
+							atr.object_cnt_dgr = atr.object_cnt;  // TODO šis arī ir drusku šaubīgs
+						} else {
+							const cpc_info_full = cpc_info.filter(function (i) {
+								return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && atr.class_list.includes(i.other_class_id)
+							});
+							atr.object_cnt_dgr = cpc_info_full.map(v => v.cnt).reduce((a, b) => a + b, 0);
+						}
 
-					}
-					else {
+					} else {
 						atr.object_cnt_dgr = atr.object_cnt; // TODO te varētu būt arī savādāk, kā darīt, ja nav cpc_rels
 					}
 					for (const to_id of atr.class_list2) {
 						const aId = `${clId}_${to_id}_${atr.p_name}`;
-						const is_range = ( atr.range_id == to_id ) ? 'R':'';
-						const p_name = ( params.addIds ) ? `${atr.p_name}(ID-${atr.p_id})`: atr.p_name;
-						if ( !has_cpc) {
-							rezFull.assoc[aId] = {string:`${p_name}  ${atr.is_domain}${is_range}`, cnt:0, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
+						const is_range = (atr.range_id == to_id) ? 'R' : '';
+						const p_name = (params.addIds) ? `${atr.p_name}(ID-${atr.p_id})` : atr.p_name;
+						if (!has_cpc) {
+							rezFull.assoc[aId] = { string: `${p_name}  ${atr.is_domain}${is_range}`, cnt: 0, p_name: atr.p_name, p_id: `p_${atr.p_id}`, from: clId, to: to_id, removed: false };
 							hasAssoc = true;
-						}
-						else {
-              let aCnt = 0;
-              if ( classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
-                aCnt = atr.object_cnt;
-              }
-              else {
-                const cpc_info_a = cpc_info.filter(function(i){
-                  return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && rezFull.classes[to_id].c_list_id.includes(i.other_class_id);
-                });
-                aCnt = cpc_info_a.map( v => v.cnt).reduce((a, b) => a + b, 0);
-              }
-							if ( aCnt > 0 ) {
-								rezFull.assoc[aId] = {string:`${p_name} (${roundCount(aCnt)}) ${atr.is_domain}${is_range}`,cnt:aCnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
+						} else {
+							let aCnt = 0;
+							if (classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
+								aCnt = atr.object_cnt;
+							} else {
+								const cpc_info_a = cpc_info.filter(function (i) {
+									return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && rezFull.classes[to_id].c_list_id.includes(i.other_class_id);
+								});
+								aCnt = cpc_info_a.map(v => v.cnt).reduce((a, b) => a + b, 0);
+							}
+							if (aCnt > 0) {
+								rezFull.assoc[aId] = { string: `${p_name} (${roundCount(aCnt)}) ${atr.is_domain}${is_range}`, cnt: aCnt, p_name: atr.p_name, p_id: `p_${atr.p_id}`, from: clId, to: to_id, removed: false };
 								hasAssoc = true;
 							}
 						}
 					}
-          if ( atr.class_list2 == undefined || atr.class_list2.length == 0 ) {
-            if ( rezFull.classes[`pt_${atr.p_id}`] != undefined ) {
-              let to_id = `pt_${atr.p_id}`;
-              if ( rezFull.classes[to_id].G_id != undefined ) {
-                to_id = rezFull.classes[to_id].G_id[rezFull.classes[to_id].G_id.length-1];
-              }
-              rezFull.assoc[`${clId}_${to_id}_${atr.p_name}`] = {string:`${atr.p_name} (${roundCount(atr.cnt)})`, cnt:atr.cnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
-              atr.class_list2 = [to_id];
-            }
-          }
+					if (atr.class_list2 == undefined || atr.class_list2.length == 0) {
+						if (rezFull.classes[`pt_${atr.p_id}`] != undefined) {
+							let to_id = `pt_${atr.p_id}`;
+							if (rezFull.classes[to_id].G_id != undefined) {
+								to_id = rezFull.classes[to_id].G_id[rezFull.classes[to_id].G_id.length - 1];
+							}
+							rezFull.assoc[`${clId}_${to_id}_${atr.p_name}`] = { string: `${atr.p_name} (${roundCount(atr.cnt)})`, cnt: atr.cnt, p_name: atr.p_name, p_id: `p_${atr.p_id}`, from: clId, to: to_id, removed: false };
+							atr.class_list2 = [to_id];
+						}
+					}
 					atr.hasAssoc = hasAssoc;
 				}
-        if ( atr.type == 'data' && atr.object_cnt > 0 && atr.cnt > 0 && atr.cnt_full > hideSmall && atr.object_cnt > classInfo.cnt*showEssent) {
-          if ( rezFull.classes[`pt_${atr.p_id}`] != undefined ) {
-            let to_id = `pt_${atr.p_id}`;
-            if ( rezFull.classes[to_id].G_id != undefined ) {
-              to_id = rezFull.classes[to_id].G_id[rezFull.classes[to_id].G_id.length-1];
-            }
-            rezFull.assoc[`${clId}_${to_id}_${atr.p_name}`] = {string:`${atr.p_name} (${roundCount(atr.cnt)})`, cnt:atr.cnt, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
-            atr.type = 'out';
-            atr.object_cnt_dgr = atr.object_cnt;
-            atr.hasAssoc = true;
-            atr.class_list2 = [to_id];
-          }
-        }
+				if (atr.type == 'data' && atr.object_cnt > 0 && atr.cnt > 0 && atr.cnt_full > hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {
+					if (rezFull.classes[`pt_${atr.p_id}`] != undefined) {
+						let to_id = `pt_${atr.p_id}`;
+						if (rezFull.classes[to_id].G_id != undefined) {
+							to_id = rezFull.classes[to_id].G_id[rezFull.classes[to_id].G_id.length - 1];
+						}
+						rezFull.assoc[`${clId}_${to_id}_${atr.p_name}`] = { string: `${atr.p_name} (${roundCount(atr.cnt)})`, cnt: atr.cnt, p_name: atr.p_name, p_id: `p_${atr.p_id}`, from: clId, to: to_id, removed: false };
+						atr.type = 'out';
+						atr.object_cnt_dgr = atr.object_cnt;
+						atr.hasAssoc = true;
+						atr.class_list2 = [to_id];
+					}
+				}
 			}
 		}
 	}

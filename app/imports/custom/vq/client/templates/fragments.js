@@ -18,7 +18,7 @@ function makeIsStandardProperty(standardProperties) {
 }
 
 // Creates an adjacency list (a list of relevant cpc_rels for each class)
-export async function getCPCAdj(weightByCPCsum, useBothClasses, SCHEMA_LEVEL_EDGE_WEIGHT = 1) {
+export async function getCPCAdj(weightByCPCsum, useBothClasses, SCHEMA_LEVEL_EDGE_WEIGHT = null) {
 	if (weightByCPCsum !== true && weightByCPCsum !== false) {console.error("getCPCAdj: weightByCPCsum is not true or false");}
 	if (useBothClasses !== true && useBothClasses !== false) {console.error("getCPCAdj: useBothClasses is not true or false");}
 	const CPCs = await dataShapes.callServerFunction("xx_getCPCInfo", {main: {}});
@@ -166,17 +166,28 @@ async function getAdjFromCP(weightByCPCsum, useBothClasses) {
 // adj value: {neighbors: [{class, propDirection, properties}], inCount, outCount, properties, standardRelCount, userDefinedRelCount}
 // standardRelCount/userDefinedRelCount split neighbors by whether the connecting property is in standardProperties (null -> all standard);
 // a neighbor with both standard and user-defined properties is counted in both.
-export async function getCPCAdjSimple(standardProperties = null) {
+export async function getCPCAdjSimple(standardProperties = null, edgesInTriples = true, cntTransform = null, useInstanceCount = false) {
 	const CPCs = await dataShapes.callServerFunction("xx_getCPCInfo", {main: {}});
 	console.log("Returned CPCs from DSS");
 	const getProp = buildPropMetaGetter();
 	const isStandardProperty = makeIsStandardProperty(standardProperties);
+	const cpcPropIds = [...new Set(CPCs.data.map(r => r.property_id))];
+	console.log("getCPCAdjSimple: standardProperties =", standardProperties, "| sample CPC property_ids =", cpcPropIds.slice(0, 10), "| std matches =", standardProperties ? cpcPropIds.filter(id => standardProperties.map(Number).includes(Number(id))).length : "all (null)");
+
+	let classSizes = null;
+	if (useInstanceCount) {
+		const xxClasses = await dataShapes.callServerFunction("xx_getClassesSimple", {main: {}});
+		classSizes = new Map(xxClasses.data.map(obj => [obj.id, Number(obj.cnt) || 0]));
+	}
 
 	const adj = new Map();
 	const seen = new Map(); // cls -> Map<key, {nb, hasStd, hasUserDef}>
 	const ensure = (cls) => {
-		if (!adj.has(cls)) { adj.set(cls, {neighbors: [], inCount: 0, outCount: 0, properties: new Map(), standardRelCount: 0, userDefinedRelCount: 0}); seen.set(cls, new Map()); }
+		if (!adj.has(cls)) { adj.set(cls, {neighbors: [], inCount: 0, outCount: 0, properties: new Map(), standardRelCount: 0, userDefinedRelCount: 0, instanceCount: classSizes ? (classSizes.get(cls) ?? 0) : 0}); seen.set(cls, new Map()); }
 	};
+
+	const transform = cntTransform ?? Math.log10;
+	const relInc = (cnt) => edgesInTriples ? transform(Math.max(1, Number(cnt) || 1)) : 1;
 
 	CPCs.data.forEach(cpc => {
 		const c = cpc.class_id;
@@ -196,12 +207,13 @@ export async function getCPCAdjSimple(standardProperties = null) {
 			const nb = {class: c, propDirection: "out", properties: [prop]};
 			seen.get(otherC).set(outKey, {nb, hasStd: std, hasUserDef: !std});
 			adj.get(otherC).neighbors.push(nb);
-			adj.get(otherC).outCount++;
-			if (std) adj.get(otherC).standardRelCount++; else adj.get(otherC).userDefinedRelCount++;
+			adj.get(otherC).outCount += useInstanceCount ? (adj.get(c).instanceCount || 1) : 1;
+			if (std) adj.get(otherC).standardRelCount += relInc(cpc.cnt);
+			else adj.get(otherC).userDefinedRelCount += relInc(cpc.cnt);
 		} else if (!outEntry.nb.properties.some(p => p.id === prop.id)) {
 			outEntry.nb.properties.push(prop);
-			if (std && !outEntry.hasStd) { outEntry.hasStd = true; adj.get(otherC).standardRelCount++; }
-			if (!std && !outEntry.hasUserDef) { outEntry.hasUserDef = true; adj.get(otherC).userDefinedRelCount++; }
+			if (std && !outEntry.hasStd) { outEntry.hasStd = true; adj.get(otherC).standardRelCount += relInc(cpc.cnt); }
+			if (!std && !outEntry.hasUserDef) { outEntry.hasUserDef = true; adj.get(otherC).userDefinedRelCount += relInc(cpc.cnt); }
 		}
 		const inKey = `${otherC}|in`;
 		const inEntry = seen.get(c).get(inKey);
@@ -209,12 +221,13 @@ export async function getCPCAdjSimple(standardProperties = null) {
 			const nb = {class: otherC, propDirection: "in", properties: [prop]};
 			seen.get(c).set(inKey, {nb, hasStd: std, hasUserDef: !std});
 			adj.get(c).neighbors.push(nb);
-			adj.get(c).inCount++;
-			if (std) adj.get(c).standardRelCount++; else adj.get(c).userDefinedRelCount++;
+			adj.get(c).inCount += useInstanceCount ? (adj.get(otherC).instanceCount || 1) : 1;
+			if (std) adj.get(c).standardRelCount += relInc(cpc.cnt);
+			else adj.get(c).userDefinedRelCount += relInc(cpc.cnt);
 		} else if (!inEntry.nb.properties.some(p => p.id === prop.id)) {
 			inEntry.nb.properties.push(prop);
-			if (std && !inEntry.hasStd) { inEntry.hasStd = true; adj.get(c).standardRelCount++; }
-			if (!std && !inEntry.hasUserDef) { inEntry.hasUserDef = true; adj.get(c).userDefinedRelCount++; }
+			if (std && !inEntry.hasStd) { inEntry.hasStd = true; adj.get(c).standardRelCount += relInc(cpc.cnt); }
+			if (!std && !inEntry.hasUserDef) { inEntry.hasUserDef = true; adj.get(c).userDefinedRelCount += relInc(cpc.cnt); }
 		}
 	});
 
@@ -526,6 +539,22 @@ function fmeasure(path, graph, alpha) {
 	return denom > 0 ? (RD * RC) / denom : 0;
 }
 
+// Export class_id, class_name, weight for every class in the current filtered dataset.
+// Weight field matches the active sort parameter in #sortPar (cnt_sum / cnt / in_props / order).
+export function exportClassDatasetCSV() {
+	const classList = dataShapes.schema?.diagram?.filteredClassList ?? [];
+	const sortP = parseInt(document.getElementById("sortPar")?.value ?? "1");
+	const weightField = sortP === 3 ? "cnt" : sortP === 4 ? "in_props" : sortP === 2 ? "order" : "cnt_sum";
+
+	const rows = [["class_id", "class_name", "weight"]];
+	classList.forEach(cl => {
+		const name = cl.prefix ? `${cl.prefix}:${cl.display_name}` : (cl.display_name ?? cl.name ?? "");
+		rows.push([cl.id, name, cl[weightField] ?? ""]);
+	});
+	const schemaName = dataShapes.schema?.schemaName ?? "dataset";
+	downloadCSV(`class_dataset_${schemaName}.csv`, rows);
+}
+
 // Build a CSV string from an array of rows and trigger a browser download, used only for analysis and testing
 function downloadCSV(filename, rows) {
 	const csv = rows.map(row => row.map(cell => {
@@ -601,7 +630,7 @@ function subgraphConnectivity(fragClassIds, simpleAdj) {
 	return { components, largestSize, isolatedCount };
 }
 
-export async function fragmentsBRP(mainClasses, fragmentClassCount, simpleAdj, config = {}) {
+export async function computeBRPRelevance(mainClasses, config = {}, rawAdj = undefined) {
 	const mainClassBoost = 1;
 	const classWeightIncoming = config.classWeightIncoming ?? 0.3;
 	const classWeightOutgoing = 1 - classWeightIncoming;
@@ -609,19 +638,19 @@ export async function fragmentsBRP(mainClasses, fragmentClassCount, simpleAdj, c
 	const propWeightUserDefined = 1 - propWeightStandart;
 	const beta = config.beta ?? 0.8;
 	const alpha = 1 - beta;
-	const alphaF = 0.5;
-	const log = true;
+	const cntTransform = config.cntTransform ?? (x => x);
+	const useInstanceCount = config.useInstanceCount ?? false;
 
-	let cpcListSimple = simpleAdj;
-	if (cpcListSimple === undefined) {
-		cpcListSimple = await getCPCAdjSimple(config.standardProperties ?? null);
+	let cpcListSimple = rawAdj;
+	if (!cpcListSimple) {
+		cpcListSimple = await getCPCAdjSimple(config.standardProperties ?? null, config.edgesInTriples, cntTransform, useInstanceCount);
 		if (cpcListSimple.size == 0) cpcListSimple = await getAdjFromCPSimple(config.standardProperties ?? null);
 	}
 
 	// Guard: with 0 or 1 classes, centrality formula divides by zero.
 	if (cpcListSimple.size <= 1) {
-		const classes = [...cpcListSimple.keys()].slice(0, fragmentClassCount);
-		return [classes, cpcListSimple];
+		const relevanceMap = new Map([...cpcListSimple].map(([k]) => [k, 0]));
+		return { cpcListSimple, relevanceMap };
 	}
 
 	// Max rels is the max amount one class has in the entire schema
@@ -630,9 +659,10 @@ export async function fragmentsBRP(mainClasses, fragmentClassCount, simpleAdj, c
 		if (obj.standardRelCount > maxStandardRels) maxStandardRels = obj.standardRelCount;
 		if (obj.userDefinedRelCount > maxUserDefinedRels) maxUserDefinedRels = obj.userDefinedRelCount;
 	});
-	if (log) console.log("Max standart rels are ", maxStandardRels, "Max user defined rels are ", maxUserDefinedRels);
+	console.log("Max standart rels are ", maxStandardRels, "Max user defined rels are ", maxUserDefinedRels);
 
 	// Centrality(Cn) = (WI*CI + WO*CO) * (ns*ws/maxs + nud*wud/maxud) / (|C| - 1)
+	const totalInstances = [...cpcListSimple.values()].reduce((sum, obj) => sum + (obj.instanceCount ?? 0), 0);
 	cpcListSimple.forEach((obj, classId) => {
 		if (mainClasses.includes(classId)) {
 			obj.centralityMeasure = mainClassBoost;
@@ -640,28 +670,98 @@ export async function fragmentsBRP(mainClasses, fragmentClassCount, simpleAdj, c
 			const propTerm =
 				(maxStandardRels > 0 ? (obj.standardRelCount * propWeightStandart) / maxStandardRels : 0) +
 				(maxUserDefinedRels > 0 ? (obj.userDefinedRelCount * propWeightUserDefined) / maxUserDefinedRels : 0);
+			const divisor = totalInstances > 0
+				? (totalInstances - (obj.instanceCount ?? 0))
+				: (cpcListSimple.size - 1);
 			obj.centralityMeasure =
-				((classWeightIncoming * obj.inCount) + (classWeightOutgoing * obj.outCount)) * propTerm / (cpcListSimple.size - 1);
+				((classWeightIncoming * obj.inCount) + (classWeightOutgoing * obj.outCount)) * propTerm / divisor;
 		}
 	});
 
-	// Closeness: weighted average of others' centrality, weighted by 1/distance
+	const closenessMode = config.closenessMode ?? 'centralityBased';
+	const N = cpcListSimple.size;
+	let nodeWeightMap = null;
+	if (closenessMode === 'weightBased') {
+		const classList = (dataShapes.schema?.diagram?.classList) ?? [];
+		nodeWeightMap = new Map(classList.map(obj => [obj.id, Number(obj.cnt_sum ?? 0)]));
+	}
+
+	// Closeness
 	cpcListSimple.forEach((objCn, Cn) => {
 		const dist = bfsUndirected(Cn, cpcListSimple);
-		let num = 0, den = 0;
-		dist.forEach((d, n) => {
-			if (n === Cn || d === 0) return;
-			num += cpcListSimple.get(n).centralityMeasure / (d * d);
-			den += 1 / d;
-		});
-		objCn.closeness = den > 0 ? num / den : 0;
+		if (closenessMode === 'unweighted') {
+			let sumD = 0;
+			dist.forEach((d, n) => {
+				if (n === Cn || d === 0) return;
+				sumD += d;
+			});
+			objCn.closeness = sumD > 0 ? (N - 1) / sumD : 0;
+		} else {
+			let num = 0, den = 0;
+			dist.forEach((d, n) => {
+				if (n === Cn || d === 0) return;
+				const w = closenessMode === 'weightBased'
+					? (nodeWeightMap?.get(n) ?? 0)
+					: cpcListSimple.get(n).centralityMeasure;
+				num += w / d;
+				den += 1 / d;
+			});
+			objCn.closeness = den > 0 ? num / den : 0;
+		}
 	});
+
+	// weightBased closeness is a weighted avg of raw cnt_sum values → can be huge; normalize to [0,1]
+	if (closenessMode === 'weightBased') {
+		let maxCloseness = 0;
+		cpcListSimple.forEach(obj => { if (obj.closeness > maxCloseness) maxCloseness = obj.closeness; });
+		if (maxCloseness > 0) cpcListSimple.forEach(obj => { obj.closeness /= maxCloseness; });
+	}
 
 	// Relevance: weighted combination of centrality and closeness; alpha + beta = 1
 	cpcListSimple.forEach((obj) => {
 		obj.relevance = beta * obj.centralityMeasure + alpha * obj.closeness;
 	});
-	if (log) console.log("CPC Adjacency list for BRP: ", cpcListSimple);
+	console.log("CPC Adjacency list for BRP: ", cpcListSimple);
+
+	const relevanceMap = new Map([...cpcListSimple].map(([k, v]) => [k, v.relevance]));
+	return { cpcListSimple, relevanceMap };
+}
+
+/**
+ * config (all fields optional):
+ *
+ *  classWeightIncoming  {number}    0.3              Weight of incoming rels in centrality; outgoing = 1 - classWeightIncoming
+ *  propWeightStandart   {number}    0.2              Weight of standard properties in centrality; user-defined = 1 - propWeightStandart
+ *  beta                 {number}    0.8              Centrality share of relevance score; closeness share = 1 - beta
+ *  closenessMode        {string}    'centralityBased'  How to weight BFS closeness:
+ *                                                       'centralityBased' — weight neighbours by their centrality
+ *                                                       'weightBased'     — weight by class cnt_sum from the schema
+ *                                                       'unweighted'      — plain shortest-path distance sums
+ *
+ *  The following are ignored when simpleAdj is provided:
+ *  cntTransform         {Function}  Math.log10       Applied to triple counts when building the adj list;
+ *                                                      supported: Math.log10, Math.log2, Math.sqrt, x => x (full/identity)
+ *  useInstanceCount     {boolean}   false            Use class instance count instead of class count for adj list and centrality divisor
+ *  standardProperties   {number[]}  null             Property IDs treated as standard; null = all properties standard
+ *  edgesInTriples       {boolean}   true             Scale adj list edge weights by triple count; false = each unique (neighbour, direction) pair counts as 1
+ */
+export async function fragmentsBRP(mainClasses, fragmentClassCount, simpleAdj, config = {edgesInTriples: true}) {
+	console.log("fragmentsBRP config:", {...config, cntTransform: config.cntTransform ? (config.cntTransform.name || 'anonymous') : null});
+	const alphaF = 0.5;
+	const log = true;
+
+	let cpcListSimple;
+	if (config.preCalcAdj) {
+		cpcListSimple = config.preCalcAdj;
+	} else {
+		({ cpcListSimple } = await computeBRPRelevance(mainClasses, config, simpleAdj));
+	}
+
+	// Guard: BRP loop requires at least 2 nodes.
+	if (cpcListSimple.size <= 1) {
+		const classes = [...cpcListSimple.keys()].slice(0, fragmentClassCount);
+		return [classes, cpcListSimple];
+	}
 
 	// --- Broaden Relevant Paths (BRP) ---
 
@@ -680,24 +780,28 @@ export async function fragmentsBRP(mainClasses, fragmentClassCount, simpleAdj, c
 
 	let resultPath = null;
 	while (true) {
-		if (NodeSet.length === 0) break;
+		if (NodeSet.length === 0) { 
+			if (log) console.log("Stopped because NODESet is empty");
+			break;
+		}
 
 		// Stop condition: the best path has reached the requested size, pathSet is kept
 		// sorted by f-measure desc, so PathSet[0] is both the largest-ready and best path
 		if (PathSet.length > 0 && PathSet[0].size >= fragmentClassCount) {
 			resultPath = PathSet[0];
+			if (log) console.log("Stopped because we have created a fragment with max size");
 			break;
 		}
 
 		// Pick Cr -- AdjacentNodes' head wins only if its relevance is strictly higher than NodeSet's head
 		let Cr;
-		if (AdjacentNodes.length > 0 && AdjacentNodes[0][1].relevance > NodeSet[0][1].relevance) {
+		if (AdjacentNodes.length > 0 && AdjacentNodes[0][1].relevance >= NodeSet[0][1].relevance) {
 			Cr = AdjacentNodes.shift();
-			if (log) console.log("Cr from AdjacentNodes is ", JSON.stringify(Cr[0]));
+			if (log) console.log("Cr from ADJACENTNodes is ", JSON.stringify(Cr[0]));
 			removeFromList(NodeSet, Cr[0]);
 		} else {
 			Cr = NodeSet.shift();
-			if (log) console.log("Cr from NodeSet is ", JSON.stringify(Cr[0]));
+			if (log) console.log("Cr from NODESet is ", JSON.stringify(Cr[0]));
 			removeFromList(AdjacentNodes, Cr[0]);
 		}
 		if (log) console.log("NodeSet ", NodeSet.length, "AdjacentNodes ", AdjacentNodes.length);
@@ -875,61 +979,126 @@ export async function exportBRPAnalysisCSV(paramRanges = {}, fragSizes = [10, 20
 	console.log(`Wrote brp_runs.csv (${runsRows.length - 1} rows) and brp_fragment_classes.csv (${classRows.length - 1} rows).`);
 }
 
-export async function exportCSVBRPandPPRComparison(mainClasses, pprAlpha = 0.85, pprTol = 1e-5, pprEdgeWeightContexts = [""], brpConfig = {}, fragSizes = [10, 20, 30, 40, 50]) {
+// brpConfigs: each key may be a scalar or array. Arrays are expanded into a full cross-product of BRP variants.
+// cntTransform values must be {name: string, fn: Function} objects so the name can appear in CSV output.
+// standardProperties is always a single value (not varied).
+export async function exportCSVBRPandPPRComparison(mainClasses, pprEdgeWeightContexts = [""], brpConfigs = {}, fragSizes = [10, 20, 30, 40, 50]) {
+	const pprAlpha = 0.85;
+	const pprTol = 1e-5;
 	const xxClasses = await dataShapes.callServerFunction("xx_getClassesSimple", {main: {}});
 	const localClassNames = new Map(xxClasses.data.map(obj => [obj.id, `${obj.ns_name}:${obj.class_name}`]));
 
-	const standardProperties = brpConfig.standardProperties ?? null;
+	const standardProperties = brpConfigs.standardProperties ?? null;
 	const standardPropCol = standardProperties ? standardProperties.join(";") : "";
 
-	let simpleAdj = await getCPCAdjSimple(standardProperties);
-	if (simpleAdj.size === 0) simpleAdj = await getAdjFromCPSimple(standardProperties);
+	// Normalize a config value (scalar or array) to an array, using def if absent.
+	const toArr = (val, def) => (val === undefined || val === null) ? [def] : (Array.isArray(val) ? val : [val]);
 
-	// Cache adj per edgeWeightContext to avoid redundant fetches
-	const adjCache = new Map();
-	const getAdj = async (ctx) => {
-		if (!adjCache.has(ctx)) {
-			const [w, ub] = getBoolsFromEdgeWeightContext(ctx);
-			adjCache.set(ctx, await getCPCAdj(w, ub));
-		}
-		return adjCache.get(ctx);
+	// Normalize a cntTransform value to {name, fn}. Accepts {name, fn} or a plain function.
+	const normTransform = (v) => {
+		if (v && typeof v === "object" && typeof v.fn === "function") return v;
+		if (typeof v === "function") return {name: "custom", fn: v};
+		return {name: "identity", fn: x => x};
 	};
 
-	const mainClassesSet = new Set(mainClasses);
-	const mainClassIds = mainClasses.join(";");
-	const classWeightIncoming = brpConfig.classWeightIncoming ?? 0.3;
-	const beta = brpConfig.beta ?? 0.8;
-	const propWeightStandart = brpConfig.propWeightStandart ?? 0.2;
+	const edgesInTriplesArr   = toArr(brpConfigs.edgesInTriples,        true);
+	const cntTransformArr     = toArr(brpConfigs.cntTransform,          null).map(normTransform);
+	const useInstanceCountArr = toArr(brpConfigs.useInstanceCount,       false);
+	const classWeightArr      = toArr(brpConfigs.classWeightIncoming,    0.3);
+	const betaArr             = toArr(brpConfigs.beta,                   0.8);
+	const propWeightArr       = toArr(brpConfigs.propWeightStandart,     0.2);
+	const closenessModeArr    = toArr(brpConfigs.closenessMode,          'centralityBased');
 
-	const brpRunsRows = [["run_id", "class_weight_incoming", "beta", "prop_weight_standart", "frag_size", "fragment_size_actual", "main_class_ids"]];
-	const brpClassRows = [["run_id", "class_id", "class_name", "is_main_class", "centrality", "closeness", "relevance", "relation_relevance", "standard_properties"]];
-	const pprRunsRows = [["run_id", "alpha", "edge_weight_context", "frag_size", "fragment_size_actual", "main_class_ids"]];
-	const pprClassRows = [["run_id", "class_id", "class_name", "is_main_class", "rank", "standard_properties"]];
+	// Full cross-product over all variant axes.
+	const cartesian = (...arrs) => arrs.reduce((acc, arr) => acc.flatMap(x => arr.map(y => [...x, y])), [[]]);
+	const brpVariants = cartesian(edgesInTriplesArr, cntTransformArr, useInstanceCountArr, classWeightArr, betaArr, propWeightArr, closenessModeArr)
+		.map(([edgesInTriples, cntTransform, useInstanceCount, classWeightIncoming, beta, propWeightStandart, closenessMode]) => ({
+			edgesInTriples, cntTransform, useInstanceCount, classWeightIncoming, beta, propWeightStandart, closenessMode, standardProperties,
+		}));
 
-	for (const fragSize of fragSizes) {
-		const brpRunId = `brp_s${fragSize}`;
-		const [brpFrag, ] = await fragmentsBRP(mainClasses, fragSize, simpleAdj, brpConfig);
+	// Cache BRP adj by the parameters that affect graph construction.
+	const brpAdjCache = new Map();
+	const getBRPAdj = async (v) => {
+		const key = `${v.edgesInTriples}|${v.cntTransform.name}|${v.useInstanceCount}|${standardPropCol}`;
+		if (!brpAdjCache.has(key)) {
+			let adj = await getCPCAdjSimple(v.standardProperties, v.edgesInTriples, v.cntTransform.fn, v.useInstanceCount);
+			if (adj.size === 0) adj = await getAdjFromCPSimple(v.standardProperties);
+			brpAdjCache.set(key, adj);
+		}
+		return brpAdjCache.get(key);
+	};
 
-		brpRunsRows.push([brpRunId, classWeightIncoming, beta, propWeightStandart, fragSize, brpFrag.length, mainClassIds]);
-		brpFrag.forEach(id => {
-			const v = simpleAdj.get(id);
-			if (!v) return;
-			brpClassRows.push([brpRunId, id, localClassNames.get(id) ?? "", mainClassesSet.has(id) ? 1 : 0, v.centralityMeasure, v.closeness, v.relevance, v.relationRelevance ?? "", standardPropCol]);
-		});
+	// Cache PPR adj per edge-weight context.
+	const pprAdjCache = new Map();
+	const getPPRAdj = async (ctx) => {
+		if (!pprAdjCache.has(ctx)) {
+			if (ctx === "no-ctx") {
+				pprAdjCache.set(ctx, await getCPCAdj(true, true, 1));
+			} else {
+				const [w, ub] = getBoolsFromEdgeWeightContext(ctx);
+				pprAdjCache.set(ctx, await getCPCAdj(w, ub));
+			}
+		}
+		return pprAdjCache.get(ctx);
+	};
 
-		for (let ctxIdx = 0; ctxIdx < pprEdgeWeightContexts.length; ctxIdx++) {
-			const edgeWeightContext = pprEdgeWeightContexts[ctxIdx];
-			const pprAdj = await getAdj(edgeWeightContext);
-			const pprRunId = `ppr_ctx${ctxIdx}_s${fragSize}`;
+	const getAllSubsets = (arr) => {
+		const result = [];
+		for (let mask = 1; mask < (1 << arr.length); mask++) {
+			result.push(arr.filter((_, i) => mask & (1 << i)));
+		}
+		return result.sort((a, b) => a.length - b.length);
+	};
+	const mainClassCombos = getAllSubsets(mainClasses);
 
-			const [pprFrag, pprRank] = await fragmentsPPR(mainClasses, fragSize, pprAlpha, pprTol, pprAdj);
+	const brpRunsRows   = [["run_id", "edges_in_triples", "cnt_transform", "use_instance_count", "class_weight_incoming", "beta", "prop_weight_standart", "closeness_mode", "frag_size", "fragment_size_actual", "main_class_ids"]];
+	const brpClassRows  = [["run_id", "class_id", "class_name", "is_main_class", "centrality", "closeness", "relevance", "relation_relevance", "standard_properties"]];
+	const pprRunsRows   = [["run_id", "alpha", "edge_weight_context", "frag_size", "fragment_size_actual", "main_class_ids"]];
+	const pprClassRows  = [["run_id", "class_id", "class_name", "is_main_class", "rank", "standard_properties"]];
 
-			pprRunsRows.push([pprRunId, pprAlpha, edgeWeightContext, fragSize, pprFrag.length, mainClassIds]);
-			pprFrag.forEach(id => {
-				pprClassRows.push([pprRunId, id, localClassNames.get(id) ?? "", mainClassesSet.has(id) ? 1 : 0, pprRank.get(id) ?? 0, standardPropCol]);
-			});
+	// PPR runs are independent of BRP variants — run once per combo × fragSize × context.
+	for (let comboIdx = 0; comboIdx < mainClassCombos.length; comboIdx++) {
+		const mainClassCombo = mainClassCombos[comboIdx];
+		const mainClassesSet = new Set(mainClassCombo);
+		const mainClassIds = mainClassCombo.join(";");
 
-			console.log(`BRP s${fragSize}: size ${brpFrag.length} | PPR ctx${ctxIdx} s${fragSize} (alpha=${pprAlpha}, ctx=${edgeWeightContext}): size ${pprFrag.length}`);
+		for (const fragSize of fragSizes) {
+			for (let ctxIdx = 0; ctxIdx < pprEdgeWeightContexts.length; ctxIdx++) {
+				const edgeWeightContext = pprEdgeWeightContexts[ctxIdx];
+				const pprAdj = await getPPRAdj(edgeWeightContext);
+				const pprRunId = `ppr_c${comboIdx}_ctx${ctxIdx}_s${fragSize}`;
+				const [pprFrag, pprRank] = await fragmentsPPR(mainClassCombo, fragSize, pprAlpha, pprTol, pprAdj);
+				pprRunsRows.push([pprRunId, pprAlpha, edgeWeightContext, fragSize, pprFrag.length, mainClassIds]);
+				pprFrag.forEach(id => {
+					pprClassRows.push([pprRunId, id, localClassNames.get(id) ?? "", mainClassesSet.has(id) ? 1 : 0, pprRank.get(id) ?? 0, standardPropCol]);
+				});
+				console.log(`PPR c${comboIdx} ctx${ctxIdx} s${fragSize} (alpha=${pprAlpha}, ctx=${edgeWeightContext}): size ${pprFrag.length}`);
+			}
+		}
+	}
+
+	// BRP runs: one pass per variant × combo × fragSize.
+	for (let variantIdx = 0; variantIdx < brpVariants.length; variantIdx++) {
+		const v = brpVariants[variantIdx];
+		const simpleAdj = await getBRPAdj(v);
+		const variantConfig = {...v, cntTransform: v.cntTransform.fn};
+
+		for (let comboIdx = 0; comboIdx < mainClassCombos.length; comboIdx++) {
+			const mainClassCombo = mainClassCombos[comboIdx];
+			const mainClassesSet = new Set(mainClassCombo);
+			const mainClassIds = mainClassCombo.join(";");
+
+			for (const fragSize of fragSizes) {
+				const brpRunId = `brp_v${variantIdx}_c${comboIdx}_s${fragSize}`;
+				const [brpFrag, ] = await fragmentsBRP(mainClassCombo, fragSize, simpleAdj, variantConfig);
+				brpRunsRows.push([brpRunId, v.edgesInTriples, v.cntTransform.name, v.useInstanceCount, v.classWeightIncoming, v.beta, v.propWeightStandart, v.closenessMode, fragSize, brpFrag.length, mainClassIds]);
+				brpFrag.forEach(id => {
+					const entry = simpleAdj.get(id);
+					if (!entry) return;
+					brpClassRows.push([brpRunId, id, localClassNames.get(id) ?? "", mainClassesSet.has(id) ? 1 : 0, entry.centralityMeasure, entry.closeness, entry.relevance, entry.relationRelevance ?? "", standardPropCol]);
+				});
+				console.log(`BRP v${variantIdx} (edges=${v.edgesInTriples}, transform=${v.cntTransform.name}, instances=${v.useInstanceCount}) c${comboIdx} s${fragSize}: size ${brpFrag.length}`);
+			}
 		}
 	}
 
@@ -937,7 +1106,7 @@ export async function exportCSVBRPandPPRComparison(mainClasses, pprAlpha = 0.85,
 	downloadCSV("brp_fragment_classes.csv", brpClassRows);
 	downloadCSV("ppr_runs.csv", pprRunsRows);
 	downloadCSV("ppr_fragment_classes.csv", pprClassRows);
-	console.log(`Wrote brp_runs.csv (${brpRunsRows.length - 1} rows), brp_fragment_classes.csv, ppr_runs.csv (${pprRunsRows.length - 1} rows), ppr_fragment_classes.csv`);
+	console.log(`Wrote brp_runs.csv (${brpRunsRows.length - 1} rows), brp_fragment_classes.csv (${brpClassRows.length - 1} rows), ppr_runs.csv (${pprRunsRows.length - 1} rows), ppr_fragment_classes.csv (${pprClassRows.length - 1} rows)`);
 }
 
 // Compare fragments calculated by various algorithms by calculating the fraction of common classes; uses each of selected classes as a main class. Currently always uses CPC rels.

@@ -311,6 +311,9 @@
                     <button id="hideFragment" type="button" class="btn btn-primary">Fragment computation options</button>
                     {{#if showFragmentBlock}}
                       <button id="getFragment" type="button" class="btn btn-primary" style="margin-left: auto;">Get fragment</button>
+                      {{#if showCentralityButton}}
+                        <button id="calculateRelevance" type="button" class="btn btn-primary" style="margin-left: 10px;">{{#if centralityApplied}}Hide Relevance{{else}}Calculate Relevance{{/if}}</button>
+                      {{/if}}
                     {{/if}}
                   </div>
                   {{#if showFragmentBlock}}
@@ -361,6 +364,7 @@
                           </div>
                           <span id="brp-alpha-val" style="font-variant-numeric: tabular-nums; text-align: left; min-width: 24px;">0.3</span>
                           <label style="text-align: left; margin-bottom: 0; line-height: 1.2;">Closeness Measure Weight</label>
+
                         </div>
                       </div>
                       <span id="fragment-std-prop-wrap" style="display: none; margin-left: 10px; align-items: flex-start; gap: 6px;">
@@ -377,6 +381,33 @@
                         <p id="fragment-ancestor-classes"></p>
                         <ul id="fragment-adj-classes" style="padding-left: 10px;"></ul>
                       </div> -->
+                    </div>
+                    <div id="fragment-brp-options" style="display: none; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 10px 0;">
+                      <label style="margin-bottom: 0;">Edges in triples:</label>
+                      <select id="brp-edgesInTriples">
+                        <option value="true" selected>Yes</option>
+                        <option value="false">No</option>
+                      </select>
+                      <span id="brp-cntTransform-wrap" style="display: inline-flex; align-items: center; gap: 8px;">
+                        <label style="margin-bottom: 0;">Count transform:</label>
+                        <select id="brp-cntTransform">
+                          <option value="log10" selected>log&#x2081;&#x2080;</option>
+                          <option value="log2">log&#x2082;</option>
+                          <option value="sqrt">sqrt</option>
+                          <option value="full">full</option>
+                        </select>
+                      </span>
+                      <label style="margin-bottom: 0;">Use class instance count:</label>
+                      <select id="brp-useInstanceCount">
+                        <option value="false" selected>No</option>
+                        <option value="true">Yes</option>
+                      </select>
+                      <label style="margin-bottom: 0;">Closeness mode:</label>
+                      <select id="brp-closenessMode">
+                        <option value="centralityBased" selected>Centrality-based</option>
+                        <option value="weightBased">Weight-based</option>
+                        <option value="unweighted">Unweighted</option>
+                      </select>
                     </div>
                   {{/if}}
                 </div>
