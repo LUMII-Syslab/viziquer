@@ -168,11 +168,10 @@ async function getAdjFromCP(weightByCPCsum, useBothClasses) {
 // a neighbor with both standard and user-defined properties is counted in both.
 export async function getCPCAdjSimple(standardProperties = null, edgesInTriples = true, cntTransform = null, useInstanceCount = false) {
 	const CPCs = await dataShapes.callServerFunction("xx_getCPCInfo", {main: {}});
-	console.log("Returned CPCs from DSS");
 	const getProp = buildPropMetaGetter();
 	const isStandardProperty = makeIsStandardProperty(standardProperties);
 	const cpcPropIds = [...new Set(CPCs.data.map(r => r.property_id))];
-	console.log("getCPCAdjSimple: standardProperties =", standardProperties, "| sample CPC property_ids =", cpcPropIds.slice(0, 10), "| std matches =", standardProperties ? cpcPropIds.filter(id => standardProperties.map(Number).includes(Number(id))).length : "all (null)");
+	console.log("getCPCAdjSimple: standardProperties =", standardProperties, "| std matches =", standardProperties ? cpcPropIds.filter(id => standardProperties.map(Number).includes(Number(id))) : "all (null)");
 
 	let classSizes = null;
 	if (useInstanceCount) {
@@ -667,14 +666,19 @@ export async function computeBRPRelevance(mainClasses, config = {}, rawAdj = und
 		if (mainClasses.includes(classId)) {
 			obj.centralityMeasure = mainClassBoost;
 		} else {
-			const propTerm =
-				(maxStandardRels > 0 ? (obj.standardRelCount * propWeightStandart) / maxStandardRels : 0) +
-				(maxUserDefinedRels > 0 ? (obj.userDefinedRelCount * propWeightUserDefined) / maxUserDefinedRels : 0);
+			const standardPropTerm = maxStandardRels > 0 ? (obj.standardRelCount * propWeightStandart) / maxStandardRels : 0;
+			const userDefinedPropTerm = maxUserDefinedRels > 0 ? (obj.userDefinedRelCount * propWeightUserDefined) / maxUserDefinedRels : 0;
+			const propTerm = standardPropTerm + userDefinedPropTerm;
+			obj.propTerms = {standardPropTerm: standardPropTerm, userDefinedPropTerm: userDefinedPropTerm, sum: propTerm};
+
 			const divisor = totalInstances > 0
 				? (totalInstances - (obj.instanceCount ?? 0))
 				: (cpcListSimple.size - 1);
-			obj.centralityMeasure =
-				((classWeightIncoming * obj.inCount) + (classWeightOutgoing * obj.outCount)) * propTerm / divisor;
+			obj.centralityDivisor = divisor;
+
+			const classTerm = (classWeightIncoming * obj.inCount) + (classWeightOutgoing * obj.outCount);
+			obj.classTerm = classTerm;
+			obj.centralityMeasure = classTerm * propTerm / divisor;
 		}
 	});
 

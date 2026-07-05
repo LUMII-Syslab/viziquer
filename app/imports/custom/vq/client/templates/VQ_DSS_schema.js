@@ -143,7 +143,7 @@ function applyRelevancePrefixes(relevanceMap) {
 	dataShapes.schema.diagram.filteredClassList.forEach(cl => {
 		if (!brpOriginalNames.has(cl.id)) brpOriginalNames.set(cl.id, cl.display_name);
 		const r = relevanceMap.get(cl.id);
-		cl.display_name = (r !== undefined ? `R${r.toFixed(3)} - ` : '') + brpOriginalNames.get(cl.id);
+		cl.display_name = (r !== undefined ? `R${r.toFixed(4)} - ` : '') + brpOriginalNames.get(cl.id);
 	});
 }
 
@@ -1040,11 +1040,11 @@ Template.VQ_DSS_schema.events({
 		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize, undefined, brpConfig);
 
 		// Update list of chosen classes
-    _.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
-			if ( fragmentClasses.includes(cl.id)) cl.sel = 1;
-			else cl.sel = 0;
-		});
-    makeClassLists();
+		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+				if ( fragmentClasses.includes(cl.id)) cl.sel = 1;
+				else cl.sel = 0;
+			});
+		makeClassLists();
 		if (fragAlgorithm === "brp") sortAndApplyBRPRelevance(rank);
 	},
   'click #calculateRelevance': async function() {
@@ -1309,6 +1309,13 @@ Template.VQ_DSS_schema.events({
     };
     Template.VQ_DSS_schema.Properties.set((stdPropSelectedBackup || []).filter(matches));
     Template.VQ_DSS_schema.RestProperties.set((stdPropRestBackup || []).filter(matches));
+  },
+  'mousedown #selectedClasses option, mousedown #restClasses option': function(e) {
+	const id = Number(e.currentTarget.value);
+	if (brpCentralityData && brpCentralityData.cpcListSimple){
+		const classObj = brpCentralityData.cpcListSimple.get(id);
+		console.log("Class obj for", id, " is ", classObj);
+	}
   },
   // Suppress native multi-select highlight so only our gray edit-mode highlight is visible.
   'mousedown #selectedProperties option, mousedown #restProperties option': function(e) {
