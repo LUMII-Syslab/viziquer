@@ -6,8 +6,6 @@ import {
   useState,
 } from 'react';
 import {
-  deduplicateTable,
-  formatUniversalPaginatorQuery,
     MultiCardinalTableServer,
     SyncPropertySelector,
 } from "rdf-toolbag";
@@ -207,7 +205,6 @@ function SaveableQuery({ value, onValueChange }) {
 
 export function GroupedResultsPaginated() {
   const q = useEditorText();
-  const globalLimit = 10000;
   const [idVars, setIdVars] = useState(["this"]);
 
   const [savedQuery, setSavedQuery]= useState("");
@@ -216,38 +213,23 @@ export function GroupedResultsPaginated() {
     /** @type {Pagination} */ ({ pageIndex: 0, pageSize: 10 })
   );
 
-  const paginatedQuery = formatWithPagination(pagination);
-
-  /**
-   * @param {Pagination} pagination
-   */
-  function formatWithPagination(pagination) {
-    return formatUniversalPaginatorQuery({
-        queryToWrap: q,
-        globalLimit,
-        groupLimit: pagination.pageSize,
-        groupOffset: pagination.pageSize * pagination.pageIndex,
-        idVars,
-    });
-  }
-
   return e(
     "div",
     {},
     e(SaveableIdVarsSelector, {
       value: idVars,
       onValueChange: setIdVars,
-      query: paginatedQuery,
+      query: q,
     }),
     e(SaveableQuery, { value: savedQuery, onValueChange: setSavedQuery }),
     e(MultiCardinalTableServer, {
-      key: paginatedQuery, // HACK: Force remount and retrigger fetchRows
-      fetchRows: async () => {
-        if (savedQuery === "") throw new Error("Unexpected blank query!");
-
-        const rawRes = await executeUnlimited(paginatedQuery);
-        return deduplicateTable(rawRes, idVars);
+      queryCallback: ({ query }) => {
+        return executeUnlimited(query);
       },
+      baseQuery: savedQuery,
+      counterLimit: 10_000_000,
+      rawRowLimit: 100_000,
+      idVars,
       pagination,
       onPaginationChange: setPagination,
     }),
