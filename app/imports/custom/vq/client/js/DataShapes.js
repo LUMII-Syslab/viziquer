@@ -320,7 +320,7 @@ const findElementDataForProperty = async (vq_obj, className = null) => {
 const findElementDataForIndividual = async (vq_obj) => {
 	let params = {};
 	const class_name = await vq_obj.getName();
-	if (class_name !== null && class_name !== undefined)
+	if (class_name !== null && class_name !== undefined && class_name !== '')
 		params.className = class_name;
 
 	const isIndirectClassMembership = await vq_obj.isIndirectClassMembership();
@@ -505,7 +505,7 @@ const dataShapes = {
 				this.schema.showPrefixes = proj.showPrefixesForAllNames.toString();
 				//this.schema.empty = false;
 				this.schema.endpoint =  proj.endpoint;
-				if ( proj.uri !== undefined && proj.uri !== '' )
+				if ( proj.uri !== undefined && proj.uri !== '' && proj.uri !== null )
 					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`;
 
 				const info = await callWithGet('info/');
@@ -586,7 +586,7 @@ const dataShapes = {
 					await this.getPublicNamespaces();
 					if (proj.endpoint !== undefined && proj.endpoint !== "") {
 						this.schema.endpoint =  proj.endpoint;
-						if ( proj.uri !== undefined && proj.uri !== '' )
+						if ( proj.uri !== undefined && proj.uri !== '' && proj.uri !== null  )
 							this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`;
 
 						this.schema.filling = 2;
@@ -601,7 +601,7 @@ const dataShapes = {
 				await this.getPublicNamespaces();
 				if (proj.endpoint !== undefined && proj.endpoint !== "") {
 					this.schema.endpoint =  proj.endpoint;
-					if ( proj.uri !== undefined && proj.uri !== '' )
+					if ( proj.uri !== undefined && proj.uri !== '' && proj.uri !== null )
 						this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`;
 
 					this.schema.filling = 2;
