@@ -1,23 +1,16 @@
 // @ts-check
 import { Interpreter } from '/imports/client/lib/interpreter.js';
 import { Template } from "meteor/templating";
-import { createVQ_Element, VQ_Element } from '../js/VQ_Element.js'
+import { createVQ_Element } from '../js/VQ_Element.js'
 
 import './generate_complex_table_query_form.html'
-import { Button, getClasses, getPrefixes, getProperties, initReactComponents, rem, reshapeData, resolvePrefixedName } from '../js/complexTable.js';
+import { Button, getClasses, getPrefixes, getProperties, initReactComponents, rem, resolvePrefixedName } from '../js/complexTable.js';
 import { createElement, useEffect, useState } from 'react';
 import {
     ComplexPropertySelector,
-    deduplicateTable,
-    demangleVarName,
-    formatMultiCardinalTableAsSelectQuery,
     formatQuery,
-    formatUniversalPaginatorQuery,
-    SyncPropertySelector,
 } from 'rdf-toolbag';
 import { makeEventHandler } from './event.js';
-import { subscribeQueryEvent } from '../js/generateSPARQL_jo.js';
-import { getComplexTableInfoSession, setComplexTableInfoSession } from '../js/complexTableUtil.js';
 
 /** @type {*} */
 let modalElement = null;
@@ -38,25 +31,6 @@ let modalElement = null;
 const queryGeneratorModalRequest = /** @type {ReturnType<typeof makeEventHandler<ModalRequestEventPayload>>} */ (
     makeEventHandler()
 );
-
-// NOTE: handle automatic idVars override
-subscribeQueryEvent(({ eventType }) => {
-    if (eventType === "queryFinished") {
-        const { sparql } = Session.get("executedSparql");
-        const complexTableInfo = getComplexTableInfoSession();
-        const { queryToWrap } = complexTableInfo;
-        const currentEditorText = Template.sparqlForm.yasqe3.get().getValue();
-
-        // NOTE: If true that means that the generated query was not modified and we should respect
-        // the selection that was made beforehand. `finalQuery` is only set during complex table
-        // generation.
-        if (currentEditorText === queryToWrap) return;
-
-        const reshaped = reshapeData(sparql);
-        const idVars = reshaped.head.vars.slice(0, 1);
-        setComplexTableInfoSession({ ...complexTableInfo, idVars});
-    }
-});
 
 /**
  * @param text {string}
@@ -310,16 +284,11 @@ function useSyncWithDiagram(setSelection) {
 
 /**
  * @param {ComplexPropertySelection} selection
- * @param {string[]} idVars
  **/
-function executeFromSelection(selection, idVars) {
-    const queryToWrap = formatQuery(selection);
+function executeFromSelection(selection) {
+    const queryToWrap = formatQuery(selection).query;
 
     setEditorText(queryToWrap);
-    setComplexTableInfoSession({
-        queryToWrap,
-        idVars,
-    });
 
     Template.GenerateComplexTableQueryForm.hideModal();
 
@@ -334,45 +303,20 @@ export function QueryGeneratorView() {
             objectProps: [],
         })
     );
-    const [idVars, setIdVars] = useState(["this"]);
-
-    /**
-     * @param {ComplexPropertySelection} selection
-     * @return {string[]}
-     */
-    function selectionToIdVarSuggestions(selection) {
-        // NOTE: A pretty rough method to do this but it does work
-        const formattedQuery = formatQuery(selection);
-        const matches = formattedQuery.match(/\?\w+/g);
-        // NOTE: Keep unique values and remove the leading "?" in matched var name
-        return [...new Set(matches)].map((match) => match.slice(1));
-    }
-
-    const suggestions = selectionToIdVarSuggestions(selection).flatMap((value) => {
-        const label = demangleVarName(value, selection);
-        return label ? { value, label } : [];
-    });
-
-    const globalLimit = 1000; // FIXME: hardcoded
-    const pageSize = 10; // FIXME: hardcoded
 
     useSyncWithDiagram(setSelection);
 
     function onCreateClick() {
-        const queryToWrap = formatQuery(selection);
+        const queryToWrap = formatQuery(selection).query;
 
         setEditorText(queryToWrap);
         switchToEditorTab();
-        setComplexTableInfoSession({
-            queryToWrap,
-            idVars,
-        });
 
         Template.GenerateComplexTableQueryForm.hideModal();
     }
 
     function onExecuteClick() {
-        executeFromSelection(selection, idVars);
+        executeFromSelection(selection);
     }
 
     function H1({ style, ...props }) {
@@ -414,31 +358,6 @@ export function QueryGeneratorView() {
                         value: iri,
                     }))),
             },
-        ),
-        createElement(H1, {}, "Limiting & Grouping"),
-        createElement(
-            "div",
-            {
-                style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: rem(0.5),
-                },
-            },
-            createElement("p", {}, `globalLimit: ${globalLimit}`),
-            createElement("p", {}, `pageSize: ${pageSize}`),
-            createElement(
-                "div",
-                {},
-                createElement("p", {}, "idVars"),
-                createElement(
-                    SyncPropertySelector,
-                    {
-                        suggestions,
-                        value: idVars,
-                        onValueChange: setIdVars,
-                    }),
-            ),
         ),
         createElement(
             "div",
@@ -489,8 +408,7 @@ function tryShowingModal() {
  * @param {ComplexPropertySelection} selection
  */
 function executeFromSelectionWithDefaults(selection) {
-    const idVars = ["this"];
-    executeFromSelection(selection, idVars);
+    executeFromSelection(selection);
 }
 
 Interpreter.customMethods({
