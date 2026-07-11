@@ -49,9 +49,6 @@ import './sparql_form.css'
 // var yasqe = null;
 // var yasqe3 = null;
 
-// NOTE: Limit size that is larger than the usual page size and can be used to fetch more rows
-const BIG_LIMIT = 2000;
-
 var sparql_form_events = {
 
 	/*"blur #generated-sparql3": function(e) {
@@ -120,29 +117,6 @@ var sparql_form_events = {
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
 	},
-
-    "click #change-limit": async function(e) {
-        e.preventDefault();
-
-        const yasqe = Template.sparqlForm_see_results.yasqe.get();
-        const query = yasqe.getValue();
-        const obj = Session.get("executedSparql");
-
-        const newLimit = BIG_LIMIT;
-		const paging_info = { offset: 0, limit: newLimit, number_of_rows: obj.number_of_rows};
-
-		await Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
-
-        // NOTE: We are fixing limit because it is not updated
-        // NOTE: We are overriding limit_set to be true only when row count hits the limit because
-        // UI uses this info to show if the limit is reached.
-        const oldValue = Session.get("executedSparql");
-        Session.set("executedSparql", {
-            ...oldValue,
-            limit: newLimit,
-            limit_set: oldValue.number_of_rows >= newLimit,
-        });
-    },
 
 	"click #download-results": function (e) {
 		e.preventDefault();
@@ -250,9 +224,6 @@ var sparql_form_helpers = {
 
 		return `${beforeLocalName.slice(0, MAX_URI_DISPLAYED - localName.length - 2)}...${localName}`
 	},
-    bigLimit() {
-        return BIG_LIMIT;
-    },
 };
 
 

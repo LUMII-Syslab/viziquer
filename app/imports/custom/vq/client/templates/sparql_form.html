@@ -61,7 +61,6 @@
                                         </table>
                                     </div>
                                     {{#if limit_set}}
-                                        <button id="change-limit" class="btn btn-success btn-sm">Set limit {{bigLimit}}</button>
                                         {{#if showPrev offset}}<button id="prev-sparql" class="btn btn-success btn-sm">Previous 50</button>{{/if}}
                                         {{#if showNext offset number_of_rows}}<button id="next-sparql" class="btn btn-success btn-sm">Next 50</button>{{/if}}
                                         <button id="download-results" class="btn btn-danger btn-sm">Download All</button>
@@ -175,9 +174,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <button id="change-limit" class="btn btn-success btn-sm">
-                              Set limit {{bigLimit}}
-                            </button>
                             {{#if limit_set}}
                                 {{#if showPrev offset}}<button id="prev-sparql" class="btn btn-success btn-sm">Previous 50</button>{{/if}}
                                 {{#if showNext offset number_of_rows}}<button id="next-sparql" class="btn btn-success btn-sm">Next 50</button>{{/if}}
