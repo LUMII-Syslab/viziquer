@@ -1,25 +1,13 @@
 // @ts-check
 import {
-    Fragment,
     createElement,
-    useEffect,
-    useState,
 } from "react";
 import { createRoot } from "react-dom/client";
-import { useTracker } from "meteor/react-meteor-data";
-import { Session } from "meteor/session";
-import { Template } from "meteor/templating";
 import {
     PortalContext,
-    AggregatedTable,
-    SyncPropertySelector,
-    formatMultiCardinalTableAsSelectQuery,
-    deduplicateTable,
-    demangleVarName,
 } from "rdf-toolbag";
 // @ts-ignore
 import rdfToolbagStyle from 'rdf-toolbag/dist/rdf-toolbag.css';
-import { tableToRows } from 'rdf-toolbag/dist/rdf-toolbag.js'
 import { dataShapes } from '../../../vq/client/js/DataShapes.js'
 
 // NOTE: Using `rem` and `styleOverrideMap` to emulate the default 1rem=16px layout because
@@ -267,104 +255,6 @@ export function Button(props) {
             },
             ...restProps,
         },
-    );
-}
-
-function usePrefixes() {
-    const [prefixes, setPrefixes] = useState(
-        /** @type {Awaited<ReturnType<getPrefixes>> | null} */ (null)
-    );
-
-    useEffect(() => {
-        getPrefixes().then((newPrefixes) => setPrefixes(newPrefixes));
-    }, []);
-
-    return prefixes;
-}
-
-function DeduplicatedTableView() {
-    const complexTableInfo = useTracker(() => Session.get("complexTableInfo"));
-    const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
-
-    // NOTE: Stricter validation could come handy here
-    const deduplicationKey = complexTableInfo?.idVars || [];
-    const selection = complexTableInfo?.selection;
-
-    const reshapedData = tableRes ? reshapeData(tableRes) : null;
-
-    const rows = reshapedData && deduplicateTable(reshapedData, deduplicationKey);
-
-    const prefixes = usePrefixes();
-
-    const firstRow = rows?.[0];
-
-    if (!firstRow) return undefined;
-
-    return rows && createElement(
-        "div",
-        {},
-        createElement(AggregatedTable, {
-            rows,
-            renderHeader(colName) {
-                if (!prefixes) return colName;
-
-                const prefixEntries = Object.entries(prefixes);
-
-                const parts = colName
-                      .split(">")
-                      .map((s) => s.trim())
-                      .map((part) => {
-                          const maybePrefix = prefixEntries.find(([_, full]) => part.startsWith(full));
-                          return maybePrefix ? part.replace(maybePrefix[1], `${maybePrefix[0]}:`) : part;
-                      });
-
-                return parts.join(" > ");
-            },
-        }),
-    );
-}
-
-export function ExtendedTableView() {
-    const complexTableInfo = useTracker(() => Session.get("complexTableInfo"));
-    const idVars = complexTableInfo?.idVars || [];
-    const selection = complexTableInfo?.selection;
-
-    /**
-     * @param {string[]} newValue
-     **/
-    function setIdVars(newValue) {
-        Session.set("complexTableInfo", { ...complexTableInfo, idVars: newValue });
-    }
-
-    const tableRes = useTracker(() => Session.get("executedSparql")?.sparql);
-    const reshapedData = tableRes ? reshapeData(tableRes) : null;
-
-    const suggestions = reshapedData?.head.vars.map((value) => {
-        const maybeLabel = selection && demangleVarName(value, selection);
-        return { value, label: maybeLabel || value, };
-    }) || [];
-
-    return createElement(
-        "div",
-        {},
-        createElement(
-            "div",
-            { style: { marginBottom: "4px" } },
-            createElement("p", { style: { fontSize: "16px" }}, "Key columns"),
-            createElement(
-                SyncPropertySelector,
-                {
-                    suggestions,
-                    value: idVars,
-                    onValueChange: setIdVars,
-                }),
-        ),
-        createElement("p", { style: { fontSize: "16px" } }, "Table"),
-        createElement(
-            "div",
-            {},
-            createElement(DeduplicatedTableView)
-        ),
     );
 }
 

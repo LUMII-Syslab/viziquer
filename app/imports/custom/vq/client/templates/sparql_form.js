@@ -9,7 +9,6 @@ import { dataShapes } from '../../../../custom/vq/client/js/DataShapes.js'
 
 import {
     initReactComponents,
-    ExtendedTableView,
 } from '../js/complexTable.js';
 import {
     GroupedResultsPaginated,
@@ -324,10 +323,6 @@ Template.sparqlForm.onRendered(async function () {
         }
     }
 
-    tryMounting(
-        "#extraResults .react-mount-root",
-        createElement(ExtendedTableView),
-    );
     tryMounting(
         "#extraResultsPaginated .react-mount-root",
         createElement(GroupedResultsPaginated),
