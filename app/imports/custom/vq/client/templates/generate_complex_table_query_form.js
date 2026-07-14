@@ -387,7 +387,7 @@ export function QueryGeneratorView() {
                         width: "fit-content",
                     },
                 },
-                "Create sparql",
+                "SPARQL Query",
             ),
             createElement(
                 Button,
@@ -397,7 +397,7 @@ export function QueryGeneratorView() {
                         width: "fit-content",
                     },
                 },
-                "Execute sparql",
+                "Show Data",
             ),
         ),
     );
