@@ -9,6 +9,7 @@ import { createElement, useEffect, useState } from 'react';
 import {
     ComplexPropertySelector,
     formatQuery,
+    rewriteQueryWithPrefixes,
 } from 'rdf-toolbag';
 import { makeEventHandler } from './event.js';
 
@@ -284,9 +285,25 @@ function useSyncWithDiagram(setSelection) {
 
 /**
  * @param {ComplexPropertySelection} selection
+ *
+ * @return {Promise<string>}
  **/
-function executeFromSelection(selection) {
-    const queryToWrap = formatQuery(selection).query;
+async function selectionToQuery(selection) {
+    const query = formatQuery(selection).query;
+
+    const prefixInfo = (await getPrefixes().then((it) => Object.entries(it)))
+          .map(([prefix, uri]) => ({ prefix, uri }));
+
+    const res = rewriteQueryWithPrefixes({ query, prefixInfo });
+
+    return res;
+}
+
+/**
+ * @param {ComplexPropertySelection} selection
+ **/
+async function executeFromSelection(selection) {
+    const queryToWrap = await selectionToQuery(selection);
 
     setEditorText(queryToWrap);
 
@@ -306,8 +323,8 @@ export function QueryGeneratorView() {
 
     useSyncWithDiagram(setSelection);
 
-    function onCreateClick() {
-        const queryToWrap = formatQuery(selection).query;
+    async function onCreateClick() {
+        const queryToWrap = await selectionToQuery(selection);
 
         setEditorText(queryToWrap);
         switchToEditorTab();
