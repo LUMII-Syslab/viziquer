@@ -44,6 +44,16 @@ Template.VQ_DSS_schema.HasCPC = new ReactiveVar('');
 Template.VQ_DSS_schema.ShowFragmentBlock = new ReactiveVar('');
 Template.VQ_DSS_schema.ShowCentralityButton = new ReactiveVar(false);
 Template.VQ_DSS_schema.CentralityButtonDisabled = new ReactiveVar(false);
+Template.VQ_DSS_schema.CountEnabled  = new ReactiveVar('');
+
+// Labels, titles and hints
+const LF_fixedCount = 'Fixed class count in diagram';
+const I_fixedCount = 'Explanation ...';  // Vienkāršais variants klašu atlasīšanai, tikai ar skaitu un kārtošanu, izslēdzot dabū manuālo režīmu
+const I_addPropEnds = 'Explanation ...'; // Properiju gali bez klasēm
+const I_pMaxCount = 'Explanation ...';  // Maksimālais vienas propertijas līniju skaits diagrammā
+const I_pMinSize = 'Explanation ...';  // To propertiju minimālais trijnieku skaits, kuras tiek zīmētas ka līnijas
+const I_pList = 'Explanation ...';  // Propertiju sarakstu rādīšanas parametrs
+
 
 Interpreter.customMethods({
 	VQ_DSS_schema: function(){
@@ -306,6 +316,27 @@ function paintSplitSlider(slider, leftValId, rightValId) {
 }
 
 Template.VQ_DSS_schema.helpers({
+  LF_fixedCount: function() {
+    return LF_fixedCount;
+  },
+  I_fixedCount: function() {
+    return I_fixedCount;
+  },
+  I_addPropEnds: function() {
+    return I_addPropEnds;
+  },
+  I_pMaxCount: function() {
+    return I_pMaxCount;
+  },
+  I_pMinSize: function() {
+    return I_pMinSize;
+  },
+  I_pList: function() {
+    return I_pList;
+  },
+  countEnabled: function() {
+   return Template.VQ_DSS_schema.CountEnabled.get();
+  },
 	pub: function() {
 		return dataShapes.schema.isPublic; //Template.VQ_DSS_schema.IsPublic.get();
 	},
@@ -388,7 +419,7 @@ Template.VQ_DSS_schema.helpers({
 		return Template.VQ_DSS_schema.FilterDisabled.get();
 	},
 	nsFilters: function() {
-		return Template.VQ_DSS_schema.NsFilters.get();
+    return Template.VQ_DSS_schema.NsFilters.get();
 	},
 	classCount: function() {
 		return Template.VQ_DSS_schema.ClassCount.get();
@@ -710,7 +741,7 @@ Template.VQ_DSS_schema.events({
 		propList = propList.map(v => v.id);
 		let allParams = {main: { c_list: classList, p_list:propList}};
 		//console.log(allParams, classList, propList )
-
+    // Salīdzina dažādas CPC rēķināšanas rezultātus
 		const rr1 = await dataShapes.callServerFunction("xx_getCPCInfo", allParams);
 		const rr2 = await dataShapes.callServerFunction("xx_getCPCInfoNew", allParams);
 		console.log(rr1,rr2)
@@ -995,6 +1026,21 @@ Template.VQ_DSS_schema.events({
 			Template.VQ_DSS_schema.FilterDisabled.set("");
 		}
 	},
+  'click #fixedCount': function() {
+		if ( !$("#fixedCount").is(":checked") ) {
+			Template.VQ_DSS_schema.ManualDisabled.set("");
+			Template.VQ_DSS_schema.FilterDisabled.set("disabled");
+			const classList = Template.VQ_DSS_schema.Classes.get().map(v => v.id);
+			_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+				if ( classList.includes(cl.id))
+					cl.sel = 1;
+			});
+		}
+		else {
+			Template.VQ_DSS_schema.ManualDisabled.set("disabled");
+			Template.VQ_DSS_schema.FilterDisabled.set("");
+		}
+	},
 	'click #getFragment': async function() {
 		// Get parameters
     isFragment = true; // TODO šis nav līdz galam uztaisīts
@@ -1034,7 +1080,7 @@ Template.VQ_DSS_schema.events({
 		// 	standardProperties:  fragmentStdPropIds.size > 0 ? [...fragmentStdPropIds] : null,
 		// 	closenessMode: ['centralityBased', 'weightBased', 'unweighted'],
 		// }, sizes);
-		
+
 
 		// Calculate fragment
 		const [fragmentClasses, rank] = await runFragmentAlgorithm(fragAlgorithm, fragEdgeWeightContext, mainClasses, fragSize, undefined, brpConfig);
@@ -1219,10 +1265,14 @@ Template.VQ_DSS_schema.events({
     isFragment = false;
   },
   'keyup #filter' : async function(){
-    var filter = $("#filter").val().toLowerCase();
+    let filter = $("#filter").val().toLowerCase();
     let allParams = {main: { limit: 100, filter: filter }};
 		rr = await dataShapes.callServerFunction("xx_getClassList", allParams);
     Template.VQ_DSS_schema.ClassesF.set(rr.data);
+  },
+  'keyup #class_filter' : async function(){
+    const filter = $("#class_filter").val().toLowerCase();
+    filterClassList(filter);
   },
   'change #fragment-algorithm': function(e) {
     const isBRP = e.target.value === "brp";
@@ -1813,6 +1863,9 @@ function setClassList0() {
 	Template.VQ_DSS_schema.ManualDisabled.set("disabled");
 	Template.VQ_DSS_schema.FilterDisabled.set("");
 	Template.VQ_DSS_schema.RestProperties.set([]);
+  const elSelect = document.getElementById('class_filter');
+  if ( elSelect != null)
+    elSelect.value = '';
 	const nsFilters = [{value:'All', name:'Classes in all namespaces'},{value:'Data',name:'Classes in all data namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}];
 
 	//const schema = dataShapes.schema.schema;
@@ -1878,6 +1931,19 @@ function setClassList0() {
     }
     Template.VQ_DSS_schema.PropertiesF.set(propF);
 	}
+}
+
+function filterClassList(filter) {
+  const filteredClassList = dataShapes.schema.diagram.filteredClassList;
+  let classes = [];
+	let restClasses = [];
+  for (const cl of filteredClassList) {
+    if (cl.sel == 1)
+      classes.push(cl);
+    else if (cl.full_name_lc.indexOf(filter) !== -1)
+      restClasses.push(cl);
+  }
+  setClassListInfo(classes, restClasses);
 }
 
 function sortClassList() {
@@ -1957,8 +2023,9 @@ function setClassList(changeCount = false) {
 }
 
 function makeClassLists() {
+  const filter = $("#class_filter").val().toLowerCase();
 	const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 1});
-	const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 0});
+	const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 0 && c.full_name_lc.indexOf(filter) !== -1 });
 	setClassListInfo(classes, restClasses);
 	sortClassList()
 }

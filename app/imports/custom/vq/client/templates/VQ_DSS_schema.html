@@ -198,7 +198,7 @@
 
               <ul class="nav nav-tabs" id="vq-tab2" style="padding-top:10px;">
                 <li class="active"><a data-toggle="tab" href="#VQ-DSS-main">Classes and properties</a></li>
-                <li><a data-toggle="tab" href="#parameters">Class merging parameters</a></li>
+                <li><a data-toggle="tab" href="#parameters">Diagram parameters</a></li>
                 <li><a data-toggle="tab" href="#extra2">Extra parameters</a></li>
                 {{#if pub}}
                 {{else}}
@@ -209,23 +209,23 @@
               <div class="tab-content" style="overflow:auto;">
                 <!-- //////////////////////////////////////// -->
                 <div id="VQ-DSS-main" class="tab-pane fade in active">
-                  <div class="explain-form-group" style="padding-bottom:5px; padding-top:10px;">
-                    <span class="label label-default" style="font-size:15px; background-color:transparent;">Class list filters:</span>
-                  </div>
                   <div class="container-fluid">
                     <div class="row">
                       <div class="col-sm-6">
+                        <div class="explain-form-group" style="padding-top:20px;">
+                          <span class="label label-default" style="font-size:15px; background-color:transparent;">{{LF_fixedCount}}</span>
+                            <label class="form-check-label">
+                              <input class="form-check-input" id="fixedCount" name="fixedCount" index = 1 type="checkbox" checked = "checked" >
+                              <span class="custom-checkbox"></span>
+                                <div class="help-tip">
+                                  <p>{{I_fixedCount}} </p>
+                                </div>
+                            </label>
+                        </div>
                         <div class="slidecontainer" style="width: 400px; padding-bottom:10px;">
                           <p><span id="classCount-slider-span"> </span> Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
                           <input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount"  {{filterDisabled}}>
                         </div>
-                        <select class="form-control" id="nsFilter" {{filterDisabled}} style="width: 400px;">
-                          {{#each nsFilters}}
-                            <option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
-                          {{/each}}
-                        </select>
-                      </div>
-                      <div class="col-sm-6">
                         <select class="form-control" id="sortPar" style="width: 400px;">
                           <option selected value=1 >Sort classes by class weight</option>
                           <option value=3 >Sort classes by count of class individuals</option>
@@ -233,19 +233,27 @@
                           <option value=2 >Sort classes by namespaces</option>
                         </select>
                         <span>Class weight = (class individuals) + (incoming triples)^(5/6)</span>
+                      </div>
+                      <div class="col-sm-6">
                         <div class="slidecontainer" style="width: 400px; padding-top:10px;">
                           <p><span id="propCount-slider-span"> </span>. Properties in the diagram - {{propCount}}</p>
                           <input type="range" min="0" max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider" {{filterDisabled}} >
                         </div>
+                        <label class="form-check-label" style="width: 400px; padding-top:10px; padding-bottom:10px;" >
+                          <input class="form-check-input" name = "addPropEnds" id="addPropEnds" type="checkbox" >
+                          <span class="custom-checkbox"></span>
+                          Non-class nodes
+                          <div class="help-tip">
+                            <p>{{I_addPropEnds}} </p>
+                          </div>
+                        </label>
+                        <label>Class name filter:</label>
+                        <input id="class_filter" type="text" class="form-control" style="width: 300px;"   {{manualDisabled}} >
                       </div>
                     </div>
                   </div>
                   <div class="explain-form-group" style="padding-top:20px;">
-                    <span class="label label-default" style="font-size:15px; background-color:transparent;">Manual classes and properties selection</span>
-                      <label class="form-check-label">
-                        <input class="form-check-input" id="manual" name="manual" index = 1 type="checkbox" >
-                        <span class="custom-checkbox"></span>
-                      </label>
+
                   </div>
                   <div class="container-fluid">
                     <div class="row">
@@ -420,45 +428,100 @@
                           <p><span id="classCount-slider-span2"> </span> Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
                           <input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount2"  {{filterDisabled}}>
                         </div>
-                        <select class="form-control" id="diffG" style="width:300px;" >
-                          <option value=0 >Without merging</option>
-                          <option value=1 >Merge equivalent classes</option>
-                          <option value=2 >Weak merging (2)</option>
-                          <option selected value=5 >Basic merging (5)</option>
-                          <option value=10 >Strong merging (10)</option>
-                          <option value=20 >Strong merging (20)</option>
-                        </select>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="slidecontainer" style="padding-bottom:10px; padding-top:10px;">
-                          <p><span id="propCount-slider-span2"> </span>. Properties - {{propCount}}</p>
-                          <input type="range" min="0" max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider2" {{filterDisabled}} >
+                        <div class="form-group">
+                          <label for="diffG" class="col-sm-3 control-label" >Merging strength:</label>
+                          <div class="col-sm-9">
+                            <select class="form-control" id="diffG" >
+                              <option value=0 >Without merging</option>
+                              <option value=1 >Equivalent classes</option>
+                              <option value=2 >Weak (2)</option>
+                              <option selected value=5 >Basic (5)</option>
+                              <option value=10 >Strong (10)</option>
+                              <option value=20 >Strong (20)</option>
+                            </select>
+                          </div>
                         </div>
-                        <button id="showGroups" type="button" class="btn btn-primary" >Show merged classes</button>
+                        <div class="form-group">
+                          <label > </label>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-sm-6">
+                            <button id="showGroups" type="button" class="btn btn-primary" >Compute nodes</button>
+                          </div>
+                          <div class="col-sm-6">
+                            <button id="makeDiagrAJOO2a" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Create Diagram</button>
+                          </div>
+                        </div>
                         {{#if pub}}
                         {{else}}
                           <button id="showClasses" type="button" class="btn btn-primary">Show basic classes</button>
                         {{/if}}
                       </div>
-                      <div class="col-sm-4" style="padding-top:10px;">
-                        <div style="padding-bottom:10px;">
-                          <span class="label label-default" style="font-size:15px; background-color:transparent;">Diagram parameters:</span>
+                      <div class="col-sm-4">
+                        <div class="slidecontainer" style=" padding-top:10px;">
+                          <p><span id="propCount-slider-span2"> </span>. Properties - {{propCount}}</p>
+                          <input type="range" min="0" max={{propSliderMax}} value={{propSliderSelected}} class="slider" id="propSlider2" {{filterDisabled}} >
                         </div>
-                        <label class="form-check-label" >
+                        <label class="form-check-label" style=" padding-top:5px;" >
                           <input class="form-check-input" name = "abstr" id="abstr" type="checkbox">
                           <span class="custom-checkbox"></span>
                           Make abstract superclasses
                         </label>
-                        <label class="form-check-label" >
-                          <input class="form-check-input" name = "addPropEnds" id="addPropEnds" type="checkbox" >
+                        <label class="form-check-label" style=" padding-top:5px;">
+                          <input class="form-check-input" name = "addSup" id="addSup" type="checkbox" checked = "checked">
                           <span class="custom-checkbox"></span>
-                          Display property sources and targets as boxes
+                          Add fragment superclasses to diagram
                         </label>
-                        <button id="makeDiagrAJOO2a" type="button" class="btn btn-primary" data-dismiss="modal" {{hasClasses}}>Create Schema diagram</button>
+                        <label class="form-check-label" style=" padding-top:5px;">
+                          <input class="form-check-input" name = "cover" id="cover" type="checkbox" checked = "checked">
+                          <span class="custom-checkbox"></span>
+                          Use DB Cover set indexes
+                        </label>
+                        <label class="form-check-label" style=" padding-top:5px;">
+                          <input class="form-check-input" name = "showIntersect" id="showIntersect" type="checkbox">
+                          <span class="custom-checkbox"></span>
+                          Connect intersecting classes
+                        </label>
+                      </div>
+                      <div class="col-sm-4">
+                        <label style="width:300px; padding-bottom:10px; padding-top:30px;"> Properties as lines: </label>
+                        <div class="form-group">
+                          <div class="col-sm-6">
+                            <label for="pMaxCount"  >Max count &ensp;</label>
+                            <label for="pMinSize"  >Min size &ensp;</label>
+                            <label for="pEssential">Essential for class % &ensp;</label>
+                            <label for="pList" style=" padding-top:20px; ">Brief property lists</label>
+                            <div class="help-tip">
+                              <p>{{I_pList}} </p>
+                            </div>
+                          </div>
+                          <div class="col-sm-4">
+                            <input type="number" id="pMaxCount" name="pMaxCount" value="7" style="width:50px;" >
+                            <div class="help-tip">
+                              <p>{{I_pMaxCount}} </p>
+                            </div>
+                            <input type="number" id="pMinSize" name="pMinSize" value="1" style="width:50px;" >
+                            <div class="help-tip">
+                              <p>{{I_pMaxCount}} </p>
+                            </div>
+                            <select class="form-control" id="pEssential" style="width:70px; " >
+                              <option selected value=0 >0%</option>
+                              <option value=1 >1%</option>
+                              <option value=2 >10%</option>
+                            </select>
+                             <label for="pMaxCount"  ></label>
+                            <select class="form-control" id="pList"  style=" width:70px;" >
+                              <option value=0 >Mini</option>
+                              <option selected value=1 >Midi</option>
+                              <option value=2 >Loose</option>
+                              <option value=3 >No</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="container-fluid" >
+                  <div class="container-fluid" style=" padding-top:10px;">
                     <span class="label label-default" style="font-size:15px; background-color:transparent; padding-left:0px;">Nodes- {{classCountUsed}}, groups - {{classCountGroups}}, abstract classes - {{classCountAbstr}}, lines - {{linesCount}} </span>
                   </div>
                   <div class="container-fluid" style="padding-top:10px;">
@@ -526,21 +589,9 @@
                           <span class="custom-checkbox"></span>
                           Compact list of property target classes
                         </label>
-                        <label class="form-check-label">
-                          <input class="form-check-input" name = "showIntersect" id="showIntersect" type="checkbox">
-                          <span class="custom-checkbox"></span>
-                          Connect intersecting classes
-                        </label>
-                        <label class="form-check-label">
-                          <input class="form-check-input" name = "addSup" id="addSup" type="checkbox" checked = "checked">
-                          <span class="custom-checkbox"></span>
-                          Add fragment superclasses to diagram
-                        </label>
-                        <label class="form-check-label">
-                          <input class="form-check-input" name = "cover" id="cover" type="checkbox" checked = "checked">
-                          <span class="custom-checkbox"></span>
-                          Use DB Cover set indexes
-                        </label>
+
+
+
                         <select class="form-control" id="diffT" style="width:300px;" >
                           <option selected value=0 >Target merging Sim>0</option>
                           <option value=1 >Target merging Sim>1</option>
@@ -578,15 +629,6 @@
                             Old diffs
                           </label>
                         {{/if}}
-                  </div>
-                </div>
-                <!-- //////////////////////////////////////// -->
-                <div id="fragment" class="tab-pane fade">
-                  <div class="form-group">
-                    <label for="" class="col-sm-2 control-label">Filter</label>
-                    <div class="col-sm-10">
-                        <input id="filter" type="text" class="form-control" style="width: 200px;" >
-                    </div>
                   </div>
                 </div>
                 <!-- //////////////////////////////////////// -->
