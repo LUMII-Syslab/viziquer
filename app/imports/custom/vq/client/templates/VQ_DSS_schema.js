@@ -44,7 +44,6 @@ Template.VQ_DSS_schema.HasCPC = new ReactiveVar('');
 Template.VQ_DSS_schema.ShowFragmentBlock = new ReactiveVar('');
 Template.VQ_DSS_schema.ShowCentralityButton = new ReactiveVar(false);
 Template.VQ_DSS_schema.CentralityButtonDisabled = new ReactiveVar(false);
-Template.VQ_DSS_schema.CountEnabled  = new ReactiveVar('');
 
 // Labels, titles and hints
 const LF_fixedCount = 'Fixed class count in diagram';
@@ -53,6 +52,7 @@ const I_addPropEnds = 'Explanation ...'; // Properiju gali bez klasēm
 const I_pMaxCount = 'Explanation ...';  // Maksimālais vienas propertijas līniju skaits diagrammā
 const I_pMinSize = 'Explanation ...';  // To propertiju minimālais trijnieku skaits, kuras tiek zīmētas ka līnijas
 const I_pList = 'Explanation ...';  // Propertiju sarakstu rādīšanas parametrs
+const I_pw = 'Explanation ...';  // Size factor skaidrojums
 
 
 Interpreter.customMethods({
@@ -91,6 +91,11 @@ Template.VQ_DSS_schema.rendered = function( param = 'schema') {
   Template.VQ_DSS_schema.ClassesFS.set([]);
   Template.VQ_DSS_schema.PropertiesF.set([]);
   Template.VQ_DSS_schema.PropertiesFS.set([]);
+
+  let cl_namespaces = dataShapes.schema.namespaces.filter(function(ns){ return ns.cl_count > 0 && ns.name != '';});
+  cl_namespaces = cl_namespaces.sort(function (a, b) { return b.cnt - a.cnt; });
+  dataShapes.schema.cl_namespaces = cl_namespaces;
+  console.log('IIIIIIIIIIIIIIIIIIIIIII', dataShapes.schema.cl_namespaces);
 
 	// TODO cik lielas shēmas vispār piedāvāju vizualizēt
 	if ( dataShapes.schema.classCount < dataShapes.schema.diagram.maxCount) {
@@ -334,8 +339,8 @@ Template.VQ_DSS_schema.helpers({
   I_pList: function() {
     return I_pList;
   },
-  countEnabled: function() {
-   return Template.VQ_DSS_schema.CountEnabled.get();
+  I_pw: function() {
+    return I_pw;
   },
 	pub: function() {
 		return dataShapes.schema.isPublic; //Template.VQ_DSS_schema.IsPublic.get();
@@ -456,7 +461,7 @@ Template.VQ_DSS_schema.helpers({
 
 function getParams() {
   let diffG = (isFragment) ? 0 : $("#diffG").val();
-	let par = {addIds:false, disconnBig:$("#disconnBig").val(), hideSmall:$("#hideSmall").val(), compView:$("#compView").is(":checked"), newDifs:true, cover:$("#cover").is(":checked"),
+	let par = {addIds:false, showEssent:1/$("#pEssential").val(), compView:$("#compView").is(":checked"), newDifs:true, cover:$("#cover").is(":checked"),
 		pw:$("#pw").val(), k:1, diffG:diffG, diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked"), addPropEnds:false, duplicate:false}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 )
 		//	par.supPar = 2;
@@ -471,6 +476,21 @@ function getParams() {
   if ( $("#duplicate").is(":checked") )
 		par.duplicate = true;
 
+  let disconnBig = document.getElementById("pMaxCount").value;
+  if ( disconnBig < 0 )
+    disconnBig = 0;
+  par.disconnBig = disconnBig;
+
+  let hideSmall = document.getElementById("pMinSize").value;
+  if ( hideSmall < 0 )
+    hideSmall = 0;
+  par.hideSmall = hideSmall;
+
+  let showEssent = $("#pEssential").val();
+  if ( showEssent > 0)
+    showEssent = 1/showEssent;
+   par.showEssent = showEssent;
+
   if ( !dataShapes.schema.isPublic ) {
 		par.addIds = $("#addIds").is(":checked");
 		par.k = $("#kValue").val();
@@ -480,6 +500,7 @@ function getParams() {
 }
 
 function getInfo() {
+  // Tiek izmantots taisot TDA diagrammai datus
 	return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`,
 			$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text()];
 }
@@ -844,6 +865,7 @@ Template.VQ_DSS_schema.events({
 
 		let link = document.createElement("a");
 		link.setAttribute("download", "diagr_data.json");
+    // TDA diagrammas dati. Īsti vairs netiek izmantoti
 		link.href = URL.createObjectURL(new Blob([JSON.stringify(rezFull, 0, 4)], {type: "application/json;charset=utf-8;"}));
 		document.body.appendChild(link);
 		link.click();
@@ -1006,6 +1028,13 @@ Template.VQ_DSS_schema.events({
 		clearData();
 	},
 	'change #diffG': function() {
+    const diffG = $("#diffG").val();
+    const pw =  document.getElementById('pw');
+    if ( diffG == 20 )
+      pw.value = 0;
+    else
+      pw.value = 5;
+
 		clearData();
 	},
 	'click #abstr' : function() {
@@ -1851,7 +1880,7 @@ function setClassListInfo(classes, restClasses) {
 		Template.VQ_DSS_schema.HasClasses.set('');
 	}
 	Template.VQ_DSS_schema.RestClasses.set(restClasses);
-	Template.VQ_DSS_schema.ClassCountRest.set(restClasses.length);
+	Template.VQ_DSS_schema.ClassCountRest.set(dataShapes.schema.diagram.filteredClassList.length - classes.length); //Template.VQ_DSS_schema.ClassCountRest.set(restClasses.length);
 	if ( document.getElementById("classCount-slider-span") ) {
 		document.getElementById("classCount-slider-span").innerHTML = classes.length;
 		document.getElementById("classCount-slider-span2").innerHTML = classes.length;
@@ -1889,6 +1918,8 @@ function setClassList0() {
 		nsFiltersSel = 'Local';
 	}
 	*/
+
+
 
 	// TODO tagad visliem ir All, šis vairs nekad neizpildīsies
 	if ( nsFiltersSel == 'Exclude' )
@@ -3526,14 +3557,16 @@ function countAssociations() {
 
 // Diagrammas līniju savilkšanas daļa
 function makeAssociations() {
+  console.log('PPPPPPPPPPPPPPPPPPPPPPPPP', params)
 	const remBig = params.disconnBig > 0;
 	const remCount = params.disconnBig;
-	let hideSmall = params.hideSmall;
-	let showEssent = 0;
-	if ( hideSmall < 0 ) {
-		showEssent = -1/hideSmall;
-		hideSmall = 0;
-	}
+	const hideSmall = params.hideSmall;
+  const showEssent = params.showEssent;
+	//let showEssent = 0;
+	//if ( hideSmall < 0 ) {
+	//	showEssent = -1/hideSmall;
+	//	hideSmall = 0;
+	//}
 	const showIntersect = params.showIntersect;
 
 	function findNewClassList(atr, type = '') {
@@ -3590,7 +3623,7 @@ function makeAssociations() {
 		const classInfo = rezFull.classes[clId];
 		if (classInfo.used) {
 			for (const atr of classInfo.atr_list) {
-				if (atr.type == 'out' && atr.cnt > 0 && atr.cnt_full > hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {
+				if (atr.type == 'out' && atr.cnt > 0 && atr.cnt_full >= hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {
 					let hasAssoc = false;
 					if (has_cpc) {
 						if (classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
@@ -3640,7 +3673,7 @@ function makeAssociations() {
 					}
 					atr.hasAssoc = hasAssoc;
 				}
-				if (atr.type == 'data' && atr.object_cnt > 0 && atr.cnt > 0 && atr.cnt_full > hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {
+				if (atr.type == 'data' && atr.object_cnt > 0 && atr.cnt > 0 && atr.cnt_full >= hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {
 					if (rezFull.classes[`pt_${atr.p_id}`] != undefined) {
 						let to_id = `pt_${atr.p_id}`;
 						if (rezFull.classes[to_id].G_id != undefined) {
@@ -3668,7 +3701,7 @@ function makeAssociations() {
 	for (const pId of Object.keys(p_list_full)) {
 		if ( p_list_full[pId].count  > remCount && remBig)
 			hidedProps.big.push(`${p_list_full[pId].p_name} cnt ${p_list_full[pId].cnt} dgr_lines_cnt ${p_list_full[pId].count}`);
-		if ( p_list_full[pId].cnt <=  hideSmall )
+		if ( p_list_full[pId].cnt <  hideSmall )
 			hidedProps.small.push(`${p_list_full[pId].p_name} cnt ${p_list_full[pId].cnt}`);
 	}
 	if ( hidedProps.big.length > 0 || hidedProps.big.small > 0 )
