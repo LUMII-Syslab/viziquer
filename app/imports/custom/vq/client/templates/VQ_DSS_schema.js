@@ -2174,6 +2174,9 @@ function setPropSliderInfo() {
 	return 0; // TODO, te varētu būt arī lielāks skaitlis, ja propertiju ir visai daudz
 }
 function clearData() {
+	revertBRPMode();
+	Template.VQ_DSS_schema.ShowCentralityButton.set(false);
+	Template.VQ_DSS_schema.CentralityButtonDisabled.set(false);
 	rezFull = {classes:{}, assoc:{}, lines:{}, schema:dataShapes.schema.schema, diffMax:0};
 	p_list_full = {};
 	//state = 0;
