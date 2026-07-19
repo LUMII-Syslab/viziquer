@@ -360,7 +360,7 @@
                           <label style="text-align: left; margin-bottom: 0; line-height: 1.2;">Outgoing Class Weight</label>
 
                           <label for="brp-pw-standart" style="text-align: right; margin-bottom: 0; line-height: 1.2;">Standard Property Weight</label>
-                          <span id="brp-pw-standart-val" style="font-variant-numeric: tabular-nums; text-align: right; min-width: 24px;">0.3</span>
+                          <span id="brp-pw-standart-val" style="font-variant-numeric: tabular-nums; text-align: right; min-width: 24px;">0.0</span>
                           <div class="brp-split-track">
                             <input type="range" id="brp-pw-standart" class="brp-split-slider" min="0" max="1" step="0.1" value="0.3">
                           </div>
@@ -401,16 +401,16 @@
                       <span id="brp-cntTransform-wrap" style="display: inline-flex; align-items: center; gap: 8px;">
                         <label style="margin-bottom: 0;">Count transform:</label>
                         <select id="brp-cntTransform">
-                          <option value="log10" selected>log&#x2081;&#x2080;</option>
+                          <option value="log10">log&#x2081;&#x2080;</option>
                           <option value="log2">log&#x2082;</option>
                           <option value="sqrt">sqrt</option>
-                          <option value="full">full</option>
+                          <option value="full" selected>full</option>
                         </select>
                       </span>
                       <label style="margin-bottom: 0;">Use class instance count:</label>
                       <select id="brp-useInstanceCount">
-                        <option value="false" selected>No</option>
-                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                        <option value="true" selected>Yes</option>
                       </select>
                       <label style="margin-bottom: 0;">Closeness mode:</label>
                       <select id="brp-closenessMode">
