@@ -128,6 +128,19 @@ let brpCentralityData = null;   // { cpcListSimple } when pre-calculated
 let brpRelevanceMap = null;     // Map<classId, relevance> currently applied to display_names
 const brpOriginalNames = new Map(); // classId → original display_name before R-prefix
 
+function buildBRPPersistPayload(config) {
+	return {
+		propertyIds: config.standardProperties || [],
+		classWeightIncoming: config.classWeightIncoming,
+		propWeightStandart: config.propWeightStandart,
+		beta: config.beta,
+		edgesInTriples: config.edgesInTriples,
+		useInstanceCount: config.useInstanceCount,
+		closenessMode: config.closenessMode,
+		cntTransformName: config.cntTransformName,
+	};
+}
+
 function getBRPConfig() {
 	const cwIn = parseFloat(document.getElementById("brp-cw-incoming").value);
 	const pwSt = parseFloat(document.getElementById("brp-pw-standart").value);
@@ -149,6 +162,7 @@ function getBRPConfig() {
 		edgesInTriples,
 		useInstanceCount,
 		closenessMode,
+		cntTransformName,
 		cntTransform: cntTransformFn,
 	};
 }
@@ -197,7 +211,7 @@ function propCoverage(p, classCount) {
 	return (Number(p.type_1 || 0) + Number(p.type_2 || 0)) / classCount;
 }
 
-async function buildFragmentStdPropList(forceReload = false) {
+async function buildFragmentBRPConfig(forceReload = false) {
 	const container = document.getElementById("fragment-std-prop-list");
 	if (!container || !dataShapes.schema) return;
 	const classCount = Number(dataShapes.schema.classCount) || 0;
@@ -206,11 +220,12 @@ async function buildFragmentStdPropList(forceReload = false) {
 		let persisted = null;
 		const schemaName = dataShapes.schema.schemaName;
 		if (schemaName) {
-			try { persisted = await Meteor.callAsync("getBRPStandardProperties", schemaName); }
-			catch (e) { console.warn("getBRPStandardProperties failed", e); }
+			try { persisted = await Meteor.callAsync("getBRPConfig", schemaName); }
+			catch (e) { console.warn("getBRPConfig failed", e); }
 		}
-		if (persisted && persisted.length > 0) {
-			fragmentStdPropIds = new Set(persisted.map(Number));
+
+		if (persisted && persisted.propertyIds && persisted.propertyIds.length > 0) {
+			fragmentStdPropIds = new Set(persisted.propertyIds.map(Number));
 		}
 		else {
 			fragmentStdPropIds = new Set();
@@ -221,6 +236,32 @@ async function buildFragmentStdPropList(forceReload = false) {
 				}
 			});
 		}
+
+		if (persisted) {
+			const cwIn = document.getElementById("brp-cw-incoming");
+			const pwSt = document.getElementById("brp-pw-standart");
+			const beta = document.getElementById("brp-beta");
+			const edgesInTriples = document.getElementById("brp-edgesInTriples");
+			const useInstanceCount = document.getElementById("brp-useInstanceCount");
+			const closenessMode = document.getElementById("brp-closenessMode");
+			const cntTransform = document.getElementById("brp-cntTransform");
+
+			if (cwIn && persisted.classWeightIncoming !== undefined) cwIn.value = persisted.classWeightIncoming;
+			if (pwSt && persisted.propWeightStandart !== undefined) pwSt.value = persisted.propWeightStandart;
+			if (beta && persisted.beta !== undefined) beta.value = persisted.beta;
+			if (edgesInTriples && persisted.edgesInTriples !== undefined) edgesInTriples.value = String(persisted.edgesInTriples);
+			if (useInstanceCount && persisted.useInstanceCount !== undefined) useInstanceCount.value = String(persisted.useInstanceCount);
+			if (closenessMode && persisted.closenessMode !== undefined) closenessMode.value = persisted.closenessMode;
+			if (cntTransform && persisted.cntTransformName !== undefined && persisted.cntTransformName !== null) cntTransform.value = persisted.cntTransformName;
+
+			paintSplitSlider(cwIn, "brp-cw-incoming-val", "brp-cw-outgoing-val");
+			paintSplitSlider(pwSt, "brp-pw-standart-val", "brp-pw-user-val");
+			paintSplitSlider(beta, "brp-beta-val", "brp-alpha-val");
+
+			const cntWrap = document.getElementById("brp-cntTransform-wrap");
+			if (cntWrap && edgesInTriples) cntWrap.style.display = edgesInTriples.value === "true" ? "inline-flex" : "none";
+		}
+
 		container.dataset.loaded = "1";
 		fragmentStdPropEditing.set(false);
 		const btn = document.getElementById("editStandardProps");
@@ -1084,6 +1125,12 @@ Template.VQ_DSS_schema.events({
 			if (Template.VQ_DSS_schema.CentralityButtonDisabled.get() && brpCentralityData) {
 				brpConfig.preCalcAdj = brpCentralityData.cpcListSimple;
 			}
+
+			const schemaName = dataShapes.schema.schemaName;
+			if (schemaName) {
+				try { await Meteor.callAsync("saveBRPConfig", schemaName, buildBRPPersistPayload(brpConfig)); }
+				catch (e) { console.warn("saveBRPConfig failed", e); }
+			}
 		}
 
 		// Example usage of exportCSVBRPandPPRComparison
@@ -1316,7 +1363,7 @@ Template.VQ_DSS_schema.events({
     Template.VQ_DSS_schema.ShowCentralityButton.set(isBRP);
     if (isBRP) {
       Template.VQ_DSS_schema.CentralityButtonDisabled.set(false);
-      void buildFragmentStdPropList();
+      void buildFragmentBRPConfig();
       paintSplitSlider(document.getElementById("brp-cw-incoming"), "brp-cw-incoming-val", "brp-cw-outgoing-val");
       paintSplitSlider(document.getElementById("brp-pw-standart"), "brp-pw-standart-val", "brp-pw-user-val");
       paintSplitSlider(document.getElementById("brp-beta"), "brp-beta-val", "brp-alpha-val");
@@ -2056,7 +2103,7 @@ function setClassList(changeCount = false) {
 function makeClassLists() {
   const filter = $("#class_filter").val().toLowerCase();
 	const classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 1});
-	const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 0 && c.full_name_lc.indexOf(filter) !== -1 });
+	const restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.sel == 0 && (c.full_name_lc || '').indexOf(filter) !== -1 });
 	setClassListInfo(classes, restClasses);
 	sortClassList()
 }
@@ -2127,6 +2174,9 @@ function setPropSliderInfo() {
 	return 0; // TODO, te varētu būt arī lielāks skaitlis, ja propertiju ir visai daudz
 }
 function clearData() {
+	revertBRPMode();
+	Template.VQ_DSS_schema.ShowCentralityButton.set(false);
+	Template.VQ_DSS_schema.CentralityButtonDisabled.set(false);
 	rezFull = {classes:{}, assoc:{}, lines:{}, schema:dataShapes.schema.schema, diffMax:0};
 	p_list_full = {};
 	//state = 0;

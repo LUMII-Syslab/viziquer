@@ -316,14 +316,16 @@
                     </div>
                   </div>
                   <div style="display: flex; align-items: center; margin-left: 10px; margin-top: 10px; margin-right: 15px;">
-                    <button id="hideFragment" type="button" class="btn btn-primary" {{manualDisabled}} >Fragment computation options</button>
+                    <button id="hideFragment" type="button" class="btn btn-primary" {{manualDisabled}}>Fragment computation options</button>
                     {{#if showFragmentBlock}}
-                      <button id="getFragment" type="button" class="btn btn-primary" style="margin-left: auto;">Get fragment</button>
-                      {{#if showCentralityButton}}
-                        <button id="calculateRelevance" type="button" class="btn btn-primary" style="margin-left: 10px;">{{#if centralityApplied}}Hide Relevance{{else}}Calculate Relevance{{/if}}</button>
-                      {{/if}}
+                    <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
+                        {{#if showCentralityButton}}
+                        <button id="calculateRelevance" type="button" class="btn btn-default">{{#if centralityApplied}}Hide BRP Score{{else}}Calculate BRP Score{{/if}}</button>
+                        {{/if}}
+                        <button id="getFragment" type="button" class="btn btn-primary">Get fragment</button>
+                    </div>
                     {{/if}}
-                  </div>
+                </div>
                   {{#if showFragmentBlock}}
                     <div id="fragment-div" style="padding-top: 10px; padding-bottom: 10px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px;">
                       <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0;">
@@ -358,7 +360,7 @@
                           <label style="text-align: left; margin-bottom: 0; line-height: 1.2;">Outgoing Class Weight</label>
 
                           <label for="brp-pw-standart" style="text-align: right; margin-bottom: 0; line-height: 1.2;">Standard Property Weight</label>
-                          <span id="brp-pw-standart-val" style="font-variant-numeric: tabular-nums; text-align: right; min-width: 24px;">0.3</span>
+                          <span id="brp-pw-standart-val" style="font-variant-numeric: tabular-nums; text-align: right; min-width: 24px;">0.0</span>
                           <div class="brp-split-track">
                             <input type="range" id="brp-pw-standart" class="brp-split-slider" min="0" max="1" step="0.1" value="0.3">
                           </div>
@@ -399,16 +401,16 @@
                       <span id="brp-cntTransform-wrap" style="display: inline-flex; align-items: center; gap: 8px;">
                         <label style="margin-bottom: 0;">Count transform:</label>
                         <select id="brp-cntTransform">
-                          <option value="log10" selected>log&#x2081;&#x2080;</option>
+                          <option value="log10">log&#x2081;&#x2080;</option>
                           <option value="log2">log&#x2082;</option>
                           <option value="sqrt">sqrt</option>
-                          <option value="full">full</option>
+                          <option value="full" selected>full</option>
                         </select>
                       </span>
                       <label style="margin-bottom: 0;">Use class instance count:</label>
                       <select id="brp-useInstanceCount">
-                        <option value="false" selected>No</option>
-                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                        <option value="true" selected>Yes</option>
                       </select>
                       <label style="margin-bottom: 0;">Closeness mode:</label>
                       <select id="brp-closenessMode">
