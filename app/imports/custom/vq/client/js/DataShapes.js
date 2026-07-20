@@ -571,16 +571,25 @@ const dataShapes = {
 					this.schema.propMax = propInfo.max;
 					if ( this.schema.classCount < DIAGRAM_CLASS_LIMIT) {
 						this.schema.diagram.classList = await this.getClassListExt();
-            			this.schema.diagram.filteredClassList = this.schema.diagram.classList;
+            this.schema.diagram.filteredClassList = this.schema.diagram.classList;
 						this.schema.diagram.properties = await this.getPropListExt();
-            			for (const p of this.schema.diagram.properties) {
-            				p.cnt = Number(p.cnt);
-            				p.object_cnt = Number(p.object_cnt);
-            				p.full_name = `${p.prefix}:${p.display_name}`;
-            			}
+            let propS = [];
+            let propTCount = 0;
+            for (const p of this.schema.diagram.properties) {
+            	p.cnt = Number(p.cnt);
+            	p.object_cnt = Number(p.object_cnt);
+            	p.full_name = `${p.prefix}:${p.display_name}`;
+              if ( p.object_cnt !== 0 && p.type_2 === '0' && p.is_follower === '0' && p.common_subjects > 0) {
+                const pp = {id:-p.id, id_prop:p.id, display_name:`Source for ${p.full_name} (${p.cntR})`, sel:0};
+                propS.push(pp);
+              }
+              if (p.object_cnt !== 0 && p.type_1 === '0' && ( p.follows > 0 || p.common_objects > 0 ))
+                propTCount = propTCount + 1;
+            }
+            this.schema.diagram.propS = propS;
+            this.schema.diagram.nonClassPropLabel = `Free sources-${propS.length}, free targets-${propTCount}`;
 					}
 					this.schema.filling = 3;
-
 				}
 				else { // Neatrada projekta shēmu DSS serverī
 					await this.getPublicNamespaces();

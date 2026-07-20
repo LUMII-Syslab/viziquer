@@ -242,7 +242,7 @@
                         <label class="form-check-label" style="width: 400px; padding-top:10px; padding-bottom:10px;" >
                           <input class="form-check-input" name = "addPropEnds" id="addPropEnds" type="checkbox" >
                           <span class="custom-checkbox"></span>
-                          Non-class nodes
+                          Non-class nodes ({{nonClassPropLabel}})
                           <div class="help-tip">
                             <p>{{I_addPropEnds}} </p>
                           </div>
@@ -513,9 +513,9 @@
                             </select>
                             <label style=" padding-top:10px; "> </label>
                             <select class="form-control" id="pList"  style=" width:70px; " >
-                              <option value=0 >Mini</option>
-                              <option selected value=1 >Midi</option>
-                              <option value=2 >Loose</option>
+                              <option selected value=0 >Strong</option>
+                              <option value=1 >Medium</option>
+                              <option value=2 >Weak</option>
                               <option value=3 >No</option>
                             </select>
                           </div>
@@ -614,6 +614,34 @@
                             Old diffs
                           </label>
                         {{/if}}
+                  </div>
+                  <div class="col-sm-4" style="padding-top:10px;">
+                    <div style="padding-bottom:10px; padding-top:10px;">
+                      <span class="label label-default" style="font-size:15px; background-color:transparent;">Hide classes from:</span>
+                    </div>
+                    <select class="form-select" id="Cl_NS" size="17" multiple aria-label="multiple select 2" {{filterDisabled}} style="width: 300px;">
+                      {{#each cl_ns}}
+                        <option value="{{name}}" {{selected}}>{{display_name_cl}}</option>
+                      {{/each}}
+                    </select>
+                    <div style="padding-bottom:10px; padding-top:10px;">
+                      <span class="label label-default" style="font-size:15px; background-color:transparent;">Exclude properties from:</span>
+                    </div>
+                    <select class="form-select" id="Prop_NS" size="17" multiple aria-label="multiple select 2" style="width: 300px;">
+                      {{#each prop_ns}}
+                        <option value="{{name}}" {{selected}}>{{display_name_prop}}</option>
+                      {{/each}}
+                    </select>
+                  </div>
+                  <div class="col-sm-4" style="padding-top:10px;">
+                    <div style="padding-bottom:10px; padding-top:10px;">
+                      <span class="label label-default"  style="font-size:15px; background-color:transparent;">Selected classes ({{classCountSelected}})</span>
+                    </div>
+                    <select class="form-select" id="ShowSelectedClasses" size="17" multiple aria-label="multiple select 2" disabled style="width: 300px;">
+                      {{#each classes}}
+                        <option value="{{id}}" {{selected}}>{{display_name}}</option>
+                      {{/each}}
+                    </select>
                   </div>
                 </div>
                 <!-- //////////////////////////////////////// -->
