@@ -162,6 +162,21 @@ function SaveableValueBar({
   );
 }
 
+/**
+ * Show a warning when idVars contains values not encountered in query.
+ *
+ * @param {Object} props
+ * @param {string[]} props.idVars
+ * @param {string} props.query
+ */
+function IdVarsWarning({ idVars, query }) {
+  const vars = findSparqlVars(query);
+  const unknownVars = idVars.filter((it) => !vars.includes(it));
+
+  const shouldShow = unknownVars.length !== 0;
+
+  return shouldShow && e("p", {}, `Selected unknown vars: ${JSON.stringify(unknownVars)}`);
+}
 
 /**
  * @param {Object} props
@@ -221,6 +236,7 @@ export function GroupedResultsPaginated() {
       onValueChange: setIdVars,
       query: q,
     }),
+    e(IdVarsWarning, { query: q, idVars }),
     e(SaveableQuery, { value: savedQuery, onValueChange: setSavedQuery }),
     e(MultiCardinalTableServer, {
       queryCallback: ({ query }) => {
