@@ -8,17 +8,7 @@ import { createVQ_Element } from './VQ_Element.js'
 import { dataShapes } from './DataShapes.js'
 import { setSchemaNamesForQuery } from './transformations.js'
 import { ElementTypes, DiagramTypes } from '../../../../db/platform/collections.js'
-import { makeEventHandler } from '../templates/event.js';
 import '../templates/VQ_DSS_custom_sparql.html'
-
-/**
- * @typedef {{
- *   eventType: "queryFinished",
- * }} QueryEventPayload
- **/
-const queryEvent = /** @type {ReturnType<typeof makeEventHandler<QueryEventPayload>>} */ (
-    makeEventHandler()
-);
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -1123,15 +1113,9 @@ async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
   }
 }
 
-async function executeSparqlString(sparql, paging_info) {
-  const res = await executeSparqlStringMain(sparql, paging_info);
-  queryEvent.emit({ eventType: "queryFinished" });
-  return res;
-}
-
 // string, {limit: , offset:, total_rows:} -->
 // Executes the given Sparql end shows result in the GUI
-async function executeSparqlStringMain(sparql, paging_info) {
+async function executeSparqlString(sparql, paging_info) {
 	var sparqlWithoutComments = sparql.split("\n")
 	 sparqlWithoutComments = sparqlWithoutComments.filter(function (el) {
 		return !el.trim().startsWith("#");
@@ -5794,23 +5778,7 @@ function combineWithDefinedPrefixes(knownPrefixes, prefixDeclarations){
 	return {knownPrefixes:knownPrefixes, messages:messages};
 }
 
-/**
- * @param {Parameters<(typeof queryEvent)["subscribe"]>[0]} callback
- **/
-function subscribeQueryEvent(callback) {
-  queryEvent.subscribe(callback);
-}
-
-/**
- * @param {Parameters<(typeof queryEvent)["unsubscribe"]>[0]} callback
- **/
-function unsubscribeQueryEvent(callback) {
-  queryEvent.unsubscribe(callback);
-}
-
 export {
 	executeSparqlString,
 	getClassListFromString,
-	subscribeQueryEvent,
-	unsubscribeQueryEvent,
 }
