@@ -41,7 +41,7 @@
 				<div class="container-fluid">
 					<div style="display: inline-block; vertical-align:top;">
 						<p>Selected properties</p>
-						<select class="form-select" id="unSelectedProperties" size="12" multiple aria-label="multiple select 1" style="width: 250px;">
+						<select class="form-select" id="unSelectedProperties" size="12" multiple aria-label="multiple select 1" style="width: 250px; border-width: 2px;">
 							{{#each properties}}
 								<option value="{{localName}} " data-datatypes='{{dataTypes}}'>{{displayName}} </option>
 							{{/each}}
@@ -59,7 +59,7 @@
 					</div>
 					<div style="display: inline-block; vertical-align:top;">
 						<p>Unselected properties</p>
-						<select class="form-select" id="selectedProperties2" size="12" multiple aria-label="multiple select 2" style="width: 250px;">
+						<select class="form-select" id="selectedProperties2" size="12" multiple aria-label="multiple select 2" style="width: 250px; border-width: 2px;">
 							{{#each selectedProperties}}
 								<option value="{{localName}}">{{displayName}}</option>
 							{{/each}}

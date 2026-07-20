@@ -5914,15 +5914,11 @@
                 "procedure": "GenereteSPARQL_form_class_DSS"
               },
               {
-                "item": "Show Data",
-                "procedure": "ExecuteSPARQL_form_class_DSS"
-              },
-              {
                 "item": "Custom Data",
                 "procedure": "GenereteSPARQL_form_class_costumise_DSS"
               },
               {
-                "item": "Show Data (Auto)",
+                "item": "Show Data",
                 "procedure": "GenerateComplexTableQueryDSSAuto"
               },
               {

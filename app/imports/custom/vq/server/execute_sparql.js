@@ -495,7 +495,43 @@ function selectHttpRequestProfile(options) {
 
 // ---------------------
 
+/**
+ * @typedef {Object} ExecuteSparqlSimpleJsonParams
+ * @property {string} url
+ * @property {string} query
+ */
+
 Meteor.methods({
+  /**
+   * @param {ExecuteSparqlSimpleJsonParams} options
+   */
+  async executeSparqlSimpleJson({ url, query }) {
+    const timeout = TIMEOUT_EXECUTE;
+
+    const baseOptions = buildOptionsBase({}, "POST", timeout);
+
+    const req = new Request(url, {
+        ...baseOptions,
+        method: "POST",
+        headers: {
+          "Accept": "application/sparql-results+json",
+        },
+        body: new URLSearchParams({
+            query,
+        })
+    });
+
+    const res = await fetch(req);
+
+    if (!res.ok) {
+      const bodyText = await res.text();
+      console.error("Failed with body:", bodyText);
+      throw new Error("Response not ok");
+    }
+
+    return await res.json();
+  },
+
 
   /**
    *

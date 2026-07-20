@@ -1,26 +1,22 @@
 // @ts-check
 import { Interpreter } from '/imports/client/lib/interpreter.js';
 import { Template } from "meteor/templating";
-import { createVQ_Element, VQ_Element } from '../js/VQ_Element.js'
+import { createVQ_Element } from '../js/VQ_Element.js'
 
 import './generate_complex_table_query_form.html'
 import { Button, getClasses, getPrefixes, getProperties, initReactComponents, rem, resolvePrefixedName } from '../js/complexTable.js';
 import { createElement, useEffect, useState } from 'react';
 import {
     ComplexPropertySelector,
-    deduplicateTable,
-    demangleVarName,
-    formatMultiCardinalTableAsSelectQuery,
     formatQuery,
-    formatUniversalPaginatorQuery,
-    SyncPropertySelector,
+    rewriteQueryWithPrefixes,
 } from 'rdf-toolbag';
+import { makeEventHandler } from './event.js';
 
 /** @type {*} */
 let modalElement = null;
 
-// NOTE: Made this simple event handler in order to cleanly notify QueryGeneratorView when property
-// selection needs to be pre-filled again.
+
 // NOTE: autoFillStrategy:
 //   - "fromElement" -- props are retrieved from the info available in the visual element
 //   - "topProps" -- most frequently occurring props for the element's type are selected
@@ -31,18 +27,11 @@ let modalElement = null;
  *   onAutoFillCompletion?: (selection: ComplexPropertySelection) => void,
  * }} ModalRequestEventPayload
  **/
-/** @typedef {(payload: ModalRequestEventPayload) => void} ModalRequestCallback */
 
-/** @type {Set<ModalRequestCallback>} */
-let eventTargets = new Set();
-const queryGeneratorModalRequest = {
-    /** @type {(callback: ModalRequestCallback) => void} */
-    subscribe: (callback) => {eventTargets.add(callback)},
-    /** @type {(callback: ModalRequestCallback) => void} */
-    unsubcribe: (callback) => {eventTargets.delete(callback)},
-    /** @type {ModalRequestCallback} */
-    emit: (eventPayload) => eventTargets.forEach((callback) => callback(eventPayload)),
-};
+/** @template {ModalRequestEventPayload} T */
+const queryGeneratorModalRequest = /** @type {ReturnType<typeof makeEventHandler<ModalRequestEventPayload>>} */ (
+    makeEventHandler()
+);
 
 /**
  * @param text {string}
@@ -284,38 +273,43 @@ function useSyncWithDiagram(setSelection) {
     }
 
     useEffect(() => {
-      /** @type {ModalRequestCallback} */
+      /** @param {ModalRequestEventPayload} payload */
       const cb = (payload) => {syncSelectionToDiagramSelection(payload)};
 
       queryGeneratorModalRequest.subscribe(cb);
       return () => {
-        queryGeneratorModalRequest.unsubcribe(cb)
+        queryGeneratorModalRequest.unsubscribe(cb)
       };
     }, [setSelection]);
 }
 
 /**
  * @param {ComplexPropertySelection} selection
- * @param {number} globalLimit
- * @param {string[]} idVars
- * @param {number} pageSize
+ *
+ * @return {Promise<string>}
  **/
-function executeFromSelection(selection, globalLimit, idVars, pageSize) {
-    const queryToWrap = formatQuery(selection);
-    const finalQuery = formatUniversalPaginatorQuery({
-        queryToWrap,
-        globalLimit,
-        groupLimit: pageSize,
-        groupOffset: 0,
-        idVars,
-    });
+async function selectionToQuery(selection) {
+    const query = formatQuery(selection).query;
 
-    setEditorText(finalQuery);
-    Session.set("complexTableInfo", { idVars, finalQuery, selection });
+    const prefixInfo = (await getPrefixes().then((it) => Object.entries(it)))
+          .map(([prefix, uri]) => ({ prefix, uri }));
+
+    const res = rewriteQueryWithPrefixes({ query, prefixInfo });
+
+    return res;
+}
+
+/**
+ * @param {ComplexPropertySelection} selection
+ **/
+async function executeFromSelection(selection) {
+    const queryToWrap = await selectionToQuery(selection);
+
+    setEditorText(queryToWrap);
 
     Template.GenerateComplexTableQueryForm.hideModal();
 
-    Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(finalQuery);
+    Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(queryToWrap);
 }
 
 export function QueryGeneratorView() {
@@ -326,49 +320,20 @@ export function QueryGeneratorView() {
             objectProps: [],
         })
     );
-    const [idVars, setIdVars] = useState(["this"]);
-
-    /**
-     * @param {ComplexPropertySelection} selection
-     * @return {string[]}
-     */
-    function selectionToIdVarSuggestions(selection) {
-        // NOTE: A pretty rough method to do this but it does work
-        const formattedQuery = formatQuery(selection);
-        const matches = formattedQuery.match(/\?\w+/g);
-        // NOTE: Keep unique values and remove the leading "?" in matched var name
-        return [...new Set(matches)].map((match) => match.slice(1));
-    }
-
-    const suggestions = selectionToIdVarSuggestions(selection).flatMap((value) => {
-        const label = demangleVarName(value, selection);
-        return label ? { value, label } : [];
-    });
-
-    const globalLimit = 1000; // FIXME: hardcoded
-    const pageSize = 10; // FIXME: hardcoded
 
     useSyncWithDiagram(setSelection);
 
-    function onCreateClick() {
-        const queryToWrap = formatQuery(selection);
-        const finalQuery = formatUniversalPaginatorQuery({
-            queryToWrap,
-            globalLimit,
-            groupLimit: pageSize,
-            groupOffset: 0,
-            idVars,
-        });
+    async function onCreateClick() {
+        const queryToWrap = await selectionToQuery(selection);
 
-        setEditorText(finalQuery);
+        setEditorText(queryToWrap);
         switchToEditorTab();
-        Session.set("complexTableInfo", { idVars, finalQuery, selection });
 
         Template.GenerateComplexTableQueryForm.hideModal();
     }
 
     function onExecuteClick() {
-        executeFromSelection(selection, globalLimit, idVars, pageSize);
+        executeFromSelection(selection);
     }
 
     function H1({ style, ...props }) {
@@ -411,31 +376,6 @@ export function QueryGeneratorView() {
                     }))),
             },
         ),
-        createElement(H1, {}, "Limiting & Grouping"),
-        createElement(
-            "div",
-            {
-                style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: rem(0.5),
-                },
-            },
-            createElement("p", {}, `globalLimit: ${globalLimit}`),
-            createElement("p", {}, `pageSize: ${pageSize}`),
-            createElement(
-                "div",
-                {},
-                createElement("p", {}, "idVars"),
-                createElement(
-                    SyncPropertySelector,
-                    {
-                        suggestions,
-                        value: idVars,
-                        onValueChange: setIdVars,
-                    }),
-            ),
-        ),
         createElement(
             "div",
             { style: { display: "flex", gap: "8px" } },
@@ -447,7 +387,7 @@ export function QueryGeneratorView() {
                         width: "fit-content",
                     },
                 },
-                "Create sparql",
+                "SPARQL Query",
             ),
             createElement(
                 Button,
@@ -457,7 +397,7 @@ export function QueryGeneratorView() {
                         width: "fit-content",
                     },
                 },
-                "Execute sparql",
+                "Show Data",
             ),
         ),
     );
@@ -485,10 +425,7 @@ function tryShowingModal() {
  * @param {ComplexPropertySelection} selection
  */
 function executeFromSelectionWithDefaults(selection) {
-    const globalLimit = 1000;
-    const idVars = ["this"];
-    const pageSize = 10;
-    executeFromSelection(selection, globalLimit, idVars, pageSize);
+    executeFromSelection(selection);
 }
 
 Interpreter.customMethods({
