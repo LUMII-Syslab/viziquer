@@ -59,11 +59,6 @@ function switchToEditorTab() {
  * @return {Promise<{label: string, value: string}[]>}
  */
 async function getPropertySuggestions(selectedType, propertyType, limit) {
-    console.log({ selectedType, propertyType });
-
-    // NOTE: There's probably a bunch of properties to suggest when no type is known but for now
-    // we will return empty array.
-    if (!selectedType) return [];
     const props = await getProperties(selectedType, propertyType, limit);
     if (!props) return [];
     return props.map(({ iri, prefixedName }) => ({
@@ -127,7 +122,7 @@ function useSyncWithDiagram(setSelection) {
     }
 
     const dataLimit = 5;
-    const objLimit = 3;
+    const objLimit = 2;
 
     /**
      * @param {{[key: string]: string}} prefixes
