@@ -38,42 +38,9 @@ async function executeUnlimited(query) {
   return res;
 }
 
-/**
- * Get synchronized editor text.
- *
- * @return {string}
- */
-function useEditorText() {
-  const yasqe3 = Template.sparqlForm.yasqe3.get();
-
-  /** @return {string} */
-  function fetchString() {
-    return yasqe3.getValue();
-  }
-
-  const [editorString, setEditorString] = useState(fetchString());
-
-  function handleChange() {
-    setEditorString(fetchString());
-  }
-
-  useEffect(() => {
-    yasqe3.on("change", handleChange);
-
-    return () => {
-      yasqe3.off("change", handleChange);
-    };
-  });
-
-  return editorString;
-}
-
-/**
- * @param {string} value
- */
-function setEditorText(value) {
-  const yasqe3 = Template.sparqlForm.yasqe3.get();
-  yasqe3.setValue(value);
+/** @return {string} */
+function getEditorText() {
+  return Template.sparqlForm.yasqe3.get().getValue();
 }
 
 /**
@@ -202,24 +169,72 @@ function SaveableIdVarsSelector({ value, onValueChange, query }) {
 }
 
 /**
- * @param {Object} props
- * @param {string} props.value
- * @param {(newValue: string) => void} props.onValueChange
+ * Return currently active tab id (or null).
+ *
+ * @return {string|null}
  */
-function SaveableQuery({ value, onValueChange }) {
-  const q = useEditorText();
+function useCurrentTabId() {
+  // NOTE: I initially wanted to use jquery API for this but I couldn't find a solution that worked
+  // and thus I ended up going for MutationObserver solution that recursively observes the tab
+  // selector element.
 
-  return e(/** @type {typeof SaveableValueBar<string>}  */(SaveableValueBar), {
-    tempValue: q,
-    onTempValueChange: setEditorText,
-    value,
-    onValueChange,
-    differenceMessage: "Query is not saved!",
-  });
+  const [tabId, setTabId] = useState(/** @type {string|null} */ (null));
+
+  useEffect(() => {
+    const tabsId = "vq-tab";
+    const tabsEl = document.getElementById(tabsId);
+
+    if (!tabsEl) {
+      console.error(`Could not find tabs element #${tabsId}`);
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      // NOTE: On mutation, find the active element again.
+      // NOTE: Going through mutation records might be more efficient but `tabsEl` really only
+      // changes when tabs are switched.
+
+      /** @type {HTMLAnchorElement | null} */
+      const tabAnchor = tabsEl.querySelector(".active a");
+
+      // NOTE: We get a full URL in href, so we split it by "#" and take the last piece to
+      // represent the id.
+      const newTabId = tabAnchor?.href.split("#").at(-1) ?? null;
+
+      setTabId(newTabId);
+    });
+
+    observer.observe(tabsEl, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+    });
+
+    return () => {
+      observer.disconnect();
+      setTabId(null);
+    };
+  }, []);
+
+  return tabId;
+}
+
+/**
+ * Execute callback whenever our tab is selected.
+ *
+ * @param {() => void} callback
+ */
+function useOnThisTabSelect(callback) {
+  const currentTabId = useCurrentTabId();
+  const thisTabId = "extraResultsPaginated";
+
+  useEffect(() => {
+    if (currentTabId !== thisTabId) return;
+    callback();
+  }, [currentTabId])
 }
 
 export function GroupedResultsPaginated() {
-  const q = useEditorText();
   const [idVars, setIdVars] = useState(["this"]);
 
   const [savedQuery, setSavedQuery]= useState("");
@@ -228,16 +243,19 @@ export function GroupedResultsPaginated() {
     /** @type {Pagination} */ ({ pageIndex: 0, pageSize: 10 })
   );
 
+  useOnThisTabSelect(() => {
+    setSavedQuery(getEditorText());
+  });
+
   return e(
     "div",
     {},
     e(SaveableIdVarsSelector, {
       value: idVars,
       onValueChange: setIdVars,
-      query: q,
+      query: savedQuery,
     }),
-    e(IdVarsWarning, { query: q, idVars }),
-    e(SaveableQuery, { value: savedQuery, onValueChange: setSavedQuery }),
+    e(IdVarsWarning, { query: savedQuery, idVars }),
     e(MultiCardinalTableServer, {
       queryCallback: ({ query }) => {
         return executeUnlimited(query);
