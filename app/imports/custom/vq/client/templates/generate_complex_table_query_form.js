@@ -127,7 +127,7 @@ function useSyncWithDiagram(setSelection) {
     }
 
     const dataLimit = 5;
-    const objLimit = 3;
+    const objLimit = 2;
 
     /**
      * @param {{[key: string]: string}} prefixes
