@@ -17,15 +17,16 @@
 	"new_diagram": "New diagram",
 	"new_diagram_name": "Name",
 	"new_diagram_type": "Type",
-	
+	"diagram_comment": "Comment",
+
 	"select_group": "Select group",
-	"selected_group_Admin/Reader": "Admin/Reader",	
+	"selected_group_Admin/Reader": "Admin/Reader",
 	"reset": "Reset",
-	
+
 	"sort": "Sort by",
 	"sort_by_A-Z": "A-Z",
 	"sort_by_Date": "Date",
-	"sort_by_Popular": "Popular",	
+	"sort_by_Popular": "Popular",
 
 	"views": "views",
 
@@ -58,9 +59,11 @@
 	"edit_post": "Edit",
 	"delete_post": "Delete",
 	"type_and_enter": "Type and enter",
+
 	"like_unlike_Like": "Like",
 	"like_unlike_Unlike": "Unlike",
-	"load_more": "Load more",
+
+  "load_more": "Load more",
 	"people_who_liked_this": "People Who Like This",
 
 	"new_version_btn": "New version",
@@ -96,8 +99,7 @@
 	"users_group_active_version_dgr": "Add to the project active version's diagrams",
 
 	"users_group_all_version_doc": "Add to all project documents",
-	"users_group_active_version_doc": "Add to the project active version's documents",	
-
+	"users_group_active_version_doc": "Add to the project active version's documents",
 
 	"user_role_Admin": "Admin",
 	"user_role_Reader": "Reader",
@@ -109,12 +111,12 @@
 	"set_as_admin": "Set as admin",
 	"user_set_as": "Set as {$role}",
 
-	"remove_user": "Remove",	
+	"remove_user": "Remove",
 
 	"invite": "Invite",
 	"invite_as_reader": "Invite as reader",
 	"invite_as_admin": "Invite as admin",
-	"user_invite_as": "Invite as {$role}",	
+	"user_invite_as": "Invite as {$role}",
 
 	"user_user": "User",
 	"user_email": "Email",
@@ -168,25 +170,30 @@
 	"profile_type_and_enter": "Type and enter",
 	"profile_confirm_password": "Confirm Password",
 
-	"profile_last_update": "Last Update on {$date} {$month}, {$year}",
+	"profile_user_projects": "Projects",
+
+	"profile_user_projects_small_1": "__count__ project",
+	"profile_user_projects_small": "__count__ projekcts",
+
+  "profile_last_update": "Last Update on {$date} {$month}, {$year}",
 	"profile_last_update_Jan": "Last Update on {$date} {$month}, {$year}",
 	"profile_last_update_Feb": "Last Update on {$date} {$month}, {$year}",
-	"profile_last_update_Mar": "Last Update on {$date} {$month}, {$year}",	
+	"profile_last_update_Mar": "Last Update on {$date} {$month}, {$year}",
 	"profile_last_update_Apr": "Last Update on {$date} {$month}, {$year}",
-	"profile_last_update_May": "Last Update on {$date} {$month}, {$year}",	
+	"profile_last_update_May": "Last Update on {$date} {$month}, {$year}",
 	"profile_last_update_Jun": "Last Update on {$date} {$month}, {$year}",
 	"profile_last_update_Jul": "Last Update on {$date} {$month}, {$year}",
 	"profile_last_update_Aug": "Last Update on {$date} {$month}, {$year}",
-	"profile_last_update_Sep": "Last Update on {$date} {$month}, {$year}",	
+	"profile_last_update_Sep": "Last Update on {$date} {$month}, {$year}",
 	"profile_last_update_Oct": "Last Update on {$date} {$month}, {$year}",
-	"profile_last_update_Nov": "Last Update on {$date} {$month}, {$year}",	
+	"profile_last_update_Nov": "Last Update on {$date} {$month}, {$year}",
 	"profile_last_update_Dec": "Last Update on {$date} {$month}, {$year}",
 
 	"profile": "Profile",
 
 	"notifications": "Notifications",
 
-	"notifications_small_1": "{$count} notification",	
+	"notifications_small_1": "{$count} notification",
 	"notifications_small": "{$count} notifications",
 
 	"create_project": "Create project",
@@ -195,9 +202,9 @@
 
 	"you_have_projects_count_1": "You have {$count} project",
 	"you_have_projects_count": "You have {$count} projects",
-	
+
 	"you_have_new_notifications_count_1": "You have {$count} notification",
-	"you_have_new_notifications_count": "You have {$count} notifications",	
+	"you_have_new_notifications_count": "You have {$count} notifications",
 
 	"document_dialog": "Document",
 	"no_documents_selected": "No Documents Selected",
@@ -227,34 +234,34 @@
 
 	"notifications_user_invited_Admin": "<p class='no-margin'>You are invited to be <strong><i>Admin</i></strong> in <strong>{$project}</strong> by <i>{$inviter}</i></p>",
 	"notifications_user_invited_Reader": "<p class='no-margin'>You are invited to be <strong><i>Reader</i></strong> in <strong>{$project}</strong> by <i>{$inviter}</i></p>",
-	  
+
     "notifications_user_rejected": "<p class='no-margin'>You have rejected the invitation for the project <strong>{$project}</strong> from <i>{$person}</i></p>",
     "notifications_user_confirmed": "<p class='no-margin'>You have accepted the invitation in the project <strong>{$project}</strong> from <i>{$person}</i></p>",
-   	
+
    	"notifications_user_changed_Admin": "<p class='no-margin'>Your role has been changed to <strong><i>Admin</i></strong> in <strong>{$project}</strong>by <i>{$person}</i></p>",
    	"notifications_user_changed_Reader": "<p class='no-margin'>Your role has been changed to <strong><i>Reader</i></strong> in <strong>{$project}</strong>by <i>{$person}</i></p>",
-    
+
     "notifications_new_version": "<p class='no-margin'>A new version <strong><span class='label label-info m-left-xs'>#{$version}</span></strong> is created in the project <strong>{$project}</strong> by <i>{$person}</i></p>",
     "notifications_delete_version": "<p class='no-margin'>The version <strong><span class='label label-danger m-left-xs'>#{$version}</span></strong> has been deleted from the project <strong>{$project}</strong> by <i>{$person}</i></p>",
     "notifications_publish_version": "<p class='no-margin'> The version <strong><span class='label label-success m-left-xs'>#{$version}</span></strong> is published in the project <strong>{$project}</strong>by <i>{$person}</i></p>",
 
     "time_since_seconds": "a few seconds ago",
-    "time_since_minute": "{$number} minute ago",    
+    "time_since_minute": "{$number} minute ago",
     "time_since_minutes": "{$number} minutes ago",
-    "time_since_hour": "{$number} hour ago",     
+    "time_since_hour": "{$number} hour ago",
     "time_since_hours": "{$number} hours ago",
-    "time_since_day": "{$number} day ago",          
+    "time_since_day": "{$number} day ago",
     "time_since_days": "{$number} days ago",
-    "time_since_month": "{$number} month ago",      
+    "time_since_month": "{$number} month ago",
     "time_since_months": "{$number} months ago",
-    "time_since_year": "{$number} year ago",      
+    "time_since_year": "{$number} year ago",
     "time_since_years": "{$number} years ago",
 
     "password_error_msg": "",
     "password_error_msg_EmptyFieldError": "This value is required.",
     "password_error_msg_ValueShouldBeTheSame": "This value should be the same.",
     "password_error_msg_PasswordTooShort": "This value is too short. It should have 8 characters or more.",
-	
+
     "password_button_msg": "",
 	"password_button_msg_OldPasswordIsIncorrect": "The old password value is incorrect.",
 	"password_button_msg_PasswordChanged": "Password changed.",
@@ -268,6 +275,7 @@
 	"project_name": "Name",
 	"project_icon": "Icon",
 	"project_category": "Category",
+	"project_comment": "Comment",
 
 	"project_tool": "Tool",
 	"project_edit_project": "Edit project",
@@ -275,10 +283,18 @@
 	"structure_font_awesome": "Click <a href='http://fortawesome.github.io/Font-Awesome/icons/' target='_blank'>here</a> to see Font-Awesome icons",
 
 	"permissions": "Permissions",
+
 	"toolbar_name": "{$name}",
 	"toolbar_name_Permissions": "Permissions",
 
 	"dashboard": "Dashboard",
+
+	"toolbar_name_Delete": "Delete",
+	"toolbar_name_Zoom in": "Zoom in",
+	"toolbar_name_Zoom out": "Zoom out",
+	"toolbar_name_Read mode": "Read mode",
+	"toolbar_name_Edit mode": "Edit mode",
+	"toolbar_name_Diagram info": "Diagram info",
 
 	"add": "Add",
 	"edit": "Edit",

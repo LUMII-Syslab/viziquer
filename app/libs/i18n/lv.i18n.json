@@ -1,28 +1,30 @@
-{	
+{
 	"diagrams": "Diagrammas",
 	"documents": "Dokumenti",
 	"users": "Lietotāji",
 	"analytics": "Pārskats",
 	"archive": "Arhīvs",
-	"dataAnalytics": "Analīze",	
+	"dataAnalytics": "Analīze",
 	"configurator": "Konfigurators",
 	"tasks": "Uzdevumi",
 	"training": "Mācības",
 
 	"search_here": "meklēt...",
-	"default_view": "Standarta skats",
+
+  "default_view": "Standarta skats",
 	"tree_view": "Koka skats",
 	"add_diagram": "Pievienot diagrammu",
 	"new_diagram": "Jauna diagramma",
 	"new_diagram_name": "Nosaukums",
 	"new_diagram_type": "Tips",
+	"diagram_comment": "Komentārs",
 
 	"select_group": "Izvēlēties grupu",
-	"selected_group_Admin/Reader": "Administators/Lasītājs",		
+	"selected_group_Admin/Reader": "Administators/Lasītājs",
 	"reset": "Notīrīt",
 
 	"sort": "Kārtot pēc",
-	"sort_by_A-Z": "A-Z",	
+	"sort_by_A-Z": "A-Z",
 	"sort_by_Date": "Datuma",
 	"sort_by_Popular": "Popularitātes",
 
@@ -40,7 +42,7 @@
 	"add_section": "Pievienot sekciju",
 	"delete_section": "Dzēst sekciju",
 	"document_edit_mode": "Rediģēšanas režīms",
-	"document_read_mode": "Lasīšanas režīms",		
+	"document_read_mode": "Lasīšanas režīms",
 	"rename_document": "Pārsaukt",
 	"delete_document": "Dzēst",
 
@@ -60,7 +62,7 @@
 
 	"like_unlike_Like": "Patīk",
 	"like_unlike_Unlike": "Atcelt",
-	
+
 	"load_more": "Ielādēt vairāk",
 	"people_who_liked_this": "Cilvēki Kuriem Šis Patīk",
 
@@ -69,6 +71,7 @@
 	"publish_btn": "Publicēt",
 	"pull": "Paņemt",
 	"version": "Versija",
+	"new_version_badge": "New",
 
 	"new_badge_New": "Jauna versija",
 	"new_badge_Published": "Publicēta versija",
@@ -96,10 +99,10 @@
 	"users_group_active_version_dgr": "Pievienot projekta aktīvās versijas diagrammām",
 
 	"users_group_all_version_doc": "Pievienot visiem projekta dokumentiem",
-	"users_group_active_version_doc": "Pievienot projekta aktīvās versijas dokumentiem",	
+	"users_group_active_version_doc": "Pievienot projekta aktīvās versijas dokumentiem",
 
 	"user_role_Admin": "Administrators",
-	"user_role_Reader": "Lasītājs",	
+	"user_role_Reader": "Lasītājs",
 
 	"user_status_Member": "Dalībnieks",
 	"user_status_Invited": "Uzaicināts",
@@ -113,7 +116,7 @@
 	"invite": "Uzaicināt",
 	"invite_as_reader": "Uzaicināt kā lasītāju",
 	"invite_as_admin": "Uzaicināt kā administratoru",
-	"user_invite_as": "Uzaicināt kā __role__",		
+	"user_invite_as": "Uzaicināt kā __role__",
 
 	"user_user": "Lietotājs",
 	"user_email": "E-pasts",
@@ -123,9 +126,8 @@
 	"user_remove": "Dzēst",
 
 	"contacts": "Kontakti",
-	"contacts_add": "Pievienot",	
+	"contacts_add": "Pievienot",
 	"type_your_msg_here": "Raksti šeit",
-
 	"view_all_messages": "Visas ziņas",
 
 	"forgot_password": "Aizmirsi paroli?",
@@ -133,6 +135,7 @@
 	"stay_signed_in": "Palikt sistēmā",
 	"enter_your_password": "Ievadi paroli",
 	"login_password": "Parole",
+	"please_enter_email": "Please enter email address/username",
 	"e_mail": "E-pasts",
 	"registration": "Reģistrācija",
 	"sign_up": "Reģistrēties",
@@ -172,26 +175,25 @@
 	"profile_user_projects_small_1": "__count__ projekts",
 	"profile_user_projects_small": "__count__ projekti",
 
+  "profile_last_update": "Pēdējās izmaiņas __date__/__month__/__year__",
 	"profile_last_update_Jan": "Pēdējās izmaiņas __date__/01/__year__",
 	"profile_last_update_Feb": "Pēdējās izmaiņas __date__/02/__year__",
-	"profile_last_update_Mar": "Pēdējās izmaiņas __date__/03/__year__",	
+	"profile_last_update_Mar": "Pēdējās izmaiņas __date__/03/__year__",
 	"profile_last_update_Apr": "Pēdējās izmaiņas __date__/04/__year__",
-	"profile_last_update_May": "Pēdējās izmaiņas __date__/05/__year__",	
+	"profile_last_update_May": "Pēdējās izmaiņas __date__/05/__year__",
 	"profile_last_update_Jun": "Pēdējās izmaiņas __date__/06/__year__",
 	"profile_last_update_Jul": "Pēdējās izmaiņas __date__/07/__year__",
 	"profile_last_update_Aug": "Pēdējās izmaiņas __date__/08/__year__",
-	"profile_last_update_Sep": "Pēdējās izmaiņas __date__/09/__year__",	
+	"profile_last_update_Sep": "Pēdējās izmaiņas __date__/09/__year__",
 	"profile_last_update_Oct": "Pēdējās izmaiņas __date__/10/__year__",
-	"profile_last_update_Nov": "Pēdējās izmaiņas __date__/11/__year__",	
+	"profile_last_update_Nov": "Pēdējās izmaiņas __date__/11/__year__",
 	"profile_last_update_Dec": "Pēdējās izmaiņas __date__/12/__year__",
-
-
 
 	"profile": "Profils",
 
 	"notifications": "Paziņojumi",
 
-	"notifications_small_1": "__count__ paziņojums",	
+	"notifications_small_1": "__count__ paziņojums",
 	"notifications_small": "__count__ paziņojumi",
 
 	"create_project": "Jauns projekts",
@@ -200,9 +202,9 @@
 
 	"you_have_projects_count_1": "Tev ir __count__ projekts",
 	"you_have_projects_count": "Tev ir __count__ projekti",
-	
+
 	"you_have_new_notifications_count_1": "Tev pavisam ir __count__ paziņojumi",
-	"you_have_new_notifications_count": "Tev pavisam ir __count__ paziņojumi",	
+	"you_have_new_notifications_count": "Tev pavisam ir __count__ paziņojumi",
 
 	"document_dialog": "Dokuments",
 	"no_documents_selected": "Neviens dokuments nav izvēlēts",
@@ -226,16 +228,16 @@
 
 	"diagram_can_be_edited": "Diagramma netiek rediģēta!",
 	"diagram_locked": "Diagrammu rediģē __user__!",
-	"diagram_is_edited": "Tu rediģē diagrammu!",	
+	"diagram_is_edited": "Tu rediģē diagrammu!",
 
 	"notifications_user_removed": "<p class='no-margin'><i>__remover__</i> Tevi izslēdza no projekta <strong>__project__</strong></p>",
-	
+
 	"notifications_user_invited_Admin": "<p class='no-margin'><i>__inviter__</i> uzaicināja Tevi būt par <strong><i>Administratoru</i></strong> projektā <strong>__project__</strong></p>",
 	"notifications_user_invited_Reader": "<p class='no-margin'><i>__inviter__</i> uzaicināja Tevi būt par <strong><i>Lasītāju</i></strong> projektā <strong>__project__</strong></p>",
 
     "notifications_user_rejected": "<p class='no-margin'>Tu esi noraidījis <i>__person__</i> uzaicinājumu būt projektā <strong>__project__</strong></p>",
     "notifications_user_confirmed": "<p class='no-margin'>Tu esi apstiprinājis <i>__person__</i> uzaicinājumu būt projektā <strong>__project__</strong></p>",
-   	
+
    	"notifications_user_changed_Admin": "<p class='no-margin'><i>__person__</i> nomainīja Tavu lomu uz <strong><i>Administrators</i></strong> projektā <strong>__project__</strong></p>",
    	"notifications_user_changed_Reader": "<p class='no-margin'><i>__person__</i> nomainīja Tavu lomu uz <strong><i>Lasītājs</i></strong> projektā <strong>__project__</strong></p>",
 
@@ -244,16 +246,16 @@
     "notifications_publish_version": "<p class='no-margin'><i>__person__</i> pulicēja jaunu versiju <strong><span class='label label-success m-left-xs'>#__version__</span></strong> projektā <strong>__project__</strong></p>",
 
     "time_since_seconds": "pirms dažām sekundēm",
-    "time_since_minute": "pirms __number__ minūtes",    
+    "time_since_minute": "pirms __number__ minūtes",
     "time_since_minutes": "pirms __number__ minūtēm",
-    "time_since_hour": "pirms __number__ stundas",     
+    "time_since_hour": "pirms __number__ stundas",
     "time_since_hours": "pirms __number__ stundām",
-    "time_since_day": "pirms __number__ dienas",          
+    "time_since_day": "pirms __number__ dienas",
     "time_since_days": "pirms __number__ dienām",
-    "time_since_month": "pirms __number__ mēneša",      
+    "time_since_month": "pirms __number__ mēneša",
     "time_since_months": "pirms __number__ mēnešiem",
-    "time_since_year": "pirms __number__ gada",      
-    "time_since_years": "pirms __number__ gadiem", 
+    "time_since_year": "pirms __number__ gada",
+    "time_since_years": "pirms __number__ gadiem",
 
     "password_error_msg": "",
     "password_error_msg_EmptyFieldError": "Šī lauka vērtība ir obligāta.",
@@ -272,26 +274,28 @@
 	"add_project": "Jauns projekts",
 	"project_name": "Nosaukums",
 	"project_icon": "Ikona",
-	"project_category": "Kategorija",	
+	"project_category": "Kategorija",
+	"project_comment": "Komentārs",
+
 	"project_tool": "Rīks",
 	"project_edit_project": "Rediģēt projektu",
 
 	"structure_font_awesome": "Spied <a href='http://fortawesome.github.io/Font-Awesome/icons/' target='_blank'>šeit</a>, lai redzētu Font-Awesome ikonas",
-	"permissions": "Tiesības",
+
+  "permissions": "Tiesības",
 
 	"toolbar_name": "__name__",
 	"toolbar_name_Permissions": "Tiesības",
 
+	"dashboard": "Pārskats",
+
 	"toolbar_name_Delete": "Dzēst",
 	"toolbar_name_Zoom in": "Tuvināt",
 	"toolbar_name_Zoom out": "Attālināt",
-	"toolbar_name_Read mode": "Lasīšanas skats",	
-	"toolbar_name_Edit mode": "Rediģēšanas skats",	
-	"toolbar_name_Diagram info": "Diagrammas informācija",	
+	"toolbar_name_Read mode": "Lasīšanas skats",
+	"toolbar_name_Edit mode": "Rediģēšanas skats",
+	"toolbar_name_Diagram info": "Diagrammas informācija",
 
-	"dashboard": "Pārskats",	
-
-	"please_enter_email": "Please enter email address/username",
 
 	"add": "Pievienot",
 	"edit": "Labot",
