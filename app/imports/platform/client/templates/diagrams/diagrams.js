@@ -436,18 +436,21 @@ Template.defaultDiagramsView.events({
     drop_down.addClass("hidden");
   },
 
-  "click .rename-diagram": function (e) {
+  "click .edit-diagram-info": function (e) {
     e.preventDefault();
     e.stopPropagation();
 
     //adding file value to the field
     var diagram_container = $(e.target).closest(".diagram");
-    var diagram_name = diagram_container.find(".diagram-name").text();
 
+    var diagram_name = diagram_container.find(".diagram-name").text();
     $("#diagram-name-field").val(diagram_name);
 
+    var diagram_comment = diagram_container.find(".diagram-comment").text().trim();
+    $("#diagram-comment-field").val(diagram_comment);
+
     //adding file id to the form
-    var form = $("#rename-diagram-form");
+    var form = $("#edit-diagram-info-form");
     form.attr("diagramId", diagram_container.attr("diagramId"));
 
     //showing form
@@ -732,14 +735,14 @@ Template.configuratorDiagramOptions.helpers({
 	},
 });
 
-Template.renameDiagramForm.events({
-  "click #rename-diagram-form-ok": function () {
-    var form = $("#rename-diagram-form");
+Template.editDiagramInfoForm.events({
+  "click #edit-diagram-info-form-ok": function () {
+    var form = $("#edit-diagram-info-form");
     var diagram_id = form.attr("diagramId");
 
     form.modal("hide");
 
-    var list = {
+    var list1 = {
       projectId: Session.get("activeProject"),
       versionId: Session.get("versionId"),
       diagramId: diagram_id,
@@ -747,7 +750,16 @@ Template.renameDiagramForm.events({
       attrValue: $("#diagram-name-field").val(),
     };
 
-    Utilities.callMeteorMethod("updateDiagram", list);
+    Utilities.callMeteorMethod("updateDiagram", list1);
+
+    var list2 = {
+      projectId: Session.get("activeProject"),
+      versionId: Session.get("versionId"),
+      diagramId: diagram_id,
+      attrName: "comment",
+      attrValue: $("#diagram-comment-field").val(),
+    };
+    Utilities.callMeteorMethod("updateDiagram", list2);
   },
 });
 

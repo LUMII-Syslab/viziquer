@@ -27,7 +27,7 @@
         {{/if}}
     </div>
 
-    {{> renameDiagramForm}}
+    {{> editDiagramInfoForm}}
 </template>
 
 <template name="diagramsViewButton">
@@ -162,7 +162,8 @@
             </div>
 
             <div class="image-like pull-right1">
-                <div>{{description}}</div>
+                {{!-- <div>{{description}}</div> --}}
+                <div class="diagram-comment">{{comment}}&nbsp;</div>
                 <div>{{seenCount}}
                   {{_ "views"}}</div>
                 <div>{{date}}</div>
@@ -190,9 +191,9 @@
                     </li>
 
                     <li>
-                        <a class="rename-diagram" href="#">
+                        <a class="edit-diagram-info" href="#">
                             <i class="fa fa-pencil fa-lg"></i>
-                            Rename
+                            Edit info
                         </a>
                     </li>
                     <li>
@@ -503,9 +504,9 @@
     {{/each}}
 </template>
 
-<template name="renameDiagramForm">
+<template name="editDiagramInfoForm">
     <!-- Modal for new document -->
-    <div id="rename-diagram-form" class="modal fade">
+    <div id="edit-diagram-info-form" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -517,7 +518,7 @@
                     >
                         &times;
                     </button>
-                    <h4 class="modal-title">Rename</h4>
+                    <h4 class="modal-title">Edit diagram info</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
@@ -537,6 +538,23 @@
                                 />
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label
+                                for="diagram-comment-field"
+                                class="col-sm-2 control-label"
+                                >{{_ "diagram_comment"}}</label
+                            >
+                            <div class="col-sm-10">
+                                <input
+                                    id="diagram-comment-field"
+                                    type="text"
+                                    class="form-control"
+                                    value=""
+                                    autocomplete="off"
+                                />
+                            </div>
+                        </div>
                     </form>
                 </div>
 
@@ -549,7 +567,7 @@
                         {{_ "cancel"}}
                     </button>
                     <button
-                        id="rename-diagram-form-ok"
+                        id="edit-diagram-info-form-ok"
                         type="button"
                         class="btn btn-primary"
                     >
@@ -639,7 +657,6 @@
 
 </template>
 
- 
 <template name="migrateForm">
     <div id="migrate-form" class="modal fade">
         <div class="modal-dialog">
