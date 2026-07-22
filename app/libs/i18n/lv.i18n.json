@@ -278,7 +278,7 @@
 	"project_comment": "Komentārs",
 
 	"project_tool": "Rīks",
-	"project_edit_project": "Rediģēt projektu",
+	"project_edit_project": "Rediģēt informāciju par projektu",
 
 	"structure_font_awesome": "Spied <a href='http://fortawesome.github.io/Font-Awesome/icons/' target='_blank'>šeit</a>, lai redzētu Font-Awesome ikonas",
 
@@ -299,6 +299,7 @@
 
 	"add": "Pievienot",
 	"edit": "Labot",
+	"edit_info": "Labot info",
 	"delete": "Dzēst",
 	"remove": "Dzēst",
 	"ok": "OK",

@@ -278,7 +278,7 @@
 	"project_comment": "Comment",
 
 	"project_tool": "Tool",
-	"project_edit_project": "Edit project",
+	"project_edit_project": "Edit project info",
 
 	"structure_font_awesome": "Click <a href='http://fortawesome.github.io/Font-Awesome/icons/' target='_blank'>here</a> to see Font-Awesome icons",
 
@@ -298,6 +298,7 @@
 
 	"add": "Add",
 	"edit": "Edit",
+	"edit_info": "Edit info",
 	"delete": "Delete",
 	"remove": "Remove",
 	"ok": "OK",
