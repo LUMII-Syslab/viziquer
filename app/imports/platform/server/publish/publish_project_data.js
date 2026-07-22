@@ -81,6 +81,7 @@ console.log("Meteor.publish(Diagrams)+Tools");
       isPublic: 1,
       layoutSettings: 1,
       description: 1,
+      comment: 1,
     };
 	var Tfields = {
       createdBy: 0,
