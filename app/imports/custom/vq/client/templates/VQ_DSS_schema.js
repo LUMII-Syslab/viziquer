@@ -49,7 +49,7 @@ Template.VQ_DSS_schema.ShowCentralityButton = new ReactiveVar(false);
 Template.VQ_DSS_schema.CentralityButtonDisabled = new ReactiveVar(false);
 
 // Labels, titles and hints
-const LF_fixedCount = 'Fixed class count in diagram';
+const LF_fixedCount = 'Simple top class selection';
 const I_fixedCount = 'Explanation ...';  // Vienkāršais variants klašu atlasīšanai, tikai ar skaitu un kārtošanu, izslēdzot dabū manuālo režīmu
 const I_addPropEnds = 'Explanation ...'; // Properiju gali bez klasēm
 const I_pMaxCount = 'Explanation ...';  // Maksimālais vienas propertijas līniju skaits diagrammā
@@ -556,8 +556,9 @@ Template.VQ_DSS_schema.helpers({
 
 function getParams() {
   let diffG = (isFragment) ? 0 : $("#diffG").val();
-	let par = {addIds:false, showEssent:1/$("#pEssential").val(), compView:$("#compView").is(":checked"), newDifs:true, cover:$("#cover").is(":checked"),
-		pw:$("#pw").val(), k:1, diffG:diffG, diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked"), addPropEnds:false, duplicate:false}; // withoutGen:$("#withoutGen").is(":checked"),
+	let par = {addIds:false, compView:$("#compView").is(":checked"), newDifs:true, cover:$("#cover").is(":checked"),
+		pw:$("#pw").val(), k:1, diffG:diffG, diffS:0, supPar:1, schema:dataShapes.schema.schema, showIntersect:$("#showIntersect").is(":checked"),
+    addPropEnds:false, duplicate:false}; // withoutGen:$("#withoutGen").is(":checked"),
 		//if ( $("#diffG").val() == 10 )
 		//	par.supPar = 2;
 	if ( $("#abstr").is(":checked") )
@@ -581,9 +582,11 @@ function getParams() {
     hideSmall = 0;
   par.hideSmall = hideSmall;
 
-  let showEssent = $("#pEssential").val();
+  let showEssent = document.getElementById("pEssential").value;
   if ( showEssent > 0)
-    showEssent = 1/showEssent;
+    showEssent = showEssent/100;
+  else
+    showEssent = 0;
    par.showEssent = showEssent;
 
   if ( !dataShapes.schema.isPublic ) {
@@ -1888,10 +1891,12 @@ async function createSchemaDiagram() {
     time2 = Date.now();
 		console.log('rezFull', rezFull);
 
+    const compClassView = ($("#pList").val() >0 ? true : false);  // $("#compClassView").is(":checked")
+
 		const table_representation = {
 			Schema:dataShapes.schema.schemaName,
 			ClassCount:Template.VQ_DSS_schema.ClassCountSelected.get(),
-			CompactClassView:$("#compClassView").is(":checked"),
+			CompactClassView:compClassView,
 			NodesCount:Template.VQ_DSS_schema.ClassCountUsed.get(),
 			LinesCount:countAssociations(),
 			Namespaces:{n_0:{compartments:{ List:rezFull.namespaces}}},
@@ -2716,7 +2721,8 @@ function makeAtrTree(cl_list, key) {
 // Funkcija klašu grupas izveidošanai, izmanto dažādās situācijās
 function makeClassGroup(list, group_type, sum = true ) { // ekv = false) {
   if ( list.length == 0)
-    return '';
+  return '';
+
 	function addGroupId(cl_id, g_id) {
 		let cInfo = rezFull.classes[cl_id];
 		if ( cInfo.G_id == undefined )
@@ -2781,19 +2787,30 @@ function makeClassGroup(list, group_type, sum = true ) { // ekv = false) {
 			c_list_full.push(c_tree[c]);
 		}
 		c_list_full = c_list_full.sort((a, b) => { return b.cnt_sum - a.cnt_sum; });
-		//const cnt = ( sum ) ? i_cnt : list[0].cnt;
+  		//const cnt = ( sum ) ? i_cnt : list[0].cnt;
 		//const cnt_sum = ( sum ) ? getWeight(i_cnt, i_in_props) : getWeight(list[0].cnt, list[0].in_props);
     const cnt = ( sum ) ? i_cnt : c_list_full[0].cnt;
 		const cnt_sum = ( sum ) ? getWeight(i_cnt, i_in_props) : getWeight(c_list_full[0].cnt, c_list_full[0].in_props);
 		const txt = (c_list_full[0].isGroup) ? '' : ' et al.';
     let pref = '';
-    if ( c_list_full[0].type == 'PropertyTarget' )
-      pref = 'Target for ';
-    if ( c_list_full[0].type == 'PropertySource' )
-      pref = 'Source for ';
+    let pref_c = '';
 
-		let fullName = `${pref}${c_list_full[0].displayName}${txt} G${Gnum} (weight-${roundCount(cnt_sum)})`;
-		let fullNameD = `${pref}${c_list_full[0].displayName}${txt} G${Gnum} (${roundCount(cnt)})`;
+
+    if ( c_list_full[0].type == 'PropertyTarget' ) {
+      pref = 'Target for ';
+      if ( c_list_full[0].hasDistinctObjects == undefined )
+          pref_c = '* ';
+    }
+    if ( c_list_full[0].type == 'PropertySource' ){
+      pref = 'Source for ';
+      pref_c = '* '
+      //if ( c_list_full[0].hasDistinctObjects == undefined )
+      //    pref_c = '* ';
+    }
+
+
+		let fullName = `${pref}${c_list_full[0].displayName}${txt} G${Gnum} (${pref_c}weight-${roundCount(cnt_sum)})`;
+		let fullNameD = `${pref}${c_list_full[0].displayName}${txt} G${Gnum} (${pref_c}${roundCount(cnt)})`;
 		let displayName = `${pref}${c_list_full[0].displayName}${txt}`;
 		// Ieliku visur vienādi, var labot atpakaļ
 		//if ( c_list_full.length == 2 ) {
@@ -2805,7 +2822,8 @@ function makeClassGroup(list, group_type, sum = true ) { // ekv = false) {
 			displayName:displayName, fullName:fullName, fullNameD:fullNameD, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
 			sub_classes_group_string:c_list_full.map(c => c.fullNameD).sort().join('\n'),
 			sub_classes_list:c_list_full.map(c => c.fullNameD).sort(), sub_classes:[],
-			sup:[], sub:[], atr_list:atr_list, atr_list_full:atr_list_full, atr_list_full_p:atr_list_full_p, all_atr:[], cnt:cnt, cnt_sum:cnt_sum, in_props:i_in_props };
+			sup:[], sub:[], atr_list:atr_list, atr_list_full:atr_list_full, atr_list_full_p:atr_list_full_p, all_atr:[], cnt:cnt, cnt_sum:cnt_sum,
+      in_props:i_in_props, hasDistinctObjects:c_list_full[0].hasDistinctObjects };
 
 		rezFull.classes[g_id].sub_classes_list =  _.map(c_list_full, function(c) {
 			return {cnt:c.cnt, name:c.fullNameD, shortName:c.displayName};
@@ -3200,11 +3218,14 @@ async function getBasicClasses() {
       for (const p of propT) {
         const id = `pt_${p.id}`;
         const name = `Target for ${p.full_name}`;
-        const full_name = `Target for ${p.full_name} (${roundCount(p.object_cnt)})`;
+        let pref = '';
+        if ( p.hasDistinctObjects == undefined )
+          pref = '* ';
+        const full_name = `Target for ${p.full_name} (${pref}${roundCount(p.object_cnt)})`;
         rezFull.classes[id] = { id:id, displayName:p.full_name, id_id:p.id, c_list_id:[p.id], super_classes:[], sub_classes:[],
           used:true, hasGen:false, type:'PropertyTarget', fullName:full_name, fullNameD:full_name,
           sup:[], sub:[], sup0:[], sub0:[], cnt:p.object_cnt, cnt_sum:p.object_cnt, in_props:0,
-          atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[], atr_list_full_p:[]};
+          atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[], atr_list_full_p:[], hasDistinctObjects:p.hasDistinctObjects};
         if ( p.type_1 != '0') {
           const prop_info = p_list_full[`p_${p.id}`];
           for(const c of prop_info.c_to){
@@ -3235,11 +3256,14 @@ async function getBasicClasses() {
       for (const p of propS) {
         const id = `ps_${p.id}`;
         const name = `Source for ${p.full_name}`;
-        const full_name = `Source for ${p.full_name} (${roundCount(p.object_cnt)})`;
+        let pref = '* ';
+        //if ( p.hasDistinctObjects == undefined )
+        //  pref = '* ';
+        const full_name = `Source for ${p.full_name} (${pref}${roundCount(p.object_cnt)})`;
         rezFull.classes[id] = { id:id, displayName:p.full_name, id_id:p.id, c_list_id:[p.id], super_classes:[], sub_classes:[],
           used:true, hasGen:false, type:'PropertySource', fullName:full_name, fullNameD:full_name,
           sup:[], sub:[], sup0:[], sub0:[], cnt:p.object_cnt, cnt_sum:p.object_cnt, in_props:0,
-          atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[], atr_list_full_p:[] };
+          atr_list:[], all_atr:[], all_atr_in:[], atr_list_full:[], atr_list_full_p:[], hasDistinctObjects:p.hasDistinctObjects };
         addAttr(id, p.id, Number(p.cnt), Number(p.cnt), 'out');
         const common_subjects = pp_info.filter(function(pp) { return pp.property_1_id == p.id && pp.property_2_id !== p.id  && pp.type_id== 2; });
         for ( const p2 of common_subjects) {
@@ -3677,7 +3701,7 @@ function countAssociations() {
 
 // Diagrammas līniju savilkšanas daļa
 function makeAssociations() {
-  console.log('PPPPPPPPPPPPPPPPPPPPPPPPP', params)
+  console.log('makeAssociations - params', params)
 	const remBig = params.disconnBig > 0;
 	const remCount = params.disconnBig;
 	const hideSmall = params.hideSmall;
@@ -3743,7 +3767,7 @@ function makeAssociations() {
 		const classInfo = rezFull.classes[clId];
 		if (classInfo.used) {
 			for (const atr of classInfo.atr_list) {
-				if (atr.type == 'out' && atr.cnt > 0 && atr.cnt_full >= hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {
+				if (atr.type == 'out' && atr.cnt > 0 && atr.cnt >= hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {  // Bija atr.cnt_full >= hideSmall
 					let hasAssoc = false;
 					if (has_cpc) {
 						if (classInfo.type == 'PropertyTarget' || classInfo.type == 'PropertySource') {
@@ -3793,7 +3817,7 @@ function makeAssociations() {
 					}
 					atr.hasAssoc = hasAssoc;
 				}
-				if (atr.type == 'data' && atr.object_cnt > 0 && atr.cnt > 0 && atr.cnt_full >= hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {
+				if (atr.type == 'data' && atr.object_cnt > 0 && atr.cnt > 0 && atr.cnt >= hideSmall && atr.object_cnt > classInfo.cnt * showEssent) {  // Bija atr.cnt_full >= hideSmall
 					if (rezFull.classes[`pt_${atr.p_id}`] != undefined) {
 						let to_id = `pt_${atr.p_id}`;
 						if (rezFull.classes[to_id].G_id != undefined) {
@@ -3821,8 +3845,8 @@ function makeAssociations() {
 	for (const pId of Object.keys(p_list_full)) {
 		if ( p_list_full[pId].count  > remCount && remBig)
 			hidedProps.big.push(`${p_list_full[pId].p_name} cnt ${p_list_full[pId].cnt} dgr_lines_cnt ${p_list_full[pId].count}`);
-		if ( p_list_full[pId].cnt <  hideSmall )
-			hidedProps.small.push(`${p_list_full[pId].p_name} cnt ${p_list_full[pId].cnt}`);
+		//if ( p_list_full[pId].cnt <  hideSmall ) //TODO šis skaits vairs nav pareizs
+		//	hidedProps.small.push(`${p_list_full[pId].p_name} cnt ${p_list_full[pId].cnt}`);
 	}
 	if ( hidedProps.big.length > 0 || hidedProps.big.small > 0 )
 		console.log('Propertijas, kas netiek novilktas kā līnijas:', hidedProps )
@@ -3889,7 +3913,7 @@ function makeDiagramData() {
 			if ( atr_info.type == 'out' ) {
 				if ( p_list_full[`p_${atr_info.p_id}`].in_diagram ) {
           if ( atr_info.duplicated )
-            rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} Target for ${p_name}`;
+            rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} dgr`;  // `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} Target for ${p_name}`;
 					else if ( atr_info.object_cnt_dgr > 0 )
 						rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain} ${u_to_type} dgr,IRI`;
 					else

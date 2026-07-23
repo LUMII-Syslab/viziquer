@@ -486,37 +486,31 @@
                         </label>
                       </div>
                       <div class="col-sm-4">
-                        <label style="width:300px; padding-bottom:10px; padding-top:30px;"> Show properties as lines, if: </label>
+                        <label style="width:300px; padding-top:30px;"> Show properties as lines, if: </label>
                         <div class="row">
                           <div class="col-sm-8">
-                            <label >Lines with property no more than: </label>
-                            <label >Triple count at least:</label>
-                            <label >Triple count at least % of class size: </label>
+                            <label style=" padding-top:5px;">Lines with property no more than: </label>
+                            <label style=" padding-top:5px;">Triple count at least:</label>
+                            <label style=" padding-top:5px;">Triple count at least % of class:</label>
                             <label style=" padding-top:10px; ">Brief property lists:</label>
                             <div class="help-tip">
                               <p>{{I_pList}} </p>
                             </div>
                           </div>
                           <div class="col-sm-4">
-                            <input type="number" id="pMaxCount" name="pMaxCount" value="7" style="width:50px;" >
+                            <input type="number" id="pMaxCount" name="pMaxCount" value="7" style="width:50px; padding-top:5px;" >
                             <div class="help-tip">
                               <p>{{I_pMaxCount}} </p>
                             </div>
-                            <input type="number" id="pMinSize" name="pMinSize" value="1" style="width:50px;" >
+                            <input type="number" id="pMinSize" name="pMinSize" value="1" style="width:50px; padding-top:10px;" >
                             <div class="help-tip">
                               <p>{{I_pMinSize}} </p>
                             </div>
-                            <select class="form-control" id="pEssential" style="width:70px; " >
-                              <option selected value=0 >0%</option>
-                              <option value=100 >1%</option>
-                              <option value=10 >10%</option>
-                            </select>
-                            <label style=" padding-top:10px; "> </label>
-                            <select class="form-control" id="pList"  style=" width:70px; " >
-                              <option selected value=0 >Strong</option>
-                              <option value=1 >Medium</option>
-                              <option value=2 >Weak</option>
-                              <option value=3 >No</option>
+                            <input type="number" id="pEssential" name="pEssential" value="0" style="width:50px; padding-top:10px; padding-bottom:10px ;" >
+                            <select class="form-control" id="pList" style=" width:70px;  " >
+                              <option value=2 >Strong</option>
+                              <option selected value=1 >Medium</option>
+                              <option value=0 >No</option>
                             </select>
                           </div>
                         </div>
@@ -567,23 +561,21 @@
                     <div style="padding-bottom:10px;">
                       <span class="label label-default" style="font-size:15px; background-color:transparent;">Diagram parameters:</span>
                     </div>
+                        {{#if pub}}
+                        {{else}}
                         <label class="form-check-label" style="padding-top:10px;">
                           <input class="form-check-input" name = "compClassView" id="compClassView" type="checkbox" checked = "checked">
                           <span class="custom-checkbox"></span>
                           Compact view of properties
                         </label>
+                        {{/if}}
                         <label class="form-check-label">
                           <input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
                           <span class="custom-checkbox"></span>
                           Compact list of property target classes
                         </label>
-                        <select class="form-control" id="diffT" style="width:300px;" >
-                          <option selected value=0 >Target merging Sim>0</option>
-                          <option value=1 >Target merging Sim>1</option>
-                          <option value=2 >Target merging Sim>2</option>
-                        </select>
                         <label class="form-check-label" style="padding-top:10px;">
-                          <input class="form-check-input" name = "duplicate" id="duplicate" type="checkbox" checked = "checked">
+                          <input class="form-check-input" name = "duplicate" id="duplicate" type="checkbox" >
                           <span class="custom-checkbox"></span>
                           Duplicate non class links in attributes
                         </label>
@@ -598,6 +590,12 @@
                           <option value=0 >power = 0 </option>
                           <option value=3 >power = 1/3 </option>
                           <option selected value=5 >power =  1/5 </option>
+                        </select>
+                        <label style=" padding-top:10px;">Target merging:</label>
+                        <select class="form-control" id="diffT" style="width:300px;" >
+                          <option selected value=0 >Basic (sim > 0)</option>
+                          <option value=1 >Weak (sim > 1)</option>
+                          <option value=2 >Weak (sim > 2)</option>
                         </select>
                         {{#if pub}}
                         {{else}}
@@ -615,6 +613,8 @@
                           </label>
                         {{/if}}
                   </div>
+                  {{#if pub}}
+                  {{else}}
                   <div class="col-sm-4" style="padding-top:10px;">
                     <div style="padding-bottom:10px; padding-top:10px;">
                       <span class="label label-default" style="font-size:15px; background-color:transparent;">Hide classes from:</span>
@@ -643,6 +643,7 @@
                       {{/each}}
                     </select>
                   </div>
+                  {{/if}}
                 </div>
                 <!-- //////////////////////////////////////// -->
                 <div id="support" class="tab-pane fade">
