@@ -247,6 +247,22 @@ export function GroupedResultsPaginated() {
     setSavedQuery(getEditorText());
   });
 
+  const isSavedQueryOk = savedQuery !== "";
+
+  if (!isSavedQueryOk) {
+    return e(
+      "div",
+      {
+        style: {
+          display: "flex",
+          flexDirection: "column",
+          padding: 16,
+        }},
+      e("p", { style: { fontSize: 16 }}, "Query is empty!"),
+      e("p", { style: { fontSize: 12 }}, "Write a query in order to get grouped results.")
+    );
+  }
+
   return e(
     "div",
     {},
