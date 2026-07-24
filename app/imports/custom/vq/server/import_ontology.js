@@ -415,6 +415,8 @@ async function add_one_compartment_from_list(list, compartmentName, value_list, 
     }
     if ( !list.compactClassView && compartmentName !== 'ClassList')
         cut_info.cut = false;
+    else if ( !list.compactClassView && compartmentName === 'ClassList' && length < 20) // Tāda šaubiga konstante
+        cut_info.cut = false;
     if ( cut_info.cut ) {
         const values75 = value_list.filter(function(v){ return v.cnt > 0.75*cut_info.class_cnt; });
         const values50 = value_list.filter(function(v){ return v.cnt > 0.5*cut_info.class_cnt; });
