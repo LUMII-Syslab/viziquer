@@ -118,7 +118,7 @@ function SaveableValueBar({
         disabled: !showBar,
         style: { ...buttonStyle, background: regular },
         onClick: () => onValueChange(tempValue),
-      }, "Save"),
+      }, "Update"),
       e("button", {
         disabled: !showBar,
         style: { ...buttonStyle, background: red },
@@ -163,7 +163,7 @@ function SaveableIdVarsSelector({ value, onValueChange, query }) {
       tempValue,
       onValueChange,
       onTempValueChange: setTempValue,
-      differenceMessage: "Key columns are not saved!",
+      differenceMessage: "Key columns are not updated!",
     }),
   );
 }
