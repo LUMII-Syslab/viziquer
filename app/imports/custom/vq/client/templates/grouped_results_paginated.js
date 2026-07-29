@@ -118,7 +118,7 @@ function SaveableValueBar({
         disabled: !showBar,
         style: { ...buttonStyle, background: regular },
         onClick: () => onValueChange(tempValue),
-      }, "Save"),
+      }, "Update"),
       e("button", {
         disabled: !showBar,
         style: { ...buttonStyle, background: red },
@@ -150,20 +150,20 @@ function IdVarsWarning({ idVars, query }) {
  * @param {string[]} props.value
  * @param {(newValue: string[]) => void} props.onValueChange
  * @param {string} props.query
+ * @param {string[]} props.tempValue
+ * @param {(newValue: string[]) => void} props.onTempValueChange
  **/
-function SaveableIdVarsSelector({ value, onValueChange, query }) {
-  const [tempValue, setTempValue] = useState(value);
-
+function SaveableIdVarsSelector({ value, onValueChange, query, tempValue, onTempValueChange }) {
   return e(
     Fragment,
     {},
-    e(IdVarsSelector, { value: tempValue, onValueChange: setTempValue, query }),
+    e(IdVarsSelector, { value: tempValue, onValueChange: onTempValueChange, query }),
     e(/** @type {typeof SaveableValueBar<string[]>} */ (SaveableValueBar), {
       value,
       tempValue,
       onValueChange,
-      onTempValueChange: setTempValue,
-      differenceMessage: "Key columns are not saved!",
+      onTempValueChange,
+      differenceMessage: "Key columns are not updated!",
     }),
   );
 }
@@ -236,6 +236,7 @@ function useOnThisTabSelect(callback) {
 
 export function GroupedResultsPaginated() {
   const [idVars, setIdVars] = useState(["this"]);
+  const [tempIdVars, setTempIdVars] = useState(["this"]);
 
   const [savedQuery, setSavedQuery]= useState("");
 
@@ -244,7 +245,16 @@ export function GroupedResultsPaginated() {
   );
 
   useOnThisTabSelect(() => {
-    setSavedQuery(getEditorText());
+    const newQuery = getEditorText();
+    // NOTE: We should check for changes. Otherwise every time the user changes back to this
+    // component's tab, the selection would be reverted which is undesirable.
+    if (newQuery !== savedQuery) {
+      const newIdVars = findSparqlVars(newQuery).slice(0, 1);
+      setIdVars(newIdVars);
+      // NOTE: Also update temporary selection so that it doesn't reflect the previous state
+      setTempIdVars(newIdVars);
+    }
+    setSavedQuery(newQuery);
   });
 
   const isSavedQueryOk = savedQuery !== "";
@@ -270,6 +280,8 @@ export function GroupedResultsPaginated() {
       value: idVars,
       onValueChange: setIdVars,
       query: savedQuery,
+      tempValue: tempIdVars,
+      onTempValueChange: setTempIdVars,
     }),
     e(IdVarsWarning, { query: savedQuery, idVars }),
     e(MultiCardinalTableServer, {
