@@ -166,7 +166,7 @@ Template.structureTemplate.events({
     var proj_id = $(e.target).closest(".project-path").attr("id");
     var list = { projectId: proj_id };
 
-    Utilities.callMeteorMethod("duplicateProject", list);
+    Utilities.callMeteorMethodAsync("duplicateProject", list);
 
     return;
   },

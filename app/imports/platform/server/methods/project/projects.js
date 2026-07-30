@@ -205,7 +205,7 @@ Meteor.methods({
       }
 
       project._id = generate_id();
-      var new_project_id = Projects.direct.insert(project);
+      var new_project_id = await Projects.direct.insertAsync(project);
       list.newProjectId = new_project_id;
 
       project._id = new_project_id;
