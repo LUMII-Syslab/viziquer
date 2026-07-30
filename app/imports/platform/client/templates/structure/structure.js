@@ -159,14 +159,14 @@ Template.structureTemplate.events({
     return;
   },
 
-  "click .duplicate-project-obj": function (e) {
+  "click .duplicate-project-obj": async function (e) {
     e.preventDefault();
     //e.stopPropagation();
 
     var proj_id = $(e.target).closest(".project-path").attr("id");
     var list = { projectId: proj_id };
 
-    Utilities.callMeteorMethodAsync("duplicateProject", list);
+    await Utilities.callMeteorMethodAsync("duplicateProject", list);
 
     return;
   },

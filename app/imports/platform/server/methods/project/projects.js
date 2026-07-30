@@ -194,26 +194,30 @@ Meteor.methods({
   },
 
   duplicateProject: async function (list) {
-    var user_id = Meteor.userId();
-    var versionId = null;
+    const user_id = Meteor.userId();
+    // const versionId = null;
+
     if (await is_project_member(user_id, list)) {
-      var project_id = list.projectId;
-      var project = await Projects.findOneAsync({ _id: project_id });
-      if (!project) {
+      const old_project_id = list.projectId;
+      const old_project = await Projects.findOneAsync({ _id: old_project_id });
+      if (!old_project) {
         console.error("No project object");
         return;
       }
 
-      project._id = generate_id();
-      var new_project_id = await Projects.direct.insertAsync(project);
-      list.newProjectId = new_project_id;
+      const new_project = Object.assign({}, old_project)
+      delete new_project._id
 
-      project._id = new_project_id;
-      var new_version_id = await afterInsert(user_id, project);
+      const new_project_id = await Projects.direct.insertAsync(new_project);
+      new_project._id = new_project_id;
 
-      await Diagrams.find({ projectId: project_id }).forEachAsync(
-        async function (diagram) {
-          await duplicateDiagram(diagram, new_project_id, new_version_id);
+      // list.newProjectId = new_project_id;
+
+      const new_version_id = await afterInsert(user_id, new_project);
+
+      await Diagrams.find({ projectId: old_project_id }).forEachAsync(
+        async function (d) {
+          await duplicateDiagram(d, new_project_id, new_version_id);
         },
       );
     }
@@ -230,71 +234,69 @@ Meteor.methods({
   },
 });
 
-async function duplicateDiagram(diagram, new_project_id, new_version_id) {
-  var diagram_id = diagram._id;
-  var project_id = diagram.projectId;
+async function duplicateDiagram(old_diagram, new_project_id, new_version_id) {
+  const old_diagram_id = old_diagram._id;
+  const old_project_id = old_diagram.projectId;
 
-  diagram._id = undefined;
-
-  _.extend(diagram, {
-    _id: undefined,
+  const new_diagram = Object.assign({}, old_diagram, {
     projectId: new_project_id,
     versionId: new_version_id,
-  });
-  var new_diagram_id = await Diagrams.insertAsync(diagram);
+  })
+  delete new_diagram._id
+  const new_diagram_id = await Diagrams.insertAsync(new_diagram);
 
-  var elems_map = {};
+  const elems_map = {};
+
   await Elements.find({
-    diagramId: diagram_id,
-    projectId: project_id,
+    diagramId: old_diagram_id,
+    projectId: old_project_id,
     type: "Box",
-  }).forEachAsync(async function (box) {
-    var old_box_id = box._id;
-    _.extend(box, {
-      _id: undefined,
+  }).forEachAsync(async function (old_box) {
+    const old_box_id = old_box._id;
+    const new_box = Object.assign({}, old_box, {
       diagramId: new_diagram_id,
       projectId: new_project_id,
       versionId: new_version_id,
-    });
+    })
+    delete new_box._id
 
-    var new_box_id = await Elements.insertAsync(box);
+    const new_box_id = await Elements.insertAsync(new_box);
     elems_map[old_box_id] = new_box_id;
   });
 
   await Elements.find({
-    diagramId: diagram_id,
-    projectId: project_id,
+    diagramId: old_diagram_id,
+    projectId: old_project_id,
     type: "Line",
-  }).forEachAsync(async function (line) {
-    var old_line_id = line._id;
-
-    line._id = undefined;
-    _.extend(line, {
-      _id: undefined,
+  }).forEachAsync(async function (old_line) {
+    const old_line_id = old_line._id;
+    const new_line = Object.assign({}, old_line, {
       diagramId: new_diagram_id,
       projectId: new_project_id,
       versionId: new_version_id,
-      startElement: elems_map[line.startElement],
-      endElement: elems_map[line.endElement],
-    });
+      startElement: elems_map[old_line.startElement],
+      endElement: elems_map[old_line.endElement],
+    })
+    delete new_line._id
 
-    var new_line_id = await Elements.insertAsync(line);
+    const new_line_id = await Elements.insertAsync(new_line);
     elems_map[old_line_id] = new_line_id;
   });
 
   await Compartments.find({
-    diagramId: diagram_id,
-    projectId: project_id,
-  }).forEachAsync(async function (compart) {
-    _.extend(compart, {
-      _id: undefined,
-      elementId: elems_map[compart.elementId],
+    diagramId: old_diagram_id,
+    projectId: old_project_id,
+  }).forEachAsync(async function (old_compart) {
+    const old_compart_id = old_compart._id
+    const new_compart = Object.assign({}, old_compart, {
+      elementId: elems_map[old_compart.elementId],
       diagramId: new_diagram_id,
       projectId: new_project_id,
       versionId: new_version_id,
-    });
+    })
+    delete new_compart._id
 
-    await Compartments.insertAsync(compart);
+    await Compartments.insertAsync(new_compart);
   });
 }
 
