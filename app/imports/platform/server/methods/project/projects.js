@@ -207,6 +207,9 @@ Meteor.methods({
 
       const new_project = Object.assign({}, old_project)
       delete new_project._id
+      new_project.name = new_project.name + ' (copy)' // TODO: paskatīties/atrast unikālu vārdu
+      new_project.createdBy = user_id
+      new_project.createdAt = new Date()
 
       const new_project_id = await Projects.direct.insertAsync(new_project);
       new_project._id = new_project_id;
@@ -217,7 +220,11 @@ Meteor.methods({
 
       await Diagrams.find({ projectId: old_project_id }).forEachAsync(
         async function (d) {
-          await duplicateDiagram(d, new_project_id, new_version_id);
+          await duplicateDiagram(d, new_project_id, new_version_id, {
+            seenCount: 0,
+            createdAt: new Date(),
+            createdBy: user_id,
+          });
         },
       );
     }
@@ -234,11 +241,11 @@ Meteor.methods({
   },
 });
 
-async function duplicateDiagram(old_diagram, new_project_id, new_version_id) {
+async function duplicateDiagram(old_diagram, new_project_id, new_version_id, attr_updates) {
   const old_diagram_id = old_diagram._id;
   const old_project_id = old_diagram.projectId;
 
-  const new_diagram = Object.assign({}, old_diagram, {
+  const new_diagram = Object.assign({}, old_diagram, attr_updates, {
     projectId: new_project_id,
     versionId: new_version_id,
   })
@@ -259,7 +266,6 @@ async function duplicateDiagram(old_diagram, new_project_id, new_version_id) {
       versionId: new_version_id,
     })
     delete new_box._id
-
     const new_box_id = await Elements.insertAsync(new_box);
     elems_map[old_box_id] = new_box_id;
   });
@@ -278,7 +284,6 @@ async function duplicateDiagram(old_diagram, new_project_id, new_version_id) {
       endElement: elems_map[old_line.endElement],
     })
     delete new_line._id
-
     const new_line_id = await Elements.insertAsync(new_line);
     elems_map[old_line_id] = new_line_id;
   });
@@ -295,7 +300,6 @@ async function duplicateDiagram(old_diagram, new_project_id, new_version_id) {
       versionId: new_version_id,
     })
     delete new_compart._id
-
     await Compartments.insertAsync(new_compart);
   });
 }

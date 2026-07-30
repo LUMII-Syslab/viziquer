@@ -355,66 +355,74 @@ Meteor.methods({
   },
 
   duplicateDiagram: async function (list) {
-    var user_id = Meteor.userId();
+    const user_id = Meteor.userId();
     if (await is_project_version_admin(user_id, list)) {
-      var diagram_id = list.diagramId;
-      var project_id = list.projectId;
+      const old_diagram_id = list.diagramId;
+      const project_id = list.projectId;
 
-      var diagram = await Diagrams.findOneAsync({
-        _id: diagram_id,
+      const old_diagram = await Diagrams.findOneAsync({
+        _id: old_diagram_id,
         projectId: project_id,
       });
-      if (!diagram) {
-        console.error("No diagram ", diagram);
+      if (!old_diagram) {
+        console.error("No diagram ", old_diagram);
         return;
       }
 
-      // diagram._id = undefined;
-      delete diagram._id;
-      var new_diagram_id = await Diagrams.insertAsync(diagram);
+      const new_diagram = Object.assign({}, old_diagram, {
+        name: old_diagram.name + ' (copy)', // TODO: paskatīties/atrast unikālu vārdu
+        seenCount: 0,
+        createdAt: new Date(),
+        createdBy: user_id,
+      })
+      delete new_diagram._id;
+      const new_diagram_id = await Diagrams.insertAsync(new_diagram);
 
-      var elems_map = {};
+      const elems_map = {};
+
       await Elements.find({
-        diagramId: diagram_id,
+        diagramId: old_diagram_id,
         projectId: project_id,
         type: "Box",
-      }).forEachAsync(async function (box) {
-        var old_box_id = box._id;
-        // box._id = undefined;
-        delete box._id;
-        box.diagramId = new_diagram_id;
-
-        var new_box_id = await Elements.insertAsync(box);
+      }).forEachAsync(async function (old_box) {
+        const old_box_id = old_box._id
+        const new_box = Object.assign({}, old_box, {
+          diagramId: new_diagram_id,
+          projectId: project_id,
+        })
+        delete new_box._id
+        const new_box_id = await Elements.insertAsync(new_box);
         elems_map[old_box_id] = new_box_id;
       });
 
       await Elements.find({
-        diagramId: diagram_id,
+        diagramId: old_diagram_id,
         projectId: project_id,
         type: "Line",
-      }).forEachAsync(async function (line) {
-        var old_line_id = line._id;
-
-        // line._id = undefined;
-        delete line._id;
-        line.startElement = elems_map[line.startElement];
-        line.endElement = elems_map[line.endElement];
-        line.diagramId = new_diagram_id;
-
-        var new_line_id = await Elements.insertAsync(line);
+      }).forEachAsync(async function (old_line) {
+        const old_line_id = old_line._id;
+        const new_line = Object.assign({}, old_line, {
+          diagramId: new_diagram_id,
+          startElement: elems_map[old_line.startElement],
+          endElement: elems_map[old_line.endElement],
+        })
+        delete new_line._id
+        const new_line_id = await Elements.insertAsync(new_line);
         elems_map[old_line_id] = new_line_id;
       });
 
       await Compartments.find({
-        diagramId: diagram_id,
+        diagramId: old_diagram_id,
         projectId: project_id,
-      }).forEachAsync(async function (compart) {
-        // compart._id = undefined;
-        delete compart._id;
-        compart.elementId = elems_map[compart.elementId];
-        compart.diagramId = new_diagram_id;
-
-        await Compartments.insertAsync(compart);
+      }).forEachAsync(async function (old_compart) {
+        const old_compart_id = old_compart._id
+        const new_compart = Object.assign({}, old_compart, {
+          elementId: elems_map[old_compart.elementId],
+          diagramId: new_diagram_id,
+        })
+        delete new_compart._id
+        await Compartments.insertAsync(new_compart);
+        await Compartments.insertAsync(old_compart);
       });
     }
   },

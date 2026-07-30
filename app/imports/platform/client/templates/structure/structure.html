@@ -44,6 +44,15 @@
                         aria-labelledby="edit-project"
                         style="left: -140px"
                     >
+                        {{#if isOwner}}
+                        <li>
+                            <a class="edit-project-obj" href="#">
+                                <i class="fa fa-pencil fa-lg"></i>
+                                {{_ "edit_info"}}
+                            </a>
+                        </li>
+                        {{/if}}
+
                         <li>
                             <a class="duplicate-project-obj" href="#">
                                 <i class="fa fa-files-o fa-lg"></i>
@@ -52,12 +61,6 @@
                         </li>
 
                         {{#if isOwner}}
-                        <li>
-                            <a class="edit-project-obj" href="#">
-                                <i class="fa fa-pencil fa-lg"></i>
-                                {{_ "edit_info"}}
-                            </a>
-                        </li>
                         <li>
                             <a class="remove-project-obj" href="#">
                                 <i class="fa fa-trash-o fa-lg"></i>
