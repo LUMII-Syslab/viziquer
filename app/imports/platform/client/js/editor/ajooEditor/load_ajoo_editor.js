@@ -193,8 +193,14 @@ function get_event_functions() {
           "dynamicReadModeContextMenu",
         );
       }
-
-      Interpreter.processContextMenu(data.ev, elem_type[menu.attrName]);
+	  let menuList = [];
+	  if ( element.style.name == 'PropertyEnds' ) {
+		menuList = elem_type[menu.attrName].slice(0, 3);
+	  }
+	  else {
+		menuList = elem_type[menu.attrName];
+	  }
+      Interpreter.processContextMenu(data.ev, menuList);
     },
 
     rClickedOnCollection: function (data) {
