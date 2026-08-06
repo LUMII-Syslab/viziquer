@@ -501,6 +501,27 @@ function selectHttpRequestProfile(options) {
  * @property {string} query
  */
 
+/**
+ * Turn non-binary body response into JSON representation.
+ *
+ * This is needed so that the data can be transferred via Meteor.methods websocket.
+ *
+ * @param {Response} response
+ *
+ * @return {Promise<[string, ResponseInit]>}
+ */
+export async function jsonifyResponse(response) {
+  const body = await response.text();
+  /** @type {ResponseInit} */
+  const responseInit = {
+    headers: response.headers,
+    status: response.status,
+    statusText: response.statusText
+  };
+
+  return [body, responseInit];
+}
+
 Meteor.methods({
   /**
    * @param {ExecuteSparqlSimpleJsonParams} options
@@ -522,14 +543,7 @@ Meteor.methods({
     });
 
     const res = await fetch(req);
-
-    if (!res.ok) {
-      const bodyText = await res.text();
-      console.error("Failed with body:", bodyText);
-      throw new Error("Response not ok");
-    }
-
-    return await res.json();
+    return await jsonifyResponse(res);
   },
 
 
