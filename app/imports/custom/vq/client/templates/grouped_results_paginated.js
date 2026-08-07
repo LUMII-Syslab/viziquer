@@ -33,9 +33,18 @@ async function executeUnlimited(query) {
     url: maybeEndpoint,
   };
 
-  const res = await Utilities.callMeteorMethodAsync("executeSparqlSimpleJson", params);
+  /** @type {[string, ResponseInit]} */
+  const serializedRes = await Utilities.callMeteorMethodAsync("executeSparqlSimpleJson", params);
 
-  return res;
+  const res = new Response(...serializedRes);
+
+  if (!res.ok) {
+    const bodyText = await res.text();
+    console.error("Failed with body:", bodyText);
+    throw new Error("Response not ok");
+  }
+
+  return await res.json();
 }
 
 /** @return {string} */
