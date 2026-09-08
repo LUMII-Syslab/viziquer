@@ -5,9 +5,9 @@ import {
 import { createRoot } from "react-dom/client";
 import {
     PortalContext,
-} from "rdf-toolbag";
+} from "multicardinal-table";
 // @ts-ignore
-import rdfToolbagStyle from 'rdf-toolbag/dist/rdf-toolbag.css';
+import rdfToolbagStyle from 'multicardinal-table/dist/multicardinal-table.css';
 import { dataShapes } from '../../../vq/client/js/DataShapes.js'
 
 // NOTE: Using `rem` and `styleOverrideMap` to emulate the default 1rem=16px layout because
