@@ -230,6 +230,9 @@ Template.VQ_DSS_custom_sparql.events({
 		prefixTable[cls["data"][0]["prefix"]] = "";
 		let prefixes = await dataShapes.getNamespaces();
 
+		let rolePrefix = getPrefix(DirRole);
+		if(rolePrefix) prefixTable[rolePrefix] = "";
+
 		for (let i = 0; i < selectedProperties.length; i++) {
 			prefixTable[selectedProperties[i]["prefix"]] = "";
 			sparqlText = sparqlText + "OPTIONAL{"+classObject + " " + selectedProperties[i]["localName"] + " ?" + selectedProperties[i]["aliasName"] + " .";
@@ -279,6 +282,9 @@ Template.VQ_DSS_custom_sparql.events({
 		let sparqlText = "SELECT DISTINCT * WHERE{\n  "+ classObject + " " + DirRole+ " " + classSubject + ". \n  ";
 		prefixTable[cls["data"][0]["prefix"]] = "";
 		let prefixes = await dataShapes.getNamespaces();
+		
+		let rolePrefix = getPrefix(DirRole);
+		if(rolePrefix) prefixTable[rolePrefix] = "";
 
 		for (let i = 0; i < selectedProperties.length; i++) {
 			prefixTable[selectedProperties[i]["prefix"]] = "";
@@ -397,3 +403,7 @@ function moveSelectedOptions(direction) {
   Template.VQ_DSS_custom_sparql.SelectedProperties.set(newSelectedProps);
 }
 
+function getPrefix(iri) {
+  const index = iri.indexOf(':');
+  return index >= 0 ? iri.slice(0, index) : null;
+}
