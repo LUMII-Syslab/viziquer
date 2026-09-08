@@ -10,7 +10,8 @@ import {
     ComplexPropertySelector,
     formatQuery,
     rewriteQueryWithPrefixes,
-} from 'rdf-toolbag';
+    reorderOptional,
+} from "multicardinal-table";
 import { makeEventHandler } from './event.js';
 
 /** @type {*} */
@@ -289,7 +290,7 @@ async function selectionToQuery(selection) {
     const prefixInfo = (await getPrefixes().then((it) => Object.entries(it)))
           .map(([prefix, uri]) => ({ prefix, uri }));
 
-    const res = rewriteQueryWithPrefixes({ query, prefixInfo });
+    const res = reorderOptional(rewriteQueryWithPrefixes({ query, prefixInfo }));
 
     return res;
 }

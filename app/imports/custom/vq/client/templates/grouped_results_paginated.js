@@ -8,7 +8,7 @@ import {
 import {
     MultiCardinalTableServer,
     SyncPropertySelector,
-} from "rdf-toolbag";
+} from "multicardinal-table";
 import { Projects } from '../../../../db/platform/collections.js'
 import { Utilities } from '../../../../platform/client/js/utilities/utils.js'
 
