@@ -50,12 +50,12 @@ Template.VQ_DSS_schema.CentralityButtonDisabled = new ReactiveVar(false);
 
 // Labels, titles and hints
 const LF_fixedCount = 'Simple top class selection';
-const I_fixedCount = 'Explanation ...';  // Vienkāršais variants klašu atlasīšanai, tikai ar skaitu un kārtošanu, izslēdzot dabū manuālo režīmu
-const I_addPropEnds = 'Explanation ...'; // Properiju gali bez klasēm
-const I_pMaxCount = 'Explanation ...';  // Maksimālais vienas propertijas līniju skaits diagrammā
-const I_pMinSize = 'Explanation ...';  // To propertiju minimālais trijnieku skaits, kuras tiek zīmētas ka līnijas
-const I_pList = 'Explanation ...';  // Propertiju sarakstu rādīšanas parametrs
-const I_pw = 'Explanation ...';  // Size factor skaidrojums
+const I_fixedCount = 'Explanation ...';  // ( Classes and Properties: -Simple top class selection) Vienkāršais variants klašu atlasīšanai, tikai ar skaitu un kārtošanu, izslēdzot dabū manuālo režīmu
+const I_addPropEnds = 'Explanation ...'; // ( Classes and Properties: Non-class nodes) Properiju gali bez klasēm
+const I_pMaxCount = 'Explanation ...';  // (Diagram parameters: -Lines with property no more than:) Maksimālais vienas propertijas līniju skaits diagrammā
+const I_pMinSize = 'Explanation ...';  // (Diagram parameters: Triple count at least) To propertiju minimālais trijnieku skaits, kuras tiek zīmētas ka līnijas
+const I_pList = 'Explanation ...';  // (Diagram parameters: Brief property lists:)Propertiju sarakstu rādīšanas parametrs
+const I_pw = 'Explanation ...';  // (Extra Parameters: Size factor:) Size factor skaidrojums
 
 
 Interpreter.customMethods({
