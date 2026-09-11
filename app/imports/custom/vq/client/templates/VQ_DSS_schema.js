@@ -2995,18 +2995,20 @@ async function getBasicClasses() {
 	if ( params.cover) // TODO Jāpadomā, vai šim nevajag atsevišķu pazīmi
 		rr = await dataShapes.callServerFunction("xx_getCCInfo", allParams);
 	else
-		rr = await dataShapes.callServerFunction("xx_getCCInfoNew", allParams);
+		rr = await dataShapes.callServerFunction("xx_getCCInfoNew", allParams);  // Te pagaidām ir arī lieki pāri
 
 	// DB virsklašu informācijas pielikšana
 	for (const cl of rr.data) {
 		const id1 = `c_${cl.class_1_id}`;
 		const id2 = `c_${cl.class_2_id}`;
-		rezFull.classes[id1].super_classes.push(id2);
-		rezFull.classes[id2].sub_classes.push(id1);
-		rezFull.classes[id1].used = true;
-		rezFull.classes[id2].used = true;
-		rezFull.classes[id1].hasGen = true;
-		rezFull.classes[id2].hasGen = true;
+    if ( rezFull.classes[id1] !== undefined && rezFull.classes[id2] !== undefined ) {
+      rezFull.classes[id1].super_classes.push(id2);
+      rezFull.classes[id2].sub_classes.push(id1);
+      rezFull.classes[id1].used = true;
+      rezFull.classes[id2].used = true;
+      rezFull.classes[id1].hasGen = true;
+      rezFull.classes[id2].hasGen = true;
+    }
 	}
 
 	//rr = await dataShapes.callServerFunction("xx_getCPCInfo", allParams);
