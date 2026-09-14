@@ -13,6 +13,9 @@ Template.registerHelper('_', function (key, options) {
   return i18n.__(key, params);
 });
 
+Template.registerHelper('appVersion', function() {
+  return Meteor.settings.public?.appVersion || 'Development';
+});
 
 Template.nav.helpers({
 
