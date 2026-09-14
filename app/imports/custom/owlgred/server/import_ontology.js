@@ -1234,28 +1234,30 @@ Meteor.methods({
 		if(ontology.objectPropertyAssertions){
 			for (const key of Object.keys(ontology.objectPropertyAssertions)) {
 			  const item = ontology.objectPropertyAssertions[key];
-			  if(element_map[item.source] && element_map[item.target]){
-				let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[item.source], element_map[item.target], line_layoutSettings);
+			  if(item.createLink !== false){
+				  if(element_map[item.source] && element_map[item.target]){
+					let object = await Create_New_OWLGrEd_Element(list, elemType, diagram_type, new_diagram_id, elemStyle, true, element_map[item.source], element_map[item.target], line_layoutSettings);
 
-				let new_line_id = await Elements.insertAsync(object);
-				element_map[new_line_id] = new_line_id;
+					let new_line_id = await Elements.insertAsync(object);
+					element_map[new_line_id] = new_line_id;
 
-				let listForCompartment = {
-						diagram_id: new_diagram_id,
-						diagram_type_id: diagram_type._id,
-						projectId: list.projectId,
-						versionId: list.versionId,
-						element_id: new_line_id,
-						element_type_id: elemType._id
-				}
-				let propertyInput = item.prefixed;
-				if(item.negative === true){
-					await add_one_compartment(listForCompartment, "IsNegativeAssertion", "true");
-					propertyInput = "\u27C2"+propertyInput;
-				}
-				await add_one_compartment(listForCompartment, "Property", item.prefixed, propertyInput);
-			  } else {
-				console.error("No Individual box for object Property Assertion", item); 
+					let listForCompartment = {
+							diagram_id: new_diagram_id,
+							diagram_type_id: diagram_type._id,
+							projectId: list.projectId,
+							versionId: list.versionId,
+							element_id: new_line_id,
+							element_type_id: elemType._id
+					}
+					let propertyInput = item.prefixed;
+					if(item.negative === true){
+						await add_one_compartment(listForCompartment, "IsNegativeAssertion", "true");
+						propertyInput = "\u27C2"+propertyInput;
+					}
+					await add_one_compartment(listForCompartment, "Property", item.prefixed, propertyInput);
+				  } else {
+					console.error("No Individual box for object Property Assertion", item); 
+				  }
 			  }
 			}
 		}

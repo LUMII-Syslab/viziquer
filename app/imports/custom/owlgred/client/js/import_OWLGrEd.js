@@ -3240,6 +3240,31 @@ async function createOntologyStructure(ontology, importSettings){
 				})
 				classInstances.push([{name:"Individual", input:individ.prefixed, value:JSON.stringify(classInstanceList)}])
 			}
+			
+			let objFacts = individ.objFacts;
+			 for(let df = 0; df < objFacts.length; df++){
+				let objFact = objFacts[df];
+				let op = objFact.p;
+				let ontologyPrefixes = ontology.prefixes;
+				let ob = individuals[objFact.object]?.prefixed || iriToPrefixed(objFact.object, ontologyPrefixes);
+				if(op || ob){
+
+					if(op === "http://www.w3.org/2002/07/owl#differentFrom" && (importSettings?.showDifferentIndividuals ?? true) === true){
+						
+					} else if(op === "http://www.w3.org/2002/07/owl#sameAs" && (importSettings?.showSameIndividuals ?? true) === true){
+					
+					} else {
+						let prefixedOP = ontology.objectProperties[op]?.prefixed || iriToPrefixed(op, ontologyPrefixes);
+						if((importSettings?.showIndividualsObjectPropertyAssertions ?? true) === true && objFact.negative !== true){
+							objectPropertyAssertions.push({iri: op, source:iri, target:objFact.object, prefixed:prefixedOP, negative:objFact.negative, createLink:false})
+						}
+						if((importSettings?.showIndividualsNegativeObjectPropertyAssertions ?? true) === true && objFact.negative === true){
+							objectPropertyAssertions.push({iri: op, source:iri, target:objFact.object, prefixed:prefixedOP, negative:objFact.negative, createLink:false})
+						}
+					}
+				}
+			 }
+			
 		  } else if(importSettings?.showSameIndividualsType_object_list  === true && typeof individ.types[0] !== "undefined"){
 			
 			let instanceList = []
@@ -3265,6 +3290,30 @@ async function createOntologyStructure(ontology, importSettings){
 				// })
 				// classInstances.push([{name:"Individual", input:individ.prefixed, value:JSON.stringify(classInstanceList)}])
 			}
+			
+			 let objFacts = individ.objFacts;
+			 for(let df = 0; df < objFacts.length; df++){
+				let objFact = objFacts[df];
+				let op = objFact.p;
+				let ontologyPrefixes = ontology.prefixes;
+				let ob = individuals[objFact.object]?.prefixed || iriToPrefixed(objFact.object, ontologyPrefixes);
+				if(op || ob){
+
+					if(op === "http://www.w3.org/2002/07/owl#differentFrom" && (importSettings?.showDifferentIndividuals ?? true) === true){
+						
+					} else if(op === "http://www.w3.org/2002/07/owl#sameAs" && (importSettings?.showSameIndividuals ?? true) === true){
+					
+					} else {
+						let prefixedOP = ontology.objectProperties[op]?.prefixed || iriToPrefixed(op, ontologyPrefixes);
+						if((importSettings?.showIndividualsObjectPropertyAssertions ?? true) === true && objFact.negative !== true){
+							objectPropertyAssertions.push({iri: op, source:iri, target:objFact.object, prefixed:prefixedOP, negative:objFact.negative, createLink:false})
+						}
+						if((importSettings?.showIndividualsNegativeObjectPropertyAssertions ?? true) === true && objFact.negative === true){
+							objectPropertyAssertions.push({iri: op, source:iri, target:objFact.object, prefixed:prefixedOP, negative:objFact.negative, createLink:false})
+						}
+					}
+				}
+			 }
 		  }
 		}
 		if(importSettings?.showSameIndividualsType_class_list  === true || importSettings?.showSameIndividualsType_object_list  === true ){
