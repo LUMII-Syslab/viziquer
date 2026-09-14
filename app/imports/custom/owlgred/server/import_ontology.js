@@ -153,10 +153,15 @@ Meteor.methods({
 					}
 					instancesToBeRemoved.push(skosConceptSchemeInstances[i]);
 					const item = ontology.classes[skosConceptSchemeInstances[i]] || ontology.classes[skosConceptSchemeInstances[i].substring(0, skosConceptSchemeInstances[i].length-13)];
-					
-					if(importSettings?.showAsClassifiersSKOSIndividualEnumeration === true && item.definitionExpression !== null && item.equivalentClasses.length === 1 && parseUnquotedListExpression(item.equivalentClasses[0][0]["value"]).length >0){
-						await add_one_compartment(listForCompartment, "Label", "<<Individual enumeration + SKOS>>", "<<Individual enumeration + SKOS>>")
-					} else await add_one_compartment(listForCompartment, "Label", "<<SKOS vocabulary>>", "<<SKOS vocabulary>>")
+									
+					if(item && importSettings?.showAsClassifiersSKOSIndividualEnumeration === true && item.definitionExpression !== null && item.equivalentClasses.length === 1 && parseUnquotedListExpression(item.equivalentClasses[0][0]["value"]).length >0){
+						await add_one_compartment(listForCompartment, "Label", "<<Individual enumeration + SKOS>>", "<<Classifier vocabulary>>")
+						await add_one_compartment(listForCompartment, "ExportMode", "Individual enumeration + SKOS", "Individual enumeration + SKOS")
+					} else 
+					{
+						await add_one_compartment(listForCompartment, "Label", "<<SKOS vocabulary>>", "<<SKOS vocabulary>>")
+						await add_one_compartment(listForCompartment, "ExportMode", "SKOS vocabulary", "SKOS vocabulary")
+					}
 					//Name
 					let clName = iriToLocalName(skosConceptSchemeInstances[i])
 					if (clName.endsWith("ConceptScheme")) {
@@ -164,7 +169,6 @@ Meteor.methods({
 					}
 					await add_one_compartment(listForCompartment, "Name", clName, clName)
 					await setHorizontalLine(listForCompartment, "HorizontalLine1")
-					await add_one_compartment(listForCompartment, "ExportMode", "SKOS vocabulary", "SKOS vocabulary")
 					
 					let opa = ontology.objectPropertyAssertions;
 
