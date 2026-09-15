@@ -24,7 +24,7 @@
     "jquery": "^3.7.1",
     "json2csv": "^5.0.7",
     "meteor-node-stubs": "^1.2.29",
-    "multicardinal-table": "https://github.com/LUMII-Syslab/multicardinal-table#semver:0.3.6",
+    "multicardinal-table": "https://github.com/LUMII-Syslab/multicardinal-table#semver:0.3.7",
     "rdflib": "2.3.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
