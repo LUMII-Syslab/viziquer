@@ -835,6 +835,32 @@ Interpreter.customMethods({
 		}
 		}
 	},
+	
+	
+	setClassifierTypeOwlgred: async function(compart_id){
+		
+		let compart = Compartments.findOne({_id: compart_id.compartmentId});
+		let elem = await Elements.findOneAsync({_id: compart.elementId});
+		var compTypeLabel =  CompartmentTypes.findOne({name: "Label", elementTypeId: elem["elementTypeId"]});
+		let label = Compartments.findOne({elementId: compart.elementId, compartmentTypeId: compTypeLabel["_id"]});
+		console.log("setClassifierTypeOwlgred", compart_id, compart_id.value, compart, elem, compTypeLabel, label)
+		const value = compart_id.value;
+		const elemOWLGrEd = await Create_OWLGrEd_Element(elem["_id"]);
+		if(value === "Individual_enumeration"){
+			await elemOWLGrEd.setCompartmentValue("Label", "<<Classifier>>", "<<Classifier>>");
+		} else if(value === "SKOS_vocabulary"){
+			await elemOWLGrEd.setCompartmentValue("Label", "<<SKOS vocabulary>>", "<<SKOS vocabulary>>");
+			await elemOWLGrEd.setCompartmentValue("ClosedClassifier", "false", "");
+			await elemOWLGrEd.setCompartmentValue("DifferentIndividuals", "false", "");
+		} else if(value === "Individual_enumeration_SKOS"){
+			await elemOWLGrEd.setCompartmentValue("Label", "<<Classifier vocabulary>>", "<<Classifier vocabulary>>");
+		} else if(value === "Datatype_enumeration"){
+			await elemOWLGrEd.setCompartmentValue("Label", "<<Datatype classifier>>", "<<Datatype classifier>>");
+			await elemOWLGrEd.setCompartmentValue("ClosedClassifier", "false", "");
+			await elemOWLGrEd.setCompartmentValue("DifferentIndividuals", "false", "");
+		}
+		
+	},
 });
 
 function flattenObjectToArray(obj, prefix = '') {

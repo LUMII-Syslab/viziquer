@@ -612,6 +612,26 @@ Meteor.methods({
         }
         return;
       }
+	  
+	  // Datatype definition written as:
+	  // :D a rdfs:Datatype ;
+	  //    rdfs:range [ a rdfs:Datatype ; owl:oneOf ( "A" "B" ) ] .
+	  if (
+	    p.value === RDFS + 'range' &&
+	    s.termType === 'NamedNode' &&
+	    state.dataTypes?.[s.value]
+	  ) {
+	    const dtb = ensureDatatype(s.value);
+
+	    if (o.termType === 'NamedNode') {
+	      dtb.definitionExpression = datatypeIriToManchester(o.value, prefixes);
+	    } else if (o.termType === 'BlankNode') {
+		  const man = serializeDataRangeForUI(store, o, prefixes);
+		  if (man) dtb.definitionExpression = man;
+	    }
+
+	    return;
+	  }
 
       // rdfs:range
       if (pIri === RDFS + 'range' && s.termType === 'NamedNode') {

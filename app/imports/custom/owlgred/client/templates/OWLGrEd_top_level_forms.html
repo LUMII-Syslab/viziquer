@@ -244,6 +244,7 @@
                                 <li><a href="#owlgred-classes" data-toggle="tab">Classes</a></li>
                                 <li><a href="#owlgred-properties" data-toggle="tab">Properties</a></li>
                                 <li><a href="#owlgred-individuals" data-toggle="tab">Individuals</a></li>
+                                <li><a href="#owlgred-classifiers" data-toggle="tab">Classifiers</a></li>
                                 <!-- <li><a href="#owlgred-effects" data-toggle="tab">Effects</a></li> -->
                                 <!-- <li><a href="#owlgred-module" data-toggle="tab">Ontology module parameters</a></li> -->
                             </ul>
@@ -361,7 +362,7 @@
           <label><input type="radio" name="showDisjointClassesType" id="showDisjointClassesType_graph" /> Graphically</label>
 		</div>
 
-        <div class="row indent-1" data-enable-when="showDisjointClassesType_graph">
+        <div class="row indent-1" data-enable-when="showClasses,showDisjointClasses,showDisjointClassesType_graph">
           <label><input type="checkbox" id="showDisjointClassesGraphicsGroupAsBoxes" /> Group as boxes (if &gt; 2)</label>
 		</div>
         <!-- <div class="row indent-1"> -->
@@ -386,7 +387,7 @@
           <label><input type="radio" name="showEquivalentClassesType" id="showEquivalentClassesType_graph" /> Graphically</label>
 		</div>
 
-        <div class="row indent-1" data-enable-when="showEquivalentClassesType_graph">
+        <div class="row indent-1" data-enable-when="showClasses,showEquivalentClasses,showEquivalentClassesType_graph">
           <label><input type="checkbox" id="showEquivalentClassesGraphicsGroupAsBoxes" /> Group as boxes (if &gt; 2)</label>
 		</div>
         <!-- <div class="row indent-1"> -->
@@ -394,10 +395,11 @@
 		<!-- </div> -->
       </fieldset>
     </fieldset>
-
-    <div class="row indent-1" data-enable-when="showClasses">
-      <label><input type="checkbox" id="showKeys" /> Keys</label>
-	</div>
+	<fieldset data-enable-when="showClasses">
+		<div class="row">
+		  <label><input type="checkbox" id="showKeys" /> Keys</label>
+		</div>
+	</fieldset>
 
     <fieldset data-enable-when="showClasses">
       <div class="row">
@@ -593,6 +595,21 @@
 
     <fieldset data-enable-when="showIndividuals">
 
+	  <fieldset class="indent-1" data-enable-when="showIndividuals">
+        <div class="row">
+          <label><input type="radio" name="showIndividualsType" id="showIndividualsType_object" /> As object</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="showIndividualsType" id="showSameIndividualsType_object_list" /> As object list</label>
+		</div>
+		<div class="row">
+          <label><input type="radio" name="showIndividualsType" id="showSameIndividualsType_class_list" /> As class list</label>
+		</div>
+		<div class="row">
+          <label><input type="input" style="width: 30px;" id="individualCountInList" /> Visible individual count in the list</label>
+        </div>
+      </fieldset>
+
       <div class="row">
         <label><input type="checkbox" id="showSameIndividuals" /> Same individuals</label>
       </div>
@@ -604,13 +621,15 @@
         <div class="row">
           <label><input type="radio" name="showSameIndividualsType" id="showSameIndividualsType_graph" /> Graphically</label>
 		</div>
-        <div class="row indent-1" data-enable-when="showSameIndividualsType_graph">
+        <div class="row indent-1" data-enable-when="showIndividuals,showSameIndividuals,showSameIndividualsType_graph">
           <label><input type="checkbox" id="showSameIndividualsGraphicsGroupAsBoxes" /> Group as boxes (if &gt; 2)</label>
 		</div>
         <!-- <div class="row indent-1"> -->
           <!-- <label><input type="checkbox" id="showSameIndividualsHideNotGraphical" /> Hide information, if not presented graphically</label> -->
 <!-- </div> -->
       </fieldset>
+	  
+	  
     </fieldset>
 
     <fieldset data-enable-when="showIndividuals">
@@ -627,7 +646,7 @@
         <div class="row">
           <label><input type="radio" name="showDifferentIndividualsType" id="showDifferentIndividualsType_graph" /> Graphically</label>
 		</div>
-        <div class="row indent-1" data-enable-when="showDifferentIndividualsType_graph">
+        <div class="row indent-1" data-enable-when="showIndividuals,showDifferentIndividuals,showDifferentIndividualsType_graph">
           <label><input type="checkbox" id="showDifferentIndividualsGraphicsGroupAsBoxes" /> Group as boxes (if &gt; 2)</label>
 		</div>
         <!-- <div class="row indent-1"> -->
@@ -694,6 +713,36 @@
     </fieldset>
                                     </form>
                                 </div>
+								
+								
+								
+								
+		<div class="tab-pane fade in active" id="owlgred-classifiers">
+            <form class="form-horizontal" role="form">
+				<div class="row">
+					  <label><input type="checkbox" id="showAsClassifiers" /> Show as classifiers</label>
+				</div>
+
+				<fieldset data-enable-when="showAsClassifiers">
+
+				  <div class="row">
+					<label><input type="checkbox" id="showAsClassifiersDataTypes" /> DataTypes with enumeration</label>
+				  </div>
+				  <div class="row">
+					<label><input type="checkbox" id="showAsClassifiersIndividualEnumeration" /> Classes with individual enumeration</label>
+				  </div>
+				  <div class="row">
+					<label><input type="checkbox" id="showAsClassifiersSKOS" /> SKOS vocabularies</label>
+				  </div>
+				  <div class="row">
+					<label><input type="checkbox" id="showAsClassifiersSKOSIndividualEnumeration" /> SKOS classes with individual enumeration</label>
+				  </div>  
+				</fieldset>
+
+            </form>
+        </div>
+								
+								
 
                                 <!-- <div class="tab-pane fade" id="owlgred-effects"> -->
                                     <!-- <form class="form-horizontal" role="form"> -->

@@ -255,21 +255,41 @@ class OWLGrEd_Element{
   }
 
   async getLinks(linkType) {
-	  const startLinks = await Promise.all(
-		Elements.find({ startElement: this.obj["_id"] }).map(async (link) => {
-		  return { link: await Create_OWLGrEd_Element(link["_id"]), start: false };
-		})
-	  );
+	  if(linkType){
+		  const elemType = ElementTypes.findOne({name: linkType});
+		  
+		  const startLinks = await Promise.all(
+			Elements.find({ startElement: this.obj["_id"], elementTypeId:elemType._id }).map(async (link) => {
+			  return { link: await Create_OWLGrEd_Element(link["_id"]), start: false };
+			})
+		  );
 
-	  const endLinks = await Promise.all(
-		Elements.find({ endElement: this.obj["_id"] }).map(async (link) => {
-		  return { link: await Create_OWLGrEd_Element(link["_id"]), start: true };
-		})
-	  );
+		  const endLinks = await Promise.all(
+			Elements.find({ endElement: this.obj["_id"], elementTypeId:elemType._id  }).map(async (link) => {
+			  return { link: await Create_OWLGrEd_Element(link["_id"]), start: true };
+			})
+		  );
 
-	  return _.filter(_.union(startLinks, endLinks), async function (linkobj) {
-		return await linkobj.link.isLink();
-	  });
+		  return _.filter(_.union(startLinks, endLinks), async function (linkobj) {
+			return await linkobj.link.isLink();
+		  });
+	  } else{
+		  const startLinks = await Promise.all(
+			Elements.find({ startElement: this.obj["_id"]}).map(async (link) => {
+			  return { link: await Create_OWLGrEd_Element(link["_id"]), start: false };
+			})
+		  );
+
+		  const endLinks = await Promise.all(
+			Elements.find({ endElement: this.obj["_id"]}).map(async (link) => {
+			  return { link: await Create_OWLGrEd_Element(link["_id"]), start: true };
+			})
+		  );
+
+		  return _.filter(_.union(startLinks, endLinks), async function (linkobj) {
+			return await linkobj.link.isLink();
+		  });
+	  }
   }
 
    async isLink(linkType) {

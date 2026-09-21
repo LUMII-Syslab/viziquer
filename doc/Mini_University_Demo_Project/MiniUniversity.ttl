@@ -1,0 +1,168 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix : <http://lumii.lv/ontologies/Mini_University.owl#>.
+
+: a owl:Ontology.
+
+:AcademicProgram
+    a owl:Class;
+    rdfs:subClassOf
+            [
+                a owl:Restriction;
+                owl:onDataRange xsd:string;
+                owl:onProperty :programName;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger
+            ].
+:acadTitle
+a owl:DatatypeProperty; rdfs:domain :FacultyLevel; rdfs:range xsd:string.
+:Alice a :Student, owl:NamedIndividual; :takes :ComputerScience.
+
+:Assistant
+    a owl:Class;
+    rdfs:subClassOf :Teacher;
+    owl:disjointWith :Professor;
+    owl:equivalentClass
+            [
+                a owl:Class;
+                owl:intersectionOf
+                        ( :Teacher
+                                [
+                                    a owl:Restriction;
+                                    owl:hasValue :Level_Assistant;
+                                    owl:onProperty :facultyLevel
+                                ]
+                        )
+            ].
+:completed
+    a owl:ObjectProperty;
+    rdfs:comment "Completed courses are finished taken courses";
+    rdfs:domain :Student;
+    rdfs:range :Course;
+    rdfs:subPropertyOf :takes.
+:ComputerScience a :MandatoryCourse, owl:NamedIndividual.
+
+:Course
+    a owl:Class;
+    owl:equivalentClass
+    [ owl:unionOf ( :MandatoryCourse :OptionalCourse ) ].
+:courseCode
+a owl:DatatypeProperty; rdfs:domain :Course; rdfs:range xsd:string.
+:courseCredit
+    a owl:DatatypeProperty;
+    rdfs:domain :Course;
+    rdfs:range
+            [
+                a rdfs:Datatype;
+                owl:onDatatype xsd:integer;
+                owl:withRestrictions ( [ xsd:minExclusive 0 ] )
+            ].
+:courseName
+a owl:DatatypeProperty; rdfs:domain :Course; rdfs:range xsd:string.
+:enrolled
+a owl:ObjectProperty; rdfs:domain :Student; rdfs:range :AcademicProgram.
+:facultyLevel
+a owl:ObjectProperty; rdfs:domain :Teacher; rdfs:range :FacultyLevel.
+:FacultyLevel a owl:Class.
+
+:includes
+a owl:ObjectProperty; rdfs:domain :AcademicProgram; rdfs:range :Course.
+:isTaughtBy
+    a owl:ObjectProperty;
+    rdfs:domain :Course;
+    rdfs:range :Teacher;
+    owl:inverseOf :teaches.
+:MandatoryCourse
+    a owl:Class;
+    rdfs:comment "Mandatory courses are taught by only professors";
+    rdfs:subClassOf
+        :Course,
+            [
+                a owl:Restriction;
+                owl:allValuesFrom :Professor;
+                owl:onProperty :isTaughtBy
+            ];
+    owl:disjointWith :OptionalCourse.
+:nationality
+a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range :Nationality.
+:Nationality a owl:Class.
+
+:nCode
+a owl:DatatypeProperty; rdfs:domain :Nationality; rdfs:range xsd:string.
+:nValue
+a owl:DatatypeProperty; rdfs:domain :Nationality; rdfs:range xsd:string.
+:OptionalCourse a owl:Class; rdfs:subClassOf :Course.
+
+:personID
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range xsd:string.
+:personName
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range xsd:string.
+:Professor
+    a owl:Class;
+    rdfs:subClassOf :Teacher;
+    owl:equivalentClass
+            [
+                a owl:Class;
+                owl:intersectionOf
+                        ( :Teacher
+                                [
+                                    a owl:Restriction;
+                                    owl:hasValue :Level_Professor;
+                                    owl:onProperty :facultyLevel
+                                ]
+                        )
+            ].
+:programName
+a owl:DatatypeProperty; rdfs:domain :AcademicProgram; rdfs:range xsd:string.
+:salary
+a owl:DatatypeProperty; rdfs:domain :Teacher; rdfs:range xsd:decimal.
+:Student
+    a owl:Class;
+    rdfs:subClassOf
+        foaf:Person,
+            [
+                a owl:Restriction;
+                owl:onClass :AcademicProgram;
+                owl:onProperty :enrolled;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger
+            ],
+            [
+                a owl:Restriction;
+                owl:onProperty :takes;
+                owl:someValuesFrom :Course
+            ].
+:studentName
+    a owl:DatatypeProperty;
+    rdfs:domain :Student;
+    rdfs:range xsd:string;
+    rdfs:subPropertyOf :personName.
+:studentNumber
+a owl:DatatypeProperty; rdfs:domain :Student; rdfs:range xsd:string.
+:takes
+    a owl:ObjectProperty;
+    rdfs:domain :Student;
+    rdfs:range :Course;
+    owl:propertyDisjointWith :teaches.
+:Teacher a owl:Class; rdfs:subClassOf foaf:Person.
+
+:teacherName
+    a owl:DatatypeProperty;
+    rdfs:domain :Teacher;
+    rdfs:range xsd:string;
+    rdfs:subPropertyOf :personName.
+:teaches
+    a owl:ObjectProperty;
+    rdfs:domain :Teacher;
+    rdfs:range :Course;
+    owl:propertyDisjointWith :takes.
+foaf:Person
+    a owl:Class;
+    rdfs:subClassOf
+            [
+                a owl:Restriction;
+                owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger;
+                owl:onClass :Nationality;
+                owl:onProperty :nationality
+            ];
+    owl:hasKey ( :personID ).

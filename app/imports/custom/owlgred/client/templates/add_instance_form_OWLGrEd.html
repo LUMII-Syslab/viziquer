@@ -1,0 +1,55 @@
+<template name="AddInstance_OWLGrEd">
+  {{#with field_instance_obj}}
+    <div id="add-instance-form-owlgred"
+         class="modal fade row-form compart-type"
+         data-backdrop="static"
+         data-keyboard="false"
+         compartmentId={{compartmentId}}
+         compartmentTypeId={{_id}}>
+
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Class Instances</h4>
+          </div>
+
+          <div class="modal-body multi-field" style="width: 550px; max-height: 800px; overflow-y: auto;">
+            <form onsubmit="return false;">
+
+              <div class="form-group" style="margin-bottom:10px;">
+                <label>IRI</label>
+                <input id="add-instance-iri" autocomplete="off" class="form-control" value="{{iriValue}}">
+              </div>
+
+              {{#if attributeInputs.length}}
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label>Attribute values</label>
+
+                  {{#each attributeInputs}}
+                    <div class="form-group" style="margin-bottom:10px;">
+                      <label for="{{inputId}}">{{attributeName}}</label>
+                      <input
+                        id="{{inputId}}"
+                        class="form-control instance-attribute-input"
+                        data-attribute-id="{{attributeId}}"
+                        data-attribute-name="{{attributeName}}"
+                        autocomplete="off"
+                        value="{{value}}">
+                    </div>
+                  {{/each}}
+                </div>
+              {{/if}}
+
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button id="cancel-add-new-instance-owlgred" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button id="ok-add-new-instance-owlgred" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{/with}}
+</template>

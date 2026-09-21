@@ -196,84 +196,171 @@ ANewLine.prototype = {
   },
 
   finishDragging: function (target) {
-    var newLine = this;
-    var editor = newLine.editor;
-    var state = newLine.state;
+	  var newLine = this;
+	  var editor = newLine.editor;
+	  var state = newLine.state;
 
-    var connection_points = editor.connectionPoints;
-    if (!target || target.type === "Line") {
-      var tmp_target = connection_points.getEndElement();
-      connection_points.reset();
-      if (!tmp_target || (target && target.type === "Line")) {
-        return newLine.destroyNewLine();
-      }
+	  if (!state || !state.object) {
+		return;
+	  }
 
-      target = tmp_target;
-    } else {
-      connection_points.reset();
-    }
+	  var connection_points = editor.connectionPoints;
 
-    var new_line = state.object;
+	  if (!target || target.type === "Line") {
+		var tmp_target = connection_points.getEndElement();
+		connection_points.reset();
 
-    state.end = target;
-    var ev = new Event(editor, "checkingNewLineConstraints", state);
+		if (!tmp_target || (target && target.type === "Line")) {
+		  return newLine.destroyNewLine();
+		}
 
-    if (ev.result === false) {
-      return newLine.destroyNewLine();
-    }
+		target = tmp_target;
+	  } else {
+		connection_points.reset();
+	  }
 
-    var new_id = $.now();
+	  var new_line = state.object;
+	  var start_elem = state.start.element;
 
-    //setting the line properties to process the line after the DB object was created
-    var element_list = editor.getElements();
-    element_list[new_id] = new_line;
+	  state.end = target;
 
-    var start_elem = state.start.element;
-    var start_elem_id = start_elem._id;
+	  /*
+	   * Find a connector type that is actually valid for these
+	   * two element types.
+	   */
+	  var line_type_info = newLine.getLineTypeFromElements(
+		start_elem,
+		target,
+		state.data
+	  );
 
-    var end_elem_id = target._id;
+	  /*
+	   * Keep the existing constraint event because it displays
+	   * "These elements cannot be connected".
+	   */
+	  var constraint_event = new Event(
+		editor,
+		"checkingNewLineConstraints",
+		state
+	  );
 
-    new_line._id = new_id;
-    new_line.startElementId = start_elem_id;
-    new_line.endElementId = end_elem_id;
-    new_line.type = "Line";
-    new_line.inLines = {};
-    new_line.outLines = {};
+	  var constraint_result = constraint_event.result;
 
-    if (start_elem_id === end_elem_id) {
-      var new_points = newLine.get_loop_points();
+	  var constraint_rejected =
+		constraint_result === false ||
+		constraint_result === "false" ||
+		constraint_result === 0 ||
+		(
+		  constraint_result &&
+		  typeof constraint_result === "object" &&
+		  (
+			constraint_result.result === false ||
+			constraint_result.success === false ||
+			constraint_result.allowed === false ||
+			constraint_result.isValid === false
+		  )
+		);
 
-      //applying new points
-      new_line.setPoints(new_points);
-    }
+	  /*
+	   * No matching connector type means that this connection
+	   * must not be created.
+	   */
+	  if (!line_type_info || constraint_rejected) {
+		return newLine.destroyNewLine();
+	  }
 
-    //adding a line to the start and end elements
-    start_elem.outLines[new_id] = new_line;
-    target.inLines[new_id] = new_line;
+	  newLine.applyLineType(new_line, line_type_info);
 
-    //add handlers
-    new_line.handlers = new ElementHandlers(new_line);
+	  var new_id = $.now();
+	  var element_list = editor.getElements();
 
-    var new_line_event = new Event(editor, "newLineCreated", new_line);
-    if (!new_line_event.isSelectionNeeded) {
-      var drawing_layer = editor.getLayer("DrawingLayer");
-      drawing_layer.batchDraw();
+	  var start_elem_id = start_elem._id;
+	  var end_elem_id = target._id;
 
-      editor.selectElements([new_line]);
+	  new_line._id = new_id;
+	  new_line.startElementId = start_elem_id;
+	  new_line.endElementId = end_elem_id;
+	  new_line.type = "Line";
+	  new_line.inLines = {};
+	  new_line.outLines = {};
 
-      var drag_layer = editor.getLayer("DragLayer");
-      new_line.line.listening(true);
+	  if (start_elem_id === end_elem_id) {
+		var new_points = newLine.get_loop_points();
+		new_line.setPoints(new_points);
+	  }
 
-      new_line.drawHitRegion(drag_layer);
-      drag_layer.draw();
-    }
+	  /*
+	   * Register the line locally.
+	   * destroyNewLine() will undo these changes if creation fails.
+	   */
+	  element_list[new_id] = new_line;
+	  start_elem.outLines[new_id] = new_line;
+	  target.inLines[new_id] = new_line;
 
-    //resets palette state
-    var palette_button = editor.palette.getPressedButton();
-    palette_button.unPressPaletteButton();
+	  new_line.handlers = new ElementHandlers(new_line);
 
-    state = {};
-  },
+	  var new_line_event = new Event(
+		editor,
+		"newLineCreated",
+		new_line
+	  );
+
+	  var creation_result = new_line_event.result;
+
+	  var creation_rejected =
+		creation_result === false ||
+		creation_result === "false" ||
+		creation_result === 0 ||
+		new_line_event.failed === true ||
+		new_line_event.error ||
+		(
+		  creation_result &&
+		  typeof creation_result === "object" &&
+		  (
+			creation_result.result === false ||
+			creation_result.success === false ||
+			creation_result.allowed === false ||
+			creation_result.isValid === false
+		  )
+		);
+
+	  /*
+	   * This is the important additional check.
+	   *
+	   * The line has already been registered locally, so rejection
+	   * must remove it from the canvas and all element collections.
+	   */
+	  if (creation_rejected) {
+		return newLine.destroyNewLine();
+	  }
+
+	  if (!new_line_event.isSelectionNeeded) {
+		var drawing_layer = editor.getLayer("DrawingLayer");
+		drawing_layer.batchDraw();
+
+		editor.selectElements([new_line]);
+
+		var drag_layer = editor.getLayer("DragLayer");
+
+		if (new_line.line) {
+		  new_line.line.listening(true);
+		}
+
+		new_line.drawHitRegion(drag_layer);
+		drag_layer.draw();
+	  }
+
+	  var palette_button = editor.palette.getPressedButton();
+
+	  if (
+		palette_button &&
+		typeof palette_button.unPressPaletteButton === "function"
+	  ) {
+		palette_button.unPressPaletteButton();
+	  }
+
+	  newLine.state = {};
+	},
   
   getLineTypeFromElements: function(startElem, endElem, data) {
 	  let elementTypeIds = data.elementTypeIds;
@@ -319,10 +406,8 @@ ANewLine.prototype = {
 		}
 	  }
 
-	  return {
-		elementTypeId: data.elementTypeId,
-		style: elementTypeIds[data.elementTypeId].styles[0],
-	  };
+	  // No connector type supports these two elements.
+	  return null;
 },
   
 
@@ -383,13 +468,120 @@ ANewLine.prototype = {
   },
 
   destroyNewLine: function () {
-    var newLine = this;
-    var state = newLine.state;
+  var newLine = this;
+  var editor = newLine.editor;
+  var state = newLine.state || {};
+  var new_line = state.object;
 
-    // state.object.presentation.destroy();
-    state.object.presentation.remove();
-    state.drawingLayer.batchDraw();
-  },
+  var drawing_layer =
+    state.drawingLayer ||
+    editor.getLayer("DrawingLayer");
+
+  var drag_layer = editor.getLayer("DragLayer");
+
+  if (new_line) {
+    var line_id = new_line._id;
+
+    /*
+     * Remove the rejected line from the editor's element map.
+     */
+    if (line_id !== undefined && line_id !== null) {
+      var element_list = editor.getElements();
+
+      if (element_list && element_list[line_id] === new_line) {
+        delete element_list[line_id];
+      }
+
+      /*
+       * Remove references from the start and end elements.
+       */
+      var start_elem =
+        state.start &&
+        state.start.element;
+
+      var end_elem = state.end;
+
+      if (start_elem && start_elem.outLines) {
+        delete start_elem.outLines[line_id];
+      }
+
+      if (end_elem && end_elem.inLines) {
+        delete end_elem.inLines[line_id];
+      }
+    }
+
+    /*
+     * A Link may contain several independent Konva nodes.
+     * Destroy every possible rendered node.
+     */
+    var nodes = [
+      new_line.hitRegion,
+      new_line.hitLine,
+      new_line.line,
+      new_line.presentation
+    ];
+
+    var processed_nodes = [];
+
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+
+      if (!node || processed_nodes.indexOf(node) !== -1) {
+        continue;
+      }
+
+      processed_nodes.push(node);
+
+      if (typeof node.destroy === "function") {
+        node.destroy();
+      } else if (typeof node.remove === "function") {
+        node.remove();
+      }
+    }
+  }
+
+  /*
+   * Stop connection-point dragging state.
+   */
+  if (
+    editor.connectionPoints &&
+    typeof editor.connectionPoints.reset === "function"
+  ) {
+    editor.connectionPoints.reset();
+  }
+
+  /*
+   * Release the selected palette connector.
+   */
+  if (
+    editor.palette &&
+    typeof editor.palette.getPressedButton === "function"
+  ) {
+    var palette_button = editor.palette.getPressedButton();
+
+    if (
+      palette_button &&
+      typeof palette_button.unPressPaletteButton === "function"
+    ) {
+      palette_button.unPressPaletteButton();
+    }
+  }
+
+  newLine.state = {};
+
+  /*
+   * Redraw both layers immediately.
+   */
+  if (drawing_layer) {
+    drawing_layer.draw();
+  }
+
+  if (drag_layer) {
+    drag_layer.draw();
+  }
+
+  return false;
+},
 
   compute_new_start_point: function (start_element_in, mouse_point) {
     //element's position

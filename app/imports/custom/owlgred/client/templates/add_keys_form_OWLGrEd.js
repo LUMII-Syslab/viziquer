@@ -22,7 +22,7 @@ Template.AddKeys_OWLGrEd.helpers({
 		var fields = [];
 
 		var compart_type =  CompartmentTypes.findOne({_id: compart_type_id});
-		console.log("compart_type", compart_type)
+
 		if (!compart_type || compart_type.name !== "Keys") {
 			return {fields: fields};
 		}

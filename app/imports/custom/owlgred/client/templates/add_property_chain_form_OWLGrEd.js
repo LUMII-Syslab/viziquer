@@ -10,23 +10,24 @@ import './add_property_chain_form_OWLGrEd.html'
 
 Template.AddPropertyChain_OWLGrEd.helpers({
 
-	key_obj:  function() {
+	key_obj: function() {
 		var data_in = Template.currentData();
 		if (!data_in) {
 			return;
 		}
 
 		var compart_type_id = data_in["compartmentTypeId"];
-		var compart =  Compartments.findOne({_id: Session.get("multFieldCompartmentId")});
+		var compart = Compartments.findOne({_id: Session.get("multFieldCompartmentId")});
 		var fields = [];
 
-		var compart_type =  CompartmentTypes.findOne({_id: compart_type_id});
+		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
 		if (!compart_type) {
 			return {fields: fields};
 		}
 
 		var sub_compartment;
 		var compart_id;
+
 		if (compart) {
 			sub_compartment = compart["subCompartments"][compart_type["name"]];
 			compart_id = compart["_id"];
@@ -34,149 +35,147 @@ Template.AddPropertyChain_OWLGrEd.helpers({
 
 		process_sub_compart_types(compart_type["subCompartmentTypes"], fields, sub_compartment);
 
-
 		for (let field = 0; field < fields.length; field++) {
 			fields[field][fields[field]["name"].replace(/\s/g, '').replace(/-/g, '')] = true;
+
 			const fieldValue = fields[field]["field_value"];
 
-			const fieldName = fields[field]["name"];
-			if (
-			  fieldValue !== null &&                            // not null and not undefined
-			  fieldValue !== ""                             // not empty string
-			) {
-			  try {
-				fields[field]["field_value"] = JSON.parse(fieldValue);
-			  } catch (e) {
-				console.warn("Invalid JSON:", fieldValue);
-			  }
+			if (fieldValue !== null && fieldValue !== "") {
+				try {
+					fields[field]["field_value"] = JSON.parse(fieldValue);
+				} catch (e) {
+					console.warn("Invalid JSON:", fieldValue);
+				}
 			}
 		}
 
-		if(typeof fields[0] !== "undefined" && typeof fields[0]["field_value"] !== "undefined" && fields[0]["field_value"] !== "")	fields = transformFields(fields[0]["field_value"]);
-		else fields = [];
+		if (
+			typeof fields[0] !== "undefined" &&
+			typeof fields[0]["field_value"] !== "undefined" &&
+			fields[0]["field_value"] !== ""
+		) {
+			fields = transformFields(fields[0]["field_value"]);
+		} else {
+			fields = [];
+		}
 
-
-
-		// if(typeof sub_compartment !== "undefined" && typeof sub_compartment["PropertyChains"] !== "undefined") {
-			// fields = sub_compartment["PropertyChains"];
-			// fields = transformFields(sub_compartment["PropertyChains"]);
-		// }
-		var key_obj = {_id: compart_type["_id"],
-						compartmentId: compart_id,
-						name: compart_type["name"],
-						label: compart_type["label"],
-						fields: fields,
-					};
-
-		return key_obj;
+		return {
+			_id: compart_type["_id"],
+			compartmentId: compart_id,
+			name: compart_type["name"],
+			label: compart_type["label"],
+			fields: fields,
+		};
 	},
 
 });
 
 
 Template.AddPropertyChain_OWLGrEd.events({
-	'click #ok-add-new-property-chain-owlgred': async function(e, templ) {
+  'click #ok-add-new-property-chain-owlgred': async function(e, templ) {
 
 	const result = [];
 
-    const rows = templ.findAll('#property-table tbody tr');
-    rows.forEach(row => {
-      const propertyInputRow = row.querySelector('td:nth-child(1) input');
-      // const inverseSelect = row.querySelector('td:nth-child(2) select');
-	  const inverseCheckbox = row.querySelector('td:nth-child(2) input[type="checkbox"]');
+	const rows = templ.findAll('#property-table tbody tr');
 
-      const propertyValue = propertyInputRow?.value?.trim();
-      let propertyInput = propertyValue;
-      // const isInverseValue = inverseSelect?.value?.toLowerCase() === "true";
-	  const isInverseValue = inverseCheckbox.checked;   // true / false
-	  if(isInverseValue) propertyInput = "inv("+ propertyInput + ")";
+	rows.forEach(row => {
+		const propertyInputRow = row.querySelector('td:nth-child(1) input');
+		const inverseCheckbox = row.querySelector('td:nth-child(2) input[type="checkbox"]');
 
-      if (propertyValue) {
-		result.push(
-		{
-			name: "PropertyChain",
-			value: propertyValue,
-			input: propertyInput,
-			delimiter: " o ",
-			subCompartments: [
-				{ name: "Property", value: propertyValue, input: propertyInput },
-				{ name: "Inverse", value: isInverseValue, input: "" }
-			]
-		})
-      }
-    });
+		const propertyValue = propertyInputRow?.value?.trim();
+		let propertyInput = propertyValue;
 
-	let chainProperties = `${result.map(item => item.input).join(' o ')}`;
+		const isInverseValue = inverseCheckbox.checked;
 
-		var selected_elem_id = Session.get("activeElement");
-		var elem = document.getElementById("add-property-chain-form-owlgred");
-		var act_el = await Elements.findOneAsync({_id: selected_elem_id});
-		if(elem.getAttribute("compartmentId") === null){
-
-			if (await Elements.findOneAsync({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-
-			  var owlgred_obj = await Create_OWLGrEd_Element(selected_elem_id);
-
-			  // await owlgred_obj.addCompartmentSubCompartments("PropertyChains", result)
-			  await owlgred_obj.addCompartmentSubCompartments2("PropertyChains",[
-				 {name:"PropertyChain",input:chainProperties, value:JSON.stringify(result)}
-				])
-			};
-		} else {
-
-			var compart_type = await CompartmentTypes.findOneAsync({name: "PropertyChains", elementTypeId: act_el["elementTypeId"]});
-			var compart = await Compartments.findOneAsync({_id:elem.getAttribute("compartmentId"), compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
-
-			if(typeof compart !== "undefined"){
-
-				let attribute = compart.subCompartments.PropertyChains.PropertyChains;
-
-
-				attribute.PropertyChain.input = JSON.stringify(result);
-				attribute.PropertyChain.value = chainProperties;
-
-				var act_elem = Session.get("activeElement");
-
-				let value = Dialog.buildCompartmentValue(compart_type, chainProperties, chainProperties);
-				Dialog.updateCompartmentValue(compart_type, act_elem, chainProperties, value, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
-			}
-
-
-
-			// var compart_type = await CompartmentTypes.findOneAsync({name: "PropertyChains", elementTypeId: act_el["elementTypeId"]});
-			// var compart = await Compartments.findOneAsync({_id:elem.getAttribute("compartmentId"), compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
-
-			// if(typeof compart !== "undefined"){
-				// let fullTextArray = []
-				 // let keys = [];
-				 // for(let key = 0; key < result.length; key++){
-					 // fullTextArray.push(result[key]["subCompartments"][0]["input"]);
-					 // keys.push(
-					   // {
-						 // "PropertyChain":{
-							 // "Inverse": {
-								 // "input":result[key]["subCompartments"][1]["value"],
-								 // "value":result[key]["subCompartments"][1]["input"]
-							 // },
-							  // "Property": {
-								 // "input":result[key]["subCompartments"][0]["value"],
-								 // "value":result[key]["subCompartments"][0]["input"]
-							 // }
-						 // }
-					   // }
-					 // )
-				 // }
-
-				// compart.subCompartments.PropertyChains.PropertyChains = keys;
-				// var act_elem = Session.get("activeElement");
-				// let fullText = fullTextArray.join(" o ");
-				// let value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
-				// Dialog.updateCompartmentValue(compart_type, act_elem, fullText, value, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
-			// }
+		if (isInverseValue) {
+			propertyInput = "inv(" + propertyInput + ")";
 		}
 
-		rows.forEach(row => row.remove());
-	},
+		if (propertyValue) {
+			result.push({
+				name: "PropertyChain",
+				value: propertyValue,
+				input: propertyInput,
+				delimiter: " o ",
+				subCompartments: [
+					{ name: "Property", value: propertyValue, input: propertyInput },
+					{ name: "Inverse", value: isInverseValue, input: "" }
+				]
+			});
+		}
+	});
+
+	const chainProperties = result.map(item => item.input).join(' o ');
+
+	const selected_elem_id = Session.get("activeElement");
+	const elem = document.getElementById("add-property-chain-form-owlgred");
+	const act_el = await Elements.findOneAsync({_id: selected_elem_id});
+
+	if (!act_el) {
+		return;
+	}
+
+	const compart_type = await CompartmentTypes.findOneAsync({
+		_id: elem.getAttribute("compartmentTypeId")
+	});
+
+	if (!compart_type) {
+		return;
+	}
+
+	const chainCompartmentName = compart_type.name;
+
+	if (elem.getAttribute("compartmentId") === null) {
+
+		const owlgred_obj = await Create_OWLGrEd_Element(selected_elem_id);
+
+		await owlgred_obj.addCompartmentSubCompartments2(chainCompartmentName, [
+			{
+				name: "PropertyChain",
+				input: chainProperties,
+				value: JSON.stringify(result)
+			}
+		]);
+
+	} else {
+
+		const compart = await Compartments.findOneAsync({
+			_id: elem.getAttribute("compartmentId"),
+			compartmentTypeId: compart_type["_id"],
+			elementId: selected_elem_id
+		});
+
+		if (typeof compart !== "undefined") {
+
+			let attribute =
+				compart.subCompartments?.[chainCompartmentName]?.[chainCompartmentName];
+
+			if (attribute && attribute.PropertyChain) {
+				attribute.PropertyChain.input = JSON.stringify(result);
+				attribute.PropertyChain.value = chainProperties;
+			}
+
+			let value = Dialog.buildCompartmentValue(
+				compart_type,
+				chainProperties,
+				chainProperties
+			);
+
+			Dialog.updateCompartmentValue(
+				compart_type,
+				selected_elem_id,
+				chainProperties,
+				value,
+				elem.getAttribute("compartmentId"),
+				null,
+				null,
+				compart.subCompartments
+			);
+		}
+	}
+
+	rows.forEach(row => row.remove());
+  },
 
 	'click #cancel-add-new-property-chain-owlgred': function(e, templ) {
 	  const rows = templ.findAll('#property-table tbody tr');
@@ -185,29 +184,37 @@ Template.AddPropertyChain_OWLGrEd.events({
 
 
 	'click #add-key-row-btn': function(e, templ) {
-	  var tbody = document.querySelector('#property-table tbody');
-	  var newRow = document.createElement('tr');
+		e.preventDefault();
 
-	  newRow.innerHTML = `
-		<td>
-			<input class="form-control property-select" type="text" name="product" autocomplete="off" list="productName" />
-			<datalist id="productName">
-			<option value="">Select a property</option>
-			</datalist>
-		</td>
-		<td style="text-align: center; vertical-align: middle;">
-		  <input
-			type="checkbox"
-			class="is-inverse-checkbox"
-		  />
-		</td>
-								<td>
-								 <button id="delete-key-row-btn" class="btn btn-sm btn-danger delete-btn">
-									<i class="fa fa-trash"></i> Delete
-								  </button>
-	   </td>	  `;
+		const tbody = templ.find('#property-table tbody');
+		if (!tbody) {
+			console.warn("Property chain table body not found");
+			return;
+		}
 
-	  tbody.appendChild(newRow);
+		const newRow = document.createElement('tr');
+
+		newRow.innerHTML = `
+			<td>
+				<input class="form-control property-select" type="text" name="product" autocomplete="off" list="productName" />
+				<datalist id="productName">
+					<option value="">Select a property</option>
+				</datalist>
+			</td>
+			<td style="text-align: center; vertical-align: middle;">
+				<input
+					type="checkbox"
+					class="is-inverse-checkbox"
+				/>
+			</td>
+			<td>
+				<button type="button" class="btn btn-sm btn-danger delete-btn">
+					<i class="fa fa-trash"></i> Delete
+				</button>
+			</td>
+		`;
+
+		tbody.appendChild(newRow);
 	},
 
 	'click .delete-btn': function (event, template) {

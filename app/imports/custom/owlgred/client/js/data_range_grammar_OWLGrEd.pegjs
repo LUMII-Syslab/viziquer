@@ -216,6 +216,8 @@ LanguageTag
 IRI
   = v:FullIRI
     { return { IRItype: "fullIRI", value: v }; }
+  / v:PrefixedIRI
+    { return { IRItype: "abbreviatedIRI", value: v }; }
   / v:AbbreviatedIRI
     { return { IRItype: "abbreviatedIRI", value: v }; }
   / v:FullNamespaceIRI
@@ -225,6 +227,19 @@ IRI
 
 FullIRI
   = s:$("<" FULL_IRI_CHARS+ ">") { return s; }
+
+/* Standard prefixed-name form: prefix:localName.
+   Use a dedicated prefix-label rule because Prefix itself permits ':'.
+   Keeping the same value shape and IRItype as AbbreviatedIRI preserves
+   compatibility with consumers of the existing name{prefix} syntax.
+*/
+PrefixedIRI
+  = prefix:PrefixLabel ":" name:LocalName
+    { return { name: name, prefix: prefix }; }
+
+/* A prefix label cannot consume the ':' separator. */
+PrefixLabel
+  = $(PN_CHARS_BASE (PN_CHARS / "." &PN_CHARS)*)
 
 AbbreviatedIRI
   = name:LocalName "{" prefix:Prefix "}"

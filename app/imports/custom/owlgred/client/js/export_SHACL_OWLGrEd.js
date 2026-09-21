@@ -6,6 +6,7 @@ import * as class_expression_grammar_parser_OWLGrEd from '/imports/custom/owlgre
 import * as data_range_grammar_parser_OWLGrEd from '/imports/custom/owlgred/client/js/data_range_grammar_parser_OWLGrEd.js'
 import * as export_grammar_parser_OWLGrEd from '/imports/custom/owlgred/client/js/export_grammar_parser_OWLGrEd.js'
 import { Create_OWLGrEd_Element } from './OWLGrEd_Element.js';
+import { saveOntologyInFormatOwlgred } from './export_OWLGrEd.js';
 import {generateN3Syntax} from '/imports/custom/owlgred/client/js/export_N3_OWLGrEd.js'
 
 let generateAxiom = true;
@@ -15,49 +16,79 @@ let namespaceTable = {}
 
 Interpreter.customMethods({
 
-  saveOntologyN3TurtleOwlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateN3Syntax(ontology, "text/turtle", namespaceTable);
-
+  saveOntologyAsShaclOwlgred: async function(){
+	  let ontology = await saveOntologyInSHACLFormatOwlgred();
+	  // let ontology = await saveOntologyInFormatOwlgred();
+	  // console.log("OOOOOOOOOO", ontology) 
+	  generateSHACLRDFLibSyntax(ontology, "text/turtle");
   },
-  saveOntologyN3n3Owlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateN3Syntax(ontology, "text/n3", namespaceTable);
-
-  },
-  saveOntologyN3ntriplesOwlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateN3Syntax(ontology, "application/n-triples");
-
-  },
-  saveOntologyN3trigOwlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateN3Syntax(ontology, "application/trig", namespaceTable);
-  },
-
-  saveOntologyRDFLibTurtleOwlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateRDFLibSyntax(ontology, "text/turtle");
-  },
-  saveOntologyRDFLibrdfxmlOwlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateRDFLibSyntax(ontology, "application/rdf+xml");
-  },
-  saveOntologyRDFLibntriplesOwlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateRDFLibSyntax(ontology, "application/n-triples");
-  },
-  saveOntologyRDFLibn3Owlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateRDFLibSyntax(ontology, "text/n3");
-  },
-  saveOntologyRDFLibldjsonOwlgred: async function(){
-	  let ontology = await saveOntologyInFormatOwlgred();
-	  generateRDFLibSyntax(ontology, "application/ld+json");
-  },
+  
 });
 
-async function saveOntologyInFormatOwlgred(){
+
+
+
+
+function generateSHACLRDFLibSyntax(onto,format){
+
+	const cleanObject = JSON.parse(JSON.stringify(onto));
+	Meteor.call('generateShaclRDFLib', onto, namespaceTable, format, (err, result) => {
+	  if (err) {
+		  console.error('Error generating:', err);
+		  return;
+		}
+		// Trigger browser download
+		const filename = guessFilename(onto, format);
+		const mime = mimeForFormat(format);
+		downloadTextAsFile(result, filename, mime);
+	});
+}
+
+function downloadTextAsFile(text, filename, mime = 'text/plain;charset=utf-8') {
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function guessFilename(onto, format) {
+  // Try to extract ontology IRI or fallback name
+  const iri = (onto && (onto.iri || onto.IRI || onto.ontologyIRI || onto.name)) || 'ontology';
+  const localName = iri.split(/[\/#]/).filter(Boolean).pop() || 'ontology';
+
+  // Pick file extension by RDF serialization format
+  const extMap = {
+    'text/turtle': 'ttl',
+    'application/rdf+xml': 'owl',
+    'application/n-triples': 'nt',
+    'text/n3': 'n3',
+    'application/ld+json': 'jsonld'
+  };
+
+  const ext = extMap[format] || 'owl'; // default fallback
+  return `${localName}.${ext}`;
+}
+
+function mimeForFormat(format) {
+  const mimeMap = {
+    'text/turtle': 'text/turtle;charset=utf-8',
+    'application/rdf+xml': 'application/rdf+xml;charset=utf-8',
+    'application/n-triples': 'application/n-triples;charset=utf-8',
+    'text/n3': 'text/n3;charset=utf-8',
+    'application/ld+json': 'application/ld+json;charset=utf-8'
+  };
+
+  return mimeMap[format] || 'application/octet-stream';
+}
+
+
+
+async function saveOntologyInSHACLFormatOwlgred(){
 	generateAxiom = true;
 	namespaceTable = {};
 	let ontology = {
@@ -70,7 +101,11 @@ async function saveOntologyInFormatOwlgred(){
 			"AnnotationProperty": {},
 			"NamedIndividual": {},
 			"NegativePropertyAssertion": {},
-			"DataType": {}
+			"DataType": {},
+			"SHACL": {
+				"NodeShape": {},
+				"PropertyShape": {}
+			},
 	};
 
 
@@ -119,7 +154,21 @@ async function saveOntologyInFormatOwlgred(){
 			const equivalentClasses = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("EquivalentClasses");
 			if(equivalentClasses.length> 0) className = equivalentClasses[0].EquivalentClass;
 		}
-		ontology.Class[className] = [];
+		
+		let shape =  await elemOWLGrEd.getCompartmentValue("Shape");
+		let cName = className;
+		if(className !== ""){
+			ontology.Class[className] = [];
+		} else if(shape){
+			ontology.Class[shape] = [];
+			cName = shape;
+		}
+		//SHACL
+		
+		if(shape && className && className !== "") ontology.Class[cName].push({"shape_name": shape, "IRI": await getFullName(cName) });
+		else if(shape) ontology.Class[cName].push({"shape_name": shape});
+		else {ontology.Class[cName].push({"shape_name": cName+"_shape", "IRI": await getFullName(cName) })};
+		
 	}
 	
 	elemTypeClass = ElementTypes.findOne({name:"Classifier", diagramTypeId:active_diagram_type_id});
@@ -294,479 +343,84 @@ async function saveOntologyInFormatOwlgred(){
 				
 				if(elem_type[elemType]["name"] === "Classifier"){
 
-					const exportMode = await elemOWLGrEd.getCompartmentValue("ExportMode");
-					if(exportMode === "Datatype enumeration (DataOneOf)"){
-						const className = await elemOWLGrEd.getCompartmentValue("Name");
-						ontologyObject = createExportStructureElement(ontology, "DataType", className);
-						let annotationObject = {
-								"type": "Declaration",
-								"axiom": {
-									"type": "Datatype",
-									"axiom": {"IRI": await getFullName(className)}
-						}}
-						ontologyObject.push(annotationObject);
-						const dataTypeDefinition = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Values", [{title:"Name",name:"Name"}, {title:"Notation",name:"Notation"}]);
 
-						let literalList = [];
-						for(let axiom = 0; axiom < dataTypeDefinition.length; axiom++){
-							literalList.push({
-								"type": "stringNoLang",
-								"value": dataTypeDefinition[axiom]["Name"]
-							})
-						}
-						
-						annotationObject = {
-							"type": "DataTypeDefinition",
-							"axiom": [
-								{"IRI": await getFullName(className)},
-								{"type": {
-									"grammarProduction": "dataDisjunction",
-									"items": [{
-										"grammarProduction": "dataConjunction",
-										"items": [{
-											"negation": "false",
-											"dataPrimaryType": "literalList",
-											"literalList": literalList
-								}]}]}}]
-						}
-						ontologyObject.push(annotationObject);
-						
-						
-						
-
-					} else if(exportMode === "Individual enumeration"){
-						namespaceTable["ex"]="http://lumii.lv/2011/1.0/extended#";
-						const className = await elemOWLGrEd.getCompartmentValue("Name");
-						ontologyObject = createExportStructureElement(ontology, "Class", className);
-						
-						// const different = await elemOWLGrEd.getCompartmentValue("DifferentIndividuals");
-						const different = true;
-						
-						let annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "Class",
-								"axiom": {"IRI": await getFullName(className)}}
-						}
-						ontologyObject.push(annotationObject);
-						
-						const dataTypeDefinition = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Values", [{title:"Name",name:"Name"}, {title:"Notation",name:"Notation"}]);
-						let individList = [];
-						let differentIndividList = [];
-						for(let axiom = 0; axiom < dataTypeDefinition.length; axiom++){
-							const individName = dataTypeDefinition[axiom]["Name"];
-							let ontologyObjectI = createExportStructureElement(ontology, "NamedIndividual", individName);
-							
-							let annotationObject = {
-									"type": "Declaration",
-									"axiom": {
-										"type": "NamedIndividual",
-										"axiom": {"IRI": await getFullName(individName)}}
-							}
-							ontologyObjectI.push(annotationObject);
-							annotationObject = {
-									"type": "ClassAssertion",
-									"axiom": [
-										{"IRI": await getFullName(className)},
-										{"IRI": await getFullName(individName)}
-									]}
-							ontologyObjectI.push(annotationObject);
-							individList.push({
-												"individualType": "IRI",
-												"individual": {
-													"IRItype": "simpleIRI",
-													"value": individName
-												}})
-							annotationObject = {
-								"type": "AnnotationAssertion",
-								"axiom": [
-									{"axiomSymbol": "http://lumii.lv/2011/1.0/extended#notation"},
-									{"IRI": await getFullName(individName)},
-									{"value": dataTypeDefinition[axiom]["Notation"]}]
-							}
-							ontologyObjectI.push(annotationObject);
-							
-							differentIndividList.push({"IRI": await getFullName(individName)})
-							if((different === true || different === "true") && axiom === dataTypeDefinition.length-1){
-							  let annotationObject = {
-								"type": "DifferentIndividuals",
-								"axiom": differentIndividList
-							  }
-							  ontologyObjectI.push(annotationObject);
-							}
-							
-						}
-						// const oneOf = await elemOWLGrEd.getCompartmentValue("ClosedClassifier");
-						const oneOf = true;
-						if(oneOf === true || oneOf === "true"){
-						  let annotationObject = {
-							"type": "EquivalentClasses",
-							"axiom": [
-								{"IRI": await getFullName(className)},
-								[{
-										"Expression": {
-											"grammarProduction": "disjunction",
-											"items": [
-												{
-													"grammarProduction": "conjunctionNoRestrictions",
-													"items": [
-														{
-															"negation": "false",
-															"primaryType": "atomic",
-															"primary": {
-																"atomType": "individualList",
-																"list": individList
-															}}]}]}}]]}
-							ontologyObject.push(annotationObject);
-						}
-
-						let ontologyObjectAP = createExportStructureElement(ontology, "AnnotationProperty", "ex:notation");
-						annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "AnnotationProperty",
-								"axiom": {"IRI": "http://lumii.lv/2011/1.0/extended#notation"}}
-						}
-						ontologyObjectAP.push(annotationObject);						
-					} else if(exportMode === "Individual enumeration + SKOS"){
-						namespaceTable["skos"] = "http://www.w3.org/2004/02/skos/core#";
-						const className = await elemOWLGrEd.getCompartmentValue("Name");
-						ontologyObject = createExportStructureElement(ontology, "Class", className);
-						
-						const different = true;
-						// const different = await elemOWLGrEd.getCompartmentValue("DifferentIndividuals");
-						
-						let annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "Class",
-								"axiom": {"IRI": await getFullName(className)}}
-						}
-						ontologyObject.push(annotationObject);
-						
-						
-						
-						namespaceTable["skos"] = "http://www.w3.org/2004/02/skos/core#";
-						ontologyObject = createExportStructureElement(ontology, "Class", "skos:ConceptScheme");
-						annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "Class",
-								"axiom": {"IRI": "http://www.w3.org/2004/02/skos/core#ConceptScheme"}}
-						}
-						ontologyObject.push(annotationObject);
-						let ontologyObjectConcept = createExportStructureElement(ontology, "Class", "skos:Concept");
-						annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "Class",
-								"axiom": {"IRI": "http://www.w3.org/2004/02/skos/core#Concept"}}
-						}
-						ontologyObjectConcept.push(annotationObject);
-						
-						let ontologyObjectI = createExportStructureElement(ontology, "NamedIndividual", className+"ConceptScheme");
-							
-						annotationObject = {
-									"type": "Declaration",
-									"axiom": {
-										"type": "NamedIndividual",
-										"axiom": {"IRI": await getFullName(className+"ConceptScheme")}}
-						}
-						ontologyObjectI.push(annotationObject);
-						annotationObject = {
-									"type": "ClassAssertion",
-									"axiom": [
-										{"IRI": "http://www.w3.org/2004/02/skos/core#ConceptScheme"},
-										{"IRI": await getFullName(className+"ConceptScheme")}
-									]}
-						ontologyObjectI.push(annotationObject);
-						
-						let ontologyObjectP = createExportStructureElement(ontology, "ObjectProperty", "skos:inScheme");
-						annotationObject = {
-									"type": "Declaration",
-									"axiom": {
-										"type": "OjectProperty",
-										"axiom": {"IRI":"http://www.w3.org/2004/02/skos/core#inScheme"}}
-						}
-						ontologyObjectP.push(annotationObject);
-						
-						const dataTypeDefinition = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Values", [{title:"Name",name:"Name"}, {title:"Notation",name:"Notation"}]);
-						let individList = [];
-						let differentIndividList = [];
-						for(let axiom = 0; axiom < dataTypeDefinition.length; axiom++){
-							const individName = dataTypeDefinition[axiom]["Name"];
-							let ontologyObjectI = createExportStructureElement(ontology, "NamedIndividual", individName);
-							
-							let annotationObject = {
-									"type": "Declaration",
-									"axiom": {
-										"type": "NamedIndividual",
-										"axiom": {"IRI": await getFullName(individName)}}
-							}
-							ontologyObjectI.push(annotationObject);
-							annotationObject = {
-									"type": "ClassAssertion",
-									"axiom": [
-										{"IRI": await getFullName(className)},
-										{"IRI": await getFullName(individName)}
-									]}
-							ontologyObjectI.push(annotationObject);
-							individList.push({
-												"individualType": "IRI",
-												"individual": {
-													"IRItype": "simpleIRI",
-													"value": individName
-												}})
-							differentIndividList.push({"IRI": await getFullName(individName)})
-							if((different === true || different === "true") && axiom === dataTypeDefinition.length-1){
-							  let annotationObject = {
-								"type": "DifferentIndividuals",
-								"axiom": differentIndividList
-							  }
-							  ontologyObjectI.push(annotationObject);
-							}
-							
-						
-							annotationObject = {
-									"type": "ClassAssertion",
-									"axiom": [
-										{"IRI": "http://www.w3.org/2004/02/skos/core#Concept"},
-										{"IRI": await getFullName(individName)}
-									]}
-							ontologyObjectI.push(annotationObject);
-							
-							annotationObject =  {
-								"type": "ObjectPropertyAssertion",
-								"axiom": [
-									{"IRI": "http://www.w3.org/2004/02/skos/core#inScheme"},
-									{"IRI": await getFullName(individName)},
-									{"IRI": await getFullName(className+"ConceptScheme")}
-								]
-							}
-							ontologyObjectI.push(annotationObject);
-							
-							annotationObject = {
-								"type": "AnnotationAssertion",
-								"axiom": [
-									{"axiomSymbol": "http://www.w3.org/2004/02/skos/core#notation"},
-									{"IRI": await getFullName(individName)},
-									{"value": dataTypeDefinition[axiom]["Notation"]}]
-							}
-							ontologyObjectI.push(annotationObject);
-						}
-						// const oneOf = await elemOWLGrEd.getCompartmentValue("ClosedClassifier");
-						const oneOf = true;
-						if(oneOf === true || oneOf === "true"){
-						  let annotationObject = {
-							"type": "EquivalentClasses",
-							"axiom": [
-								{"IRI": await getFullName(className)},
-								[{
-										"Expression": {
-											"grammarProduction": "disjunction",
-											"items": [
-												{
-													"grammarProduction": "conjunctionNoRestrictions",
-													"items": [
-														{
-															"negation": "false",
-															"primaryType": "atomic",
-															"primary": {
-																"atomType": "individualList",
-																"list": individList
-															}}]}]}}]]}
-							ontologyObject.push(annotationObject);
-						}
-						
-						let ontologyObjectAP = createExportStructureElement(ontology, "AnnotationProperty", "skos:notation");
-						annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "AnnotationProperty",
-								"axiom": {"IRI": "http://www.w3.org/2004/02/skos/core#notation"}}
-						}
-						ontologyObjectAP.push(annotationObject);
-					} else if(exportMode === "SKOS vocabulary"){
-						namespaceTable["skos"] = "http://www.w3.org/2004/02/skos/core#";
-						let ontologyObject = createExportStructureElement(ontology, "Class", "skos:ConceptScheme");
-						let annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "Class",
-								"axiom": {"IRI": "http://www.w3.org/2004/02/skos/core#ConceptScheme"}}
-						}
-						ontologyObject.push(annotationObject);
-						let ontologyObjectConcept = createExportStructureElement(ontology, "Class", "skos:Concept");
-						annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "Class",
-								"axiom": {"IRI": "http://www.w3.org/2004/02/skos/core#Concept"}}
-						}
-						ontologyObjectConcept.push(annotationObject);
-						
-						const className = await elemOWLGrEd.getCompartmentValue("Name");
-						let ontologyObjectI = createExportStructureElement(ontology, "NamedIndividual", className);
-							
-						annotationObject = {
-									"type": "Declaration",
-									"axiom": {
-										"type": "NamedIndividual",
-										"axiom": {"IRI": await getFullName(className)}}
-						}
-						ontologyObjectI.push(annotationObject);
-						annotationObject = {
-									"type": "ClassAssertion",
-									"axiom": [
-										{"IRI": "http://www.w3.org/2004/02/skos/core#ConceptScheme"},
-										{"IRI": await getFullName(className)}
-									]}
-						ontologyObjectI.push(annotationObject);
-						
-						let ontologyObjectP = createExportStructureElement(ontology, "ObjectProperty", "skos:inScheme");
-						annotationObject = {
-									"type": "Declaration",
-									"axiom": {
-										"type": "OjectProperty",
-										"axiom": {"IRI":"http://www.w3.org/2004/02/skos/core#inScheme"}}
-						}
-						ontologyObjectP.push(annotationObject);
-						
-						
-						let ontologyObjectAP = createExportStructureElement(ontology, "AnnotationProperty", "skos:notation");
-						annotationObject = {
-							"type": "Declaration",
-							"axiom": {
-								"type": "AnnotationProperty",
-								"axiom": {"IRI": "http://www.w3.org/2004/02/skos/core#notation"}}
-						}
-						ontologyObjectAP.push(annotationObject);
-						
-						const dataTypeDefinition = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Values", [{title:"Name",name:"Name"}, {title:"Notation",name:"Notation"}]);
-						
-						for(let axiom = 0; axiom < dataTypeDefinition.length; axiom++){
-							const individName = dataTypeDefinition[axiom]["Name"];
-							let ontologyObjectV = createExportStructureElement(ontology, "NamedIndividual", individName);
-							
-							annotationObject = {
-									"type": "Declaration",
-									"axiom": {
-										"type": "NamedIndividual",
-										"axiom": {"IRI": await getFullName(individName)}}
-							}
-							ontologyObjectV.push(annotationObject);
-							annotationObject = {
-									"type": "ClassAssertion",
-									"axiom": [
-										{"IRI": "http://www.w3.org/2004/02/skos/core#Concept"},
-										{"IRI": await getFullName(individName)}
-									]}
-							ontologyObjectV.push(annotationObject);
-							
-							annotationObject =  {
-								"type": "ObjectPropertyAssertion",
-								"axiom": [
-									{"IRI": "http://www.w3.org/2004/02/skos/core#inScheme"},
-									{"IRI": await getFullName(individName)},
-									{"IRI": await getFullName(className)}
-								]
-							}
-							ontologyObjectV.push(annotationObject);
-							
-							annotationObject = {
-								"type": "AnnotationAssertion",
-								"axiom": [
-									{"axiomSymbol": "http://www.w3.org/2004/02/skos/core#notation"},
-									{"IRI": await getFullName(individName)},
-									{"value": dataTypeDefinition[axiom]["Notation"]}]
-							}
-							ontologyObjectV.push(annotationObject);
-						}
-					}
 				} else if(elem_type[elemType]["name"] === "Class"){
 					let className = await elemOWLGrEd.getCompartmentValue("Name");
+					
+					let shape = await elemOWLGrEd.getCompartmentValue("Shape");
+					let shapeName = shape || className+"_shape";
+					let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
+					
+					ontology.SHACL.NodeShape[shapeNameFull] = {
+						name: shapeName,
+						IRI: shapeNameFull
+					};
+					
+					if(className && className !== ""){
+						ontology.SHACL.NodeShape[shapeNameFull]["owlClass"] = {
+							name: className,
+							IRI: await getFullName(className)
+						}
+					}
+					
 					const equivalentClasses = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("EquivalentClasses", [{title:"EquivalentClass",name:"EquivalentClass"}]);
 					if(!className){
 						if(equivalentClasses.length> 0) className = equivalentClasses[0].EquivalentClass;
 					}
+					
+					//DISJOINT CLASSES
+					const disjointClasses = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("DisjointClasses", [{title:"DisjointClass",name:"DisjointClass"}]);
+					if(disjointClasses){
+						
+						ontology.SHACL.NodeShape[shapeNameFull].disjoint = [];
 
-					ontologyObject = createExportStructureElement(ontology, "Class", className);
-
-					let equivalentObject = {type: "EquivalentClasses", axiom : []}
-					let isAnonymousClass = false;
-					let counter = 0;
-
-					if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-						equivalentObject.axiom.push({IRI: await getFullName(className)});
-					} else if(className){
-						isAnonymousClass = true;
-						counter = 1;
-						let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-						equivalentObject.axiom.push({"Expression": parsed_exp_data});
-					}
-					let eqClasses = [];
-					if(!isAnonymousClass || equivalentClasses.length > 1){
-						for(let axiom = counter; axiom < equivalentClasses.length; axiom++){
-							let name = equivalentClasses[axiom].EquivalentClass;
-							if (name && /^[a-zA-Z0-9\-_:]+$/.test(name)) {
-								eqClasses.push({IRI: await getFullName(name)});
-							} else if(name){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(name, {});
-								eqClasses.push({"Expression": parsed_exp_data});
-							}
+						for(let axiom = 0; axiom < disjointClasses.length; axiom++){
+							ontology.SHACL.NodeShape[shapeNameFull].disjoint.push(await getFullName(disjointClasses[axiom].DisjointClass));
 						}
 					}
-					equivalentObject.axiom.push(eqClasses);
-					ontologyObject.push(equivalentObject);
-					const keys = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Keys");
+					// subClasses
+					const superClasses = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("SuperClasses", [{title:"SuperClass",name:"SuperClass"}]);
+					if(superClasses){
+						
+						ontology.SHACL.NodeShape[shapeNameFull].superClass = [];
 
-					for(let axiom = 0; axiom < keys.length; axiom++){
-
-						let properties = JSON.parse(keys[axiom].Key);
-						if (properties && properties.length > 0) {
-							let keysObject = {};
-							keysObject.type = "HasKey";
-							keysObject.axiom = [];
-							if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-								keysObject.axiom.push({IRI:  await getFullName(className)});
-							} else if(className){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-								keysObject.axiom.push({"Expression": parsed_exp_data});
-							}
-							let axiomObjectect = [];
-							for(let prop = 0; prop < properties.length; prop++){
-								axiomObjectect.push({IRI: await getFullName(properties[prop].value), inverseOf: properties[prop].subCompartments[1].value});
-							}
-							keysObject.axiom.push({axiom:  axiomObjectect});
-							ontologyObject.push(keysObject);
+						for(let axiom = 0; axiom < superClasses.length; axiom++){
+							ontology.SHACL.NodeShape[shapeNameFull].superClass.push(await getFullName(superClasses[axiom].SuperClass));
 						}
 					}
+					
 
 					// Annotations
 
 					const annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Annotation",  [{title:"AnnotationType",name:"AnnotationType"},
 					{title:"Value",name:"Value"},
 					{title:"Language",name:"Language"}]);
-					for(let axiom = 0; axiom < annotations.length; axiom++){
-						let annotationObject = {};
-						annotationObject.type = "AnnotationAssertion";
-						annotationObject.axiom = [];
-						const annotationType = await getAnnotationPropertyName(annotations[axiom]["AnnotationType"]);
-						annotationObject.axiom.push({axiomSymbol: annotationType})
-						if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-							annotationObject.axiom.push({IRI: await getFullName(className)})
-						} else if(className){
-							let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-							annotationObject.axiom.push({"Expression": parsed_exp_data});
+					if(annotations){
+						ontology.SHACL.NodeShape[shapeNameFull].annotations = [];
+						for(let axiom = 0; axiom < annotations.length; axiom++){
+							const annotationType = await getAnnotationPropertyNameSHACL(annotations[axiom]["AnnotationType"]);
+							ontology.SHACL.NodeShape[shapeNameFull].annotations.push({
+									"annotationType": annotationType,
+									"value": annotations[axiom]["Value"],
+									"language":annotations[axiom]["Language"]
+							})
 						}
 						
-						annotationObject.axiom.push({value: annotations[axiom]["Value"]})
-						annotationObject.axiom.push({language: annotations[axiom]["Language"]})
-						ontologyObject.push(annotationObject);
-
 					}
-
-					//Attributes
+					
+					//Comment
+					let comment = await elemOWLGrEd.getCompartmentValue("Comment");
+					if(comment && comment !==""){
+						if(!ontology.SHACL.NodeShape[shapeNameFull].annotations) ontology.SHACL.NodeShape[shapeNameFull].annotations = [];
+						const annotationType = await getAnnotationPropertyNameSHACL("comment");
+						ontology.SHACL.NodeShape[shapeNameFull].annotations.push({
+							"annotationType": annotationType,
+							"value": comment,
+							"language":""
+						})
+					}
+					
+					//Attributes SHACL
 					const attributes = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Attributes",  [{title:"Name",name:"Name"},
 					{title:"Type",name:"Type"},
 					{title:"Multiplicity",name:"Multiplicity"},
@@ -787,148 +441,92 @@ async function saveOntologyInFormatOwlgred(){
 						(typeof ontology.Classifier[attribuyeType] !== "undefined" && ontology.Classifier[attribuyeType] !== "Datatype enumeration (DataOneOf)")) propertyType = "Object";
 						
 						const attrName = await getFullName(attribute.Name);
-						ontology.DataProperty.push(attrName);
-						//Name
-						let attributeObject = {};
-						attributeObject.type = "Declaration";
-						attributeObject.axiom = {type: propertyType+"Property", axiom: {IRI: attrName}};
-						ontologyObject.push(attributeObject);
+						
+						let propertyShapeName = (className || shape)+"_"+attribute.Name
+						let propertyShapeNameFull = "http://www.w3.org/ns/shacl_local#"+propertyShapeName;
+						ontology.SHACL.PropertyShape[propertyShapeNameFull] = {
+							name: propertyShapeName,
+							IRI: propertyShapeNameFull,
+							owlProperty: {
+								name: attribute.Name,
+								IRI: attrName,
+								kind: "DatatypeProperty"
+							},
+							domain: {
+								name: className,
+								IRI: (await getFullName(className || "")) || null,
+								nodeShapeIRI: shapeNameFull
+							},
+							range: {
+								kind: "datatype",
+								name: attribute.Type,
+								IRI: await getTypeExpression((attribute.Type || ""), ontology)
+							},
 
-						//Domain
-						attributeObject = {};
-						attributeObject.type = propertyType+"PropertyDomain";
-						attributeObject.axiom = [];
-						attributeObject.axiom.push({IRI: attrName});
-						if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-							attributeObject.axiom.push({IRI: await getFullName(className)})
-						} else if(className){
-							let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-							attributeObject.axiom.push({"Expression": parsed_exp_data});
 						}
-						ontologyObject.push(attributeObject);
-
-						//Range type
-						if(attribute.Type){
-							attributeObject = {};
-							attributeObject.type = propertyType+"PropertyRange";
-							attributeObject.axiom = [];
-							attributeObject.axiom.push({IRI: attrName});
-							if(typeof ontology.Classifier[attribuyeType] !== "undefined" && ontology.Classifier[attribuyeType] === "SKOS vocabulary"){
-								attributeObject.axiom.push({IRI: "http://www.w3.org/2004/02/skos/core#Concept"});
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(attribute.Name+" only (skos:Concept and skos:inScheme value "+attribute.Type+")", {});				
-								let subClassObject = {
-									"type": "SubClassOf",
-									"axiom": [
-										{
-											"IRI": await getFullName(className)
-										},
-										[
-											{"Expression": parsed_exp_data}
-										]
-									]
-								}
-								// ontologyObject.push(subClassObject);
-								
-							}else attributeObject.axiom.push({IRI: await getTypeExpression(attribute.Type, ontology)});
-							ontologyObject.push(attributeObject);
-						}
+						
 						// Multiplicity
 						if(attribute.Multiplicity){
 							let multiplicity = getMultiplicity(attribute.Multiplicity);
-							attributeObject = {};
-							attributeObject.type = "SubClassOf";
-							attributeObject.axiom = [];
-							if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-								attributeObject.axiom.push({IRI: await getFullName(className)})
-							} else if(className){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-								attributeObject.axiom.push({"Expression": parsed_exp_data});
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity = {};
+							if(multiplicity.type === "max") ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.value;
+							if(multiplicity.type === "min") ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.value;
+							if(multiplicity.type === "exact") {
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.value;
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.value;
 							}
-
-							if(multiplicity.type === "max") attributeObject.axiom.push({type: propertyType+"MaxCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, {IRI: await getTypeExpression(attribute.Type, ontology)}]});
-							if(multiplicity.type === "min") attributeObject.axiom.push({type: propertyType+"MinCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, {IRI: await getTypeExpression(attribute.Type, ontology)}]});
-							if(multiplicity.type === "exact") attributeObject.axiom.push({type: propertyType+"ExactCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, {IRI: await getTypeExpression(attribute.Type, ontology)}]});
 							if(multiplicity.type === "range") {
-								attributeObject.axiom.push({type: propertyType+"MaxCardinality", axiom: [{Number : multiplicity.max}, {IRI: attrName}, {IRI: await getTypeExpression(attribute.Type, ontology)}]});
-								ontologyObject.push(attributeObject);
-								attributeObject = {};
-								attributeObject.type = "SubClassOf";
-								attributeObject.axiom = [];
-								if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-									attributeObject.axiom.push({IRI: await getFullName(className)})
-								} else if(className){
-									let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-									attributeObject.axiom.push({"Expression": parsed_exp_data});
-								}
-								attributeObject.axiom.push({type: propertyType+"MinCardinality", axiom: [{Number : multiplicity.min}, {IRI: attrName}, {IRI: await getTypeExpression(attribute.Type, ontology)}]});
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.max;
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.min;
 							}
-							ontologyObject.push(attributeObject);
 						}
-						// FunctionalDataProperty( /../Name:$getUri(/Name /Namespace))
+
 						// Functional Property
 						if(attribute.IsFunctional === "true" || attribute.IsFunctional === true){
-						attributeObject = {};
-						attributeObject.type = "Functional"+propertyType+"Property";
-						attributeObject.axiom = {IRI: attrName};
-						ontologyObject.push(attributeObject);
+							if(!ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity || !ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount){
+								if(!ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity) ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity = {};
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = 1;
+							}
 						}
 
 						// Equivalent Properties
 						let properties = JSON.parse(attributes[axiom].EquivalentProperties);
 						if (properties && properties.length > 0) {
-							attributeObject = {};
-							attributeObject.type = "Equivalent"+propertyType+"Properties";
-							attributeObject.axiom = [];
-							attributeObject.axiom.push({IRI: attrName});
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].equals = [];
 							for(let prop = 0; prop < properties.length; prop++){
-								attributeObject.axiom.push({IRI: await getFullName(properties[prop].value)});
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].equals.push(await getFullName(properties[prop].value));
 							}
-							ontologyObject.push(attributeObject);
 						}
 
 						// Disjoint Properties
 						properties = JSON.parse(attributes[axiom].DisjointProperties);
 						if (properties && properties.length > 0) {
-							attributeObject = {};
-							attributeObject.type = "Disjoint"+propertyType+"Properties";
-							attributeObject.axiom = [];
-							attributeObject.axiom.push({IRI: attrName});
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].disjoint = [];
 							for(let prop = 0; prop < properties.length; prop++){
-								attributeObject.axiom.push({IRI: await getFullName(properties[prop].value)});
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].disjoint.push(await getFullName(properties[prop].value));
 							}
-							ontologyObject.push(attributeObject);
 						}
 
 						// Sub Properties
 						properties = JSON.parse(attributes[axiom].SuperProperties);
-
 						if (properties && properties.length > 0) {
-						  attributeObject = {};
-						  attributeObject.type = "Sub"+propertyType+"PropertyOf";
-						  attributeObject.axiom = [];
-						  attributeObject.axiom.push({ IRI: attrName });
-
-						  for (let prop = 0; prop < properties.length; prop++) {
-							attributeObject.axiom.push({IRI: await getFullName(properties[prop].value)});
-						  }
-
-						  ontologyObject.push(attributeObject);
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].subsetof = [];
+							for(let prop = 0; prop < properties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].subsetof.push(await getFullName(properties[prop].value));
+							}
 						}
 
 						// Annotations
 						properties = JSON.parse(attributes[axiom].Annotation);
 						if (properties && properties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].annotations = [];
 							for(let prop = 0; prop < properties.length; prop++){
-								let attributeObject = {};
-								attributeObject.type = "AnnotationAssertion";
-								attributeObject.axiom = [];
-								const annotationType = await getAnnotationPropertyName(properties[prop]["annotationType"]);
-								attributeObject.axiom.push({axiomSymbol: annotationType})
-
-								attributeObject.axiom.push({IRI: attrName})
-								attributeObject.axiom.push({value: '"'+ properties[prop]["value"]+ '"'})
-								attributeObject.axiom.push({language: properties[prop]["language"]})
-								ontologyObject.push(attributeObject);
+								const annotationType = await getAnnotationPropertyNameSHACL(properties[prop]["annotationType"]);
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].annotations.push({
+									"annotationType": annotationType,
+									"value": properties[prop]["value"],
+									"language":properties[prop]["language"]
+								})
 							}
 						}
 					}
@@ -979,85 +577,39 @@ async function saveOntologyInFormatOwlgred(){
 						}
 					}
 					
-				}  else if(elem_type[elemType]["name"] === "Restriction"){
-					const Role = await elemOWLGrEd.getCompartmentValue("Role");
-					const IsInverse = await elemOWLGrEd.getCompartmentValue("IsInverse");
-					const Only = await elemOWLGrEd.getCompartmentValue("Only");
-					const Some = await elemOWLGrEd.getCompartmentValue("Some");
-					const Multiplicity = await elemOWLGrEd.getCompartmentValue("Multiplicity");
-
-					// getDomainOrRange(/end/start)
-
-					let clazz = await getElementsFromPath(["start"], elemOWLGrEd);
+				} else if(elem_type[elemType]["name"] === "Generalization"){
+					let start = await getElementsFromPath(["start"], elemOWLGrEd);
+					let end = await getElementsFromPath(["end"], elemOWLGrEd);
 					
-					let domain = await getDomainOrRange(clazz);
-					let domainObject;
-						
-					if (domain && /^[a-zA-Z0-9\-_:]+$/.test(domain)) {
-						let domainOrRange = await getFullName(domain);
-						domainObject = {"IRI": domainOrRange}
-					} else if(domain){
-						let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(domain, {});
-						domainObject = {"Expression": parsed_exp_data}
-					} 
-						
-					clazz = await getElementsFromPath(["end"], elemOWLGrEd);
-
-					let range = await getDomainOrRange(clazz);
-					let rangeObject;
-						
-					if (range && /^[a-zA-Z0-9\-_:]+$/.test(range)) {
-						let domainOrRange = await getFullName(range);
-						rangeObject = {"IRI": domainOrRange}
-					} else if(range){
-						let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(range, {});
-						rangeObject = {"Expression": parsed_exp_data}
-					} 
+					let className = await start.getCompartmentValue("Name");
+					let superClassName = await end.getCompartmentValue("Name");
 					
+					let shape = await start.getCompartmentValue("Shape");
+					let shapeName = shape || className+"_shape";
+					let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
 					
-
-					ontologyObject = createExportStructureElement(ontology, "ObjectProperty", Role);
-
-
-					attributeObject = {};
-					attributeObject.type = "SubClassOf";
-					attributeObject.axiom = [];
-					attributeObject.axiom.push(domainObject);
-
-					if(Only === "true") {
-						if(IsInverse === "true") attributeObject.axiom.push({type: "ObjectAllValuesFrom", axiom: [ {axiom: {type: "ObjectInverseOf", axiom: {IRI: await getFullName(Role)}}}, rangeObject]});
-						else attributeObject.axiom.push({type: "ObjectAllValuesFrom", axiom: [{IRI: await getFullName(Role)}, rangeObject]});
-					} else {
-						if(IsInverse === "true") attributeObject.axiom.push({type: "ObjectSomeValuesFrom", axiom: [ {axiom: {type: "ObjectInverseOf", axiom: {IRI: await getFullName(Role)}}}, rangeObject]});
-						else attributeObject.axiom.push({type: "ObjectSomeValuesFrom", axiom: [{IRI: await getFullName(Role)}, rangeObject]});
-					}
-					ontologyObject.push(attributeObject);
-
-					// Multiplicity
-					if(Multiplicity){
-						let multiplicity = getMultiplicity(Multiplicity);
-						attributeObject = {};
-						attributeObject.type = "SubClassOf";
-						attributeObject.axiom = [];
-						attributeObject.axiom.push(domainObject);
-						let attrName = await getFullName(Role);
-						if(multiplicity.type === "max") attributeObject.axiom.push({type: "ObjectMaxCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, rangeObject]});
-						if(multiplicity.type === "min") attributeObject.axiom.push({type: "ObjectMinCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, rangeObject]});
-						if(multiplicity.type === "exact") attributeObject.axiom.push({type: "ObjectExactCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, rangeObject]});
-						if(multiplicity.type === "range") {
-							attributeObject.axiom.push({type: "ObjectMaxCardinality", axiom: [{Number : multiplicity.max}, {IRI: attrName}, rangeObject]});
-							ontologyObject.push(attributeObject);
-							attributeObject = {};
-							attributeObject.type = "SubClassOf";
-							attributeObject.axiom = [];
-							attributeObject.axiom.push(domainObject);
-							attributeObject.axiom.push({type: "ObjectMinCardinality", axiom: [{Number : multiplicity.min}, {IRI: attrName}, rangeObject]});
-						}
-						ontologyObject.push(attributeObject);
-					}
+					if(!ontology.SHACL.NodeShape[shapeNameFull].superClass)ontology.SHACL.NodeShape[shapeNameFull].superClass = [];
+					ontology.SHACL.NodeShape[shapeNameFull].superClass.push(await getFullName(superClassName))
+					
 				} else if(elem_type[elemType]["name"] === "AnnotationProperty"){
-					const className = await elemOWLGrEd.getCompartmentValue("Name");
-					ontologyObject = createExportStructureElement(ontology, "AnnotationProperty", className);
+					const propertyName = await elemOWLGrEd.getCompartmentValue("Name");
+					const domainName = await elemOWLGrEd.getCompartmentValue("Domain");
+					const rangeName = await elemOWLGrEd.getCompartmentValue("Range");
+					
+					
+					if(domainName){
+						ontology.SHACL.NodeShape["http://www.w3.org/ns/shacl_local#"+propertyName+"_domain"]= {
+							IRI:"http://www.w3.org/ns/shacl_local#"+propertyName+"_domain",
+							targetSubjectsOf:await getFullName(propertyName || ""),
+							class: {
+								kind: "class",
+								name: domainName,
+								IRI: (await getFullName(domainName || "")) || null
+							},
+						}
+					}					
+					
+					ontologyObject = createExportStructureElement(ontology, "AnnotationProperty", propertyName);
 					const annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Annotation",  [{title:"AnnotationType",name:"AnnotationType"},
 					{title:"Value",name:"Value"},
 					{title:"Language",name:"Language"}]);
@@ -1069,7 +621,7 @@ async function saveOntologyInFormatOwlgred(){
 						const annotationType = await getAnnotationPropertyName(annotations[axiom]["AnnotationType"]);
 						annotationObject.axiom.push({axiomSymbol: annotationType})
 
-						annotationObject.axiom.push({IRI: await getFullName(className)})
+						annotationObject.axiom.push({IRI: await getFullName(propertyName)})
 						annotationObject.axiom.push({value: annotations[axiom]["Value"]})
 						annotationObject.axiom.push({language: annotations[axiom]["Language"]})
 						ontologyObject.push(annotationObject);
@@ -1142,7 +694,7 @@ async function saveOntologyInFormatOwlgred(){
 									"type": "ObjectPropertyAssertion",
 									"axiom": [
 										{"IRI": await getFullName(ind.name)},
-										{"IRI": await getFullName(individual[0].value)},
+										{"IRI": await getFullName(className)},
 										{"IRI": await getFullName(ind.value)}
 									]
 								}
@@ -1152,7 +704,7 @@ async function saveOntologyInFormatOwlgred(){
 									"type": "DataPropertyAssertion",
 									"axiom": [
 										{"IRI": await getFullName(ind.name)},
-										{"IRI":  await getFullName(individual[0].value)},
+										{"IRI":  await getFullName(className)},
 										{"value": ind.value}
 									]
 								}
@@ -1162,8 +714,74 @@ async function saveOntologyInFormatOwlgred(){
 					}
 					
 				} else if(elem_type[elemType]["name"] === "Object"){
+					
+					const instanceName = await elemOWLGrEd.getCompartmentValue("Name");
+					const className = await elemOWLGrEd.getCompartmentValue("ClassName");
+					
+					let instanceShapeName = instanceName+"_shape";
+					let instanceShapeNameFull = "http://www.w3.org/ns/shacl_local#"+instanceShapeName;
+						
+						
+					ontology.SHACL.NodeShape[instanceShapeNameFull] = {
+							name: instanceName,
+							IRI: instanceShapeNameFull,
+							Instance: {
+								IRI : await getFullName(instanceName)
+							},
+					};
+						
+					if(className && className !== ""){
+						ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["onClass"] = await getFullName(className);
+					}
+						
+					const DataPropertyAssertion = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("DataPropertyAssertion");
+					if(DataPropertyAssertion){
+					  ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["Properties"] = [];
+					  for(let axiom = 0; axiom < DataPropertyAssertion.length; axiom++){
+						
+						ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["Properties"].push(
+						{
+							path: await getFullName(DataPropertyAssertion[axiom]["Property"]),
+							hasValue: DataPropertyAssertion[axiom]["Value"],
+							type: await getTypeExpression((DataPropertyAssertion[axiom]["Type"] || ""), ontology)
+						})
+					  }
+					}
+					
+					
 
-					const className = await elemOWLGrEd.getCompartmentValue("Name");
+					//Annotations
+					const annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Annotation",  [{title:"AnnotationType",name:"AnnotationType"},
+					{title:"Value",name:"Value"},
+					{title:"Language",name:"Language"}]);
+
+					if(annotations){
+						ontology.SHACL.NodeShape[instanceShapeNameFull].annotations = [];
+						for(let axiom = 0; axiom < annotations.length; axiom++){
+							const annotationType = await getAnnotationPropertyNameSHACL(annotations[axiom]["AnnotationType"]);
+							ontology.SHACL.NodeShape[instanceShapeNameFull].annotations.push({
+									"annotationType": annotationType,
+									"value": annotations[axiom]["Value"],
+									"language":annotations[axiom]["Language"]
+							})
+						}
+						
+					}	
+					
+					//Comment
+					let comment = await elemOWLGrEd.getCompartmentValue("Comment");
+					if(comment && comment !==""){
+						if(!ontology.SHACL.NodeShape[instanceShapeNameFull].annotations) ontology.SHACL.NodeShape[instanceShapeNameFull].annotations = [];
+						const annotationType = await getAnnotationPropertyNameSHACL("comment");
+						ontology.SHACL.NodeShape[instanceShapeNameFull].annotations.push({
+							"annotationType": annotationType,
+							"value": comment,
+							"language":""
+						})
+					}
+
+					/*
+					
 					ontologyObject = createExportStructureElement(ontology, "NamedIndividual", className);
 					// DataPropertyAssertion
 					const DataPropertyAssertion = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("DataPropertyAssertion");
@@ -1211,10 +829,12 @@ async function saveOntologyInFormatOwlgred(){
 						annotationObject.axiom.push({value: annotations[axiom]["Value"]})
 						annotationObject.axiom.push({language: annotations[axiom]["Language"]})
 						ontologyObject.push(annotationObject);
-					}
+					}*/
 				} else if(elem_type[elemType]["name"] === "ObjectPropertyAssertion"){
+					
 					let clazzS = await getElementsFromPath(["end", "start"], elemOWLGrEd);
 					let clazzO = await getElementsFromPath(["start", "end"], elemOWLGrEd);
+					
 					if(clazzS && clazzO){
 						let objectName = await clazzS.getCompartmentValue("Name");
 						const domain = await getFullName(objectName);
@@ -1226,6 +846,19 @@ async function saveOntologyInFormatOwlgred(){
 						let IsNegativeAssertion = await elemOWLGrEd.getCompartmentValue("isNegative");
 
 						if(Property){
+							let instanceShapeName = objectName+"_shape";
+							let instanceShapeNameFull = "http://www.w3.org/ns/shacl_local#"+instanceShapeName;
+							
+							if(!ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["Properties"])ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["Properties"] = [];
+							ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["Properties"].push(
+							{
+								path: await getFullName(Property),
+								hasValue: range,
+							})
+							
+							
+							
+							
 							ontologyObject = createExportStructureElement(ontology, "NamedIndividual", objectName);
 							let annotationObject = {};
 							if(IsNegativeAssertion === "true")annotationObject.type = "NegativeObjectPropertyAssertion";
@@ -1324,6 +957,20 @@ async function saveOntologyInFormatOwlgred(){
 					let InvIsNegativeAssertion = await elemOWLGrEd.getCompartmentValue("InvIsNegativeAssertion");
 
 					if(Property){
+						
+						let instanceShapeName = objectName+"_shape";
+						let instanceShapeNameFull = "http://www.w3.org/ns/shacl_local#"+instanceShapeName;
+							
+						if(!ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["Properties"])ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["Properties"] = [];
+						ontology.SHACL.NodeShape[instanceShapeNameFull]["Instance"]["Properties"].push(
+						{
+							path: await getFullName(Property),
+							hasValue: range,
+						})
+						
+						
+						
+						
 						ontologyObject = createExportStructureElement(ontology, "NamedIndividual", objectName);
 						let annotationObject = {};
 						if(IsNegativeAssertion === "true")annotationObject.type = "NegativeObjectPropertyAssertion";
@@ -1350,8 +997,11 @@ async function saveOntologyInFormatOwlgred(){
 					let path = ["end", "start"];
 					let clazz = await getElementsFromPath(path, elemOWLGrEd);
 					let className;
-					if(clazz) className = await clazz.getCompartmentValue("Name");
-					else {
+					let shape;
+					if(clazz) {
+						className = await clazz.getCompartmentValue("Name");
+						shape = await clazz.getCompartmentValue("Shape");
+					} else {
 						className = await elemOWLGrEd.getCompartmentValue("Domain");
 						if(!className) className = "Thing";
 					}
@@ -1359,419 +1009,395 @@ async function saveOntologyInFormatOwlgred(){
 					let range = await elemOWLGrEd.getCompartmentValue("Range");
 					let property = await elemOWLGrEd.getCompartmentValue("Name");
 					
-
-					//Range type
-					if(range && property){
-						let attrName = await getFullName(property);
-						attributeObject = {};
-						attributeObject.type = "DataPropertyRange";
-						attributeObject.axiom = [];
-						attributeObject.axiom.push({IRI: attrName});
-						attributeObject.axiom.push({IRI: await getTypeExpression(range, ontology)});
-						ontologyObject.push(attributeObject);
-					}
+					let shapeName = shape || className+"_shape";
+					let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
 					
-					// Multiplicity
-					let multip = await elemOWLGrEd.getCompartmentValue("Multiplicity");
-					if(multip){
-						let attrName = await getFullName(property);
-						let multiplicity = getMultiplicity(multip);
-						attributeObject = {};
-						attributeObject.type = "SubClassOf";
-						attributeObject.axiom = [];
-						if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-							attributeObject.axiom.push({IRI: await getFullName(className)})
-						} else if(className){
-							let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-							attributeObject.axiom.push({"Expression": parsed_exp_data});
-						}
-
-						if(multiplicity.type === "max") attributeObject.axiom.push({type: "DataMaxCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, {IRI: await getTypeExpression(range, ontology)}]});
-						if(multiplicity.type === "min") attributeObject.axiom.push({type: "DataMinCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, {IRI: await getTypeExpression(range, ontology)}]});
-						if(multiplicity.type === "exact") attributeObject.axiom.push({type: "DataExactCardinality", axiom: [{Number : multiplicity.value}, {IRI: attrName}, {IRI: await getTypeExpression(range, ontology)}]});
-						if(multiplicity.type === "range") {
-							attributeObject.axiom.push({type: "DataMaxCardinality", axiom: [{Number : multiplicity.max}, {IRI: attrName}, {IRI: await getTypeExpression(range, ontology)}]});
-							ontologyObject.push(attributeObject);
-							attributeObject = {};
-							attributeObject.type = "SubClassOf";
-							attributeObject.axiom = [];
-							if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-								attributeObject.axiom.push({IRI: await getFullName(className)})
-							} else if(className){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-								attributeObject.axiom.push({"Expression": parsed_exp_data});
-							}
-							attributeObject.axiom.push({type: "DataMinCardinality", axiom: [{Number : multiplicity.min}, {IRI: attrName}, {IRI: await getTypeExpression(range, ontology)}]});
-						}
-						ontologyObject.push(attributeObject);
-				    }
-					
-					// Functional Property
-					let IsFunctional = await elemOWLGrEd.getCompartmentValue("IsFunctional");
-					if(IsFunctional === "true" || IsFunctional === true){
-						let attrName = await getFullName(property);
-						attributeObject = {};
-						attributeObject.type = "FunctionalDataProperty";
-						attributeObject.axiom = {IRI: attrName};
-						ontologyObject.push(attributeObject);
-					}
-					const annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Annotation",  [{title:"AnnotationType",name:"AnnotationType"},
-					{title:"Value",name:"Value"},
-					{title:"Language",name:"Language"}]);
-
-					for(let axiom = 0; axiom < annotations.length; axiom++){
-						let annotationObject = {};
-						annotationObject.type = "AnnotationAssertion";
-						annotationObject.axiom = [];
-						const annotationType = await getAnnotationPropertyName(annotations[axiom]["AnnotationType"]);
-						annotationObject.axiom.push({axiomSymbol: annotationType})
-
-						annotationObject.axiom.push({IRI: await getFullName(className)})
-						annotationObject.axiom.push({value:  annotations[axiom]["Value"]})
-						annotationObject.axiom.push({language: annotations[axiom]["Language"]})
-						ontologyObject.push(annotationObject);
-					}
-					
-					let qualifiers = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Qualifiers");
-					for(let axiom = 0; axiom < qualifiers.length; axiom++){
-						
-						let propertyName = await elemOWLGrEd.getCompartmentValue("Name");
-						let property = qualifiers[axiom]["Property"];
-						let type = qualifiers[axiom]["Type"];
-						let multiplicity = qualifiers[axiom]["Multiplicity"];
-						
-						let annotationPropertyObject = createExportStructureElement(ontology, "AnnotationProperty", qualifiers[axiom]["Property"]);
-						annotationPropertyObject.push(
-							{
-								"type": "Declaration",
-								"axiom": {
-									"type": "AnnotationProperty",
-									"axiom": {
-										"IRI": await getFullName(property)
-									}
-								}
-							}
-						)
-						
-						let annotationObject = {};
-						annotationObject.type = "AnnotationAssertion";
-						annotationObject.axiom = [];
-						const annotationType = "http://lumii.lv/2011/1.0/extended#qualifier";
-						annotationObject.axiom.push({axiomSymbol: annotationType})
-
-						annotationObject.axiom.push({IRI: await getFullName(propertyName)});
-						annotationObject.axiom.push({IRI: await getFullName(property)});
-						annotationObject.axiom.push({language: ""});
-						
-						let qualifierProperties = [];
-						annotationObject.axiom.push({axiom: qualifierProperties})
-						if(type){
-							qualifierProperties.push(
-							  {
-								"type": "Annotation",
-								"axiomSymbol": "http://www.w3.org/2000/01/rdf-schema#range",
-								"axiom": {IRI: await getTypeExpression(type, ontology)}
-							  }	
-							)
+					let propertyShapeName = (className || shape)+"_"+property
+						let propertyShapeNameFull = "http://www.w3.org/ns/shacl_local#"+propertyShapeName;
+						ontology.SHACL.PropertyShape[propertyShapeNameFull] = {
+							name: propertyShapeName,
+							IRI: propertyShapeNameFull,
+							owlProperty: {
+								name: property,
+								IRI: await getFullName(property || ""),
+								kind: "DatatypeProperty"
+							},
+							domain: {
+								name: className,
+								IRI: (await getFullName(className || "")) || null,
+								nodeShapeIRI: shapeNameFull
+							},
+							range: {
+								kind: "datatype",
+								name: range,
+								IRI: await getTypeExpression((range || ""), ontology)
+							},
 
 						}
-						if(multiplicity){
-							multiplicity = getMultiplicity(multiplicity);
-							let axiomSymbol;
-							let multiplicityValue = multiplicity.value;
-							if(multiplicity.type === "max") {
-								axiomSymbol = "http://www.w3.org/2002/07/owl#maxCardinality";
+						
+						if(className){
+							ontology.SHACL.NodeShape["http://www.w3.org/ns/shacl_local#"+property+"_domain"]= {
+								IRI:"http://www.w3.org/ns/shacl_local#"+property+"_domain",
+								targetSubjectsOf:await getFullName(property || ""),
+								class: {
+									kind: "class",
+									name: className,
+									IRI: (await getFullName(className || "")) || null
+								},
 							}
-							if(multiplicity.type === "min") {
-								axiomSymbol = "http://www.w3.org/2002/07/owl#minCardinality";
+						}else if(shapeName){
+							ontology.SHACL.NodeShape["http://www.w3.org/ns/shacl_local#"+property+"_domain"]= {
+								IRI:"http://www.w3.org/ns/shacl_local#"+property+"_domain",
+								targetSubjectsOf:await getFullName(property || ""),
+								node: {
+									kind: "node",
+									name: shapeName,
+									IRI: shapeNameFull
+								},
 							}
+						}	
+						
+						let Multiplicity = await elemOWLGrEd.getCompartmentValue("Multiplicity");
+						
+						// Multiplicity
+						if(Multiplicity){
+							let multiplicity = getMultiplicity(Multiplicity);
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity = {};
+							if(multiplicity.type === "max") ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.value;
+							if(multiplicity.type === "min") ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.value;
 							if(multiplicity.type === "exact") {
-								axiomSymbol = "http://www.w3.org/2002/07/owl#qualifiedCardinality";
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.value;
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.value;
 							}
 							if(multiplicity.type === "range") {
-								
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.max;
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.min;
 							}
-							
-							qualifierProperties.push(
-							  {
-								"type": "Annotation",
-								"axiomSymbol": axiomSymbol,
-								"axiom": {Number: multiplicityValue}
-							  }	
-							)
-
 						}
 						
-						ontologyObject.push(annotationObject);
-							
-					}
+						// Functional Property
+						let IsFunctional =  await elemOWLGrEd.getCompartmentValue("IsFunctional");
+						if(IsFunctional === "true" || IsFunctional === true){
+							if(!ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity || !ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount){
+								if(!ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity) ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity = {};
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = 1;
+							}
+						}
+
+						// Equivalent Properties
+						let EquivalentProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("EquivalentProperties");
+						if (EquivalentProperties && EquivalentProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].equals = [];
+							for(let prop = 0; prop < EquivalentProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].equals.push(await getFullName(EquivalentProperties[prop].EquivalentProperty));
+							}
+						}
+
+						// Disjoint Properties
+						let DisjointProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("DisjointProperties");
+						if (DisjointProperties && DisjointProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].disjoint = [];
+							for(let prop = 0; prop < DisjointProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].disjoint.push(await getFullName(DisjointProperties[prop].DisjointProperty));
+							}
+						}
+
+						// Sub Properties
+						let SuperProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("SuperProperties");
+						if (SuperProperties && SuperProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].subsetof = [];
+							for(let prop = 0; prop < SuperProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].subsetof.push(await getFullName(SuperProperties[prop].SuperProperty));
+							}
+						}
+
+						// Annotations
+						let annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Annotation",  [{title:"AnnotationType",name:"AnnotationType"},
+						{title:"Value",name:"Value"},
+						{title:"Language",name:"Language"}]);
+						if (annotations && annotations.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].annotations = [];
+							for(let prop = 0; prop < annotations.length; prop++){
+								const annotationType = await getAnnotationPropertyNameSHACL(annotations[prop]["AnnotationType"]);
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].annotations.push({
+									"annotationType": annotationType,
+									"value": annotations[prop]["Value"],
+									"language":annotations[prop]["Language"]
+								})
+							}
+						}
 					
 				} else if(elem_type[elemType]["name"] === "Association" || elem_type[elemType]["name"] === "ObjectProperty"){
 					let propertyName = await elemOWLGrEd.getCompartmentValue("Name");
-					ontologyObject = createExportStructureElement(ontology, "ObjectProperty", propertyName);
-					let annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Annotation",  [{title:"AnnotationType",name:"AnnotationType"},
-					{title:"Value",name:"Value"},
-					{title:"Language",name:"Language"}]);
-
-					for(let axiom = 0; axiom < annotations.length; axiom++){
-						let annotationObject = {};
-						annotationObject.type = "AnnotationAssertion";
-						annotationObject.axiom = [];
-						const annotationType = await getAnnotationPropertyName(annotations[axiom]["AnnotationType"]);
-						annotationObject.axiom.push({axiomSymbol: annotationType})
-
-						annotationObject.axiom.push({IRI: await getFullName(propertyName)})
-						annotationObject.axiom.push({value: annotations[axiom]["Value"]})
-						annotationObject.axiom.push({language: annotations[axiom]["Language"]})
-						ontologyObject.push(annotationObject);
-					}
-
-					let Multiplicity  = await elemOWLGrEd.getCompartmentValue("Multiplicity");
-
-					// Multiplicity
-					if(Multiplicity && Multiplicity !== "*"){
-						let path = ["start"];
-						if( elem_type[elemType]["name"] === "ObjectProperty") path = ["end", "start"];
-						let clazz = await getElementsFromPath(path, elemOWLGrEd);
-						let domainObject;
+					
+					let path = ["start"];
+					if( elem_type[elemType]["name"] === "ObjectProperty") path = ["end", "start"];
+					let clazz = await getElementsFromPath(path, elemOWLGrEd);
+					let domainName;
+					let domainShape;
 						
-						if(clazz){
-							let domain = await getDomainOrRange(clazz);
-							
-							
-							if (domain && /^[a-zA-Z0-9\-_:]+$/.test(domain)) {
-								let domainOrRange = await getFullName(domain);
-								domainObject = {"IRI": domainOrRange}
-							} else if(domain){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(domain, {});
-								domainObject = {"Expression": parsed_exp_data}
-							} 
-						}
-						path = ["end"];
-						if( elem_type[elemType]["name"] === "ObjectProperty") path = ["start", "end"];
-						clazz = await getElementsFromPath(path, elemOWLGrEd);
-						let rangeObject;
-						// const range = await getFullName(await getDomainOrRange(clazz));
-						if(clazz){	
-							let range = await getDomainOrRange(clazz);
-							
-							if (range && /^[a-zA-Z0-9\-_:]+$/.test(range)) {
-								let domainOrRange = await getFullName(range);
-								rangeObject = {"IRI": domainOrRange}
-							} else if(range){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(range, {});
-								rangeObject = {"Expression": parsed_exp_data}
-							} 
-						}
-						if(rangeObject && domainObject){
-							let multiplicity = getMultiplicity(Multiplicity);
-							attributeObject = {};
-							attributeObject.type = "SubClassOf";
-							attributeObject.axiom = [];
-							attributeObject.axiom.push(domainObject);
-							
-
-							if(multiplicity.type === "max") attributeObject.axiom.push({type: "ObjectMaxCardinality", axiom: [{Number : multiplicity.value}, {IRI: await getFullName(propertyName)}, rangeObject]});
-							if(multiplicity.type === "min") attributeObject.axiom.push({type: "ObjectMinCardinality", axiom: [{Number : multiplicity.value}, {IRI: await getFullName(propertyName)}, rangeObject]});
-							if(multiplicity.type === "exact") attributeObject.axiom.push({type: "ObjectExactCardinality", axiom: [{Number : multiplicity.value}, {IRI: await getFullName(propertyName)}, rangeObject]});
-							if(multiplicity.type === "range") {
-								attributeObject.axiom.push({type: "ObjectMaxCardinality", axiom: [{Number : multiplicity.max}, {IRI: await getFullName(propertyName)}, rangeObject]});
-								ontologyObject.push(attributeObject);
-								attributeObject = {};
-								attributeObject.type = "SubClassOf";
-								attributeObject.axiom = [];
-								attributeObject.axiom.push(domainObject);
-								attributeObject.axiom.push({type: "ObjectMinCardinality", axiom: [{Number : multiplicity.min}, {IRI: await getFullName(propertyName)}, rangeObject]});
-							}
-							ontologyObject.push(attributeObject);
-						}
+					if(clazz){
+						domainName = await clazz.getCompartmentValue("Name");
+						domainShape = await clazz.getCompartmentValue("Shape");
+					} else {
+						domainName = await elemOWLGrEd.getCompartmentValue("Domain");
 					}
-
-
-
-					propertyName = await elemOWLGrEd.getCompartmentValue("NameInv");
-					annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("AnnotationInv",  [{title:"AnnotationType",name:"AnnotationType"},
-					{title:"Value",name:"Value"},
-					{title:"Language",name:"Language"}]);
-
-					for(let axiom = 0; axiom < annotations.length; axiom++){
-						let annotationObject = {};
-						annotationObject.type = "AnnotationAssertion";
-						annotationObject.axiom = [];
-						const annotationType = await getAnnotationPropertyName(annotations[axiom]["AnnotationType"]);
-						annotationObject.axiom.push({axiomSymbol: annotationType})
-
-						annotationObject.axiom.push({IRI: await getFullName(propertyName)})
-						annotationObject.axiom.push({value: annotations[axiom]["Value"]})
-						annotationObject.axiom.push({language: annotations[axiom]["Language"]})
-						ontologyObject.push(annotationObject);
-					}
-
-					Multiplicity  = await elemOWLGrEd.getCompartmentValue("MultiplicityInv");
-					// MultiplicityInv
-					if(Multiplicity){
-
-						let clazz = await getElementsFromPath(["start"], elemOWLGrEd);
-						// const domain = await getFullName(await getDomainOrRange(clazz));
-						let domain = await getDomainOrRange(clazz);
-						let domainObject;
+					path = ["end"];
+					if( elem_type[elemType]["name"] === "ObjectProperty") path = ["start", "end"];
+					clazz = await getElementsFromPath(path, elemOWLGrEd);
+					let rangeName;
+					let rangeShape;
 						
-						if (domain && /^[a-zA-Z0-9\-_:]+$/.test(domain)) {
-							let domainOrRange = await getFullName(domain);
-							domainObject = {"IRI": domainOrRange}
-						} else if(domain){
-							let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(domain, {});
-							domainObject = {"Expression": parsed_exp_data}
-						} 
-						
-						clazz = await getElementsFromPath(["end"], elemOWLGrEd);
-						// const range = await getFullName(await getDomainOrRange(clazz));
-						let range = await getDomainOrRange(clazz);
-						let rangeObject;
-						
-						if (range && /^[a-zA-Z0-9\-_:]+$/.test(range)) {
-							let domainOrRange = await getFullName(range);
-							rangeObject = {"IRI": domainOrRange}
-						} else if(range){
-							let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(range, {});
-							rangeObject = {"Expression": parsed_exp_data}
-						} 
-						
-						let multiplicity = getMultiplicity(Multiplicity);
-						attributeObject = {};
-						attributeObject.type = "SubClassOf";
-						attributeObject.axiom = [];
-						attributeObject.axiom.push(domainObject);
-
-						if(multiplicity.type === "max") attributeObject.axiom.push({type: "ObjectMaxCardinality", axiom: [{Number : multiplicity.value}, {IRI: await getFullName(propertyName)}, rangeObject]});
-						if(multiplicity.type === "min") attributeObject.axiom.push({type: "ObjectMinCardinality", axiom: [{Number : multiplicity.value}, {IRI: await getFullName(propertyName)}, rangeObject]});
-						if(multiplicity.type === "exact") attributeObject.axiom.push({type: "ObjectExactCardinality", axiom: [{Number : multiplicity.value}, {IRI: await getFullName(propertyName)}, rangeObject]});
-						if(multiplicity.type === "range") {
-							attributeObject.axiom.push({type: "ObjectMaxCardinality", axiom: [{Number : multiplicity.max}, {IRI: await getFullName(propertyName)}, rangeObject]});
-							ontologyObject.push(attributeObject);
-							attributeObject = {};
-							attributeObject.type = "SubClassOf";
-							attributeObject.axiom = [];
-							attributeObject.axiom.push(domainObject);
-							attributeObject.axiom.push({type: "ObjectMinCardinality", axiom: [{Number : multiplicity.min}, {IRI: await getFullName(propertyName)}, rangeObject]});
-						}
-						ontologyObject.push(attributeObject);
-					}
-
-
-					//propertyChain
-					let propertyChains = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("PropertyChains");
-					for(let axiom = 0; axiom < propertyChains.length; axiom++){
-						let propertyName = await elemOWLGrEd.getCompartmentValue("Name");
-						let properties = JSON.parse(propertyChains[axiom].PropertyChain);
-						if (properties && properties.length > 0) {
-							let keysObject = {};
-							keysObject.type = "SubObjectPropertyOf";
-							keysObject.axiom = [];
-							keysObject.axiom.push({IRI:  await getFullName(propertyName)});
-
-							let axiomObjectect = [];
-							for(let prop = 0; prop < properties.length; prop++){
-								axiomObjectect.push({IRI: await getFullName(properties[prop].value), inverseOf: properties[prop].subCompartments[1].value});
-							}
-							keysObject.axiom.push({axiom: {type: "ObjectPropertyChain", axiom:axiomObjectect}});
-							ontologyObject.push(keysObject);
-						}
-					}
-
-					propertyChains = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("PropertyChainsInv");
-					for(let axiom = 0; axiom < propertyChains.length; axiom++){
-						let propertyName = await elemOWLGrEd.getCompartmentValue("NameInv");
-						let properties = JSON.parse(propertyChains[axiom].PropertyChain);
-						if (properties && properties.length > 0) {
-							let keysObject = {};
-							keysObject.type = "SubObjectPropertyOf";
-							keysObject.axiom = [];
-							keysObject.axiom.push({IRI:  await getFullName(propertyName)});
-
-							let axiomObjectect = [];
-							for(let prop = 0; prop < properties.length; prop++){
-								axiomObjectect.push({IRI: await getFullName(properties[prop].value), inverseOf: properties[prop].subCompartments[1].value});
-							}
-							keysObject.axiom.push({axiom: {type: "ObjectPropertyChain", axiom:axiomObjectect}});
-
-							ontologyObject.push(keysObject);
-						}
+					if(clazz){	
+						rangeName = await clazz.getCompartmentValue("Name");
+						rangeShape = await clazz.getCompartmentValue("Shape");
+					} else {
+						rangeName = await elemOWLGrEd.getCompartmentValue("Range");
 					}
 					
-					let qualifiers = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Qualifiers");
-					for(let axiom = 0; axiom < qualifiers.length; axiom++){
-						
-						let propertyName = await elemOWLGrEd.getCompartmentValue("Name");
-						let property = qualifiers[axiom]["Property"];
-						let type = qualifiers[axiom]["Type"];
-						let multiplicity = qualifiers[axiom]["Multiplicity"];
-						
-						let annotationPropertyObject = createExportStructureElement(ontology, "AnnotationProperty", qualifiers[axiom]["Property"]);
-						annotationPropertyObject.push(
-							{
-								"type": "Declaration",
-								"axiom": {
-									"type": "AnnotationProperty",
-									"axiom": {
-										"IRI": await getFullName(property)
-									}
-								}
+					rangeShape = (rangeShape || rangeName)+"_shape";
+					let rangeShapeFull = "http://www.w3.org/ns/shacl_local#"+rangeShape;
+					
+					domainShape = domainShape || domainName+"_shape";
+					let domainShapeFull = "http://www.w3.org/ns/shacl_local#"+domainShape;
+					
+					let propertyShapeName = (domainName || domainShape)+"_"+propertyName
+					let propertyShapeNameFull = "http://www.w3.org/ns/shacl_local#"+propertyShapeName;
+					ontology.SHACL.PropertyShape[propertyShapeNameFull] = {
+						name: propertyShapeName,
+						IRI: propertyShapeNameFull,
+						owlProperty: {
+							name: propertyName,
+							IRI: await getFullName(propertyName || "") || null,
+							kind: "ObjectProperty"
+						},
+						domain: {
+							name: domainName,
+							IRI: (await getFullName(domainName || "")) || null,
+							nodeShapeIRI: domainShapeFull
+						},
+						range: {
+							kind: "class",
+							name: rangeName,
+							IRI: (await getFullName(rangeName || "")) || null
+						},
+					}
+					
+					if(elem_type[elemType]["name"] === "ObjectProperty"){
+						if(domainName){
+							ontology.SHACL.NodeShape["http://www.w3.org/ns/shacl_local#"+propertyName+"_domain"]= {
+								IRI:"http://www.w3.org/ns/shacl_local#"+propertyName+"_domain",
+								targetSubjectsOf:await getFullName(propertyName || ""),
+								class: {
+									kind: "class",
+									name: domainName,
+									IRI: (await getFullName(domainName || "")) || null
+								},
 							}
-						)
-						
-						let annotationObject = {};
-						annotationObject.type = "AnnotationAssertion";
-						annotationObject.axiom = [];
-						const annotationType = "http://lumii.lv/2011/1.0/extended#qualifier";
-						annotationObject.axiom.push({axiomSymbol: annotationType})
-
-						annotationObject.axiom.push({IRI: await getFullName(propertyName)});
-						annotationObject.axiom.push({IRI: await getFullName(property)});
-						annotationObject.axiom.push({language: ""});
-						
-						let qualifierProperties = [];
-						annotationObject.axiom.push({axiom: qualifierProperties})
-						if(type){
-							qualifierProperties.push(
-							  {
-								"type": "Annotation",
-								"axiomSymbol": "http://www.w3.org/2000/01/rdf-schema#range",
-								"axiom": {IRI: await getTypeExpression(type, ontology)}
-							  }	
-							)
-
+						} else if(domainShape){
+							ontology.SHACL.NodeShape["http://www.w3.org/ns/shacl_local#"+propertyName+"_domain"]= {
+								IRI:"http://www.w3.org/ns/shacl_local#"+propertyName+"_domain",
+								targetSubjectsOf:await getFullName(propertyName || ""),
+								node: {
+									kind: "node",
+									name: domainShape,
+									IRI: domainShapeFull
+								},
+							}
 						}
-						if(multiplicity){
-							multiplicity = getMultiplicity(multiplicity);
-							let axiomSymbol;
-							let multiplicityValue = multiplicity.value;
-							if(multiplicity.type === "max") {
-								axiomSymbol = "http://www.w3.org/2002/07/owl#maxCardinality";
+						if(rangeName){
+							ontology.SHACL.NodeShape["http://www.w3.org/ns/shacl_local#"+propertyName+"_range"]= {
+								IRI:"http://www.w3.org/ns/shacl_local#"+propertyName+"_range",
+								targetObjectOf:await getFullName(propertyName || ""),
+								class: {
+									kind: "class",
+									name: rangeName,
+									IRI: (await getFullName(rangeName || "")) || null
+								},
 							}
-							if(multiplicity.type === "min") {
-								axiomSymbol = "http://www.w3.org/2002/07/owl#minCardinality";
+						} else if(rangeShape){
+							ontology.SHACL.NodeShape["http://www.w3.org/ns/shacl_local#"+propertyName+"_range"]= {
+								IRI:"http://www.w3.org/ns/shacl_local#"+propertyName+"_range",
+								targetObjectOf:await getFullName(propertyName || ""),
+								node: {
+									kind: "node",
+									name: rangeShape,
+									IRI: rangeShapeFull
+								},
 							}
+						}
+					}
+						
+						// Multiplicity
+						let Multiplicity  = await elemOWLGrEd.getCompartmentValue("Multiplicity");
+						if(Multiplicity){
+							let multiplicity = getMultiplicity(Multiplicity);
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity = {};
+							if(multiplicity.type === "max") ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.value;
+							if(multiplicity.type === "min") ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.value;
 							if(multiplicity.type === "exact") {
-								axiomSymbol = "http://www.w3.org/2002/07/owl#qualifiedCardinality";
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.value;
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.value;
 							}
 							if(multiplicity.type === "range") {
-								
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.max;
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.min;
 							}
-							
-							qualifierProperties.push(
-							  {
-								"type": "Annotation",
-								"axiomSymbol": axiomSymbol,
-								"axiom": {Number: multiplicityValue}
-							  }	
-							)
+						}
 
+						// Functional Property
+						let IsFunctional = await elemOWLGrEd.getCompartmentValue("Functional");
+						if(IsFunctional === "true" || IsFunctional === true){
+							if(!ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity || !ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount){
+								if(!ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity) ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity = {};
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = 1;
+							}
+						}
+
+						// Equivalent Properties
+						let EquivalentProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("EquivalentProperties");
+						if (EquivalentProperties && EquivalentProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].equals = [];
+							for(let prop = 0; prop < EquivalentProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].equals.push(await getFullName(EquivalentProperties[prop].EquivalentProperty));
+							}
+						}
+
+						// Disjoint Properties
+						let DisjointProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("DisjointProperties");
+						if (DisjointProperties && DisjointProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].disjoint = [];
+							for(let prop = 0; prop < DisjointProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].disjoint.push(await getFullName(DisjointProperties[prop].DisjointProperty));
+							}
+						}
+
+						// Sub Properties
+						let SuperProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("SuperProperties");
+						if (SuperProperties && SuperProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].subsetof = [];
+							for(let prop = 0; prop < SuperProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].subsetof.push(await getFullName(SuperProperties[prop].SuperProperty));
+							}
+						}
+
+						// Annotations
+						let annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("Annotation",  [{title:"AnnotationType",name:"AnnotationType"},
+						{title:"Value",name:"Value"},
+						{title:"Language",name:"Language"}]);
+						if (annotations && annotations.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].annotations = [];
+							for(let prop = 0; prop < annotations.length; prop++){
+								const annotationType = await getAnnotationPropertyNameSHACL(annotations[prop]["AnnotationType"]);
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].annotations.push({
+									"annotationType": annotationType,
+									"value": annotations[prop]["Value"],
+									"language":annotations[prop]["Language"]
+								})
+							}
 						}
 						
-						ontologyObject.push(annotationObject);
-							
+					// INV
+					let propertyNameInv = await elemOWLGrEd.getCompartmentValue("NameInv");
+					if(propertyNameInv){
+
+						propertyShapeName = rangeName+"_"+propertyNameInv
+						propertyShapeNameFull = "http://www.w3.org/ns/shacl_local#"+propertyShapeName;
+						ontology.SHACL.PropertyShape[propertyShapeNameFull] = {
+							name: propertyShapeName,
+							IRI: propertyShapeNameFull,
+							owlProperty: {
+								name: propertyNameInv,
+								IRI: await getFullName(propertyNameInv || "") || null,
+								kind: "ObjectProperty"
+							},
+							domain: {
+								name: rangeName,
+								IRI: (await getFullName(rangeName || "")) || null,
+								nodeShapeIRI: rangeShapeFull
+							},
+							range: {
+								kind: "class",
+								name: domainName,
+								IRI: (await getFullName(domainName || "")) || null
+							},
+							inverseProperty:{
+								name: propertyName,
+								IRI: await getFullName(propertyName)
+							}
+						}
+						
+						// Multiplicity
+						Multiplicity  = await elemOWLGrEd.getCompartmentValue("MultiplicityInv");
+						if(Multiplicity){
+							let multiplicity = getMultiplicity(Multiplicity);
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity = {};
+							if(multiplicity.type === "max") ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.value;
+							if(multiplicity.type === "min") ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.value;
+							if(multiplicity.type === "exact") {
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.value;
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.value;
+							}
+							if(multiplicity.type === "range") {
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = multiplicity.max;
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.minCount = multiplicity.min;
+							}
+						}
+
+						// Functional Property
+						IsFunctional = await elemOWLGrEd.getCompartmentValue("FunctionalInv");
+						if(IsFunctional === "true" || IsFunctional === true){
+							if(!ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity || !ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount){
+								if(!ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity) ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity = {};
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].multiplicity.maxCount = 1;
+							}
+						}
+
+						// Equivalent Properties
+						EquivalentProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("EquivalentPropertiesInv");
+						if (EquivalentProperties && EquivalentProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].equals = [];
+							for(let prop = 0; prop < EquivalentProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].equals.push(await getFullName(EquivalentProperties[prop].EquivalentProperty));
+							}
+						}
+
+						// Disjoint Properties
+						DisjointProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("DisjointPropertiesInv");
+						if (DisjointProperties && DisjointProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].disjoint = [];
+							for(let prop = 0; prop < DisjointProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].disjoint.push(await getFullName(DisjointProperties[prop].DisjointProperty));
+							}
+						}
+
+						// Sub Properties
+						SuperProperties = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("SuperPropertiesInv");
+						if (SuperProperties && SuperProperties.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].subsetof = [];
+							for(let prop = 0; prop < SuperProperties.length; prop++){
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].subsetof.push(await getFullName(SuperProperties[prop].SuperProperty));
+							}
+						}
+
+						// Annotations
+						annotations = await elemOWLGrEd.getMultiCompartmentSubCompartmentValues("AnnotationInv",  [{title:"AnnotationType",name:"AnnotationType"},
+						{title:"Value",name:"Value"},
+						{title:"Language",name:"Language"}]);
+						if (annotations && annotations.length > 0) {
+							ontology.SHACL.PropertyShape[propertyShapeNameFull].annotations = [];
+							for(let prop = 0; prop < annotations.length; prop++){
+								const annotationType = await getAnnotationPropertyNameSHACL(annotations[prop]["AnnotationType"]);
+								ontology.SHACL.PropertyShape[propertyShapeNameFull].annotations.push({
+									"annotationType": annotationType,
+									"value": annotations[prop]["Value"],
+									"language":annotations[prop]["Language"]
+								})
+							}
+						}
 					}
+		
+					
 					
 				} else if(elem_type[elemType]["name"] === "HorizontalFork"){
 					
@@ -1788,6 +1414,7 @@ async function saveOntologyInFormatOwlgred(){
 
 					const supClass = await getElementsFromPath(["start", "end"], elemOWLGrEd);
 					let className = await supClass.getCompartmentValue("Name");
+					
 					subClasses = subClasses.filter(item => item.obj._id !== supClass.obj._id);
 					
 					if(!className){
@@ -1795,95 +1422,154 @@ async function saveOntologyInFormatOwlgred(){
 						if(equivalentClasses.length> 0) className = equivalentClasses[0].EquivalentClass;
 					}
 
-					if(disjoint || complete){
-
-						ontologyObject = createExportStructureElement(ontology, "Class", className);
-						if(subClasses.length > 1){
-							if(disjoint === "true"){
-								let disjointObject = {type: "DisjointClasses", axiom : []}
+					if(disjoint && complete){
+						let shape = await supClass.getCompartmentValue("Shape");
+								let superShapeName = shape || className+"_shape";
+								let superShapeNameFull = "http://www.w3.org/ns/shacl_local#"+superShapeName;
+								ontology.SHACL.NodeShape[superShapeNameFull].xone = []
 								for(let d = 0; d < subClasses.length; d++){
 									let disName = await subClasses[d].getCompartmentValue("Name");
-									disName = await getFullName(disName);
-									disjointObject.axiom.push({IRI: disName});
+									let shape = await subClasses[d].getCompartmentValue("Shape");
+									let shapeName = shape || disName+"_shape";
+									let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
+									ontology.SHACL.NodeShape[superShapeNameFull].xone.push(await getFullName(disName))
+						}
+					}
+					else if(disjoint || complete){
+
+						if(subClasses.length > 1){
+							if(disjoint === "true"){
+								
+								for(let d = 0; d < subClasses.length; d++){
+									let disName = await subClasses[d].getCompartmentValue("Name");
+									let shape = await subClasses[d].getCompartmentValue("Shape");
+									let shapeName = shape || disName+"_shape";
+									let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
+									if(!ontology.SHACL.NodeShape[shapeNameFull].disjoint) ontology.SHACL.NodeShape[shapeNameFull].disjoint = [];
+
+									for(let dd = 0; dd < subClasses.length; dd++){
+										if(d!==dd){
+											let disName = await subClasses[dd].getCompartmentValue("Name");
+											disName = await getFullName(disName);
+											ontology.SHACL.NodeShape[shapeNameFull].disjoint.push(disName);
+										}
+									}
 								}
-								ontologyObject.push(disjointObject);
 
 							}
 							if(complete === "true"){
-								let disjointObject = {type: "EquivalentClasses", axiom : []}
-								disjointObject.axiom.push({IRI: await getFullName(className)});
-								let ObjectUnionOf = {type: "ObjectUnionOf", axiom: []}
-								disjointObject.axiom.push(ObjectUnionOf);
+								let shape = await supClass.getCompartmentValue("Shape");
+								let superShapeName = shape || className+"_shape";
+								let superShapeNameFull = "http://www.w3.org/ns/shacl_local#"+superShapeName;
+								ontology.SHACL.NodeShape[superShapeNameFull].or = []
 								for(let d = 0; d < subClasses.length; d++){
 									let disName = await subClasses[d].getCompartmentValue("Name");
-									disName = await getFullName(disName);
-									ObjectUnionOf.axiom.push({IRI: disName});
+									let shape = await subClasses[d].getCompartmentValue("Shape");
+									let shapeName = shape || disName+"_shape";
+									let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
+									ontology.SHACL.NodeShape[superShapeNameFull].or.push(await getFullName(disName))
 								}
-								ontologyObject.push(disjointObject);
 							}
 						}
-
-						// const className1 = await subject.getCompartmentValue("Name");
-						// const className3 = await object.getCompartmentValue("Name");
 					}
-					for(let d = 0; d < subClasses.length; d++){
+					
+					if(subClasses){
+						for(let d = 0; d < subClasses.length; d++){
 							let subClassName = await subClasses[d].getCompartmentValue("Name");
-							if(!subClassName){
-								const equivalentClasses = await subClasses[d].getMultiCompartmentSubCompartmentValues("EquivalentClasses");
-								if(equivalentClasses.length> 0) subClassName = equivalentClasses[0].EquivalentClass;
-							}
+							let shape = await subClasses[d].getCompartmentValue("Shape");
+							let shapeName = shape || subClassName+"_shape";
+							let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
 							
-							ontologyObject = createExportStructureElement(ontology, "Class", subClassName);
-							let subClassObject = {type: "SubClassOf", axiom : []}
-							// subClassObject.axiom.push({IRI:  await getFullName(subClassName)})
-							if (subClassName && /^[a-zA-Z0-9\-_:]+$/.test(subClassName)) {
-								subClassObject.axiom.push({IRI: await getFullName(subClassName)});
-							} else if(subClassName){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(subClassName, {});
-								subClassObject.axiom.push({"Expression": parsed_exp_data});
-							}
-							// subClassObject.axiom.push({IRI:  await getFullName(className)})
+							if(!ontology.SHACL.NodeShape[shapeNameFull].superClass) ontology.SHACL.NodeShape[shapeNameFull].superClass = [];
 							
-							if (className && /^[a-zA-Z0-9\-_:]+$/.test(className)) {
-								subClassObject.axiom.push({IRI: await getFullName(className)});
-							} else if(className){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(className, {});
-								subClassObject.axiom.push({"Expression": parsed_exp_data});
-							}
-
-							ontologyObject.push(subClassObject);
+							ontology.SHACL.NodeShape[shapeNameFull].superClass.push(await getFullName(className));		
+						}
 					}
-				} else if(elem_type[elemType]["name"] === "EquivalentClasses" || elem_type[elemType]["name"] === "DisjointClasses"){
+					
+					
+					
+				} else if(elem_type[elemType]["name"] === "Disjoint"){
+					let classes = await getElementsFromPath2(["start"], elemOWLGrEd);
+					let classes2 = await getElementsFromPath2(["end"], elemOWLGrEd);
+					
+					classes = classes.concat(classes2);
+
+					if(classes.length > 1){
+						let className = await classes[0].getCompartmentValue("Name");
+
+						let disjointObject = {type: elem_type[elemType]["name"], axiom : []}
+						for(let d = 0; d < classes.length; d++){
+							let disName = await classes[d].getCompartmentValue("Name");
+
+							let shape = await classes[d].getCompartmentValue("Shape");
+							let shapeName = shape || disName+"_shape";
+							let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
+							
+							if(!ontology.SHACL.NodeShape[shapeNameFull].disjoint) ontology.SHACL.NodeShape[shapeNameFull].disjoint = [];		
+							
+							for(let dd = 0; dd < classes.length; dd++){
+								if(d!==dd){
+									let disName = await classes[dd].getCompartmentValue("Name");
+									disName = await getFullName(disName);
+									ontology.SHACL.NodeShape[shapeNameFull].disjoint.push(disName);
+								}
+							}							
+						}		
+					}
+				} else if(elem_type[elemType]["name"] === "DisjointClasses"){
 					let classes = await getElementsFromPath2(["start", "end"], elemOWLGrEd)
 					let classes2 = await getElementsFromPath2(["end", "start"], elemOWLGrEd)
 					classes = classes.concat(classes2);
 
 					if(classes.length > 1){
 						let className = await classes[0].getCompartmentValue("Name");
-						if(!className){
-								const equivalentClasses = await classes[0].getMultiCompartmentSubCompartmentValues("EquivalentClasses");
-								if(equivalentClasses.length> 0) className = equivalentClasses[0].EquivalentClass;
-						}
-	
-						ontologyObject = createExportStructureElement(ontology, "Class", className);
+
 						let disjointObject = {type: elem_type[elemType]["name"], axiom : []}
 						for(let d = 0; d < classes.length; d++){
 							let disName = await classes[d].getCompartmentValue("Name");
-							if(!disName){
-								const equivalentClasses = await classes[d].getMultiCompartmentSubCompartmentValues("EquivalentClasses");
-								if(equivalentClasses.length> 0) disName = equivalentClasses[0].EquivalentClass;
-						    }
 
-							if (disName && /^[a-zA-Z0-9\-_:]+$/.test(disName)) {
-								disjointObject.axiom.push({IRI: await getFullName(disName)});
-							} else if(disName){
-								let parsed_exp_data = class_expression_grammar_parser_OWLGrEd.parse(disName, {});
-								disjointObject.axiom.push({"Expression": parsed_exp_data});
-							}
+							let shape = await classes[d].getCompartmentValue("Shape");
+							let shapeName = shape || disName+"_shape";
+							let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
 							
-						}
-						ontologyObject.push(disjointObject);
+							if(!ontology.SHACL.NodeShape[shapeNameFull].disjoint) ontology.SHACL.NodeShape[shapeNameFull].disjoint = [];		
+							
+							for(let dd = 0; dd < classes.length; dd++){
+								if(d!==dd){
+									let disName = await classes[dd].getCompartmentValue("Name");
+									disName = await getFullName(disName);
+									ontology.SHACL.NodeShape[shapeNameFull].disjoint.push(disName);
+								}
+							}							
+						}		
 					}
+				} else if(elem_type[elemType]["name"] === "EquivalentClasses"){
+					// let classes = await getElementsFromPath2(["start", "end"], elemOWLGrEd)
+					// let classes2 = await getElementsFromPath2(["end", "start"], elemOWLGrEd)
+					// classes = classes.concat(classes2);
+
+					// if(classes.length > 1){
+						// let className = await classes[0].getCompartmentValue("Name");
+
+						// let disjointObject = {type: elem_type[elemType]["name"], axiom : []}
+						// for(let d = 0; d < classes.length; d++){
+							// let disName = await classes[d].getCompartmentValue("Name");
+
+							// let shape = await classes[d].getCompartmentValue("Shape");
+							// let shapeName = shape || disName+"_shape";
+							// let shapeNameFull = "http://www.w3.org/ns/shacl_local#"+shapeName;
+							
+							// if(!ontology.SHACL.NodeShape[shapeNameFull].equals) ontology.SHACL.NodeShape[shapeNameFull].equals = [];		
+							
+							// for(let dd = 0; dd < classes.length; dd++){
+								// if(d!==dd){
+									// let disName = await classes[dd].getCompartmentValue("Name");
+									// disName = await getFullName(disName);
+									// ontology.SHACL.NodeShape[shapeNameFull].equals.push(disName);
+								// }
+							// }							
+						// }		
+					// }
 				} else if(elem_type[elemType]["name"] === "SameAsIndivids" || elem_type[elemType]["name"] === "DifferentIndivids"){
 					let classes = await getElementsFromPath2(["start", "end"], elemOWLGrEd)
 					let classes2 = await getElementsFromPath2(["end", "start"], elemOWLGrEd)
@@ -1978,68 +1664,6 @@ async function saveOntologyInFormatOwlgred(){
 	// console.log("OOOOOOOOOOOOOOO", ontology);
 	return ontology;
  }
-
-
-function downloadTextAsFile(text, filename, mime = 'text/plain;charset=utf-8') {
-  const blob = new Blob([text], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
-function guessFilename(onto, format) {
-  // Try to extract ontology IRI or fallback name
-  const iri = (onto && (onto.iri || onto.IRI || onto.ontologyIRI || onto.name)) || 'ontology';
-  const localName = iri.split(/[\/#]/).filter(Boolean).pop() || 'ontology';
-
-  // Pick file extension by RDF serialization format
-  const extMap = {
-    'text/turtle': 'ttl',
-    'application/rdf+xml': 'owl',
-    'application/n-triples': 'nt',
-    'text/n3': 'n3',
-    'application/ld+json': 'jsonld'
-  };
-
-  const ext = extMap[format] || 'owl'; // default fallback
-  return `${localName}.${ext}`;
-}
-
-function mimeForFormat(format) {
-  const mimeMap = {
-    'text/turtle': 'text/turtle;charset=utf-8',
-    'application/rdf+xml': 'application/rdf+xml;charset=utf-8',
-    'application/n-triples': 'application/n-triples;charset=utf-8',
-    'text/n3': 'text/n3;charset=utf-8',
-    'application/ld+json': 'application/ld+json;charset=utf-8'
-  };
-
-  return mimeMap[format] || 'application/octet-stream';
-}
-
-function generateRDFLibSyntax(onto,format){
-
-	const cleanObject = JSON.parse(JSON.stringify(onto));
-	// Utilities.callMeteorMethod("parseExpressionForCompletions", "");
-	Meteor.call('generateOwlRDFLib', onto, namespaceTable, format, (err, result) => {
-	  if (err) {
-		  console.error('Error generating:', err);
-		  return;
-		}
-
-		// console.log('Output:\n', result);
-
-		// Trigger browser download
-		const filename = guessFilename(onto, format);
-		const mime = mimeForFormat(format);
-		downloadTextAsFile(result, filename, mime);
-	});
-}
 
 function createExportStructureElement(object, topLeveName, name) {
     if(typeof object[topLeveName][name] === "undefined"){
@@ -2601,6 +2225,40 @@ async function getAnnotationPropertyName(name, namespace) {
 	ns_uri_table_annot["seealso"] = "rdfs:seeAlso"
 	ns_uri_table_annot["versioninfo"] = "owl:versionInfo"
 	ns_uri_table_annot["date"] = "<http://purl.org/dc/elements/1.1/date>"
+
+	// get annotation properties
+	// for k, v in pairs(getAnnotationPropertyNS(diagram, ns_uri_table)) do
+		// ns_uri_table_annot[string.lower(k)] = v
+	// end
+   if (namespace && namespace !== "") {
+		// TO DO ns_uri_table
+        // if (ns_uri_table[namespace]) {
+            // return "<" + ns_uri_table[namespace] + name + ">";
+        // }
+        if (namespace.startsWith("http") || namespace.startsWith("www")) {
+            return "<" + namespace + "#" + name + ">";
+        }
+        return "<" + await getCurrentUri() + name + ">";
+    } else {
+		// TO DO ns_uri_table_annot
+        if (ns_uri_table_annot[name.toLowerCase()]) {
+            return ns_uri_table_annot[name.toLowerCase()];
+        }
+        return  await getCurrentUri() + name ;
+    }
+}
+async function getAnnotationPropertyNameSHACL(name, namespace) {
+    let ns_uri_table_annot = [];
+	ns_uri_table_annot["backwardcompatiblewith"] = "http://www.w3.org/2002/07/owl#backwardCompatibleWith"
+	ns_uri_table_annot["deprecated"] = "http://www.w3.org/2002/07/owl#deprecated"
+	ns_uri_table_annot["comment"] = "http://www.w3.org/2000/01/rdf-schema#comment"
+	ns_uri_table_annot["incompatiblewith"] = "http://www.w3.org/2002/07/owl#incompatibleWith"
+	ns_uri_table_annot["isdefinedby"] = "http://www.w3.org/2000/01/rdf-schema#isDefinedBy"
+	ns_uri_table_annot["label"] = "http://www.w3.org/2000/01/rdf-schema#label"
+	ns_uri_table_annot["Label"] = "http://www.w3.org/2000/01/rdf-schema#label"
+	ns_uri_table_annot["priorversion"] = "http://www.w3.org/2002/07/owl#priorVersion"
+	ns_uri_table_annot["seealso"] = "http://www.w3.org/2000/01/rdf-schema#seeAlso"
+	ns_uri_table_annot["versioninfo"] = "http://www.w3.org/2002/07/owl#versionInfo"
 
 	// get annotation properties
 	// for k, v in pairs(getAnnotationPropertyNS(diagram, ns_uri_table)) do

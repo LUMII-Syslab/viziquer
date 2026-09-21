@@ -1,4 +1,84 @@
 <template name="AddAttribute_OWLGrEd">
+<style>
+  #add-attribute-form-owlgred .modal-dialog {
+    width: min(550px, 96vw);
+    margin: 18px auto;
+  }
+
+  #add-attribute-form-owlgred .modal-content {
+    border-radius: 6px;
+  }
+
+  #add-attribute-form-owlgred .modal-header,
+  #add-attribute-form-owlgred .modal-footer {
+    padding: 8px 14px;
+  }
+
+  #add-attribute-form-owlgred .modal-title {
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  #add-attribute-form-owlgred .modal-body {
+    width: auto !important;
+    max-height: calc(100vh - 135px) !important;
+    overflow-y: auto;
+    padding: 10px 14px;
+  }
+
+  #add-attribute-form-owlgred .form-group {
+    margin-bottom: 7px !important;
+  }
+
+  #add-attribute-form-owlgred label,
+  #add-attribute-form-owlgred .label-checkbox {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  #add-attribute-form-owlgred .form-control,
+  #add-attribute-form-owlgred .property-select {
+    height: 28px;
+    padding: 3px 7px;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  #add-attribute-form-owlgred .compact-section {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 6px;
+  }
+
+  #add-attribute-form-owlgred .table {
+    margin-bottom: 6px;
+  }
+
+  #add-attribute-form-owlgred .table > thead > tr > th,
+  #add-attribute-form-owlgred .table > tbody > tr > td {
+    padding: 3px 5px !important;
+    font-size: 12px;
+    line-height: 1.2;
+    vertical-align: middle;
+  }
+
+  #add-attribute-form-owlgred .btn-sm {
+    padding: 1px 6px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  #add-attribute-form-owlgred .compact-actions {
+    text-align: right;
+    margin-top: 4px;
+  }
+
+  #add-attribute-form-owlgred .delete-btn {
+    min-width: 28px;
+  }
+</style>
   {{#with field_obj}}
 	<!-- Modal for new document -->
     <div id="add-attribute-form-owlgred" class="modal fade row-form compart-type" data-backdrop="static" data-keyboard="false" compartmentId={{compartmentId}} compartmentTypeId={{_id}}>
@@ -9,7 +89,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Attributes</h4>
                 </div>
-				<div class="modal-body multi-field" style="width: 550px; max-height: 800px; overflow-y: auto;">
+				<div class="modal-body multi-field">
 	                    <form onsubmit="return false;">
 	                    	{{#if fields}}
 								{{#each fields}}
@@ -78,7 +158,7 @@
 									   <div class="form-group" style="margin-bottom:10px;">
 									  <label class="label-checkbox">Annotations</label>
 
-									  <div style="border: 1px solid #ccc; border-radius: 5px; padding: 15px;">
+									  <div class="compact-section">
 
 										<table id="property-table-annotations" class="table table-bordered">
 										  <thead>
@@ -102,7 +182,7 @@
 												  <input class="form-control property-select" type="text" name="annotationLang" list="LanguageList" autocomplete="off" value="{{language}}" />
 												</td>
 												<td>
-												  <button class="btn btn-sm btn-danger delete-btn">
+												  <button type="button" class="btn btn-sm btn-danger delete-btn">
 													<i class="fa fa-trash"></i>
 												  </button>
 												</td>
@@ -133,8 +213,8 @@
 										  <option mappedValue="pt" input="pt">pt</option>
 										</datalist>
 
-										<div style="text-align: right; margin-top: 10px;">
-										  <button id="add-annotation-row-btn" class="btn btn-primary btn-sm" style="padding: 1px 6px;">
+										<div class="compact-actions">
+										  <button id="add-annotation-row-btn" type="button" class="btn btn-primary btn-sm">
 											<i class="fa fa-plus"></i> Add
 										  </button>
 										</div>
@@ -153,7 +233,7 @@
 									 <div class="form-group" style="margin-bottom:10px;">
 									  <label class="label-checkbox">Equivalent Properties</label>
 
-									  <div style="border: 1px solid #ccc; border-radius: 5px; padding: 15px;">
+									  <div class="compact-section">
 
 										<table id="property-table-equivalent" class="table table-bordered">
 										  <thead>
@@ -169,7 +249,7 @@
 												  <input class="form-control property-select" type="text" name="product" list="productName" autocomplete="off" value="{{value}}" />
 												</td>
 												<td>
-												  <button class="btn btn-sm btn-danger delete-btn">
+												  <button type="button" class="btn btn-sm btn-danger delete-btn">
 													<i class="fa fa-trash"></i>
 												  </button>
 												</td>
@@ -178,8 +258,8 @@
 										  </tbody>
 										</table>
 
-										<div style="text-align: right; margin-top: 10px;">
-										   <button id="add-equivalent-properties-row-btn" class="btn btn-primary btn-sm" style="padding: 1px 6px;">
+										<div class="compact-actions">
+										   <button id="add-equivalent-properties-row-btn" type="button" class="btn btn-primary btn-sm">
 											  <i class="fa fa-plus"></i> Add
 											</button>
 										</div>
@@ -192,7 +272,7 @@
 											<label class="label-checkbox">
 
 												Super Properties
-												<div style="border: 1px solid #ccc; border-radius: 5px; padding: 15px;">
+												<div class="compact-section">
 												<table id="property-table-super" class="table table-bordered">
 												<thead>
 												  <tr>
@@ -207,7 +287,7 @@
 													  <input class="form-control property-select" type="text" name="product" list="productName" autocomplete="off" value="{{value}}" />
 													</td>
 													<td>
-													  <button class="btn btn-sm btn-danger delete-btn">
+													  <button type="button" class="btn btn-sm btn-danger delete-btn">
 														<i class="fa fa-trash"></i>
 													  </button>
 													</td>
@@ -215,8 +295,8 @@
 												{{/each}}
 												</tbody>
 											  </table>
-											  <div style="text-align: right; margin-top: 10px;">
-											  <button id="add-super-properties-row-btn" class="btn btn-primary btn-sm" style="padding: 1px 6px;">
+											  <div class="compact-actions">
+											  <button id="add-super-properties-row-btn" type="button" class="btn btn-primary btn-sm">
 												<i class="fa fa-plus"></i> Add
 											  </button>
 											   </div>
@@ -227,7 +307,7 @@
 									   <div class="form-group" style="margin-bottom:10px;">
 											<label class="label-checkbox">
 												Disjoint Properties
-												<div style="border: 1px solid #ccc; border-radius: 5px; padding: 15px;">
+												<div class="compact-section">
 												<table id="property-table-disjoint" class="table table-bordered">
 												<thead>
 												  <tr>
@@ -242,7 +322,7 @@
 														  <input class="form-control property-select" type="text" name="product" list="productName" autocomplete="off" value="{{value}}" />
 														</td>
 														<td>
-														  <button class="btn btn-sm btn-danger delete-btn">
+														  <button type="button" class="btn btn-sm btn-danger delete-btn">
 															<i class="fa fa-trash"></i>
 														  </button>
 														</td>
@@ -250,8 +330,8 @@
 													{{/each}}
 												</tbody>
 											  </table>
-											  <div style="text-align: right; margin-top: 10px;">
-											  <button id="add-disjoint-properties-row-btn" class="btn btn-primary btn-sm" style="padding: 1px 6px;">
+											  <div class="compact-actions">
+											  <button id="add-disjoint-properties-row-btn" type="button" class="btn btn-primary btn-sm">
 												<i class="fa fa-plus"></i> Add
 											  </button>
 											  </div>

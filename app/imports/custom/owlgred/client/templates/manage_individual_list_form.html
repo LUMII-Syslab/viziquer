@@ -1,0 +1,208 @@
+<template name="ManageIndividualList">
+<style>
+    div.modal-body {
+        overflow-y: auto;
+        max-height: 60vh;
+    }
+
+    .individuals-toolbar {
+        margin-bottom: 10px;
+    }
+
+    .individuals-table-wrapper {
+        max-height: 400px;
+        overflow: auto;
+        border: 1px solid #ddd;
+    }
+
+    .individuals-table {
+        width: 100%;
+        min-width: 700px;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .individuals-table th,
+    .individuals-table td {
+        border: 1px solid #ddd;
+        padding: 6px;
+        vertical-align: middle;
+    }
+
+    .individuals-table th {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 1;
+    }
+
+    .individuals-table input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+    }
+
+    .delete-col {
+        width: 90px;
+        text-align: center;
+    }
+	.iri-column {
+		background: #fafafa;
+	}
+
+	.data-column {
+		background: #fff;
+	}
+
+	.object-column {
+		background: #f4f8ff;
+	}
+
+	.object-column input[type="text"] {
+		font-style: italic;
+	}
+
+	.individuals-table th.object-column {
+		background: #e8f0ff;
+	}
+
+	.individuals-table th.data-column {
+		background: #f7f7f7;
+	}
+	
+	.individual-list-oneof-label {
+		padding-left: 0 !important;
+		font-size: 15px;
+		line-height: 20px;
+		display: inline-flex;
+		align-items: center;
+	}
+	
+	.individual-list-visible-count-label {
+	    padding-left: 0 !important;
+		font-size: 15px;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	#individual-list-visible-count-input {
+		width: 30px;
+	}
+
+	#individual-list-oneof-checkbox {
+		opacity: 1 !important;
+		position: static !important;
+		width: 20px !important;
+		height: 20px !important;
+		z-index: auto !important;
+		margin: 0 8px 0 0 !important;
+		vertical-align: middle;
+		cursor: pointer;
+	}
+	
+</style>
+
+    <div id="manage-individual-list-form" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="width: 900px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Manage Individual list</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form autocomplete="off" onsubmit="return false;">
+						<div class="checkbox" style="margin-top:0; margin-bottom:12px;">
+							<label class="individual-list-oneof-label">
+								<input
+									id="individual-list-oneof-checkbox"
+									type="checkbox"
+									checked="{{isOneOfChecked}}"
+								>
+								Only these declared individuals belong to the class (owl:oneOf)
+							</label>
+						</div>
+						<div class="checkbox" style="margin-top:0; margin-bottom:12px;">
+							<label class="individual-list-visible-count-label">
+								<input
+									id="individual-list-visible-count-input"
+									type="input"
+									value= {{intanceCount}}
+								>
+								Visible individual count in the element node
+							</label>
+						</div>
+						<!-- <div class="form-group" style="margin-bottom:12px;"> -->
+							<!-- <label for="individual-list-display-attribute" style="margin-right:8px;"> -->
+								<!-- Display individuals in diagram as -->
+							<!-- </label> -->
+							<!-- <select id="individual-list-display-attribute" class="form-control" style="display:inline-block; width:auto;"> -->
+								<!-- <option value="" selected="{{isDisplayAttributeEmpty}}">IRI</option> -->
+								<!-- {{#each displayColumns}} -->
+									<!-- <option value="{{id}}" selected="{{isSelectedDisplayColumn id}}"> -->
+										<!-- {{name}}(IRI) -->
+									<!-- </option> -->
+								<!-- {{/each}} -->
+							<!-- </select> -->
+						<!-- </div> -->
+                        <div class="individuals-toolbar">
+                            <button id="add-individual-row" type="button" class="btn btn-default">
+                                Add
+                            </button>
+                        </div>
+
+                        <div id="manage-individual-list-field" class="form-group" style="margin-bottom:10px;">
+                            <div class="individuals-table-wrapper">
+                                <table class="individuals-table">
+                                    <thead>
+										<tr>
+											{{#each tableColumns}}
+												<th class="{{columnClass this}}" title="{{columnTitle this}}">
+													{{name}}
+												</th>
+											{{/each}}
+											<th class="delete-col">Delete</th>
+										</tr>
+									</thead>
+                                    <tbody>
+										{{#each row in tableRows}}
+											<tr>
+												{{#each cell in row.cells}}
+													<td class="{{columnClass (findColumn cell.columnId)}}">
+														<input
+															type="text"
+															class="individual-cell"
+															value="{{cell.value}}"
+															data-row-index="{{row.rowIndex}}"
+															data-column-id="{{cell.columnId}}"
+														/>
+													</td>
+												{{/each}}
+												<td class="delete-col">
+													<button
+														type="button"
+														class="btn btn-xs btn-danger delete-individual-row"
+														data-row-index="{{row.rowIndex}}"
+													>
+														<i class="fa fa-trash"></i>
+													</button>
+												</td>
+											</tr>
+										{{/each}}
+									</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="cancel-manage-individual-list" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-manage-individual-list" type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

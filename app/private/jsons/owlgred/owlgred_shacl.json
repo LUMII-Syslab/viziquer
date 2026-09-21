@@ -205,6 +205,10 @@
             "item": "Paste",
             "procedure": "Paste"
           },
+		  {
+            "item": "Save as SHACL",
+            "procedure": "saveOntologyAsShaclOwlgred"
+          },
           {
             "item": "Save Ontology ...",
             "procedure": "saveOntologyRDFLibTurtleOwlgred",
@@ -528,6 +532,70 @@
                 ],
                 "subCompartmentTypes": [],
                 "label": "Name"
+              }
+            },
+			{
+              "object": {
+                "_id": "5ThCQMTX6rEZxjArU",
+                "toolId": "cHSidEZPTvZRSFFtZ",
+                "versionId": "EtJZ6WzJNMpthfpC3",
+                "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
+                "diagramId": "YmsfLsQHNYsgFDJab",
+                "elementTypeId": "fCNoA6sqGLdTB2Dmg",
+                "elementId": "xQtWJgZ7CDTazoQjt",
+                "index": 1,
+                "noRepresentation": false,
+                "tabIndex": 2,
+                "dialogTabId": "XF6xzTCkx8s7bd6yY",
+                "name": "Shape",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "25d26f1d79525aac5ad974db",
+                    "style": {
+                      "align": "center",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "subCompartmentTypes": [],
+                "label": "Shape"
               }
             },
             {
@@ -1808,70 +1876,6 @@
                 ],
                 "subCompartmentTypes": [],
                 "label": "IndividualLabel"
-              }
-            },
-			{
-              "object": {
-                "_id": "5ThCQE7U6rEZxjr5Y",
-                "toolId": "cHSidEZPTvZRSFFtZ",
-                "versionId": "EtJZ6WzJNMpthfpC3",
-                "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
-                "diagramId": "YmsfLsQHNYsgFDJab",
-                "elementTypeId": "fCNoA6sqGLdTB2Dmg",
-                "elementId": "xQtWJgZ7CDTazoQjt",
-                "index": 2098,
-                "noRepresentation": false,
-                "tabIndex": 2198,
-                "dialogTabId": "eLy7pfE4GnHAPeeFq",
-                "name": "VisibleIndividualCount",
-                "isObjectRepresentation": false,
-                "inputType": {
-                    "type": "input",
-                    "inputType": "text"
-                },
-                "styles": [
-                  {
-                    "name": "Default",
-                    "id": "5a056f8f20b07d71dcce3de5",
-                    "style": {
-                      "align": "left",
-                      "fill": "#000000",
-                      "padding": 0,
-                      "placement": "start-left",
-                      "visible": false,
-                      "fontSize": 12,
-                      "fontStyle": "bold",
-                      "fontFamily": "Courier New",
-                      "fontVariant": "normal"
-                    }
-                  }
-                ],
-                "extensionPoints": [
-                  {
-                    "extensionPoint": "beforeUpdate"
-                  },
-                  {
-                    "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
-                  },
-                  {
-                    "extensionPoint": "afterUpdate"
-                  },
-                  {
-                    "extensionPoint": "dynamicPrefix"
-                  },
-                  {
-                    "extensionPoint": "dynamicSuffix"
-                  },
-                  {
-                    "extensionPoint": "dynamicDefaultValue"
-                  },
-                  {
-                    "extensionPoint": "dynamicDropDown"
-                  }
-                ],
-                "subCompartmentTypes": [],
-                "label": "Visible individual count"
               }
             },
             {
@@ -12905,9 +12909,9 @@
                 "label": "Class"
               }
             },
-			{
+            {
               "object": {
-                "_id": "5ThCQE7U6rEZxgO3a",
+                "_id": "MeMTtaBxZsKgjAbWZ",
                 "toolId": "cHSidEZPTvZRSFFtZ",
                 "versionId": "EtJZ6WzJNMpthfpC3",
                 "diagramTypeId": "Ca5nHdCHmkBgxxSgd",
@@ -12918,57 +12922,86 @@
                 "noRepresentation": false,
                 "tabIndex": 2,
                 "dialogTabId": "QKBEmKcuxZWwB2Gqd",
-                "name": "VisibleIndividualCount",
+                "name": "AttributeList",
+                "description": "",
+                "prefix": "",
+                "suffix": "",
+                "defaultValue": "",
                 "isObjectRepresentation": false,
                 "inputType": {
-                    "type": "input",
-                    "inputType": "text"
+                  "type": "selection",
+                  "values": [
+                    {
+                      "input": "attr1attr1",
+                      "value": "attr1",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    },
+                    {
+                      "input": "attr2",
+                      "value": "attr2",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    },
+                    {
+                      "input": "attr3attr3",
+                      "value": "attr3",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    }
+                  ]
                 },
                 "styles": [
                   {
                     "name": "Default",
-                    "id": "5a056f8f20b07d71dcce3d85",
+                    "id": "16387cf28ed4e67a9c7b43b2",
                     "style": {
                       "align": "left",
-                      "fill": "#000000",
+                      "fill": "black",
                       "padding": 0,
                       "placement": "start-left",
-                      "visible": false,
-                      "fontSize": 12,
-                      "fontStyle": "bold",
-                      "fontFamily": "Courier New",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
                       "fontVariant": "normal"
                     }
                   }
                 ],
                 "extensionPoints": [
                   {
-                    "extensionPoint": "beforeUpdate"
+                    "extensionPoint": "beforeUpdate",
+                    "procedure": ""
                   },
                   {
                     "extensionPoint": "update",
                     "procedure": "UpdateCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate"
+                    "extensionPoint": "afterUpdate",
+                    "procedure": ""
                   },
                   {
-                    "extensionPoint": "dynamicPrefix"
+                    "extensionPoint": "dynamicPrefix",
+                    "procedure": ""
                   },
                   {
-                    "extensionPoint": "dynamicSuffix"
+                    "extensionPoint": "dynamicSuffix",
+                    "procedure": ""
                   },
                   {
-                    "extensionPoint": "dynamicDefaultValue"
+                    "extensionPoint": "dynamicDefaultValue",
+                    "procedure": ""
                   },
                   {
-                    "extensionPoint": "dynamicDropDown"
+                    "extensionPoint": "dynamicDropDown",
+                    "procedure": ""
                   }
                 ],
-                "subCompartmentTypes": [],
-                "label": "Visible individual count"
+                "type": "text",
+                "label": "AttributeList"
               }
-            },  
+            },
             {
               "object": {
                 "_id": "nGRjFyviG39W7d8MX",
@@ -15791,7 +15824,7 @@
                 "dialogTabId": "WAKzjAJbhjgmtcSvT",
                 "name": "PropertyChains",
                 "description": "",
-                "prefix": "\u2287 ",
+                "prefix": "\u27a4 ",
                 "suffix": null,
                 "defaultValue": "",
                 "isObjectRepresentation": false,
@@ -15845,7 +15878,7 @@
                     "_id": "2eudnaty3ckgqymqhvkzyfrt",
                     "name": "PropertyChains",
                     "extensionPoints": [],
-                    "prefix": "\u2287 ",
+                    "prefix": "\u27a4 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [
@@ -15914,7 +15947,7 @@
                 "dialogTabId": "FPAAkjYTxawuKognq",
                 "name": "PropertyChainsInv",
                 "description": "",
-                "prefix": "\u2287 ",
+                "prefix": "\u27a4 ",
                 "suffix": null,
                 "defaultValue": "",
                 "isObjectRepresentation": false,
@@ -15968,7 +16001,7 @@
                     "_id": "2eudnaty3ckgqymqhvkzy1g5",
                     "name": "PropertyChainsInv",
                     "extensionPoints": [],
-                    "prefix": "\u2287 ",
+                    "prefix": "\u27a4 ",
                     "suffix": null,
                     "defaultValue": null,
                     "subCompartmentTypes": [

@@ -128,8 +128,8 @@ Template.OWLGRED_createProjectModal.events({
 				"showEquivalentClassesGraphicsGroupAsBoxes": true,
 				"showKeys": true,
 				"showClassAnnotations": true,
-				"showClassAnnotationsType_text": false,
-				"showClassAnnotationsType_graph": true,
+				"showClassAnnotationsType_text": true,
+				"showClassAnnotationsType_graph": false,
 				"showClassAnnotationsEnableSpecComments": true,
 				"showObjectProperties": true,
 				"showObjectPropertiesType_text": false,
@@ -160,24 +160,33 @@ Template.OWLGRED_createProjectModal.events({
 				"showPropertyRestrictionsGraphicallyNoLineToSelf": true,
 				"showIndividuals": true,
 				"showSameIndividuals": true,
+				"showIndividualsType_object": true,
+				"showSameIndividualsType_object_list": false,
+				"showSameIndividualsType_class_list": false,
 				"showSameIndividualsType_text": false,
 				"showSameIndividualsType_graph": true,
 				"showSameIndividualsGraphicsGroupAsBoxes": true,
+				"individualCountInList": 20,
 				"showDifferentIndividuals": true,
 				"showDifferentIndividualsType_text": false,
 				"showDifferentIndividualsType_graph": true,
 				"showDifferentIndividualsGraphicsGroupAsBoxes": true,
 				"showIndividualAnnotations": true,
-				"showIndividualAnnotationType_text": false,
-				"showIndividualAnnotationType_graph": true,
+				"showIndividualAnnotationType_text": true,
+				"showIndividualAnnotationType_graph": false,
 				"showIndividualClassAssertions": true,
-				"showClassAssertionsType_text": false,
-				"showClassAssertionsType_graph": true,
+				"showClassAssertionsType_text": true,
+				"showClassAssertionsType_graph": false,
 				"showClassAssertionsGraphicsKeepText": true,
 				"showIndividualsObjectPropertyAssertions": true,
 				"showIndividualsDataPropertyAssertions": true,
 				"showIndividualsNegativeObjectPropertyAssertions": true,
-				"showIndividualsNegativeDataPropertyAssertions": true
+				"showIndividualsNegativeDataPropertyAssertions": true,
+				"showAsClassifiers": false,
+				"showAsClassifiersDataTypes": false,
+				"showAsClassifiersIndividualEnumeration": false,
+				"showAsClassifiersSKOS": false,
+				"showAsClassifiersSKOSIndividualEnumeration": false
 			}
 			list.OWLGrEdimportParameters = JSON.stringify(OWLGrEdimportParameters, null, 2);
 			await Utilities.callMeteorMethodAsync("insertProject", list);
@@ -257,45 +266,79 @@ Template.OWLGRED_ontologySettings.onCreated(function () {
   Session.set("msg", undefined);
 });
 
+Template.OWLGRED_ontologySettings.onRendered(function () {
+  const instance = this;
+
+  const refresh = () => {
+    const $modal = instance.$("#OWLGRED-ontology-settings-form");
+
+    $modal.find("[data-enable-when]").each(function () {
+      const conditions = $(this).attr("data-enable-when").split(",");
+
+      let enabled = true;
+
+      conditions.forEach((id) => {
+        const el = $modal.find("#" + id).get(0);
+        if (!el || !el.checked) enabled = false;
+      });
+
+      // Enable/disable all inputs inside
+      $(this).find("input, select, textarea").prop("disabled", !enabled);
+    });
+  };
+
+  // expose for reuse
+  instance._refreshOntologySettingsDependencies = refresh;
+
+  // run initially
+  refresh();
+
+  // re-run on any change
+  instance.$("#OWLGRED-ontology-settings-form").on(
+    "change.owlgredSettings",
+    "input",
+    refresh
+  );
+});
+
 Template.OWLGRED_ontologySettings.onRendered(async function () {
   const instance = this;
 
   const applySettingsToForm = (settings) => {
-    const $modal = instance.$("#OWLGRED-ontology-settings-form");
+      const $modal = instance.$("#OWLGRED-ontology-settings-form");
 
-    Object.entries(settings || {}).forEach(([id, val]) => {
-      const $el = $modal.find("#" + id);
-      if (!$el.length) return;
+	  Object.entries(settings || {}).forEach(([id, val]) => {
+		const $el = $modal.find("#" + id);
+		if (!$el.length) return;
 
-      const el = $el.get(0);
-      if (el.type === "checkbox" || el.type === "radio") el.checked = !!val;
-      else $el.val(val);
-    });
+		const el = $el.get(0);
+		if (el.type === "checkbox" || el.type === "radio") el.checked = !!val;
+		else $el.val(val);
+	  });
 
-    if (instance._refreshOntologySettingsDependencies) {
-      instance._refreshOntologySettingsDependencies();
-    }
-  };
+	  if (instance._refreshOntologySettingsDependencies) {
+		instance._refreshOntologySettingsDependencies();
+	  }
+    };
 
-  // Load settings from proj.OWLGrEdimportParameters (JSON string)
-  const loadFromProject = async () => {
-    const proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
+    // Load settings from proj.OWLGrEdimportParameters (JSON string)
+	 const loadFromProject = async () => {
+	  const proj = await Projects.findOneAsync({ _id: Session.get("activeProject") });
 
-    let settings = {};
-    try {
-      const jsonStr = proj?.OWLGrEdimportParameters;
+	  let settings = {};
+	  try {
+		const jsonStr = proj?.OWLGrEdimportParameters;
 
-      // If missing/empty => treat as defaults (empty object)
-      if (typeof jsonStr === "string" && jsonStr.trim() !== "") {
-        settings = JSON.parse(jsonStr);
-      }
-    } catch (e) {
-      console.error("Invalid OWLGrEdimportParameters JSON:", e);
-      settings = {};
-    }
+		if (typeof jsonStr === "string" && jsonStr.trim() !== "") {
+		  settings = JSON.parse(jsonStr);
+		}
+	  } catch (e) {
+		console.error("Invalid OWLGrEdimportParameters JSON:", e);
+		settings = {};
+	  }
 
-    applySettingsToForm(settings);
-  };
+	  applySettingsToForm(settings);
+	};
 
   // When modal is shown, load from project and fill inputs
   instance

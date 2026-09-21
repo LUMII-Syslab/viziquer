@@ -5,49 +5,26 @@ const RDF  = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 const RDFS = "http://www.w3.org/2000/01/rdf-schema#";
 const OWL  = "http://www.w3.org/2002/07/owl#";
 const XSD  = "http://www.w3.org/2001/XMLSchema#";
+const sh = "http://www.w3.org/ns/shacl#";
+const sh_local = "http://www.w3.org/ns/shacl_local#";
+const dash = "http://datashapes.org/dash#";
 
 
 Meteor.methods({
-  parseOwlTurtle(turtleText) {
-    const store = $rdf.graph();
-    const baseURI = 'http://example.org#';
+  
 
-    $rdf.parse(turtleText, store, baseURI, 'text/turtle');
+  generateShaclRDFLib(onto, namespaceTable, format = 'text/turtle') {
 
-    const result = $rdf.serialize(null, store, baseURI, 'application/rdf+xml');
-    return result;
-  },
-
-  declareOwlClass() {
-    const store = $rdf.graph();
-
-    // Namespaces
-    const EX = $rdf.Namespace('http://example.org/');
-    const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
-    const RDF = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-
-    // Add OWL class declaration
-    store.add(EX('MyClass'), RDF('type'), OWL('Class'));
-
-    // Serialize to Turtle
-    const turtle = $rdf.serialize(null, store, 'http://example.org/', 'text/turtle');
-	// const rdfxml = $rdf.serialize(null, store, 'http://example.org/', 'application/rdf+xml');
-	// const ntriples = $rdf.serialize(null, store, 'http://example.org/', 'application/n-triples');
-	// const n3 = $rdf.serialize(null, store, 'http://example.org/', 'text/n3');
-	// const jsonld = $rdf.serialize(null, store, 'http://example.org/', 'application/ld+json');
-
-    return turtle;
-  },
-
-  generateOwlRDFLib(onto, namespaceTable, format = 'text/turtle') {
-
-	  const store = $rdf.graph();
+	const store = $rdf.graph();
 
 
     store.namespaces = {
       rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
       owl: 'http://www.w3.org/2002/07/owl#',
       rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+	  sh: 'http://www.w3.org/ns/shacl#',
+	  sh_local: 'http://www.w3.org/ns/shacl_local#',
+	  dash: 'http://datashapes.org/dash#',
     };
     let BASE;
      for (const key of Object.keys(namespaceTable)){
@@ -58,11 +35,13 @@ Meteor.methods({
 	  }
       else store.namespaces[key] = namespaceTable[key]
     }
-
 	  const ns = {
 		rdf: $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#'),
 		rdfs: $rdf.Namespace('http://www.w3.org/2000/01/rdf-schema#'),
 		owl: $rdf.Namespace('http://www.w3.org/2002/07/owl#'),
+		sh: $rdf.Namespace('http://www.w3.org/ns/shacl#'),
+		sh_local: $rdf.Namespace('http://www.w3.org/ns/shacl_local#'),
+		dash: $rdf.Namespace('http://datashapes.org/dash#'),
 	  };
 
 	  const annotationPropertyTypes = {
@@ -86,7 +65,7 @@ Meteor.methods({
 		"rdf:reifies": ns.rdf('reifies')
 	  };
 
-	  const { Ontology, Class, DataType, AnnotationProperty, ObjectProperty, NamedIndividual } = onto;
+	  let { Ontology, Class, DataType, AnnotationProperty, ObjectProperty, NamedIndividual, SHACL } = onto;
 
 
 
@@ -129,19 +108,356 @@ Meteor.methods({
 		  }
 		}
 	  }
+	  
+	  
+	  //NodeShapes
+	  for (const key of Object.keys(SHACL.NodeShape)) {
+		let shape = SHACL.NodeShape[key];
+		// NodeShape
+		addTriple(shape.IRI, ns.rdf('type').uri, ns.sh('NodeShape').uri);
+		let owlClass = shape.owlClass;
+		if(owlClass && owlClass.IRI){
+			// OWL class declaration
+			addTriple(owlClass.IRI, ns.rdf('type').uri, ns.owl('Class').uri);
+			//sh:targetClass
+			addTriple(shape.IRI, ns.sh('targetClass').uri, owlClass.IRI);
+		}
+		if(shape.Instance) {
+			let instance = shape.Instance;
+			// Instance declaration
+			addTriple(instance.IRI, ns.rdf('type').uri, ns.owl('NamedIndividual').uri);
+			//targerNode
+			addTriple(shape.IRI, ns.sh('targetNode').uri, instance.IRI);
+			if(instance.onClass) addTriple(shape.IRI, ns.sh('class').uri, instance.onClass);
+			let properties = instance.Properties;
+			if(properties){
+				for (let p = 0; p < properties.length; p++){
+
+					const propertyIRI = $rdf.sym(properties[p]["path"]);   // e.g. "http://example.org/personName"
+					const datatypeIRI = properties[p]["type"];        // e.g. "http://www.w3.org/2001/XMLSchema#string"
+					const value = properties[p].hasValue;
+
+					// blank node for:
+					// [ sh:path :personName ; sh:hasValue "Anna"^^xsd:string ]
+					const propertyShape = $rdf.blankNode();
+
+
+					// sh_local:Anna_shape sh:property _:propertyShape .
+					store.add(
+					  shape.IRI,
+					  $rdf.sym(ns.sh('property')),
+					  propertyShape
+					);
+
+					// _:propertyShape sh:path :personName .
+					store.add(
+					  propertyShape,
+					  $rdf.sym(ns.sh('path')),
+					  propertyIRI
+					);
+
+					// _:propertyShape sh:hasValue "Anna"^^xsd:string .
+					if(datatypeIRI){
+						store.add(
+						  propertyShape,
+						  $rdf.sym(ns.sh('hasValue')),
+						  $rdf.literal(value, undefined, $rdf.sym(datatypeIRI))
+						);
+					} else {
+						store.add(
+						  propertyShape,
+						  $rdf.sym(ns.sh('hasValue')),
+						  $rdf.sym(value)
+						);
+					}
+					
+				}
+			}
+		}
+		let disjoint = shape.disjoint;
+		if(disjoint){
+			for (let d = 0; d < disjoint.length; d++){
+				const notShape = $rdf.blankNode();
+				// sh_local:Student_shape sh:not _:notShape
+				store.add(
+				  shape.IRI,
+				  $rdf.sym(ns.sh('not').uri),
+				  notShape
+				);
+
+				// _:notShape sh:class n0:Teacher
+				store.add(
+				  notShape,
+				  $rdf.sym(ns.sh('class').uri),
+				   $rdf.sym(disjoint[d])
+				);
+		    }			
+		}
+		
+		let subClass = shape.superClass;
+		if(subClass){
+			for (let s = 0; s < subClass.length; s++){
+				addTriple(shape.IRI, ns.sh('class').uri, subClass[s])
+		    }			
+		}
+		
+		let or = shape.or;
+		if(or){
+			// Create blank node shapes:
+			// [ sh:class :Student ]
+			// [ sh:class :Teacher ]
+			const alternativeShapes = or.map(classIRI => {
+			  const shape = $rdf.blankNode();
+
+			  store.add(
+				shape,
+				$rdf.sym(ns.sh('class').uri),
+				$rdf.sym(classIRI)
+			  );
+
+			  return shape;
+			});
+
+			// Create RDF list:
+			// ( [ sh:class :Student ] [ sh:class :Teacher ] )
+			const orList = createRdfList(store, alternativeShapes);
+
+			// sh_local:Person_shape sh:or ( ... ) .
+			store.add(
+			  shape.IRI,
+			  $rdf.sym(ns.sh('or').uri),
+			  orList
+			);
+
+		}
+		
+		let xone = shape.xone;
+		if(xone){
+			// Create blank node shapes:
+			// [ sh:class :Student ]
+			// [ sh:class :Teacher ]
+			const alternativeShapes = xone.map(classIRI => {
+			  const shape = $rdf.blankNode();
+
+			  store.add(
+				shape,
+				$rdf.sym(ns.sh('class').uri),
+				$rdf.sym(classIRI)
+			  );
+
+			  return shape;
+			});
+
+			// Create RDF list:
+			// ( [ sh:class :Student ] [ sh:class :Teacher ] )
+			const orList = createRdfList(store, alternativeShapes);
+
+			store.add(
+			  shape.IRI,
+			  $rdf.sym(ns.sh('xone').uri),
+			  orList
+			);
+
+		}
+		
+		let annotations = shape.annotations;
+		if(annotations){
+		  for (const annotation of annotations) {
+			  if (!annotation.annotationType || annotation.value === undefined || annotation.value === null) {
+				continue;
+			  }
+
+			  const predicate = $rdf.sym(annotation.annotationType);
+
+			  let object;
+			  if (annotation.language && annotation.language.trim() !== "") {
+				object = $rdf.literal(annotation.value, annotation.language);
+			  } else {
+				object = $rdf.literal(annotation.value);
+			  }
+
+			  store.add(
+				shape.IRI,
+				predicate,
+				object
+			  );
+			}
+		}
+		
+		let targetSubjectsOf = shape.targetSubjectsOf;
+		if(targetSubjectsOf){
+			addTriple(shape.IRI, ns.sh('targetSubjectsOf').uri, targetSubjectsOf)
+		}
+		let targetObjectOf = shape.targetObjectOf;
+		if(targetObjectOf){
+			addTriple(shape.IRI, ns.sh('targetObjectOf').uri, targetObjectOf)
+		}
+		let clazz = shape.class;
+		if(clazz){
+			addTriple(shape.IRI, ns.sh('class').uri, clazz.IRI)
+		}
+		let node = shape.node;
+		if(node){
+			addTriple(shape.IRI, ns.sh('node').uri, node.IRI)
+		}
+	  } 
+	  
+	  //PropertyShapes
+	  for (const key of Object.keys(SHACL.PropertyShape)) {
+		let shape = SHACL.PropertyShape[key];
+		// PropertyShape
+		addTriple(shape.IRI, ns.rdf('type').uri, ns.sh('PropertyShape').uri);
+		let owlProperty = shape.owlProperty;
+		if(owlProperty && owlProperty.IRI){
+			//OWL property declaration
+			addTriple(owlProperty.IRI, ns.rdf('type').uri, ns.owl(owlProperty.kind).uri);
+			//rdf:property
+			addTriple(owlProperty.IRI, ns.rdf('type').uri, ns.rdf('Property').uri);
+			// sh:path
+			addTriple(shape.IRI, ns.sh('path').uri, owlProperty.IRI);
+		}
+		let range = shape.range;
+		if(range && range.IRI){
+			// sh:datatype
+			if (range.kind === "datatype") addTriple(shape.IRI, ns.sh('datatype').uri, range.IRI);
+			//sh:class
+			else if (range.kind === "class") addTriple(shape.IRI, ns.sh('class').uri, range.IRI);
+		}
+		let domain = shape.domain;
+		if(domain && domain.nodeShapeIRI){
+			// sh:property
+			addTriple(domain.nodeShapeIRI, ns.sh('property').uri, shape.IRI);
+		}
+		let multiplicity = shape.multiplicity;
+		if(multiplicity && multiplicity.minCount){
+			// sh:minCount
+			store.add(
+			  $rdf.sym(shape.IRI),
+			  $rdf.sym(ns.sh('minCount')),
+			  $rdf.literal(multiplicity.minCount, undefined, $rdf.sym(XSD + "integer"))
+			);
+		}
+		if(multiplicity && multiplicity.maxCount){
+			// sh:maxCount
+			store.add(
+			  $rdf.sym(shape.IRI),
+			  $rdf.sym(ns.sh('maxCount')),
+			  $rdf.literal(multiplicity.maxCount, undefined, $rdf.sym(XSD + "integer"))
+			);
+		}
+		let equals = shape.equals;
+		if(equals){
+		  for (let e = 0; e < equals.length; e++){
+			// sh:equals
+			addTriple(shape.IRI, ns.sh('equals').uri, equals[e]);
+		  }
+		}
+		let disjoint = shape.disjoint;
+		if(disjoint){
+		  for (let d = 0; d < disjoint.length; d++){
+			// sh:disjoint
+			addTriple(shape.IRI, ns.sh('disjoint').uri, disjoint[d]);
+		  }
+		}
+		
+		let subsetof = shape.subsetof;
+		if(subsetof){
+		  for (let s = 0; s < subsetof.length; s++){
+			// dash:subSetOf
+			addTriple(shape.IRI, ns.dash('subSetOf').uri, subsetof[s]);
+		  }
+		}
+		
+		let annotations = shape.annotations;
+		if(annotations){
+		  for (const annotation of annotations) {
+			  if (!annotation.annotationType || annotation.value === undefined || annotation.value === null) {
+				continue;
+			  }
+
+			  const predicate = $rdf.sym(annotation.annotationType);
+
+			  let object;
+			  if (annotation.language && annotation.language.trim() !== "") {
+				object = $rdf.literal(annotation.value, annotation.language);
+			  } else {
+				object = $rdf.literal(annotation.value);
+			  }
+
+			  store.add(
+				shape.IRI,
+				predicate,
+				object
+			  );
+			}
+		}
+		let inverseProperty = shape.inverseProperty;
+		if(inverseProperty){
+			const inversePathNode = $rdf.blankNode();
+
+			store.add(
+			  shape.IRI,
+			  $rdf.sym(ns.sh('equals').uri),
+			  inversePathNode
+			);
+
+
+			store.add(
+			  inversePathNode,
+			  $rdf.sym(ns.sh('inversePath').uri),
+			  $rdf.sym(inverseProperty.IRI)
+			);
+		}
+	  }
+	  
+	  
+	  Class = {};
+	  // DataType= {};
+	  // AnnotationProperty= {};
+	  ObjectProperty= {};
+	  NamedIndividual= {};
 	  for (const key of Object.keys(Class)) {
+		let shapeName;
 		for (const clazz of Object.keys(Class[key])) {
 		  const ax = Class[key][clazz];
+		  
+		  //SHACL CLASS DECLARATION
+		  // if(ax.shape_name){
+			// shapeName = ax.shape_name;
+			// addTriple(ns.sh_local(shapeName).uri, ns.rdf('type').uri, ns.sh('NodeShape').uri);
+			// if(ax.IRI)addTriple(ns.sh_local(shapeName).uri, ns.sh('targetClass').uri, ax.IRI);
+		  // }
+		  
 		  if (ax.type === "Declaration" && ax.axiom.type === "Class" && ax.axiom.axiom.IRI) {
-			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('Class').uri);
+			// addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('Class').uri);
 		  }else if (ax.type === "Declaration" && ax.axiom.type === "DataProperty") {
 			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('DatatypeProperty').uri);
+			//SHACL DATA PROPERTY DECLARATION
+			let propertyName = getLocalName(ax.axiom.axiom.IRI);
+			propertyName = ns.sh_local(shapeName+"_"+propertyName).uri;
+			addTriple(propertyName, ns.rdf('type').uri, ns.sh('PropertyShape').uri);
+			addTriple(propertyName, ns.sh('path').uri, ax.axiom.axiom.IRI);
+
 		  }else if (ax.type === "Declaration" && ax.axiom.type === "ObjectProperty") {
 			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('ObjectProperty').uri);
+			
+			//SHACL OBJECT PROPERTY DECLARATION
+			let propertyName = getLocalName(ax.axiom.axiom.IRI);
+			propertyName = ns.sh_local(shapeName+"_"+propertyName).uri;
+			addTriple(propertyName, ns.rdf('type').uri, ns.sh('PropertyShape').uri);
+			addTriple(propertyName, ns.sh('path').uri, ax.axiom.axiom.IRI);
+
 		  }else if (ax.type === "DataPropertyDomain" || ax.type === "ObjectPropertyDomain") {
 			  const attrIRI = ax.axiom[0].IRI;
 			  let classIRI = ax.axiom[1].IRI;
-			  if(classIRI) classIRI = $rdf.sym(classIRI);
+			  if(classIRI) {
+				classIRI = $rdf.sym(classIRI);
+				
+				//SHACL PROPERTY DOMAIN
+				let propertyName = getLocalName(attrIRI);
+				propertyName = ns.sh_local(shapeName+"_"+propertyName).uri;
+				addTriple(ns.sh_local(shapeName).uri, ns.sh('property').uri, propertyName);
+			  }
 			  else if(ax.axiom[1].Expression){
 				  const dataPropertySet = new Set(onto.DataProperty);
 				  const { term: exprTerm } = classExpressionAstToRdflib(
@@ -157,11 +473,20 @@ Meteor.methods({
 			  }
   
 			  if(attrIRI && classIRI) store.add($rdf.sym(attrIRI), $rdf.sym(ns.rdfs('domain').uri), classIRI);
+			  
 		  } else if (ax.type === "DataPropertyRange" || ax.type === "ObjectPropertyRange") {
 			  const attrIRI = ax.axiom[0].IRI;
 			  const classIRI = ax.axiom[1].IRI;
 			  if(classIRI !== null && attrIRI !== null && typeof classIRI === "string"){
 				 addTriple(attrIRI, ns.rdfs('range').uri, classIRI);
+				 
+				//SHACL PROPERTY RANGE
+				let propertyName = getLocalName(attrIRI);
+				propertyName = ns.sh_local(shapeName+"_"+propertyName).uri;
+				if (ax.type === "DataPropertyRange") addTriple(propertyName, ns.sh('datatype').uri, classIRI);
+				else addTriple(propertyName, ns.sh('class').uri, classIRI)
+
+				 
 			  } else if(classIRI !== null && attrIRI !== null && typeof classIRI === "object"){
 					const statements = buildDataPropertyRangeStatements(attrIRI, classIRI, namespaceTable);
 					for (const st of statements) store.add(st.subject, st.predicate, st.object); 
@@ -353,7 +678,7 @@ Meteor.methods({
 			  store.add(LHS, OWL('equivalentClass'), unionExpr);
 
 
-		}else{
+		}else{/*
 		  if(ax.axiom.length > 2 && ax.type === "DisjointClasses"){
 			const RDF = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 			const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
@@ -445,7 +770,8 @@ Meteor.methods({
 						});
 			  }
 			}
-        }
+        */
+		}
 		  } else if (ax.type === "AnnotationAssertion") {
 			if(ax.axiom?.[4]?.axiom){
 				  addAnnotationAssertionWithAxiomAnnotations(store, ax)
@@ -483,7 +809,7 @@ Meteor.methods({
 			  }
 			}
 		  } else if (ax.type === "HasKey") {
-
+			/*
 			  const RDF = $rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 			  const OWL = $rdf.Namespace('http://www.w3.org/2002/07/owl#');
 			  const cls = ax.axiom[0];
@@ -526,7 +852,7 @@ Meteor.methods({
 
 			  // :Class owl:hasKey ( ... )
 			  store.add(classNode, OWL('hasKey'), keyList);
-
+			*/
 		  }
 		}
 	  }
@@ -570,7 +896,8 @@ Meteor.methods({
 		for (const p of Object.keys(AnnotationProperty[key])) {
 		  const ax = AnnotationProperty[key][p];
 		  if (ax.type === "Declaration" && ax.axiom.type === "AnnotationProperty") {
-        addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('AnnotationProperty').uri);
+			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.owl('AnnotationProperty').uri);
+			addTriple(ax.axiom.axiom.IRI, ns.rdf('type').uri, ns.rdf('Property').uri);
 		  } else if(ax.type === "AnnotationPropertyDomain" || ax.type === "AnnotationPropertyRange"){
 		  if(typeof ax.axiom[1].IRI !== "undefined"){
 			const typeMap = {
@@ -1961,4 +2288,60 @@ function makeLiteral_RDFlib($rdf, ax) {
     return $rdf.literal(val, $rdf.sym(ax.axiom[3].type)); // typed literal
   }
   return $rdf.literal(val); // plain literal
+}
+
+
+function getLocalName(iri) {
+  if (typeof iri !== "string") return "";
+
+  // Remove wrapping angle brackets, common in RDF/N-Triples
+  iri = iri.trim().replace(/^<|>$/g, "");
+
+  // Local name is usually after the last #, /, or :
+  const index = Math.max(
+    iri.lastIndexOf("#"),
+    iri.lastIndexOf("/"),
+    iri.lastIndexOf(":")
+  );
+
+  return index >= 0 ? iri.slice(index + 1) : iri;
+}
+
+function createRdfList(store, items) {
+  const RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+
+  if (!items || items.length === 0) {
+    return $rdf.sym(RDF + "nil");
+  }
+
+  const head = $rdf.blankNode();
+  let current = head;
+
+  for (let i = 0; i < items.length; i++) {
+    store.add(
+      current,
+      $rdf.sym(RDF + "first"),
+      items[i]
+    );
+
+    if (i === items.length - 1) {
+      store.add(
+        current,
+        $rdf.sym(RDF + "rest"),
+        $rdf.sym(RDF + "nil")
+      );
+    } else {
+      const next = $rdf.blankNode();
+
+      store.add(
+        current,
+        $rdf.sym(RDF + "rest"),
+        next
+      );
+
+      current = next;
+    }
+  }
+
+  return head;
 }

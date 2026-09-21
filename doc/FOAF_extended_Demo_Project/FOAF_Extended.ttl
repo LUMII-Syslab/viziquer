@@ -1,0 +1,293 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix foaf_ex: <http://owlgred.lumii.lv/web/2026/foaf-extension#>.
+
+foaf_ex: a owl:Ontology.
+
+foaf_ex:Active
+a foaf_ex:ProfileStatus, owl:NamedIndividual; owl:differentFrom foaf_ex:Inactive.
+foaf_ex:Administrator
+    a foaf_ex:CommunityRole, owl:NamedIndividual, skos:Concept;
+    skos:inScheme foaf_ex:CommunityRoleConceptScheme.
+foaf_ex:Archived a foaf_ex:ProfileStatus, owl:NamedIndividual.
+
+foaf_ex:ArtificialIntelligence
+a owl:NamedIndividual, skos:Concept; skos:inScheme foaf_ex:InterestTopic.
+foaf_ex:communityRole
+a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range foaf_ex:CommunityRole.
+foaf_ex:CommunityRole
+    a owl:Class;
+    owl:equivalentClass
+    [ a owl:Class; owl:oneOf ( foaf_ex:Member foaf_ex:Moderator foaf_ex:Administrator ) ].
+foaf_ex:CommunityRoleConceptScheme a owl:NamedIndividual, skos:ConceptScheme.
+
+foaf_ex:ComputerScienceDepartment a owl:NamedIndividual, foaf:Organization.
+
+foaf_ex:Databases a owl:NamedIndividual, skos:Concept; skos:inScheme foaf_ex:InterestTopic.
+
+foaf_ex:ExampleUniversity a owl:NamedIndividual, foaf:Organization.
+
+foaf_ex:FacultyOfScience a owl:NamedIndividual, foaf:Organization.
+
+foaf_ex:Gender
+a rdfs:Datatype; rdfs:range [ a rdfs:Datatype; owl:oneOf ( "Male" "Female" ) ].
+foaf_ex:Inactive a foaf_ex:ProfileStatus, owl:NamedIndividual.
+
+foaf_ex:InterestTopic a owl:NamedIndividual, skos:ConceptScheme.
+
+foaf_ex:Member
+    a foaf_ex:CommunityRole, owl:NamedIndividual, skos:Concept;
+    owl:differentFrom foaf_ex:Moderator;
+    skos:inScheme foaf_ex:CommunityRoleConceptScheme.
+foaf_ex:memberCount
+a owl:DatatypeProperty; rdfs:domain foaf:Organization; rdfs:range xsd:string.
+foaf_ex:Moderator
+    a foaf_ex:CommunityRole, owl:NamedIndividual, skos:Concept;
+    skos:inScheme foaf_ex:CommunityRoleConceptScheme.
+foaf_ex:organizationCode
+a owl:DatatypeProperty; rdfs:domain foaf:Organization; rdfs:range xsd:string.
+foaf_ex:P001
+    a owl:NamedIndividual, foaf:Person;
+    foaf:firstName "Bob";
+    foaf:lastName " Jones".
+foaf_ex:P002
+    a owl:NamedIndividual, foaf:Person;
+    foaf:firstName "Carol";
+    foaf:lastName "White".
+foaf_ex:P003
+    a owl:NamedIndividual, foaf:Person;
+    foaf:firstName "David";
+    foaf:lastName " Brown".
+foaf_ex:P004
+a owl:NamedIndividual, foaf:Person; foaf:firstName "Eva"; foaf:lastName "Green".
+foaf_ex:P005
+    a owl:NamedIndividual, foaf:Person;
+    foaf:firstName "Frank";
+    foaf:lastName "Black".
+foaf_ex:P006
+    a owl:NamedIndividual, foaf:Person;
+    foaf:firstName "Alice";
+    foaf:gender "Female";
+    foaf:knows foaf_ex:P001 .
+foaf_ex:profileStatus
+    a owl:ObjectProperty;
+    rdfs:domain foaf:PersonalProfileDocument;
+    rdfs:range foaf_ex:ProfileStatus.
+foaf_ex:ProfileStatus
+    a owl:Class;
+    owl:equivalentClass
+    [ a owl:Class; owl:oneOf ( foaf_ex:Active foaf_ex:Inactive foaf_ex:Archived ) ].
+foaf_ex:ResearchInstitute a owl:NamedIndividual, foaf:Organization.
+
+foaf_ex:SemanticWeb
+a owl:NamedIndividual, skos:Concept; skos:inScheme foaf_ex:InterestTopic.
+owl:Thing a owl:Class.
+
+skos:Concept a owl:Class.
+
+skos:ConceptScheme a owl:Class.
+
+skos:notation a owl:AnnotationProperty.
+
+foaf:account
+a owl:ObjectProperty; rdfs:domain foaf:Agent; rdfs:range foaf:OnlineAccount.
+foaf:accountName
+a owl:DatatypeProperty; rdfs:domain foaf:OnlineAccount; rdfs:range rdfs:Literal.
+foaf:accountServiceHomepage
+a owl:ObjectProperty; rdfs:domain foaf:OnlineAccount; rdfs:range foaf:Document.
+foaf:age
+    a owl:DatatypeProperty, owl:FunctionalProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range rdfs:Literal.
+foaf:Agent a owl:Class.
+
+foaf:aimChatID
+a owl:DatatypeProperty; rdfs:domain foaf:Agent; rdfs:range rdfs:Literal.
+foaf:birthday
+    a owl:DatatypeProperty, owl:FunctionalProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range rdfs:Literal.
+foaf:currentProject
+a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range owl:Thing.
+foaf:depiction
+    a owl:ObjectProperty;
+    rdfs:domain owl:Thing;
+    rdfs:range foaf:Image;
+    owl:inverseOf foaf:depicts.
+foaf:depicts a owl:ObjectProperty; rdfs:domain foaf:Image; rdfs:range owl:Thing.
+
+foaf:dnaChecksum
+a owl:DatatypeProperty; rdfs:domain owl:Thing; rdfs:range rdfs:Literal.
+foaf:Document a owl:Class; owl:disjointWith foaf:Project.
+
+foaf:family_name
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range rdfs:Literal.
+foaf:familyName
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range rdfs:Literal.
+foaf:firstName
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range rdfs:Literal.
+foaf:focus a owl:ObjectProperty; rdfs:domain skos:Concept; rdfs:range owl:Thing.
+
+foaf:fundedBy a owl:ObjectProperty; rdfs:domain owl:Thing; rdfs:range owl:Thing.
+
+foaf:geekcode
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range rdfs:Literal.
+foaf:gender
+    a owl:DatatypeProperty, owl:FunctionalProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range foaf_ex:Gender.
+foaf:givenname a owl:DatatypeProperty; rdfs:domain owl:Thing.
+
+foaf:givenName a owl:DatatypeProperty; rdfs:domain owl:Thing.
+
+foaf:Group a owl:Class; rdfs:subClassOf foaf:Agent.
+
+foaf:holdsAccount
+a owl:ObjectProperty; rdfs:domain foaf:Agent; rdfs:range foaf:OnlineAccount.
+foaf:homepage
+    a owl:InverseFunctionalProperty, owl:ObjectProperty;
+    rdfs:domain owl:Thing;
+    rdfs:range foaf:Document;
+    rdfs:subPropertyOf foaf:isPrimaryTopicOf, foaf:page.
+foaf:icqChatID a owl:DatatypeProperty; rdfs:domain foaf:Agent.
+
+foaf:Image
+    a owl:Class;
+    rdfs:subClassOf foaf:Document;
+    owl:disjointWith foaf:PersonalProfileDocument.
+foaf:img
+    a owl:ObjectProperty;
+    rdfs:domain foaf:Person;
+    rdfs:range foaf:Image;
+    rdfs:subPropertyOf foaf:depiction.
+foaf:interest
+a owl:ObjectProperty; rdfs:domain foaf:Agent; rdfs:range foaf:Document.
+foaf:isPrimaryTopicOf
+    a owl:InverseFunctionalProperty, owl:ObjectProperty;
+    rdfs:domain owl:Thing;
+    rdfs:range foaf:Document;
+    rdfs:subPropertyOf foaf:page;
+    owl:inverseOf foaf:primaryTopic.
+foaf:yahooChatID
+a owl:DatatypeProperty; rdfs:domain foaf:Agent; rdfs:range rdfs:Literal.
+foaf:jabberID
+a owl:DatatypeProperty; rdfs:domain foaf:Agent; rdfs:range rdfs:Literal.
+foaf:knows a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range foaf:Person.
+
+foaf:LabelProperty a owl:Class.
+
+foaf:lastName
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range rdfs:Literal.
+foaf:logo
+    a owl:InverseFunctionalProperty, owl:ObjectProperty;
+    rdfs:domain owl:Thing;
+    rdfs:range owl:Thing.
+foaf:made
+    a owl:ObjectProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range owl:Thing;
+    owl:inverseOf foaf:maker.
+foaf:maker a owl:ObjectProperty; rdfs:domain owl:Thing; rdfs:range foaf:Agent.
+
+foaf:mbox
+    a owl:InverseFunctionalProperty, owl:ObjectProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range owl:Thing.
+foaf:mbox_sha1sum
+a owl:DatatypeProperty; rdfs:domain foaf:Agent; rdfs:range rdfs:Literal.
+foaf:member a owl:ObjectProperty; rdfs:domain foaf:Group; rdfs:range foaf:Agent.
+
+foaf:myersBriggs
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range rdfs:Literal.
+foaf:msnChatID a owl:DatatypeProperty; rdfs:domain foaf:Agent.
+
+foaf:name a owl:DatatypeProperty; rdfs:domain owl:Thing; rdfs:range rdfs:Literal.
+
+foaf:nick a owl:DatatypeProperty; rdfs:domain owl:Thing.
+
+foaf:OnlineAccount a owl:Class; rdfs:subClassOf owl:Thing.
+
+foaf:OnlineChatAccount a owl:Class; rdfs:subClassOf foaf:OnlineAccount.
+
+foaf:OnlineEcommerceAccount a owl:Class; rdfs:subClassOf foaf:OnlineAccount.
+
+foaf:OnlineGamingAccount a owl:Class; rdfs:subClassOf foaf:OnlineAccount.
+
+foaf:openid
+    a owl:InverseFunctionalProperty, owl:ObjectProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range foaf:Document;
+    rdfs:subPropertyOf foaf:isPrimaryTopicOf.
+foaf:Organization
+    a owl:Class;
+    foaf_ex:memberCount "1200", "150", "300", "80";
+    foaf_ex:organizationCode "CSD", "EU", "FS", "RI";
+    rdfs:subClassOf foaf:Agent;
+    owl:disjointWith foaf:Document, foaf:Person.
+foaf:page
+    a owl:ObjectProperty;
+    rdfs:domain owl:Thing;
+    rdfs:range foaf:Document;
+    owl:inverseOf foaf:topic.
+foaf:pastProject
+a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range owl:Thing.
+foaf:Person a owl:Class; rdfs:subClassOf foaf:Agent.
+
+foaf:PersonalProfileDocument a owl:Class; rdfs:subClassOf foaf:Document.
+
+foaf:phone a owl:ObjectProperty; rdfs:domain owl:Thing; rdfs:range owl:Thing.
+
+foaf:plan a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range rdfs:Literal.
+
+foaf:primaryTopic
+    a owl:FunctionalProperty, owl:ObjectProperty;
+    rdfs:domain foaf:Document;
+    rdfs:range owl:Thing.
+foaf:Project a owl:Class; owl:disjointWith foaf:Person.
+
+foaf:publications
+a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range foaf:Document.
+foaf:schoolHomepage
+a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range foaf:Document.
+foaf:sha1 a owl:DatatypeProperty; rdfs:domain foaf:Document.
+
+foaf:skypeID
+    a owl:DatatypeProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range rdfs:Literal;
+    rdfs:subPropertyOf foaf:nick.
+foaf:status
+a owl:DatatypeProperty; rdfs:domain foaf:Agent; rdfs:range rdfs:Literal.
+foaf:surname
+a owl:DatatypeProperty; rdfs:domain foaf:Person; rdfs:range rdfs:Literal.
+foaf:theme a owl:ObjectProperty; rdfs:domain owl:Thing; rdfs:range owl:Thing.
+
+foaf:thumbnail a owl:ObjectProperty; rdfs:domain foaf:Image; rdfs:range foaf:Image.
+
+foaf:tipjar
+    a owl:ObjectProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range foaf:Document;
+    rdfs:subPropertyOf foaf:page.
+foaf:title a owl:DatatypeProperty; rdfs:domain owl:Thing.
+
+foaf:topic a owl:ObjectProperty; rdfs:domain foaf:Document; rdfs:range owl:Thing.
+
+foaf:topic_interest
+a owl:ObjectProperty; rdfs:domain foaf:Agent; rdfs:range skos:Concept.
+foaf:weblog
+    a owl:InverseFunctionalProperty, owl:ObjectProperty;
+    rdfs:domain foaf:Agent;
+    rdfs:range foaf:Document;
+    rdfs:subPropertyOf foaf:page.
+foaf:workInfoHomepage
+a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range foaf:Document.
+foaf:workplaceHomepage
+a owl:ObjectProperty; rdfs:domain foaf:Person; rdfs:range foaf:Document.
+[
+    a owl:AllDisjointClasses;
+    owl:members ( foaf:Person foaf:Group foaf:Organization )
+].

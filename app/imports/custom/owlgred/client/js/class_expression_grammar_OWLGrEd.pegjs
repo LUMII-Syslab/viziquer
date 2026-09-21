@@ -379,6 +379,8 @@ LANG_TAG_CHARS
 IRI
   = v:FullIRI
     { return { IRItype: "fullIRI", value: v }; }
+  / v:PrefixedIRI
+    { return { IRItype: "abbreviatedIRI", value: v }; }
   / v:AbbreviatedIRI
     { return { IRItype: "abbreviatedIRI", value: v }; }
   / v:FullNamespaceIRI
@@ -392,6 +394,14 @@ FULL_IRI_CHARS
 
 FullIRI
   = s:$("<" FULL_IRI_CHARS+ ">") { return s; }
+
+PrefixedIRI
+  = prefix:PrefixLabel ":" name:LocalName
+    { return { name: name, prefix: prefix }; }
+
+/* A prefix label cannot consume the ':' separator or end in '.'. */
+PrefixLabel
+  = $(PN_CHARS_BASE (PN_CHARS / "." &PN_CHARS)*)
 
 AbbreviatedIRI
   = name:LocalName "{" prefix:Prefix "}"

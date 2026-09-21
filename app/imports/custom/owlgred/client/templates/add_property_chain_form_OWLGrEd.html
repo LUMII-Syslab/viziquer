@@ -66,7 +66,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">PropertyChains</h4>
+                    <h4 class="modal-title">{{label}}</h4>
                 </div>
 				<div id="add-new-property-chain-id" class="modal-body multi-field" style="width: 550px">
 	                    <form onsubmit="return false;">
@@ -97,16 +97,16 @@
 								  />
 								</td>
 								<td>
-								  <button class="btn btn-sm btn-danger delete-btn">
+								 <button type="button" class="btn btn-sm btn-danger delete-btn">
 									<i class="fa fa-trash"></i> Delete
-								  </button>
+								 </button>
 								</td>
 							  </tr>
 							  {{/each}}
 
 							</tbody>
 						  </table>
-						  <button id="add-key-row-btn" class="btn btn-primary">
+						  <button id="add-key-row-btn" type="button" class="btn btn-primary">
 							<i class="fa fa-plus"></i> Add
 						  </button>
 						</div>

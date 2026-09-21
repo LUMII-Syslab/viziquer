@@ -833,67 +833,147 @@ function generateN3Syntax(onto, format, nsTable){
 
 
       } else if(axiomObject.type === "DataPropertyAssertion"){
-		  let objectLiteral;
+		 const p = namedNode(axiomObject.axiom[0].IRI);
+		  const s = namedNode(axiomObject.axiom[1].IRI);
 
+		  // value literal (typed optional)
+		  let o;
 		  if (axiomObject.axiom[3] && axiomObject.axiom[3].type) {
-			objectLiteral = literal(axiomObject.axiom[2].value, namedNode(axiomObject.axiom[3].type));
+			o = literal(axiomObject.axiom[2].value, namedNode(axiomObject.axiom[3].type));
 		  } else {
-			objectLiteral = literal(axiomObject.axiom[2].value);
+			o = literal(axiomObject.axiom[2].value);
 		  }
+		  // base triple
+		writer.addQuad(quad(s, p, o));
 
-		  writer.addQuad(
-			quad(namedNode(axiomObject.axiom[1].IRI), namedNode(axiomObject.axiom[0].IRI), objectLiteral)
-		  );
+		// annotations: axiomObject.axiom[4].axiom
+		const ann = axiomObject.axiom[4] && axiomObject.axiom[4].axiom;
+		if (Array.isArray(ann) && ann.length) {
+		  const ax = blankNode();
 
+		  writer.addQuad(quad(ax, namedNode(RDF + "type"), namedNode(OWL + "Axiom")));
+		  writer.addQuad(quad(ax, namedNode(OWL + "annotatedSource"), s));
+		  writer.addQuad(quad(ax, namedNode(OWL + "annotatedProperty"), p));
+		  writer.addQuad(quad(ax, namedNode(OWL + "annotatedTarget"), o));
 
-	  } else if(axiomObject.type === "NegativeDataPropertyAssertion"){
-		const neg = blankNode();
+		  for (const a of ann) {
+			  const obj = a.type
+				? literal(a.value, namedNode(a.type))
+				: literal(a.value);
 
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-								 namedNode("http://www.w3.org/2002/07/owl#NegativePropertyAssertion")));
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#sourceIndividual"),
-								 namedNode(axiomObject.axiom[1].IRI)));
-
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#assertionProperty"),
-								 namedNode(axiomObject.axiom[0].IRI)));
-
-		// owl:targetValue "value" [^^datatype] — datatype optional
-		let objectLiteral;
-		if (axiomObject.axiom[3] && axiomObject.axiom[3].type) {
-		  objectLiteral = literal(
-			axiomObject.axiom[2].value,
-			namedNode(axiomObject.axiom[3].type)
-		  );
-		} else {
-		  objectLiteral = literal(axiomObject.axiom[2].value);
+			  writer.addQuad(
+				quad(
+				  ax,
+				  namedNode(a.axiomSymbol),
+				  obj
+				)
+			  );
+		  }
 		}
+	  } else if(axiomObject.type === "NegativeDataPropertyAssertion"){
+		  const p = namedNode(axiomObject.axiom[0].IRI);
+		  const s = namedNode(axiomObject.axiom[1].IRI);
 
-		writer.addQuad(
-		  quad(
-			neg,
-			namedNode("http://www.w3.org/2002/07/owl#targetValue"),
-			objectLiteral
-		  )
-		);
+		  // value literal (typed optional)
+		  let o;
+		  if (axiomObject.axiom[3] && axiomObject.axiom[3].type) {
+			o = literal(axiomObject.axiom[2].value, namedNode(axiomObject.axiom[3].type));
+		  } else {
+			o = literal(axiomObject.axiom[2].value);
+		  }
+		   // base triple
+			writer.addQuad(quad(s, p, o));
+
+			// annotations: axiomObject.axiom[4].axiom
+			const ann = axiomObject.axiom[4] && axiomObject.axiom[4].axiom;
+			if (Array.isArray(ann) && ann.length) {
+			  const ax = blankNode();
+
+			  writer.addQuad(quad(ax, namedNode(RDF + "type"), namedNode(OWL + "Axiom")));
+			  writer.addQuad(quad(ax, namedNode(OWL + "annotatedSource"), s));
+			  writer.addQuad(quad(ax, namedNode(OWL + "annotatedProperty"), p));
+			  writer.addQuad(quad(ax, namedNode(OWL + "annotatedTarget"), o));
+
+			  for (const a of ann) {
+				writer.addQuad(
+				  quad(
+					ax,
+					namedNode(a.axiomSymbol),
+					literal(a.value, namedNode(a.type))
+				  )
+				);
+			  }
+			}
+
 	  } else if(axiomObject.type === "ObjectPropertyAssertion"){
-		  writer.addQuad(
-			quad(namedNode(axiomObject.axiom[1].IRI), namedNode(axiomObject.axiom[0].IRI), namedNode(axiomObject.axiom[2].IRI))
-		  );
+		  const p = namedNode(axiomObject.axiom[0].IRI);
+		  const s = namedNode(axiomObject.axiom[1].IRI);
+		  const o = namedNode(axiomObject.axiom[2].IRI);
+
+		  // base assertion triple
+		  writer.addQuad(quad(s, p, o));
+
+		  // axiom annotations (if any)
+		  const annBlock = axiomObject.axiom[3] && axiomObject.axiom[3].axiom;
+		  if (Array.isArray(annBlock) && annBlock.length) {
+			const ax = blankNode();
+
+			writer.addQuad(quad(ax, namedNode(RDF + "type"), namedNode(OWL + "Axiom")));
+			writer.addQuad(quad(ax, namedNode(OWL + "annotatedSource"), s));
+			writer.addQuad(quad(ax, namedNode(OWL + "annotatedProperty"), p));
+			writer.addQuad(quad(ax, namedNode(OWL + "annotatedTarget"), o));
+
+			for (const a of annBlock) {
+			  const pred = namedNode(a.axiomSymbol);
+
+			  const obj = a.type
+				? literal(a.value, namedNode(a.type))
+				: literal(a.value);
+
+			  writer.addQuad(quad(ax, pred, obj));
+			}
+		  }
+		  
+		  
+		  // writer.addQuad(
+			// quad(namedNode(axiomObject.axiom[1].IRI), namedNode(axiomObject.axiom[0].IRI), namedNode(axiomObject.axiom[2].IRI))
+		  // );
 	  } else if(axiomObject.type === "NegativeObjectPropertyAssertion"){
+		  const p = namedNode(axiomObject.axiom[0].IRI);
+		  const s = namedNode(axiomObject.axiom[1].IRI);
+		  const o = namedNode(axiomObject.axiom[2].IRI);
+
 		  const neg = blankNode();
 
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-								 namedNode("http://www.w3.org/2002/07/owl#NegativePropertyAssertion")));
+		  // the negative property assertion structure
+		  writer.addQuad(quad(neg, namedNode(RDF + "type"), namedNode(OWL + "NegativePropertyAssertion")));
+		  writer.addQuad(quad(neg, namedNode(OWL + "sourceIndividual"), s));
+		  writer.addQuad(quad(neg, namedNode(OWL + "assertionProperty"), p));
+		  writer.addQuad(quad(neg, namedNode(OWL + "targetIndividual"), o));
 
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#sourceIndividual"),
-								 namedNode(axiomObject.axiom[1].IRI)));
+		  // axiom annotations (if any)
+		  const annBlock = axiomObject.axiom[3] && axiomObject.axiom[3].axiom;
+		  if (Array.isArray(annBlock) && annBlock.length) {
+			const ax = blankNode();
 
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#assertionProperty"),
-								 namedNode(axiomObject.axiom[0].IRI)));
+			writer.addQuad(quad(ax, namedNode(RDF + "type"), namedNode(OWL + "Axiom")));
 
-		writer.addQuad(quad(neg, namedNode("http://www.w3.org/2002/07/owl#targetIndividual"),
-								 namedNode(axiomObject.axiom[2].IRI)));
+			// annotate the negative assertion node
+			writer.addQuad(quad(ax, namedNode(OWL + "annotatedSource"), neg));
+			writer.addQuad(quad(ax, namedNode(OWL + "annotatedProperty"), namedNode(RDF + "type")));
+			writer.addQuad(quad(ax, namedNode(OWL + "annotatedTarget"), namedNode(OWL + "NegativePropertyAssertion")));
+
+			// optionally also capture the actual content being negated (helps consumers)
+			writer.addQuad(quad(ax, namedNode(OWL + "sourceIndividual"), s));
+			writer.addQuad(quad(ax, namedNode(OWL + "assertionProperty"), p));
+			writer.addQuad(quad(ax, namedNode(OWL + "targetIndividual"), o));
+
+			for (const a of annBlock) {
+			  const pred = namedNode(a.axiomSymbol);
+			  const obj  = literal(a.value, namedNode(a.type));
+			  writer.addQuad(quad(ax, pred, obj));
+			}
+  }
 	  }
 	 }
   }
