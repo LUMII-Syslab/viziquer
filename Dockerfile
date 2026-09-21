@@ -1,6 +1,12 @@
 # The tag here should match the Meteor version of your app, per .meteor/release
 FROM geoffreybooth/meteor-base:3.3.2
 
+# Accept the build argument from GitHub Actions
+ARG APP_VERSION=dev
+
+# Persist it as an environment variable for runtime
+ENV APP_VERSION=${APP_VERSION}
+
 # Copy app package.json and package-lock.json into container
 COPY ./app/package*.json $APP_SOURCE_FOLDER/
 

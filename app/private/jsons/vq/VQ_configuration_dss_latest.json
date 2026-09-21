@@ -5910,20 +5910,20 @@
                 "procedure": "Delete"
               },
               {
-                "item": "Generate SPARQL",
-                "procedure": "GenereteSPARQL_form_class_DSS"
-              },
-              {
-                "item": "Custom Data",
-                "procedure": "GenereteSPARQL_form_class_costumise_DSS"
-              },
-              {
                 "item": "Show Data",
                 "procedure": "GenerateComplexTableQueryDSSAuto"
               },
               {
-                "item": "Show Data (New Form)",
+                "item": "Generate SPARQL",
+                "procedure": "GenereteSPARQL_form_class_DSS"
+              },
+              {
+                "item": "Custom Data (New Form)",
                 "procedure": "GenerateComplexTableQueryDSS"
+              },
+			  {
+                "item": "Custom Data (Legacy)",
+                "procedure": "GenereteSPARQL_form_class_costumise_DSS"
               },
               {
                 "item": "Explore ...",
@@ -7207,7 +7207,7 @@
                 "procedure": "Delete"
               },
               {
-                "item": "Show Linked Data",
+                "item": "Show Linked Data (Legacy)",
                 "procedure": "ExecuteSPARQL_form_object_property_DSS"
               },
               {
@@ -7215,13 +7215,13 @@
                 "procedure": "GenereteSPARQL_form_object_property_DSS"
               },
               {
-                "item": "Show Data (New Form)",
-                "procedure": "GenerateComplexTableQueryLinkNormal"
-              },
-              {
                 "item": "Show Data (Auto)",
                 "procedure": "GenerateComplexTableQueryLinkNormalAuto"
-              }
+              },
+			  {
+                "item": "Custom Data (New Form)",
+                "procedure": "GenerateComplexTableQueryLinkNormal"
+              }  
             ],
             "readModeContextMenu": [],
             "name": "ObjectProperty",

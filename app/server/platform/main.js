@@ -75,6 +75,11 @@ import "/imports/libs/custom/mytest";
 Meteor.startup(async () => {
   console.log("Loading server");
 
+  if (process.env.APP_VERSION) {
+    Meteor.settings.public = Meteor.settings.public || {};
+    Meteor.settings.public.appVersion = process.env.APP_VERSION;
+  }
+
   await Meteor.callAsync("importConfiguration");
 
   //adding captcha secret key
