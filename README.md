@@ -1,39 +1,47 @@
 [![License](http://img.shields.io/:license-mit-blue.svg)](https://raw.githubusercontent.com/LUMII-Syslab/viziquer/master/LICENSE)
+# ViziQuer
 
-This tool is based upon the `ajoo` platorm which is hosted (together with the `ViziQuer` tool) in the repository [platform](https://github.com/LUMII-Syslab/viziquer)
+The aim of the ViziQuer project is to provide visual/diagrammatic environment for ontology-based data query definition and execution.
 
-# OWLGrEd
+See https://viziquer.lumii.lv for the tool description.
 
-OWLGrEd provides a graphical notation for OWL 2, based on UML class diagrams. OWL classes are typically visualized as UML classes, data properties as class attributes, object properties as association roles, individuals as objects, cardinality restrictions on association domain class as UML cardinalities, etc.
-The UML class diagrams are enriched with new extension notations, e.g.:
-- fields in classes for equivalent class, superclass and disjoint class expressions written in Manchester OWL syntax;
-- fields in association roles and attributes for equivalent, disjoint and super properties and fields for property characteristics, e.g., functional, transitive, etc.;
-- anonymous classes containing equivalent class expression but no name;
-- connectors (as lines) for visualizing binary disjoint, equivalent, etc. axioms;
-- boxes with connectors for n-ary disjoint, equivalent, etc. axioms;
-- connectors (lines) for visualizing object property restrictions some, only, exactly, as well as cardinality restrictions.
-
-See the [OWLGrEd wiki](https://github.com/LUMII-Syslab/owlgred/wiki) for more documentation.
-
-Try visual ontology editing in the [OWLGrEd Playground](LINK).
+See the [ViziQuer wiki](https://github.com/LUMII-Syslab/viziquer/wiki) for information on getting started and using ViziQuer.
 
 ## Acknowledgements
 
-The OWLGrEd tool has been developed at [Institute of Mathematics and Computer Science, University of Latvia](https://lumii.lv) 
-with support from activity 1.1.1.9 Research application No 1.1.1.9/LZP/1/24/037 of the Activity "Post-doctoral Research" "Visual methods and tools for ontology management".
+The ViziQuer tool has been developed at [Institute of Mathematics and Computer Science, University of Latvia](https://lumii.lv) 
+with partial support from Latvian Science Council grant lzp-2021/1-0389 "Visual Queries in Distributed Knowledge Graphs" (2022-2024) and 
+Latvian Science Council grant lzp-2024/1-0665 "What is in Your Knowledge Graph?" (since 2025).
 
 ## Installation
 
-### To setup OWLGrEd locally
+You can choose between running ViziQuer locally (from source) and running ViziQuer within a Docker environment.
+
+### To run ViziQuer in Docker
+
+Go to the [ViziQuer Tools repository](https://github.com/LUMII-Syslab/viziquer-tools/) and follow the instructions there.
+
+### To setup ViziQuer locally
 
 1. Download and install _Meteor_ framework, follow instructions: [https://www.meteor.com/install](https://docs.meteor.com/about/install.html)
 1. Perform `git clone` for this repository.
-1. Change to the `./owlgred/app` directory.
+1. Change to the `./viziquer/app` directory.
 1. Execute the command `meteor npm ci` to install the required _node.js_ packages.
-1. Now to run the OWLGrEd tool, type `meteor` in the OWLGrEd directory.
+1. Now to run the ViziQuer tool, type `meteor` in the ViziQuer directory.
  To run on a specific port, type, for example, `meteor --port 4000`.
 1. Open the web browser and type `localhost:3000` (default port: 3000) or with the specified port `localhost:4000`
 
 ### Configuration for the first use
 
 - The first user that signs up to the tool instance shall get administrator rights (the rights to manage tool configurations)
+
+## Context
+
+For the use with the data shape server (DSS), the DSS server needs to be installed/accessible, as well (put the link in .env file, 
+following the pattern given in sample.env).
+
+See https://github.com/LUMII-Syslab/data-shape-server
+
+The DSS shall need a link to a PostgreSQL database, holding the data schemas for the endpoints to be queried. 
+
+The sample schemas are available; means for their creation are described at https://viziquer.lumii.lv
