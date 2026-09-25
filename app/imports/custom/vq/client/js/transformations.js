@@ -9,11 +9,57 @@ import { Create_VQ_Element_Async, VQ_Element, createVQ_Element } from './VQ_Elem
 import * as vq_property_path_grammar_parser from './vq_property_path_grammar_parser.js'
 import { dataShapes } from './DataShapes.js'
 
+async function ExpandOne(elem, comp) {
+  const propValue = await elem.getCompartmentValue(comp);
+  if ( propValue != null )
+    await elem.setCompartmentValue(comp, propValue, propValue);
+}
+
+async function ExpandClassLIst(elem) {
+  const name = await elem.getCompartmentValue("Name");
+  const classList = await elem.getCompartmentValue("ClassList");
+  if ( name != classList)
+    await elem.setCompartmentValue("ClassList", classList, classList);
+}
+
 Interpreter.customMethods({
 	changeProject: async function(projId){
 		console.log("$$$$$$$$$$$$$ transformations  $$$$$$$$$$$$$$ - changeProject", Session.get("activeProject"), projId)
 		await dataShapes.changeActiveProject(projId, 'changeProject');
 	},
+  ExpandAll: async function() {
+		let elem = await createVQ_Element(Session.get("activeElement"));
+    await ExpandOne(elem, "PropOut");
+    await ExpandOne(elem, "PropIn");
+    await ExpandOne(elem, "PropC");
+    await ExpandClassLIst(elem)
+  },
+  ExpandProperties: async function() {
+		let elem = await createVQ_Element(Session.get("activeElement"));
+    await ExpandOne(elem, "PropOut");
+    await ExpandOne(elem, "PropIn");
+    await ExpandOne(elem, "PropC");
+  },
+  ExpandPropertiesOut: async function() {
+		let elem = await createVQ_Element(Session.get("activeElement"));
+    await ExpandOne(elem, "PropOut");
+  },
+  ExpandPropertiesIn: async function() {
+		let elem = await createVQ_Element(Session.get("activeElement"));
+    await ExpandOne(elem, "PropIn");
+  },
+  ExpandPropertiesC: async function() {
+		let elem = await createVQ_Element(Session.get("activeElement"));
+    await ExpandOne(elem, "PropC");
+  },
+  ExpandClasses: async function() {
+		let elem = await createVQ_Element(Session.get("activeElement"));
+    await ExpandClassLIst(elem)
+  },
+  ExpandLinkProperties: async function() {
+		let elem = await createVQ_Element(Session.get("activeElement"));
+    await ExpandOne(elem, "Name");
+  },
 	linkChangeDirection: async function(){
 		let elem = await createVQ_Element(Session.get("activeElement"));
 

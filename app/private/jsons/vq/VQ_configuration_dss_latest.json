@@ -5928,7 +5928,35 @@
               {
                 "item": "Explore ...",
                 "procedure": "AddLinkForSchema"
-              }
+              },
+			  {
+			    "item": "Expand...",
+                "procedure": "ExpandAll",
+				"subMenu": [
+					{
+						"item": "Expand properties",
+						"procedure": "ExpandProperties",
+						"subMenu": [
+							{
+								"item": "Expand Outgoing properties",
+								"procedure": "ExpandPropertiesOut"
+							},
+							{
+								"item": "Expand Incoming properties",
+								"procedure": "ExpandPropertiesIn"
+							},
+							{
+								"item": "Expand Cyclic properties",
+								"procedure": "ExpandPropertiesC"
+							}		
+						]
+					},
+					{
+						"item": "Expand classes",
+						"procedure": "ExpandClasses"
+					}
+                ]
+			  }
             ],
             "readModeContextMenu": [],
             "styles": [
@@ -7221,7 +7249,11 @@
 			  {
                 "item": "Custom Data (New Form)",
                 "procedure": "GenerateComplexTableQueryLinkNormal"
-              }  
+              },
+			  {
+                "item": "Expand",
+                "procedure": "ExpandLinkProperties"
+              }			  
             ],
             "readModeContextMenu": [],
             "name": "ObjectProperty",

@@ -195,7 +195,7 @@ function get_event_functions() {
       }
 	  let menuList = [];
     // TODO Kamēr nav atrasti dinamiskie PopUp, Shēmu diagrammās propertiju galiem tiek samazināts
-	  if ( element.style.name == 'PropertyEnds' ) {
+	  if ( element.style != undefined && element.style.name == 'PropertyEnds' ) {
 		menuList = elem_type[menu.attrName].slice(0, 3);
 	  }
 	  else {
