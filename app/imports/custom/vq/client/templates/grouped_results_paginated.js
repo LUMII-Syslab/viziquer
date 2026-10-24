@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import {
+    optimize,
     MultiCardinalTableServer,
     SyncPropertySelector,
 } from "multicardinal-table";
@@ -295,7 +296,9 @@ export function GroupedResultsPaginated() {
     e(IdVarsWarning, { query: savedQuery, idVars }),
     e(MultiCardinalTableServer, {
       queryCallback: ({ query }) => {
-        return executeUnlimited(query);
+        const newQuery = optimize(query);
+
+        return executeUnlimited(newQuery);
       },
       baseQuery: savedQuery,
       counterLimit: 100_000,
