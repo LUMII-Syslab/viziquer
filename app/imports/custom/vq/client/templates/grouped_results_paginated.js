@@ -12,6 +12,7 @@ import {
 } from "multicardinal-table";
 import { Projects } from '../../../../db/platform/collections.js'
 import { Utilities } from '../../../../platform/client/js/utilities/utils.js'
+import { Random } from 'meteor/random'
 
 /** @typedef
  * {NonNullable<React.ComponentProps<typeof MultiCardinalTableServer>["pagination"]>}
@@ -19,20 +20,31 @@ import { Utilities } from '../../../../platform/client/js/utilities/utils.js'
 
 /**
  * @param {string} query
+ * @param {AbortSignal} abortSignal
  */
-async function executeUnlimited(query) {
+async function executeUnlimited(query, abortSignal) {
   const proj = await Projects.findOneAsync({_id: Session.get("activeProject")});
   if (!proj) throw new Error("Unexpected missing project!");
   /** @type {string | undefined}  */
   const maybeEndpoint = proj.endpoint;
   if (!maybeEndpoint) throw new Error("unexpected missing endpoint in project!");
-  // NOTE: endpoint could have credentials we might need to use
 
+  const jobId = Random.id();
+
+  // NOTE: endpoint could have credentials we might need to use
   /** @type {import("../../server/execute_sparql.js").ExecuteSparqlSimpleJsonParams} */
   const params = {
     query,
     url: maybeEndpoint,
+    jobId,
   };
+
+  abortSignal.onabort = async function () {
+    await Utilities.callMeteorMethodAsync("abortSparqlSimpleJson", { jobId });
+  }
+
+  // NOTE: Check if aborted before we initiate request
+  if (abortSignal.aborted) throw new Error("aborted");
 
   /** @type {[string, ResponseInit]} */
   const serializedRes = await Utilities.callMeteorMethodAsync("executeSparqlSimpleJson", params);
@@ -295,10 +307,10 @@ export function GroupedResultsPaginated() {
     }),
     e(IdVarsWarning, { query: savedQuery, idVars }),
     e(MultiCardinalTableServer, {
-      queryCallback: ({ query }) => {
+      queryCallback: ({ query,  signal }) => {
         const newQuery = optimize(query);
 
-        return executeUnlimited(newQuery);
+        return executeUnlimited(newQuery, signal);
       },
       baseQuery: savedQuery,
       rawRowLimit: 100_000,

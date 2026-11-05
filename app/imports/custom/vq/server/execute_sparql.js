@@ -499,6 +499,7 @@ function selectHttpRequestProfile(options) {
  * @typedef {Object} ExecuteSparqlSimpleJsonParams
  * @property {string} url
  * @property {string} query
+ * @property {string} jobId identifier that can be used to abort the request
  */
 
 /**
@@ -522,28 +523,62 @@ export async function jsonifyResponse(response) {
   return [body, responseInit];
 }
 
+/** @type {Map<string, { abortController: AbortController}} */
+const simpleJsonJobs = new Map();
+
 Meteor.methods({
   /**
    * @param {ExecuteSparqlSimpleJsonParams} options
    */
-  async executeSparqlSimpleJson({ url, query }) {
+  async executeSparqlSimpleJson({ url, query, jobId }) {
+    this.unblock(); // NOTE: to allow request abortion
     const timeout = TIMEOUT_EXECUTE;
 
     const baseOptions = buildOptionsBase({}, "POST", timeout);
 
-    const req = new Request(url, {
+    const abortController = new AbortController();
+
+    simpleJsonJobs.set(jobId, { abortController });
+
+    try {
+      const req = new Request(url, {
         ...baseOptions,
         method: "POST",
         headers: {
           "Accept": "application/sparql-results+json",
         },
         body: new URLSearchParams({
-            query,
-        })
-    });
+          query,
+        }),
+        signal: abortController.signal,
+      });
 
-    const res = await fetch(req);
-    return await jsonifyResponse(res);
+      const res = await fetch(req);
+      return await jsonifyResponse(res);
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        throw new Meteor.Error('aborted', 'Request aborted');
+      }
+      throw err;
+    } finally {
+      simpleJsonJobs.delete(jobId);
+    }
+  },
+
+  async abortSparqlSimpleJson({ jobId }) {
+    const job = simpleJsonJobs.get(jobId);
+
+    if (!job) {
+      return {
+        msg: "Job does not exist.",
+      }
+    }
+
+    job.abortController.abort();
+
+    return {
+      msg: "Ok",
+    }
   },
 
 
