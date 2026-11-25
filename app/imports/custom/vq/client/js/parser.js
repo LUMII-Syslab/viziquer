@@ -782,7 +782,8 @@ function setVariableName(varName, alias, variableData, generateNewName, useAlias
 			} else {
 
 				let conditionInDifferentContext = false;
-				if(parseType === "condition" &&  typeof classSimbolTable !== "undefined" && typeof classSimbolTable[varFullName] !== "undefined"){
+				if (parseType === "condition" &&!(currentClass != null && (currentClass.isUnit == true || currentClass.isUnion == true)) && 
+				  typeof classSimbolTable !== "undefined" && typeof classSimbolTable[varFullName] !== "undefined") {
 					for(let st = 0; st < classSimbolTable[varFullName].length; st++){
 						if(typeof classSimbolTable[varFullName][st] === "object"){
 							if(classSimbolTable[varFullName][st]["context"] !== classID){
